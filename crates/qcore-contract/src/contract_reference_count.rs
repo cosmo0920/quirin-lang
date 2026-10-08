@@ -109,9 +109,7 @@ pub(super) fn declaration(
             ReferenceOperation::Kept => format!(
                 "a keep returns `resource_return_alias({name}, nonnull)` or `resource_return_none()`"
             ),
-            ReferenceOperation::Dropped => {
-                "a drop returns `resource_return_none()`".to_owned()
-            }
+            ReferenceOperation::Dropped => "a drop returns `resource_return_none()`".to_owned(),
         });
     }
     Ok(vec![ReferenceClause {

@@ -26,6 +26,7 @@ use qcore_schemas::contract::{
 use qcore_schemas::reference_count::ReferenceOperation;
 use qcore_schemas::retained_by::RetainingContract;
 
+use super::slot_move_route::Invalid;
 use super::{
     AbstractPointer, AbstractState, Derivation, LIVE, LegacyDiagnostic, LegacyDiagnosticKind,
     LegacyInstruction, Parser, Token,
@@ -34,7 +35,6 @@ use crate::reference_count::{
     Binding, DROPPED, DropDecision, ExitOutcome, Family, Held, KeepDecision, UNBALANCED, UNDECIDED,
     WITHDRAWN, decide_drop, decide_exit, decide_keep, owed,
 };
-use super::slot_move_route::Invalid;
 
 /// The largest count a family is tracked to; one more keep makes it
 /// undecided, which bounds the work list.
@@ -184,9 +184,10 @@ fn linked(state: &AbstractState, site: usize) -> bool {
             .values()
             .any(|children| children.contains(&site))
         || state.published.contains(&site)
-        || state.retained.iter().any(|(object, _)| {
-            *object == crate::retained_by::HeldObject::Site(site)
-        })
+        || state
+            .retained
+            .iter()
+            .any(|(object, _)| *object == crate::retained_by::HeldObject::Site(site))
 }
 
 /// Whether one of the family's references was handed off at an exit (it
@@ -351,7 +352,9 @@ pub(super) fn apply(
                         line,
                         called,
                         &operand.text,
-                        &format!("the reference is kept into `{destination}`, a place this route does not track"),
+                        &format!(
+                            "the reference is kept into `{destination}`, a place this route does not track"
+                        ),
                         UNDECIDED,
                         state,
                         diagnostics,
@@ -562,9 +565,13 @@ pub(super) fn site_kind(instruction: &LegacyInstruction) -> Option<(usize, Resou
 
 /// The callee of the call whose argument list the `(` at `open` opens.
 fn callee_of<'a>(body: &[&'a str], open: usize) -> Option<&'a str> {
-    open.checked_sub(1)
-        .map(|at| body[at])
-        .filter(|word| is_identifier(word) && !matches!(*word, "if" | "while" | "for" | "switch" | "return" | "sizeof"))
+    open.checked_sub(1).map(|at| body[at]).filter(|word| {
+        is_identifier(word)
+            && !matches!(
+                *word,
+                "if" | "while" | "for" | "switch" | "return" | "sizeof"
+            )
+    })
 }
 
 /// The `(` enclosing position `at`, at depth zero to its left.
@@ -671,11 +678,14 @@ pub(super) fn validated(
                             _ => (depth, commas),
                         })
                         .1;
-                    if contracts.retaining_contract(callee).is_some_and(|declared| {
-                        declared.references.iter().any(|clause| {
-                            clause.operation == operation && clause.parameter == position
+                    if contracts
+                        .retaining_contract(callee)
+                        .is_some_and(|declared| {
+                            declared.references.iter().any(|clause| {
+                                clause.operation == operation && clause.parameter == position
+                            })
                         })
-                    }) {
+                    {
                         touched = true;
                     }
                     continue;
@@ -708,7 +718,10 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
         let Some((parameters, body)) = super::slot_move_route::defined_body(tokens, name) else {
             continue;
         };
-        let alias = matches!(declaration.contract.result, ResourceReturnMode::Derived { .. });
+        let alias = matches!(
+            declaration.contract.result,
+            ResourceReturnMode::Derived { .. }
+        );
         let valid = declaration.references.iter().all(|clause| {
             validated(
                 &body,
@@ -747,21 +760,37 @@ mod tests {
 
     #[test]
     fn the_measured_keep_bodies_validate() {
-        let keep0 = words(
-            "{ rd_atomic32_add ( & rktp -> rktp_refcnt , 1 ) ; return rktp ; }",
-        );
-        assert!(validated(&keep0, "rktp", ReferenceOperation::Kept, true, &empty()));
+        let keep0 = words("{ rd_atomic32_add ( & rktp -> rktp_refcnt , 1 ) ; return rktp ; }");
+        assert!(validated(
+            &keep0,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let q_keep = words(
             "{ mtx_lock ( & rkq -> rkq_lock ) ; rkq -> rkq_refcnt ++ ; \
              mtx_unlock ( & rkq -> rkq_lock ) ; return rkq ; }",
         );
-        assert!(validated(&q_keep, "rkq", ReferenceOperation::Kept, true, &empty()));
+        assert!(validated(
+            &q_keep,
+            "rkq",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let topic_keep = words(
             "{ rd_kafka_lwtopic_t * lrkt ; if ( __builtin_expect ( ! ! ( ( lrkt = \
              rd_kafka_rkt_get_lw ( rkt ) ) != NULL ) , 0 ) ) rd_kafka_lwtopic_keep ( lrkt ) ; \
              else rd_atomic32_add ( & rkt -> rkt_refcnt , 1 ) ; return rkt ; }",
         );
-        assert!(validated(&topic_keep, "rkt", ReferenceOperation::Kept, true, &empty()));
+        assert!(validated(
+            &topic_keep,
+            "rkt",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
     }
 
     #[test]
@@ -770,25 +799,74 @@ mod tests {
             "{ if ( __builtin_expect ( ! ! ( rd_refcnt_sub0 ( & rktp -> rktp_refcnt ) == 0 ) , 0 ) ) \
              rd_kafka_toppar_destroy_final ( rktp ) ; }",
         );
-        assert!(validated(&destroy0, "rktp", ReferenceOperation::Dropped, false, &empty()));
+        assert!(validated(
+            &destroy0,
+            "rktp",
+            ReferenceOperation::Dropped,
+            false,
+            &empty()
+        ));
     }
 
     #[test]
     fn a_body_that_stores_or_returns_the_object_is_refused() {
-        let stores = words("{ holder -> p = rktp ; rd_atomic32_add ( & rktp -> n , 1 ) ; return rktp ; }");
-        assert!(!validated(&stores, "rktp", ReferenceOperation::Kept, true, &empty()));
+        let stores =
+            words("{ holder -> p = rktp ; rd_atomic32_add ( & rktp -> n , 1 ) ; return rktp ; }");
+        assert!(!validated(
+            &stores,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let returns_other = words("{ rd_atomic32_add ( & rktp -> n , 1 ) ; return other ; }");
-        assert!(!validated(&returns_other, "rktp", ReferenceOperation::Kept, true, &empty()));
+        assert!(!validated(
+            &returns_other,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let rebinds = words("{ rktp = other ; rktp -> n ++ ; return rktp ; }");
-        assert!(!validated(&rebinds, "rktp", ReferenceOperation::Kept, true, &empty()));
+        assert!(!validated(
+            &rebinds,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let address = words("{ f ( & rktp ) ; rktp -> n -- ; }");
-        assert!(!validated(&address, "rktp", ReferenceOperation::Dropped, false, &empty()));
+        assert!(!validated(
+            &address,
+            "rktp",
+            ReferenceOperation::Dropped,
+            false,
+            &empty()
+        ));
         let returns = words("{ rktp -> n -- ; return rktp ; }");
-        assert!(!validated(&returns, "rktp", ReferenceOperation::Dropped, false, &empty()));
+        assert!(!validated(
+            &returns,
+            "rktp",
+            ReferenceOperation::Dropped,
+            false,
+            &empty()
+        ));
         let untouched = words("{ return rktp ; }");
-        assert!(!validated(&untouched, "rktp", ReferenceOperation::Kept, true, &empty()));
+        assert!(!validated(
+            &untouched,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
         let jumps = words("{ rktp -> n ++ ; goto out ; out : return rktp ; }");
-        assert!(!validated(&jumps, "rktp", ReferenceOperation::Kept, true, &empty()));
+        assert!(!validated(
+            &jumps,
+            "rktp",
+            ReferenceOperation::Kept,
+            true,
+            &empty()
+        ));
     }
 
     #[test]

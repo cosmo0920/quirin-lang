@@ -705,8 +705,10 @@ pub(super) fn before(
         for name in reads(&node.instruction) {
             // Card REFCOUNT-RESOURCE-KIND (rule 13b): a drop's own actual
             // past an acquired family's last drop is the rule's to decide.
-            if matches!(state.invalidated.get(&name), Some(Invalid::ReferenceFreed { .. }))
-                && super::reference_route::decides_read(&node.instruction, &name)
+            if matches!(
+                state.invalidated.get(&name),
+                Some(Invalid::ReferenceFreed { .. })
+            ) && super::reference_route::decides_read(&node.instruction, &name)
             {
                 continue;
             }
@@ -867,7 +869,10 @@ pub(super) fn join(state: &mut AbstractState, incoming: &AbstractState) {
 }
 
 /// The parameter names and body words of `function`'s definition in `tokens`.
-pub(super) fn defined_body<'a>(tokens: &'a [Token], function: &str) -> Option<(Vec<String>, Vec<&'a str>)> {
+pub(super) fn defined_body<'a>(
+    tokens: &'a [Token],
+    function: &str,
+) -> Option<(Vec<String>, Vec<&'a str>)> {
     let (parameters, open) = super::retention_guard::definition(tokens, function)?;
     let close = super::matching(tokens, open, "{", "}")?;
     let words = tokens[open..=close]

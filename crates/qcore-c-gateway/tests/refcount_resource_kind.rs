@@ -144,7 +144,10 @@ fn a_balanced_keep_and_drop_is_safe() {
     if !clang_available() {
         return;
     }
-    let row = one("void f(void *p) { rc_keep(p); rc_use(p); rc_drop(p); }", "f");
+    let row = one(
+        "void f(void *p) { rc_keep(p); rc_use(p); rc_drop(p); }",
+        "f",
+    );
     assert!(row.safe(), "{row:?}");
     // Through the kept result, a void keep, and two references held at once.
     let row = one(
@@ -175,7 +178,10 @@ fn a_missing_drop_is_a_leak_candidate_and_never_safe() {
     let row = one("void f(void *p) { rc_keep(p); rc_use(p); }", "f");
     assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
     // Two keeps, one drop.
-    let row = one("void f(void *p) { rc_keep(p); rc_keep(p); rc_drop(p); }", "f");
+    let row = one(
+        "void f(void *p) { rc_keep(p); rc_keep(p); rc_drop(p); }",
+        "f",
+    );
     assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
     // A drop on one arm only.
     let row = one(
@@ -210,17 +216,23 @@ fn a_double_drop_is_refused() {
     if !clang_available() {
         return;
     }
-    let row = one("void f(void *p) { rc_keep(p); rc_drop(p); rc_drop(p); }", "f");
-    assert!(row.refused() && row.mentions("reference-dropped"), "{row:?}");
+    let row = one(
+        "void f(void *p) { rc_keep(p); rc_drop(p); rc_drop(p); }",
+        "f",
+    );
+    assert!(
+        row.refused() && row.mentions("reference-dropped"),
+        "{row:?}"
+    );
     // A drop of a reference the function never took consumes the caller's:
     // refused, never Safe.
     let row = one("void f(void *p) { rc_drop(p); }", "f");
-    assert!(row.refused() && row.mentions("reference-drop-unheld"), "{row:?}");
-    // A drop of a member read: refused.
-    let row = one(
-        "void f(struct holder *h) { rc_drop(h->ref); }",
-        "f",
+    assert!(
+        row.refused() && row.mentions("reference-drop-unheld"),
+        "{row:?}"
     );
+    // A drop of a member read: refused.
+    let row = one("void f(struct holder *h) { rc_drop(h->ref); }", "f");
     assert!(row.refused(), "{row:?}");
 }
 
@@ -240,10 +252,7 @@ fn a_keep_returned_to_the_caller_is_balanced() {
     );
     assert!(row.safe(), "{row:?}");
     // Two keeps, one returned: one still owed.
-    let row = one(
-        "void *f(void *p) { rc_keep(p); return rc_keep(p); }",
-        "f",
-    );
+    let row = one("void *f(void *p) { rc_keep(p); return rc_keep(p); }", "f");
     assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
 }
 
@@ -272,7 +281,10 @@ fn a_keep_stored_into_a_tracked_owner_is_handed_off() {
          o = rc_alloc(8); r = rc_keep(p); o->ref = r; rc_drop(r); return o; }",
         "f",
     );
-    assert!(row.refused() && row.mentions("reference-drop-unheld"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("reference-drop-unheld"),
+        "{row:?}"
+    );
     // A keep in a loop, dropped in the same iteration: balanced.
     let row = one(
         "void f(struct obj **v, int n) {\n int i;\n for (i = 0; i < n; i++) {\n \
@@ -294,10 +306,7 @@ fn a_statistics_counter_is_never_read_as_a_reference() {
         return;
     }
     // The declared keep wrapper over the primitive is a reference.
-    let row = one(
-        "void f(struct obj *o) { obj_keep(o); rc_drop(o); }",
-        "f",
-    );
+    let row = one("void f(struct obj *o) { obj_keep(o); rc_drop(o); }", "f");
     assert!(row.safe(), "{row:?}");
     let row = one("void f(struct obj *o) { obj_keep(o); }", "f");
     assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
@@ -332,12 +341,18 @@ fn a_use_after_a_possibly_final_drop_is_refused() {
         "void f(void *p) { void *q = rc_keep(p); rc_drop(q); rc_use(p); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("reference-dropped"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("reference-dropped"),
+        "{row:?}"
+    );
     let row = one(
         "void f(void *p) { rc_keep(p); void *a = p; rc_drop(p); rc_use(a); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("reference-dropped"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("reference-dropped"),
+        "{row:?}"
+    );
     // A keep after the last drop: refused too.
     let row = one(
         "void f(void *p) { rc_keep(p); rc_drop(p); rc_keep(p); rc_drop(p); }",
@@ -402,7 +417,10 @@ fn an_over_drop_of_an_acquired_reference_is_a_violation_candidate() {
         "void f(void) {\n void *r = rc_new(1);\n if (!r) return;\n rc_drop(r);\n rc_use(r);\n}",
         "f",
     );
-    assert!(row.refused() && row.mentions("reference-dropped"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("reference-dropped"),
+        "{row:?}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -437,7 +455,10 @@ fn a_body_that_does_not_validate_withdraws_the_declaration_in_its_unit() {
          void f(void *p) { rc_keep(p); rc_drop(p); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("reference-withdrawn"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("reference-withdrawn"),
+        "{row:?}"
+    );
     let row = one(
         "void *stash; void *rc_keep(void *p) { stash = p; return p; } \
          void f(void *p) { rc_keep(p); }",
@@ -543,7 +564,8 @@ fn lean_outcome(outcome: RefOutcome) -> &'static str {
 
 #[test]
 fn the_decision_vectors_are_the_lean_table() {
-    let rows = lean_rows("def referenceVectors : List (Binding × KeepDecision × DropDecision) := [");
+    let rows =
+        lean_rows("def referenceVectors : List (Binding × KeepDecision × DropDecision) := [");
     let rust = REFERENCE_VECTORS
         .iter()
         .map(|(binding, keep, drop)| {

@@ -2343,7 +2343,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 .retentions
                 .iter()
                 .any(|retention| retention.retained == reference.parameter)
-                || declared.slot_moves.iter().any(|moved| moved.slot == reference.parameter)
+                || declared
+                    .slot_moves
+                    .iter()
+                    .any(|moved| moved.slot == reference.parameter)
                 || declared
                     .derived_outs
                     .iter()

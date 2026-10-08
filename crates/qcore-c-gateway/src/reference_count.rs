@@ -208,7 +208,11 @@ pub const fn decide_exit(owed: Option<u32>, modeled: bool) -> ExitOutcome {
 /// `(binding, keep, drop)`, shared with `QCore.ReferenceCount`
 /// (`reference_vectors_hold`).
 pub const REFERENCE_VECTORS: [(Binding, KeepDecision, DropDecision); 9] = [
-    (Binding::Unbound, KeepDecision::Mint, DropDecision::Refuse(UNHELD)),
+    (
+        Binding::Unbound,
+        KeepDecision::Mint,
+        DropDecision::Refuse(UNHELD),
+    ),
     (
         Binding::Family {
             held: Held::Known(1),
@@ -307,7 +311,9 @@ pub enum RefOutcome {
 enum ReplayName {
     Bound(u8),
     /// `acquired`: the family the last drop discharged was acquired.
-    Invalid { acquired: bool },
+    Invalid {
+        acquired: bool,
+    },
 }
 
 /// The replay's state.
@@ -496,10 +502,17 @@ pub const REFERENCE_TRACE_VECTORS: [(&[RefEvent], RefOutcome); 21] = [
         RefOutcome::Refused,
     ),
     // A keep returned to the caller.
-    (&[RefEvent::KeepTo(1, 0), RefEvent::Handoff(1)], RefOutcome::Safe),
+    (
+        &[RefEvent::KeepTo(1, 0), RefEvent::Handoff(1)],
+        RefOutcome::Safe,
+    ),
     // A keep stored into a tracked owner that escapes.
     (
-        &[RefEvent::KeepTo(1, 0), RefEvent::Alias(2, 1), RefEvent::Handoff(2)],
+        &[
+            RefEvent::KeepTo(1, 0),
+            RefEvent::Alias(2, 1),
+            RefEvent::Handoff(2),
+        ],
         RefOutcome::Safe,
     ),
     // Two keeps, one drop.
@@ -602,12 +615,30 @@ mod tests {
 
     #[test]
     fn exits() {
-        assert_eq!(decide_exit(owed(Held::Known(0), false), true), ExitOutcome::Balanced);
-        assert_eq!(decide_exit(owed(Held::Known(1), true), true), ExitOutcome::Balanced);
-        assert_eq!(decide_exit(owed(Held::Known(1), false), true), ExitOutcome::Leak);
-        assert_eq!(decide_exit(owed(Held::Known(1), false), false), ExitOutcome::Refused);
-        assert_eq!(decide_exit(owed(Held::Known(2), true), true), ExitOutcome::Leak);
-        assert_eq!(decide_exit(owed(Held::Undecided, false), true), ExitOutcome::Refused);
+        assert_eq!(
+            decide_exit(owed(Held::Known(0), false), true),
+            ExitOutcome::Balanced
+        );
+        assert_eq!(
+            decide_exit(owed(Held::Known(1), true), true),
+            ExitOutcome::Balanced
+        );
+        assert_eq!(
+            decide_exit(owed(Held::Known(1), false), true),
+            ExitOutcome::Leak
+        );
+        assert_eq!(
+            decide_exit(owed(Held::Known(1), false), false),
+            ExitOutcome::Refused
+        );
+        assert_eq!(
+            decide_exit(owed(Held::Known(2), true), true),
+            ExitOutcome::Leak
+        );
+        assert_eq!(
+            decide_exit(owed(Held::Undecided, false), true),
+            ExitOutcome::Refused
+        );
         assert_eq!(Held::Known(1).join(Held::Known(1)), Held::Known(1));
         assert_eq!(Held::Known(1).join(Held::Known(2)), Held::Undecided);
     }

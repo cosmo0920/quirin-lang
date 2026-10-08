@@ -478,6 +478,11 @@ contract {
 // `rkqu->rkqu_rk = rk`, `return rkqu;`: the reference it takes on `rkq` is
 // handed into the queue handle it returns, which `rd_kafka_queue_destroy`
 // (`:980-986`) drops before freeing the handle. The caller owes the handle.
+// The handle also keeps `rk` (`rkqu->rkqu_rk`), the client's back-pointer:
+// no retention clause names a holder that is the call's result, and no
+// audited caller tracks a client handle, so `rk` is read as borrowed here
+// and the gap is recorded (`RETAINED-BY-RESULT-HOLDER`): librdkafka requires
+// every queue to be destroyed before its client.
 
 extern fn rd_kafka_queue_new0(rk: ptr<mut, u8>, rkq: ptr<mut, u8>) -> ptr<mut, u8>
 contract {

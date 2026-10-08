@@ -150,7 +150,10 @@ fn the_reference_kind_is_spelled_only_on_an_owned_result() {
     let result = "extern fn k() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nullable);\n    ensures normal resource_return_kind(reference);\n};\n";
     let contracts = load(result).expect("an owned reference result loads");
     let contract = contracts.contract("k").expect("in the function map");
-    assert_eq!(contract.result_kind, qcore_schemas::contract::ResourceKind::Reference);
+    assert_eq!(
+        contract.result_kind,
+        qcore_schemas::contract::ResourceKind::Reference
+    );
     // On any other result it rejects the module.
     let none = "extern fn k() -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_none();\n    ensures normal resource_return_kind(reference);\n};\n";
     assert!(load(none).is_err());
