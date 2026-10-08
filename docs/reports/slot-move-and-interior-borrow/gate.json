@@ -1,0 +1,13 @@
+{
+  "note": "SLOT-MOVE-AND-INTERIOR-BORROW card gate on base 6cbcc4e9c, every code step at 8ce2e96dc, scripts docs/reports/slot-move-and-interior-borrow/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/smib/gate-g2 and private/smib/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 454 units, 467 summaries, 7,666 passed, 0 failed, 11 ignored, exit 0 (private/smib/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 296 audits passed (293 + AuditSlotMove + AuditInteriorBorrow + AuditDerivedOutSlot); python tests 08 exit 1 on the committed matrix (1 failure: the matrix carried 293 Lean audits, the card adds three; kept as private/smib/gate-g2-08-stale-matrix.log, as W43-ABI-ENUM-AND-CONST-PP's gate did); docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK. Python suite after 09a: 365 tests OK (09b).",
+  "workspace_tests": 7666,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 296,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

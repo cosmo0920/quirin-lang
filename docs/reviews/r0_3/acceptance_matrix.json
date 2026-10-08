@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W43-ABI-ENUM-AND-CONST-PP card gate on base 4f55fa4c4, every code step at 72f81604f, scripts docs/reports/w43-abi-enum-and-const-pp/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/w43aecp/gate-g2 and private/w43aecp/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 452 units, 465 summaries, 7,647 passed, 0 failed, 11 ignored, exit 0 (private/w43aecp/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 293 audits passed (291 + AuditAbiEnumConstPointer + AuditRetentionGuard); python tests 08 exit 0 (365 OK) on the committed matrix; docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 7647,
+  "note": "SLOT-MOVE-AND-INTERIOR-BORROW card gate on base 6cbcc4e9c, every code step at 8ce2e96dc, scripts docs/reports/slot-move-and-interior-borrow/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/smib/gate-g2 and private/smib/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 454 units, 467 summaries, 7,666 passed, 0 failed, 11 ignored, exit 0 (private/smib/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 296 audits passed (293 + AuditSlotMove + AuditInteriorBorrow + AuditDerivedOutSlot); python tests 08 exit 1 on the committed matrix (1 failure: the matrix carried 293 Lean audits, the card adds three; kept as private/smib/gate-g2-08-stale-matrix.log, as W43-ABI-ENUM-AND-CONST-PP's gate did); docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK. Python suite after 09a: 365 tests OK (09b).",
+  "workspace_tests": 7666,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 293,
+  "lean_audits": 296,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6847,6 +6847,7 @@
    "AuditDeclaredModeAgreement.lean",
    "AuditDenominatorCoverage.lean",
    "AuditDereferencedResult.lean",
+   "AuditDerivedOutSlot.lean",
    "AuditDerivedResult.lean",
    "AuditDerivedResultInference.lean",
    "AuditDerivedTextAdmission.lean",
@@ -6882,6 +6883,7 @@
    "AuditIndirectCalls.lean",
    "AuditIndirectChainAccess.lean",
    "AuditIndirectScalarAccess.lean",
+   "AuditInteriorBorrow.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
    "AuditJoinedProvenanceRoundBound.lean",
@@ -6989,6 +6991,7 @@
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",
    "AuditSlicePermissions.lean",
+   "AuditSlotMove.lean",
    "AuditSocketCellRoute.lean",
    "AuditSocketEventCompose.lean",
    "AuditSocketFootprint.lean",
@@ -7059,7 +7062,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa47169901f5399cd/docs/reports/w43-abi-enum-and-const-pp/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a06dea49a38c32ef4/docs/reports/slot-move-and-interior-borrow/gate.json)"
  },
  "named_followups": [
   {

@@ -268,7 +268,39 @@ undischarged member is rehomed in `CLASS1-UNDECLARABLE-RETAINERS`). Registered:
 
 ## 9. Gate
 
-GATE-SECTION
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g2` then [`scripts/finish-gate.sh`](scripts/finish-gate.sh) `g2`, code steps
+at `8ce2e96dc` on base `6cbcc4e9c`; logs `private/smib/gate-g2/`, exits in
+[gate/](gate/), summary [gate.json](gate.json). A first attempt, `g1` (at
+`94d5c0e31`), stopped at `cargo check` (the CG00 control
+`clang_gap_phase4.rs` pins the extent set, updated deliberately for
+`Borrowed`) and clippy (an auto-deref); both fixed, every step rerun as `g2`.
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 454 units, 467 summaries; 7,666 passed, 0 failed, 11 ignored (`private/smib/tests-gate-g2`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 296 audits passed (293 + `AuditSlotMove` + `AuditInteriorBorrow` + `AuditDerivedOutSlot`) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK, after `build_matrix.py . --gate gate.json` (the committed matrix carried 293 Lean audits; the stale-matrix run, 1 failure, is kept as `private/smib/gate-g2-08-stale-matrix.log`) |
+| `build_docs_index.py --check` | 0 | |
+| `build_matrix.py` with the final `gate.json`, the Python suite again, the index and its check | 0 | see [gate/](gate/) |
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g2`,
+logs `private/smib/provider-gate-g2/`): `cargo check --locked` 0, `cargo test`
+0 (129 passed), fmt 0, clippy 0, `providers/contracts.py check` 0, package
+build 0 and `verify` 0 for all five packages, `python3 -m unittest discover -s
+providers/tests` 0 (25 tests OK). Pins: section 4. Targeted runs before the
+gate (`scripts/targeted.sh`, logs `private/smib/t1`-`t6`, `p1`-`p5`) found the
+pin updates this card makes deliberately: the loader counts (319 -> 333 v1
+declarations, retaining table 7 -> 16, the five borrowed results' previous
+readings) and the contract-surface table.
+
+The measured binary (`a2`) was built before `cargo fmt`, the clippy fix and
+the test-only edits; the gate's code is that tree.
 
 ## Files
 
