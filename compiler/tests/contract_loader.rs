@@ -933,10 +933,7 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     ] {
         old.insert_contract(
             name,
-            ResourceFunctionContract::new(
-                [P::Released { nullable: false }],
-                R::None,
-            ),
+            ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
         );
     }
     // Explicitly borrowed trailing arguments were implicit in the old table.
