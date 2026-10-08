@@ -53,6 +53,9 @@ pub enum HolderSpelling {
     Name(String),
     /// The declaration's `global` holder.
     Global,
+    /// Card **REFCOUNT-REFERENCE-RETURNING-DECLARATIONS** (rule 13e): the
+    /// object the call returns, decided against the call's destination.
+    Result,
 }
 
 /// The operands of one retaining call, in clause order.
@@ -235,7 +238,9 @@ impl Parser<'_> {
         };
         // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
         // operands, or the refusal of a declaration withdrawn in this unit.
-        if !declaration.references.is_empty() {
+        // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13d): a
+        // returned reference rule 13d withdrew carries no clause, but refuses.
+        if !declaration.references.is_empty() || declaration.references_withdrawn {
             let owned = |index: usize| -> Option<Vec<String>> {
                 actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
             };
@@ -266,6 +271,13 @@ impl Parser<'_> {
                 // string literal, since a character literal there is an
                 // integer-to-pointer conversion Clang rejects by default).
                 Some(["__qcore_literal__"]) => Some(RetainedSpelling::Literal),
+                // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13e,
+                // P-RETAINED-PREDEFINED): `__func__` is a static array (C11
+                // 6.4.2.2p1) and `__FUNCTION__`, `__PRETTY_FUNCTION__` are
+                // its GNU spellings, which Clang lexes as keywords.
+                Some([name]) if crate::retained_by::PREDEFINED_IDENTIFIERS.contains(name) => {
+                    Some(RetainedSpelling::Literal)
+                }
                 Some([name]) if is_identifier(name) => {
                     Some(if self.caller_formals.contains(name) {
                         RetainedSpelling::Formal((*name).to_owned())
@@ -277,11 +289,13 @@ impl Parser<'_> {
             };
             let held = match retention.holder {
                 RetentionHolder::Global => Some((HolderSpelling::Global, "global".to_owned())),
+                RetentionHolder::Result => Some((HolderSpelling::Result, "result".to_owned())),
                 RetentionHolder::Parameter { index } => holder(self, index),
             };
             let holder_text = match retention.holder {
                 RetentionHolder::Parameter { index } => actual(index).map(|a| a.join(" ")),
                 RetentionHolder::Global => Some("global".to_owned()),
+                RetentionHolder::Result => Some("the returned object".to_owned()),
             }
             .unwrap_or_else(|| "?".to_owned());
             let retained_text = retained_text.unwrap_or_else(|| "?".to_owned());
@@ -371,11 +385,18 @@ fn tracked(state: &AbstractState, name: &str) -> Option<usize> {
     .then_some(site)
 }
 
-fn holder_class(state: &AbstractState, holder: &HolderSpelling) -> Holder {
+fn holder_class(state: &AbstractState, holder: &HolderSpelling, destination: Option<&str>) -> Holder {
     match holder {
         HolderSpelling::Frame(name) => Holder::Frame(name.clone()),
         HolderSpelling::Global => Holder::Global,
         HolderSpelling::Name(name) => tracked(state, name).map_or(Holder::Foreign, Holder::Tracked),
+        // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13e): the
+        // returned object is the one live identity the call bound its plain
+        // destination to; any other destination is undecided.
+        HolderSpelling::Result => destination
+            .filter(|place| crate::may_alias::place_root(place) == Some(*place))
+            .and_then(|place| tracked(state, place))
+            .map_or(Holder::Foreign, Holder::Tracked),
     }
 }
 
@@ -401,11 +422,12 @@ pub(super) fn apply(
     line: usize,
     called: &str,
     operands: &Operands,
+    destination: Option<&str>,
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for reset in &operands.resets {
-        match holder_class(state, reset) {
+        match holder_class(state, reset, destination) {
             Holder::Frame(name) => state
                 .retained
                 .retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
@@ -416,7 +438,7 @@ pub(super) fn apply(
     for (retained, retained_text, holder, holder_text) in &operands.retentions {
         match decide(
             &retained_class(state, retained),
-            &holder_class(state, holder),
+            &holder_class(state, holder, destination),
         ) {
             Decision::Outlives => {}
             Decision::Record(object, by) => {

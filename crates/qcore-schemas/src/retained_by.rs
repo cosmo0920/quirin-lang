@@ -38,6 +38,12 @@ pub enum RetentionHolder {
     /// file-scope object, a queue another thread drains): it lives for the
     /// program as far as the caller can tell.
     Global,
+    /// Card **REFCOUNT-REFERENCE-RETURNING-DECLARATIONS** (§C04.14.2, gateway
+    /// rule 13e): the object the call returns (`resource_retained_by(p,
+    /// result)`), which the declaration's `resource_return_owned(nonnull)`
+    /// hands its caller. The caller must show `p`'s object outlives the
+    /// handle: the handle is released, or its last reference dropped, first.
+    Result,
 }
 
 /// `resource_retained_by(p, h)`: the parameter at `retained` is kept by `holder`.

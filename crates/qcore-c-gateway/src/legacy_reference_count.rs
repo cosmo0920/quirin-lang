@@ -457,6 +457,17 @@ pub(super) fn apply(
                     };
                     state.resources.remove(&site);
                     state.nullable_sites.remove(&site);
+                    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule
+                    // 13e): the last reference this function holds on an
+                    // object it acquired is dropped, so the object it held
+                    // other pointers in is, as far as this function can see,
+                    // gone (premise P-RESULT-HOLDER-LAST-DROP): what it
+                    // retains is no longer this function's to outlive. A
+                    // borrowed family's object lives on with the caller's
+                    // reference, so its records stand.
+                    if acquired {
+                        super::retained_by_route::holder_released(state, site);
+                    }
                     let names = state
                         .pointers
                         .iter()
@@ -710,6 +721,15 @@ pub(super) fn validated(
 /// marked withdrawn there, so every call refuses and no inference reads the
 /// body in its place. `None` when nothing is withdrawn.
 pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<ResourceContracts> {
+    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13d): returned
+    // references first, then the keeps and drops over that environment.
+    let results = super::reference_result_route::settle(tokens, contracts);
+    let contracts_after_results = results.as_ref().unwrap_or(contracts);
+    settle_clauses(tokens, contracts_after_results).or(results)
+}
+
+/// Rule 13c proper: the keep and drop clauses.
+fn settle_clauses(tokens: &[Token], contracts: &ResourceContracts) -> Option<ResourceContracts> {
     let mut withdrawn = Vec::new();
     for (name, declaration) in contracts.retaining() {
         if declaration.references.is_empty() || declaration.references_withdrawn {

@@ -45,6 +45,12 @@ pub const UNDECIDED: &str = "retention-undecided";
 /// still retains.
 pub const RELEASED_WHILE_HELD: &str = "retention-released-while-held";
 
+/// Card **REFCOUNT-REFERENCE-RETURNING-DECLARATIONS** (rule 13e,
+/// P-RETAINED-PREDEFINED): C11 6.4.2.2's predefined identifier and its two
+/// GNU spellings. Each denotes a static array, so, like a string literal, it
+/// outlives every holder (`variadic_nested`'s T6 reads them the same way).
+pub const PREDEFINED_IDENTIFIERS: &[&str] = &["__func__", "__FUNCTION__", "__PRETTY_FUNCTION__"];
+
 /// The minted name of `callee`'s custody contract.
 pub(crate) fn retained_name(callee: &str) -> String {
     format!("{RETAINED_PREFIX}{callee}")

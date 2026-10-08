@@ -10,7 +10,9 @@
 //! `p` names a depth-one pointer parameter whose mode is `resource_borrowed`
 //! (the caller keeps custody); `h` names a distinct depth-one pointer
 //! parameter whose mode is `resource_borrowed`, or is the word `global`
-//! (storage of static duration, or a holder no caller object denotes). A
+//! (storage of static duration, or a holder no caller object denotes), or
+//! (card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, §C04.14.2) the word
+//! `result`: the object a `resource_return_owned(nonnull)` call returns. A
 //! parameter is retained at most once; a reset names a depth-one pointer
 //! parameter, `resource_borrowed`, at most once. No kind stands on either
 //! position. A declaration carrying either clause is withheld from the
@@ -18,7 +20,9 @@
 
 use std::collections::BTreeMap;
 
-use qcore_schemas::contract::{ResourceFunctionContract, ResourceKind, ResourceParameterMode};
+use qcore_schemas::contract::{
+    ResourceFunctionContract, ResourceKind, ResourceParameterMode, ResourceReturnMode,
+};
 use qcore_schemas::retained_by::{
     GuardRelation, RetainingContract, Retention, RetentionGuard, RetentionHolder,
 };
@@ -31,6 +35,10 @@ pub(super) const HOLDER_RESET: &str = "resource_holder_reset";
 
 /// The holder word for static storage.
 pub(super) const GLOBAL: &str = "global";
+
+/// Card **REFCOUNT-REFERENCE-RETURNING-DECLARATIONS** (§C04.14.2): the holder
+/// word for the object the call returns.
+pub(super) const RESULT: &str = "result";
 
 /// The depth-one pointer types a retained pointer or a holder may have.
 const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
@@ -172,6 +180,12 @@ pub(super) fn declaration(
              `{GLOBAL}`"
         ));
     }
+    if names.contains_key(RESULT) && retentions.iter().any(|(_, holder, _)| holder == RESULT) {
+        return Err(format!(
+            "a retention clause reads `{RESULT}` as the returned object: rename the parameter \
+             `{RESULT}`"
+        ));
+    }
     let position = |name: &str, role: &str| -> Result<usize, String> {
         let at = index(name)?;
         if !DEPTH_ONE.contains(&parameter_types[at].as_str()) {
@@ -207,6 +221,20 @@ pub(super) fn declaration(
         }
         let holder = if holder == GLOBAL {
             RetentionHolder::Global
+        } else if holder == RESULT {
+            // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (§C04.14.2): the
+            // returned object holds `retained`; only a fresh non-null object
+            // the caller owns can be a holder whose end the caller sees.
+            if !matches!(
+                contract.result,
+                ResourceReturnMode::Owned { nullable: false }
+            ) {
+                return Err(format!(
+                    "a `{RESULT}` holder needs `resource_return_owned(nonnull)`: the caller \
+                     owns the object that keeps the pointer"
+                ));
+            }
+            RetentionHolder::Result
         } else {
             let at = position(holder, "holder")?;
             if at == retained {

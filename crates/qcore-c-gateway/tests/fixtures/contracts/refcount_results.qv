@@ -1,0 +1,106 @@
+module contract;
+
+// Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (gateway rules 13d, 13e): a
+// generic surface for returned references and result holders. Synthetic
+// trusted test assumptions, not a model of any real library: `rr_lookup`
+// stands for `rd_kafka_toppar_get0` (NULL, or one reference the caller owes),
+// `rr_make` for `rd_kafka_q_new0` (a fresh object holding one reference, which
+// keeps `owner` and `name`), `rr_handle` for `rd_kafka_queue_new0` (a heap
+// handle that keeps `owner`), `rr_keep`/`rr_drop` for a keep and a drop,
+// `rr_get`, `rr_bad` and `rr_release` for declarations whose bodies a unit
+// defines (rule 13d and rule 13c).
+
+extern fn rr_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn rr_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn rr_use(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn rr_lookup(k: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(k);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn rr_make(owner: ptr<mut, u8>, name: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(owner);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_retained_by(owner, result);
+    ensures normal resource_retained_by(name, result);
+    ensures normal resource_return_owned(nonnull);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn rr_handle(owner: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(owner);
+    ensures normal resource_retained_by(owner, result);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn rr_handle_destroy(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rr_keep(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_kept(p);
+    ensures normal resource_return_alias(p, nonnull);
+};
+
+extern fn rr_drop(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_dropped(p);
+    ensures normal resource_return_none();
+};
+
+extern fn rr_get(k: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(k);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn rr_bad(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+extern fn rr_release(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_dropped(p);
+    ensures normal resource_return_none();
+};

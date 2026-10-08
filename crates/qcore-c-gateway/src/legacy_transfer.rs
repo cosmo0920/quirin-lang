@@ -3961,6 +3961,7 @@ pub(super) fn transfer_base(
                     node.line,
                     called,
                     operands,
+                    destination.as_deref(),
                     &mut state,
                     diagnostics,
                 );

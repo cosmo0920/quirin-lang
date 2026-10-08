@@ -478,17 +478,22 @@ contract {
 // `rkqu->rkqu_rk = rk`, `return rkqu;`: the reference it takes on `rkq` is
 // handed into the queue handle it returns, which `rd_kafka_queue_destroy`
 // (`:980-986`) drops before freeing the handle. The caller owes the handle.
-// The handle also keeps `rk` (`rkqu->rkqu_rk`), the client's back-pointer:
-// no retention clause names a holder that is the call's result, and no
-// audited caller tracks a client handle, so `rk` is read as borrowed here
-// and the gap is recorded (`RETAINED-BY-RESULT-HOLDER`): librdkafka requires
-// every queue to be destroyed before its client.
+// The handle also keeps `rk` (`rkqu->rkqu_rk`), the client's back-pointer.
+// Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (C04.14.2, gateway rule 13e)
+// spells that holder: the handle the call returns retains `rk`, so a caller
+// must show the client outlives the handle (the handle is released first);
+// otherwise the call is `retention-undecided`, never `Safe` (librdkafka
+// requires every queue to be destroyed before its client, which no audited
+// caller shows). This replaces the borrowed reading of `rk` recorded as a gap
+// by REFCOUNT-RESOURCE-KIND (`RETAINED-BY-RESULT-HOLDER`); the declaration is
+// now withheld from the function map with the retaining declarations.
 
 extern fn rd_kafka_queue_new0(rk: ptr<mut, u8>, rkq: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(rkq);
+    ensures normal resource_retained_by(rk, result);
     ensures normal resource_return_owned(nonnull);
 };
 
@@ -562,5 +567,186 @@ extern fn rd_kafka_topic_partition_result_destroy(partition_result: ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_released(partition_result, nonnull);
+    ensures normal resource_return_none();
+};
+
+// Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (contract specification
+// C04.17, C04.14.2; gateway rules 13d and 13e), under the user's decision of
+// 2026-10-05 on class 3. A returned reference is
+// `resource_return_owned(n)` with `resource_return_kind(reference)`: the call
+// hands its caller one reference the caller must drop or hand off (an
+// acquired family, rule 13b). Rule 13d checks each body below in every unit
+// that defines it: every `return` is a null constant (declared nullable), a
+// call of a declared keep or returned reference, or a local assigned only
+// from those or from a declared allocation and never given away. The count
+// arithmetic and the non-null results stay declared assumptions, cited here
+// and pinned (C06.2). `rd_malloc` and `rd_calloc` (`rd.h:139-149`) assert
+// their result, and the audited compile commands define no `NDEBUG`, so they
+// never return NULL in the audited build. Every body was read at `66910c10`
+// and `046accf6` and is byte-identical (`scripts/body.py`).
+
+// ## Lookups (each returns a kept reference, or NULL)
+//
+// `rd_kafka_toppar_get0` (`rdkafka_partition.c:418-436`): `rktp` is read from
+// the topic's partition array or its UA partition; a present one is returned
+// through `rd_kafka_toppar_keep_fl` (`rd_kafka_toppar_keep0`, a declared
+// keep), otherwise NULL. The `rd_kafka_toppar_get` macro
+// (`rdkafka_partition.h:614-615`) passes `__FUNCTION__` and `__LINE__`.
+
+extern fn rd_kafka_toppar_get0(func: ptr<const, u8>, line: i32, rkt: ptr<const, u8>, partition: i32, ua_on_miss: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_borrowed(ua_on_miss);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// `rd_kafka_toppar_desired_get` (`rdkafka_partition.c:628-639`): walks the
+// topic's desired list and returns `rd_kafka_toppar_keep(rktp)` of the
+// matching partition, otherwise NULL.
+
+extern fn rd_kafka_toppar_desired_get(rkt: ptr<mut, u8>, partition: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// `rd_kafka_toppar_new0` (`rdkafka_partition.c:219-305`): allocates the
+// toppar (`rd_calloc`), initialises its count to 0 (`:261`), links it to its
+// topic, and returns `rd_kafka_toppar_keep(rktp)` (`:304`): the caller holds
+// the one reference. Non-null (`rd_calloc`). The `rd_kafka_toppar_new` macro
+// (`rdkafka_partition.h:579-580`) passes `__FUNCTION__` and `__LINE__`.
+
+extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_owned(nonnull);
+    ensures normal resource_return_kind(reference);
+};
+
+// `rd_kafka_toppar_desired_add` (`rdkafka_partition.c:711-728`): `rktp` is
+// `rd_kafka_toppar_get`'s, else `rd_kafka_toppar_desired_get`'s, else
+// `rd_kafka_toppar_new`'s (each a reference the caller holds); it is locked
+// and marked desired, and returned ("Callers refcount"). Non-null: the last
+// source is non-null and `rd_kafka_toppar_lock(rktp)` dereferences it.
+
+extern fn rd_kafka_toppar_desired_add(rkt: ptr<mut, u8>, partition: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_return_owned(nonnull);
+    ensures normal resource_return_kind(reference);
+};
+
+// `rd_kafka_toppar_get2` (`rdkafka_partition.c:446-481`): finds or creates the
+// topic (dropping that topic reference with `rd_kafka_topic_destroy0` before
+// returning), then returns `rd_kafka_toppar_desired_add`'s reference, or NULL
+// when the topic is neither found nor created.
+
+extern fn rd_kafka_toppar_get2(rk: ptr<mut, u8>, topic: ptr<const, u8>, partition: i32, ua_on_miss: i32, create_on_miss: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(topic);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_borrowed(ua_on_miss);
+    ensures normal resource_borrowed(create_on_miss);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// `rd_kafka_toppar_get_avail` (`rdkafka_partition.c:549-608`): NULL (with
+// `*errp` set) for a topic that does not exist, has failed, or lacks the
+// partition; otherwise `rd_kafka_toppar_get`'s reference, or NULL. `errp`
+// (`rd_kafka_resp_err_t *`) is written, never kept.
+
+extern fn rd_kafka_toppar_get_avail(rkt: ptr<const, u8>, partition: i32, ua_on_miss: i32, errp: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_borrowed(ua_on_miss);
+    ensures normal resource_borrowed(errp);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// ## Constructors (each returns a fresh object holding one reference)
+//
+// `rd_kafka_q_new0` (`rdkafka_queue.c:115-129`): `rkq = rd_malloc(…)`
+// (non-null), `rd_kafka_q_init(rkq, rk)` or `rd_kafka_consume_q_init(rkq, rk)`
+// (`rd_kafka_q_init0`, `:85-110`: `rkq->rkq_refcnt = 1` at `:92`,
+// `rkq->rkq_rk = rk`), then, in the audited build (`ENABLE_DEVEL` off in the
+// audited CMake cache), `rkq->rkq_name = func`, and `return rkq;`. The queue
+// keeps `rk` and `func`: both are retained by the returned queue (C04.14.2,
+// rule 13e), so a caller must show they outlive it (the queue's last reference
+// this caller holds is dropped first). Every audited `func` is the
+// `__FUNCTION__` the `rd_kafka_q_new` and `rd_kafka_consume_q_new` macros pass
+// (`rdkafka_queue.h:149`), a static array.
+
+extern fn rd_kafka_q_new0(rk: ptr<mut, u8>, for_consume: u8, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(for_consume);
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_retained_by(rk, result);
+    ensures normal resource_retained_by(func, result);
+    ensures normal resource_return_owned(nonnull);
+    ensures normal resource_return_kind(reference);
+};
+
+// `ut_create_mock_toppar` (`rdunittest_msgset_errors.c:121-127`, `static`):
+// NULL when `rd_kafka_topic_new` fails, otherwise `rd_kafka_toppar_new(rkt,
+// partition)`'s reference. (The topic reference it takes is not dropped here;
+// it is not this declaration's result.)
+
+extern fn ut_create_mock_toppar(rk: ptr<mut, u8>, topic: ptr<const, u8>, partition: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(topic);
+    ensures normal resource_borrowed(partition);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+
+// `ut_create_mock_queue` (`rdunittest_fetcher.c:95-100`, `static`): `rkq =
+// rd_calloc(…)` (non-null), `rd_kafka_q_init(rkq, NULL)` (count 1, no client),
+// marks it allocated, `return rkq;`.
+
+extern fn ut_create_mock_queue() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+    ensures normal resource_return_kind(reference);
+};
+
+// ## A drop that consumes its caller's reference
+//
+// `ut_destroy_mock_queue` (`rdunittest_fetcher.c:102-106`, `static`): returns
+// on NULL, otherwise `rd_kafka_q_destroy_owner(rkq)`, a declared drop at the
+// same position (rule 13c validates the forward). From its caller's side it
+// takes over the caller's reference: the transfer the ledger asked about is a
+// drop (C04.17).
+
+extern fn ut_destroy_mock_queue(rkq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_reference_dropped(rkq);
     ensures normal resource_return_none();
 };

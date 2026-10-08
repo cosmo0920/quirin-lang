@@ -324,6 +324,10 @@ pub(crate) mod slot_move_route;
 // operands, the keep and drop transfer, the exit balance, the body checks).
 #[path = "legacy_reference_count.rs"]
 pub(crate) mod reference_route;
+// Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13d): the body check of
+// a returned-reference declaration, called from `reference_route::settle`.
+#[path = "legacy_reference_result.rs"]
+pub(crate) mod reference_result_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
