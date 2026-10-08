@@ -351,6 +351,13 @@ contract {
 // body `rd_kafka_toppar_keep0`) to `Safe`; they were withdrawn before any
 // record (the card's report, section 4).
 //
+// Card REFCOUNT-RESOURCE-KIND (the user's decision of 2026-10-05, class 3:
+// a reference-count resource kind) keeps both undeclared: the reference
+// operations are declared on the named wrappers whose bodies show the object
+// (`client.qv`, "Reference counts"), and a plain counter on the same
+// primitive needs its own declaration, typed by its operand, which no card
+// has yet written (`REFCOUNT-PLAIN-COUNTER-DECLARATION`).
+//
 // ## ABI (constraint 8)
 //
 // Every pointer is one object-pointer level, `ptr<mut, u8>`; `int`/`int32_t`

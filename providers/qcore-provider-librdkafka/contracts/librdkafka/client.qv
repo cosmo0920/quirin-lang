@@ -317,3 +317,245 @@ contract {
     ensures normal resource_out_derived(p, slice, nonnull);
     ensures normal resource_return_none();
 };
+
+// # Reference counts
+//
+// Card REFCOUNT-RESOURCE-KIND (contract specification C04.17, gateway rules
+// 13b and 13c). USER DECISION 2026-10-05 (`W48-CALLEE-DECISION-TABLE` class
+// 3): a reference count is a resource kind. Taking a reference ("keep") is
+// +1 owned reference; dropping one ("destroy", "drop") is -1; each function
+// balances the references it takes or hands them off (return, store into a
+// tracked owner, a declared transfer). The custody-neutral reading of keep and
+// drop was rejected; a keep or drop declaration is withheld from the function
+// map, so a consumer that knows nothing of references sees an uncontracted
+// callee, never a borrow.
+//
+// The hazard, resolved at the wrapper level. In the audited build
+// (`HAVE_ATOMICS_32`, so no `RD_REFCNT_USE_LOCKS`) `rd.h:298` makes
+// `rd_refcnt_t` a typedef of `rd_atomic32_t` and `rd.h:351` defines
+// `rd_refcnt_add0(R)` as `rd_atomic32_add(R, 1)`: after preprocessing a
+// reference keep and a statistics counter are the same call. No
+// `rd_atomic32_*` primitive is declared (see `memory.qv`); a reference
+// operation is declared only on a named wrapper whose body this module cites
+// and whose pin fixes the body, and rule 13c checks the body structurally in
+// every unit that defines it (header bodies are defined in every unit that
+// includes them). A statistics counter is therefore never read as a
+// reference, and a reference operation spelled through the primitive is not
+// read at all (it stays `call to uncontracted function`).
+//
+// Every body below was read at both audited revisions and is byte-identical
+// at `66910c10` and `046accf6` (`scripts/body.py`). Each declaration is
+// pinned (C06.2).
+
+// ## Keeps (each returns its argument after one increment)
+//
+// `rd_kafka_toppar_keep0` (`rdkafka_partition.h:532-536`, `static RD_INLINE`):
+// `rd_refcnt_add_fl(func, line, &rktp->rktp_refcnt)` (`rd_atomic32_add` of
+// the toppar's `rd_refcnt_t`), `return rktp;`. The `rd_kafka_toppar_keep`
+// macro (`:526-527`) passes `__FUNCTION__` and `__LINE__`.
+
+extern fn rd_kafka_toppar_keep0(func: ptr<const, u8>, line: i32, rktp: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(rktp);
+    ensures normal resource_reference_kept(rktp);
+    ensures normal resource_return_alias(rktp, nonnull);
+};
+
+// `rd_kafka_q_keep` (`rdkafka_queue.h:157-162`): `rkq->rkq_refcnt++` (a plain
+// `int` count) under `rkq->rkq_lock`, `return rkq;`.
+// `rd_kafka_q_keep_nolock` (`:164-168`): the same increment without the lock.
+
+extern fn rd_kafka_q_keep(rkq: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_reference_kept(rkq);
+    ensures normal resource_return_alias(rkq, nonnull);
+};
+
+extern fn rd_kafka_q_keep_nolock(rkq: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_reference_kept(rkq);
+    ensures normal resource_return_alias(rkq, nonnull);
+};
+
+// `rd_kafka_topic_keep` (`rdkafka_topic.h:228-236`): a lightweight topic
+// (`rd_kafka_rkt_get_lw(rkt)`, the same object reinterpreted) is kept through
+// `rd_kafka_lwtopic_keep`, any other through `rd_refcnt_add(&rkt->rkt_refcnt)`;
+// `return rkt;`.
+
+extern fn rd_kafka_topic_keep(rkt: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_reference_kept(rkt);
+    ensures normal resource_return_alias(rkt, nonnull);
+};
+
+// ## Drops (each subtracts one reference; the last frees the object)
+//
+// `rd_kafka_toppar_destroy0` (`rdkafka_partition.h:547-551`): when
+// `rd_refcnt_sub_fl(func, line, &rktp->rktp_refcnt)` reaches zero,
+// `rd_kafka_toppar_destroy_final(rktp)`. The `rd_kafka_toppar_destroy` macro
+// (`:540-544`) copies its argument into a block-scope `_RKTP` first.
+
+extern fn rd_kafka_toppar_destroy0(func: ptr<const, u8>, line: i32, rktp: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(rktp);
+    ensures normal resource_reference_dropped(rktp);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_destroy0` (`rdkafka_queue.h:219-240`): with `disable`, disables
+// and purges the queue; then `do_delete = !--rkq->rkq_refcnt` under the lock,
+// and `rd_kafka_q_destroy_final(rkq)` when it reached zero.
+// `rd_kafka_q_destroy_owner` (`:253-255`) is `rd_kafka_q_destroy0(rkq, 1)`.
+
+extern fn rd_kafka_q_destroy0(rkq: ptr<mut, u8>, disable: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(disable);
+    ensures normal resource_reference_dropped(rkq);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_q_destroy_owner(rkq: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_reference_dropped(rkq);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_topic_destroy0` (`rdkafka_topic.h:247-253`): a lightweight topic
+// through `rd_kafka_lwtopic_destroy`, any other through
+// `rd_refcnt_sub(&rkt->rkt_refcnt)` and `rd_kafka_topic_destroy_final(rkt)` at
+// zero.
+
+extern fn rd_kafka_topic_destroy0(rkt: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkt);
+    ensures normal resource_reference_dropped(rkt);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_enq_once_trigger` (`rdkafka_queue.h:1110-1149`): drops the
+// source's reference (`eonce->refcnt--` under `eonce->lock`), detaches the op
+// the eonce held, destroys the eonce at zero (`rd_kafka_enq_once_destroy0`),
+// and enqueues the detached op on its reply queue. The op is the eonce's, so
+// the caller's balance changes only by the dropped reference. `err` is
+// `rd_kafka_resp_err_t`, `i32` (rule 12u, see the head of this module).
+
+extern fn rd_kafka_enq_once_trigger(eonce: ptr<mut, u8>, err: i32, srcdesc: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(eonce);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_borrowed(srcdesc);
+    ensures normal resource_reference_dropped(eonce);
+    ensures normal resource_return_none();
+};
+
+// ## Owners of references (the decision's hand-offs, existing vocabulary)
+//
+// A reference stored into an owner is the owner's; the owner's destructor
+// drops it. From the caller's side these are an ordinary constructor and
+// ordinary destructors.
+//
+// `rd_kafka_queue_new0` (`rdkafka_queue.c:988-999`): `rkqu =
+// rd_calloc(1, sizeof(*rkqu))` (`rd.h:139-143` asserts on failure, so the
+// result is never NULL), `rkqu->rkqu_q = rkq`, `rd_kafka_q_keep(rkq)`,
+// `rkqu->rkqu_rk = rk`, `return rkqu;`: the reference it takes on `rkq` is
+// handed into the queue handle it returns, which `rd_kafka_queue_destroy`
+// (`:980-986`) drops before freeing the handle. The caller owes the handle.
+
+extern fn rd_kafka_queue_new0(rk: ptr<mut, u8>, rkq: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// `rd_kafka_topic_partition_list_destroy` (`rdkafka_partition.c:3117-3128`):
+// destroys each element in place (`rd_kafka_topic_partition_destroy0(&elems[i],
+// 0)`, which frees its topic and metadata and drops the toppar reference its
+// `_private` holds), frees `elems`, frees the list. It dereferences
+// `rktparlist` unconditionally: `nonnull`.
+
+extern fn rd_kafka_topic_partition_list_destroy(rktparlist: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rktparlist, nonnull);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_topic_partition_destroy0` (`rdkafka_partition.c:2969-2982`,
+// `static`): frees the partition's topic and metadata, destroys its
+// `_private` (dropping the toppar reference it holds, `:2962-2967`), and frees
+// the partition itself **only when `do_free`**. The literal premise (C04.5)
+// confines the declaration to the call sites passing `1` (`rd_true` is `1`,
+// `rdtypes.h:50`): `rd_kafka_topic_partition_destroy` (`:3108-3110`) and
+// `rd_kafka_topic_partition_destroy_free` (`:3104-3106`). The sites passing
+// `0` (the list destructor and `_list_clear`) stay undeclared, which answers
+// the conditional-release ground on which `topic_partition.qv` left it
+// undeclared; its other ground (W4 is the lever) does not hold, because its
+// body drops the reference `_private` holds through a member read, which no
+// rule infers (`REFCOUNT-MEMBER-REFERENCE-DROP`).
+
+extern fn rd_kafka_topic_partition_destroy0(rktpar: ptr<mut, u8>, do_free: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_literal_argument(do_free, 1);
+    ensures normal resource_released(rktpar, nonnull);
+    ensures normal resource_borrowed(do_free);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_AlterConsumerGroupOffsets_destroy` (`rdkafka_admin.c:6809-6813`),
+// `rd_kafka_DeleteConsumerGroupOffsets_destroy` (`:4999-5003`): the request's
+// partition list (`rd_kafka_topic_partition_list_destroy`), then the request.
+// `rd_kafka_ListConsumerGroupOffsets_destroy` (`:7047-7054`): the same, the
+// list only when non-NULL. Each dereferences its argument: `nonnull`.
+
+extern fn rd_kafka_AlterConsumerGroupOffsets_destroy(alter_grpoffsets: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(alter_grpoffsets, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_DeleteConsumerGroupOffsets_destroy(del_grpoffsets: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(del_grpoffsets, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_ListConsumerGroupOffsets_destroy(list_grpoffsets: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(list_grpoffsets, nonnull);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_topic_partition_result_destroy` (`rdkafka_aux.c:370-375`): the
+// result's partition (`rd_kafka_topic_partition_destroy`), its error
+// (`rd_kafka_error_destroy`), then the result: `nonnull`.
+
+extern fn rd_kafka_topic_partition_result_destroy(partition_result: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(partition_result, nonnull);
+    ensures normal resource_return_none();
+};
