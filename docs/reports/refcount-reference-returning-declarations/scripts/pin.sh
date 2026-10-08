@@ -24,7 +24,9 @@ step() {
 }
 # PINS: "crate:function ..." per stage, from the environment (default: stage
 # (a)'s declarations).
-pins="${PINS:-qcore-provider-librdkafka:add_item_to_array qcore-provider-librdkafka:replace_item_in_object quirin-provider-cfl:cfl_kvlist_insert_array quirin-provider-cfl:cfl_kvlist_insert_kvlist qcore-provider-ctraces:ctr_attributes_set_array qcore-provider-ctraces:ctr_attributes_set_kvlist}"
+# REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: this card's ten new declarations
+# and the re-declared `rd_kafka_queue_new0`.
+pins="${PINS:-qcore-provider-librdkafka:rd_kafka_toppar_get0 qcore-provider-librdkafka:rd_kafka_toppar_desired_get qcore-provider-librdkafka:rd_kafka_toppar_new0 qcore-provider-librdkafka:rd_kafka_toppar_desired_add qcore-provider-librdkafka:rd_kafka_toppar_get2 qcore-provider-librdkafka:rd_kafka_toppar_get_avail qcore-provider-librdkafka:rd_kafka_q_new0 qcore-provider-librdkafka:ut_create_mock_toppar qcore-provider-librdkafka:ut_create_mock_queue qcore-provider-librdkafka:ut_destroy_mock_queue qcore-provider-librdkafka:rd_kafka_queue_new0}"
 crates=$(for pin in $pins; do echo "${pin%%:*}"; done | sort -u | tr '\n' ' ')
 if [ "$mode" = pin ]; then
   for root in "$old" "$new"; do

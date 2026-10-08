@@ -1498,9 +1498,41 @@
       ]
     },
     {
+      "function": "rd_kafka_q_new0",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "9aa9a5f8fe6320f2e9fe79c6d8dd770bd13fabfa276639f7e1da4ca544731f4b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.c",
+              "kind": "definition",
+              "declaration_sha256": "0796be83f570fe17531bfc23000fc47dcfd64d8b3fc3bfd2f30ba9d3a5ff1a31",
+              "body_sha256": "1dc00d29025af1c123df6d05b44a85a32a92a8ec545ab1869321bff6b29d516b"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_queue.h",
+              "kind": "declaration",
+              "declaration_sha256": "0796be83f570fe17531bfc23000fc47dcfd64d8b3fc3bfd2f30ba9d3a5ff1a31"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_queue_new0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f3dc9eea84b89b529ddb2998e1baf790a910d0c7caf49ca7d195dece9718f86d",
+      "contract_sha256": "d32b8c712bef6c911409251d1f5d20ee263ba927f9bc8c547ddecb5c804131e5",
       "identities": [
         {
           "reviewed_at": [
@@ -1734,6 +1766,70 @@
       ]
     },
     {
+      "function": "rd_kafka_toppar_desired_add",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "bb2efc06f3c97322a4ea95690d8c97306d52b7e6822c5a6b47356f4d8cf6cec2",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "fa5200139063d5ec156166a77312ee29d1a3802214c41f83d9c5d4d8ed81c380",
+              "body_sha256": "33b1c9296bb902b4c9c1144d65aa179d8ce53794bc2151e4933446caddb7ac20"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "fa5200139063d5ec156166a77312ee29d1a3802214c41f83d9c5d4d8ed81c380"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_toppar_desired_get",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "c4d38f957b43fa3d82c61ce55bbbb4341714bfeb8d4bff7a6ad7bc5f52e1efb9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "da79678da651606c13af56b6db5b2704be49e4b96ea3c628975fbe2ee25776d1",
+              "body_sha256": "41bd09dd5a50a951cd30fec4ffc456648fc9bba9416083a5c68e1074f07fb56b"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "da79678da651606c13af56b6db5b2704be49e4b96ea3c628975fbe2ee25776d1"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_toppar_destroy0",
       "module": "librdkafka/client.qv",
       "contract_sha256": "75bfc92a0f0d4a15af21efc84b7006061d60bbbd9a9f254d002fb9c47f52a22e",
@@ -1761,6 +1857,102 @@
       ]
     },
     {
+      "function": "rd_kafka_toppar_get0",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "c26959f3a414a633cbadfb3fff096f239d88711c38b5b04880cb0b8988c231e2",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "96c8a45f1e5ace9b66fd467839e79f7767632757685e907476c96b5e3d1ee807",
+              "body_sha256": "df16d92c5f612015452858fcc79129170e3bbc0df13e54892dd205e611aebf56"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "96c8a45f1e5ace9b66fd467839e79f7767632757685e907476c96b5e3d1ee807"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_toppar_get2",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "cac06271bf51f53ed53c1a882f235130f419ecb1f8620a967fdb5a436d18599a",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "bad8ab7293e712ff2f0d9ccbd8eebec0483d7124b4bb24cdf54c2bd0ab1053d3",
+              "body_sha256": "391502141b89f1e0669ecf441a0dfcb1a8c206381a70f419f62a77ec426361bf"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "bad8ab7293e712ff2f0d9ccbd8eebec0483d7124b4bb24cdf54c2bd0ab1053d3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_toppar_get_avail",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "b5a1c8eaee27124937077bb81be7bf9076328457a3d6e394ca6d142090e3d7e8",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "6872311594cc509b8364917af9100ba6e331f97714d58ac38f56af861129ea31",
+              "body_sha256": "5f836af37f0337d08b92e4e894ef6f8ca91d93b5caff8b2c8386c9ba259a5a18"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "6872311594cc509b8364917af9100ba6e331f97714d58ac38f56af861129ea31"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_toppar_keep0",
       "module": "librdkafka/client.qv",
       "contract_sha256": "92691831480a07adb59a63ab324af250ff15bad7d1bbfa5308a450d1487d4e09",
@@ -1782,6 +1974,38 @@
               "kind": "definition",
               "declaration_sha256": "cdd22eb2f2cd143ebb6744dc56980c4a9b04bebfa77685b0f4bf7cc67867a5bd",
               "body_sha256": "f2f5b09026d89b383ede3b886c9f11051e340c06de14e70dcd4994d1403064a4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "rd_kafka_toppar_new0",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "099c42932f5bde8e4e325bb85f8b5fc4b7fc785e82d9da1bdfd5de1ce3ddbed9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+              "kind": "definition",
+              "declaration_sha256": "a9932c6e58a23d6577da140150d0f908344dabb1318abb579bf0b3d0659e1e6b",
+              "body_sha256": "e9ce1dd57d49432810ad72cc17ed10144f777e95c4f225d9671508a148b8d823"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_partition.h",
+              "kind": "declaration",
+              "declaration_sha256": "a9932c6e58a23d6577da140150d0f908344dabb1318abb579bf0b3d0659e1e6b"
             }
           ]
         }
@@ -1976,6 +2200,87 @@
               "kind": "definition",
               "declaration_sha256": "67a8c0ecd3ea8cf5267f2cb746792f373b2fb40fa1bdb688278c0e0bcd199594",
               "body_sha256": "3065bcc995ef5183a684c4389e1dc62a523c99d60be16c852a48b91bd2c11012"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "ut_create_mock_queue",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "d58c3b41c39a0fa00550e48bdbf9aad33a66692510e40917b864f968a40553a1",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+              "kind": "definition",
+              "declaration_sha256": "49247c9cda12ea4fa2990ef9ec756e41e4ea39341a103064661fe55a36657085",
+              "body_sha256": "72238fbc4ccafc783af5cb43f4e30de9bf0eeaa49dac179f3d5fb726f4c8295d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "ut_create_mock_toppar",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "b14312209b177c499cb7bf25337936f3bcf3a3059a7f7f91430f1274bc56dfc2",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdunittest_msgset_errors.c",
+              "kind": "definition",
+              "declaration_sha256": "738fd8284b9f258d7fde594cf1e40dc436afe3461cc3d8948423f561ec8903d0",
+              "body_sha256": "c6e0d8989337037095b055f4de99e0c7975ae11638e06687581a6d97bd3e044f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "ut_destroy_mock_queue",
+      "module": "librdkafka/client.qv",
+      "contract_sha256": "f06cb090ae5b5deaaf518da01d0058b8b7186614f99d536cc4f2a5169be221e8",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdunittest_fetcher.c",
+              "kind": "definition",
+              "declaration_sha256": "bad960ae72a30f20f3a9b5e15b6f893541f28ffa32fb691eafbae3d1043809b6",
+              "body_sha256": "1a7928f43ec82e8ff8c2abe2e367cd1bd18b7f056228af384068f3f2266a020a"
             }
           ]
         }
