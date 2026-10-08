@@ -1,0 +1,1400 @@
+{
+ "statuses_before": {
+  "Unknown": 3941,
+  "Safe": 884,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3945,
+  "Safe": 880,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Safe -> Unknown": 4
+ },
+ "status_moves_by_label": {
+  "other": 4
+ },
+ "removed": {
+  "call to uncontracted function `_`": 78,
+  "unresolved resource identity `_`": 12,
+  "unmodeled call, aggregate or indirect access in branch condition": 5,
+  "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)": 4,
+  "indirect memory access is outside the resource projection": 2
+ },
+ "added": {
+  "use of `_` after a possibly-final drop of its reference (reference-dropped)": 20,
+  "a holder retaining `_` may outlive this function's frame (retention-undecided)": 19,
+  "indirect memory access is outside the resource projection": 18,
+  "unresolved resource identity `_`": 17,
+  "loop re-acquisition: an earlier generation that may be live is still held": 9,
+  "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)": 7,
+  "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (retention-undecided)": 2,
+  "a reference taken at line 20617 may still be owed at this exit (reference-unbalanced)": 2,
+  "call to uncontracted function `_`": 2,
+  "a reference taken at line 23559 may still be owed at this exit (reference-unbalanced)": 1,
+  "call to `_` with `_`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)": 1,
+  "a reference taken at line 20210 may still be owed at this exit (reference-unbalanced)": 1,
+  "nullable resource `_` used by a non-null contract": 1,
+  "a reference taken at line 21474 may still be owed at this exit (reference-unbalanced)": 1,
+  "a reference taken at line 24345 may still be owed at this exit (reference-unbalanced)": 1,
+  "unmodeled call, aggregate or indirect access in branch condition": 1
+ },
+ "moving_rows": 63,
+ "status_moves": [
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_consumer",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20300: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_main",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20295: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20867: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20960: call to uncontracted function `rd_kafka_queue_get_sasl`"
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "23936: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "23970: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_get",
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "23762: call to uncontracted function `rd_kafka_toppar_get0`",
+    "23764: call to uncontracted function `rd_kafka_toppar_desired_get`"
+   ],
+   "gained": [
+    "23766: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_batch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_get",
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "23629: call to uncontracted function `rd_kafka_toppar_get0`",
+    "23631: call to uncontracted function `rd_kafka_toppar_desired_get`"
+   ],
+   "gained": [
+    "23633: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_get",
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "23697: call to uncontracted function `rd_kafka_toppar_get0`",
+    "23699: call to uncontracted function `rd_kafka_toppar_desired_get`",
+    "23709: unresolved resource identity `rktp`"
+   ],
+   "gained": [
+    "23701: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_start0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_add"
+   ],
+   "lost": [
+    "23431: call to uncontracted function `rd_kafka_toppar_desired_add`",
+    "23440: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23446: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "gained": [
+    "23441: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "23441: use of `rktp` after a possibly-final drop of its reference (reference-dropped)",
+    "23447: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "23447: use of `rktp` after a possibly-final drop of its reference (reference-dropped)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23494: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "23478: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "23478: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "23847: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "23851: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "23886: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_get_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get2"
+   ],
+   "lost": [
+    "24132: call to uncontracted function `rd_kafka_toppar_get2`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_for_times",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "24210: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "24228: use of `rkq` after a possibly-final drop of its reference (reference-dropped)",
+    "24229: use of `rkq` after a possibly-final drop of its reference (reference-dropped)",
+    "24230: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_position",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23978: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "23978: loop re-acquisition: an earlier generation that may be live is still held",
+    "23978: unresolved resource identity `rktpar`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "24700: call to uncontracted function `rd_kafka_q_new0`",
+    "24709: unresolved resource identity `tmpq`"
+   ],
+   "gained": [
+    "24715: use of `tmpq` after a possibly-final drop of its reference (reference-dropped)",
+    "24716: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "24082: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "24112: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "24114: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "24124: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "23518: unmodeled call, aggregate or indirect access in branch condition",
+    "23525: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "23525: indirect memory access is outside the resource projection",
+    "23537: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "23537: use of `rktp` after a possibly-final drop of its reference (reference-dropped)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:rd_kafka_toppar_get2"
+   ],
+   "lost": [
+    "23559: call to uncontracted function `rd_kafka_q_new0`",
+    "23563: call to uncontracted function `rd_kafka_toppar_get2`"
+   ],
+   "gained": [
+    "23563: loop re-acquisition: an earlier generation that may be live is still held",
+    "23563: unresolved resource identity `rktpar`",
+    "23582: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "23582: a reference taken at line 23559 may still be owed at this exit (reference-unbalanced)",
+    "23589: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "23598: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "23611: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "23370: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "23370: call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20617: call to uncontracted function `rd_kafka_toppar_get0`"
+   ],
+   "gained": [
+    "20686: a reference taken at line 20617 may still be owed at this exit (reference-unbalanced)",
+    "20697: a reference taken at line 20617 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "21020: call to uncontracted function `rd_kafka_q_new0`",
+    "21050: call to uncontracted function `rd_kafka_toppar_get0`",
+    "21054: unresolved resource identity `rktp`",
+    "21059: unresolved resource identity `rktp`",
+    "21097: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21020: indirect memory access is outside the resource projection",
+    "21097: call to `rd_kafka_toppar_keep0` with `rktp`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20225: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "20226: loop re-acquisition: an earlier generation that may be live is still held",
+    "20256: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "20261: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "20269: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msg_partitioner",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20538: call to uncontracted function `rd_kafka_toppar_get0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_produce_batch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get_avail"
+   ],
+   "lost": [
+    "20210: call to uncontracted function `rd_kafka_toppar_get_avail`",
+    "20245: call to uncontracted function `rd_kafka_toppar_get_avail`",
+    "20248: unresolved resource identity `rktp`"
+   ],
+   "gained": [
+    "20245: loop re-acquisition: an earlier generation that may be live is still held",
+    "20245: unresolved resource identity `rkm`",
+    "20278: a reference taken at line 20210 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "20354: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20362: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "20396: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20396: call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_store",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20502: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "20219: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20219: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_desired_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_get",
+    "callee:rd_kafka_toppar_get0",
+    "callee:rd_kafka_toppar_new0"
+   ],
+   "lost": [
+    "20575: call to uncontracted function `rd_kafka_toppar_get0`",
+    "20577: call to uncontracted function `rd_kafka_toppar_desired_get`",
+    "20579: call to uncontracted function `rd_kafka_toppar_new0`"
+   ],
+   "gained": [
+    "20578: unresolved resource identity `rktp`",
+    "20583: nullable resource `rktp` used by a non-null contract",
+    "20583: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_add"
+   ],
+   "lost": [
+    "20461: call to uncontracted function `rd_kafka_toppar_desired_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get_avail",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20522: unresolved resource identity `rkt`",
+    "20525: call to uncontracted function `rd_kafka_toppar_get0`",
+    "20527: unresolved resource identity `rkt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get_by_id2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_add"
+   ],
+   "lost": [
+    "20491: call to uncontracted function `rd_kafka_toppar_desired_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppars_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "21474: call to uncontracted function `rd_kafka_q_new0`",
+    "21475: unresolved resource identity `rk`"
+   ],
+   "gained": [
+    "21498: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "21498: a reference taken at line 21474 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_background",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20329: unresolved resource identity `rk`"
+   ],
+   "gained": [
+    "20329: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_consumer",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20300: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_main",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20295: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get2"
+   ],
+   "lost": [
+    "20309: call to uncontracted function `rd_kafka_toppar_get2`",
+    "20313: unresolved resource identity `rktp`",
+    "20314: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "gained": [
+    "20313: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0"
+   ],
+   "lost": [
+    "20288: call to uncontracted function `rd_kafka_q_new0`",
+    "20290: call to `rd_kafka_q_destroy0` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ],
+   "gained": [
+    "20292: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "unittest_idempotent_producer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get2"
+   ],
+   "lost": [
+    "24345: call to uncontracted function `rd_kafka_toppar_get2`"
+   ],
+   "gained": [
+    "24352: a reference taken at line 24345 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20867: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_background_callbacks_enable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20932: unmodeled call, aggregate or indirect access in branch condition"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20960: call to uncontracted function `rd_kafka_queue_get_sasl`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_assign_uas",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20493: call to uncontracted function `rd_kafka_toppar_get0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20647: call to uncontracted function `rd_kafka_toppar_get0`",
+    "20654: unresolved resource identity `rktp`"
+   ],
+   "gained": [
+    "20647: loop re-acquisition: an earlier generation that may be live is still held",
+    "20649: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20651: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20654: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20657: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20664: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20675: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20675: use of `rktp` after a possibly-final drop of its reference (reference-dropped)",
+    "20678: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20678: use of `rktp` after a possibly-final drop of its reference (reference-dropped)",
+    "20681: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "20681: use of `rktp` after a possibly-final drop of its reference (reference-dropped)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_available",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20859: call to uncontracted function `rd_kafka_toppar_get0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_desired_get",
+    "callee:rd_kafka_toppar_new0"
+   ],
+   "lost": [
+    "20411: call to uncontracted function `rd_kafka_toppar_desired_get`",
+    "20419: call to uncontracted function `rd_kafka_toppar_new0`"
+   ],
+   "gained": [
+    "20411: loop re-acquisition: an earlier generation that may be live is still held",
+    "20419: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_scan_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20812: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "20812: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_leader_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20272: call to uncontracted function `rd_kafka_toppar_get0`",
+    "20274: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20274: call to uncontracted function `rd_kafka_log0`"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_get0"
+   ],
+   "lost": [
+    "20653: call to uncontracted function `rd_kafka_toppar_get0`",
+    "20654: unresolved resource identity `rktp`"
+   ],
+   "gained": [
+    "20653: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_all_acquired",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19668: call to uncontracted function `ut_create_mock_queue`",
+    "19690: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19690: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_disjoint_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19719: call to uncontracted function `ut_create_mock_queue`",
+    "19741: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19741: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_empty_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19745: call to uncontracted function `ut_create_mock_queue`",
+    "19756: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19756: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_no_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19760: call to uncontracted function `ut_create_mock_queue`",
+    "19772: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19772: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_partial_range",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19694: call to uncontracted function `ut_create_mock_queue`",
+    "19715: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19715: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_range_beyond_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19804: call to uncontracted function `ut_create_mock_queue`",
+    "19820: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19820: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_sparse_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ut_create_mock_queue",
+    "callee:ut_destroy_mock_queue"
+   ],
+   "lost": [
+    "19776: call to uncontracted function `ut_create_mock_queue`",
+    "19800: call to uncontracted function `ut_destroy_mock_queue`"
+   ],
+   "gained": [
+    "19800: call to `ut_destroy_mock_queue` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20349: call to uncontracted function `ut_create_mock_toppar`",
+    "20352: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20349: unresolved resource identity `rkshare`",
+    "20352: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20282: call to uncontracted function `ut_create_mock_toppar`",
+    "20285: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20282: unresolved resource identity `rkshare`",
+    "20285: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20236: call to uncontracted function `ut_create_mock_toppar`",
+    "20239: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20236: unresolved resource identity `rkshare`",
+    "20239: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "19830: call to uncontracted function `ut_create_mock_toppar`",
+    "19832: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "19830: unresolved resource identity `rkshare`",
+    "19832: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "19894: call to uncontracted function `ut_create_mock_toppar`",
+    "19897: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "19894: unresolved resource identity `rkshare`",
+    "19897: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20081: call to uncontracted function `ut_create_mock_toppar`",
+    "20084: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20081: unresolved resource identity `rkshare`",
+    "20084: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20156: call to uncontracted function `ut_create_mock_toppar`",
+    "20159: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20156: unresolved resource identity `rkshare`",
+    "20159: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "20012: call to uncontracted function `ut_create_mock_toppar`",
+    "20015: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "20012: unresolved resource identity `rkshare`",
+    "20015: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_new0",
+    "callee:ut_create_mock_toppar"
+   ],
+   "lost": [
+    "19955: call to uncontracted function `ut_create_mock_toppar`",
+    "19958: call to uncontracted function `rd_kafka_q_new0`"
+   ],
+   "gained": [
+    "19955: unresolved resource identity `rkshare`",
+    "19958: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "ut_create_mock_toppar",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_new0"
+   ],
+   "lost": [
+    "19662: call to uncontracted function `rd_kafka_toppar_new0`"
+   ],
+   "gained": []
+  }
+ ]
+}

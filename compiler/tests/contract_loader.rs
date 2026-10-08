@@ -936,6 +936,25 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
         );
     }
+    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: the returned references
+    // with no other clause had no previous reading; each is an owned result
+    // of the reference kind (`rd_kafka_q_new0` retains, and is withheld).
+    for (name, nullable) in [
+        ("rd_kafka_toppar_get0", true),
+        ("rd_kafka_toppar_desired_get", true),
+        ("rd_kafka_toppar_new0", false),
+        ("rd_kafka_toppar_desired_add", false),
+        ("rd_kafka_toppar_get2", true),
+        ("rd_kafka_toppar_get_avail", true),
+        ("ut_create_mock_toppar", true),
+        ("ut_create_mock_queue", false),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([], R::Owned { nullable })
+                .with_result_kind(ResourceKind::Reference),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1744,9 +1763,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // drops (reference clauses, withheld) and seven plain declarations (the
     // queue handle constructor `rd_kafka_queue_new0` and six destructors).
     // Selection and rejected unchanged.
+    // 349 -> 359 by card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: ten
+    // declarations appended to `librdkafka/client.qv`, all pinned: nine
+    // returned references (`rd_kafka_q_new0` also retaining `rk` and `func` by
+    // its result) and the drop `ut_destroy_mock_queue`. Selection and rejected
+    // unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 349, 218)
+        (61, 359, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1765,8 +1789,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `strto*`: 7 -> 16. The five borrowed results are in the function map.
     // Card REFCOUNT-RESOURCE-KIND: the nine keeps and drops (C04.17) are
     // withheld into the same table: 16 -> 25.
+    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: `rd_kafka_q_new0` and
+    // the re-declared `rd_kafka_queue_new0` (retained by the result, C04.14.2)
+    // and the drop `ut_destroy_mock_queue`: 25 -> 28. The eight returned
+    // references with no other clause stay in the function map.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 25);
+    assert_eq!(loaded.retaining().len(), 28);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

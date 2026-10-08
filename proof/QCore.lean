@@ -339,6 +339,7 @@ import QCore.SlotMove
 import QCore.InteriorBorrow
 import QCore.DerivedOutSlot
 import QCore.ReferenceCount
+import QCore.ReferenceResult
 import QCore.AbiEnumConstPointer
 import QCore.IndirectCalls
 import QCore.VariadicConditions

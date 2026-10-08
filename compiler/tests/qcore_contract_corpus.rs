@@ -1066,7 +1066,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 4),
     ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 4),
     ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 6),
-    ("librdkafka/client.qv", "rd_kafka_queue_new0", 4),
+    // 4 -> 5 by card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: the handle
+    // retains `rk` by its result (C04.14.2, rule 13e).
+    ("librdkafka/client.qv", "rd_kafka_queue_new0", 5),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_list_destroy",
@@ -1097,6 +1099,20 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_topic_partition_result_destroy",
         3,
     ),
+    // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (C04.17, C04.14.2, rules
+    // 13d and 13e): nine returned references (marker, borrowed formals, the
+    // owned result and its reference kind; `rd_kafka_q_new0` also retains
+    // `rk` and `func` by its result) and one drop.
+    ("librdkafka/client.qv", "rd_kafka_toppar_get0", 8),
+    ("librdkafka/client.qv", "rd_kafka_toppar_desired_get", 5),
+    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 7),
+    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 5),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get2", 8),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 7),
+    ("librdkafka/client.qv", "rd_kafka_q_new0", 9),
+    ("librdkafka/client.qv", "ut_create_mock_toppar", 6),
+    ("librdkafka/client.qv", "ut_create_mock_queue", 3),
+    ("librdkafka/client.qv", "ut_destroy_mock_queue", 4),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

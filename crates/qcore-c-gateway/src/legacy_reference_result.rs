@@ -141,10 +141,7 @@ fn reference_callee(callee: &str, contracts: &ResourceContracts) -> bool {
                     .references
                     .iter()
                     .any(|clause| clause.operation == ReferenceOperation::Kept)
-                    && matches!(
-                        declared.contract.result,
-                        ResourceReturnMode::Derived { .. }
-                    )));
+                    && matches!(declared.contract.result, ResourceReturnMode::Derived { .. })));
     }
     contracts.contract(callee).is_some_and(returned)
 }
@@ -253,7 +250,12 @@ fn gives_away(callee: &str, position: usize, contracts: &ResourceContracts) -> b
 /// Whether the local `name` is a reference the body obtained and kept until
 /// it returns it: every assignment a null constant, a reference call or an
 /// allocation; never address-taken; never given away.
-fn local_validates(body: &[&str], name: &str, nullable: bool, contracts: &ResourceContracts) -> bool {
+fn local_validates(
+    body: &[&str],
+    name: &str,
+    nullable: bool,
+    contracts: &ResourceContracts,
+) -> bool {
     let mut assigned = false;
     for (at, word) in body.iter().enumerate() {
         if *word != name {
@@ -323,9 +325,13 @@ pub(super) fn validated(
 
 /// Whether a declaration's custody contract returns a reference, and its
 /// nullability.
-fn returned_reference(contract: &qcore_schemas::contract::ResourceFunctionContract) -> Option<bool> {
+fn returned_reference(
+    contract: &qcore_schemas::contract::ResourceFunctionContract,
+) -> Option<bool> {
     match contract.result {
-        ResourceReturnMode::Owned { nullable } if contract.result_kind == ResourceKind::Reference => {
+        ResourceReturnMode::Owned { nullable }
+            if contract.result_kind == ResourceKind::Reference =>
+        {
             Some(nullable)
         }
         _ => None,
@@ -485,7 +491,12 @@ mod tests {
             "{ q_t * q = alloc ( sizeof ( * q ) ) ; init ( q , rk ) ; \
              q -> flags |= 1 ; q -> name = func ; return q ; }",
         );
-        assert!(validated(&q_new0, &formals(&["rk", "func"]), false, &contracts));
+        assert!(validated(
+            &q_new0,
+            &formals(&["rk", "func"]),
+            false,
+            &contracts
+        ));
         // A cast around the returned call.
         let cast = words("{ return ( t * ) lookup ( k ) ; }");
         assert!(validated(&cast, &formals(&["k"]), true, &contracts));

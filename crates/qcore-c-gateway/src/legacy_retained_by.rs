@@ -385,7 +385,11 @@ fn tracked(state: &AbstractState, name: &str) -> Option<usize> {
     .then_some(site)
 }
 
-fn holder_class(state: &AbstractState, holder: &HolderSpelling, destination: Option<&str>) -> Holder {
+fn holder_class(
+    state: &AbstractState,
+    holder: &HolderSpelling,
+    destination: Option<&str>,
+) -> Holder {
     match holder {
         HolderSpelling::Frame(name) => Holder::Frame(name.clone()),
         HolderSpelling::Global => Holder::Global,

@@ -194,10 +194,7 @@ fn a_result_holder_that_outlives_the_frame_is_undecided_never_safe() {
         row.refused() && row.mentions("retention-undecided"),
         "{row:?}"
     );
-    let row = one(
-        "void *f(void *owner) { return rr_handle(owner); }",
-        "f",
-    );
+    let row = one("void *f(void *owner) { return rr_handle(owner); }", "f");
     assert!(row.refused(), "{row:?}");
     // A queue reference handed on to the caller still holds `owner`.
     let row = one(

@@ -20,15 +20,14 @@ import re
 import sys
 
 DECLARED = [
-    # SLOT-MOVE-AND-INTERIOR-BORROW: class 2 slot moves (rule 12x)
-    "cfl_sds_cat_safe", "sds_cat_safe",
-    # class 8 borrowed results (rule 12y)
-    "rd_kafka_admin_result_ret_topics", "rd_kafka_admin_result_ret_resources",
-    "rd_kafka_admin_result_ret_groups", "get_object_item",
-    "rd_kafka_topic_partition_get_private",
-    # derived out slots (rule 12z)
-    "rd_slice_reader0", "cJSON_ParseWithLengthOpts",
-    "strtol", "strtoll", "strtoul", "strtoull", "strtod",
+    # REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references (rule 13d)
+    "rd_kafka_toppar_get0", "rd_kafka_toppar_desired_get", "rd_kafka_toppar_new0",
+    "rd_kafka_toppar_desired_add", "rd_kafka_toppar_get2", "rd_kafka_toppar_get_avail",
+    "rd_kafka_q_new0", "ut_create_mock_toppar", "ut_create_mock_queue",
+    # a drop (rule 13c)
+    "ut_destroy_mock_queue",
+    # re-declared with the result holder (rule 13e)
+    "rd_kafka_queue_new0",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

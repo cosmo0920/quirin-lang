@@ -1,5 +1,5 @@
 {
- "report": "private/rrrd/before/resource-diagnostics.json",
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aee9c7bbf78d5c9e8/private/rrrd/before/resource-diagnostics.json",
  "statuses": {
   "Unknown": 3941,
   "Safe": 884,
@@ -362,8 +362,12 @@
     "rdkafka_cert.c::rd_kafka_cert_dup",
     "rdkafka_idempotence.c::rd_kafka_idemp_inflight_toppar_add"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdatomic.h:56"
+    }
+   ]
   },
   {
    "callee": "_mk_event_wait_2",
@@ -1002,8 +1006,12 @@
    "freed": [
     "cmt_encode_opentelemetry.c::is_metric_empty"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/cfl/include/cfl/cfl_list.h:200"
+    }
+   ]
   },
   {
    "callee": "clone_kvlist_entry",
@@ -1064,8 +1072,12 @@
    "freed": [
     "rdkafka_buf.c::rd_kafka_bufq_reset"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdatomic.h:118"
+    }
+   ]
   },
   {
    "callee": "rd_kafka_q_enq",
@@ -1076,8 +1088,12 @@
    "freed": [
     "rdkafka.c::rd_kafka_share_fetch_fanout_enqueue"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdkafka_queue.h:484"
+    }
+   ]
   },
   {
    "callee": "LZ4F_compressUpdateImpl",
@@ -1174,8 +1190,15 @@
    "freed": [
     "mk_server/mk_plugin.c::mk_plugin_load_static"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/chunkio/deps/monkey/include/monkey/mk_core/mk_list.h:47"
+    },
+    {
+     "header": "lib/monkey/include/monkey/mk_core/mk_list.h:48"
+    }
+   ]
   },
   {
    "callee": "pack_context_metrics",
@@ -1292,8 +1315,12 @@
    "freed": [
     "rdkafka.c::rd_kafka_share_record_poll_start"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdatomic.h:208"
+    }
+   ]
   },
   {
    "callee": "rd_kafka_admin_result_set_err0",
@@ -1346,8 +1373,12 @@
    "freed": [
     "rdkafka_buf.c::rd_kafka_buf_upgrade_flexver_request"
    ],
-   "kind": "external",
-   "homes": []
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdkafka_buf.h:1105"
+    }
+   ]
   },
   {
    "callee": "rd_kafka_topic_partition_list_add",
