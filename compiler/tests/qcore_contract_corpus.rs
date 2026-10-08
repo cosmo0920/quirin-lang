@@ -387,14 +387,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CALLEE-RETENTION-CLASS1, stage (a): the forwarding setters,
     // marker, two borrowed formals, two return-code classes, `none`.
     ("ctraces/context_lifetime.qv", "ctr_attributes_set_array", 6),
-    // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the static
-    // forwarder of `cfl_sds_cat_safe` in `ctr_encode_text.c:22-28`.
-    ("ctraces/context_lifetime.qv", "sds_cat_safe", 5),
     (
         "ctraces/context_lifetime.qv",
         "ctr_attributes_set_kvlist",
         6,
     ),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the static
+    // forwarder of `cfl_sds_cat_safe` in `ctr_encode_text.c:22-28`.
+    ("ctraces/context_lifetime.qv", "sds_cat_safe", 5),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",

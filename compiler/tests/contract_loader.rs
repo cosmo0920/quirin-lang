@@ -1734,8 +1734,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // tables (contract spec C04.13, C04.14), six and five of them; card
     // W43-ABI-ENUM-AND-CONST-PP adds two retaining declarations
     // (`rd_kafka_confval_set_type`, `rd_kafka_interceptor_method_add`): 5 -> 7.
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: nine declarations with slot clauses
+    // are withheld into the same table (C04.15, C04.16): the two slot moves,
+    // `rd_slice_reader0`, `cJSON_ParseWithLengthOpts` and the five libc
+    // `strto*`: 7 -> 16. The five borrowed results are in the function map.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 7);
+    assert_eq!(loaded.retaining().len(), 16);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
