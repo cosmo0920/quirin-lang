@@ -14,7 +14,7 @@ mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"
 cp "$logs/clang-version.txt" "$report/gate/clang-version.txt"
 # The provider gate's exits and head, prefixed.
-providers="$repo/private/rfbc/provider-gate-$name"
+providers="$repo/private/rfbc/provider-gate-${PROVIDER:-$name}"
 for exitfile in "$providers"/*.exit; do
   cp "$exitfile" "$report/gate/provider-$(basename "$exitfile")"
 done
