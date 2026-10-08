@@ -1,0 +1,32 @@
+{
+ "reference-drop-unheld:address": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0
+ },
+ "reference-drop-unheld:member": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 1
+ },
+ "reference-drop-unheld:name": {
+  "leaves": 131,
+  "functions": 91,
+  "alone": 1
+ },
+ "reference-drop-unheld:unread": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 0
+ },
+ "reference-unbalanced": {
+  "leaves": 5,
+  "functions": 5,
+  "alone": 0
+ },
+ "reference-undecided:name": {
+  "leaves": 7,
+  "functions": 7,
+  "alone": 0
+ }
+}
