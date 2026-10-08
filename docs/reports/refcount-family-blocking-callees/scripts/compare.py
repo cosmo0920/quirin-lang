@@ -20,14 +20,11 @@ import re
 import sys
 
 DECLARED = [
-    # REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references (rule 13d)
-    "rd_kafka_toppar_get0", "rd_kafka_toppar_desired_get", "rd_kafka_toppar_new0",
-    "rd_kafka_toppar_desired_add", "rd_kafka_toppar_get2", "rd_kafka_toppar_get_avail",
-    "rd_kafka_q_new0", "ut_create_mock_toppar", "ut_create_mock_queue",
-    # a drop (rule 13c)
-    "ut_destroy_mock_queue",
-    # re-declared with the result holder (rule 13e)
-    "rd_kafka_queue_new0",
+    # REFCOUNT-FAMILY-BLOCKING-CALLEES: plain declarations between a
+    # reference's acquisition and its drop
+    "rd_kafka_q_pop",  # declared in a1 only, withdrawn before a2
+    "rd_kafka_q_wait_result", "rd_kafka_q_purge0",
+    "rd_kafka_toppar_needs_query", "rd_kafka_toppar_fetch_backoff",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

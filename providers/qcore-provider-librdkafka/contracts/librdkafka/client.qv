@@ -767,8 +767,8 @@ contract {
 // (`W48-CALLEE-DECISION-TABLE` class 3, `REFCOUNT-BY-VALUE-AGGREGATE-ABI`).
 //
 // THE SERVED-QUEUE PREMISE (a declared assumption, constraint 4).
-// `rd_kafka_q_pop`, `rd_kafka_q_wait_result` and `rd_kafka_q_purge0` may run
-// a popped op's own callback (`rd_kafka_op_handle` -> `rd_kafka_op_call`,
+// `rd_kafka_q_wait_result` (through `rd_kafka_q_pop`) and `rd_kafka_q_purge0`
+// may run a popped op's own callback (`rd_kafka_op_handle` -> `rd_kafka_op_call`,
 // `rd_kafka_op_destroy`'s `RD_KAFKA_RESP_ERR__DESTROY` call), which receives
 // the served queue or the op: the declarations assume such a callback takes
 // over no reference the caller holds on that queue. The callbacks themselves
@@ -776,9 +776,17 @@ contract {
 // and `rd_kafka_q_pop_serve*`, which take a callback argument, stay
 // undeclared.
 
-// ## Popping and purging a queue
+// ## Waiting on and purging a queue
 //
-// `rd_kafka_q_pop(rkq, timeout_us, version)` (`rdkafka_queue.c:537-540`) is
+// `rd_kafka_q_pop` (`rdkafka_queue.c:537-540`) is deliberately NOT declared
+// here, although its body states exactly (`rkq` borrowed, the popped op an
+// owned nullable result): measured declared, it turned ten Unknown rows into
+// leak candidates, one of them on an infeasible path (`rd_kafka_metadata`
+// reaches its loop head again only when `err == RD_KAFKA_RESP_ERR__DESTROY_BROKER`,
+// after destroying the op; the route does not correlate the two tests of
+// `err`), and it repairs no reference family (`REFCOUNT-Q-POP-OWNED-OP`).
+//
+// `rd_kafka_q_pop(rkq, timeout_us, version)` is
 // `rd_kafka_q_pop_serve(rkq, timeout_us, version, RD_KAFKA_Q_CB_RETURN, NULL,
 // NULL)` (`:507-515`), i.e. the static `rd_kafka_q_pop_serve0` (`:398-505`):
 // under `rkq->rkq_lock` it either takes the forward queue
@@ -787,20 +795,9 @@ contract {
 // (`rd_kafka_q_destroy(fwdq)`): another object, balanced; or it dequeues ops
 // (`rd_kafka_q_deq0`), lets `rd_kafka_op_handle` handle each (a handled op is
 // destroyed there) and returns the first op handed back, or NULL on a yield
-// or when the absolute timeout passes. The returned op is unlinked and the
-// caller's (released by `rd_kafka_op_destroy`):
-// `resource_return_owned(nullable)`. `rkq` is only locked, read and dequeued
-// from. `timeout_us` is `rd_ts_t` (`int64_t`), `version` `int32_t`.
-
-extern fn rd_kafka_q_pop(rkq: ptr<mut, u8>, timeout_us: i64, version: i32) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(rkq);
-    ensures normal resource_borrowed(timeout_us);
-    ensures normal resource_borrowed(version);
-    ensures normal resource_return_owned(nullable);
-};
-
+// or when the absolute timeout passes. `rkq` is only locked, read and
+// dequeued from.
+//
 // `rd_kafka_q_wait_result(rkq, timeout_ms)` (`rdkafka_queue.c:1199-1212`):
 // `rko = rd_kafka_q_pop(rkq, rd_timeout_us(timeout_ms), 0)`; NULL gives
 // `RD_KAFKA_RESP_ERR__TIMED_OUT`, otherwise the op's `rko_err` is read and the
