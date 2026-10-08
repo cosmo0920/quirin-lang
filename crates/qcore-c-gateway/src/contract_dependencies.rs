@@ -31,7 +31,7 @@
 //! a structural check that admitted it (rules 11r, 12w, 13a, 13c, 13d). A
 //! withdrawal in the unit (ABI or mode agreement, a contradicted disposition,
 //! a summary conflict, a refutation, a check the body failed) is a failure.
-//! Evidence taken under hypothetical holds ([`hypothetical`]: rule 12m's
+//! Evidence taken under hypothetical holds ([`hypothetical`]: rule 10i's
 //! second analysis with every held declaration in force) is not recorded,
 //! because those holds are not in force.
 

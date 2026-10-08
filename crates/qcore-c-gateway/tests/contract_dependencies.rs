@@ -227,7 +227,8 @@ fn a_held_or_withdrawn_spelling_is_named_by_its_standing() {
     let (mut record, summary, mut environment) = example();
     let f = record.functions.get_mut("f").expect("f");
     f.missed.insert("qcore_pin_mismatch__close".to_owned());
-    f.missed.insert("qcore_abi_withdrawn__mismatch__fclose".to_owned());
+    f.missed
+        .insert("qcore_abi_withdrawn__mismatch__fclose".to_owned());
     let body = record.bodies.get_mut("f").expect("f");
     body.insert("qcore_pin_mismatch__close".to_owned());
     body.insert("qcore_abi_withdrawn__mismatch__fclose".to_owned());
@@ -263,11 +264,11 @@ fn unit_contracts() -> ResourceContracts {
 #[test]
 fn the_set_comes_from_the_routes_consultations_and_changes_no_verdict() {
     let contracts = unit_contracts();
-    let unrecorded = analyze_legacy_c_translation_unit(UNIT, "owner", &contracts)
-        .expect("the unit analyses");
+    let unrecorded =
+        analyze_legacy_c_translation_unit(UNIT, "owner", &contracts).expect("the unit analyses");
     let recording = Recording::start();
-    let recorded = analyze_legacy_c_translation_unit(UNIT, "owner", &contracts)
-        .expect("the unit analyses");
+    let recorded =
+        analyze_legacy_c_translation_unit(UNIT, "owner", &contracts).expect("the unit analyses");
     let record = recording.finish();
     // Recording changes no row: status, diagnostics, CFG and exits.
     assert_eq!(unrecorded, recorded);
@@ -310,8 +311,8 @@ void *keep;\n\
 void released(void *p) { keep = p; }\n";
     let contracts = unit_contracts();
     let recording = Recording::start();
-    let summary = analyze_legacy_c_translation_unit(unit, "released", &contracts)
-        .expect("the unit analyses");
+    let summary =
+        analyze_legacy_c_translation_unit(unit, "released", &contracts).expect("the unit analyses");
     let record = recording.finish();
     assert_ne!(summary.functions["released"].status, AnalysisStatus::Safe);
     assert_ne!(

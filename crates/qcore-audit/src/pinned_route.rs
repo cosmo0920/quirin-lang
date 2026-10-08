@@ -440,7 +440,10 @@ pub fn run(
     let dependency_premises = crate::contract_dependencies::premises(&contracts)?;
     let dependency_section =
         crate::contract_dependencies::section(&revision_section, &dependency_premises, &report);
-    println!("{}", crate::contract_dependencies::tally(&dependency_section));
+    println!(
+        "{}",
+        crate::contract_dependencies::tally(&dependency_section)
+    );
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its digest
     // and the calls it held, tallied and added the same additive way.
     let refuted_section = crate::refuted_contracts::section(&applied, &report);

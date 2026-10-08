@@ -90,7 +90,10 @@ fn the_section_rolls_up_the_safe_rows_by_what_they_rest_on() {
     );
     let declarations = &section["declarations"];
     assert_eq!(declarations["v"]["body_standing"], "validated");
-    assert_eq!(declarations["v"]["bodies"]["validated_by"], json!(["W4", "entry"]));
+    assert_eq!(
+        declarations["v"]["bodies"]["validated_by"],
+        json!(["W4", "entry"])
+    );
     assert_eq!(declarations["a"]["body_standing"], "declared-assumption");
     assert_eq!(declarations["h"]["body_standing"], "held");
     assert_eq!(declarations["a"]["rows"], 2);

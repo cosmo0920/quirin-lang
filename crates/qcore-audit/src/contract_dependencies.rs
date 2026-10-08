@@ -64,7 +64,9 @@ const RESULT_HOLDER_PREMISES: [(&str, &str); 2] = [
 ];
 
 /// The analysed summary of a unit result, when it has rows.
-fn summary_of(result: &Result<UnrestrictedLegacyResult, impl Sized>) -> Option<&LegacyProgramSummary> {
+fn summary_of(
+    result: &Result<UnrestrictedLegacyResult, impl Sized>,
+) -> Option<&LegacyProgramSummary> {
     match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => Some(&certificate.summary),
         Ok(UnrestrictedLegacyResult::Unsafe(summary)) => Some(summary),
@@ -123,8 +125,7 @@ pub fn unit_field(record: &UnitRecord, contracts: &ResourceContracts) -> Option<
         .filter(|(name, _)| declared(contracts, name))
         .map(|(name, why)| (name.clone(), json!(why)))
         .collect::<serde_json::Map<_, _>>();
-    if validated.is_empty() && unvalidated.is_empty() && failed.is_empty() && withdrawn.is_empty()
-    {
+    if validated.is_empty() && unvalidated.is_empty() && failed.is_empty() && withdrawn.is_empty() {
         return None;
     }
     Some(json!({
@@ -171,13 +172,16 @@ pub fn annotate_unit(
 pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
     let mut premises = BTreeMap::<String, Vec<Value>>::new();
     for (name, declared) in qcore_contract::contract_loader::declared_premises(contracts)? {
-        premises.entry(name).or_default().extend(declared.into_iter().map(|premise| {
-            json!({
-                "name": premise.name,
-                "statement": premise.statement,
-                "origin": premise.origin.as_str(),
-            })
-        }));
+        premises
+            .entry(name)
+            .or_default()
+            .extend(declared.into_iter().map(|premise| {
+                json!({
+                    "name": premise.name,
+                    "statement": premise.statement,
+                    "origin": premise.origin.as_str(),
+                })
+            }));
     }
     for (name, retaining) in contracts.retaining() {
         if retaining
@@ -229,7 +233,11 @@ struct Bodies {
 }
 
 fn strings(value: &Value) -> impl Iterator<Item = &str> {
-    value.as_array().into_iter().flatten().filter_map(Value::as_str)
+    value
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
 }
 
 impl Facts {
@@ -279,19 +287,25 @@ impl Facts {
         for (name, by) in evidence["validated"].as_object().into_iter().flatten() {
             let bodies = self.bodies.entry(name.clone()).or_default();
             bodies.validated_units += 1;
-            bodies
-                .validated_by
-                .extend(strings(by).map(str::to_owned));
+            bodies.validated_by.extend(strings(by).map(str::to_owned));
         }
         for name in strings(&evidence["unvalidated"]) {
-            self.bodies.entry(name.to_owned()).or_default().unvalidated_units += 1;
+            self.bodies
+                .entry(name.to_owned())
+                .or_default()
+                .unvalidated_units += 1;
         }
         for (name, why) in evidence["failed"].as_object().into_iter().flatten() {
             let bodies = self.bodies.entry(name.clone()).or_default();
             bodies.failed_units += 1;
             bodies.failed_by.extend(strings(why).map(str::to_owned));
         }
-        for name in evidence["withdrawn"].as_object().into_iter().flatten().map(|(n, _)| n) {
+        for name in evidence["withdrawn"]
+            .as_object()
+            .into_iter()
+            .flatten()
+            .map(|(n, _)| n)
+        {
             self.bodies.entry(name.clone()).or_default().withdrawn_units += 1;
         }
     }

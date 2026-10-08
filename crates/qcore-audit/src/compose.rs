@@ -287,9 +287,7 @@ fn refuted_rows(members: &mut [Member]) -> Result<crate::refuted_contracts::RowT
 
 /// Card VERDICT-CONTRACT-DEPENDENCIES: the dependency facts of every unit
 /// row, read like [`refuted_rows`].
-fn dependency_facts(
-    members: &mut [Member],
-) -> Result<crate::contract_dependencies::Facts, String> {
+fn dependency_facts(members: &mut [Member]) -> Result<crate::contract_dependencies::Facts, String> {
     let mut facts = crate::contract_dependencies::Facts::default();
     for member in members.iter_mut() {
         let preparation = member.reader.section::<RowStepSection>("preparation")?;

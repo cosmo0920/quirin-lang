@@ -5667,3 +5667,98 @@ own anchor here.
     `a_drop_after_a_transfer_is_an_over_drop`); controls in
     `tests/refcount_reference_returning.rs`;
     [report](../reports/refcount-reference-returning-declarations/README.md).
+
+<a id="constraint-13f"></a>
+
+13f. **Every published legacy-C row carries the contract declarations its
+    derivation consulted, taken from the route's own consultations; the set
+    may over-approximate and never omits one.** Card
+    VERDICT-CONTRACT-DEPENDENCIES (contract specification C06.5, language
+    specification L20): `crates/qcore-c-gateway/src/contract_dependencies.rs`.
+    Shared items: `qcore_schemas::contract_consultation` (a per-thread log;
+    `ResourceContracts::{contract, relational_contract, retaining_contract}`
+    note the name they were asked for and whether they found it, only while a
+    log is open); `contract_dependencies::within` around
+    `build_function_cfg_with` (split from `build_function_cfg_unscoped`),
+    `analyze_defined_function`, `infer_validated_summary` and
+    `recursion::contextual_cfg_under`; `contract_dependencies::body` in the CFG
+    builder (the identifiers of the body in the stream the build reads);
+    `CustodyDerivation`'s end-of-derivation `inferred` notes; the loader's
+    duplicate check reads the maps directly. A row's set is every lookup of
+    its own work **whose name its body spells** (a minted or held spelling
+    read back to its declaration: passes such as the literal-premise rewrite
+    scan the whole unit inside one function's build), every callee its solved
+    CFG applies a contract of (`ContractCall`, nested calls, element stores and
+    releases: every contract the solver applied), and its own name (its entry
+    contract), closed over every in-unit summary it consulted. Standing at the
+    consultation: `held` (pending review or pin mismatch, or a held spelling),
+    `withdrawn` (a withdrawal spelling, a declaration withdrawn in the unit,
+    or a refuted one outside its own body), otherwise `declarations`. The
+    audit opens a `Recording` around one unit's analysis
+    (`qcore_audit::projection`; the certificate recheck runs outside it) and
+    writes `contract_dependencies` into every row after the verdict is
+    settled (`qcore_audit::contract_dependencies::annotate_unit`). **Do not**
+    read the log from any analysis decision, attribute a lookup a body does
+    not spell to its row, or source the set from a lexical scan alone.
+    Measured (binary `851bf3dd…`): every row of corpus (4,834), system (448)
+    and slice (404) carries it; corpus Safe rows rest on 0.77 declarations on
+    average (at most 12). Controls in `tests/contract_dependencies.rs`;
+    `QCore.ContractDependencies` (`an_applied_call_is_a_dependency`,
+    `a_consulted_declaration_is_a_dependency`,
+    `the_entry_contract_is_a_dependency`, `a_summary_dependency_propagates`,
+    `closure_vectors_hold`);
+    [report](../reports/verdict-contract-dependencies/README.md).
+
+<a id="constraint-13g"></a>
+
+13g. **A declaration is `validated` for a run only where every unit that
+    examined one of its bodies validated it and at least one did; one held
+    for a human act is `held`; every other is a `declared-assumption`.**
+    Card VERDICT-CONTRACT-DEPENDENCIES (contract specification C06.5). A
+    unit's evidence (`contract_dependencies::{examined, validated, withdrawn,
+    failed, unit_evidence}`): `W4` (the final derivation's summary equals a
+    declaration that has no container or counted-user clause), `entry` (the
+    body under the declaration's entry custody matches every exit, `Safe`,
+    no diagnostic), `11r` (a body summary confirms a declared disposition;
+    shared item: `CustodyDerivation::relational_evidence`), `12w`, `13a`,
+    `13c`, `13d` (the structural checks admitted it). Failures: a summary
+    conflict, a refutation (C06.4), a withdrawal by the ABI or mode gate, a
+    checked specification not established, a contradicted disposition, a
+    failed structural check, a guard dropped. A failure wins in its unit; a
+    unit that examined the body and found neither is `unvalidated`. Evidence
+    is not kept under hypothetical holds (`contract_dependencies::hypothetical`
+    around the second analysis of rule 10i's W45-REVIEW-HOLD-PREEMPTS-STATEMENT-REFUSAL amendment), nor from intermediate derivations.
+    Each unit row carries `contract_body_evidence`; the run's standing is
+    `qcore_audit::contract_dependencies::body_standing_of`. **Do not** label a
+    declaration with no examined body, or one some unit did not validate,
+    `validated`. Measured: corpus 330 declarations consulted, 73 validated
+    (W4 45, entry 38, 13c 10, 13d 9, 13a 7, 11r 2; 28 on a structural check
+    alone), 256 declared assumptions, 1 held. `QCore.ContractDependencies`
+    (`a_declared_assumption_is_never_validated`,
+    `no_examined_body_is_a_declared_assumption`,
+    `an_unvalidated_body_is_never_validated`,
+    `a_failed_body_is_never_validated`,
+    `validated_needs_evidence_in_every_unit`, `a_failure_wins_in_its_unit`,
+    `a_held_declaration_is_never_validated`, `outcome_vectors_hold`,
+    `standing_vectors_hold`).
+
+<a id="constraint-13h"></a>
+
+13h. **The dependency record is evidence: no verdict reads it, and removing
+    it restores every report byte for byte.** Card
+    VERDICT-CONTRACT-DEPENDENCIES: the row field, the unit field and the
+    sidecar's `contract_dependencies` section (each route's sidecar; the
+    composer folds it from the rows like the refutation section, under the
+    `contract_premises` the current route records before its units). The
+    premise clause `requires resource_premise(NAME, "STATEMENT");`
+    (contract specification C04.18) changes no mode and is covered by the
+    pin digest (control: without the re-pin both premised declarations are
+    `contract-changed`, not in force). Measured on the base's inputs plus the
+    premise: corpus report projection byte-identical to BEFORE (`36fd1649…`);
+    system and slice verdict rows identical (`c000abd8…` / `0cd51920…` raw
+    BEFORE; their only other differences are the contract-source digests the
+    current route's `compile_configuration` names), and the system run
+    before the premise (`a3`) byte-identical in full; parity multisets
+    identical on all three. `QCore.ContractDependencies`
+    (`publishing_the_set_changes_no_verdict`,
+    `two_sets_publish_the_same_verdict_row`).
