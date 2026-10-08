@@ -1,0 +1,126 @@
+{
+ "report": "private/smib/a2/resource-diagnostics.json",
+ "members": {
+  "class2": {
+   "sds_cat_safe": {
+    "leaves": 41,
+    "functions": 5,
+    "alone": 0
+   },
+   "cfl_sds_cat_safe": {
+    "leaves": 113,
+    "functions": 23,
+    "alone": 0
+   },
+   "format_metric": {
+    "leaves": 14,
+    "functions": 6,
+    "alone": 3
+   },
+   "mk_header_prepare": {
+    "leaves": 10,
+    "functions": 6,
+    "alone": 2
+   },
+   "rd_kafka_parse_Metadata0": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "setupRackAwareAssignment0": {
+    "leaves": 33,
+    "functions": 11,
+    "alone": 2
+   },
+   "ut_init_member_internal": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "flb_config_task_map_grow": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   }
+  },
+  "class8": {
+   "rd_kafka_admin_result_ret_groups": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_admin_result_ret_resources": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_admin_result_ret_topics": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "get_object_item": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "get_or_create_external_metadata_kvlist": {
+    "leaves": 20,
+    "functions": 7,
+    "alone": 2
+   },
+   "rd_kafka_topic_partition_get_private": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   }
+  },
+  "out-slot": {
+   "rd_slice_reader0": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "cJSON_ParseWithLengthOpts": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "strtol": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "strtoll": {
+    "leaves": 1,
+    "functions": 1,
+    "alone": 0
+   },
+   "strtoul": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "strtoull": {
+    "leaves": 1,
+    "functions": 1,
+    "alone": 0
+   },
+   "strtod": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "strtof": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "strtold": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   }
+  }
+ }
+}

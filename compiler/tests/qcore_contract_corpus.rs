@@ -34,6 +34,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // marker, two borrowed formals, two return-code classes, `none`.
     ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_array", 6),
     ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_kvlist", 6),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the slot move,
+    // read from `lib/cfl/src/cfl_sds.c:376-389`.
+    ("cfl/sds_lifetime.qv", "cfl_sds_cat_safe", 6),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -384,6 +387,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CALLEE-RETENTION-CLASS1, stage (a): the forwarding setters,
     // marker, two borrowed formals, two return-code classes, `none`.
     ("ctraces/context_lifetime.qv", "ctr_attributes_set_array", 6),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the static
+    // forwarder of `cfl_sds_cat_safe` in `ctr_encode_text.c:22-28`.
+    ("ctraces/context_lifetime.qv", "sds_cat_safe", 5),
     (
         "ctraces/context_lifetime.qv",
         "ctr_attributes_set_kvlist",
@@ -815,6 +821,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdlib.qv", "abort", 4),
     ("libc/stdlib.qv", "exit", 5),
     ("libc/stdlib.qv", "__assert_fail", 8),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: the derived out slots (rule 12z),
+    // flexible like every libc declaration.
+    ("libc/stdlib.qv", "strtol", 7),
+    ("libc/stdlib.qv", "strtoll", 7),
+    ("libc/stdlib.qv", "strtoul", 7),
+    ("libc/stdlib.qv", "strtoull", 7),
+    ("libc/stdlib.qv", "strtod", 6),
     ("libc/string.qv", "strcmp", 5),
     ("libc/string.qv", "strlen", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: scalar byte/string reads. These are
@@ -989,6 +1002,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // marker, borrowed formals, two return-code classes, `none`.
     ("librdkafka/cjson.qv", "add_item_to_array", 5),
     ("librdkafka/cjson.qv", "replace_item_in_object", 7),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: a borrowed child (class 8, rule
+    // 12y) and a derived out slot beside a `global` retention (rules 12z, 12t).
+    ("librdkafka/cjson.qv", "get_object_item", 5),
+    ("librdkafka/cjson.qv", "cJSON_ParseWithLengthOpts", 8),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic
@@ -1013,6 +1030,29 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_confval_set_type", 8),
     ("librdkafka/client.qv", "rd_kafka_interceptor_method_add", 8),
     ("librdkafka/client.qv", "rd_flags2str", 6),
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: borrowed results (class 8, rule 12y)
+    // and a derived out slot (rule 12z).
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_admin_result_ret_topics",
+        4,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_admin_result_ret_resources",
+        4,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_admin_result_ret_groups",
+        4,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_topic_partition_get_private",
+        3,
+    ),
+    ("librdkafka/client.qv", "rd_slice_reader0", 6),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

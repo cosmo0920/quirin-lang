@@ -155,16 +155,23 @@ theorem run_keeps_refused (st : State) (es : List Event) (h : st.refused = true)
 /-- Filtering out the slot's aliases keeps the slot's own binding. -/
 theorem lookup_filter_keeps_slot (b : List (Nat × Nat)) (slot s : Nat) :
     lookup (b.filter fun p => !isAlias slot s p) slot = lookup b slot := by
+  unfold lookup
+  congr 1
   induction b with
   | nil => rfl
   | cons p ps ih =>
+      simp only [List.filter_cons]
       by_cases hp : p.1 = slot
-      · simp [lookup, List.filter, isAlias, hp]
-      · by_cases hs : p.2 = s
-        · simp [lookup, List.filter, isAlias, hp, hs] at ih ⊢
-          exact ih
-        · simp [lookup, List.filter, isAlias, hp, hs] at ih ⊢
-          exact ih
+      · have hk : (!isAlias slot s p) = true := by simp [isAlias, hp]
+        simp [hk, hp]
+      · cases hk : (!isAlias slot s p) <;> simp [hp, ih]
+
+/-- A move with the slot bound, as a record update. -/
+theorem step_move (st : State) (slot s : Nat) (h : lookup st.bound slot = some s) :
+    step st (.move slot false) =
+      { st with bound := st.bound.filter (fun p => !isAlias slot s p),
+                invalid := (st.bound.filter (isAlias slot s)).map (·.1) ++ st.invalid } := by
+  simp [step, h]
 
 /-- **The slot owns exactly one object before and after**: a move keeps the
 slot's binding and the live obligations. -/
@@ -175,17 +182,15 @@ theorem the_slot_keeps_its_identity_and_its_obligation (st : State) (slot s : Na
   cases failed with
   | true => simp [step, h]
   | false =>
-      simp only [step, h, Bool.false_eq_true, ite_false]
-      exact ⟨by rw [lookup_filter_keeps_slot]; exact h, rfl⟩
+      rw [step_move st slot s h]
+      exact ⟨(lookup_filter_keeps_slot st.bound slot s).trans h, rfl⟩
 
 /-- **Every alias of the old pointer is invalid after a move.** -/
 theorem every_old_alias_is_invalid_after_a_move (st : State) (slot s a : Nat)
     (h : lookup st.bound slot = some s) (ha : (a, s) ∈ st.bound) (hne : a ≠ slot) :
-    (step st (.move slot false)).invalid.contains a = true := by
-  simp only [step, h, Bool.false_eq_true, ite_false]
-  simp only [List.contains_append, Bool.or_eq_true]
-  left
-  apply List.elem_eq_true_of_mem
+    a ∈ (step st (.move slot false)).invalid := by
+  rw [step_move st slot s h]
+  apply List.mem_append_left
   exact List.mem_map.mpr ⟨(a, s), List.mem_filter.mpr ⟨ha, by simp [isAlias, hne]⟩, rfl⟩
 
 /-- **A use of an old alias after a move is refused.** -/
@@ -209,8 +214,9 @@ theorem a_safe_path_never_uses_an_invalid_name (pre post : List Event) (a : Nat)
   cases hc : (run State.empty pre).invalid.contains a with
   | false => rfl
   | true =>
+      have hm : a ∈ (run State.empty pre).invalid := by simpa using hc
       have hr : (step (run State.empty pre) (.use a)).refused = true := by
-        simp [step, hc]
+        simp [step, hm]
       have := run_keeps_refused _ post hr
       simp only [run, List.foldl_cons] at hsafe
       simp only [run] at this

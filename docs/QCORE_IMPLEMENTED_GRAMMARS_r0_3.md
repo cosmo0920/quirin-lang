@@ -3552,7 +3552,10 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | "resource_no_return", "(", ")"   (* card CG21, contract spec C04.3.3 *)
   | counted_user_predicate
   | container_predicate
-  | retention_predicate ;
+  | retention_predicate
+  | slot_predicate
+  | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
+    (* card SLOT-MOVE-AND-INTERIOR-BORROW, contract spec C04.3.4 *)
 nullability = "nullable" | "nonnull" ;
 (* card W45-FB-RETRY-LIFETIME, contract specification C04.7 and C04.8 *)
 counted_user_predicate =
@@ -3581,7 +3584,13 @@ retention_predicate =
 (* card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1 *)
 retention_guard = "when", IDENT, guard_op, integer_literal ;
 guard_op = "==" | "<" | ">" | "<=" | ">=" ;
+(* card SLOT-MOVE-AND-INTERIOR-BORROW, contract specification C04.15, C04.16 *)
+slot_predicate =
+    "resource_slot_moved", "(", IDENT, ",", nullability, ")"            (* slot *)
+  | "resource_out_derived", "(", IDENT, ",", IDENT, ",", nullability, ")" ;  (* slot, base *)
 ```
+
+The slot predicates and the borrowed result (card SLOT-MOVE-AND-INTERIOR-BORROW, contract specification C04.3.4, C04.15, C04.16) carry static conditions of their own: a moved slot names a `ptr<mut, ptr<mut, u8>>` parameter, a derived out slot a `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>` parameter, each `resource_borrowed` with no kind; a derived out slot's base is a distinct depth-one pointer parameter, `resource_borrowed`, with no kind; a slot is named by at most one slot predicate and is never also a retained pointer; a slot predicate stands where a retention predicate may (beside plain parameter and result predicates, revision markers and retention predicates), and a declaration carrying one is withheld from the function map with the retaining declarations (C04.14). `resource_return_borrowed_from(p, n)` loads to the derived result at the `Borrowed` extent: `p` names a depth-one `resource_borrowed` pointer parameter and the result is a depth-one pointer or `ptr<mut, ptr<mut, u8>>` / `ptr<mut, ptr<const, u8>>` (an array of the parent's children); every other placement rejects the module. A slot predicate inside `resource_on_return` is not admitted (an unsupported predicate). Every violation rejects the whole module.
 
 A `retention_guard` (card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1) stands only on `resource_retained_by` (a guard on any other predicate, and a second `when`, reject the module; a clause-level revision marker wraps a guarded clause as it wraps a bare one); `when` is reserved in a clause expression. Its `IDENT` names an integer parameter of the declaration (`i8` through `i64`, `isize`, `u8` through `u64`, `usize`; never `bool`, a float, a pointer, `fnptr` or `va_list`) other than the clause's retained pointer and holder; its `integer_literal` follows the canonical-literal rule below and lies in that parameter's range; and the guard partitions the range (some value satisfies it and some does not). `!=` and Boolean combinations are not admitted. Every violation rejects the whole module.
 

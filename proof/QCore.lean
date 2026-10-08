@@ -335,6 +335,9 @@ import QCore.RelationalPost
 import QCore.RelationalForwarding
 import QCore.RetainedBy
 import QCore.RetentionGuard
+import QCore.SlotMove
+import QCore.InteriorBorrow
+import QCore.DerivedOutSlot
 import QCore.AbiEnumConstPointer
 import QCore.IndirectCalls
 import QCore.VariadicConditions

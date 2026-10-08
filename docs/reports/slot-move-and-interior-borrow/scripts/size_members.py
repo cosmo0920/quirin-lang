@@ -27,7 +27,10 @@ def named(description):
     if description.startswith("call to uncontracted function `"):
         return NAMED.search(description).group(1)
     if description.startswith("call to `") and (
-            "relational-" in description or "retention-" in description):
+            "relational-" in description or "retention-" in description
+            # SLOT-MOVE-AND-INTERIOR-BORROW: a slot clause the call does not
+            # decide (rules 12x, 12z), and a withdrawn declaration.
+            or " with slot `" in description or "was withdrawn against" in description):
         return NAMED.search(description).group(1)
     return None
 

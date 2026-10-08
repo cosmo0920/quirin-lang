@@ -570,7 +570,11 @@ mod tests {
     #[test]
     fn slot_vectors_hold() {
         for (binding, nullable, outcome) in SLOT_VECTORS {
-            assert_eq!(decide_slot(binding, nullable), outcome, "{binding:?} {nullable}");
+            assert_eq!(
+                decide_slot(binding, nullable),
+                outcome,
+                "{binding:?} {nullable}"
+            );
         }
     }
 
@@ -578,7 +582,11 @@ mod tests {
     fn slot_trace_vectors_hold() {
         for (path, refused, live) in SLOT_TRACE_VECTORS {
             let state = slot_replay(path);
-            assert_eq!((state.refused, state.live.len()), (refused, live), "{path:?}");
+            assert_eq!(
+                (state.refused, state.live.len()),
+                (refused, live),
+                "{path:?}"
+            );
         }
     }
 
@@ -594,7 +602,11 @@ mod tests {
     #[test]
     fn out_vectors_hold() {
         for (before, nullable, outcome) in OUT_VECTORS {
-            assert_eq!(decide_out(before, nullable), outcome, "{before:?} {nullable}");
+            assert_eq!(
+                decide_out(before, nullable),
+                outcome,
+                "{before:?} {nullable}"
+            );
         }
     }
 }

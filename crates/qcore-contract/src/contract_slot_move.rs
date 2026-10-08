@@ -54,8 +54,15 @@ pub const BORROWED_RESULTS: [&str; 4] = [
 /// A slot clause as written, before the declaration's parameters are known.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) enum WrittenSlot {
-    Moved { slot: String, null: String },
-    OutDerived { slot: String, base: String, null: String },
+    Moved {
+        slot: String,
+        null: String,
+    },
+    OutDerived {
+        slot: String,
+        base: String,
+        null: String,
+    },
 }
 
 /// Read one slot clause from its predicate words, `None` for any other
@@ -122,7 +129,9 @@ pub(super) fn declaration(
         };
         let slot = index(slot_name)?;
         if slots.contains(&slot) {
-            return Err(format!("a slot is named by one slot clause (`{slot_name}`)"));
+            return Err(format!(
+                "a slot is named by one slot clause (`{slot_name}`)"
+            ));
         }
         slots.push(slot);
         let nullable = nullability(null)?;

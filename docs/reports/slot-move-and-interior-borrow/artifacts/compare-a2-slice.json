@@ -1,0 +1,85 @@
+{
+ "statuses_before": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "statuses_after": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 5
+ },
+ "added": {
+  "call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 2
+ },
+ "moving_rows": 3,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "occurrence": 1,
+   "function": "configured_limit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtol"
+   ],
+   "lost": [
+    "18954: call to uncontracted function `strtol`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_set_property",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtod",
+    "callee:strtoull"
+   ],
+   "lost": [
+    "18663: call to uncontracted function `strtoull`",
+    "18683: call to uncontracted function `strtod`"
+   ],
+   "gained": [
+    "18663: call to `strtoull` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_set_property",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtod",
+    "callee:strtoull"
+   ],
+   "lost": [
+    "18663: call to uncontracted function `strtoull`",
+    "18683: call to uncontracted function `strtod`"
+   ],
+   "gained": [
+    "18663: call to `strtoull` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  }
+ ]
+}

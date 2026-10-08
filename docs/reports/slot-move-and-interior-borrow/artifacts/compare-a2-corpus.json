@@ -1,0 +1,2509 @@
+{
+ "statuses_before": {
+  "Unknown": 3979,
+  "Safe": 846,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3953,
+  "Safe": 872,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 26
+ },
+ "status_moves_by_label": {
+  "callee:sds_cat_safe": 4,
+  "callee:rd_kafka_admin_result_ret_groups": 4,
+  "callee:cfl_sds_cat_safe": 3,
+  "callee:rd_kafka_admin_result_ret_resources": 3,
+  "callee:rd_kafka_admin_result_ret_topics": 3,
+  "callee:rd_kafka_topic_partition_get_private": 3,
+  "callee:get_object_item": 2,
+  "callee:rd_slice_reader0": 2,
+  "other": 1,
+  "callee-summary:rd_kafka_topic_partition_set_leader_epoch": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 275,
+  "unresolved resource identity `_`": 17,
+  "unmodeled call, aggregate or indirect access in loop condition": 5,
+  "unmodeled call, aggregate or indirect access in branch condition": 1,
+  "unmodeled call, aggregate or indirect access in return expression": 1
+ },
+ "added": {
+  "call to `_` with slot `_`: the slot is neither `_`, a caller's slot passed through, nor NULL": 146,
+  "use of `_` after its object moved or its parent changed (interior-borrow-ended)": 35,
+  "unresolved resource identity `_`": 12,
+  "call to `_` with slot `_`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds": 8,
+  "indirect memory access is outside the resource projection": 2,
+  "call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 2
+ },
+ "moving_rows": 92,
+ "status_moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_GetObjectItem",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:get_object_item"
+   ],
+   "lost": [
+    "2811: call to uncontracted function `get_object_item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_GetObjectItemCaseSensitive",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:get_object_item"
+   ],
+   "lost": [
+    "2815: call to uncontracted function `get_object_item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_HasObjectItem",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "2819: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5687: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_bytes_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5651: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6788: call to uncontracted function `sds_cat_safe`",
+    "6791: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6783: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6777: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6771: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "sds_cat_safe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6765: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_peeker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_slice_reader0"
+   ],
+   "lost": [
+    "3793: call to uncontracted function `rd_slice_reader0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_reader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_slice_reader0"
+   ],
+   "lost": [
+    "3790: call to uncontracted function `rd_slice_reader0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22077: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "24602: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreatePartitions_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21690: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateTopics_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21399: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "23241: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteGroups_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "23124: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteTopics_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21519: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22430: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22254: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "24766: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_current_leader_epoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21751: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_from_fetch_pos",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_leader_epoch"
+   ],
+   "lost": [
+    "21758: call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_leader_epoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21722: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_topic_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21735: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "21736: unresolved resource identity `parpriv`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_Compare",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3692: unresolved resource identity `a`",
+    "3692: unresolved resource identity `b`",
+    "3696: unresolved resource identity `a`",
+    "3714: unresolved resource identity `a`",
+    "3721: unresolved resource identity `a`",
+    "3721: unresolved resource identity `b`",
+    "3728: unresolved resource identity `a`",
+    "3728: unresolved resource identity `b`",
+    "3732: unmodeled call, aggregate or indirect access in branch condition",
+    "3739: unresolved resource identity `a`",
+    "3740: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_DetachItemFromObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_GetObjectItem"
+   ],
+   "lost": [
+    "3063: call to uncontracted function `cJSON_GetObjectItem`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_DetachItemFromObjectCaseSensitive",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_GetObjectItemCaseSensitive"
+   ],
+   "lost": [
+    "3068: call to uncontracted function `cJSON_GetObjectItemCaseSensitive`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_GetObjectItem",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:get_object_item"
+   ],
+   "lost": [
+    "2811: call to uncontracted function `get_object_item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_GetObjectItemCaseSensitive",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:get_object_item"
+   ],
+   "lost": [
+    "2815: call to uncontracted function `get_object_item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_HasObjectItem",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "2819: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_apply_acl_and_settings",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtoul"
+   ],
+   "lost": [
+    "3155: call to uncontracted function `strtoul`"
+   ],
+   "gained": [
+    "3155: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5664: call to uncontracted function `cfl_sds_cat_safe`",
+    "5670: call to uncontracted function `cfl_sds_cat_safe`",
+    "5675: call to uncontracted function `cfl_sds_cat_safe`",
+    "5680: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5769: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5769: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5801: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_summary_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5698: call to uncontracted function `cfl_sds_cat_safe`",
+    "5704: call to uncontracted function `cfl_sds_cat_safe`",
+    "5709: call to uncontracted function `cfl_sds_cat_safe`",
+    "5714: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5832: call to uncontracted function `cfl_sds_cat_safe`",
+    "5843: call to uncontracted function `cfl_sds_cat_safe`",
+    "5849: call to uncontracted function `cfl_sds_cat_safe`",
+    "5852: call to uncontracted function `cfl_sds_cat_safe`",
+    "5868: call to uncontracted function `cfl_sds_cat_safe`",
+    "5871: call to uncontracted function `cfl_sds_cat_safe`",
+    "5879: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5832: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5843: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5849: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5852: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5868: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5871: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5879: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "add_label",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6005: call to uncontracted function `cfl_sds_cat_safe`",
+    "6006: call to uncontracted function `cfl_sds_cat_safe`",
+    "6008: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6005: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6006: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6008: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "add_static_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6022: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6022: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6001: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "bucket_value_to_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe",
+    "callee:strtod"
+   ],
+   "lost": [
+    "6154: call to uncontracted function `strtod`",
+    "6161: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6161: call to `cfl_sds_cat_safe` with slot `& str`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6181: call to uncontracted function `cfl_sds_cat_safe`",
+    "6182: call to uncontracted function `cfl_sds_cat_safe`",
+    "6185: call to uncontracted function `cfl_sds_cat_safe`",
+    "6189: call to uncontracted function `cfl_sds_cat_safe`",
+    "6191: call to uncontracted function `cfl_sds_cat_safe`",
+    "6204: call to uncontracted function `cfl_sds_cat_safe`",
+    "6212: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6181: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6182: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6185: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6189: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6191: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6204: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6212: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6107: call to uncontracted function `cfl_sds_cat_safe`",
+    "6111: call to uncontracted function `cfl_sds_cat_safe`",
+    "6117: call to uncontracted function `cfl_sds_cat_safe`",
+    "6131: call to uncontracted function `cfl_sds_cat_safe`",
+    "6140: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6107: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6111: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6117: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6131: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6140: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_summary_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6229: call to uncontracted function `cfl_sds_cat_safe`",
+    "6231: call to uncontracted function `cfl_sds_cat_safe`",
+    "6233: call to uncontracted function `cfl_sds_cat_safe`",
+    "6246: call to uncontracted function `cfl_sds_cat_safe`",
+    "6251: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "6229: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6231: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6233: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6246: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6251: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "metric_banner",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5920: call to uncontracted function `cfl_sds_cat_safe`",
+    "5923: call to uncontracted function `cfl_sds_cat_safe`",
+    "5926: call to uncontracted function `cfl_sds_cat_safe`",
+    "5927: call to uncontracted function `cfl_sds_cat_safe`",
+    "5930: call to uncontracted function `cfl_sds_cat_safe`",
+    "5933: call to uncontracted function `cfl_sds_cat_safe`",
+    "5936: call to uncontracted function `cfl_sds_cat_safe`",
+    "5939: call to uncontracted function `cfl_sds_cat_safe`",
+    "5942: call to uncontracted function `cfl_sds_cat_safe`",
+    "5945: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5920: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5923: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5926: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5927: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5930: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5933: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5936: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5939: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5942: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5945: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "metric_escape",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5899: call to uncontracted function `cfl_sds_cat_safe`",
+    "5902: call to uncontracted function `cfl_sds_cat_safe`",
+    "5906: call to uncontracted function `cfl_sds_cat_safe`",
+    "5910: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "append_bucket_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5845: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5845: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5700: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5700: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "append_quantiles_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5921: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5921: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "double_to_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5605: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5605: call to `cfl_sds_cat_safe` with slot `& str`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_context_common",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5715: call to uncontracted function `cfl_sds_cat_safe`",
+    "5717: call to uncontracted function `cfl_sds_cat_safe`",
+    "5721: call to uncontracted function `cfl_sds_cat_safe`",
+    "5722: call to uncontracted function `cfl_sds_cat_safe`",
+    "5732: call to uncontracted function `cfl_sds_cat_safe`",
+    "5745: call to uncontracted function `cfl_sds_cat_safe`",
+    "5758: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5863: call to uncontracted function `cfl_sds_cat_safe`",
+    "5865: call to uncontracted function `cfl_sds_cat_safe`",
+    "5867: call to uncontracted function `cfl_sds_cat_safe`",
+    "5869: call to uncontracted function `cfl_sds_cat_safe`",
+    "5871: call to uncontracted function `cfl_sds_cat_safe`",
+    "5874: call to uncontracted function `cfl_sds_cat_safe`",
+    "5877: call to uncontracted function `format_metric_type`",
+    "5878: call to uncontracted function `cfl_sds_cat_safe`",
+    "5879: call to uncontracted function `cfl_sds_cat_safe`",
+    "5883: call to uncontracted function `cfl_sds_cat_safe`",
+    "5888: call to uncontracted function `cfl_sds_cat_safe`",
+    "5891: call to uncontracted function `format_metric_type`",
+    "5892: call to uncontracted function `cfl_sds_cat_safe`",
+    "5893: call to uncontracted function `cfl_sds_cat_safe`",
+    "5897: call to uncontracted function `cfl_sds_cat_safe`",
+    "5902: call to uncontracted function `cfl_sds_cat_safe`",
+    "5905: call to uncontracted function `format_metric_type`",
+    "5906: call to uncontracted function `cfl_sds_cat_safe`",
+    "5907: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5863: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5865: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5867: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5869: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5871: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5874: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5878: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5879: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5883: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5888: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5892: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5893: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5897: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5902: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5906: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5907: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_data_points",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5984: call to uncontracted function `cfl_sds_cat_safe`",
+    "5987: call to uncontracted function `cfl_sds_cat_safe`",
+    "5988: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5984: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5987: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5988: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5791: call to uncontracted function `cfl_sds_cat_safe`",
+    "5794: call to uncontracted function `cfl_sds_cat_safe`",
+    "5797: call to uncontracted function `cfl_sds_cat_safe`",
+    "5799: call to uncontracted function `cfl_sds_cat_safe`",
+    "5801: call to uncontracted function `cfl_sds_cat_safe`",
+    "5821: call to uncontracted function `cfl_sds_cat_safe`",
+    "5823: call to uncontracted function `cfl_sds_cat_safe`",
+    "5825: call to uncontracted function `cfl_sds_cat_safe`",
+    "5827: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5662: call to uncontracted function `cfl_sds_cat_safe`",
+    "5664: call to uncontracted function `cfl_sds_cat_safe`",
+    "5670: call to uncontracted function `cfl_sds_cat_safe`",
+    "5676: call to uncontracted function `cfl_sds_cat_safe`",
+    "5678: call to uncontracted function `cfl_sds_cat_safe`",
+    "5679: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5662: call to `cfl_sds_cat_safe` with slot `& metric_name`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds",
+    "5664: call to `cfl_sds_cat_safe` with slot `& metric_name`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds",
+    "5670: call to `cfl_sds_cat_safe` with slot `& metric_name`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds",
+    "5676: call to `cfl_sds_cat_safe` with slot `& metric_name`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds",
+    "5678: call to `cfl_sds_cat_safe` with slot `& metric_name`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds"
+   ]
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5687: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_summary_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5938: call to uncontracted function `cfl_sds_cat_safe`",
+    "5940: call to uncontracted function `cfl_sds_cat_safe`",
+    "5942: call to uncontracted function `cfl_sds_cat_safe`",
+    "5944: call to uncontracted function `cfl_sds_cat_safe`",
+    "5946: call to uncontracted function `format_metric_type`",
+    "5947: call to uncontracted function `cfl_sds_cat_safe`",
+    "5948: call to uncontracted function `cfl_sds_cat_safe`",
+    "5953: call to uncontracted function `cfl_sds_cat_safe`",
+    "5958: call to uncontracted function `cfl_sds_cat_safe`",
+    "5961: call to uncontracted function `format_metric_type`",
+    "5962: call to uncontracted function `cfl_sds_cat_safe`",
+    "5963: call to uncontracted function `cfl_sds_cat_safe`",
+    "5967: call to uncontracted function `cfl_sds_cat_safe`",
+    "5972: call to uncontracted function `cfl_sds_cat_safe`",
+    "5975: call to uncontracted function `format_metric_type`",
+    "5976: call to uncontracted function `cfl_sds_cat_safe`",
+    "5977: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5938: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5940: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5942: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5944: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5947: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5948: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5953: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5958: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5962: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5963: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5967: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5972: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5976: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5977: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_array_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5629: call to uncontracted function `cfl_sds_cat_safe`",
+    "5636: call to uncontracted function `cfl_sds_cat_safe`",
+    "5640: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5629: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5636: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5640: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_bytes_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5651: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_exp_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5870: call to uncontracted function `cfl_sds_cat_safe`",
+    "5877: call to uncontracted function `cfl_sds_cat_safe`",
+    "5882: call to uncontracted function `cfl_sds_cat_safe`",
+    "5889: call to uncontracted function `cfl_sds_cat_safe`",
+    "5891: call to uncontracted function `cfl_sds_cat_safe`",
+    "5896: call to uncontracted function `cfl_sds_cat_safe`",
+    "5903: call to uncontracted function `cfl_sds_cat_safe`",
+    "5905: call to uncontracted function `cfl_sds_cat_safe`",
+    "5910: call to uncontracted function `cfl_sds_cat_safe`",
+    "5922: call to uncontracted function `cfl_sds_cat_safe`",
+    "5923: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5784: call to uncontracted function `cfl_sds_cat_safe`",
+    "5806: call to uncontracted function `cfl_sds_cat_safe`",
+    "5808: call to uncontracted function `cfl_sds_cat_safe`",
+    "5813: call to uncontracted function `cfl_sds_cat_safe`",
+    "5818: call to uncontracted function `cfl_sds_cat_safe`",
+    "5819: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_kvlist_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5611: call to uncontracted function `cfl_sds_cat_safe`",
+    "5616: call to uncontracted function `cfl_sds_cat_safe`",
+    "5619: call to uncontracted function `cfl_sds_cat_safe`",
+    "5623: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5611: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5616: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5619: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5623: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_metric_exemplars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5758: call to uncontracted function `cfl_sds_cat_safe`",
+    "5765: call to uncontracted function `cfl_sds_cat_safe`",
+    "5769: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5758: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5765: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5769: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5943: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5943: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_summary_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5831: call to uncontracted function `cfl_sds_cat_safe`",
+    "5845: call to uncontracted function `cfl_sds_cat_safe`",
+    "5847: call to uncontracted function `cfl_sds_cat_safe`",
+    "5852: call to uncontracted function `cfl_sds_cat_safe`",
+    "5857: call to uncontracted function `cfl_sds_cat_safe`",
+    "5858: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_variant_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5659: call to uncontracted function `cfl_sds_cat_safe`",
+    "5663: call to uncontracted function `cfl_sds_cat_safe`",
+    "5665: call to uncontracted function `cfl_sds_cat_safe`",
+    "5673: call to uncontracted function `cfl_sds_cat_safe`",
+    "5677: call to uncontracted function `cfl_sds_cat_safe`",
+    "5681: call to uncontracted function `cfl_sds_cat_safe`",
+    "5684: call to uncontracted function `append_bytes_value`",
+    "5693: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5659: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5663: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5665: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5673: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5677: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5681: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5693: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "5969: call to uncontracted function `cfl_sds_cat_safe`",
+    "5971: call to uncontracted function `cfl_sds_cat_safe`",
+    "5975: call to uncontracted function `cfl_sds_cat_safe`",
+    "5980: call to uncontracted function `cfl_sds_cat_safe`",
+    "5982: call to uncontracted function `cfl_sds_cat_safe`",
+    "5984: call to uncontracted function `cfl_sds_cat_safe`",
+    "6007: call to uncontracted function `cfl_sds_cat_safe`",
+    "6010: call to uncontracted function `cfl_sds_cat_safe`",
+    "6026: call to uncontracted function `cfl_sds_cat_safe`",
+    "6029: call to uncontracted function `cfl_sds_cat_safe`",
+    "6032: call to uncontracted function `cfl_sds_cat_safe`",
+    "6038: call to uncontracted function `cfl_sds_cat_safe`",
+    "6044: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": [
+    "5969: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5971: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5975: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5980: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5982: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "5984: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6007: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6010: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6026: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6029: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6032: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6038: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6044: call to `cfl_sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "ctr_encode_text_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "7081: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": [
+    "7081: call to `sds_cat_safe` with slot `& buf`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6800: call to uncontracted function `sds_cat_safe`",
+    "6804: call to uncontracted function `sds_cat_safe`",
+    "6806: call to uncontracted function `format_string`",
+    "6809: call to uncontracted function `format_bool`",
+    "6812: call to uncontracted function `format_int64`",
+    "6815: call to uncontracted function `format_double`",
+    "6821: call to uncontracted function `sds_cat_safe`",
+    "6826: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": [
+    "6800: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6804: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6806: unresolved resource identity `v`",
+    "6809: unresolved resource identity `v`",
+    "6812: unresolved resource identity `v`",
+    "6815: unresolved resource identity `v`",
+    "6821: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6826: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6835: call to uncontracted function `sds_cat_safe`",
+    "6839: call to uncontracted function `sds_cat_safe`",
+    "6842: call to uncontracted function `format_string`",
+    "6845: call to uncontracted function `format_bool`",
+    "6848: call to uncontracted function `format_int64`",
+    "6851: call to uncontracted function `format_double`",
+    "6859: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": [
+    "6835: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6839: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6842: unresolved resource identity `v`",
+    "6845: unresolved resource identity `v`",
+    "6848: unresolved resource identity `v`",
+    "6851: unresolved resource identity `v`",
+    "6859: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6788: call to uncontracted function `sds_cat_safe`",
+    "6791: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6783: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6866: call to uncontracted function `sds_cat_safe`",
+    "6868: call to uncontracted function `sds_cat_safe`",
+    "6871: call to uncontracted function `sds_cat_safe`",
+    "6873: call to uncontracted function `sds_cat_safe`",
+    "6876: call to uncontracted function `sds_cat_safe`",
+    "6881: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": [
+    "6866: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6868: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6871: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6873: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6876: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6881: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6777: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6895: call to uncontracted function `sds_cat_safe`",
+    "6903: call to uncontracted function `sds_cat_safe`",
+    "6912: call to uncontracted function `sds_cat_safe`",
+    "6921: call to uncontracted function `sds_cat_safe`",
+    "6925: call to uncontracted function `sds_cat_safe`",
+    "6928: call to uncontracted function `sds_cat_safe`",
+    "6931: call to uncontracted function `sds_cat_safe`",
+    "6934: call to uncontracted function `sds_cat_safe`",
+    "6937: call to uncontracted function `sds_cat_safe`",
+    "6940: call to uncontracted function `sds_cat_safe`",
+    "6942: call to uncontracted function `sds_cat_safe`",
+    "6945: call to uncontracted function `sds_cat_safe`",
+    "6948: call to uncontracted function `sds_cat_safe`",
+    "6950: call to uncontracted function `sds_cat_safe`",
+    "6953: call to uncontracted function `sds_cat_safe`",
+    "6957: call to uncontracted function `sds_cat_safe`",
+    "6961: call to uncontracted function `sds_cat_safe`",
+    "6966: call to uncontracted function `sds_cat_safe`",
+    "6970: call to uncontracted function `sds_cat_safe`",
+    "6977: call to uncontracted function `sds_cat_safe`",
+    "6982: call to uncontracted function `sds_cat_safe`",
+    "6991: call to uncontracted function `sds_cat_safe`",
+    "7000: call to uncontracted function `sds_cat_safe`",
+    "7003: call to uncontracted function `sds_cat_safe`",
+    "7005: call to uncontracted function `sds_cat_safe`",
+    "7008: call to uncontracted function `sds_cat_safe`",
+    "7012: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": [
+    "6895: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6903: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6912: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6921: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6925: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6928: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6931: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6934: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6937: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6940: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6942: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6945: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6948: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6950: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6953: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6957: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6961: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6966: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6970: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6977: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6982: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "6991: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "7000: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "7003: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "7005: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "7008: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL",
+    "7012: call to `sds_cat_safe` with slot `buf`: the slot is neither `&NAME`, a caller's slot passed through, nor NULL"
+   ]
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:sds_cat_safe"
+   ],
+   "lost": [
+    "6771: call to uncontracted function `sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "sds_cat_safe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_sds_cat_safe"
+   ],
+   "lost": [
+    "6765: call to uncontracted function `cfl_sds_cat_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_config.c",
+   "occurrence": 1,
+   "function": "mk_config_listen_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtol"
+   ],
+   "lost": [
+    "6090: call to uncontracted function `strtol`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "header_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtol"
+   ],
+   "lost": [
+    "5637: call to uncontracted function `strtol`"
+   ],
+   "gained": [
+    "5642: unresolved resource identity `endptr`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "http_parser_transfer_encoding_chunked",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtol"
+   ],
+   "lost": [
+    "5840: call to uncontracted function `strtol`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_buf_write_slice",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3595: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_crc32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3925: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_crc32c",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3933: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_get_iov",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3911: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_peeker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_slice_reader0"
+   ],
+   "lost": [
+    "3793: call to uncontracted function `rd_slice_reader0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3804: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_reader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_slice_reader0"
+   ],
+   "lost": [
+    "3790: call to uncontracted function `rd_slice_reader0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22077: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "24602: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_get_single_broker_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtol"
+   ],
+   "lost": [
+    "21948: call to uncontracted function `strtol`"
+   ],
+   "gained": [
+    "21948: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreatePartitions_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21690: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateTopics_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21399: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "23241: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteGroups_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "23124: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteTopics_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_topics"
+   ],
+   "lost": [
+    "21519: call to uncontracted function `rd_kafka_admin_result_ret_topics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22430: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigs_result_resources",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_resources"
+   ],
+   "lost": [
+    "22254: call to uncontracted function `rd_kafka_admin_result_ret_resources`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_result_ret_groups"
+   ],
+   "lost": [
+    "24766: call to uncontracted function `rd_kafka_admin_result_ret_groups`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_anyconf_set_prop0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtod"
+   ],
+   "lost": [
+    "24402: call to uncontracted function `strtod`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_file_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtoull"
+   ],
+   "lost": [
+    "20263: call to uncontracted function `strtoull`"
+   ],
+   "gained": [
+    "20263: call to `strtoull` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_ensure_toppar",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21943: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "21944: unresolved resource identity `parpriv`",
+    "21946: unresolved resource identity `rk`"
+   ],
+   "gained": [
+    "21948: use of `parpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21950: use of `parpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21954: use of `parpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21958: use of `parpriv` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_add0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21816: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "21827: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": [
+    "21819: use of `parpriv_copy` after its object moved or its parent changed (interior-borrow-ended)",
+    "21822: use of `parpriv_copy` after its object moved or its parent changed (interior-borrow-ended)",
+    "21823: use of `parpriv_copy` after its object moved or its parent changed (interior-borrow-ended)",
+    "21825: use of `parpriv_copy` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_add_with_topic_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21847: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_add_with_topic_name_and_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21861: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_leaders",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_current_leader_epoch"
+   ],
+   "lost": [
+    "22330: call to uncontracted function `rd_kafka_topic_partition_set_current_leader_epoch`"
+   ],
+   "gained": [
+    "22330: unresolved resource identity `mdpi`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_set_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_leader_epoch"
+   ],
+   "lost": [
+    "22221: call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "22647: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "22648: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": [
+    "22627: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22627: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22629: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22629: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22630: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22630: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22637: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22637: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22638: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22638: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22639: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22639: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22642: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22642: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22644: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22644: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22649: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22650: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22650: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22651: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22651: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_new_with_id_and_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_topic_id"
+   ],
+   "lost": [
+    "21639: call to uncontracted function `rd_kafka_topic_partition_set_topic_id`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_new_with_topic_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21622: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_current_leader_epoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21751: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_from_fetch_pos",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_leader_epoch"
+   ],
+   "lost": [
+    "21758: call to uncontracted function `rd_kafka_topic_partition_set_leader_epoch`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_leader_epoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21722: call to uncontracted function `rd_kafka_topic_partition_get_private`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_set_topic_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21735: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "21736: unresolved resource identity `parpriv`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_get_private"
+   ],
+   "lost": [
+    "21652: unresolved resource identity `dst`",
+    "21655: unresolved resource identity `dst`",
+    "21657: unresolved resource identity `dst`",
+    "21660: call to uncontracted function `rd_kafka_topic_partition_get_private`",
+    "21667: unresolved resource identity `dst`"
+   ],
+   "gained": [
+    "21661: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21662: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21663: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21664: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21665: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)",
+    "21666: use of `dstpriv` after its object moved or its parent changed (interior-borrow-ended)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_consumer_lag_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_current_leader_epoch"
+   ],
+   "lost": [
+    "20295: call to uncontracted function `rd_kafka_topic_partition_set_current_leader_epoch`"
+   ],
+   "gained": [
+    "20295: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_offset_request",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_set_current_leader_epoch",
+    "callee-summary:rd_kafka_topic_partition_set_from_fetch_pos"
+   ],
+   "lost": [
+    "21066: call to uncontracted function `rd_kafka_topic_partition_set_from_fetch_pos`",
+    "21067: call to uncontracted function `rd_kafka_topic_partition_set_current_leader_epoch`"
+   ],
+   "gained": [
+    "21067: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "parse_ujws_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:strtoll"
+   ],
+   "lost": [
+    "20464: call to uncontracted function `strtoll`"
+   ],
+   "gained": [
+    "20464: call to `strtoll` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  }
+ ]
+}

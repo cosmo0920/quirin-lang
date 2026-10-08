@@ -235,6 +235,7 @@ Exactly one result predicate is required:
 | `resource_return_reallocated(p, n)` | The incoming `p` MUST be `Owned`. A null failure preserves that incoming custody; a successful replacement consumes/replaces the old resource exactly once and establishes the result identity. |
 | `resource_return_alias(p, n)` | The result is the value of `p` itself (`memcpy` returns `dst`). With `nullable` the call may return NULL instead; with `nonnull` it never substitutes NULL. The result owns nothing. See §C04.3.1. |
 | `resource_return_interior(p, n)` | The result points into the object `p` points to (`strchr`, `memchr`), or is NULL when `n` is `nullable`. The result owns nothing. See §C04.3.1. |
+| `resource_return_borrowed_from(p, n)` | The result is borrowed from the parent `p` designates (an interior pointer, a child it owns, or a child created in it), or NULL under `nullable`; it owns nothing and is ended by the parent's release or mutation. See §C04.3.4. |
 
 The analyzer MUST retain the result-dependent alternatives until control-flow facts resolve them. It MUST NOT treat a possible null realloc result as proof that the old resource was released. Reallocation semantics include identity replacement, not just a zero aggregate net count.
 
@@ -301,6 +302,57 @@ Card CG21-CALL-EXITS-AND-BOUNDARIES added `ensures normal resource_no_return();`
 **Placement.** The result MUST be `unit` with `resource_return_none()`, every parameter MUST be `resource_borrowed`, and no counted-user, container, loop-owner, thread-synchronization or lifecycle clause may stand beside it; anything else rejects the whole module. Independently of any clause, a declaration of one of the names the loader lists as undeclarable (`UNDECLARABLE_C_NAMES`: the Clang extension nodes spelled like calls, such as `__builtin_choose_expr` and `__builtin_offsetof`; the returns-twice calls, such as `setjmp`; the non-local exits above) is rejected: no v1 mode states their node or their exit, and an ordinary declaration would give the call the continuation of an ordinary call.
 
 **Semantics.** The flag is not carried on the custody record; consumers rederive it from the retained trusted texts (`no_return_callees`), so an inferred or proposed contract never carries it. A consumer that ignores it applies the declaration as an ordinary borrowing call whose continuation C does not have: an over-approximation of the paths, never the unsound direction. The C gateway reads it (gateway rule 11o) and lowers a call **statement** as a path end — its modes applied as preconditions, no successor, no exit state — only where the call's own Clang declaration is `noreturn`; a declaration the Clang declaration does not establish is refused at the call. Versioning is as for C04.3.1: an addition to vocabulary version 1, marker unchanged. The Lean model is `QCore.CallExits`.
+
+#### C04.3.4. Borrowed results
+
+Card SLOT-MOVE-AND-INTERIOR-BORROW (gateway rules 12y and 13a), on the user's decision recorded here verbatim from the card's brief (it also governs C04.15 and C04.16):
+
+> **USER DECISION 2026-10-05.**
+> - **Class 2, slot-move custody.** This is the custody counterpart of CG24's `bounds_frame_moves`.
+>   - After the call, the slot `T **s` still owns an object, possibly a new one.
+>   - Every alias of the old pointer is invalid (a use is refused, never Safe).
+>   - On failure the original stays owned by the slot.
+>   - It composes with rule 11r's dispositions where the success/failure split is by return code.
+>   - Members (W45 run sizes, functions decided alone): `sds_cat_safe` 4, `cfl_sds_cat_safe` 3, `format_metric` 3, `mk_header_prepare`, `rd_kafka_parse_Metadata0`, and two unit-test constructors (7 callees / 18).
+>   - Read each body at both revisions; some may not be pure slot moves.
+>   - Also: system `flb_config_task_map_grow` (a field reallocation). Include it only if the slot reading covers a field slot honestly; otherwise record it.
+> - **Class 8, interior borrow of parent.**
+>   - The result is borrowed from the parent: no release obligation for the caller.
+>   - It is valid only while the parent lives and is not mutated through another path (a parent release or an invalidating mutation ends it, and a later use is refused).
+>   - A write through it is a write to the parent.
+>   - A lazily created child (`get_or_create_*`, `rd_kafka_topic_partition_get_private`) is created inside and owned by the parent.
+>   - Relate it to the interim cfl_arena interior reading (memory `arena-pool-decision`; contract spec C04.3.1's derived-result rules) and do not contradict it.
+>   - Members: `rd_kafka_admin_result_ret_groups` 4, `_resources` 3, `_topics` 3, cJSON `get_object_item` 2, `get_or_create_external_metadata_kvlist` 2, `rd_kafka_topic_partition_get_private` 2 (6 / 16).
+> - **Also absorb `INTERIOR-OUT-SLOT-MODE`.** It is the same class-8 reading delivered through an out slot. A derived out-slot mode: the slot receives a pointer derived from parameter k, owning nothing, under C04.3.1's rules.
+>   - Members: `rd_slice_reader0` 2.
+>   - `cJSON_ParseWithLengthOpts` 2: its interior out slot plus its global holder, via rule 12t.
+>   - The previously refused libc `strtol`/`strtoll`/`strtoull`/`strtod` (W43-LIBC-CONTRACTS): declare them in quirin-provider-libc if the mode covers them.
+>   - Retire or amend that entry.
+
+```qcore
+extern fn child(parent: ptr<mut, u8>, key: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(parent);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_return_borrowed_from(parent, nullable);
+};
+```
+
+`resource_return_borrowed_from(p, n)` loads to the derived result of C04.3.1 at a third extent, `ResourceReturnMode::Derived { extent: Borrowed, … }`: the result is **borrowed from the parent** `p` designates — a pointer into it, a child object it owns (`get_object_item`, the admin result arrays), or a child the call creates and links into it (`rd_kafka_topic_partition_get_private`, a lazily created child). **Placement** is C04.3.1's, except that the result may also be `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>` (the parent's array of child pointers: `rd_kafka_admin_result_ret_groups` returns `const T **`); `const_dropped` is set when the base is `ptr<const, u8>` and the result's outer pointee is mutable.
+
+**Semantics.** C04.3.1's rules apply, strengthened and never relaxed:
+
+1. **No release obligation**, and no release: handing a borrowed result to any custody-bearing position is refused, never accused (it is never `invalid_release`, since the child may sit at its own allocation's start).
+2. **Valid only while the parent lives and is not mutated through another path.** A consumer MUST end a borrowed result at the parent's release and at every operation that may mutate the parent through anything but the borrow itself: the C gateway ends it at every call or store whose actuals or written places name the parent, an ancestor of it, or any other name outside the borrow's family (its aliases and the borrows taken from them), and at every call with an actual it does not read (rule 12y, premise P-BORROW-FRAME: a call reaches only what its actuals reach). A later use of an ended borrow is **refused**, never accused (`interior-borrow-ended`).
+3. **A write through it is a write to the parent.** A call or store through the borrow keeps the borrow, and ends every other borrow of the parent (its siblings).
+4. **A lazily created child is created inside and owned by the parent**: the caller owes nothing, may not release it, and the call creating it is itself a mutation of the parent (rule 12y ends the parent's other borrows at every borrowed-result call).
+5. **Nullness is the declaration's own** (C04.3.1 rule 4): `nonnull` makes the result non-null whatever the base's binding says.
+6. **Forwarding.** The derived-result inference of C04.3.2 publishes a `Borrowed` summary when any exit returns a borrowed result, never a plain interior one, so a wrapper's callers apply these rules too.
+
+**Relation to the arena reading.** The interim `cfl_arena_calloc` reading (`resource_return_interior(arena, nullable)`, W47-ARENA-INTERIOR-READING, the user's decision of 2026-09-28) is unchanged: an arena result stays an interior result of C04.3.1, invalidated by the arena's release, and the pool resource kind remains the target (`W47-ARENA-POOL-RESULT-MODE`). A borrowed result is the stricter reading of the same relation (it also ends at a mutation and is never accused); nothing here reads an arena result as borrowed.
+
+**Checked against bodies (rule 13a).** In a unit that defines the declared function, the declaration stands only when the body validates it structurally: the base formal is never assigned and its whole address never taken, and every `return` is NULL or a pointer reached from the base by member reads (through casts, parentheses and offsets), through locals every assignment of which is so reached, or a local assigned from a call whose result the body stores into a member of a reached name before returning it (the lazily created child). A body that does not validate withdraws the declaration in that unit (every call there sees an uncontracted callee, and an inferred summary of the body governs). The Lean model is `QCore.InteriorBorrow`.
 
 ### C04.4. Unsupported semantics and false declarations
 
@@ -634,7 +686,7 @@ contract {
 * **A holder reset or destroyed.** A tracked heap holder releases what it holds when it is released; a `resource_holder_reset(H)` call drops what `H` holds. A tracked holder that still holds at an exit (returned, stored or leaked) may outlive the frame: the exit refuses.
 * **The program-lifetime holder.** `global` keeps only static storage: any other `P` there is undecided.
 
-A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps; since card W43-ABI-ENUM-AND-CONST-PP the guarded form of C04.14.1), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot, and a callback the holder invokes over what it keeps (shape (c)).
+A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps; since card W43-ABI-ENUM-AND-CONST-PP the guarded form of C04.14.1), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot (since card SLOT-MOVE-AND-INTERIOR-BORROW, C04.16), and a callback the holder invokes over what it keeps (shape (c)).
 
 **Checked, never trusted.** A retaining declaration is pinned (C06.2) and evaluated against its pin like every declaration, and compared with the unit's C declaration (C04.1); no inference replaces it in a unit that defines its body. Its body is not yet checked against the retention (`RETAINED-BY-BODY-CHECK`): it is a declared assumption (constraint 4). The Lean model is `QCore.RetainedBy`.
 
@@ -656,6 +708,54 @@ ensures normal resource_retained_by(P, H) when X OP K;
 **Body check.** Where the analysed unit defines the callee's body, a guarded clause stands in that unit only when the body **validates** it: every mention of `P` outside a guard region is a null or equality test or a dereference (never under `&`), where a guard region is the braced then-block of `if (X OP K)` with exactly the guard's comparison, or a `case` arm of `switch (X)` that no other label falls into and whose constant satisfies the guard; `X` is never written and the body has no `goto`. A guard the body does not validate is removed in that unit, which is the cautious reading at every call there. The check establishes only that the body cannot keep `P` when the guard fails; the retention itself stays the declared assumption C04.14 describes. In another unit the guard is a declared assumption like every clause, pinned (C06.2) after review.
 
 **No corpus declaration carries a guard.** The decision's example, `rd_kafka_confval_set_type`, retains `valuep` on the holder's own stored type, not the argument (C04.1): it is declared with the cautious retention, and the in-unit check refuses a guard on that body shape. The Lean model is `QCore.RetentionGuard`.
+
+### C04.15. Slot moves
+
+Card SLOT-MOVE-AND-INTERIOR-BORROW (gateway rules 12x and 13a), on the user's decision recorded in C04.3.4: class 2, the custody counterpart of CG24's `bounds_frame_moves`.
+
+```qcore
+extern fn cat(slot: ptr<mut, ptr<mut, u8>>, text: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slot);
+    ensures normal resource_borrowed(text);
+    ensures normal resource_slot_moved(slot, nullable);
+    ensures normal resource_return_none();
+};
+```
+
+`resource_slot_moved(s, n)` declares that the object `*s` designates may be moved (reallocated) by the call: **after the call the slot still owns exactly one object, possibly a new one; every alias of the old pointer is invalid; on failure the original stays owned by the slot.** `n` is the nullability of `*s` at entry: under `nullable` a NULL `*s` moves nothing. Total-or-reject (G05): `s` is a `ptr<mut, ptr<mut, u8>>` parameter, `resource_borrowed`, with no kind, named by one slot clause; the clause stands where a retention may (C04.14). The declaration is **withheld from the function map** with the retaining declarations, so a consumer that knows nothing of it sees an uncontracted callee: a moved slot is never read as borrowed.
+
+**What the C gateway decides (rule 12x).** At a call, the slot actual is `&L`, a formal slot the calling body names only as whole actuals at slot-moving positions (the caller of this function owns what it designates: passed through, nothing moves here), or anything else (refused, `slot-move-undecided`). For `&L`, `L`'s binding decides: exactly one live identity this body tracks, held by no structure other than names (no field link, container, holder, collection, pending replacement or nullable marker) — the move: `L` keeps the identity and its one obligation, and **every other name bound to it is invalidated**: its binding is dropped and a later read of it is refused (`slot-move-alias`), never accused, since the object may not have moved; a definitely-NULL `L` under `nullable`: nothing; anything else: refused. Because the slot keeps the identity, the failure arm needs no rule of its own: the original is still owed by the slot, and the caller's single release discharges whichever object the slot holds.
+
+**Composition with return-code dispositions.** The decision states that a slot move composes with rule 11r where the success/failure split is by return code (the success class moves, the failure class leaves the slot and its aliases as they were). No measured member has such a split (every declared slot mover returns `void`); a `resource_slot_moved` inside `resource_on_return` is therefore not admitted yet (an unsupported predicate, the refusing direction; `SLOT-MOVE-RETURN-CODE-SPLIT`).
+
+**Not covered.** A field reallocated through a borrowed parameter (`flb_config_task_map_grow` reallocates `config->task_map`) is not a slot parameter: aliases of the old field value cannot be enumerated from the caller, so it is not declared (`SLOT-MOVE-FIELD-SLOT`). A body that forwards its slot to undeclared helpers (`format_metric`) gets no inferred slot-move summary (`SLOT-MOVE-SUMMARY-INFERENCE`).
+
+**Checked against bodies (rule 13a).** In a unit that defines the declared function, the declaration stands only when every mention of the slot formal is a whole actual at a slot-moving position of a declared callee (the body moves exactly what its callees move); otherwise it is withdrawn in that unit. A body that stores through the slot itself (`cfl_sds_cat_safe`) is not read by the check, so there the declaration is withdrawn, and elsewhere it is a declared assumption (constraint 4). The Lean model is `QCore.SlotMove`.
+
+### C04.16. Derived out slots
+
+Card SLOT-MOVE-AND-INTERIOR-BORROW (gateway rules 12z and 13a), on the user's decision recorded in C04.3.4 (absorbing `INTERIOR-OUT-SLOT-MODE`).
+
+```qcore
+extern fn strtol(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>, base: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+```
+
+`resource_out_derived(s, p, n)` declares that the call may write through the slot `s` a pointer derived from parameter `p`, owning nothing, under C04.3.1's rules, or leave the slot as it was; `n` is the nullability of `s` itself. Total-or-reject (G05): `s` is `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>`, `p` a distinct depth-one pointer, both `resource_borrowed` with no kind; `const_dropped` is recorded when `p` is `ptr<const, u8>` and `s` `ptr<mut, ptr<mut, u8>>`. The declaration is withheld from the function map with the retaining declarations; it may stand beside a retention (`cJSON_ParseWithLengthOpts` both retains `value` in `global` and writes into it through `return_parse_end`).
+
+**What the C gateway decides (rule 12z).** `&L` with `L` holding no tracked identity: `L` becomes a pointer derived from `p`'s binding, possibly NULL. Because the slot may still hold its old (untracked) value, the binding is read at the `Borrowed` extent of C04.3.4 without a borrow record: it owns nothing (a release of it is refused), the release of `p`'s object ends it (a later use is refused rather than accused), and no mutation ends it. `&L` with `L` holding a tracked identity is refused (the write could lose it, `out-derived-undecided`); a NULL slot under `nullable` and a caller's slot passed through change nothing here; anything else is refused.
+
+**Checked against bodies (rule 13a).** In a unit that defines the declared function, every mention of the slot formal is `*s = EXPR;` with `EXPR` reached from `p` (C04.3.4's reading), or a whole actual at a derived-out position; otherwise the declaration is withdrawn in that unit. The Lean model is `QCore.DerivedOutSlot`.
 
 ## C05. Manifests and immutable assumptions
 

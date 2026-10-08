@@ -2165,8 +2165,8 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             {
                 return Err("a derived result requires a depth-one pointer base and result".into());
             }
-            *const_dropped =
-                parameter_types[parameter] == "ptr<const, u8>" && return_type.starts_with("ptr<mut,");
+            *const_dropped = parameter_types[parameter] == "ptr<const, u8>"
+                && return_type.starts_with("ptr<mut,");
         }
         for (i, mode) in parameters.iter().enumerate() {
             let ty = token_kinds(&decl.parameters[i].type_source)?;
@@ -2299,8 +2299,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             &names,
         )?;
         if let Some(retention) = declared.retentions.iter().find(|retention| {
-            slot_moves.iter().any(|moved| moved.slot == retention.retained)
-                || derived_outs.iter().any(|out| out.slot == retention.retained)
+            slot_moves
+                .iter()
+                .any(|moved| moved.slot == retention.retained)
+                || derived_outs
+                    .iter()
+                    .any(|out| out.slot == retention.retained)
         }) {
             return Err(format!(
                 "a slot is not also a retained pointer (parameter {})",

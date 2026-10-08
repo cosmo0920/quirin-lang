@@ -1,0 +1,884 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/smib-a2/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "population": 38,
+ "alone_total": 27,
+ "ranking": [
+  {
+   "callee": "file_pending_flush",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 2,
+   "freed": [
+    "plugins/in_tail/tail_dockermode.c::flb_tail_dmode_pending_flush_all",
+    "plugins/in_tail/tail_multiline.c::flb_tail_mult_pending_flush_all"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_dockermode.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "plugins/in_tail/tail_multiline.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_hash_table_del",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 4,
+   "freed": [
+    "plugins/in_tail/tail_scan.c::flb_tail_scan_unregister_aged_out_inode",
+    "plugins/in_tail/tail_scan.c::flb_tail_scan_unregister_ignored_file_size"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "do_start",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 5,
+   "freed": [
+    "src/flb_lib.c::flb_start_trace"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 8,
+      "call to uncontracted function `_`": 4,
+      "call to `_` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 2,
+      "unmodeled increment or decrement expression": 1
+     }
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 8,
+      "call to uncontracted function `_`": 4,
+      "call to `_` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 2,
+      "unmodeled increment or decrement expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_pause",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 6,
+   "freed": [
+    "src/flb_input.c::flb_input_pause_all"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 1,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "nested call `_` inside a modeled call is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 1,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "nested call `_` inside a modeled call is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "XXH_INLINE_XXH3_64bits",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 7,
+   "freed": [
+    "plugins/in_tail/tail_file.c::stat_to_hash_bits"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "compute_offset_marker",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 8,
+   "freed": [
+    "plugins/in_tail/tail_file.c::flb_tail_file_offset_marker_matches"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_file.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_callback_set",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 9,
+   "freed": [
+    "src/flb_lib.c::flb_output_set_callback"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_config_map_create",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 10,
+   "freed": [
+    "src/flb_input.c::flb_input_get_global_config_map"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_config_prop_get",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 11,
+   "freed": [
+    "src/flb_input.c::flb_input_get_property"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_filter_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 12,
+   "freed": [
+    "src/flb_lib.c::flb_filter"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_filter_set_property",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 13,
+   "freed": [
+    "src/flb_lib.c::flb_filter_set"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_hash_table_get_ptr",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 14,
+   "freed": [
+    "plugins/in_tail/tail_scan.c::flb_tail_scan_fetch_ignored_file_size"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_input_collector_start",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 15,
+   "freed": [
+    "src/flb_input_thread.c::flb_input_thread_collectors_start"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_coro_finished",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 16,
+   "freed": [
+    "src/flb_input_thread.c::handle_input_thread_event"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_set_property",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 17,
+   "freed": [
+    "src/flb_lib.c::flb_input_set"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 54,
+      "unmodeled call, aggregate or indirect access in branch condition": 41,
+      "indirect memory access is outside the resource projection": 28,
+      "call to uncontracted function `_`": 17
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 54,
+      "unmodeled call, aggregate or indirect access in branch condition": 41,
+      "indirect memory access is outside the resource projection": 28,
+      "call to uncontracted function `_`": 17
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_output_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 18,
+   "freed": [
+    "src/flb_lib.c::flb_output"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_output_set_property",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 19,
+   "freed": [
+    "src/flb_lib.c::flb_output_set"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_output_set_test_with_ctx_callback",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [
+    "src/flb_lib.c::flb_output_set_test"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 5,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 5,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_sqldb_close",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 21,
+   "freed": [
+    "plugins/in_tail/tail_db.c::flb_tail_db_close"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_sqldb_lock",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 22,
+   "freed": [
+    "plugins/in_tail/tail_db.c::tail_db_lock"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_sqldb_unlock",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 23,
+   "freed": [
+    "plugins/in_tail/tail_db.c::tail_db_unlock"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_tail_file_remove",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 24,
+   "freed": [
+    "plugins/in_tail/tail_file.c::flb_tail_file_remove_all"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_file.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 12,
+      "indirect memory access is outside the resource projection": 10,
+      "unresolved resource identity `_`": 5,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_tail_mult_flush",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 25,
+   "freed": [
+    "plugins/in_tail/tail_multiline.c::file_pending_flush"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_multiline.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 6,
+      "unresolved resource identity `_`": 1,
+      "indirect memory access is outside the resource projection": 1,
+      "unmodeled call, aggregate or indirect access in branch condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "input_collector_fd",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 26,
+   "freed": [
+    "src/flb_input_thread.c::engine_handle_event"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input_thread.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 3,
+      "indirect memory access is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 3,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "tail_fs_add",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 27,
+   "freed": [
+    "plugins/in_tail/tail_fs_inotify.c::flb_tail_fs_add_rotated"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_fs_inotify.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 5,
+      "unmodeled call, aggregate or indirect access in branch condition": 4,
+      "indirect memory access is outside the resource projection": 3,
+      "call to uncontracted function `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cmt_initialize",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 27,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "dormant_destroy",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 27,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_file.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 4,
+      "indirect memory access is outside the resource projection": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unlink by `_` of `_`, which this function has not published": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "dormant_retire",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 28,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_file.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_config_map_properties_check",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 28,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_context_set",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 29,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_coro_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 29,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_downstream_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 29,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_input_coro_destroy",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 29,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unlink by `_` of `_`, which this function has not published": 1,
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unlink by `_` of `_`, which this function has not published": 1,
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_get_instance",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 30,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_log_append",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 30,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_input_resume",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 31,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "nested call `_` inside a modeled call is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "src/flb_input.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "nested call `_` inside a modeled call is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_kv_item_create",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 31,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_kv_item_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 31,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_log_event_encoder_reset",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 32,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_output_prepare",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 32,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_tail_db_file_offset",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 32,
+   "freed": [],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_db.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 15,
+      "indirect memory access is outside the resource projection": 3,
+      "unresolved resource identity `_`": 2,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_tail_file_update_offset_marker",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 33,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_file.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 4,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_time_get",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 33,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_time_to_double",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 34,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_tls_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 34,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_upstream_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 35,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "mk_list_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 36,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_str",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 36,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_str_body",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 37,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "reconcile_file_state",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 37,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "plugins/in_tail/tail_fs_inotify.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 8,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "indirect memory access is outside the resource projection": 2,
+      "unresolved resource identity `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "tail_signal_pending",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 38,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  }
+ ]
+}

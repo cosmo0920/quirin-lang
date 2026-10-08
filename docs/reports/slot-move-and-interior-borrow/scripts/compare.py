@@ -20,16 +20,15 @@ import re
 import sys
 
 DECLARED = [
-    # W43-ABI-ENUM-AND-CONST-PP: enum shape (rule 12u)
-    "LZ4_decompress_generic", "rd_kafka_error_new_v", "rd_kafka_error_new",
-    "rd_kafka_err_action", "rd_kafka_oauthbearer_set_token_failure",
-    "rd_kafka_toppars_pause_resume", "rd_kafka_AclBinding_new0",
-    "rd_kafka_ConsumerGroupDescription_new", "rd_kafka_admin_add_config0",
-    "getrlimit", "setrlimit",
-    # const-pp shape (rule 12v)
-    "rd_flags2str", "rd_kafka_anyconf_dump",
-    # class-1 retainers (rule 12t, cautious)
-    "rd_kafka_confval_set_type", "rd_kafka_interceptor_method_add",
+    # SLOT-MOVE-AND-INTERIOR-BORROW: class 2 slot moves (rule 12x)
+    "cfl_sds_cat_safe", "sds_cat_safe",
+    # class 8 borrowed results (rule 12y)
+    "rd_kafka_admin_result_ret_topics", "rd_kafka_admin_result_ret_resources",
+    "rd_kafka_admin_result_ret_groups", "get_object_item",
+    "rd_kafka_topic_partition_get_private",
+    # derived out slots (rule 12z)
+    "rd_slice_reader0", "cJSON_ParseWithLengthOpts",
+    "strtol", "strtoll", "strtoul", "strtoull", "strtod",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

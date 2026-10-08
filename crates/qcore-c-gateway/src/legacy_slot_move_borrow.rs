@@ -194,7 +194,10 @@ fn only_slot_mentions(
 }
 
 fn moves_at(declaration: &RetainingContract, index: usize) -> bool {
-    declaration.slot_moves.iter().any(|moved| moved.slot == index)
+    declaration
+        .slot_moves
+        .iter()
+        .any(|moved| moved.slot == index)
 }
 
 fn outs_at(declaration: &RetainingContract, index: usize) -> bool {
@@ -228,9 +231,8 @@ impl Parser<'_> {
         let slot = |index: usize,
                     wanted: &dyn Fn(&RetainingContract, usize) -> bool|
          -> Result<(SlotActual, String), String> {
-            let spelled = actual(index).ok_or_else(|| {
-                undecided_description(function, "?", "the actual is not read")
-            })?;
+            let spelled = actual(index)
+                .ok_or_else(|| undecided_description(function, "?", "the actual is not read"))?;
             let words = spelled.iter().map(String::as_str).collect::<Vec<_>>();
             let text = words.join(" ");
             let words = strip(&words);
@@ -323,7 +325,10 @@ fn held_elsewhere(state: &AbstractState, site: usize) -> bool {
             .conditional_replacements
             .iter()
             .any(|(new, old)| *new == site || old.contains(&site))
-        || state.status_witnesses.values().any(|(held, _)| *held == site)
+        || state
+            .status_witnesses
+            .values()
+            .any(|(held, _)| *held == site)
         || state.nullable_sites.contains(&site)
 }
 
@@ -640,11 +645,7 @@ fn mutation(instruction: &LegacyInstruction) -> Mutation {
 
 /// Whether `name` is in the family of the borrow `record`: a borrow of the
 /// same take, or one taken (transitively) from such a borrow.
-fn in_family(
-    borrows: &BTreeMap<String, BTreeSet<Borrow>>,
-    record: &Borrow,
-    name: &str,
-) -> bool {
+fn in_family(borrows: &BTreeMap<String, BTreeSet<Borrow>>, record: &Borrow, name: &str) -> bool {
     let mut frontier = vec![name.to_owned()];
     let mut seen = BTreeSet::new();
     while let Some(current) = frontier.pop() {
@@ -672,7 +673,9 @@ fn in_family(
 fn end(state: &mut AbstractState, name: &str) {
     state.borrows.remove(name);
     state.pointers.remove(name);
-    state.invalidated.insert(name.to_owned(), Invalid::BorrowEnded);
+    state
+        .invalidated
+        .insert(name.to_owned(), Invalid::BorrowEnded);
 }
 
 /// Hook 3a: before `node`'s transfer, a read of an invalidated name refuses,
@@ -877,9 +880,7 @@ fn expression_end(words: &[&str], start: usize) -> usize {
 /// an identifier.
 fn is_type_group(words: &[&str]) -> bool {
     words.first().is_some_and(|word| is_identifier(word))
-        && words
-            .iter()
-            .all(|word| *word == "*" || is_identifier(word))
+        && words.iter().all(|word| *word == "*" || is_identifier(word))
 }
 
 /// Whether the expression `words` is NULL or a pointer reached from a name in
@@ -1102,9 +1103,10 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
             .slot_moves
             .iter()
             .all(|moved| slot_validated(&body, named(moved.slot), contracts))
-            && declaration.derived_outs.iter().all(|out| {
-                out_validated(&body, named(out.slot), named(out.base), contracts)
-            });
+            && declaration
+                .derived_outs
+                .iter()
+                .all(|out| out_validated(&body, named(out.slot), named(out.base), contracts));
         if !valid {
             withdrawn.push(name.clone());
         }

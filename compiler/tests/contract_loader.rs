@@ -894,6 +894,28 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             },
         ),
     );
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: the borrowed results (class 8)
+    // had no previous reading; each is the borrowed base and the result.
+    for (name, parameter, nullable, const_dropped) in [
+        ("rd_kafka_admin_result_ret_topics", 0, true, true),
+        ("rd_kafka_admin_result_ret_resources", 0, true, true),
+        ("rd_kafka_admin_result_ret_groups", 0, true, true),
+        ("rd_kafka_topic_partition_get_private", 0, false, false),
+        ("get_object_item", 0, true, true),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                [],
+                R::Derived {
+                    parameter,
+                    extent: DerivedExtent::Borrowed,
+                    nullable,
+                    const_dropped,
+                },
+            ),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1686,9 +1708,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `LZ4_decompress_generic` appended to `librdkafka/lz4_stream.qv`, and the
     // flexible libc `getrlimit`/`setrlimit` appended to `libc/process.qv`, all
     // pinned (the libc pair flexible). Rejected unchanged.
+    // 319 -> 333 by card SLOT-MOVE-AND-INTERIOR-BORROW: fourteen declarations
+    // appended to already-selected modules: the slot moves
+    // `cfl/sds_lifetime.qv`'s `cfl_sds_cat_safe` and
+    // `ctraces/context_lifetime.qv`'s `sds_cat_safe`, the borrowed results
+    // `librdkafka/cjson.qv`'s `get_object_item` and `librdkafka/client.qv`'s
+    // three `rd_kafka_admin_result_ret_*` and
+    // `rd_kafka_topic_partition_get_private`, the derived out slots
+    // `librdkafka/client.qv`'s `rd_slice_reader0`, `librdkafka/cjson.qv`'s
+    // `cJSON_ParseWithLengthOpts` (beside a `global` retention) and the
+    // flexible libc `strtol`/`strtoll`/`strtoul`/`strtoull`/`strtod` in
+    // `libc/stdlib.qv`; the rest pinned. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 319, 218)
+        (61, 333, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

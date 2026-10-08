@@ -1584,17 +1584,15 @@ impl Parser<'_> {
                             DerivedBase::Unmodeled
                                 if extent == qcore_schemas::contract::DerivedExtent::Borrowed =>
                             {
-                                cast_place(argument).map_or(
-                                    DerivedBase::Unmodeled,
-                                    |place| DerivedBase::Place {
+                                cast_place(argument).map_or(DerivedBase::Unmodeled, |place| {
+                                    DerivedBase::Place {
                                         place,
                                         offset: false,
-                                    },
-                                )
+                                    }
+                                })
                             }
                             base => base,
-                        })
-                    {
+                        }) {
                         Some(DerivedBase::Place { place, offset }) => {
                             arguments[parameter] = Some(place);
                             offset_base = offset;

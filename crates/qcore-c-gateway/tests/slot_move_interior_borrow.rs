@@ -141,7 +141,10 @@ fn the_slot_keeps_exactly_one_object_across_a_move() {
     );
     assert!(row.safe(), "{row:?}");
     // The failure arm: the original stays in the slot, so it is still owed.
-    let row = one("void f(void) { char *b = sm_alloc(8); sm_cat(&b, \"x\"); }", "f");
+    let row = one(
+        "void f(void) { char *b = sm_alloc(8); sm_cat(&b, \"x\"); }",
+        "f",
+    );
     assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
 }
 
@@ -171,7 +174,10 @@ fn a_caller_slot_passed_through_is_safe_and_anything_else_is_undecided() {
     if !clang_available() {
         return;
     }
-    let row = one("void g(char **buf) { sm_cat(buf, \"x\"); sm_cat(buf, \"y\"); }", "g");
+    let row = one(
+        "void g(char **buf) { sm_cat(buf, \"x\"); sm_cat(buf, \"y\"); }",
+        "g",
+    );
     assert!(row.safe(), "{row:?}");
     // The body reads the slot's object: it holds an alias the move invalidates.
     let row = one(
@@ -181,7 +187,10 @@ fn a_caller_slot_passed_through_is_safe_and_anything_else_is_undecided() {
     assert!(!row.safe(), "{row:?}");
     // A slot holding no tracked identity: undecided.
     let row = one("void g(char *s) { sm_cat(&s, \"x\"); }", "g");
-    assert!(row.refused() && row.mentions("slot-move-undecided"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("slot-move-undecided"),
+        "{row:?}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +206,10 @@ fn an_interior_use_after_the_parent_release_is_refused() {
         "void f(void) { char *p = sm_alloc(8); char *c = sm_private(p); sm_free(p); sm_len(c); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("interior-borrow-ended"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("interior-borrow-ended"),
+        "{row:?}"
+    );
 }
 
 #[test]
@@ -209,7 +221,10 @@ fn an_interior_use_after_an_invalidating_mutation_is_refused() {
         "void f(void *p) { char *c = sm_private(p); sm_touch(p); sm_len(c); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("interior-borrow-ended"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("interior-borrow-ended"),
+        "{row:?}"
+    );
     // A write through one borrow ends its sibling.
     let row = one(
         "void f(void *p) { char *a = sm_private(p); char *b = sm_child(p, \"k\"); \
@@ -224,7 +239,10 @@ fn a_release_of_an_interior_pointer_is_refused() {
     if !clang_available() {
         return;
     }
-    let row = one("void f(void *p) { char *c = sm_private(p); sm_free(c); }", "f");
+    let row = one(
+        "void f(void *p) { char *c = sm_private(p); sm_free(c); }",
+        "f",
+    );
     assert!(row.refused(), "{row:?}");
     assert!(!row.mentions("InvalidRelease"), "{row:?}");
     let row = one(
@@ -284,14 +302,20 @@ fn a_derived_out_slot_owns_nothing() {
     );
     assert!(row.safe(), "{row:?}");
     // Its value released: refused.
-    let row = one("void f(void *slice) { char *q; sm_reader(slice, &q); sm_free(q); }", "f");
+    let row = one(
+        "void f(void *slice) { char *q; sm_reader(slice, &q); sm_free(q); }",
+        "f",
+    );
     assert!(row.refused(), "{row:?}");
     // The slot would overwrite a tracked identity: refused.
     let row = one(
         "void f(void *slice) { char *q = sm_alloc(1); sm_reader(slice, &q); sm_free(q); }",
         "f",
     );
-    assert!(row.refused() && row.mentions("out-derived-undecided"), "{row:?}");
+    assert!(
+        row.refused() && row.mentions("out-derived-undecided"),
+        "{row:?}"
+    );
     // A caller's slot passed through, and a NULL slot under `nullable`.
     let rows = rows(
         "size_t r(void *slice, char **p) { return sm_reader(slice, p); }\n\
@@ -324,7 +348,11 @@ fn a_declaration_its_own_body_does_not_validate_is_withdrawn_in_that_unit() {
         rows["caller"]
     );
     let rows = rows_of_borrowed_bodies();
-    assert!(rows.0.safe(), "a child reached from the parent: {:?}", rows.0);
+    assert!(
+        rows.0.safe(),
+        "a child reached from the parent: {:?}",
+        rows.0
+    );
     // The withdrawn declaration no longer governs: the body's own summary
     // (a fresh owned object) does, and the caller that drops it leaks.
     assert!(
