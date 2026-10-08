@@ -1448,7 +1448,9 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.variadic_borrowed_tail != parent_loaded.variadic_borrowed_tail
             || child_loaded.no_return != parent_loaded.no_return
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
-            || child_loaded.premises != parent_loaded.premises
+            // A literal-argument premise is compared above by parameter
+            // index; its rendering names the child's own parameter.
+            || declared_premises_of(&child_loaded) != declared_premises_of(&parent_loaded)
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
             || child_loaded.lifecycle != parent_loaded.lifecycle
@@ -1466,6 +1468,16 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// Card VERDICT-CONTRACT-DEPENDENCIES: a declaration's named premises
+/// (C04.18), without the literal-argument premises rendered beside them.
+fn declared_premises_of(loaded: &LoadedDeclaration) -> Vec<&DeclaredPremise> {
+    loaded
+        .premises
+        .iter()
+        .filter(|premise| premise.origin == PremiseOrigin::Declared)
+        .collect()
 }
 
 fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {

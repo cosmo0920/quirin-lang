@@ -200,6 +200,15 @@ pub fn compose(
         );
     }
     println!("{}", crate::contract_revision::tally(&revision));
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h): the same fold the whole
+    // run makes, one unit at a time, under the premises the run recorded;
+    // tallied where the whole run tallies it, after the revision section.
+    let dependencies = crate::contract_dependencies::render(
+        &dependency_facts(&mut members)?,
+        &revision,
+        &assumptions[crate::contract_dependencies::PREMISES_KEY],
+    );
+    println!("{}", crate::contract_dependencies::tally(&dependencies));
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the section the whole run's
     // `finish` writes, built from the same rows one unit at a time under the
     // table the run recorded before its units.
@@ -207,14 +216,6 @@ pub fn compose(
     let refuted_rows = refuted_rows(&mut members)?;
     let refuted = refuted_rows.section(&applied);
     println!("{}", crate::refuted_contracts::tally(&refuted));
-    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h): the same fold the whole
-    // run makes, one unit at a time, under the premises the run recorded.
-    let dependencies = crate::contract_dependencies::render(
-        &dependency_facts(&mut members)?,
-        &revision,
-        &assumptions[crate::contract_dependencies::PREMISES_KEY],
-    );
-    println!("{}", crate::contract_dependencies::tally(&dependencies));
     if let Some(report) = outputs.report {
         if let Some(parent) = report.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
