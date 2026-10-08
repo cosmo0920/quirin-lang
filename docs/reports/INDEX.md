@@ -815,6 +815,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
 
+| [slot-move-and-interior-borrow](slot-move-and-interior-borrow/README.md) | SLOT-MOVE-AND-INTERIOR-BORROW: slot moves, borrowed results, derived out slots |
+
 | [socket-event-compose](socket-event-compose/README.md) | SOCKET-EVENT-COMPOSE — a checked socket as a reactor-registered event source |
 
 | [socket-inet-addresses](socket-inet-addresses/README.md) | SOCKET-INET-ADDRESSES — declared IPv4 and IPv6 addresses with ports |

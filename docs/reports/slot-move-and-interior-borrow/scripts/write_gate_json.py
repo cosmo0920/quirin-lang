@@ -32,15 +32,15 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"W43-ABI-ENUM-AND-CONST-PP card gate on base 4f55fa4c4, every code step at {head[:9]}, scripts "
+        f"SLOT-MOVE-AND-INTERIOR-BORROW card gate on base 6cbcc4e9c, every code step at {head[:9]}, scripts "
         "docs/reports/slot-move-and-interior-borrow/scripts/gate.sh (each step under the shared flock), "
         f"provider-gate.sh and finish-gate.sh, logs private/smib/gate-{name} and "
         f"private/smib/provider-gate-{name} of this worktree. gate-{name}: cargo check --workspace "
         "--all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/smib/tests-gate-{name}); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (291 + "
-        "AuditAbiEnumConstPointer + AuditRetentionGuard); python tests 08 exit 0 "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (293 + "
+        "AuditSlotMove + AuditInteriorBorrow + AuditDerivedOutSlot); python tests 08 exit 0 "
         f"({python.group(1) if python else '?'} OK) on the committed matrix; docs index check 0; then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
         f"Provider gate (provider-gate-{name}): cargo check --locked 0, cargo test {provider_tests} passed "
