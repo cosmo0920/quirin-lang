@@ -1,0 +1,32 @@
+functions with a reference leaf 105; unheld drops 141; unbalanced 11
+  declared-withdrawn                             62
+  origin-undeclared:call                         35
+  origin-undeclared:other                        26
+  not-a-name                                     14
+  origin-undeclared:formal                        4
+  withdrawer                                                    fam sole  dec safe
+  indirect memory access is outside the resource projection@rd   13    0    0    0
+  unresolved resource identity@ut_create_mock_toppar              9    0    0    0
+  unresolved resource identity@unlikely                           5    3    3    0
+  indirect memory access is outside the resource projection@rd    4    0    0    0
+  call to@rd_kafka_q_new                                          3    0    0    0
+  uncontracted:rd_kafka_toppar_op_seek                            3    0    0    0
+  loop re-acquisition: an earlier generation that may be live     2    0    0    0
+  uncontracted:rd_kafka_ListOffsetsRequest                        2    0    0    0
+  uncontracted:rd_kafka_consumer_close_q                          2    1    0    0
+  uncontracted:rd_kafka_share_fetch_reply_handle_partition_err    2    0    0    0
+  unmodeled call, aggregate or indirect access in branch condi    2    2    0    0
+  unresolved resource identity@rd_kafka_toppar_get2               2    0    0    0
+  uncontracted:rd_kafka_consume_stop0                             1    1    1    0
+  uncontracted:rd_kafka_offset_store0                             1    1    1    0
+  uncontracted:rd_kafka_replyq_make                               1    1    1    0
+  uncontracted:rd_kafka_toppar_broker                             1    1    1    0
+  braced initializer, expression, or declaration is not modele    1    1    0    0
+  indirect memory access is outside the resource projection@rd    1    0    0    0
+  loop re-acquisition: an earlier generation that may be live     1    0    0    0
+  uncontracted:rd_kafka_broker_purge_queues                       1    1    0    0
+  uncontracted:rd_kafka_op_set_replyq                             1    0    0    0
+  uncontracted:rd_kafka_toppar_op_pause_resume                    1    1    0    0
+  uncontracted:rd_kafka_toppar_pid_change                         1    0    0    0
+  unresolved resource identity@-                                  1    0    0    0
+  unresolved resource identity@rd_kafka_toppar_get_avail          1    0    0    0

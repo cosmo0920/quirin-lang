@@ -1,0 +1,37 @@
+{
+ "reference-drop-unheld:address": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0
+ },
+ "reference-drop-unheld:member": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 1
+ },
+ "reference-drop-unheld:name": {
+  "leaves": 127,
+  "functions": 89,
+  "alone": 1
+ },
+ "reference-drop-unheld:unread": {
+  "leaves": 10,
+  "functions": 10,
+  "alone": 0
+ },
+ "reference-dropped": {
+  "leaves": 18,
+  "functions": 4,
+  "alone": 0
+ },
+ "reference-unbalanced": {
+  "leaves": 11,
+  "functions": 10,
+  "alone": 0
+ },
+ "reference-undecided:name": {
+  "leaves": 8,
+  "functions": 8,
+  "alone": 0
+ }
+}

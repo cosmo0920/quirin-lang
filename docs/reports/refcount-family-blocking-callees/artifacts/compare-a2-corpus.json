@@ -1,0 +1,426 @@
+{
+ "statuses_before": {
+  "Unknown": 3945,
+  "Safe": 880,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3944,
+  "Safe": 881,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 1
+ },
+ "status_moves_by_label": {
+  "callee:rd_kafka_q_purge0": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 24,
+  "unresolved resource identity `_`": 3,
+  "use of `_` after a possibly-final drop of its reference (reference-dropped)": 2
+ },
+ "added": {
+  "unresolved resource identity `_`": 6
+ },
+ "moving_rows": 21,
+ "status_moves": [
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_and_disable_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20797: call to uncontracted function `rd_kafka_q_purge0`",
+    "20799: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "23480: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "23857: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "21843: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "21843: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "24711: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "23537: call to uncontracted function `rd_kafka_q_wait_result`",
+    "23537: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "23537: use of `rktp` after a possibly-final drop of its reference (reference-dropped)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22295: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22295: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20173: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "20173: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "23465: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "23465: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminated",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22572: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22572: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_try_terminate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22605: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22605: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_preferred_replica_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20292: call to uncontracted function `rd_kafka_toppar_fetch_backoff`",
+    "20314: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20679: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20400: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_fetch_decide",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "22296: call to uncontracted function `rd_kafka_toppar_fetch_backoff`",
+    "22302: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "20359: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_and_disable_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20797: call to uncontracted function `rd_kafka_q_purge0`",
+    "20799: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20766: unresolved resource identity `rkq`",
+    "20788: call to uncontracted function `rd_kafka_q_purge0`",
+    "20793: unresolved resource identity `rkq`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppars_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "21495: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "19699: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "19788: call to uncontracted function `rd_kafka_q_purge0`",
+    "19790: unresolved resource identity `cnt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_scan_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_needs_query"
+   ],
+   "lost": [
+    "20816: call to uncontracted function `rd_kafka_toppar_needs_query`"
+   ],
+   "gained": []
+  }
+ ]
+}

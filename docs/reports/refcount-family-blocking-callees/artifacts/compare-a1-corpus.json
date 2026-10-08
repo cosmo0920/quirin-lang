@@ -1,0 +1,1249 @@
+{
+ "statuses_before": {
+  "Unknown": 3945,
+  "Safe": 880,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3934,
+  "Safe": 881,
+  "Unsafe": 19
+ },
+ "transitions": {
+  "Unknown -> Unsafe": 10,
+  "Unknown -> Safe": 1
+ },
+ "status_moves_by_label": {
+  "callee:rd_kafka_q_pop": 10,
+  "callee:rd_kafka_q_purge0": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 62,
+  "unresolved resource identity `_`": 24,
+  "unmodeled call, aggregate or indirect access in loop condition": 4,
+  "use of `_` after a possibly-final drop of its reference (reference-dropped)": 2
+ },
+ "added": {
+  "loop re-acquisition: an earlier generation that may be live is still held": 28,
+  "unresolved resource identity `_`": 7,
+  "live obligation acquired at rdunittest_msgset_errors.c:1368": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:1401": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:1440": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:475": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:585": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:793": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:684": 4,
+  "live obligation acquired at rdunittest_msgset_errors.c:905": 3,
+  "live obligation acquired at rdunittest_msgset_errors.c:930": 3,
+  "live obligation acquired at rdunittest_msgset_errors.c:1023": 3,
+  "live obligation acquired at rdunittest_msgset_errors.c:1048": 3,
+  "live obligation acquired at rdunittest_msgset_errors.c:1388": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1422": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1460": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1230": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1241": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1252": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1145": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:919": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1037": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:1062": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:780": 2,
+  "live obligation acquired at rdunittest_msgset_errors.c:812": 2,
+  "live obligation acquired at rdkafka_metadata.c:155": 1,
+  "nullable resource `_` used by a non-null contract": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:1476": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:1263": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:1158": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:497": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:607": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:944": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:1073": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:825": 1,
+  "live obligation acquired at rdunittest_msgset_errors.c:707": 1
+ },
+ "moving_rows": 39,
+ "status_moves": [
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20253: call to uncontracted function `rd_kafka_q_pop`",
+    "20257: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "20225: live obligation acquired at rdkafka_metadata.c:155",
+    "20253: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_and_disable_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20797: call to uncontracted function `rd_kafka_q_purge0`",
+    "20799: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20386: call to uncontracted function `rd_kafka_q_pop`",
+    "20388: unresolved resource identity `rko`",
+    "20396: call to uncontracted function `rd_kafka_q_pop`",
+    "20398: unresolved resource identity `rko`",
+    "20404: call to uncontracted function `rd_kafka_q_pop`",
+    "20406: unresolved resource identity `rko`",
+    "20414: call to uncontracted function `rd_kafka_q_pop`",
+    "20416: unresolved resource identity `rko`",
+    "20422: call to uncontracted function `rd_kafka_q_pop`",
+    "20424: unresolved resource identity `rko`",
+    "20432: call to uncontracted function `rd_kafka_q_pop`",
+    "20434: unresolved resource identity `rko`",
+    "20439: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20386: loop re-acquisition: an earlier generation that may be live is still held",
+    "20388: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20389: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20390: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20391: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20396: loop re-acquisition: an earlier generation that may be live is still held",
+    "20398: live obligation acquired at rdunittest_msgset_errors.c:1388",
+    "20399: live obligation acquired at rdunittest_msgset_errors.c:1388",
+    "20404: loop re-acquisition: an earlier generation that may be live is still held",
+    "20406: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20407: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20408: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20409: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20414: loop re-acquisition: an earlier generation that may be live is still held",
+    "20416: live obligation acquired at rdunittest_msgset_errors.c:1422",
+    "20417: live obligation acquired at rdunittest_msgset_errors.c:1422",
+    "20422: loop re-acquisition: an earlier generation that may be live is still held",
+    "20424: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20425: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20426: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20427: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20432: loop re-acquisition: an earlier generation that may be live is still held",
+    "20434: live obligation acquired at rdunittest_msgset_errors.c:1460",
+    "20435: live obligation acquired at rdunittest_msgset_errors.c:1460",
+    "20440: live obligation acquired at rdunittest_msgset_errors.c:1476"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20303: call to uncontracted function `rd_kafka_q_pop`",
+    "20310: call to uncontracted function `rd_kafka_q_pop`",
+    "20317: call to uncontracted function `rd_kafka_q_pop`",
+    "20324: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20303: loop re-acquisition: an earlier generation that may be live is still held",
+    "20305: live obligation acquired at rdunittest_msgset_errors.c:1230",
+    "20306: live obligation acquired at rdunittest_msgset_errors.c:1230",
+    "20312: live obligation acquired at rdunittest_msgset_errors.c:1241",
+    "20313: live obligation acquired at rdunittest_msgset_errors.c:1241",
+    "20317: loop re-acquisition: an earlier generation that may be live is still held",
+    "20319: live obligation acquired at rdunittest_msgset_errors.c:1252",
+    "20320: live obligation acquired at rdunittest_msgset_errors.c:1252",
+    "20325: live obligation acquired at rdunittest_msgset_errors.c:1263"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20253: call to uncontracted function `rd_kafka_q_pop`",
+    "20255: unresolved resource identity `rko`",
+    "20260: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20253: loop re-acquisition: an earlier generation that may be live is still held",
+    "20255: live obligation acquired at rdunittest_msgset_errors.c:1145",
+    "20256: live obligation acquired at rdunittest_msgset_errors.c:1145",
+    "20261: live obligation acquired at rdunittest_msgset_errors.c:1158"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19855: call to uncontracted function `rd_kafka_q_pop`",
+    "19857: unresolved resource identity `rko`",
+    "19865: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19855: loop re-acquisition: an earlier generation that may be live is still held",
+    "19857: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19858: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19859: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19860: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19866: live obligation acquired at rdunittest_msgset_errors.c:497"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19921: call to uncontracted function `rd_kafka_q_pop`",
+    "19923: unresolved resource identity `rko`",
+    "19930: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19921: loop re-acquisition: an earlier generation that may be live is still held",
+    "19923: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19924: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19925: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19926: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19931: live obligation acquired at rdunittest_msgset_errors.c:607"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20107: call to uncontracted function `rd_kafka_q_pop`",
+    "20115: call to uncontracted function `rd_kafka_q_pop`",
+    "20122: call to uncontracted function `rd_kafka_q_pop`",
+    "20130: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20107: loop re-acquisition: an earlier generation that may be live is still held",
+    "20109: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20110: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20111: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20115: loop re-acquisition: an earlier generation that may be live is still held",
+    "20117: live obligation acquired at rdunittest_msgset_errors.c:919",
+    "20118: live obligation acquired at rdunittest_msgset_errors.c:919",
+    "20122: loop re-acquisition: an earlier generation that may be live is still held",
+    "20124: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20125: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20126: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20131: live obligation acquired at rdunittest_msgset_errors.c:944"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20176: call to uncontracted function `rd_kafka_q_pop`",
+    "20184: call to uncontracted function `rd_kafka_q_pop`",
+    "20191: call to uncontracted function `rd_kafka_q_pop`",
+    "20199: call to uncontracted function `rd_kafka_q_pop`",
+    "20206: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20176: loop re-acquisition: an earlier generation that may be live is still held",
+    "20178: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20179: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20180: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20186: live obligation acquired at rdunittest_msgset_errors.c:1037",
+    "20187: live obligation acquired at rdunittest_msgset_errors.c:1037",
+    "20191: loop re-acquisition: an earlier generation that may be live is still held",
+    "20193: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20194: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20195: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20199: loop re-acquisition: an earlier generation that may be live is still held",
+    "20201: live obligation acquired at rdunittest_msgset_errors.c:1062",
+    "20202: live obligation acquired at rdunittest_msgset_errors.c:1062",
+    "20207: live obligation acquired at rdunittest_msgset_errors.c:1073"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20034: call to uncontracted function `rd_kafka_q_pop`",
+    "20036: unresolved resource identity `rko`",
+    "20041: call to uncontracted function `rd_kafka_q_pop`",
+    "20043: unresolved resource identity `rko`",
+    "20050: call to uncontracted function `rd_kafka_q_pop`",
+    "20052: unresolved resource identity `rko`",
+    "20057: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20034: loop re-acquisition: an earlier generation that may be live is still held",
+    "20036: live obligation acquired at rdunittest_msgset_errors.c:780",
+    "20037: live obligation acquired at rdunittest_msgset_errors.c:780",
+    "20041: loop re-acquisition: an earlier generation that may be live is still held",
+    "20043: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20044: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20045: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20046: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20050: loop re-acquisition: an earlier generation that may be live is still held",
+    "20052: live obligation acquired at rdunittest_msgset_errors.c:812",
+    "20053: live obligation acquired at rdunittest_msgset_errors.c:812",
+    "20058: live obligation acquired at rdunittest_msgset_errors.c:825"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19979: call to uncontracted function `rd_kafka_q_pop`",
+    "19981: unresolved resource identity `rko`",
+    "19988: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19979: loop re-acquisition: an earlier generation that may be live is still held",
+    "19981: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19982: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19983: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19984: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19989: live obligation acquired at rdunittest_msgset_errors.c:707"
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "23951: call to uncontracted function `rd_kafka_q_pop`",
+    "23954: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "23951: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23729: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": [
+    "23729: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "23480: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "23857: call to uncontracted function `rd_kafka_q_purge0`",
+    "23861: unmodeled call, aggregate or indirect access in loop condition",
+    "23863: unresolved resource identity `rko`",
+    "23865: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "23861: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "21843: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "21843: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "24711: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "23537: call to uncontracted function `rd_kafka_q_wait_result`",
+    "23537: use of `_RKTP` after a possibly-final drop of its reference (reference-dropped)",
+    "23537: use of `rktp` after a possibly-final drop of its reference (reference-dropped)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "23585: call to uncontracted function `rd_kafka_q_pop`",
+    "23595: unresolved resource identity `rko`",
+    "23601: unresolved resource identity `rko`",
+    "23606: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "23585: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "23378: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22295: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22295: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20173: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "20173: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "23465: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "23465: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminated",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22572: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22572: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_try_terminate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "22605: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": [
+    "22605: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_preferred_replica_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20292: call to uncontracted function `rd_kafka_toppar_fetch_backoff`",
+    "20314: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20679: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "20400: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21139: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": [
+    "21139: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20790: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": [
+    "20790: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_fetch_decide",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_fetch_backoff"
+   ],
+   "lost": [
+    "22296: call to uncontracted function `rd_kafka_toppar_fetch_backoff`",
+    "22302: call to uncontracted function `rd_kafka_toppar_fetch_backoff`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20253: call to uncontracted function `rd_kafka_q_pop`",
+    "20257: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "20225: live obligation acquired at rdkafka_metadata.c:155",
+    "20253: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "20359: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20212: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20213: nullable resource `reply` used by a non-null contract",
+    "20213: unresolved resource identity `reply`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_and_disable_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20797: call to uncontracted function `rd_kafka_q_purge0`",
+    "20799: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "20766: unresolved resource identity `rkq`",
+    "20788: call to uncontracted function `rd_kafka_q_purge0`",
+    "20793: unresolved resource identity `rkq`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppars_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_wait_result"
+   ],
+   "lost": [
+    "21495: call to uncontracted function `rd_kafka_q_wait_result`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "19699: call to uncontracted function `rd_kafka_q_purge0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_purge0"
+   ],
+   "lost": [
+    "19788: call to uncontracted function `rd_kafka_q_purge0`",
+    "19790: unresolved resource identity `cnt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_wait_result",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20429: call to uncontracted function `rd_kafka_q_pop`",
+    "20433: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_scan_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppar_needs_query"
+   ],
+   "lost": [
+    "20816: call to uncontracted function `rd_kafka_toppar_needs_query`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20386: call to uncontracted function `rd_kafka_q_pop`",
+    "20388: unresolved resource identity `rko`",
+    "20396: call to uncontracted function `rd_kafka_q_pop`",
+    "20398: unresolved resource identity `rko`",
+    "20404: call to uncontracted function `rd_kafka_q_pop`",
+    "20406: unresolved resource identity `rko`",
+    "20414: call to uncontracted function `rd_kafka_q_pop`",
+    "20416: unresolved resource identity `rko`",
+    "20422: call to uncontracted function `rd_kafka_q_pop`",
+    "20424: unresolved resource identity `rko`",
+    "20432: call to uncontracted function `rd_kafka_q_pop`",
+    "20434: unresolved resource identity `rko`",
+    "20439: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20386: loop re-acquisition: an earlier generation that may be live is still held",
+    "20388: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20389: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20390: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20391: live obligation acquired at rdunittest_msgset_errors.c:1368",
+    "20396: loop re-acquisition: an earlier generation that may be live is still held",
+    "20398: live obligation acquired at rdunittest_msgset_errors.c:1388",
+    "20399: live obligation acquired at rdunittest_msgset_errors.c:1388",
+    "20404: loop re-acquisition: an earlier generation that may be live is still held",
+    "20406: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20407: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20408: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20409: live obligation acquired at rdunittest_msgset_errors.c:1401",
+    "20414: loop re-acquisition: an earlier generation that may be live is still held",
+    "20416: live obligation acquired at rdunittest_msgset_errors.c:1422",
+    "20417: live obligation acquired at rdunittest_msgset_errors.c:1422",
+    "20422: loop re-acquisition: an earlier generation that may be live is still held",
+    "20424: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20425: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20426: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20427: live obligation acquired at rdunittest_msgset_errors.c:1440",
+    "20432: loop re-acquisition: an earlier generation that may be live is still held",
+    "20434: live obligation acquired at rdunittest_msgset_errors.c:1460",
+    "20435: live obligation acquired at rdunittest_msgset_errors.c:1460",
+    "20440: live obligation acquired at rdunittest_msgset_errors.c:1476"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20303: call to uncontracted function `rd_kafka_q_pop`",
+    "20310: call to uncontracted function `rd_kafka_q_pop`",
+    "20317: call to uncontracted function `rd_kafka_q_pop`",
+    "20324: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20303: loop re-acquisition: an earlier generation that may be live is still held",
+    "20305: live obligation acquired at rdunittest_msgset_errors.c:1230",
+    "20306: live obligation acquired at rdunittest_msgset_errors.c:1230",
+    "20312: live obligation acquired at rdunittest_msgset_errors.c:1241",
+    "20313: live obligation acquired at rdunittest_msgset_errors.c:1241",
+    "20317: loop re-acquisition: an earlier generation that may be live is still held",
+    "20319: live obligation acquired at rdunittest_msgset_errors.c:1252",
+    "20320: live obligation acquired at rdunittest_msgset_errors.c:1252",
+    "20325: live obligation acquired at rdunittest_msgset_errors.c:1263"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20253: call to uncontracted function `rd_kafka_q_pop`",
+    "20255: unresolved resource identity `rko`",
+    "20260: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20253: loop re-acquisition: an earlier generation that may be live is still held",
+    "20255: live obligation acquired at rdunittest_msgset_errors.c:1145",
+    "20256: live obligation acquired at rdunittest_msgset_errors.c:1145",
+    "20261: live obligation acquired at rdunittest_msgset_errors.c:1158"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19855: call to uncontracted function `rd_kafka_q_pop`",
+    "19857: unresolved resource identity `rko`",
+    "19865: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19855: loop re-acquisition: an earlier generation that may be live is still held",
+    "19857: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19858: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19859: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19860: live obligation acquired at rdunittest_msgset_errors.c:475",
+    "19866: live obligation acquired at rdunittest_msgset_errors.c:497"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19921: call to uncontracted function `rd_kafka_q_pop`",
+    "19923: unresolved resource identity `rko`",
+    "19930: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19921: loop re-acquisition: an earlier generation that may be live is still held",
+    "19923: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19924: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19925: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19926: live obligation acquired at rdunittest_msgset_errors.c:585",
+    "19931: live obligation acquired at rdunittest_msgset_errors.c:607"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20107: call to uncontracted function `rd_kafka_q_pop`",
+    "20115: call to uncontracted function `rd_kafka_q_pop`",
+    "20122: call to uncontracted function `rd_kafka_q_pop`",
+    "20130: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20107: loop re-acquisition: an earlier generation that may be live is still held",
+    "20109: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20110: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20111: live obligation acquired at rdunittest_msgset_errors.c:905",
+    "20115: loop re-acquisition: an earlier generation that may be live is still held",
+    "20117: live obligation acquired at rdunittest_msgset_errors.c:919",
+    "20118: live obligation acquired at rdunittest_msgset_errors.c:919",
+    "20122: loop re-acquisition: an earlier generation that may be live is still held",
+    "20124: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20125: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20126: live obligation acquired at rdunittest_msgset_errors.c:930",
+    "20131: live obligation acquired at rdunittest_msgset_errors.c:944"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20176: call to uncontracted function `rd_kafka_q_pop`",
+    "20184: call to uncontracted function `rd_kafka_q_pop`",
+    "20191: call to uncontracted function `rd_kafka_q_pop`",
+    "20199: call to uncontracted function `rd_kafka_q_pop`",
+    "20206: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20176: loop re-acquisition: an earlier generation that may be live is still held",
+    "20178: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20179: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20180: live obligation acquired at rdunittest_msgset_errors.c:1023",
+    "20186: live obligation acquired at rdunittest_msgset_errors.c:1037",
+    "20187: live obligation acquired at rdunittest_msgset_errors.c:1037",
+    "20191: loop re-acquisition: an earlier generation that may be live is still held",
+    "20193: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20194: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20195: live obligation acquired at rdunittest_msgset_errors.c:1048",
+    "20199: loop re-acquisition: an earlier generation that may be live is still held",
+    "20201: live obligation acquired at rdunittest_msgset_errors.c:1062",
+    "20202: live obligation acquired at rdunittest_msgset_errors.c:1062",
+    "20207: live obligation acquired at rdunittest_msgset_errors.c:1073"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "20034: call to uncontracted function `rd_kafka_q_pop`",
+    "20036: unresolved resource identity `rko`",
+    "20041: call to uncontracted function `rd_kafka_q_pop`",
+    "20043: unresolved resource identity `rko`",
+    "20050: call to uncontracted function `rd_kafka_q_pop`",
+    "20052: unresolved resource identity `rko`",
+    "20057: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "20034: loop re-acquisition: an earlier generation that may be live is still held",
+    "20036: live obligation acquired at rdunittest_msgset_errors.c:780",
+    "20037: live obligation acquired at rdunittest_msgset_errors.c:780",
+    "20041: loop re-acquisition: an earlier generation that may be live is still held",
+    "20043: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20044: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20045: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20046: live obligation acquired at rdunittest_msgset_errors.c:793",
+    "20050: loop re-acquisition: an earlier generation that may be live is still held",
+    "20052: live obligation acquired at rdunittest_msgset_errors.c:812",
+    "20053: live obligation acquired at rdunittest_msgset_errors.c:812",
+    "20058: live obligation acquired at rdunittest_msgset_errors.c:825"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:rd_kafka_q_pop"
+   ],
+   "lost": [
+    "19979: call to uncontracted function `rd_kafka_q_pop`",
+    "19981: unresolved resource identity `rko`",
+    "19988: call to uncontracted function `rd_kafka_q_pop`"
+   ],
+   "gained": [
+    "19979: loop re-acquisition: an earlier generation that may be live is still held",
+    "19981: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19982: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19983: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19984: live obligation acquired at rdunittest_msgset_errors.c:684",
+    "19989: live obligation acquired at rdunittest_msgset_errors.c:707"
+   ]
+  }
+ ]
+}
