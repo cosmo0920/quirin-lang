@@ -5351,3 +5351,130 @@ own anchor here.
     `an_admitted_guard_partitions_its_range`); tests
     `tests/retention_guard.rs`, `crates/qcore-contract/tests/retention_guard_clause.rs`;
     [report](../reports/w43-abi-enum-and-const-pp/README.md).
+
+<a id="constraint-12x"></a>
+
+12x. **A slot move keeps the slot's one object and invalidates every other
+    name of it; anything the call cannot decide is refused.** Card
+    SLOT-MOVE-AND-INTERIOR-BORROW, class 2, on the user's decision of
+    2026-10-05 (contract specification C04.15, grammar G05):
+    `resource_slot_moved(s, n)` (`qcore_schemas::slot_move::SlotMove`, a
+    field of `RetainingContract`, skipped when empty; the loader's
+    `contract_slot_move.rs`) is withheld from the function map with the
+    retaining declarations; the pure decisions are
+    `crates/qcore-c-gateway/src/slot_move_borrow.rs` (`decide_slot`,
+    `slot_step`, `SLOT_VECTORS`, `SLOT_TRACE_VECTORS`), the route-G adapter
+    `legacy_slot_move_borrow.rs`; shared items added:
+    `retained_by_route::Operands::slots`, `AbstractState::{invalidated,
+    borrows}` (joined by union), `Parser::slot_address` (the classifier's
+    `&NAME` exemption at a slot position), the `transfer` wrapper's
+    `before`/`after` hooks, `RetainingContract::retains` (rule 12t's holder
+    test now asks it), `ResourceContracts::withdraw_declaration`. At a call
+    the slot actual is `&L`, a formal slot the body names only as whole
+    slot-moving actuals (passed through: nothing moves here), or anything
+    else (refused, `slot-move-undecided`). For `&L`: exactly one live tracked
+    identity held by no structure but names (no field link, container,
+    holder, collection, pending replacement or nullable marker) is moved:
+    `L` keeps it and its one obligation, and every other name bound to it
+    loses its binding and is invalidated, so a later read is refused
+    (`slot-move-alias`), never accused; a definitely-NULL `L` under
+    `nullable` moves nothing; anything else refuses. The failure arm needs
+    no rule: the slot still owes its object. **Do not** read a moved slot as
+    borrowed, accuse a use of an old alias (the object may not have moved),
+    move a field reached through a borrowed parameter (`SLOT-MOVE-FIELD-SLOT`),
+    or admit a slot move inside a return-code disposition before a member
+    needs it (`SLOT-MOVE-RETURN-CODE-SPLIT`). Premises stated, not proved:
+    faithful extraction (trust boundary 28) and the declared slot moves
+    (constraint 4; rule 13a checks what it can). Measured with rules 12y,
+    12z, 13a and fourteen declarations (binary `8f811155…`): corpus 846 / 9 /
+    3,979 → **872 / 9 / 3,953** (`686fca16…` → `52d14db1…`, **+26 Unknown →
+    Safe**: 7 over the two slot moves, 15 over the borrowed results, 2 over
+    `rd_slice_reader0`, 2 through new summaries), no Safe → non-Safe move, no
+    leak or violation added; system no row moves; slice leaves only.
+    `QCore.SlotMove`
+    (`the_slot_keeps_its_identity_and_its_obligation`,
+    `every_old_alias_is_invalid_after_a_move`,
+    `a_use_of_an_old_alias_is_refused`, `the_failure_arm_keeps_the_original`,
+    `a_safe_path_never_uses_an_invalid_name`, `slot_vectors_hold`,
+    `slot_trace_vectors_hold`); tests `tests/slot_move_interior_borrow.rs`,
+    `crates/qcore-contract/tests/slot_move_clause.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).
+
+<a id="constraint-12y"></a>
+
+12y. **A borrowed result owns nothing, ends at its parent's release or at
+    any mutation it does not make itself, and is refused, never accused,
+    after it ends.** Card SLOT-MOVE-AND-INTERIOR-BORROW, class 8 (contract
+    specification C04.3.4): `resource_return_borrowed_from(p, n)` loads to
+    the derived result at a new extent, `DerivedExtent::Borrowed` (a shared
+    item; every consumer of the extent was audited: an offset, a step and a
+    derivation keep it, `interior_extent` changes only an exact alias, the
+    inference publishes `Borrowed` when any exit is borrowed and the
+    summary check lets only a `Borrowed` declaration cover a borrowed exit,
+    `derive_pointer` takes a borrowed result's nullness from the
+    declaration). A borrowed call records the destination's borrow (its take
+    and its parent's root name; an alias copies it). Before every
+    instruction, a read of an ended name refuses (`interior-borrow-ended`);
+    a call or store ends every borrow unless every name it may write is in
+    the borrow's family (its aliases and the borrows taken from them) or a
+    declared scalar, and an actual it does not read ends every borrow
+    (premise P-BORROW-FRAME: a call reaches only what its actuals reach); a
+    rebound parent ends its borrows; an ended borrow's binding is dropped.
+    A release of a borrow is refused (never `invalid_release`); a store
+    through a non-null borrow is admitted as a write to its parent (it keeps
+    the borrow and ends its siblings); a use after the parent's release that
+    the settled-state reports would have accused is refused instead. The
+    base may be spelled through a pointer cast of a place (`cast_place`,
+    for the `Borrowed` extent only; `DERIVED-BASE-CAST-READING`). **Do not**
+    publish a plain interior summary over a borrowed exit, let a borrowed
+    result outlive a mutation it did not make, or read an arena result as
+    borrowed (the interim `cfl_arena_calloc` reading of C04.3.1 stands).
+    `QCore.InteriorBorrow` (`a_borrow_release_is_refused`,
+    `a_parent_release_ends_its_borrows`,
+    `an_invalidating_mutation_ends_a_borrow`, `a_use_after_the_end_is_refused`,
+    `a_write_through_a_borrow_keeps_it`, `a_write_through_a_borrow_ends_its_sibling`,
+    `a_lazily_created_child_is_owned_by_the_parent`,
+    `a_safe_path_never_uses_an_ended_borrow`, `borrow_trace_vectors_hold`);
+    [report](../reports/slot-move-and-interior-borrow/README.md).
+
+<a id="constraint-12z"></a>
+
+12z. **A derived out slot receives a pointer that owns nothing and never
+    overwrites a tracked one.** Card SLOT-MOVE-AND-INTERIOR-BORROW
+    (contract specification C04.16, absorbing `INTERIOR-OUT-SLOT-MODE`):
+    `resource_out_derived(s, p, n)` (`DerivedOut`, withheld with the
+    retaining declarations). At a call: `&L` with `L` holding no tracked
+    identity binds `L` to a pointer derived from `p`'s binding, possibly
+    NULL, read at the `Borrowed` extent without a borrow record (the slot
+    may keep its old untracked value, so its release and a use after `p`'s
+    release are refused, never accused, and no mutation ends it); `&L`
+    holding a tracked identity is refused (`out-derived-undecided`); a NULL
+    slot under `nullable` and a caller's slot passed through change nothing
+    here; anything else refuses. **Do not** read the slot as `resource_out`
+    (fresh custody) or as borrowed and forgotten. `QCore.DerivedOutSlot`
+    (`a_tracked_slot_is_never_overwritten`, `the_slot_value_is_never_released`,
+    `the_base_release_ends_the_slot_value`,
+    `a_safe_path_never_uses_a_value_its_base_outlived`, `out_vectors_hold`);
+    [report](../reports/slot-move-and-interior-borrow/README.md).
+
+<a id="constraint-13a"></a>
+
+13a. **In a unit that defines a slot-moving, derived-out or borrowed-result
+    declaration, the declaration stands only where its body validates it.**
+    Card SLOT-MOVE-AND-INTERIOR-BORROW (`slot_move_route::settle`, beside
+    rule 12w's at the three unit entry points): a slot move when every
+    mention of the slot formal is a whole actual at a slot-moving position;
+    a derived out slot when every mention is `*s = EXPR;` with `EXPR`
+    reached from the base, or a whole actual at a derived-out position; a
+    borrowed result when the base is never assigned nor its whole address
+    taken and every `return` is NULL or reached from the base by member
+    reads (through casts, parentheses and offsets, `-` `>` read as one
+    arrow), through locals every assignment of which is so reached (the
+    greatest fixpoint, address-taken locals excluded), or a local assigned
+    from a call whose result the body stores into a member of a reached
+    name (a lazily created child). Otherwise the declaration is withdrawn in
+    that unit (`ResourceContracts::withdraw_declaration`): its call sites
+    there see an uncontracted callee and an inferred summary of the body
+    governs. Structural: it establishes the provenance of what the body
+    hands back or forwards, and the declaration stays a declared assumption
+    in every other unit. Unit tests in `legacy_slot_move_borrow.rs`, the
+    withdrawal control in `tests/slot_move_interior_borrow.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).

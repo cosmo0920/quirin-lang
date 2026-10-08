@@ -242,7 +242,7 @@ impl Parser<'_> {
                 }
                 [name]
                     if is_identifier(name)
-                        && self.caller_formals.contains(*name)
+                        && self.caller_formals.contains(name)
                         && body.is_some_and(|body| {
                             only_slot_mentions(body, name, self.contracts, |d, i| wanted(d, i))
                         }) =>

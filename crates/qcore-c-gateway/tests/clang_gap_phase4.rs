@@ -340,9 +340,12 @@ fn k06_derived_results_have_no_offset_or_length() {
     let error = load("    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_interior(p, n, nullable);\n")
         .expect_err("an offset-carrying derived result is outside resource v1");
     assert!(!error.is_empty());
-    // The schema's extent is exactly Exact / Interior.
+    // The schema's extent is exactly Exact / Interior / Borrowed (the last
+    // added deliberately by card SLOT-MOVE-AND-INTERIOR-BORROW, gateway rule
+    // 12y: a result borrowed from its parent; it carries no offset or length
+    // either).
     let extents = |extent: DerivedExtent| match extent {
-        DerivedExtent::Exact | DerivedExtent::Interior => (),
+        DerivedExtent::Exact | DerivedExtent::Interior | DerivedExtent::Borrowed => (),
     };
     extents(DerivedExtent::Exact);
     // And the result modes are exactly these four.
