@@ -1205,6 +1205,30 @@ and its body is checked only where a consumer analyses it. Still not landed
 inheritance of bounds modules, the cross-unit refutation phase on the routes,
 and tip tracking for bounds pins.
 
+**Body evidence, refutation phase and tips (card
+CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS, 2026-10-09; gateway rules
+[14f](agents/gateway.md#constraint-14f)–[14j](agents/gateway.md#constraint-14j)).**
+A header-defined function still has no row on the audit routes. Its body,
+and every declared body a unit defines, is checked against its declaration in
+each unit's first phase and published as **evidence for the declaration**
+(C06.5's shape: a `Safe`, unrefuted body covers its quant checks and
+preconditions; a frame clause only a positive frame check of its parameter; a
+relation, a return extent, `bounds_preserves_extents()` and a global extent
+nothing; `validated` only where every examining unit validated it and every
+clause is covered in every one), with a roll-up of the bounds `Safe` rows; no
+verdict reads it. A declaration a body refutes in one unit is withdrawn from
+every unit's callers by the routes' second phase (C06.4's two phases). A
+bounds declaration may track the tip of a branch exactly as C06.2 says for a
+resource declaration. Inclusion and inheritance stay refused for bounds
+modules, and a checkpointed run refuses the bounds selection, since a
+checkpoint carries no bounds rows: both remain `CG16-BOUNDS-CONTRACT-TRANSPORT`.
+The quant body check also reads a byte-type view of a quant object (every C
+byte type has size 1). Further chunkio header accessors are declared:
+`cio_file_st_get_hash` (`bounds_return_derived(map, 2, 4, bytes)`, a read
+frame), `cio_file_st_infer_content_len` (`22 <= #i && #i < 24`, read) and
+`cio_file_st_set_content_len` (`10 <= #i && #i < 14`, write), pinned at
+`66910c10` and `046accf6`.
+
 **Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY,
 2026-10-02; gateway rule [11e](agents/gateway.md#constraint-11e)).** Landed in
 the same consumer and grammar: a **closed frame**, one of

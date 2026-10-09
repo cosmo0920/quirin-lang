@@ -256,3 +256,10 @@ check`); a bounds declaration whose pin is not in force is held
 (`contract-pin-mismatch`). Packages carry the module through the unchanged
 inventory; no audit route reads contract modules from a package.
 [Report](../reports/chunkio-meta-len-bounds-contracts/README.md).
+Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (gateway rules
+[14i](gateway.md#constraint-14i), [14j](gateway.md#constraint-14j)): `pin
+--bounds --track-tip REF` and `--untrack-tip` write tip entries in a bounds lock
+as in a resource lock; a bounds module never uses `#include` or `inherit` (the
+probe leaves one out of every view). `qcore-provider-chunkio`'s bounds view is
+`chunkio/file_st_bounds.qv` and `chunkio/meta_len_bounds.qv` (five pinned
+declarations). [Report](../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md).

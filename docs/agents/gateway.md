@@ -6061,3 +6061,159 @@ own anchor here.
     (`the_annotated_walk_is_the_walk`, the memo theorems);
     `function_reading_reuse::tests::the_line_tree_mirrors_the_function`,
     `a_span_is_tokenized_once`.
+
+<a id="constraint-14f"></a>
+
+14f. **A declared body a unit defines is checked against its declaration in
+    every unit and published as evidence for the declaration, never as a
+    verdict row: a header definition stays outside the denominator.** Card
+    CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (contract specification C09.1
+    in C06.5's shape; `qcore_core::bounds_body_standing`, the gateway module
+    `index_extent/body_evidence.rs` with a thin hook in phase one of
+    `analyze_bounds_preprocessed`, the audit module `bounds_evidence.rs` with
+    thin hooks in `projection.rs` and `report.rs`; shared items added:
+    `BoundsUnitReport::declaration_bodies`,
+    `BoundsFunctionRow::contract_dependencies` (absent when empty),
+    `AuditReport::bounds_evidence`, `index_extent::bounds_body_standing`
+    (a re-export); no custody code reads any of it). (1) **Checked.** Phase
+    one already analysed, in every unit, the body of each declaration with a
+    frame, quant check, return extent or relation that the unit defines
+    (`static inline` header definitions included) to withdraw a refuted one
+    from the unit's callers; it now also analyses each selected declared
+    main-source body, under the declarations as loaded (no refutation table,
+    so a route's second phase finds the same evidence), and keeps the result.
+    (2) **Coverage.** A body whose own row is `Safe` and does not refute
+    covers its quant checks and preconditions (`bounds_extent`,
+    `bounds_index`); a frame clause only by rule 14g's positive frame check of
+    its parameter; a derived relation (its length is a fact about the
+    caller's object), a return extent, `bounds_preserves_extents()` and a
+    global extent by nothing. (3) **Standing.** Per unit: held (no evidence is
+    kept under a review marker or a pin hold), failed (refuted), validated
+    with its covered clauses, or unvalidated; per run, rules 13g–13j's fold:
+    `validated` only when some unit examined a body, every examining unit
+    validated it and every clause is covered in every one,
+    `partly-validated`, `held`, otherwise a `declared-assumption`. (4)
+    **Publication.** The bounds selection record (`ROWS.contracts.json`)
+    gains `body_evidence` (every declaration of the environment, one no unit
+    examined a declared assumption; each unit's outcome; per-clause standing)
+    and a Safe roll-up of the bounds rows by the declarations each row's
+    analysis could have consulted (its own name and every called declared
+    name, an over-approximation), with a console tally. **Do not** publish a
+    row for a header definition, keep evidence from a held declaration or a
+    hypothetical analysis, cover a clause by evidence of another kind, or let
+    any verdict read the section. Premises stated, not proved: faithful Clang
+    extraction (trust boundary 28) and that a `Safe` row means every access
+    through a quant-checked formal was decided inside (rule 12l(2)).
+    `QCore.BoundsBodyStanding` (`a_refuting_body_covers_nothing`,
+    `nothing_covers_these`, `body_evidence_needs_a_safe_body`,
+    `frame_evidence_needs_the_frame_check`,
+    `a_safe_body_alone_never_covers_a_frame`, `a_held_unit_keeps_no_evidence`,
+    `validated_needs_every_unit_and_clause`, `a_failure_wins`,
+    `partly_names_its_uncovered_clauses`,
+    `only_validated_needs_every_dependency_validated`,
+    `an_unknown_dependency_is_an_assumption` and 7 more), bound by
+    `coverageVectors` and `standingVectors`
+    (`crates/qcore-core/tests/bounds_body_standing.rs`); controls in
+    `crates/qcore-c-gateway/tests/bounds_body_evidence.rs` and
+    `crates/qcore-audit/tests/bounds_transport.rs`;
+    [report](../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md).
+
+<a id="constraint-14g"></a>
+
+14g. **Two narrow readings serve the body check: a positive frame check that
+    reads the body's syntax only, and a byte view of a quant object.** Card
+    CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (`index_extent/body_evidence.rs`,
+    `index_extent/quant_checks.rs`; shared items added: `TuIndex::typedefs`
+    and the `TypedefDecl` names and types the streaming reader now keeps).
+    (1) **Frame.** A pointer or slot parameter's declared frame is confirmed
+    when the parameter is never assigned, copied or has its address taken,
+    and every occurrence is a read through it (`P[k]`, `*P`, `P->f`), a write
+    through it when its mode is not `reads`, a comparison operand, an actual
+    at a resolved, in-force closed frame position no stronger than its own and
+    not a derived base of the callee, or (with a relation on it) `return P` or
+    `return P ± k`; inline assembly or any other occurrence leaves it
+    unconfirmed. Evidence only: no analysis reads it. (2) **Byte view.** A
+    pointer conversion between C's byte types (`char`, `signed char`,
+    `unsigned char`, typedefs through the unit's `TypedefDecl`s) of a pointer
+    into a **quant object** keeps its target, and a pointer local assigned
+    such a view keeps the fact: every byte type has size 1, so an index
+    through the view is the same index into the object and the quant check
+    decides it as `P + k` (chunkio's `(uint8_t *) &map[10]`). **Do not**
+    follow a view of any other object, a view to a wider type, or confirm a
+    frame through a copy the walk cannot follow. Controls:
+    `a_byte_view_reads_only_byte_types_of_quant_objects` (an index through the
+    view outside the check refutes; a four-byte view and a byte view of a
+    local array keep their refusal), `controls_refute_or_leave_clauses_uncovered`.
+
+<a id="constraint-14h"></a>
+
+14h. **A bounds declaration whose body refutes it in one unit is withdrawn
+    from every unit's callers by the route's second phase.** Card
+    CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (C06.4's two phases for the
+    bounds property; `refuted_contracts::run_two_phases_with_bounds`,
+    `bounds_evidence::refutation_table`,
+    `bounds_selection::apply_refutation_table`; hooks in `pinned_route.rs`,
+    `current_route.rs` and `no_build.rs`; shared items added:
+    `UnitProducts::bounds_evidence`, `EntryProducts::bounds_evidence`). The
+    table is the union of every unit's refuting bodies (rule 14f's evidence,
+    so independent of unit order and of the table applied); phase two runs
+    when the custody table or the bounds table is not empty, with the bounds
+    table recorded in the installed environment's `BoundsContracts::refuted`
+    (the record names it as `refutation_table`), so every caller outside the
+    defining body sees an uncontracted callee: the obligation is unresolved,
+    never `Safe`, never an accusation. With both tables empty nothing runs
+    twice, so a run without a refutation is byte-identical. **Do not**
+    withdraw a declaration from its own body, read the table from a phase-two
+    analysis, or run phase two on the custody table alone when the bounds
+    table is not empty. `QCore.BoundsTransport`
+    (`the_empty_table_changes_nothing`, `its_own_body_keeps_it`,
+    `a_refuted_declaration_is_withdrawn`, `a_withdrawal_never_accuses`,
+    `a_caller_of_a_refuted_declaration_is_never_safe`,
+    `mem_bounds_table_iff`, `the_table_is_stable_across_phases`); control
+    `a_body_refuting_its_declaration_withdraws_it_in_every_unit` (a caller in
+    another unit moves Safe → Unknown).
+
+<a id="constraint-14i"></a>
+
+14i. **A bounds declaration may track the tip of a branch exactly as a
+    resource declaration does (C06.2): in force only at the tip's sites, then
+    a named assumption with its notice; otherwise held.** Card
+    CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (`contract_pin.rs`:
+    `pin --bounds --track-tip REF` and `--untrack-tip`, no longer refused;
+    `bounds_selection::apply_bounds_pins` and `add_tip_tracking`). The
+    decision is `pin_standing`'s, unchanged; the pin section's outcome reads
+    `tip-in-force`, carries the tip record and its notice (`info` in force,
+    `warning` not), and, only when some declaration tracks a tip, the section
+    gains `tip_meaning`, `tip_counts`, `tip_notices` and
+    `assumptions.tip_tracked` (`tip-tracked:FUNCTION`); the console prints
+    one `bounds contract notice` line per tip. A run with no tip entry is
+    byte-identical. **Do not** keep a tip entry in force on another site or
+    an unresolved tip, or let a notice decide anything. `QCore.BoundsTransport`
+    (`a_tip_is_in_force_iff`, `an_out_of_force_tip_is_held`,
+    `a_tip_assumption_is_listed_iff_in_force`, `tip_vectors_hold`), bound by
+    `tip_vectors_match_lean`; control
+    `a_bounds_tip_entry_is_a_named_assumption_in_force_and_held_otherwise`.
+
+<a id="constraint-14j"></a>
+
+14j. **What does not transport bounds refuses rather than drops: a
+    checkpointed run refuses the bounds selection, and a bounds module that
+    includes or inherits never reaches a bounds view.** Card
+    CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (`checkpoint_run::run`). A
+    `.qo` checkpoint carries no bounds row, body evidence or bounds
+    environment, and its identity names neither the environment nor its
+    refutation table, so a reused or composed run would omit every requested
+    row; `current --checkpoint-dir` with `QCORE_BOUNDS_PROPERTY` set refuses
+    and writes no rows. G05a stays outside bounds contract v1: the bounds
+    loader refuses `#include` and `contract inherit`, so the generated views
+    leave such a module out and a load path that names one in a bounds view
+    refuses the whole selection. Transport (sections in the checkpoint, the
+    environment and table digests in its identity) and inclusion (the
+    elaboration with a bounds agreement gate over renamed quant predicates and
+    counts, and evidence replay) remain registered
+    (`CG16-BOUNDS-CONTRACT-TRANSPORT`). **Do not** compose bounds rows from
+    checkpoints or elaborate a bounds module without that gate.
+    `QCore.BoundsTransport` (`a_composition_would_omit_the_requested_rows`,
+    `a_bounds_run_is_never_composed_from_checkpoints`); controls
+    `a_checkpointed_run_refuses_the_bounds_selection`,
+    `an_inheriting_bounds_module_never_reaches_a_bounds_view`.

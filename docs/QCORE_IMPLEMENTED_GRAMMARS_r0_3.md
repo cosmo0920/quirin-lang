@@ -3754,7 +3754,11 @@ and `DIGITS` is canonical (no sign, suffix, base or leading zero);
 parameter, object, return and `bounds_preserves_extents`; one contract-level
 marker, or clause-level markers, never both, never a marker around a marker
 or around the selector; only `requires` and `ensures normal`. No inclusion or
-inheritance (G05a) exists for this vocabulary. Card QUANT-INDEX-CHECKS adds the
+inheritance (G05a) exists for this vocabulary. Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS
+(gateway rule [14j](agents/gateway.md#constraint-14j)) keeps it so: the loader
+refuses `#include` and `contract inherit`, the generated bounds view leaves
+such a module out, and a load path naming one in a bounds view refuses the
+selection. Card QUANT-INDEX-CHECKS adds the
 quantified index check [G05c](#g05c-quantified-index-checks). The meanings are C09.1's;
 `elements` counts the C pointee type the audited declaration states.
 `resource_*` and `bounds_*` predicates are disjoint, so each loader rejects the
