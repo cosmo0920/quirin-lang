@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build.sh NAME [FEATURES] -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): under the
+# build.sh NAME [FEATURES] -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): under the
 # shared heavy lock, build the release quirin-audit of the checked-out tree
 # (with cargo FEATURES when given, e.g. qcore-c-gateway/indirect-census) into a
 # private target directory (private/vbs/target-rel, or target-FEATURES), so

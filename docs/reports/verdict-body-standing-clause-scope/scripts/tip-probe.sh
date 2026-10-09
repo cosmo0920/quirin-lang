@@ -1,5 +1,5 @@
 #!/bin/bash
-# tip-probe.sh NAME -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): the round-12 shared
+# tip-probe.sh NAME -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): the round-12 shared
 # acceptance probe (scratchpad tip-contracts.sh) with this card's saved binary
 # private/vbs/bin/NAME, reports into
 # private/vbs/tip-NAME/. The scratch copy's

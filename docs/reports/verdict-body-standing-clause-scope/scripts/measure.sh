@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# measure.sh NAME [ROUTES] -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS) (from
+# measure.sh NAME [ROUTES] -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS) (from
 # CG10-INDIRECT-ACCESS-SOLE-BLOCKERS's scripts/measure.sh): the corpus arbiter,
 # system route and tail-pause slice with this worktree's release quirin-audit,
 # each into a fresh directory (corpus/system under private/vbs/NAME*, the slice

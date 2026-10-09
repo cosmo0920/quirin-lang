@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""parity.py BEFORE.jsonl AFTER.jsonl OUT.json [MOVING.json] -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES):
+"""parity.py BEFORE.jsonl AFTER.jsonl OUT.json [MOVING.json] -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES):
 the full comparison of two QCORE_TYPED_PATH_PARITY streams (Clang AST node
 addresses erased for the multiset comparison).
 

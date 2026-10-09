@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# measure-binary.sh NAME BINARY [ROUTES] -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS):
+# measure-binary.sh NAME BINARY [ROUTES] -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS):
 # measure.sh with a saved binary (private/vbs/bin/...). run_pinned_audit.py
 # always runs target/release/quirin-audit, so BINARY's bytes are written there
 # first under the shared heavy lock and its digest recorded beside the run;
