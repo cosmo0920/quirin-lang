@@ -94,6 +94,27 @@ def allowed(path, after):
     return False
 
 
+def standing(path, after):
+    """A difference rules 13i-13k derive from a changed declaration's clauses
+    (main since VERDICT-BODY-STANDING-CLAUSE-SCOPE): no evidence covers a
+    named premise, so a validated declaration that gains one is
+    `partly-validated`. Allowed only for a CHANGED declaration's own
+    coverage and record, and for the run's counts and Safe roll-up derived
+    from them; each is listed so the movement is attributed, not hidden."""
+    marker = "/contract_body_evidence/clauses/"
+    if marker in path:
+        return path.split(marker, 1)[1].split("/")[0] in CHANGED
+    prefix = "/contract_dependencies/declarations/"
+    if path.startswith(prefix):
+        return path[len(prefix):].split("/")[0] in CHANGED
+    if path.startswith("/contract_dependencies/counts/"):
+        return True
+    if path.startswith("/contract_dependencies/safe_rollup/") and "top_declared_assumptions" not in path:
+        return True
+    top = "/contract_dependencies/safe_rollup/top_declared_assumptions"
+    return indexed_function(after, path, top) in CHANGED if path.startswith(top + "[") else False
+
+
 def verdict_rows(report):
     rows = [[u.get("library"), u.get("file"), u.get("status"), u.get("reason"), u.get("reason_code"),
              [[f["function"], f["status"], f.get("diagnostics")] for f in u.get("functions", [])]]
@@ -119,9 +140,11 @@ def main():
         raw_b, raw_a = (before / suffix).read_bytes(), (after / suffix).read_bytes()
         b, a = json.loads(raw_b), json.loads(raw_a)
         diffs = differences(b, a)
-        outside = [p for p in diffs if not allowed(p, a)]
+        derived = [p for p in diffs if not allowed(p, a) and standing(p, a)]
+        outside = [p for p in diffs if not allowed(p, a) and not standing(p, a)]
         record[name] = {"before_sha256": sha(raw_b), "after_sha256": sha(raw_a),
-                        "differing_paths": diffs, "outside_the_contract_input": outside}
+                        "differing_paths": diffs, "clause_standing_paths": derived,
+                        "outside_the_contract_input": outside}
         ok = ok and not outside
         if name == "report":
             vb, va = sha(verdict_rows(b)), sha(verdict_rows(a))
@@ -137,8 +160,17 @@ def main():
         else:
             section = a.get("contract_dependencies", {})
             declarations = section.get("declarations", {})
+            before_declarations = b.get("contract_dependencies", {}).get("declarations", {})
+            record["standing_moves"] = {
+                d: [before_declarations[d].get("body_standing"), declarations[d].get("body_standing")]
+                for d in CHANGED if d in declarations and d in before_declarations
+                and before_declarations[d].get("body_standing") != declarations[d].get("body_standing")}
+            record["safe_rollup_before"] = {k: v for k, v in b.get("contract_dependencies", {}).get("safe_rollup", {}).items()
+                                            if k != "top_declared_assumptions"}
+            record["counts_before"] = b.get("contract_dependencies", {}).get("counts")
+            record["counts_after"] = section.get("counts")
             record["changed_declarations"] = {
-                d: {k: declarations[d].get(k) for k in ("mode", "status", "body_standing", "rows", "safe_rows")}
+                d: {k: declarations[d].get(k) for k in ("mode", "status", "body_standing", "rows", "safe_rows", "uncovered_clauses")}
                 | {"premises": [p["name"] for p in declarations[d].get("premises", [])]}
                 if d in declarations else None
                 for d in CHANGED}
@@ -161,10 +193,14 @@ def main():
     for name in ("report", "sidecar"):
         part = record[name]
         print(name, part["before_sha256"][:12], "->", part["after_sha256"][:12],
-              "differing", len(part["differing_paths"]), "outside", len(part["outside_the_contract_input"]))
+              "differing", len(part["differing_paths"]), "clause-standing", len(part["clause_standing_paths"]),
+              "outside", len(part["outside_the_contract_input"]))
         for path in part["outside_the_contract_input"][:20]:
             print("  OUTSIDE", path)
     print("totals", record["totals_after"])
+    print("standing moves", json.dumps(record.get("standing_moves")))
+    print("safe rollup", json.dumps(record.get("safe_rollup_before")), "->", json.dumps(record.get("safe_rollup")))
+    print("counts", json.dumps(record.get("counts_before")), "->", json.dumps(record.get("counts_after")))
     print("by premise", json.dumps(record["by_premise"]))
     print("changed", json.dumps(record["changed_declarations"]))
     sys.exit(0 if ok else 1)
