@@ -215,7 +215,30 @@ constructor, protobuf-c initialisers outside any provider crate).
 
 ## 5. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (filled by `scripts/finish-gate.sh`).
+Standing gate (`docs/agents/validation.md`), `scripts/gate.sh g2` then
+`scripts/write_gate_json.py g2 pg1` and `scripts/finish-gate.sh g2 pg1`; logs
+`private/cg10r2/gate-g2/`, exits copied to [gate/](gate/), summary
+[gate.json](gate.json) (GATE_TABLE).
+
+**Provider gate** (`scripts/provider-gate.sh pg1`, at `80f91076a`;
+`providers/` unchanged since): `cargo check --locked` 0, `cargo test` 129
+passed, fmt 0, clippy 0, `providers/contracts.py check` 0, package build 0 and
+`verify` 0 for all five packages, providers Python suite 25 tests OK
+([gate/provider/](gate/provider/)). Targeted runs before the gates: the new
+controls (`t-int4`), the contract pins (`t-pins3`), all under
+`private/cg10r2/`.
+
+**Pins flipped deliberately.** The first gate, `gate-g1` (code at
+`80f91076a`), failed exactly two gateway pins (7,767 passed, 2 failed; every
+other step 0, 304 Lean audits): `sub_object_stores`'s
+`r->count = x_len(s)` (a `None`-result, all-`Borrowed` call stored into a
+scalar member) is read by rule 14a and is now `Safe`, with a new control that
+two calls keep the refusal; `neighbours`' control that a pointer-arithmetic
+tail actual keeps the constructor's refusal (`storage->stream->name + 0`) is
+read by rule 14d, which the test now asserts, and the refused control is `*&`
+over the same path (`f26c53cd7`). Contract pins, before any gate:
+`compiler/tests/contract_loader.rs` 363 → 365 v1 declarations and two
+previous-mode rows, `compiler/tests/qcore_contract_corpus.rs` two clause rows.
 
 ## Files
 
