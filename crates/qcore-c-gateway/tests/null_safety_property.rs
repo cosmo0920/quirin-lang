@@ -236,11 +236,7 @@ fn a_reassignment_between_does_not_move_the_question() {
         .map(|c| c.outcome)
         .collect::<Vec<_>>();
     assert_eq!(checks, vec!["candidate", "moved", "candidate"], "{row:#?}");
-    let last = row
-        .checks
-        .iter()
-        .rfind(|c| c.subject == "p")
-        .expect("p");
+    let last = row.checks.iter().rfind(|c| c.subject == "p").expect("p");
     assert_eq!(
         last.sources,
         vec!["memory-field:p->next".to_owned()],
@@ -471,11 +467,7 @@ fn lookups_and_memory_reads_are_sources() {
         .find(|c| c.subject == "s->next")
         .expect("s->next");
     assert_eq!(next.outcome, "candidate", "{row:#?}");
-    let base = row
-        .checks
-        .iter()
-        .rfind(|c| c.subject == "s")
-        .expect("s");
+    let base = row.checks.iter().rfind(|c| c.subject == "s").expect("s");
     assert_eq!(base.outcome, "proved", "{row:#?}");
 }
 
