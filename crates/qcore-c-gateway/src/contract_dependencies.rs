@@ -34,6 +34,12 @@
 //! Evidence taken under hypothetical holds ([`hypothetical`]: rule 10i's
 //! second analysis with every held declaration in force) is not recorded,
 //! because those holds are not in force.
+//!
+//! Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rules 13i–13k): a unit's
+//! `validated` is evidence for the clauses that evidence covers, not for the
+//! whole declaration ([`crate::contract_clause_standing`]); a W4 summary equal
+//! to the custody projection of a declaration with container or counted-user
+//! clauses is recorded too, covering the custody clauses only.
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
@@ -641,11 +647,12 @@ pub(crate) fn unit_evidence(
         }
         if derivation.conflict(name).is_some() {
             failed(name, "conflict");
-        } else if derivation.inferred(name).is_some() && *declared == declared.custody_projection()
-        {
+        } else if derivation.inferred(name).is_some() {
             // No conflict means the validated summary is the declaration's
-            // custody projection, and a declaration without container or
-            // counted-user clauses is exactly that.
+            // custody projection. Card VERDICT-BODY-STANDING-CLAUSE-SCOPE
+            // (rule 13i): W4 covers exactly the clauses that projection
+            // compares, so a container or counted-user clause beside them
+            // stays uncovered (`contract_clause_standing::covers`).
             validated(name, "W4");
         }
     }

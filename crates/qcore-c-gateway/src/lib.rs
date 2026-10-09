@@ -29,6 +29,9 @@ mod clang;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the declarations each
 // row's derivation consulted, and the unit's body evidence; evidence only.
 pub mod contract_dependencies;
+// Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rules 13i-13k): the clauses of a
+// declaration and which of them each piece of body evidence covers.
+pub mod contract_clause_standing;
 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: one unit's Clang results reused
 // across the analysis scopes of a worker thread.
 mod clang_reuse;

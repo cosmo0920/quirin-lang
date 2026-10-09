@@ -21,10 +21,24 @@
 //! premises: per declaration its digest, mode and status, its **body
 //! standing** for the run, its premises and how many rows (and `Safe` rows)
 //! consulted it; and the reviewer's roll-up of the `Safe` rows. A
-//! declaration is `validated` for the run only when every unit that examined
-//! one of its bodies validated it and at least one did; one held for a human
-//! act is `held`; every other is a `declared-assumption` (contract
+//! declaration's evidence standing is `validated` only when every unit that
+//! examined one of its bodies validated it and at least one did; one held for
+//! a human act is `held`; every other is a `declared-assumption` (contract
 //! specification C06): no body, or a body that did not validate it.
+//!
+//! # Per clause (card VERDICT-BODY-STANDING-CLAUSE-SCOPE, rules 13i–13k)
+//!
+//! Evidence validates the clauses it covers, read clause by clause by
+//! [`qcore_c_gateway::contract_clause_standing`]. The unit field carries, for
+//! every declaration the unit validated, each clause with the evidence that
+//! covered it there (`clauses`). A clause is `validated` for the run when the
+//! declaration's evidence standing is `validated` and the clause was covered in
+//! every unit that validated the declaration; the declaration is `validated`
+//! only when **every** clause is, `partly-validated` when some but not all are
+//! (its `uncovered_clauses` listed), and otherwise a `declared-assumption`
+//! ([`clause_standing_of`]). The roll-up's "only validated" bucket counts rows
+//! whose every declaration is fully validated; a row resting on a
+//! partly-validated declaration and no declared assumption is counted apart.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -48,7 +62,7 @@ pub const SECTION_KEY: &str = "contract_dependencies";
 pub const PREMISES_KEY: &str = "contract_premises";
 
 /// What the section means, carried in the section itself.
-pub const MEANING: &str = "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rule 13g): `validated` only where every unit that examined a body of the declared function validated the declaration (an equal W4 summary, the body under the declaration's entry custody matching every exit and Safe, or the structural checks of rules 11r, 12w, 13a, 13c and 13d) and at least one did; `held` for a declaration held for a human act; otherwise `declared-assumption` (contract specification C06): there is no analysed body, or it did not validate the declaration. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). Evidence only: no verdict reads this section or the row fields";
+pub const MEANING: &str = "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rules 13g, 13i-13k): evidence covers the clauses it compares or reads (an equal W4 summary, and the body under the declaration's entry custody matching every exit and Safe: every parameter and result mode with its kind; rule 11r: every exit class; 12w: the guards of retentions; 13a: slot moves, derived out slots and a borrowed result; 13c: reference keeps and drops; 13d: a returned reference); no evidence covers a container or counted-user clause, a retention, a holder reset, a named premise, a variadic tail or a no-return clause. A clause is `validated` where every unit that examined a body of the declared function validated the declaration, at least one did, and every such unit's evidence covered the clause; a declaration is `validated` only when every clause is, `partly-validated` when some but not all are (`uncovered_clauses`), `held` when held for a human act, and otherwise `declared-assumption` (contract specification C06): there is no analysed body, a body did not validate it, or no clause is covered everywhere. `resting_only_on_validated_declarations` counts Safe rows whose every declaration is fully validated. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). Evidence only: no verdict reads this section or the row fields";
 
 /// The premises rule 13e states for a declaration whose result holds a
 /// retained pointer.
@@ -128,13 +142,23 @@ pub fn unit_field(record: &UnitRecord, contracts: &ResourceContracts) -> Option<
     if validated.is_empty() && unvalidated.is_empty() && failed.is_empty() && withdrawn.is_empty() {
         return None;
     }
-    Some(json!({
+    let mut field = json!({
         "validated": validated,
         "unvalidated": unvalidated,
         "failed": failed,
         "withdrawn": withdrawn,
-    }))
+    });
+    // Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rule 13j): each validated
+    // declaration's clauses, with the evidence that covered each here.
+    let coverage = qcore_c_gateway::contract_clause_standing::unit_coverage(record, contracts);
+    if !coverage.is_empty() {
+        field[CLAUSES_KEY] = json!(coverage);
+    }
+    Some(field)
 }
+
+/// The unit field's key of the per-clause coverage (rule 13j).
+pub const CLAUSES_KEY: &str = "clauses";
 
 /// Add the row and unit fields to the unit row `row` the report just
 /// recorded for `result`, from the unit's `record` under `contracts`.
@@ -230,6 +254,11 @@ struct Bodies {
     validated_by: BTreeSet<String>,
     failed_by: BTreeSet<String>,
     withdrawn_units: usize,
+    /// Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rule 13j): validated units
+    /// that carried the declaration's clause coverage.
+    clause_units: usize,
+    /// Per clause, the validated units whose evidence covered it.
+    clauses: BTreeMap<String, usize>,
 }
 
 fn strings(value: &Value) -> impl Iterator<Item = &str> {
@@ -288,6 +317,15 @@ impl Facts {
             let bodies = self.bodies.entry(name.clone()).or_default();
             bodies.validated_units += 1;
             bodies.validated_by.extend(strings(by).map(str::to_owned));
+            // Rule 13j: a clause counts in this unit only when some evidence
+            // covered it here; a clause absent here was not covered here.
+            if let Some(coverage) = evidence[CLAUSES_KEY][name].as_object() {
+                bodies.clause_units += 1;
+                for (clause, covering) in coverage {
+                    let covered = covering.as_array().is_some_and(|by| !by.is_empty());
+                    *bodies.clauses.entry(clause.clone()).or_default() += usize::from(covered);
+                }
+            }
         }
         for name in strings(&evidence["unvalidated"]) {
             self.bodies
@@ -327,6 +365,10 @@ impl Facts {
             mine.withdrawn_units += bodies.withdrawn_units;
             mine.validated_by.extend(bodies.validated_by);
             mine.failed_by.extend(bodies.failed_by);
+            mine.clause_units += bodies.clause_units;
+            for (clause, covered) in bodies.clauses {
+                *mine.clauses.entry(clause).or_default() += covered;
+            }
         }
         self.safe.extend(other.safe);
         self.rows_annotated += other.rows_annotated;
@@ -356,15 +398,89 @@ pub fn body_standing_of(
     }
 }
 
+/// Card VERDICT-BODY-STANDING-CLAUSE-SCOPE (rules 13j, 13k): the run-level
+/// standing of one declaration from its clauses. `clauses` maps each clause
+/// to the validated units whose evidence covered it; `clause_units` counts
+/// the validated units that carried coverage at all. Under the evidence
+/// standing [`body_standing_of`]'s `validated`, the declaration is
+/// `validated` only when it has a clause and every clause was covered in
+/// every validated unit, `partly-validated` when some clause was, and a
+/// `declared-assumption` otherwise; `held` and `declared-assumption` pass
+/// through. `QCore.BodyClauseStanding.standing`.
+#[must_use]
+pub fn clause_standing_of(
+    status: Option<&str>,
+    validated_units: usize,
+    unvalidated_units: usize,
+    failed_units: usize,
+    clause_units: usize,
+    clauses: &BTreeMap<String, usize>,
+) -> &'static str {
+    let evidence = body_standing_of(status, validated_units, unvalidated_units, failed_units);
+    if evidence != "validated" {
+        return evidence;
+    }
+    let everywhere =
+        |covered: &usize| clause_units == validated_units && *covered == validated_units;
+    if !clauses.is_empty() && clauses.values().all(everywhere) {
+        "validated"
+    } else if clauses.values().any(everywhere) {
+        "partly-validated"
+    } else {
+        "declared-assumption"
+    }
+}
+
+/// Each clause's standing for the run (rule 13j): `validated` where the
+/// declaration's evidence standing is `validated` and every validated unit's
+/// evidence covered it, otherwise `declared-assumption`.
+fn clause_standings(status: Option<&str>, bodies: &Bodies) -> BTreeMap<String, &'static str> {
+    let evidence = body_standing_of(
+        status,
+        bodies.validated_units,
+        bodies.unvalidated_units,
+        bodies.failed_units,
+    );
+    bodies
+        .clauses
+        .iter()
+        .map(|(clause, covered)| {
+            let validated = evidence == "validated"
+                && bodies.clause_units == bodies.validated_units
+                && *covered == bodies.validated_units;
+            (
+                clause.clone(),
+                if validated {
+                    "validated"
+                } else {
+                    "declared-assumption"
+                },
+            )
+        })
+        .collect()
+}
+
 fn body_standing(status: Option<&str>, bodies: Option<&Bodies>) -> &'static str {
-    let (validated, unvalidated, failed) = bodies.map_or((0, 0, 0), |bodies| {
-        (
+    match bodies {
+        Some(bodies) => clause_standing_of(
+            status,
             bodies.validated_units,
             bodies.unvalidated_units,
             bodies.failed_units,
-        )
-    });
-    body_standing_of(status, validated, unvalidated, failed)
+            bodies.clause_units,
+            &bodies.clauses,
+        ),
+        None => clause_standing_of(status, 0, 0, 0, 0, &BTreeMap::new()),
+    }
+}
+
+/// The clauses of `clauses` that are not `validated`.
+fn uncovered(clauses: &BTreeMap<String, &str>) -> Vec<String> {
+    clauses
+        .iter()
+        .filter(|(_, standing)| **standing != "validated")
+        .map(|(clause, _)| clause.clone())
+        .collect()
 }
 
 /// The section for `facts` under the rendered `contract_revision` section
@@ -380,6 +496,7 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
         .collect::<BTreeSet<_>>();
     let mut declarations = serde_json::Map::new();
     let mut standing = BTreeMap::new();
+    let mut partly = Vec::new();
     for name in &names {
         let entry = &inventory[name];
         let status = entry["status"].as_str();
@@ -412,27 +529,49 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
                 "validated_by": bodies.validated_by,
                 "failed_by": bodies.failed_by,
             });
+            // Rule 13j: each clause's standing, and what is left uncovered.
+            if body != "held" && !bodies.clauses.is_empty() {
+                let clauses = clause_standings(status, bodies);
+                if body == "partly-validated" {
+                    partly.push((uses.safe_rows, name.clone(), uncovered(&clauses)));
+                    record["uncovered_clauses"] = json!(uncovered(&clauses));
+                }
+                record["clauses"] = json!(clauses);
+            }
         }
         declarations.insert(name.clone(), record);
     }
     let mut none = 0;
     let mut only_validated = 0;
+    let mut on_partly_validated = 0;
     let mut on_assumption = 0;
     let mut on_held_or_withdrawn = 0;
+    let is = |name: &String, label: &str| standing.get(name).is_some_and(|value| *value == label);
     for (rested, other) in &facts.safe {
         if *other > 0 {
             on_held_or_withdrawn += 1;
         } else if rested.is_empty() {
             none += 1;
+        } else if rested.iter().all(|name| is(name, "validated")) {
+            only_validated += 1;
         } else if rested
             .iter()
-            .all(|name| standing.get(name) == Some(&"validated"))
+            .all(|name| is(name, "validated") || is(name, "partly-validated"))
         {
-            only_validated += 1;
+            // Rule 13k: every declaration validated or partly validated, at
+            // least one partly, and no declared assumption.
+            on_partly_validated += 1;
         } else {
             on_assumption += 1;
         }
     }
+    partly.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.cmp(&b.1)));
+    let partly = partly
+        .into_iter()
+        .map(|(safe_rows, name, uncovered)| {
+            json!({"function": name, "safe_rows": safe_rows, "uncovered_clauses": uncovered})
+        })
+        .collect::<Vec<_>>();
     let mut assumptions = facts
         .rows
         .iter()
@@ -463,6 +602,7 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
             "rows_annotated": facts.rows_annotated,
             "declarations_consulted": declarations.len(),
             "validated": count("validated"),
+            "partly_validated": count("partly-validated"),
             "declared_assumption": count("declared-assumption"),
             "held": count("held"),
         },
@@ -470,9 +610,11 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
             "safe_rows": facts.safe_rows,
             "resting_on_no_declaration": none,
             "resting_only_on_validated_declarations": only_validated,
+            "resting_on_a_partly_validated_declaration": on_partly_validated,
             "resting_on_a_declared_assumption": on_assumption,
             "consulting_a_held_or_withdrawn_declaration": on_held_or_withdrawn,
             "top_declared_assumptions": top,
+            "partly_validated_declarations": partly,
         },
         "declarations": declarations,
     })
@@ -491,16 +633,21 @@ pub fn tally(section: &Value) -> String {
     let count = |key: &str| rollup[key].as_u64().unwrap_or_default();
     format!(
         "contract dependencies: {} Safe row(s): {} on no declaration, {} only on validated \
-         declarations, {} on a declared assumption, {} consulting a held or withdrawn \
-         declaration; {} declaration(s) consulted ({} validated)",
+         declarations, {} on a partly validated declaration, {} on a declared assumption, {} \
+         consulting a held or withdrawn declaration; {} declaration(s) consulted ({} validated, \
+         {} partly validated)",
         count("safe_rows"),
         count("resting_on_no_declaration"),
         count("resting_only_on_validated_declarations"),
+        count("resting_on_a_partly_validated_declaration"),
         count("resting_on_a_declared_assumption"),
         count("consulting_a_held_or_withdrawn_declaration"),
         section["counts"]["declarations_consulted"]
             .as_u64()
             .unwrap_or_default(),
         section["counts"]["validated"].as_u64().unwrap_or_default(),
+        section["counts"]["partly_validated"]
+            .as_u64()
+            .unwrap_or_default(),
     )
 }
