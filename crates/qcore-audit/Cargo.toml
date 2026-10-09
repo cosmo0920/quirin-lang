@@ -16,6 +16,13 @@ path = "src/main.rs"
 name = "quirin-dump-checkpoint"
 path = "src/bin/quirin-dump-checkpoint.rs"
 
+[features]
+# Card DEEP-AST-TRANSPORTS-AND-WALL-TIME. Off by default and never enabled by
+# any workspace member: with it off, `unit_timing` and its one call site in
+# `pinned_route` are compiled out entirely. It records each pinned-route unit's
+# analysis interval for the card's wall-time measurement and moves no output.
+unit-timing = []
+
 [dependencies]
 quirin-source-analysis = { path = "../quirin-source-analysis", version = "0.1.0" }
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }

@@ -56,6 +56,10 @@ mod source_audit;
 pub mod source_contract;
 pub mod timeout_teardown;
 pub mod unit_selection;
+// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: measurement only, compiled out
+// unless the `unit-timing` feature is on.
+#[cfg(feature = "unit-timing")]
+mod unit_timing;
 // Card W45-USER-CONTRACT-PLUGINS: user contract crates on an extending load
 // path, their collisions with shipped contracts, checker plugins, and the
 // resource views of user crates (`quirin-audit plugin views`).
