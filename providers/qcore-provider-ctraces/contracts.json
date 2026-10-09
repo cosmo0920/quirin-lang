@@ -2,6 +2,6 @@
   "schema_version": 1,
   "plugin_id": "qcore.ctraces",
   "contracts": {
-    "contracts/ctraces/context_lifetime.qv": "a510f08067bce8a23d27a1aad2052467ba0f99ca785673ef5994046fca06831b"
+    "contracts/ctraces/context_lifetime.qv": "00fb6fe02bb2daf5e56b6a8719355866d86651984b76d11fd3c59efabf8712e9"
   }
 }

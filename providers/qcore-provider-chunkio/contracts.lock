@@ -227,7 +227,7 @@
     {
       "function": "cio_errno_print",
       "module": "chunkio/chunk_residency.qv",
-      "contract_sha256": "41d4a13ad93cf7e55bd4d8c34305afefc2413e771a904c718e6e51ca2c4188bd",
+      "contract_sha256": "0afa7cb0ba4ce7657d11fd0849a8d33597580cfc6df29f0ecdfe1944b9ea9b3c",
       "identities": [
         {
           "reviewed_at": [

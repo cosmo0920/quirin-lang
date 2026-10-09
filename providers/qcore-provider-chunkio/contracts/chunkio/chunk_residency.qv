@@ -174,13 +174,13 @@ contract {
 // `errno` (`(*__errno_location())`), read through the libc declaration of
 // `__errno_location` (CONSTRUCTOR-RESIDUALS' nested rule).
 //
-// ABI: `int cio_errno_print(int, const char *, int)`; `i32`, `ptr<mut, u8>`,
+// ABI: `int cio_errno_print(int, const char *, int)`; `i32`, `ptr<const, u8>`,
 // `i32`, `-> i32`.
 //
 // NOT CLAIMED: what is printed, or `file`'s validity.
 
 // --- print an errno value ---------------------------------------------------
-extern fn cio_errno_print(errnum: i32, file: ptr<mut, u8>, line: i32) -> i32
+extern fn cio_errno_print(errnum: i32, file: ptr<const, u8>, line: i32) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(errnum);

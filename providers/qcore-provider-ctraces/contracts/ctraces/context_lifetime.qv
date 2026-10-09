@@ -348,12 +348,12 @@ contract {
 // element, every formal `resource_borrowed`, `resource_return_none()`.
 // Callers spell it `ctr_errno()`, whose actual is `errno`.
 //
-// ABI: `int ctr_errno_print(int, const char *, int)`; `i32`, `ptr<mut, u8>`,
+// ABI: `int ctr_errno_print(int, const char *, int)`; `i32`, `ptr<const, u8>`,
 // `i32`, `-> i32`.
 //
 // NOT CLAIMED: what is printed, or `file`'s validity.
 
-extern fn ctr_errno_print(errnum: i32, file: ptr<mut, u8>, line: i32) -> i32
+extern fn ctr_errno_print(errnum: i32, file: ptr<const, u8>, line: i32) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(errnum);
