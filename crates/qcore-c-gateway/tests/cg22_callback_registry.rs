@@ -141,6 +141,12 @@ int run_uncontracted(void *reader, void *context) { return c_each(reader, opaque
 int run_formal(void *reader, int (*cb)(void *, unsigned long, void *), void *context) { return c_each(reader, cb, context); }
 int run_null(void *reader, void *context) { return c_each(reader, NULL, context); }
 int run_choice(void *reader, void *context, int which) { return c_each(reader, which ? visit : consume, context); }
+static int reads(void *reader, unsigned long index, void *context) { return *(int *)context + (int)index; }
+int run_requires(void *reader, void *context) { return c_each(reader, reads, context); }
+int direct_requires(void *reader, void *context) { return reads(reader, 0, context); }
+int run_requires_local(void *reader) { int local = 0; return c_each(reader, reads, &local); }
+#define each_generic(r, c) _Generic (0 ? (r) : (void *) 1, const void *: (int) (c_each (r, visit, c)), default: c_each (r, visit, c))
+int run_generic(void *reader, void *context) { return each_generic(reader, context); }
 ";
 
 #[test]
@@ -151,6 +157,23 @@ fn an_identity_callback_reads_as_its_custody_contract() {
     let rows = rows(INVOCATIONS);
     assert!(rows["visit"].safe(), "{:?}", rows["visit"]);
     assert!(rows["run_identity"].safe(), "{:?}", rows["run_identity"]);
+    // A callback that reads the caller's context (`resource_owned` in its
+    // summary) puts that requirement on the call: the caller is decided as a
+    // direct call of the callback with the same actual is.
+    assert_eq!(
+        rows["run_requires"].status,
+        rows["direct_requires"].status,
+        "{:?} {:?}",
+        rows["run_requires"],
+        rows["direct_requires"]
+    );
+    assert_eq!(
+        rows["run_requires"].unsupported.is_empty(),
+        rows["direct_requires"].unsupported.is_empty()
+    );
+    // glibc's `__glibc_const_generic` shape: two Clang calls on one line, one
+    // per association, with one resolution.
+    assert!(rows["run_generic"].safe(), "{:?}", rows["run_generic"]);
 }
 
 #[test]

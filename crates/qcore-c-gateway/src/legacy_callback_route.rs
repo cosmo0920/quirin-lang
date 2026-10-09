@@ -76,6 +76,10 @@ pub struct Operands {
     pub uses: Vec<RegistryUse>,
     /// The holder actual's text, per use (for refusals).
     pub texts: Vec<String>,
+    /// The call's parameters a callback reads at a `resource_owned(n)`
+    /// position, with `n` (every candidate's `n` joined): the classifier
+    /// reads each as `resource_owned(n)` on the call itself.
+    pub owned: BTreeMap<usize, bool>,
 }
 
 /// What a holder keys on in the path state.
@@ -325,26 +329,28 @@ fn direct_name(node: &Value) -> Option<&str> {
 impl Parser<'_> {
     /// The one Clang call node of `callee` on `line` of the current function,
     /// with its function body, read through the unit's AST.
-    fn callback_site<T>(
+    /// Every Clang call of `callee` on `line` of the current function is
+    /// read; the answer stands only when there is one, or when all agree (rule
+    /// 11p's placement: glibc's `__glibc_const_generic` puts two `bsearch`
+    /// calls, one per association, on the line the token stream reads as one).
+    fn callback_site<T: PartialEq>(
         &self,
         callee: &str,
         line: usize,
-        read: impl FnOnce(&Value, &Value, &crate::indirect_calls::TableFacts) -> T,
+        mut read: impl FnMut(&Value, &Value, &crate::indirect_calls::TableFacts) -> T,
     ) -> Option<T> {
         crate::typed_access_path::with_indirect_call_unit(|unit| {
             let function = unit.function(&self.typed_path_function)?;
             let mut found = Vec::new();
             calls(function, &mut found);
-            let matching = found
+            let mut answers = found
                 .into_iter()
                 .filter(|call| {
                     direct_callee(call) == Some(callee) && unit.node_line(call) == Some(line)
                 })
-                .collect::<Vec<_>>();
-            let [call] = matching.as_slice() else {
-                return None;
-            };
-            Some(read(call, function, unit.tables()))
+                .map(|call| read(call, function, unit.tables()));
+            let first = answers.next()?;
+            answers.all(|answer| answer == first).then_some(first)
         })
         .flatten()
     }
@@ -451,6 +457,26 @@ impl Parser<'_> {
             .collect()
     }
 
+    /// The requirements every candidate puts on the call's parameters
+    /// ([`crate::callback_contracts::requirements`]), joined into `owned`.
+    fn require(
+        &self,
+        candidates: &BTreeSet<String>,
+        actuals: &[CallbackActual],
+        owned: &mut BTreeMap<usize, bool>,
+    ) {
+        for name in candidates {
+            for (index, nullable) in
+                crate::callback_contracts::requirements(self.contracts.contract(name), actuals)
+            {
+                owned
+                    .entry(index)
+                    .and_modify(|all| *all &= nullable)
+                    .or_insert(nullable);
+            }
+        }
+    }
+
     /// Hook 1 (rules 13u–13x): decide the synchronous invocations and table
     /// dispatches of a call to `function`, and read its registry clauses.
     /// `Err` with the call's refusal.
@@ -493,6 +519,7 @@ impl Parser<'_> {
         let mut operands = Operands {
             uses: Vec::new(),
             texts: Vec::new(),
+            owned: BTreeMap::new(),
         };
         for clause in &declaration.callbacks {
             match clause {
@@ -511,6 +538,9 @@ impl Parser<'_> {
                             &invocation_detail(reason, candidate.as_deref(), &text(*callback)),
                             reason,
                         ));
+                    }
+                    if let Ok(candidates) = &resolution {
+                        self.require(candidates, actuals, &mut operands.owned);
                     }
                 }
                 CallbackClause::Table { table, actuals } => {
@@ -531,6 +561,9 @@ impl Parser<'_> {
                             _ => invocation_detail(reason, candidate.as_deref(), &text(*table)),
                         };
                         return Err(refusal(function, &detail, reason));
+                    }
+                    if let Ok(candidates) = &resolution {
+                        self.require(candidates, actuals, &mut operands.owned);
                     }
                 }
                 CallbackClause::Registered { callback, holder: at } => {
@@ -600,7 +633,7 @@ impl Parser<'_> {
                 }
             }
         }
-        Ok((!operands.uses.is_empty()).then_some(operands))
+        Ok((!operands.uses.is_empty() || !operands.owned.is_empty()).then_some(operands))
     }
 
     /// Whether `name` is a frame registry holder of the calling function.
@@ -740,6 +773,24 @@ pub(super) fn apply(
         match registry_use {
             RegistryUse::Register { .. } => {}
             RegistryUse::Invoke { actuals, .. } => {
+                if candidates.iter().any(|(_, contract)| {
+                    !crate::callback_contracts::requirements(contract.as_ref(), actuals).is_empty()
+                }) {
+                    // A registered callback that requires the caller's actual
+                    // live is not decided here (the conservative reading).
+                    refuse(
+                        function,
+                        line,
+                        refusal(
+                            callee,
+                            &format!("a callback `{text}` keeps requires a caller's object live"),
+                            crate::callback_contracts::EFFECTFUL,
+                        ),
+                        state,
+                        diagnostics,
+                    );
+                    continue;
+                }
                 let classes = candidates
                     .iter()
                     .map(|(name, contract)| (name.clone(), classify(contract.as_ref(), actuals)))
@@ -926,6 +977,75 @@ pub(super) fn refuse_release_of_registry(
     holds
 }
 
+/// The parameter names of `function`'s definition, read as rule 12w's
+/// `definition` reads them, except that an inline function-pointer
+/// declarator `RET (*NAME)(…)` names `NAME` (`rd_list_init`'s `free_cb`);
+/// any other parenthesised declarator names nothing, which the check refuses.
+fn parameter_names(tokens: &[super::Token], function: &str) -> Option<Vec<String>> {
+    let (open, _) = super::find_function_body(tokens, function)?;
+    let close = open.checked_sub(1)?;
+    let mut depth = 0usize;
+    let mut start = None;
+    for at in (0..=close).rev() {
+        match tokens[at].text.as_str() {
+            ")" => depth += 1,
+            "(" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    start = Some(at);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let start = start?;
+    let words = tokens[start + 1..close]
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    let mut names = Vec::new();
+    let mut group: Vec<&str> = Vec::new();
+    let mut nested = 0usize;
+    let finish = |group: &[&str]| -> String {
+        if !group.contains(&"(") {
+            return group
+                .last()
+                .filter(|word| is_identifier(word))
+                .map_or_else(String::new, |word| (*word).to_owned());
+        }
+        // `RET ( * NAME ) ( … )`: exactly one starred name in the first group.
+        match group.iter().position(|word| *word == "(") {
+            Some(at)
+                if group.get(at + 1) == Some(&"*")
+                    && group.get(at + 2).is_some_and(|word| is_identifier(word))
+                    && group.get(at + 3) == Some(&")")
+                    && group.get(at + 4) == Some(&"(") =>
+            {
+                group[at + 2].to_owned()
+            }
+            _ => String::new(),
+        }
+    };
+    for word in words {
+        match word {
+            "(" | "[" => nested += 1,
+            ")" | "]" => nested = nested.saturating_sub(1),
+            "," if nested == 0 => {
+                names.push(finish(&group));
+                group.clear();
+                continue;
+            }
+            _ => {}
+        }
+        group.push(word);
+    }
+    if !group.is_empty() {
+        names.push(finish(&group));
+    }
+    Some(names)
+}
+
 /// Whether the formal `name` is rebound or has its address taken in `body`.
 fn rebound(body: &[&str], name: &str) -> bool {
     body.iter().enumerate().any(|(at, word)| {
@@ -956,7 +1076,9 @@ fn invocation_validates(
     callback: usize,
     actuals: &[CallbackActual],
 ) -> bool {
-    let Some(name) = parameters.get(callback) else {
+    let Some(name) = parameters.get(callback).filter(|name| !name.is_empty()) else {
+        // A callback formal whose name the reader does not read is never
+        // validated vacuously.
         return false;
     };
     if rebound(body, name) {
@@ -988,9 +1110,9 @@ fn invocation_validates(
         for (&(start, end), actual) in spans.iter().zip(actuals) {
             let argument = &body[start..end];
             let fits = match actual {
-                CallbackActual::Parameter { index } => parameters
-                    .get(*index)
-                    .is_some_and(|formal| argument == [formal.as_str()] && !rebound(body, formal)),
+                CallbackActual::Parameter { index } => parameters.get(*index).is_some_and(|formal| {
+                    !formal.is_empty() && argument == [formal.as_str()] && !rebound(body, formal)
+                }),
                 CallbackActual::Supplied => !argument.contains(&name.as_str()),
                 CallbackActual::Element => false,
             };
@@ -1006,7 +1128,10 @@ fn invocation_validates(
 /// on a body that names `F` only as the value of stores `H->M = F;`, at least
 /// once, `H` and `F` never rebound.
 fn registration_validates(body: &[&str], parameters: &[String], callback: usize, holder: usize) -> bool {
-    let (Some(name), Some(holder)) = (parameters.get(callback), parameters.get(holder)) else {
+    let (Some(name), Some(holder)) = (
+        parameters.get(callback).filter(|name| !name.is_empty()),
+        parameters.get(holder).filter(|name| !name.is_empty()),
+    ) else {
         return false;
     };
     if rebound(body, name) || rebound(body, holder) {
@@ -1063,7 +1188,10 @@ pub(crate) fn settle(
         if checked.is_empty() {
             continue;
         }
-        let Some((parameters, body)) = super::slot_move_route::defined_body(tokens, name) else {
+        let Some((_, body)) = super::slot_move_route::defined_body(tokens, name) else {
+            continue;
+        };
+        let Some(parameters) = parameter_names(tokens, name) else {
             continue;
         };
         let valid = checked.iter().all(|clause| match clause {
@@ -1158,6 +1286,35 @@ mod tests {
 
     fn formals(names: &[&str]) -> Vec<String> {
         names.iter().map(|name| (*name).to_owned()).collect()
+    }
+
+    fn stream(text: &str) -> Vec<super::super::Token> {
+        text.split_whitespace()
+            .map(|word| super::super::Token {
+                text: word.to_owned(),
+                line: 1,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn an_inline_function_pointer_parameter_is_named() {
+        // `rd_list_init`'s definition (`rdlist.c:53-62`).
+        let tokens = stream(
+            "rd_list_t * rd_list_init ( rd_list_t * rl , int initial_size , void ( * free_cb ) \
+             ( void * ) ) { memset ( rl , 0 , sizeof ( * rl ) ) ; if ( initial_size > 0 ) \
+             rd_list_grow ( rl , initial_size ) ; rl -> rl_free_cb = free_cb ; return rl ; }",
+        );
+        let names = parameter_names(&tokens, "rd_list_init").expect("a definition");
+        assert_eq!(names, ["rl", "initial_size", "free_cb"]);
+        let (_, body) =
+            super::super::slot_move_route::defined_body(&tokens, "rd_list_init").expect("a body");
+        assert!(registration_validates(&body, &names, 2, 0));
+        // A declarator the reader does not name never validates vacuously.
+        let odd = stream("int f ( int ( * ( * g ) ) ( void ) ) { return 0 ; }");
+        let names = parameter_names(&odd, "f").expect("a definition");
+        assert_eq!(names, [""]);
+        assert!(!invocation_validates(&words("{ return 0 ; }"), &names, 0, &[]));
     }
 
     #[test]

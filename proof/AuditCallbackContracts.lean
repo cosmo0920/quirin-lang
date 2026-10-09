@@ -25,3 +25,7 @@ import QCore.CallbackContracts
 #print axioms QCore.CallbackContracts.decision_vectors_count
 #print axioms QCore.CallbackContracts.registry_vectors_hold
 #print axioms QCore.CallbackContracts.registry_vectors_count
+#print axioms QCore.CallbackContracts.identity_only_borrows_or_requires
+#print axioms QCore.CallbackContracts.a_release_is_only_of_an_element
+#print axioms QCore.CallbackContracts.requirements_are_owned_parameters
+#print axioms QCore.CallbackContracts.classify_vectors_hold

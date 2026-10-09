@@ -1835,8 +1835,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // the re-declared `rd_kafka_queue_new0` (retained by the result, C04.14.2)
     // and the drop `ut_destroy_mock_queue`: 25 -> 28. The eight returned
     // references with no other clause stay in the function map.
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT: the fourteen callback declarations
+    // and the two re-declared with callback clauses
+    // (`rd_kafka_topic_partition_list_sort`, `msgpack_packer_init`, which
+    // leave the function map) are withheld into the same table (C04.19):
+    // 28 -> 44.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 28);
+    assert_eq!(loaded.retaining().len(), 44);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

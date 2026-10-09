@@ -162,6 +162,97 @@ theorem an_identity_decision_is_the_custody_reading {σ : Type} {o : Bool}
   rw [ids p (within p mp)]
   exact sound t
 
+/-! ## Reading a candidate's contract
+
+`classify` and `requirements` of `callback_contracts.rs` over a plain contract
+of the right arity: each position's mode against what the callback receives
+there. `resource_owned` is a requirement (a live non-null object), not an
+effect: the callee meets it with what it supplies, and at a parameter position
+the call itself carries it (`requirementsOf`), as a direct call of the
+candidate with that actual would. -/
+
+inductive Mode where
+  | borrowed
+  | owned
+  | released
+  | other
+  deriving DecidableEq, Repr
+
+inductive Actual where
+  | parameter (i : Nat)
+  | supplied
+  | element
+  deriving DecidableEq, Repr
+
+/-- Whether one position is admitted, and whether it releases. -/
+def admitted : Mode × Actual → Bool
+  | (.borrowed, _) => true
+  | (.owned, _) => true
+  | (.released, .element) => true
+  | _ => false
+
+def classifyModes (ms : List (Mode × Actual)) : CandidateClass :=
+  if !ms.all admitted then .effectful
+  else if ms.any (fun p => p.1 == .released) then .releasesElement
+  else .identity
+
+def requirementsOf : List (Mode × Actual) → List Nat
+  | [] => []
+  | (.owned, .parameter i) :: rest => i :: requirementsOf rest
+  | _ :: rest => requirementsOf rest
+
+/-- An identity candidate only borrows or requires. -/
+theorem identity_only_borrows_or_requires (ms : List (Mode × Actual))
+    (h : classifyModes ms = .identity) : ∀ p ∈ ms, p.1 = .borrowed ∨ p.1 = .owned := by
+  unfold classifyModes at h
+  split at h
+  · cases h
+  · rename_i hall
+    simp only [Bool.not_eq_true', Bool.not_eq_false] at hall
+    split at h
+    · cases h
+    · rename_i hrel
+      intro p m
+      have ha := List.all_eq_true.mp (by simpa using hall) p m
+      obtain ⟨mode, actual⟩ := p
+      cases mode <;> cases actual <;> simp_all [admitted]
+
+/-- A release is admitted only at an `element` position. -/
+theorem a_release_is_only_of_an_element (ms : List (Mode × Actual))
+    (h : classifyModes ms ≠ .effectful) (a : Actual) (m : (Mode.released, a) ∈ ms) :
+    a = .element := by
+  unfold classifyModes at h
+  split at h
+  · exact absurd rfl h
+  · rename_i hall
+    have ha := List.all_eq_true.mp (by simpa using hall) _ m
+    cases a <;> simp_all [admitted]
+
+/-- The requirements are exactly the `owned` parameter positions. -/
+theorem requirements_are_owned_parameters (ms : List (Mode × Actual)) (i : Nat) :
+    i ∈ requirementsOf ms ↔ (Mode.owned, Actual.parameter i) ∈ ms := by
+  induction ms with
+  | nil => simp [requirementsOf]
+  | cons p rest ih =>
+    obtain ⟨mode, actual⟩ := p
+    cases mode <;> cases actual <;> simp_all [requirementsOf, eq_comm]
+
+/-- `CLASSIFY_VECTORS`: positions and the class. -/
+def classifyVectors : List (List (Mode × Actual) × CandidateClass) := [
+  ([(.borrowed, .parameter 0), (.borrowed, .supplied), (.borrowed, .parameter 2)], .identity),
+  ([(.owned, .supplied), (.owned, .supplied)], .identity),
+  ([(.owned, .parameter 0), (.borrowed, .supplied)], .identity),
+  ([(.released, .element)], .releasesElement),
+  ([(.released, .supplied)], .effectful),
+  ([(.released, .parameter 0)], .effectful),
+  ([(.other, .supplied)], .effectful),
+  ([], .identity)
+]
+
+theorem classify_vectors_hold :
+    classifyVectors.all (fun (ms, c) => classifyModes ms == c) = true := by
+  decide
+
 /-! ## Registries and element custody -/
 
 /-- What a registration in force holds, for element custody. -/

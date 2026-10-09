@@ -380,9 +380,24 @@ impl Parser<'_> {
             LegacyInstruction::ContractCall {
                 function: called,
                 retention,
+                contract,
                 ..
             } => {
                 function.clone_into(called);
+                // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13u): a callback
+                // that requires a caller's actual live puts the requirement
+                // on the call's own position.
+                if let Some(callbacks) = &operands.callbacks {
+                    for (&index, &nullable) in &callbacks.owned {
+                        if let Some(
+                            mode @ qcore_schemas::contract::ResourceParameterMode::Borrowed,
+                        ) = contract.parameters.get_mut(index)
+                        {
+                            *mode =
+                                qcore_schemas::contract::ResourceParameterMode::Owned { nullable };
+                        }
+                    }
+                }
                 *retention = Some(Box::new(operands));
             }
             LegacyInstruction::Unknown { description, .. } => {

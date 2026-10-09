@@ -97,7 +97,10 @@ pub fn classify(
     let mut releases = false;
     for (mode, actual) in contract.parameters.iter().zip(actuals) {
         match (mode, actual) {
-            (ResourceParameterMode::Borrowed, _) => {}
+            // `resource_owned` is a requirement (a live non-null object),
+            // not an effect: the callee meets it with what it supplies, and
+            // at a parameter position [`requirements`] puts it on the call.
+            (ResourceParameterMode::Borrowed | ResourceParameterMode::Owned { .. }, _) => {}
             (ResourceParameterMode::Released { .. }, CallbackActual::Element) => releases = true,
             _ => return CandidateClass::Effectful,
         }
@@ -107,6 +110,34 @@ pub fn classify(
     } else {
         CandidateClass::Identity
     }
+}
+
+/// The requirements a candidate's contract puts on the call's own
+/// parameters: each parameter actual the candidate reads at a
+/// `resource_owned(n)` position, with `n`. The call then reads that position
+/// as `resource_owned(n)` itself (the requirement a direct call of the
+/// candidate with that actual would carry); across candidates a position is
+/// nullable only when every requirement on it is.
+#[must_use]
+pub fn requirements(
+    contract: Option<&ResourceFunctionContract>,
+    actuals: &[CallbackActual],
+) -> Vec<(usize, bool)> {
+    let Some(contract) = contract else {
+        return Vec::new();
+    };
+    contract
+        .parameters
+        .iter()
+        .zip(actuals)
+        .filter_map(|(mode, actual)| match (mode, actual) {
+            (
+                ResourceParameterMode::Owned { nullable },
+                CallbackActual::Parameter { index },
+            ) => Some((*index, *nullable)),
+            _ => None,
+        })
+        .collect()
 }
 
 /// The decision of one invocation clause over its candidates.
@@ -472,6 +503,111 @@ mod tests {
             })
             .collect::<Vec<_>>();
         assert_eq!(rows, rust);
+    }
+
+    /// `CLASSIFY_VECTORS` (`QCore.CallbackContracts.classifyVectors`): the
+    /// positions of a plain contract of the right arity and its class. A mode
+    /// is `borrowed`, `owned` (`resource_owned(nonnull)`), `released`
+    /// (`resource_released(nullable)`) or `other` (`resource_consumed`).
+    const CLASSIFY_VECTORS: &[(&[(&str, CallbackActual)], CandidateClass)] = &[
+        (
+            &[
+                ("borrowed", CallbackActual::Parameter { index: 0 }),
+                ("borrowed", CallbackActual::Supplied),
+                ("borrowed", CallbackActual::Parameter { index: 2 }),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[
+                ("owned", CallbackActual::Supplied),
+                ("owned", CallbackActual::Supplied),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[
+                ("owned", CallbackActual::Parameter { index: 0 }),
+                ("borrowed", CallbackActual::Supplied),
+            ],
+            CandidateClass::Identity,
+        ),
+        (
+            &[("released", CallbackActual::Element)],
+            CandidateClass::ReleasesElement,
+        ),
+        (
+            &[("released", CallbackActual::Supplied)],
+            CandidateClass::Effectful,
+        ),
+        (
+            &[("released", CallbackActual::Parameter { index: 0 })],
+            CandidateClass::Effectful,
+        ),
+        (&[("other", CallbackActual::Supplied)], CandidateClass::Effectful),
+        (&[], CandidateClass::Identity),
+    ];
+
+    fn mode(spelling: &str) -> ResourceParameterMode {
+        match spelling {
+            "borrowed" => ResourceParameterMode::Borrowed,
+            "owned" => ResourceParameterMode::Owned { nullable: false },
+            "released" => ResourceParameterMode::Released { nullable: true },
+            _ => ResourceParameterMode::Consumed { nullable: false },
+        }
+    }
+
+    #[test]
+    fn classify_vectors_hold_and_are_the_lean_vectors() {
+        let rows = lean_rows(
+            "def classifyVectors : List (List (Mode × Actual) × CandidateClass) := [",
+        );
+        let mut rendered = Vec::new();
+        for (positions, class) in CLASSIFY_VECTORS {
+            let contract = ResourceFunctionContract {
+                parameters: positions.iter().map(|(m, _)| mode(m)).collect(),
+                result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
+            };
+            let actuals = positions.iter().map(|(_, a)| *a).collect::<Vec<_>>();
+            assert_eq!(classify(Some(&contract), &actuals), *class, "{positions:?}");
+            rendered.push(format!(
+                "([{}], {})",
+                positions
+                    .iter()
+                    .map(|(m, a)| format!(
+                        "(.{m}, {})",
+                        match a {
+                            CallbackActual::Parameter { index } => format!(".parameter {index}"),
+                            CallbackActual::Supplied => ".supplied".to_owned(),
+                            CallbackActual::Element => ".element".to_owned(),
+                        }
+                    ))
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                lean_class(*class)
+            ));
+        }
+        assert_eq!(rows, rendered);
+        // The requirement of the third vector: parameter 0, non-null.
+        let owned = ResourceFunctionContract {
+            parameters: vec![
+                ResourceParameterMode::Owned { nullable: false },
+                ResourceParameterMode::Borrowed,
+            ],
+            result: ResourceReturnMode::None,
+            ..ResourceFunctionContract::default()
+        };
+        assert_eq!(
+            requirements(
+                Some(&owned),
+                &[
+                    CallbackActual::Parameter { index: 0 },
+                    CallbackActual::Supplied
+                ]
+            ),
+            [(0, false)]
+        );
     }
 
     #[test]
