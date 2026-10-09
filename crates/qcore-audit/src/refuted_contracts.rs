@@ -111,8 +111,25 @@ pub struct TwoPhases<R, E> {
 /// caller prints and folds the published results afterwards, so a phase that
 /// is repeated prints nothing twice. `table_of` reads the table from results.
 pub fn run_two_phases<R, E>(
+    phase: impl FnMut(&RefutationTable) -> (Vec<R>, Option<E>),
+    table_of: impl Fn(&[R]) -> RefutationTable,
+) -> TwoPhases<R, E> {
+    run_two_phases_with_bounds(phase, table_of, |_| BTreeSet::new())
+}
+
+/// [`run_two_phases`] with the bounds property's own table (card
+/// **CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS**, rule 14h): `bounds_of`
+/// reads the bounds declarations phase one's bodies refute
+/// ([`crate::bounds_evidence::refutation_table`]). Phase two runs when either
+/// table is not empty; the bounds table is installed in the bounds
+/// environment first ([`crate::bounds_selection::apply_refutation_table`]),
+/// so every unit's bounds rows are analysed again with each refuted
+/// declaration withdrawn from its callers. With both tables empty nothing runs
+/// twice, as before.
+pub fn run_two_phases_with_bounds<R, E>(
     mut phase: impl FnMut(&RefutationTable) -> (Vec<R>, Option<E>),
     table_of: impl Fn(&[R]) -> RefutationTable,
+    bounds_of: impl Fn(&[R]) -> BTreeSet<String>,
 ) -> TwoPhases<R, E> {
     let empty = RefutationTable::new();
     let (results, error) = phase(&empty);
@@ -124,13 +141,15 @@ pub fn run_two_phases<R, E>(
         };
     }
     let found = table_of(&results);
-    if found.is_empty() {
+    let bounds = bounds_of(&results);
+    if found.is_empty() && bounds.is_empty() {
         return TwoPhases {
             results,
             error,
             applied: empty,
         };
     }
+    crate::bounds_selection::apply_refutation_table(&bounds);
     // The first pass will never be published now. Release its potentially large
     // reports before allocating the second pass, rather than retaining both.
     drop(results);

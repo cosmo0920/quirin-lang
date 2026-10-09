@@ -140,9 +140,24 @@ fn header_bodies_are_evidence_not_rows() {
             "cio_file_st_get_hash",
             "cio_file_st_get_meta_len",
             "cio_file_st_infer_content_len",
+            "cio_file_st_set_content_len",
             "cio_file_st_set_meta_len",
         ],
         "{evidence:#?}"
+    );
+    // set_content_len: its accesses through the byte view of `&map[10]` are
+    // decided inside `[10, 14)` (rule 14g); the frame walk cannot follow the
+    // view, so the write frame stays uncovered.
+    let content = &evidence["cio_file_st_set_content_len"];
+    assert_eq!(content.outcome, "validated", "{content:#?}");
+    assert_eq!(content.body_verdict, "Safe", "{content:#?}");
+    assert_eq!(
+        content.covered,
+        BTreeMap::from([(
+            "quant checks map, Idx #i: 10 <= #i && #i < 14".to_owned(),
+            "bounds-body"
+        )]),
+        "{content:#?}"
     );
     for name in [
         "cio_file_st_get_meta_len",
@@ -258,5 +273,76 @@ fn controls_refute_or_leave_clauses_uncovered() {
         evidence["writer"].covered.get("bounds_frame_writes(map)"),
         Some(&"bounds-frame"),
         "{evidence:#?}"
+    );
+}
+
+const VIEWS: &str = "module contract;
+extern fn view_outside(map: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 10 <= #i && #i < 14;
+    ensures normal bounds_frame_writes(map);
+};
+extern fn wide_view(map: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 0 <= #i && #i < 8;
+    ensures normal bounds_frame_writes(map);
+};
+";
+
+const VIEW_SOURCE: &str = "typedef unsigned char uint8_t;
+typedef unsigned int uint32_t;
+static inline void view_outside(char *map)
+{
+    uint8_t *view = (uint8_t *) &map[10];
+    view[4] = 0;
+}
+static inline void wide_view(char *map)
+{
+    uint32_t *view = (uint32_t *) &map[0];
+    view[1] = 0;
+}
+unsigned char local_view(void)
+{
+    char buffer[4];
+    unsigned char *view = (unsigned char *) &buffer[0];
+    buffer[0] = 1;
+    return view[0];
+}
+";
+
+/// Rule 14g's byte view is narrow: an index through it outside the check
+/// refutes like any other access; a wider view and a byte view of an object
+/// that is no quant object keep their refusal.
+#[test]
+fn a_byte_view_reads_only_byte_types_of_quant_objects() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load_bounds_contract_sources(&BTreeMap::from([(
+        "fixture:views.qv".to_owned(),
+        VIEWS.to_owned(),
+    )]))
+    .unwrap();
+    let report = report(VIEW_SOURCE, &["local_view"], &contracts);
+    let evidence = evidence(&report);
+    // view[4] is map[14], outside [10, 14): the body refutes its check.
+    assert_eq!(evidence["view_outside"].outcome, "failed", "{evidence:#?}");
+    // A four-byte view is not a byte view: no fact, nothing decided inside.
+    assert_eq!(
+        evidence["wide_view"].body_verdict, "Unknown",
+        "{evidence:#?}"
+    );
+    assert!(evidence["wide_view"].covered.is_empty(), "{evidence:#?}");
+    // A byte view of a local array (no quant object) keeps the refusal.
+    let local = report.row("local_view").unwrap();
+    assert_eq!(local.verdict, "Unknown", "{local:#?}");
+    assert!(
+        local
+            .reasons
+            .iter()
+            .any(|r| r.contains("bounds-missing-extent")),
+        "{local:#?}"
     );
 }

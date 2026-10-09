@@ -637,6 +637,13 @@ impl UnitProducts {
     pub fn unit_rows(&self) -> &[Value] {
         self.report.unit_rows()
     }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: this unit's bounds
+    /// body evidence, from which a phase's bounds refutation table is read.
+    #[must_use]
+    pub fn bounds_evidence(&self) -> &[Value] {
+        self.report.bounds_evidence()
+    }
 }
 
 impl NoBuildAudit {
@@ -1288,7 +1295,7 @@ pub fn run_units(
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: phase one under the loaded
     // contracts and, when a body refutes its own declaration, phase two under
     // the refutation table; only the published phase is folded, in unit order.
-    let phases = crate::refuted_contracts::run_two_phases(
+    let phases = crate::refuted_contracts::run_two_phases_with_bounds(
         |table| {
             audit.set_refuted_table(table);
             let mut outcomes = Vec::new();
@@ -1312,6 +1319,16 @@ pub fn run_units(
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
                     .flat_map(|products| products.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            )
+        },
+        // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h).
+        |outcomes| {
+            crate::bounds_evidence::refutation_table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.bounds_evidence().iter().cloned())
                     .collect::<Vec<_>>(),
             )
         },

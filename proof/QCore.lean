@@ -160,6 +160,8 @@ import QCore.IndexExtent
 import QCore.IndexExtentFrames
 import QCore.IndexQuant
 import QCore.BoundsPinHold
+import QCore.BoundsBodyStanding
+import QCore.BoundsTransport
 import QCore.CallArgumentAccess
 import QCore.MemberRelease
 import QCore.MemoKey

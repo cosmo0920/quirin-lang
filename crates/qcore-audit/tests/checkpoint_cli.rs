@@ -182,7 +182,18 @@ impl Fixture {
     }
 
     fn run(&self, out: &str, extra: &[&str]) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
+        self.run_with(out, extra, None)
+    }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: [`Self::run`] with
+    /// the bounds property selected (its rows written to `bounds`) or not.
+    fn run_with(&self, out: &str, extra: &[&str], bounds: Option<&Path>) -> Output {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_quirin-audit"));
+        match bounds {
+            Some(rows) => command.env("QCORE_BOUNDS_PROPERTY", rows),
+            None => command.env_remove("QCORE_BOUNDS_PROPERTY"),
+        };
+        command
             .current_dir(&self.0)
             .args([
                 "current",
@@ -759,4 +770,29 @@ fn interrupted_run_preserves_completed_units_for_resume() {
     assert_eq!(checkpoint_paths(&fixture, "qo").len(), 6);
     succeeded(&fixture.run("whole", &["--jobs", "2"]));
     assert_eq!(fixture.outputs("resumed"), fixture.outputs("whole"));
+}
+
+/// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (gateway rule 14j): a
+/// `.qo` checkpoint carries no bounds rows, body evidence or bounds
+/// environment, so a checkpointed run refuses the bounds selection instead of
+/// omitting the rows it asks for; the whole run under the selection writes
+/// them, and its custody report is the one the run without the selection
+/// writes.
+#[test]
+fn a_checkpointed_run_refuses_the_bounds_selection() {
+    let Some(clang) = clang() else { return };
+    let fixture = Fixture::new(&clang);
+    let rows = fixture.path("bounds.jsonl");
+    let refused_run = fixture.run_with("qo-bounds", &["--checkpoint-dir", "qo"], Some(&rows));
+    refused(&refused_run, "checkpoints refuse the bounds selection");
+    assert!(!rows.exists(), "no partial bounds rows are written");
+    let whole = fixture.run_with("whole-bounds", &["--jobs", "1"], Some(&rows));
+    succeeded(&whole);
+    assert!(rows.exists());
+    let plain = fixture.run("plain", &["--jobs", "1"]);
+    succeeded(&plain);
+    assert_eq!(
+        fs::read(fixture.path("whole-bounds/report.json")).unwrap(),
+        fs::read(fixture.path("plain/report.json")).unwrap()
+    );
 }

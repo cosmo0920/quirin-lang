@@ -38,3 +38,17 @@ contract {
     quant checks map, Idx #i: 22 <= #i && #i < 24;
     ensures normal bounds_frame_reads(map);
 };
+
+// static inline void cio_file_st_set_content_len(char *map, uint32_t len)
+//     content_length_buffer = (uint8_t *) &map[CIO_FILE_CONTENT_LENGTH_OFFSET];
+//     content_length_buffer[0] = ...; ... content_length_buffer[3] = ...;
+// CIO_FILE_CONTENT_LENGTH_OFFSET is 10: the body writes map[10..13], the
+// big-endian content length, through a byte view of `&map[10]` (uint8_t and
+// char are both one byte, rule 14g). A write frame: it writes through `map`
+// and resizes, moves or releases nothing.
+extern fn cio_file_st_set_content_len(map: ptr<mut, u8>, len: u32) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 10 <= #i && #i < 14;
+    ensures normal bounds_frame_writes(map);
+};

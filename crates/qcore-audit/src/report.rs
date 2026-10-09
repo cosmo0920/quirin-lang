@@ -131,6 +131,10 @@ pub struct AuditReport {
     /// selected the bounds property (`QCORE_BOUNDS_PROPERTY`), in unit order.
     /// Never part of the custody document: [`Self::document`] does not read it.
     bounds: Vec<Value>,
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: each unit's body
+    /// evidence for bounds declarations ([`crate::bounds_evidence`]), in unit
+    /// order. Never part of the custody document.
+    bounds_evidence: Vec<Value>,
 }
 
 impl AuditReport {
@@ -143,12 +147,27 @@ impl AuditReport {
             evidence: None,
             plugin_links: None,
             bounds: Vec::new(),
+            bounds_evidence: Vec::new(),
         }
     }
 
     /// Card CG16-INDEX-AND-OFFSET-EXTENTS: one function's bounds row.
     pub(crate) fn record_bounds(&mut self, row: Value) {
         self.bounds.push(row);
+    }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: one unit's body
+    /// evidence for bounds declarations.
+    pub(crate) fn record_bounds_evidence(&mut self, unit: Value) {
+        self.bounds_evidence.push(unit);
+    }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: every unit's body
+    /// evidence recorded so far, from which a phase's bounds refutation table
+    /// is read.
+    #[must_use]
+    pub fn bounds_evidence(&self) -> &[Value] {
+        &self.bounds_evidence
     }
 
     /// Card CG16-INDEX-AND-OFFSET-EXTENTS: write the bounds selection's rows
@@ -213,7 +232,16 @@ impl AuditReport {
             .map_err(|e| format!("could not write {}: {e}", summary_path.display()))?;
         // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds environment the
         // route installed (selection, modules, pins), beside the rows.
-        if let Some(record) = crate::bounds_selection::installed_record() {
+        if let Some(mut record) = crate::bounds_selection::installed_record() {
+            // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: the body
+            // evidence of every declaration and the bounds Safe roll-up.
+            let evidence = crate::bounds_evidence::section(
+                &self.bounds_evidence,
+                &self.bounds,
+                &crate::bounds_selection::environment(),
+            );
+            println!("{}", crate::bounds_evidence::tally(&evidence));
+            record["body_evidence"] = evidence;
             let mut bytes = serde_json::to_vec_pretty(&record).map_err(|e| e.to_string())?;
             bytes.push(b'\n');
             let contracts_path = path.with_extension("contracts.json");
@@ -259,6 +287,7 @@ impl AuditReport {
             evidence,
             plugin_links: _,
             bounds,
+            bounds_evidence,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -274,6 +303,7 @@ impl AuditReport {
         }
         self.units.extend(units);
         self.bounds.extend(bounds);
+        self.bounds_evidence.extend(bounds_evidence);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
@@ -627,6 +657,7 @@ impl AuditReport {
             evidence,
             plugin_links: None,
             bounds: Vec::new(),
+            bounds_evidence: Vec::new(),
         }
     }
 

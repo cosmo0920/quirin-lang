@@ -101,6 +101,8 @@ mod quant_checks;
 // evidence for declarations, never a verdict.
 mod body_evidence;
 pub use body_evidence::DeclarationBodyEvidence;
+/// The standing decisions the audit folds body evidence with.
+pub use qcore_core::bounds_body_standing;
 
 /// The property, its verdict values and the composition, for consumers that
 /// reach the core through this gateway (the audit routes).
@@ -414,6 +416,10 @@ struct TuIndex<'a> {
     globals: BTreeMap<String, (String, String)>, // id -> (name, type)
     enums: BTreeMap<String, i128>,               // EnumConstantDecl id -> value
     prototypes: BTreeMap<String, Vec<String>>,   // function name -> parameter types
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14g): each
+    /// file-scope typedef's underlying type as Clang desugars it, read only by
+    /// the byte-view reading of a quant object.
+    typedefs: BTreeMap<String, String>,
 }
 
 fn index_unit(ast: &Value) -> TuIndex<'_> {
@@ -422,9 +428,15 @@ fn index_unit(ast: &Value) -> TuIndex<'_> {
         globals: BTreeMap::new(),
         enums: BTreeMap::new(),
         prototypes: BTreeMap::new(),
+        typedefs: BTreeMap::new(),
     };
     for decl in kids(ast) {
         match kind(decl) {
+            "TypedefDecl" => {
+                if let Some(name) = decl["name"].as_str() {
+                    unit.typedefs.insert(name.to_owned(), qual(decl));
+                }
+            }
             "FunctionDecl" => {
                 let name = decl["name"].as_str().unwrap_or("").to_owned();
                 let parameters = kids(decl)
@@ -2448,9 +2460,20 @@ impl<'a> Analysis<'a> {
                     ..
                 } => {
                     let element_now = pointee(&qual(left)).unwrap_or_default();
-                    if strip_qualifiers(&element_now) != element {
+                    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule
+                    // 14g): a byte view of a quant object keeps its target.
+                    let element = if strip_qualifiers(&element_now) == element {
+                        element
+                    } else if self.quant.contains_key(&object)
+                        && quant_checks::byte_types(
+                            &self.desugared(&element_now),
+                            &self.desugared(&element),
+                        )
+                    {
+                        strip_qualifiers(&element_now)
+                    } else {
                         return Update::None;
-                    }
+                    };
                     Update::Pointer(
                         PointerFact {
                             object,
@@ -3882,6 +3905,11 @@ impl<'de> serde::de::Visitor<'de> for InnerSeed<'_> {
                     "kind": "VarDecl", "id": decl["id"].clone(), "name": name, "type": decl["type"].clone(),
                 })),
                 "EnumDecl" => self.kept.push(decl),
+                // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule
+                // 14g): the typedef's name and type only.
+                "TypedefDecl" => self.kept.push(serde_json::json!({
+                    "kind": "TypedefDecl", "name": name, "type": decl["type"].clone(),
+                })),
                 _ => {}
             }
         }

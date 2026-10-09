@@ -69,6 +69,14 @@ fn constant_set(
     }
 }
 
+/// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14g): both
+/// element types are C byte types (`char`, `signed char`, `unsigned char`,
+/// typedefs read desugared), each of size 1.
+pub(super) fn byte_types(a: &str, b: &str) -> bool {
+    const BYTES: [&str; 3] = ["char", "signed char", "unsigned char"];
+    BYTES.contains(&strip_qualifiers(a).as_str()) && BYTES.contains(&strip_qualifiers(b).as_str())
+}
+
 fn quant_decision(decision: &QuantDecision) -> Decision {
     match decision {
         QuantDecision::Inside => Decision::InBounds,
@@ -179,6 +187,36 @@ impl Analysis<'_> {
                 },
             );
         }
+    }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14g): a
+    /// pointer conversion between C's byte types (`char`, `signed char`,
+    /// `unsigned char`, through typedefs such as `uint8_t`) of a pointer into
+    /// a quant object keeps its target: every byte type has size 1 (C17
+    /// 6.5.3.4), so an element index through the view is the same index into
+    /// the object, and the quant check decides it as any other access
+    /// through `P + k` (chunkio's `(uint8_t *) &map[10]`). Any other
+    /// conversion, and a byte view of any other object, stays refused.
+    pub(super) fn byte_view_of_quant_object(
+        &self,
+        node: &Value,
+        inner: &Value,
+        target: &Target,
+    ) -> bool {
+        matches!(target, Target::Known { object, .. } if self.quant.contains_key(object))
+            && pointee(&qual(node))
+                .zip(pointee(&qual(inner)))
+                .is_some_and(|(a, b)| byte_types(&self.desugared(&a), &self.desugared(&b)))
+    }
+
+    /// A type spelling through file-scope typedefs, as Clang desugars each
+    /// (at most one step: Clang's typedef type is already desugared).
+    pub(super) fn desugared(&self, ty: &str) -> String {
+        let ty = strip_qualifiers(ty);
+        self.unit
+            .typedefs
+            .get(&ty)
+            .map_or(ty, |under| strip_qualifiers(under))
     }
 
     /// The seeded extent of a quant object is a lower bound: out of bounds

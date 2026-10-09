@@ -40,8 +40,10 @@
 //! bounds view, [`crate::bounds_selection`]): `pin --bounds`, `pin --bounds
 //! --check`, `--regenerate` and `--drop-revision` act on them exactly as on
 //! the resource locks; every bounds declaration is pinned (bounds v1 has no
-//! flexible mode) and tip tracking is not offered for them. `--verify-contracts`
-//! verifies the resource and the bounds locks.
+//! flexible mode). `--verify-contracts` verifies the resource and the bounds
+//! locks. Card **CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS** (rule 14i):
+//! `--bounds --track-tip REF` and `--bounds --untrack-tip` record and turn back
+//! tip entries in the bounds locks exactly as in the resource locks.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -189,15 +191,10 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
     if parsed.modules.is_some() && (parsed.load_path.is_some() || !parsed.crates.is_empty()) {
         return Err("--modules is not combined with --load-path or --crate".into());
     }
-    if parsed.bounds
-        && (parsed.modules.is_some()
-            || parsed.track_tip.is_some()
-            || parsed.untrack_tip
-            || parsed.verify_contracts)
-    {
+    if parsed.bounds && (parsed.modules.is_some() || parsed.verify_contracts) {
         return Err(
-            "--bounds pins the bounds views of load-path crates: no --modules, --track-tip, \
-             --untrack-tip or --verify-contracts (which verifies both kinds of lock)"
+            "--bounds pins the bounds views of load-path crates: no --modules or \
+             --verify-contracts (which verifies both kinds of lock)"
                 .into(),
         );
     }

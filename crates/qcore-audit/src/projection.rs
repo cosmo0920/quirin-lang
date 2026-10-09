@@ -58,6 +58,14 @@ fn record_bounds(
         Some(text) => analyze_bounds_preprocessed(text, unit, functions, contracts),
         None => analyze_bounds_c11(unit, functions, contracts),
     };
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14f): the body
+    // evidence of every declaration this unit defines, header definitions
+    // included; evidence for the declaration, never a row.
+    if let Ok(analysed) = &analysed
+        && let Some(unit) = crate::bounds_evidence::unit_record(library, file, analysed)
+    {
+        report.record_bounds_evidence(unit);
+    }
     let custody = summary_of(result);
     for name in functions {
         let custody = custody

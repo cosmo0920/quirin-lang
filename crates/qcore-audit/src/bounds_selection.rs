@@ -94,6 +94,34 @@ pub fn installed_record() -> Option<Value> {
         .and_then(|installed| installed.as_ref().map(|i| i.record.clone()))
 }
 
+/// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h): record
+/// the bounds refutation table (the declarations some unit's body refutes)
+/// in the installed environment, so a route's second phase withdraws each
+/// from every unit's callers (C06.4's two phases, `BoundsContracts::refuted`),
+/// and name it in the selection record. An empty table changes nothing; with
+/// no installed environment there is nothing to withdraw.
+pub fn apply_refutation_table(table: &BTreeSet<String>) {
+    if table.is_empty() {
+        return;
+    }
+    let mut slot = INSTALLED
+        .write()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    if let Some(installed) = slot.as_mut() {
+        let mut contracts = BoundsContracts::clone(&installed.contracts);
+        contracts.refuted.clone_from(table);
+        installed.record["refutation_table"] = json!({
+            "meaning": REFUTATION_MEANING,
+            "refuted": table,
+            "environment_sha256": contracts.digest(),
+        });
+        installed.contracts = Arc::new(contracts);
+    }
+}
+
+/// What the record's refutation table means.
+pub const REFUTATION_MEANING: &str = "bounds declarations whose own body refuted them in some unit's first phase (an access outside a quant check, a write beyond a declared frame, a return contradicting a declared extent or relation): the route's second phase analysed every unit's bounds rows with each withdrawn from its callers, who then see an uncontracted callee (C06.4's two phases, gateway rule 14h); the defining body keeps its own declaration";
+
 fn install(contracts: BoundsContracts, record: Value) -> Result<(), String> {
     let mut slot = INSTALLED
         .write()
@@ -227,6 +255,7 @@ pub fn apply_bounds_pins(
     let mut tips = TipResolver::from_environment()?;
     let mut outcomes = Vec::new();
     let mut holds = Vec::new();
+    let mut tip_records = Vec::new();
     for (name, contract) in &contracts.functions {
         let lock_file = lock_of[name].as_ref();
         let lock = lock_file.and_then(|path| locks.get(path));
@@ -239,6 +268,11 @@ pub fn apply_bounds_pins(
             &contract.module,
             &mut tips,
         );
+        // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14i): a tip
+        // entry is reported as C06.2 reports a resource one.
+        let notice = standing.notice(name);
+        let tip = standing.tip().cloned();
+        let at_tip = matches!(standing, PinStanding::InForceAtTip { .. });
         let (reason, detail, matched): (Option<&str>, String, Vec<ReviewedSource>) = match standing
         {
             PinStanding::InForce { reviewed_at } => (None, String::new(), reviewed_at),
@@ -250,29 +284,91 @@ pub fn apply_bounds_pins(
         if let Some(reason) = reason {
             holds.push((name.clone(), reason.to_owned(), detail.clone()));
         }
-        outcomes.push(json!({
+        let mut outcome = json!({
             "function": name,
             "module": contract.module,
             "lock": lock_file.map(|path| path.display().to_string()),
             "contract_sha256": contract.text_sha256,
-            "standing": if reason.is_some() { "not-in-force" } else { "in-force" },
+            "standing": if reason.is_some() {
+                "not-in-force"
+            } else if at_tip {
+                "tip-in-force"
+            } else {
+                "in-force"
+            },
             "reason": reason,
             "detail": detail,
             "reviewed_at": matched,
             "sites": sites,
-        }));
+        });
+        if let (Some(tip), Some(notice)) = (tip, notice) {
+            outcome["tip"] = serde_json::to_value(&tip).map_err(|e| e.to_string())?;
+            outcome["notice"] = serde_json::to_value(&notice).map_err(|e| e.to_string())?;
+            tip_records.push((name.clone(), at_tip, tip, notice));
+        }
+        outcomes.push(outcome);
     }
     let held = holds.len();
     for (name, reason, detail) in holds {
         contracts.hold_for_pin_mismatch(&name, &reason, &detail)?;
     }
-    Ok(json!({
+    let mut section = json!({
         "source": {"kind": scan.kind, "revision": scan.revision},
         "locks": lock_records,
         "in_force": outcomes.len() - held,
         "held": held,
         "outcomes": outcomes,
-    }))
+    });
+    add_tip_tracking(&mut section, &tip_records)?;
+    Ok(section)
+}
+
+/// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14i): C06.2's tip
+/// counts, notices and named assumptions for the bounds declarations that
+/// track a tip, added only when one does (a run without one keeps its bytes).
+fn add_tip_tracking(
+    section: &mut Value,
+    tips: &[(
+        String,
+        bool,
+        crate::contract_tip::TipResolution,
+        crate::contract_tip::Notice,
+    )],
+) -> Result<(), String> {
+    if tips.is_empty() {
+        return Ok(());
+    }
+    let in_force = tips.iter().filter(|(_, at_tip, ..)| *at_tip).count();
+    section["tip_meaning"] = json!(crate::contract_revision::TIP_MEANING);
+    section["tip_counts"] = json!({
+        "tip_tracked": tips.len(),
+        "tip_in_force": in_force,
+        "tip_not_in_force": tips.len() - in_force,
+    });
+    let mut notices = Vec::new();
+    let mut assumptions = Vec::new();
+    for (function, at_tip, tip, notice) in tips {
+        let mut record = serde_json::to_value(notice).map_err(|e| e.to_string())?;
+        record["function"] = json!(function);
+        notices.push(record);
+        if *at_tip {
+            assumptions.push(json!({
+                "name": format!("{}{function}", crate::contract_tip::TIP_ASSUMPTION_PREFIX),
+                "function": function,
+                "statement": crate::contract_tip::TIP_STATEMENT,
+                "repository": tip.repository,
+                "ref": tip.reference,
+                "release_label": tip.release_label,
+                "resolved_commit": tip.resolved_commit,
+                "reviewed_commit": tip.reviewed_commit,
+                "moved_since_review": tip.moved_since_review,
+                "sites_changed_since_review": tip.sites_changed_since_review,
+            }));
+        }
+    }
+    section["tip_notices"] = json!(notices);
+    section["assumptions"] = json!({ "tip_tracked": assumptions });
+    Ok(())
 }
 
 /// Select the bounds environment of an audit route (see the module docs):
@@ -321,6 +417,15 @@ pub fn select_for_route(
         pins["in_force"],
         pins["held"]
     );
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14i): one line
+    // per tip notice, only when a declaration tracks a tip.
+    for notice in pins["tip_notices"].as_array().into_iter().flatten() {
+        println!(
+            "bounds contract notice [{}]: {}",
+            notice["severity"].as_str().unwrap_or_default(),
+            notice["message"].as_str().unwrap_or_default()
+        );
+    }
     let record = json!({
         "schema_version": 1,
         "property": qcore_c_gateway::index_extent::BOUNDS_PROPERTY,

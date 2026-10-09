@@ -285,7 +285,7 @@ pub fn run_current_route_with_checkpoints(
     // loaded contracts and, when a body refutes its own declaration, once more
     // under the refutation table; only the published phase is printed and
     // folded, in task order, stopping at its first error as before.
-    let phases = crate::refuted_contracts::run_two_phases(
+    let phases = crate::refuted_contracts::run_two_phases_with_bounds(
         |table| {
             audit.set_refuted_table(table);
             let mut outcomes = Vec::new();
@@ -309,6 +309,16 @@ pub fn run_current_route_with_checkpoints(
                     .iter()
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
                     .flat_map(|products| products.unit_rows()),
+            )
+        },
+        // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h).
+        |outcomes| {
+            crate::bounds_evidence::refutation_table(
+                &outcomes
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.bounds_evidence().iter().cloned())
+                    .collect::<Vec<_>>(),
             )
         },
     );

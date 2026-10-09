@@ -116,6 +116,14 @@ impl EntryProducts {
     pub fn unit_rows(&self) -> &[serde_json::Value] {
         self.report.unit_rows()
     }
+
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: this
+    /// configuration's bounds body evidence, from which a phase's bounds
+    /// refutation table is read.
+    #[must_use]
+    pub fn bounds_evidence(&self) -> &[serde_json::Value] {
+        self.report.bounds_evidence()
+    }
 }
 
 impl CurrentAudit {

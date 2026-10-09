@@ -313,9 +313,22 @@ pub fn run(
     )
     .is_err();
     let found = table_of(&outcomes);
-    let applied = if stopped || found.is_empty() {
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14h): the
+    // bounds declarations phase one's bodies refute also call for phase two.
+    let bounds_found = crate::bounds_evidence::refutation_table(
+        &outcomes
+            .iter()
+            .filter_map(|outcome| match outcome {
+                StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
+                _ => None,
+            })
+            .flat_map(|products| products.report.bounds_evidence().iter().cloned())
+            .collect::<Vec<_>>(),
+    );
+    let applied = if stopped || (found.is_empty() && bounds_found.is_empty()) {
         qcore_schemas::contract_refutation::RefutationTable::new()
     } else {
+        crate::bounds_selection::apply_refutation_table(&bounds_found);
         let held = crate::refuted_contracts::with_table(&contracts, &found);
         let units = steps
             .iter()

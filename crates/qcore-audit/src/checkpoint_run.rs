@@ -85,6 +85,19 @@ pub(crate) fn run(
              record in analysis order, so a group's checkpoint could not stand for its share of them"
         ));
     }
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14j): a `.qo`
+    // checkpoint carries no bounds rows, body evidence or bounds environment,
+    // and its identity names neither the bounds environment nor its
+    // refutation table, so a reused or composed run would omit the rows the
+    // selection asks for. Refused, never silently partial.
+    if std::env::var_os(crate::projection::BOUNDS_SELECTION).is_some() {
+        return Err(format!(
+            "checkpoints refuse the bounds selection ({}): a checkpoint carries no bounds rows, \
+             body evidence or bounds environment and its identity names none of them, so a \
+             reused or composed run would omit the requested rows; run without --checkpoints",
+            crate::projection::BOUNDS_SELECTION
+        ));
+    }
     let groups = split_units(
         audit,
         split_groups(plan.headers, plan.unresolved, plan.tasks)?,
