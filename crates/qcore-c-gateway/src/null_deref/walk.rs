@@ -37,6 +37,11 @@ pub(super) struct Val {
     pub(super) null_constant: bool,
     /// A path fact that survived a non-character scalar store (C11 6.5p7).
     pub(super) effective_type: bool,
+    /// The value's identity: every tracked variable holding the same value
+    /// (a copy `q = p`, or an offset of it) carries the same one, so a test
+    /// or a dereference of one decides them all. A new one at each other
+    /// assignment.
+    pub(super) ident: Option<usize>,
 }
 
 impl Val {
@@ -47,6 +52,7 @@ impl Val {
             place: None,
             null_constant: false,
             effective_type: false,
+            ident: None,
         }
     }
 
@@ -66,6 +72,7 @@ impl Val {
             place: None,
             null_constant: false,
             effective_type: self.effective_type,
+            ident: self.ident,
         }
     }
 
@@ -84,6 +91,11 @@ impl Val {
             },
             null_constant: self.null_constant && other.null_constant,
             effective_type: self.effective_type || other.effective_type,
+            ident: if self.ident == other.ident {
+                self.ident
+            } else {
+                None
+            },
         }
     }
 }
@@ -368,6 +380,10 @@ impl<'a> Walker<'a> {
             paths: BTreeMap::new(),
             firsts: vec![BTreeSet::from([First::Pending]); count],
         };
+        let parameter_sites = kids(function)
+            .filter(|c| kind(c) == "ParmVarDecl")
+            .map(|c| walker.site(c))
+            .collect::<Vec<_>>();
         for (index, (id, pname, pointer)) in walker.formals.clone().iter().enumerate() {
             if !*pointer {
                 continue;
@@ -395,6 +411,7 @@ impl<'a> Walker<'a> {
                         place: Some(Place::Var(id.clone())),
                         null_constant: false,
                         effective_type: false,
+                        ident: parameter_sites.get(index).copied(),
                     },
                 );
             } else {
@@ -481,6 +498,21 @@ impl<'a> Walker<'a> {
         }
     }
 
+    /// Give `value`'s place, and every tracked variable holding the same
+    /// value, the null-ness `null`.
+    fn set_value(state: &mut State, value: &Val, null: Nullness) {
+        if let Some(ident) = value.ident {
+            for held in state.vars.values_mut() {
+                if held.ident == Some(ident) {
+                    held.null = null.clone();
+                }
+            }
+        }
+        if let Some(place) = &value.place {
+            Self::set_place(state, place, null);
+        }
+    }
+
     /// Every path rooted at the variable `id` is forgotten (it was written).
     fn forget_rooted(state: &mut State, id: &str) {
         let root = format!("t:{id}");
@@ -541,6 +573,7 @@ impl<'a> Walker<'a> {
                     place: Some(place.clone()),
                     null_constant: false,
                     effective_type,
+                    ident: None,
                 }
             }
         }
@@ -604,9 +637,9 @@ impl<'a> Walker<'a> {
             if let Some(formal) = value.origin {
                 state.firsts[formal] = state.firsts[formal].iter().map(|f| f.dereference()).collect();
             }
-            if let Some(place) = &value.place {
+            if value.place.is_some() || value.ident.is_some() {
                 let after = core::after_dereference(&value.null, id);
-                Self::set_place(state, place, after);
+                Self::set_value(state, value, after);
             }
         }
         id
@@ -650,15 +683,13 @@ impl<'a> Walker<'a> {
         }
         // An arm the value contradicts is infeasible whether or not the walk
         // can name where the value lives.
-        match (core::refine(&value.null, true, proof.clone()), &value.place) {
-            (Some(null), Some(place)) => Self::set_place(&mut on_true, place, null),
-            (Some(_), None) => {}
-            (None, _) => on_true.live = false,
+        match core::refine(&value.null, true, proof.clone()) {
+            Some(null) => Self::set_value(&mut on_true, value, null),
+            None => on_true.live = false,
         }
-        match (core::refine(&value.null, false, proof), &value.place) {
-            (Some(null), Some(place)) => Self::set_place(&mut on_false, place, null),
-            (Some(_), None) => {}
-            (None, _) => on_false.live = false,
+        match core::refine(&value.null, false, proof) {
+            Some(null) => Self::set_value(&mut on_false, value, null),
+            None => on_false.live = false,
         }
         (on_true, on_false)
     }
@@ -838,6 +869,9 @@ impl<'a> Walker<'a> {
                     let mut stored = value.clone();
                     stored.place = Some(Place::Var(id.clone()));
                     stored.null_constant = false;
+                    if stored.ident.is_none() {
+                        stored.ident = Some(self.site(lhs));
+                    }
                     state.vars.insert(id, stored);
                 }
             }
@@ -1308,6 +1342,17 @@ impl<'a> Walker<'a> {
         let Some(callee_name) = name else {
             return Val::of(Nullness::maybe(Source::UncontractedResult("indirect call".into())));
         };
+        // `__builtin_alloca` returns the address of the space it allocated:
+        // the builtin has no failure result (exhausting the stack is not a
+        // null return).
+        if matches!(
+            callee_name.as_str(),
+            "__builtin_alloca" | "__builtin_alloca_with_align"
+        ) {
+            return Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                "builtin:{callee_name}"
+            ))));
+        }
         // `errno` expands to a modifiable lvalue (C11 7.5p2): the function
         // the C library spells it through returns the address of an object.
         if ast::is_errno_location(&callee_name) {
@@ -1463,6 +1508,12 @@ impl<'a> Walker<'a> {
                 let dead = State::dead(state.firsts.len());
                 if zero { (dead, state) } else { (state, dead) }
             }
+            // `*"text"`, the first character of a non-empty string literal,
+            // is a nonzero constant (`rd_assert(!*"...")`, `RD_BUG`).
+            _ if string_literal_first_char(node).is_some_and(|nonzero| nonzero) => {
+                let dead = State::dead(state.firsts.len());
+                (state, dead)
+            }
             _ => {
                 let mut state = state;
                 self.eval(node, &mut state);
@@ -1497,11 +1548,13 @@ impl<'a> Walker<'a> {
                         Some(init) if !static_storage => {
                             let value = self.eval(init, &mut state);
                             if self.tracked.contains(&id) {
+                                let ident = value.ident.or_else(|| Some(self.site(decl)));
                                 state.vars.insert(
                                     id.clone(),
                                     Val {
                                         place: Some(Place::Var(id.clone())),
                                         null_constant: false,
+                                        ident,
                                         ..value
                                     },
                                 );
@@ -1819,6 +1872,36 @@ impl<'a> Walker<'a> {
         let frame = self.loops.pop().expect("the loop frame");
         (exit_test.join(&frame.breaks), back)
     }
+}
+
+/// Whether `node` reads the first character of a string literal (`*"x"`,
+/// through value-preserving casts), and whether that character is nonzero.
+fn string_literal_first_char(node: &Value) -> Option<bool> {
+    let mut node = strip(node);
+    while kind(node) == "ImplicitCastExpr"
+        && matches!(
+            node["castKind"].as_str(),
+            Some("LValueToRValue" | "IntegralCast" | "NoOp")
+        )
+    {
+        node = strip(kids(node).next()?);
+    }
+    if kind(node) != "UnaryOperator" || node["opcode"] != "*" {
+        return None;
+    }
+    let mut operand = strip(kids(node).next()?);
+    while kind(operand) == "ImplicitCastExpr"
+        && matches!(operand["castKind"].as_str(), Some("ArrayToPointerDecay" | "NoOp"))
+    {
+        operand = strip(kids(operand).next()?);
+    }
+    if kind(operand) != "StringLiteral" {
+        return None;
+    }
+    let text = operand["value"].as_str()?;
+    // The JSON spelling is the source literal, quotes included.
+    let first = text.strip_prefix('"')?.chars().next()?;
+    Some(first != '"' && !text.starts_with("\"\\0"))
 }
 
 /// The expression of a generic selection's selected association.

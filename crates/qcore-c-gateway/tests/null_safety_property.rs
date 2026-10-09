@@ -459,3 +459,44 @@ fn a_test_of_an_assignment_tests_its_left_operand() {
         "{row:#?}"
     );
 }
+
+#[test]
+fn a_constant_failing_assertion_ends_its_path() {
+    if !clang_available() {
+        return;
+    }
+    // librdkafka's `RD_BUG` is `rd_assert(!*"INTERNAL ERROR")`: the first
+    // character of a non-empty literal is a nonzero constant, so only the
+    // assertion's failing (no-return) arm is reachable.
+    let row = subject_row(
+        "int subject(struct S *s) { if (!s) return 0; struct S *p = s->next; \
+         if (!p) { if (!*\"bug\") ; else __assert_fail(\"x\", \"f\", 1, \"g\"); } return p->a; }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    // `__builtin_alloca` has no null result.
+    let row = subject_row(
+        "int subject(void) { struct S *p = __builtin_alloca(sizeof *p); p->a = 1; return p->a; }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+}
+
+#[test]
+fn a_test_of_a_value_decides_its_copies() {
+    if !clang_available() {
+        return;
+    }
+    // monkey's mk_string_tolower: `op` is a copy of `out` taken before the
+    // test of `out`; the test decides both.
+    let row = subject_row(
+        "char *subject(const char *in) { char *out = nd_find(in, 0); char *op = out; \
+         if (!out) return 0; *op = 'x'; return out; }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    // A reassignment detaches the copy.
+    let row = subject_row(
+        "int subject(struct S *s) { if (!s) return 0; struct S *p = s->next; struct S *q = p; \
+         p = s; if (!p) return 0; return q->a; }",
+    );
+    let q = row.checks.iter().find(|c| c.subject == "q").expect("q");
+    assert_eq!(q.outcome, "candidate", "{row:#?}");
+}
