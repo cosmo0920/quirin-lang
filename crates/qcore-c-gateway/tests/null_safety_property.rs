@@ -411,3 +411,24 @@ fn lookups_and_memory_reads_are_sources() {
         .expect("s");
     assert_eq!(base.outcome, "proved", "{row:#?}");
 }
+
+#[test]
+fn qualified_formals_errno_and_generic_selections_are_read() {
+    if !clang_available() {
+        return;
+    }
+    // A `const` pointer formal is a pointer (`T *const`).
+    let row = subject_row("int subject(struct S *const s) { if (!s) return 0; return s->a; }");
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    // `errno` is a modifiable lvalue (C11 7.5p2).
+    let row = subject_row(
+        "int *__errno_location(void);\nint subject(void) { return (*__errno_location ()); }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    // Only the selected association of a generic selection is evaluated.
+    let row = subject_row(
+        "int subject(struct S *s, int k) { if (!s) return 0; return _Generic(k, int: s->a, default: s->next->a); }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    assert!(row.checks.iter().all(|c| c.subject != "s->next"), "{row:#?}");
+}

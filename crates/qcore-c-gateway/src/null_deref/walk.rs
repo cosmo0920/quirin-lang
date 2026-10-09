@@ -707,6 +707,14 @@ impl<'a> Walker<'a> {
                 self.element(node, state);
                 None
             }
+            // C11 6.5.1.1: only the selected association is evaluated.
+            "GenericSelectionExpr" => match selected_association(node) {
+                Some(selected) => self.lvalue(selected, state),
+                None => {
+                    self.reason("null-unsupported-form: GenericSelectionExpr".into());
+                    None
+                }
+            },
             _ => {
                 self.eval(node, state);
                 None
@@ -798,7 +806,13 @@ impl<'a> Walker<'a> {
 
     /// The value read from an lvalue.
     fn read(&mut self, node: &Value, state: &mut State) -> Val {
-        let pointer = is_pointer(ty(node));
+        self.read_as(node, false, state)
+    }
+
+    /// The value read from an lvalue, a pointer when its type or the
+    /// reading conversion's type is one.
+    fn read_as(&mut self, node: &Value, pointer: bool, state: &mut State) -> Val {
+        let pointer = pointer || is_pointer(ty(node));
         let place = self.lvalue(node, state);
         if !pointer {
             return Val::scalar();
@@ -919,7 +933,21 @@ impl<'a> Walker<'a> {
                 // evaluation is what checks.
                 self.read(node, state)
             }
-            "UnaryExprOrTypeTraitExpr" | "OffsetOfExpr" => Val::scalar(),
+            "UnaryExprOrTypeTraitExpr" | "OffsetOfExpr" | "TypeTraitExpr" => Val::scalar(),
+            // C11 6.5.1.1: only the selected association is evaluated.
+            "GenericSelectionExpr" => match selected_association(node) {
+                Some(selected) => self.eval(selected, state),
+                None => {
+                    self.reason("null-unsupported-form: GenericSelectionExpr".into());
+                    Val::of(Nullness::maybe(Source::Other("generic-selection".into())))
+                }
+            },
+            "MaterializeTemporaryExpr" => match kids(node).next() {
+                Some(inner) => self.eval(inner, state),
+                None => Val::scalar(),
+            },
+            // A type is never evaluated (a `typeof` operand, a trait's types).
+            kind_name if kind_name.ends_with("Type") => Val::scalar(),
             "InitListExpr" | "ParenListExpr" | "DesignatedInitExpr" | "ShuffleVectorExpr"
             | "ConvertVectorExpr" | "ExtVectorElementExpr" => {
                 for child in kids(node) {
@@ -1003,7 +1031,7 @@ impl<'a> Walker<'a> {
             return Val::scalar();
         };
         match node["castKind"].as_str() {
-            Some("LValueToRValue") => self.read(operand, state),
+            Some("LValueToRValue") => self.read_as(operand, is_pointer(ty(node)), state),
             Some("ArrayToPointerDecay") => {
                 // Forming the address of an array's first element reads no
                 // pointer; an array member of `B->` is `&B->G` (decision 1).
@@ -1264,6 +1292,13 @@ impl<'a> Walker<'a> {
         let Some(callee_name) = name else {
             return Val::of(Nullness::maybe(Source::UncontractedResult("indirect call".into())));
         };
+        // `errno` expands to a modifiable lvalue (C11 7.5p2): the function
+        // the C library spells it through returns the address of an object.
+        if ast::is_errno_location(&callee_name) {
+            return Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                "c11-7.5p2-errno:{callee_name}"
+            ))));
+        }
         if let Some(summary) = self.env.summaries.get(&callee_name)
             && summary.returns_non_null
             && callee_name != self.function
@@ -1570,7 +1605,8 @@ impl<'a> Walker<'a> {
                 let label = node["declId"].as_str().unwrap_or("").to_owned();
                 let mut state = state;
                 if self.backward.contains(&label) {
-                    state = self.widen_all(state, &label);
+                    let name = node["name"].as_str().unwrap_or("?").to_owned();
+                    state = self.widen_all(state, &name);
                 } else if let Some(arriving) = self.gotos.get(&label) {
                     state = state.join(arriving);
                 }
@@ -1767,6 +1803,13 @@ impl<'a> Walker<'a> {
         let frame = self.loops.pop().expect("the loop frame");
         (exit_test.join(&frame.breaks), back)
     }
+}
+
+/// The expression of a generic selection's selected association.
+fn selected_association(node: &Value) -> Option<&Value> {
+    kids(node)
+        .find(|c| c["selected"] == true)
+        .and_then(|association| kids(association).last())
 }
 
 fn contains_default(node: &Value) -> bool {

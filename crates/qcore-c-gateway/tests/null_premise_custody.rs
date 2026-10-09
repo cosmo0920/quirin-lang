@@ -163,6 +163,11 @@ fn every_other_obligation_is_decided_as_before() {
         run("int subject(struct S *a) { struct S *n = &a->next[a->a]; n->a = 1; return 0; }");
     assert_ne!(outcome.status, AnalysisStatus::Safe, "{outcome:?}");
     assert!(outcome.premises.is_empty(), "{outcome:?}");
+    assert_eq!(
+        outcome.descriptions,
+        vec!["UnknownAlias { variable: \"n\" }".to_owned()],
+        "{outcome:?}"
+    );
     // A bound chain root needs rule 11d's per-path premise as a non-null one
     // would: the base's premise is listed, the chain still refuses.
     let outcome = run(

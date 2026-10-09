@@ -55,7 +55,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
-use qcore_core::null_deref::{self as core, First, Nullness, Outcome, Proof, Source};
+use qcore_core::null_deref::{self as core, Nullness, Outcome, Proof, Source};
 use qcore_schemas::contract::ResourceContracts;
 use serde_json::Value;
 
@@ -539,13 +539,4 @@ pub fn analyze_null_c11(
     let preprocessed =
         crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
     analyze_null_preprocessed(&preprocessed, unit, functions, resource, bounds)
-}
-
-/// The inference's per-path record, for the Lean vectors' Rust side.
-#[doc(hidden)]
-pub fn first_after(events: &[&str]) -> First {
-    events.iter().fold(First::Pending, |first, event| match *event {
-        "deref" => first.dereference(),
-        _ => first.test(),
-    })
 }

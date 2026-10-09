@@ -16,7 +16,7 @@ fn bump(map: &mut BTreeMap<String, usize>, key: &str) {
 /// The summary of the recorded null rows.
 #[must_use]
 pub fn summary(rows: &[Value]) -> Value {
-    let mut null = BTreeMap::new();
+    let mut verdicts = BTreeMap::new();
     let mut custody = BTreeMap::new();
     let mut combined = BTreeMap::new();
     let mut outcomes = BTreeMap::new();
@@ -41,7 +41,7 @@ pub fn summary(rows: &[Value]) -> Value {
         } else {
             verdict
         };
-        bump(&mut null, key);
+        bump(&mut verdicts, key);
         bump(&mut custody, row["custody"].as_str().unwrap_or("absent"));
         bump(&mut combined, row["combined"].as_str().unwrap_or("absent"));
         let library = row["library"].as_str().unwrap_or("?");
@@ -106,7 +106,7 @@ pub fn summary(rows: &[Value]) -> Value {
         "property": qcore_c_gateway::null_deref::NULL_PROPERTY,
         "meaning": MEANING,
         "functions": rows.len(),
-        "null": null,
+        "null": verdicts,
         "custody": custody,
         "combined": combined,
         "functions_by_reason_code": reasons,

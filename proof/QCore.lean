@@ -359,5 +359,6 @@ import QCore.DeepUnitAst
 import QCore.DeepAstTransports
 import QCore.ResidualAccessReadings
 import QCore.CallbackContracts
+import QCore.NullDeref
 
 /-! The executable formal core of QCore-C revision 0.1. -/

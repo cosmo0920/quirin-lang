@@ -13,8 +13,10 @@ pub(super) fn kids(node: &Value) -> std::slice::Iter<'_, Value> {
 }
 
 /// The fields a compacted node keeps.
-const KEPT: [&str; 13] = [
+const KEPT: [&str; 15] = [
     "kind",
+    "selected",
+    "associationKind",
     "id",
     "name",
     "opcode",
@@ -100,17 +102,20 @@ pub(super) fn ty(node: &Value) -> &str {
 }
 
 fn strip_qualifiers(ty: &str) -> String {
-    ty.split_whitespace()
-        .filter(|word| !matches!(*word, "const" | "volatile" | "restrict" | "__restrict"))
+    // `T *const` spells the qualifier against the star: split it off first.
+    ty.replace('*', " * ")
+        .split_whitespace()
+        .filter(|word| !matches!(*word, "const" | "volatile" | "restrict" | "__restrict" | "_Nonnull" | "_Nullable"))
         .collect::<Vec<_>>()
         .join(" ")
+        .replace(" *", "*")
 }
 
 /// A C pointer type (an object or function pointer), from its spelling.
 pub(super) fn is_pointer(ty: &str) -> bool {
     let ty = strip_qualifiers(ty);
     let ty = ty.trim_end();
-    ty.ends_with('*') || ty.contains("(*)") || ty.contains("(*const)")
+    ty.ends_with('*') || ty.contains("(*)")
 }
 
 /// A non-character arithmetic (or enumeration) type: a store of one cannot
@@ -197,6 +202,13 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
 /// The no-return builtins, for callers that name one without a declaration.
 pub(super) fn builtin_no_return(name: &str) -> bool {
     NO_RETURN_BUILTINS.contains(&name)
+}
+
+/// The functions C libraries spell `errno` through (`*__errno_location()`):
+/// `errno` is a modifiable lvalue (C11 7.5p2), so each returns the address
+/// of an object.
+pub(super) fn is_errno_location(name: &str) -> bool {
+    matches!(name, "__errno_location" | "__error" | "_errno" | "__errno")
 }
 
 /// Names of the assertion-failure functions an `assert` expands to.

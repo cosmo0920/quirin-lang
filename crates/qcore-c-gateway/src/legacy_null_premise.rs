@@ -29,11 +29,13 @@ use crate::indirect_chain_access::{AccessChain, ChainView, LinkBinding, chain_re
 /// decision 1 reads non-null at a dereference. `QCore.NullDeref.premised`.
 pub(super) fn premised(state: &super::AbstractState, base: &str) -> bool {
     state.pointers.get(base).is_some_and(|pointer| {
-        pointer.targets.is_empty()
-            && pointer.unknown
-            && pointer.may_be_null
-            && pointer.derivation.is_identity()
-            && !state.widened
+        crate::null_premise::premised_shape(
+            pointer.targets.is_empty(),
+            pointer.unknown,
+            pointer.may_be_null,
+            pointer.derivation.is_identity(),
+            state.widened,
+        )
     })
 }
 

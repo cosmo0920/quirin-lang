@@ -85,3 +85,83 @@ pub(crate) fn note(function: &str, line: usize, variable: &str) {
         }
     });
 }
+
+/// Decision 1's binding shape (`QCore.NullDeref.premised`): no tracked
+/// target, unknown, possibly null, the identity derivation, in a state that
+/// is not widened.
+#[must_use]
+pub fn premised_shape(
+    targets_empty: bool,
+    unknown: bool,
+    may_be_null: bool,
+    identity: bool,
+    widened: bool,
+) -> bool {
+    targets_empty && unknown && may_be_null && identity && !widened
+}
+
+/// The Lean `premisedVectors`: (targets empty, unknown, possibly null,
+/// identity, widened, premised).
+#[cfg(test)]
+pub(crate) const PREMISED_VECTORS: &[(bool, bool, bool, bool, bool, bool)] = &[
+    (true, true, true, true, false, true),
+    (false, true, true, true, false, false),
+    (true, false, true, true, false, false),
+    (true, true, false, true, false, false),
+    (true, true, true, false, false, false),
+    (true, true, true, true, true, false),
+];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const LEAN: &str = include_str!("../../../proof/QCore/NullDeref.lean");
+
+    #[test]
+    fn premised_vectors_hold_and_are_the_lean_vectors() {
+        for (t, u, m, i, w, premised) in PREMISED_VECTORS {
+            assert_eq!(premised_shape(*t, *u, *m, *i, *w), *premised);
+        }
+        let header =
+            "def premisedVectors : List (Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool) := [";
+        let start = LEAN.find(header).expect("the Lean vector list") + header.len();
+        let body = &LEAN[start..];
+        let end = body.find("\n]").expect("the list's end");
+        let rows = body[..end]
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect::<Vec<_>>();
+        let rust = PREMISED_VECTORS
+            .iter()
+            .map(|(t, u, m, i, w, p)| format!("({t}, {u}, {m}, {i}, {w}, {p})"))
+            .collect::<Vec<_>>();
+        assert_eq!(rows, rust);
+    }
+
+    #[test]
+    fn a_premise_is_kept_by_the_analysis_that_relied_on_it() {
+        let ((), outer) = collecting(|| {
+            note("f", 3, "n");
+            let ((), inner) = collecting(|| note("g", 9, "m"));
+            assert_eq!(
+                inner,
+                vec![NullPremise {
+                    line: 9,
+                    variable: "m".into()
+                }]
+            );
+            note("f", 3, "n");
+        });
+        assert_eq!(
+            outer,
+            vec![NullPremise {
+                line: 3,
+                variable: "n".into()
+            }]
+        );
+        assert_eq!(outer[0].name("f"), "null-deref:f:3:n");
+    }
+}
