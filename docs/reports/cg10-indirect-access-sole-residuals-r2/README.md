@@ -1,10 +1,12 @@
 # CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: four readings of the access residual
 
 Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS, round 2 (wave 48, round 21). Base:
-local `main` at `84ec54d1d`, which it stayed at. Gateway rules
+local `main` at `84ec54d1d`; after the measurements the card was rebased onto
+`6f64d545e` (CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS landed) and the
+three routes measured again on the rebased tip (section 3). Gateway rules
 [14a](../../agents/gateway.md#constraint-14a)–[14d](../../agents/gateway.md#constraint-14d),
-Lean `QCore.ResidualAccessReadings` (18 audited theorems, `proof/AuditResidualAccessReadings.lean`,
-303 → 304 audits); two neutral declarations in `qcore-provider-chunkio` and
+Lean `QCore.ResidualAccessReadings` (18 audited theorems, `proof/AuditResidualAccessReadings.lean`;
+303 → 304 audits on the base, 305 → 306 on the rebased tree); two neutral declarations in `qcore-provider-chunkio` and
 `qcore-provider-ctraces`, pinned at both audited revisions.
 [PREDICTION.md](PREDICTION.md) was committed at `ea9b35e3c`, before any
 implementation code was written.
@@ -80,7 +82,17 @@ own rule (an unresolved identity, possibly null), never by the gate.
 ## 3. Measurement (task 5)
 
 Binaries: BEFORE `3f385e08…`, AFTER `aa878c14…` (`run.json`'s `binary_sha256`
-checked on every corpus run; system and slice ran the saved binary).
+checked on every corpus run; system and slice ran the saved binary). **After
+the rebase** onto `6f64d545e` the rebased tip's binary (`b3e23340…`) wrote all
+three reports byte for byte as the pre-rebase AFTER (corpus `7a70c7b7…`, system
+`01df2f02…`, slice `71812a5f…`; verdict rows `f08d6ce0…`, `c9c9bd07…`,
+`badf903f…`), as CG16's custody identity predicts, so every figure below holds
+on the rebased tip; the census tables were not run again. `cargo check
+--workspace --all-targets` 0, the conflict-marker grep empty; the card-lines
+audit (`audit_card_lines.sh 84ec54d1d 848e100eb`) listed only the STATUS rows
+and the increment paragraph, which conflicted with CG16's records and were
+re-applied on main's text (`1d4ed0bc7`); `contract_loader.rs` merged to
+`(61, 365, 221)`; `pin --check` per crate 0 at both trees again.
 
 | route | BEFORE | AFTER | report / verdict rows |
 | --- | --- | --- | --- |
@@ -215,16 +227,18 @@ constructor, protobuf-c initialisers outside any provider crate).
 
 ## 5. Gate
 
-Standing gate (`docs/agents/validation.md`), `scripts/gate.sh g2` then
-`scripts/write_gate_json.py g2 pg1` and `scripts/finish-gate.sh g2 pg1`; logs
-`private/cg10r2/gate-g2/`, exits copied to [gate/](gate/), summary
-[gate.json](gate.json) (GATE_TABLE).
+Standing gate (`docs/agents/validation.md`) on the rebased tip,
+`scripts/gate.sh g3` then `scripts/write_gate_json.py g3 pg2` and
+`scripts/finish-gate.sh g3 pg2`; logs `private/cg10r2/gate-g3/`, exits copied
+to [gate/](gate/), summary [gate.json](gate.json) (GATE_TABLE). A second
+pre-rebase gate, `gate-g2`, was stopped during its test step when main moved
+(steps 00–03 exit 0) and is not evidence.
 
-**Provider gate** (`scripts/provider-gate.sh pg1`, at `80f91076a`;
-`providers/` unchanged since): `cargo check --locked` 0, `cargo test` 129
-passed, fmt 0, clippy 0, `providers/contracts.py check` 0, package build 0 and
-`verify` 0 for all five packages, providers Python suite 25 tests OK
-([gate/provider/](gate/provider/)). Targeted runs before the gates: the new
+**Provider gate** `pg2` on the rebased tip (main's chunkio contracts beside
+this card's; `scripts/provider-gate.sh`): PROVIDER_TABLE. The pre-rebase
+`pg1` (at `80f91076a`) passed every step too: 129 tests, five packages
+verified, 25 providers Python tests ([gate/provider/](gate/provider/) holds
+`pg2`'s exits). Targeted runs before the gates: the new
 controls (`t-int4`), the contract pins (`t-pins3`), all under
 `private/cg10r2/`.
 

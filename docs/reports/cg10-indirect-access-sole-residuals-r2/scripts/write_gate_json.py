@@ -23,7 +23,7 @@ def main() -> int:
     exits = {path.stem: path.read_text().strip() for path in sorted(logs.glob("*.exit"))}
     pexits = {path.stem: path.read_text().strip() for path in sorted(plogs.glob("*.exit"))}
     # The python suite (08) reads the committed matrix, which counts the Lean
-    # audits (303 -> 304): it fails until build_matrix.py (09a) regenerates the
+    # audits (305 -> 306): it fails until build_matrix.py (09a) regenerates the
     # matrix with this file, and finish-gate.sh reruns it (09b), the authority.
     bad = {k: v for k, v in exits.items() if v != "0" and k != "08-python"}
     bad.update({f"provider:{k}": v for k, v in pexits.items() if v != "0"})
@@ -42,7 +42,7 @@ def main() -> int:
     phead = (plogs / "head").read_text().strip()
     packages = sorted(k[len("p7-verify-"):] for k in pexits if k.startswith("p7-verify-"))
     note = (
-        f"CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 card gate on base 84ec54d1d, every code step at "
+        f"CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 card gate on main 6f64d545e (rebased from 84ec54d1d), every code step at "
         f"{head[:9]}, scripts docs/reports/cg10-indirect-access-sole-residuals-r2/scripts/gate.sh "
         "(each step under the shared flock) and finish-gate.sh, logs "
         f"private/cg10r2/gate-{name} of this worktree. "
@@ -52,11 +52,11 @@ def main() -> int:
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/cg10r2/tests-gate-{name}); "
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (with the new "
         f"AuditResidualAccessReadings); python suite before the matrix regeneration 08 = {exits.get('08-python')} "
-        "(Lean audits 303 -> 304 in the committed matrix), docs index check 09 = "
+        "(Lean audits 305 -> 306 in the committed matrix), docs index check 09 = "
         f"{exits.get('09-index')}, then build_matrix.py . --gate this file (09a), the python suite (09b) "
-        "and the docs index (10b, 10c). The first gate, g1 (same code but two gateway pins), failed "
+        "and the docs index (10b, 10c). The first gate, g1 (pre-rebase, same code but two gateway pins), failed "
         "exactly the two pins rule 14a and rule 14d flip (7,767 passed / 2 failed), updated deliberately "
-        f"at f26c53cd7. Provider gate {provider} (providers/ changes) at {phead[:9]}: cargo check --locked, "
+        f"(f26c53cd7 before the rebase); g2 was stopped in its test step when main moved, not evidence. Provider gate {provider} (providers/ changes) at {phead[:9]}: cargo check --locked, "
         f"cargo test {provider_tests} passed, fmt, clippy, contracts.py check, package build and verify of "
         f"{len(packages)} packages ({', '.join(packages)}), providers Python "
         f"{provider_python.group(1) if provider_python else '?'} tests OK, every exit 0 "
