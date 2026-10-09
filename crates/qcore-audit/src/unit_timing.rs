@@ -50,6 +50,51 @@ impl Span {
     }
 }
 
+/// The analysing thread's stack mapping, from `/proc/self/smaps`: its size
+/// and the memory it has touched (`Rss` plus `Swap`, in KiB). A thread's stack
+/// pages stay resident once touched, so the touched figure is the thread's
+/// high-water mark so far (an over-estimate when the C library hands the
+/// thread a stack an earlier thread already used). `None` when the mapping
+/// holding a local of this frame is not found.
+fn stack_touched() -> Option<serde_json::Value> {
+    let marker = 0u8;
+    let address = std::hint::black_box(&marker) as *const u8 as usize;
+    let smaps = std::fs::read_to_string("/proc/self/smaps").ok()?;
+    let mut inside = None;
+    let (mut rss, mut swap) = (None, None);
+    for line in smaps.lines() {
+        let mut fields = line.split_whitespace();
+        let first = fields.next().unwrap_or("");
+        if let Some((low, high)) = first.split_once('-')
+            && let (Ok(low), Ok(high)) = (
+                usize::from_str_radix(low, 16),
+                usize::from_str_radix(high, 16),
+            )
+        {
+            if inside.is_some() {
+                break;
+            }
+            if (low..high).contains(&address) {
+                inside = Some(high - low);
+            }
+            continue;
+        }
+        if inside.is_some() {
+            let value = fields.next().and_then(|value| value.parse::<u64>().ok());
+            match first {
+                "Rss:" => rss = value,
+                "Swap:" => swap = value,
+                _ => {}
+            }
+        }
+    }
+    let size = inside?;
+    Some(serde_json::json!({
+        "mapping_kib": size / 1024,
+        "touched_kib": rss? + swap.unwrap_or(0),
+    }))
+}
+
 impl Drop for Span {
     fn drop(&mut self) {
         let end = now();
@@ -61,6 +106,7 @@ impl Drop for Span {
             "thread": self.thread,
             "start": self.start,
             "end": end,
+            "stack": stack_touched(),
         });
         let _guard = WRITE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         if let Ok(mut out) = std::fs::OpenOptions::new()
