@@ -3837,6 +3837,38 @@ declaration digest. Review markers are contract-level only (a clause-level
 `bounds_review_pending(…)` wraps a predicate call, which this clause is not).
 `resource_*` consumers reject the clause kind.
 
+## G05d. Null-dereference checks
+
+Card NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10, decision 2), contract
+specification
+[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
+gateway rules [14o](agents/gateway.md#constraint-14o) and
+[14p](agents/gateway.md#constraint-14p). One more `bounds_clause` of G05b,
+read by `crates/qcore-contract/src/bounds_contract.rs`:
+
+```ebnf
+bounds_clause   = … | null_deref ;
+null_deref      = "quant", "null", "-", "deref", "#", IDENT, ";" ;
+```
+
+The structural parser (G01) reads `quant null-deref` as its own clause kind
+(`SourceContractClauseKind::QuantNullDeref`, no exit selector) and retains
+the text after it; before this card the spelling was a parse error (`null` is
+no exit selector), so no previously accepted text changes meaning. Static
+conditions, each rejecting the whole module with a named diagnostic: the
+clause is exactly `#` and one `IDENT` (`quant-null-deref-shape`); the `IDENT`
+is a pointer parameter of the declaration (`ptr<mut, u8>` or
+`ptr<const, u8>`; not a scalar, a slot or another name,
+`quant-null-deref-parameter`); at most one per formal (`duplicate bounds
+clause for null-deref P`). The clause is part of the declaration digest
+(`quant null-deref #P`) and is pinned with the declaration
+(`bounds-contracts.lock`). Only the null-dereference property reads it: the
+bounds consumer reads the environment without it (a declaration and a module
+left with no clause leave the bounds identity), and `resource_*` consumers
+reject the clause kind, as they do `quant checks`. A declaration holding only
+null-dereference checks still carries `requires bounds_contract_v1;`, and its
+signature obeys G05b (no floating type; a slot only with a closed frame).
+
 ## G06. Observation predicate grammar
 
 ```ebnf

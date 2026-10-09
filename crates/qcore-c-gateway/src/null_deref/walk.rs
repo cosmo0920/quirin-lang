@@ -228,6 +228,8 @@ pub(super) struct Walked {
     pub(super) returns: Option<Nullness>,
     /// Declared and inferred callees whose clause an actual met.
     pub(super) consulted: BTreeSet<String>,
+    /// Calls through a function pointer (not inventoried as checks).
+    pub(super) indirect_calls: usize,
 }
 
 pub(super) struct Walker<'a> {
@@ -249,6 +251,7 @@ pub(super) struct Walker<'a> {
     exits: Vec<BTreeSet<First>>,
     returns: Option<Nullness>,
     consulted: BTreeSet<String>,
+    indirect_calls: BTreeSet<usize>,
 }
 
 fn strip(node: &Value) -> &Value {
@@ -356,6 +359,7 @@ impl<'a> Walker<'a> {
             exits: vec![BTreeSet::new(); count],
             returns: None,
             consulted: BTreeSet::new(),
+            indirect_calls: BTreeSet::new(),
         };
         let mut state = State {
             live: true,
@@ -419,6 +423,7 @@ impl<'a> Walker<'a> {
             exits: walker.exits,
             returns: walker.returns,
             consulted: walker.consulted,
+            indirect_calls: walker.indirect_calls.len(),
         }
     }
 
@@ -643,16 +648,17 @@ impl<'a> Walker<'a> {
                 }
             }
         }
-        let Some(place) = &value.place else {
-            return (on_true, on_false);
-        };
-        match core::refine(&value.null, true, proof.clone()) {
-            Some(null) => Self::set_place(&mut on_true, place, null),
-            None => on_true.live = false,
+        // An arm the value contradicts is infeasible whether or not the walk
+        // can name where the value lives.
+        match (core::refine(&value.null, true, proof.clone()), &value.place) {
+            (Some(null), Some(place)) => Self::set_place(&mut on_true, place, null),
+            (Some(_), None) => {}
+            (None, _) => on_true.live = false,
         }
-        match core::refine(&value.null, false, proof) {
-            Some(null) => Self::set_place(&mut on_false, place, null),
-            None => on_false.live = false,
+        match (core::refine(&value.null, false, proof), &value.place) {
+            (Some(null), Some(place)) => Self::set_place(&mut on_false, place, null),
+            (Some(_), None) => {}
+            (None, _) => on_false.live = false,
         }
         (on_true, on_false)
     }
@@ -1137,9 +1143,17 @@ impl<'a> Walker<'a> {
             "=" => {
                 let place = self.lvalue(lhs, state);
                 let value = self.eval(rhs, state);
-                self.store(lhs, place, &value, state);
+                self.store(lhs, place.clone(), &value, state);
+                // The assignment's value is its left operand's after the store
+                // (C11 6.5.16p3): a test of `(p = f()) != NULL` tests `p`.
+                let readable = match &place {
+                    Some(Place::Var(id)) => state.vars.contains_key(id),
+                    Some(Place::Path(key)) => state.paths.contains_key(key),
+                    None => false,
+                };
                 Val {
-                    place: None,
+                    place: if readable && is_pointer(ty(lhs)) { place } else { None },
+                    null_constant: false,
                     ..value
                 }
             }
@@ -1200,8 +1214,10 @@ impl<'a> Walker<'a> {
         if name.is_none() {
             // An indirect call: its callee expression is evaluated (a
             // `s->cb` dereferences `s`); the function pointer itself is not
-            // checked (a registered residual).
+            // checked (a registered residual, counted on the row).
             self.eval(callee, state);
+            let site = self.site(node);
+            self.indirect_calls.insert(site);
         }
         let values = arguments
             .iter()

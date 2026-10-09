@@ -122,6 +122,14 @@ pub struct NullFunctionRow {
     /// The declared names (and in-unit inferences) the row consulted.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub contract_dependencies: Vec<String>,
+    /// Calls through a function pointer, whose own null-ness is not checked
+    /// (a registered residual).
+    #[serde(skip_serializing_if = "is_zero")]
+    pub indirect_calls: usize,
+}
+
+fn is_zero(count: &usize) -> bool {
+    *count == 0
 }
 
 /// The null report of one translation unit.
@@ -369,6 +377,7 @@ fn analyze_function(
         clause_standing,
         returns_non_null,
         contract_dependencies: dependencies,
+        indirect_calls: walked.indirect_calls,
     };
     (row, summary)
 }
@@ -493,6 +502,7 @@ fn analyze_on_stack(
                 clause_standing: Vec::new(),
                 returns_non_null: false,
                 contract_dependencies: Vec::new(),
+                indirect_calls: 0,
             })
         })
         .collect();

@@ -432,3 +432,30 @@ fn qualified_formals_errno_and_generic_selections_are_read() {
     assert_eq!(row.verdict, "Safe", "{row:#?}");
     assert!(row.checks.iter().all(|c| c.subject != "s->next"), "{row:#?}");
 }
+
+#[test]
+fn a_test_of_an_assignment_tests_its_left_operand() {
+    if !clang_available() {
+        return;
+    }
+    // `if (!(p = alloc()))`: the assignment's value is `p` (C11 6.5.16p3).
+    let row = subject_row(
+        "int subject(void) { struct S *p; if (!(p = nd_alloc(8))) return -1; return p->a; }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    let row = subject_row(
+        "int subject(struct S *s) { if (!s) return 0; struct S *n; \
+         if ((n = s->next) != 0) return n->a; return 0; }",
+    );
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+    // A contradicted arm is infeasible even when the tested value has no
+    // place: `(e->next = NULL) != NULL` never takes its true arm.
+    let row = subject_row(
+        "int subject(struct S *s, struct S *e) { if (!s || !e) return 0; \
+         if ((e->next = (struct S *)0) != 0) return e->next->a; return 1; }",
+    );
+    assert!(
+        row.checks.iter().all(|c| !c.outcome.starts_with("violation")),
+        "{row:#?}"
+    );
+}

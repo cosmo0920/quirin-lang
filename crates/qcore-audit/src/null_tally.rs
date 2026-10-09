@@ -30,6 +30,8 @@ pub fn summary(rows: &[Value]) -> Value {
     let mut safe_with_premise = 0usize;
     let mut safe_premises_proved = 0usize;
     let mut candidate_functions = 0usize;
+    let mut indirect_calls = 0u64;
+    let mut indirect_functions = 0usize;
     for row in rows {
         let verdict = row["null"]["verdict"].as_str().unwrap_or("absent");
         let key = if verdict == "Safe" {
@@ -64,6 +66,9 @@ pub fn summary(rows: &[Value]) -> Value {
             }
         }
         candidate_functions += usize::from(has_candidate);
+        let indirect = row["null"]["indirect_calls"].as_u64().unwrap_or_default();
+        indirect_calls += indirect;
+        indirect_functions += usize::from(indirect > 0);
         let mut codes = std::collections::BTreeSet::new();
         for reason in row["null"]["reasons"].as_array().into_iter().flatten() {
             codes.insert(
@@ -115,6 +120,8 @@ pub fn summary(rows: &[Value]) -> Value {
             "candidates_by_source_kind": sources,
             "candidates_by_library": libraries,
             "functions_with_a_candidate": candidate_functions,
+            "indirect_calls_not_inventoried": indirect_calls,
+            "functions_with_an_indirect_call": indirect_functions,
         },
         "inference": {
             "inferred_preconditions": inferred,

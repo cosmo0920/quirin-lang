@@ -1539,6 +1539,147 @@ of bounds modules landed with card CHUNKIO-META-LEN-BOUNDS-CONTRACTS (C09.1's
 status paragraph). Not landed (named residual): symbolic forms beyond
 `[0, f)` (`CG16-BOUNDS-SYMBOLIC-RANGES`).
 
+### C09.3. Null dereference: the property `c.null.deref.v1` and `quant null-deref`
+
+**Card NULL-SAFETY-PROPERTY, 2026-10-10; gateway rules
+[14k](agents/gateway.md#constraint-14k)–[14p](agents/gateway.md#constraint-14p);
+grammar [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks).**
+
+> **USER DECISION 2026-10-10.**
+> 1. **Move the NULL question** (resolves `CG10-INTERIOR-ALIAS-NULLABILITY`).
+>    `&B->F`, or any use of `B` as non-NULL, is read as non-NULL only when
+>    every path to it already went through a real read or write via `B`, with
+>    `B` not reassigned in between. Forming `&B->G` and `sizeof`/unevaluated
+>    operands do not count as dereferences. The NULL question then moves to
+>    that dominating dereference, and that dereference becomes a published
+>    check in a new null-safety property. **Proved:** from a NULL test, a
+>    non-NULL contract result or parameter, a checked allocation, or a further
+>    dominating dereference up the chain. **Otherwise:** a NULL-dereference
+>    candidate, validated for reachability before any Unsafe and never
+>    presented as an upstream defect. A custody verdict relying on the
+>    non-NULL reading lists a named assumption tied to the dereference site
+>    until the null-safety check proves it. It appears in the per-verdict
+>    dependency set and roll-up. User motivation: NULL dereference is one of
+>    the most common bug sources, so the value is in surfacing candidates, not
+>    only in freeing functions.
+> 2. **Contract syntax** (the user called it "quite ideal"): `quant null-deref
+>    #B;` A collocated check form, like `quant checks`. It means "this function
+>    dereferences `B`; `B` must be non-NULL." **Caller side:** the actual for
+>    `B` must be proved non-NULL, otherwise it is a candidate at the call site.
+>    **Callee side:** the body check validates that the body dereferences `B`
+>    without a prior NULL test. Inside the body, after the first dereference,
+>    `B` and `&B->F` are non-NULL (decision 1). A body that tests `B` first does
+>    not need the clause; it is reported as stronger than necessary, never as
+>    wrong.
+
+**The property.** `c.null.deref.v1` is a separately selected property of
+existing C, beside custody and bounds (C09.1): the audit selects it with
+`QCORE_NULL_PROPERTY` and publishes one null row per projected function beside
+an unchanged custody report; a request naming custody and null publishes their
+join (`Safe < Pending < Unknown < Unsafe`, a missing row `Unknown`). A custody
+certificate claims nothing about null dereference, and a null row nothing
+about custody.
+
+**What is checked.** Every evaluated `*p`, `p->f` and `p[i]` read or write, an
+atomic access through a pointer, and every actual at a callee's `quant
+null-deref` position. Unevaluated operands (`sizeof`, `_Alignof`, a
+`typeof`, a trait, an unselected `_Generic` association) and address formation
+(`&B->G`, `&B[i]`, `&*E`, an array member's decay) are not dereferences. A call
+through a function pointer is not inventoried (a registered residual).
+
+**Sources of possibly-NULL.** The result of a callee whose resource contract
+states an owned or reallocated *nullable* result (an allocation); a derived
+nullable result (a lookup); any other pointer result no contract states; a
+formal with no clause; a pointer read from memory (a member, an element,
+`*pp`, a global, an address-taken local); a null pointer constant on some
+path; an uninitialized local.
+
+**Sources of non-NULL.** The address of an object, an array's decay, a string
+literal, a function; a resource contract's non-null owned result (a listed
+`declared:` assumption); an in-unit body whose every return is non-null; the
+`errno` lvalue's address (C11 7.5p2); the function's own clause (declared, or
+inferred below); a NULL test's non-null arm (`if (p)`, `!p`, `p != NULL`,
+`p == NULL`'s other arm, `&&`, `||`, `?:`, `__builtin_expect`), including an
+early exit or a no-return call on the other arm; `assert(p)`'s surviving arm
+when the analysed text still holds the assertion, as the listed premise that
+the deployed build does too (`NDEBUG` absent); and decision 1's dominating
+dereference.
+
+**Facts.** A local or formal whose address is never taken keeps its fact
+across calls; a pointer `B ± n` is non-NULL exactly when `B` is (C11 6.5.6p8),
+so an offset keeps the moved question; any other assignment replaces the fact
+(the reassignment of decision 1). A fact on memory (`s->next`, a global, an
+address-taken local) is forgotten at every call and at every store that could
+write a pointer; a store of a non-character scalar keeps it under the listed
+premise that it cannot modify a pointer object (C11 6.5p7). Paths join (a
+value is non-NULL after a join only when it is on every arriving path); a loop
+is iterated to its fixed point (a function whose loop does not reach one is
+`Unknown`); a label a later `goto` reaches forgets every fact.
+
+**Verdicts.** A check is *proved* (non-NULL on every path), *moved* (non-NULL,
+the question moved to an earlier check of the same function, whose own
+outcome stands in the inventory), *held* (discharged only by a held clause),
+a *candidate* (possibly NULL, with its sources), a *violation* (NULL on every
+path) or *excluded* (unreachable). The function is `Safe` only when every check
+is proved, moved or excluded and no form went unread; `Pending` only when held
+clauses are the sole obstacle; `Unsafe` only for a violation on the
+straight-line prefix from entry (no branch, loop, call or label before it);
+otherwise `Unknown`, with every candidate listed. A candidate is never
+presented as an upstream defect. A row is `Safe` *conditional on* its own
+preconditions when its scope names a declared or inferred clause.
+
+**The clause `quant null-deref #B;`** (decision 2). Admitted in **bounds
+contract v1 only** (G05d), not in resource contract v1: it is a check form
+like `quant checks`, read by a separately selected property; resource v1
+declarations feed custody's environment digest and certificates, which the
+clause would change for a clause custody never reads, and the bounds
+vocabulary already carries the check-form machinery (pins in the crate's
+`bounds-contracts.lock`, C06.2's holds, the selection on the audit routes).
+The bounds consumer reads the environment without these clauses: a
+declaration left with none, and a module left with none, leave the bounds
+identity (`BoundsContracts::for_bounds`), so no bounds row moves. The clause
+text is part of the declaration digest, so a changed clause takes the pin out
+of force (held: discharges nothing, accuses nothing). **Callee side:** `B` is
+non-NULL at entry and the row is conditional on the clause; the body is
+checked against it: `necessary` when every terminating path dereferences `B`
+before any test or assignment of it, otherwise `stronger-than-necessary`,
+never wrong (a stronger precondition is sound; it only asks more of callers).
+**Caller side:** the actual is checked at the call (`call-precondition`); a
+possibly-NULL actual is a candidate there; after the call the actual is
+non-NULL with its question moved to that check. A held declaration's
+obligation is `held` (Pending at most), and moves nothing. A declaration whose
+parameters do not match the call's arguments or the definition is withdrawn
+(`Unknown`).
+
+**Inference** (rule 14p). In a unit, a body whose every terminating path
+dereferences a formal (directly, through a copy or an offset, or by passing it
+to a clause position) before any NULL test or assignment of it infers the
+clause; the unit's callers carry the obligation, the body is `Safe`
+conditional on it, and a body whose every return is non-null gives callers a
+non-null result. Summaries are computed callees first; a recursive edge is
+cut (no clause, no result). An inferred clause never leaves its unit, and a
+caller in another unit sees nothing unless the clause is declared.
+
+**Custody** (decision 1, rule 14n). Custody's dereference obligation reads a
+dereference through a **target-free, unknown, possibly-NULL binding of the
+identity derivation** in an unwidened state (what a pointer-valued path read
+and rule 14b bind) as non-NULL; every other part of the obligation is decided
+as for a non-NULL binding, and a tracked, derived, mixed, widened or known
+binding keeps its refusal. The reading leaves the named premise
+`null-deref:FUNCTION:LINE:VARIABLE`: on the function's summary
+(`null_premises`), on the published row, in its `contract_dependencies` (its
+own and, transitively, its in-unit summaries'), and in the Safe roll-up
+(`resting_only_on_a_null_premise`, `carrying_a_null_premise`). The null row
+says of each premise whether the null property proves its check. The binding
+itself stays possibly NULL for custody (a release, a publication or an escape
+through it decides as before).
+
+Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
+`moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,
+`caller_obligation_establishes_the_entry`, `an_inferred_clause_is_necessary`,
+`a_relied_on_reading_is_listed`, `combined_safe_needs_null_safe`), audited in
+`proof/AuditNullDeref.lean`, vectors bound to the Rust.
+
 ## C10. Cleanup and OS endpoint contracts
 
 Cleanup must distinguish invocation, attempted release, observed return, actual release and residual custody. An OS endpoint is identified by its kind, acquisition generation and lifetime, not by a numeric descriptor or virtual address alone. Numeric reuse after an earlier epoch has ended is permitted and must not merge the epochs.

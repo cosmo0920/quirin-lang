@@ -6496,3 +6496,137 @@ own anchor here.
     `a_bounds_run_is_never_composed_from_checkpoints`); controls
     `a_checkpointed_run_refuses_the_bounds_selection`,
     `an_inheriting_bounds_module_never_reaches_a_bounds_view`.
+
+<a id="constraint-14k"></a>
+
+14k. **Null dereference is a separately selected property, `c.null.deref.v1`:
+    every evaluated dereference is a check, and a function is `Safe` only when
+    every check is proved or moved to a check that is.** Card
+    NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10; contract specification
+    C09.3; `null_deref.rs`, `null_deref/{ast,walk}.rs`,
+    `qcore_core::null_deref`). The consumer reads Clang's typed AST (every
+    definition compacted as it is read) and walks each body forward, joining
+    paths. A check is every evaluated `*p`, `p->f`, `p[i]` read or write, an
+    atomic access, and an actual at a `quant null-deref` position (rule 14o);
+    its outcome is `proved`, `moved` (rule 14m), `held`, `candidate` (with its
+    sources), `violation` or `excluded`. `Unsafe` only for a pointer null on
+    every path dereferenced on the straight-line prefix from entry (no branch,
+    loop, call or label before it); a violation elsewhere is
+    `null-violation-reachability-unresolved` (`Unknown`); a held clause the
+    sole obstacle is `Pending`; a form the walk does not read
+    (`null-unsupported-form: KIND`), a loop without a fixed point
+    (`null-loop-unconverged`) or a missing definition (`null-import-failure`)
+    is `Unknown`. The audit selects it with `QCORE_NULL_PROPERTY` (rows as JSON
+    lines, `.summary.json` beside them; a checkpointed run refuses it) and
+    publishes the custody status and the join of a request naming both
+    (`compose`); the custody report is byte-identical with or without the
+    selection. **Do not** publish a candidate as a defect, or read a row
+    `Safe` while any check is a candidate. `QCore.NullDeref`
+    (`check_sound`, `no_safe_on_an_undecided_pointer`,
+    `unsafe_only_for_a_reachable_violation`, `combined_safe_needs_null_safe`;
+    `checkVectors`, `verdictVectors`).
+
+<a id="constraint-14l"></a>
+
+14l. **Sources and guards of the null property.** Card NULL-SAFETY-PROPERTY.
+    Possibly null: an owned or reallocated *nullable* contract result
+    (`allocation`), a derived nullable result (`lookup`), a pointer result no
+    contract states (`uncontracted-result`), a formal with no clause
+    (`formal`), a pointer read from memory or a global (`memory-field`,
+    `global`), a null constant on some path (`null-literal`), an uninitialized
+    local. Non-null: an address, an array decay, a string literal, a function,
+    a non-null owned contract result (a listed `declared:` assumption), a
+    non-null in-unit summary result (rule 14p), `errno`'s address (C11 7.5p2).
+    A NULL test (`if (p)`, `!p`, `p != NULL`, `p == NULL`, `&&`, `||`, `?:`,
+    `__builtin_expect`) proves its non-null arm and makes the other null; an
+    arm that ends in a `return`, `break`, `goto` or a no-return call does not
+    reach the join. `assert(p)` is a guard only where the analysed text still
+    holds it (`NDEBUG` absent there), and a proof resting on it lists the
+    premise `asserted:` (the deployed build keeps the assertion). **Do not**
+    read a guard the analysed text does not hold, or a non-null result no
+    contract or in-unit body states. `QCore.NullDeref` (`guard_sound`,
+    `walk_sound`, `join_sound_left`).
+
+<a id="constraint-14m"></a>
+
+14m. **Decision 1's dominating dereference moves the NULL question; a
+    reassignment ends it.** Card NULL-SAFETY-PROPERTY. After a real read or
+    write through `B` (check `c`), `B` is non-null with its question moved to
+    `c` (`moved`, proofs `moved:c`), and so is `&B->F`; until `B` is assigned
+    again. `B ± n` is non-null exactly when `B` is (C11 6.5.6p8), so an offset
+    keeps the moved question. Forming `&B->G`, `&B[i]`, `&*E` or an array
+    member's decay, and an unevaluated operand (`sizeof`, `_Alignof`,
+    `typeof`, a trait, an unselected `_Generic` association) are not
+    dereferences. A local or formal whose address is never taken keeps its
+    fact across calls; a memory path (`s->next`, a global, an address-taken
+    local) loses its fact at every call and every store that could write a
+    pointer, and keeps it across a non-character scalar store only under the
+    listed premise `effective-type:` (C11 6.5p7). Loops reach a fixed point
+    (16 rounds, else `Unknown`); a label a later `goto` reaches forgets every
+    fact. **Do not** move a question across a reassignment, a call (for a
+    memory path) or a label. `QCore.NullDeref`
+    (`moved_question_is_the_origins`, `nullness_kept_without_assignment`,
+    `afterDereference_sound`, `offset_sound`).
+
+<a id="constraint-14n"></a>
+
+14n. **Custody reads a dereference through a target-free, possibly-null
+    borrowed alias non-null only under a named premise.** Card
+    NULL-SAFETY-PROPERTY (decision 1; resolves
+    `CG10-INTERIOR-ALIAS-NULLABILITY`; `legacy_null_premise.rs`,
+    `null_premise.rs`). In the typed scalar access's base and chain
+    obligations (W43-INDIRECT-ACCESS-GENERAL, W44-INDIRECT-CHAIN-ACCESS), a
+    binding with no target, `unknown`, possibly null, of the identity
+    derivation, in an unwidened state (what a pointer-valued path read and
+    rule 14b bind) is read non-null at this dereference, and every other part
+    of the obligation is decided as for a non-null binding (a bound chain root
+    still needs rule 11d's premise). The reading records the premise
+    `null-deref:FUNCTION:LINE:VARIABLE` on the summary (`null_premises`, kept
+    by the analysis that relied on it), on the report row, in the row's
+    `contract_dependencies.null_premises` (its own and, through the
+    consultation log, every in-unit summary's) and in the Safe roll-up
+    (`resting_only_on_a_null_premise`, `carrying_a_null_premise`, never
+    counted as resting on nothing). With the null property selected, each
+    custody row's premises carry what the null row says of the variable's
+    checks at that line (`proved` only on that line; `nearby:` within three
+    lines, never counted proved). The binding stays possibly null for every
+    other rule (a release, an escape or a store through it decides as
+    before); a tracked, derived, mixed, widened or known binding is never
+    premised. **Do not** read a possibly-null binding non-null without
+    recording its premise. `QCore.NullDeref` (`a_relied_on_reading_is_listed`,
+    `a_tracked_binding_is_never_premised`,
+    `a_known_or_widened_binding_is_never_premised`; `premisedVectors`).
+
+<a id="constraint-14o"></a>
+
+14o. **`quant null-deref #B;` is a bounds contract v1 check: a caller
+    obligation and a body check, never read by the bounds consumer.** Card
+    NULL-SAFETY-PROPERTY (decision 2; grammar G05d). The callee's `B` is
+    non-null at entry and its row is conditional on the clause; each caller's
+    actual is a `call-precondition` check (a possibly-null actual is a
+    candidate at the call), after which the actual's question is that check's.
+    A held declaration (review marker or pin not in force) is `held` at the
+    call and moves nothing; a declaration whose parameters do not match is
+    withdrawn (`Unknown`). The body is checked against its own clause:
+    `necessary` when every terminating path dereferences `B` before any test or
+    assignment of it, else `stronger-than-necessary`, never wrong. The bounds
+    consumer reads `BoundsContracts::for_bounds()` (no null-deref clause; a
+    declaration or module left empty leaves the bounds identity), so no bounds
+    row moves. **Do not** admit the clause in resource contract v1 (it would
+    change custody's environment digest for a clause custody never reads).
+    `QCore.NullDeref` (`caller_obligation_establishes_the_entry`).
+
+<a id="constraint-14p"></a>
+
+14p. **In-unit inference of the clause and of non-null results; neither
+    leaves the unit.** Card NULL-SAFETY-PROPERTY. Bodies are analysed callees
+    first (a recursive edge is cut: no clause, no result). A formal that every
+    terminating path dereferences (directly, through a copy or an offset, or
+    by handing it to a clause position) before any NULL test or assignment of
+    it infers `quant null-deref #B;`: the body's row is `Safe` conditional on it
+    (`inferred_preconditions`, the scope names it) and every in-unit caller
+    carries the obligation; a body whose every return is non-null gives its
+    in-unit callers a non-null result. A caller in another unit sees neither
+    unless the clause is declared (rule 14o). **Do not** carry an inferred
+    clause or result across a unit boundary. `QCore.NullDeref`
+    (`an_inferred_clause_is_necessary`; `firstVectors`, `inferredVectors`).
