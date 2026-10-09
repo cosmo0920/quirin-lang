@@ -1,0 +1,82 @@
+{
+ "runs": {
+  "before": [
+   {
+    "name": "before1",
+    "corpus": {
+     "seconds": 550.302,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 65.561,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.459,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   }
+  ],
+  "after": [
+   {
+    "name": "a1",
+    "corpus": {
+     "seconds": 494.924,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "239457b396b8e1c7ceb53a085e6d76fed93cae00a40c6415b0f22b2ff6ee036f"
+    },
+    "system": {
+     "seconds": 69.471,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.942,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "after1",
+    "corpus": {
+     "seconds": 498.615,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "20e68c5beb3832219e1dba93f690d6cd03dea63d79de6e0ea61187e6be6ae76f"
+    },
+    "system": {
+     "seconds": 68.261,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 31.37,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   }
+  ]
+ },
+ "medians": {
+  "corpus": {
+   "before": 550.302,
+   "after": 496.7695,
+   "change_percent": -9.7
+  },
+  "system": {
+   "before": 65.561,
+   "after": 68.866,
+   "change_percent": 5.0
+  },
+  "slice": {
+   "before": 29.459,
+   "after": 30.656,
+   "change_percent": 4.1
+  }
+ }
+}

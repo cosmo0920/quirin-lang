@@ -1,0 +1,162 @@
+{
+ "analyses": 185,
+ "span": 531.4,
+ "phases": {
+  "1": {
+   "units": 185,
+   "first_start": 0.0,
+   "last_end": 531.4,
+   "sum_seconds": 2123.4
+  }
+ },
+ "longest": [
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   1,
+   343.2,
+   74.0,
+   417.2
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_admin.c",
+   1,
+   310.3,
+   0.0,
+   310.3
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_metadata.c",
+   1,
+   116.3,
+   259.9,
+   376.2
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_request.c",
+   1,
+   108.1,
+   0.0,
+   108.1
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   1,
+   81.6,
+   152.5,
+   234.1
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   1,
+   74.0,
+   0.0,
+   74.0
+  ],
+  [
+   "librdkafka-2.15.0/src/rdhttp.c",
+   1,
+   70.7,
+   452.9,
+   523.6
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka.c",
+   1,
+   67.4,
+   1.3,
+   68.7
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_partition.c",
+   1,
+   50.9,
+   134.2,
+   185.1
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock.c",
+   1,
+   45.5,
+   185.1,
+   230.6
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_broker.c",
+   1,
+   45.3,
+   68.7,
+   113.9
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   1,
+   38.6,
+   113.9,
+   152.5
+  ]
+ ],
+ "rdhttp": [
+  {
+   "phase": 1,
+   "seconds": 70.75,
+   "start": 452.9,
+   "end": 523.6,
+   "thread": "2310711",
+   "stack": {
+    "stack_kib": 2048,
+    "touched_kib": 140
+   }
+  }
+ ],
+ "stack": {
+  "stack_kib": [
+   2048
+  ],
+  "max_touched_kib": 144,
+  "threads": 4,
+  "raised_by": [
+   [
+    "librdkafka-2.15.0/src/rdkafka_request.c",
+    1,
+    "2310712",
+    0,
+    144
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    1,
+    "2310709",
+    132,
+    144
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_admin.c",
+    1,
+    "2310710",
+    0,
+    140
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+    1,
+    "2310711",
+    136,
+    140
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    1,
+    "2310711",
+    0,
+    136
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka.c",
+    1,
+    "2310709",
+    0,
+    132
+   ]
+  ]
+ }
+}

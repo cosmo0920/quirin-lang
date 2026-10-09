@@ -1,0 +1,7 @@
+59 thread-samples hold elaboration_node::walk
+24 ::elaboration_node::walk <- ::elaboration_node <- ::elaborated_statement <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+18 ::elaboration_node::walk <- ::elaboration_node <- ::call_once <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+14 ::elaboration_node::walk <- ::elaboration_node <- ::uncast_value_statement <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+3 ::elaboration_node::walk
+3 thread-samples hold call_exits::walk
+3 qcore_c_gateway::call_exits::walk:: <- qcore_c_gateway::call_exits::resolve <- ::resolution <- ::call_exit_census <- ::expression_statement <- ::parse_statement

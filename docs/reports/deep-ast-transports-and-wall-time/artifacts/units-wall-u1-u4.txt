@@ -1,0 +1,8 @@
+before private/dat/u1-plain-units.jsonl sum 1990.1 without rdhttp.c 1861.0 rdhttp.c 129.1
+after private/dat/u2-plain-units.jsonl sum 1973.5 without rdhttp.c 1904.8 rdhttp.c 68.7 median ratio of the other units over 5 s 1.09 (53 units)
+   slowest: [('librdkafka-2.15.0/src/rdkafka_metadata_cache.c', 9.5, 13.2), ('librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c', 11.3, 15.7), ('librdkafka-2.15.0/src/rdunittest_fetcher.c', 11.7, 15.5), ('librdkafka-2.15.0/src/rdkafka_transport.c', 6.7, 8.9), ('librdkafka-2.15.0/src/rdkafka_timer.c', 5.2, 6.9), ('librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c', 10.8, 13.9)]
+   fastest: [('librdkafka-2.15.0/src/rdkafka_conf.c', 24.1, 22.3), ('librdkafka-2.15.0/src/rdkafka_mock_handlers.c', 347.8, 320.8), ('librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c', 12.9, 11.8)]
+before private/dat/u3-plain-units.jsonl sum 1954.9 without rdhttp.c 1832.4 rdhttp.c 122.5
+after private/dat/u4-plain-units.jsonl sum 2021.3 without rdhttp.c 1951.1 rdhttp.c 70.2 median ratio of the other units over 5 s 1.163 (54 units)
+   slowest: [('librdkafka-2.15.0/src/rdkafka_idempotence.c', 5.1, 7.4), ('librdkafka-2.15.0/src/rdkafka_sticky_assignor.c', 29.2, 41.5), ('cmetrics/src/cmt_decode_msgpack.c', 6.3, 8.8), ('librdkafka-2.15.0/src/rdkafka_partition.c', 39.2, 52.4), ('librdkafka-2.15.0/src/rdkafka_sasl_cyrus.c', 6.0, 7.9), ('librdkafka-2.15.0/src/rdkafka_aux.c', 6.5, 8.5)]
+   fastest: [('librdkafka-2.15.0/src/rdkafka.c', 63.2, 60.5), ('librdkafka-2.15.0/src/rdkafka_broker.c', 42.0, 39.4), ('librdkafka-2.15.0/src/rdkafka_request.c', 107.6, 95.3)]

@@ -1,0 +1,288 @@
+{
+ "runs": {
+  "before": [
+   {
+    "name": "before1",
+    "corpus": {
+     "seconds": 550.302,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 65.561,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.459,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before2",
+    "corpus": {
+     "seconds": 522.788,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 63.196,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 27.696,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before3",
+    "corpus": {
+     "seconds": 538.899,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 65.596,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.976,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before4",
+    "corpus": {
+     "seconds": null,
+     "exit": null,
+     "report_sha256": null
+    },
+    "system": {
+     "seconds": 70.451,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 30.895,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before5",
+    "corpus": {
+     "seconds": null,
+     "exit": null,
+     "report_sha256": null
+    },
+    "system": {
+     "seconds": 71.559,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 32.197,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before6",
+    "corpus": {
+     "seconds": null,
+     "exit": null,
+     "report_sha256": null
+    },
+    "system": {
+     "seconds": 71.375,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 32.919,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before7",
+    "corpus": {
+     "seconds": 566.204,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 65.796,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.709,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before8",
+    "corpus": {
+     "seconds": 547.654,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 65.162,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 28.124,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "before9",
+    "corpus": {
+     "seconds": 550.184,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "3dcd3b2e280f73ae58a136fd006f37de04da969ecc69355f703238c727ed971f"
+    },
+    "system": {
+     "seconds": 66.331,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 29.215,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   }
+  ],
+  "after": [
+   {
+    "name": "final1",
+    "corpus": {
+     "seconds": 517.336,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "d5ac72e8196689cd32404f9a58c6e4606a5b8dceb43f6895824cb03cc6408d61"
+    },
+    "system": {
+     "seconds": 72.43,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 32.599,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "final2",
+    "corpus": {
+     "seconds": 519.553,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "d5ac72e8196689cd32404f9a58c6e4606a5b8dceb43f6895824cb03cc6408d61"
+    },
+    "system": {
+     "seconds": 71.673,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 31.225,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "final3",
+    "corpus": {
+     "seconds": 499.494,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "d5ac72e8196689cd32404f9a58c6e4606a5b8dceb43f6895824cb03cc6408d61"
+    },
+    "system": {
+     "seconds": 65.951,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 31.454,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "final4",
+    "corpus": {
+     "seconds": 494.451,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "d5ac72e8196689cd32404f9a58c6e4606a5b8dceb43f6895824cb03cc6408d61"
+    },
+    "system": {
+     "seconds": 69.75,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 30.347,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   },
+   {
+    "name": "final5",
+    "corpus": {
+     "seconds": 497.755,
+     "exit": "0",
+     "report_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+     "binary_sha256": "d5ac72e8196689cd32404f9a58c6e4606a5b8dceb43f6895824cb03cc6408d61"
+    },
+    "system": {
+     "seconds": 69.597,
+     "exit": "0",
+     "report_sha256": "06954e601fb79724b4b044f6a9d8278077c0ce1b8ad04e9aac8147f6933dc5af"
+    },
+    "slice": {
+     "seconds": 30.825,
+     "exit": "0",
+     "report_sha256": "f23681280dca27b43762f8cd6e1067915223d0487e82b1b61a809d31220c0586"
+    }
+   }
+  ]
+ },
+ "medians": {
+  "corpus": {
+   "before": 548.919,
+   "after": 499.494,
+   "change_percent": -9.0
+  },
+  "system": {
+   "before": 65.796,
+   "after": 69.75,
+   "change_percent": 6.0
+  },
+  "slice": {
+   "before": 29.709,
+   "after": 31.225,
+   "change_percent": 5.1
+  }
+ }
+}

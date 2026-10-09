@@ -1,0 +1,6 @@
+private/dat/c1-cpu.jsonl cpu 1862.9 s, span 539.5 s
+private/dat/c2-cpu.jsonl cpu 1777.3 s, span 470.5 s
+private/dat/s1-cpu.jsonl cpu 184.0 s, span 60.1 s
+private/dat/s2-cpu.jsonl cpu 213.3 s, span 68.1 s
+private/dat/s3-cpu.jsonl cpu 198.4 s, span 63.6 s
+private/dat/s4-cpu.jsonl cpu 197.5 s, span 63.3 s
