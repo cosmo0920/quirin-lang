@@ -7,7 +7,7 @@ use std::collections::BTreeMap;
 use serde_json::{Value, json};
 
 /// What the summary means, carried in it.
-pub const MEANING: &str = "the null-dereference property (c.null.deref.v1) of every projected function, reported separately from custody: `null` counts the null rows' verdicts (Safe split into unconditional and conditional on the function's own declared or inferred null-deref preconditions); `combined` joins the custody and null rows of a request naming both, a missing row counting Unknown; `checks` counts every judged dereference by outcome, and every candidate by source kind and by library; `custody_null_premises` counts the named null premises custody rows rest on (rule 14n) by what the null row says of each (`proved` when every check of the variable at that line is proved or moved to a proved check) and the custody Safe rows whose every own premise the null property proves. Unknown and Pending stay in every denominator";
+pub const MEANING: &str = "the null-dereference property (c.null.deref.v1) of every projected function, reported separately from custody: `null` counts the null rows' verdicts (Safe split into unconditional and conditional on the function's own declared or inferred null-deref preconditions); `combined` joins the custody and null rows of a request naming both, a missing row counting Unknown; `checks` counts every judged dereference by outcome, and every candidate by source kind and by library; `custody_null_premises` counts the named null premises custody rows rest on (rule 14n) by what the null row says of each (`proved` when every check of the variable at that line is proved or moved to a proved check; `nearby:` when only checks within three lines name it, never counted as proved) and the custody Safe rows whose every own premise the null property proves. Unknown and Pending stay in every denominator";
 
 fn bump(map: &mut BTreeMap<String, usize>, key: &str) {
     *map.entry(key.to_owned()).or_default() += 1;
@@ -152,4 +152,36 @@ pub fn line(summary: &Value) -> String {
             .as_u64()
             .unwrap_or_default(),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_tally_splits_safe_rows_and_counts_premises_conservatively() {
+        let rows = vec![
+            json!({"library": "l", "custody": "Safe", "combined": "Unknown",
+                   "null": {"verdict": "Unknown", "scope": "unconditional", "reasons": ["null-deref-candidate"],
+                            "checks": [{"outcome": "candidate", "sources": ["memory-field:s->next"]}]},
+                   "custody_null_premises": [{"null_property": "candidate"}]}),
+            json!({"library": "l", "custody": "Safe", "combined": "Safe",
+                   "null": {"verdict": "Safe", "scope": "unconditional", "reasons": [],
+                            "checks": [{"outcome": "proved"}]},
+                   "custody_null_premises": [{"null_property": "proved"}]}),
+            json!({"library": "l", "custody": "Safe", "combined": "Safe",
+                   "null": {"verdict": "Safe", "scope": "conditional on f's null-deref preconditions: inferred quant null-deref #p",
+                            "reasons": [], "checks": [], "inferred_preconditions": ["#p"]},
+                   "custody_null_premises": [{"null_property": "nearby:proved"}]}),
+        ];
+        let summary = summary(&rows);
+        assert_eq!(summary["null"]["Safe (unconditional)"], 1);
+        assert_eq!(summary["null"]["Safe (conditional on its preconditions)"], 1);
+        assert_eq!(summary["checks"]["candidates_by_source_kind"]["memory-field"], 1);
+        assert_eq!(summary["custody_null_premises"]["custody_safe_rows_with_an_own_premise"], 3);
+        // A nearby proof is never counted as a discharged premise.
+        assert_eq!(summary["custody_null_premises"]["of_which_every_premise_proved"], 1);
+        assert_eq!(summary["inference"]["inferred_preconditions"], 1);
+        assert!(line(&summary).contains("1 Safe unconditional, 1 Safe conditional"));
+    }
 }

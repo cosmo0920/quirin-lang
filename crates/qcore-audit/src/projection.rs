@@ -134,28 +134,38 @@ fn custody_null_value(status: AnalysisStatus) -> qcore_c_gateway::null_deref::Nu
     }
 }
 
-/// What the null row says of the checks of `variable` at `line`: `proved`
-/// when every one is proved or moved to a proved check, otherwise the worst
-/// class met (`unmatched` when the row has no such check).
-fn premise_standing(row: &qcore_c_gateway::null_deref::NullFunctionRow, line: usize, variable: &str) -> &'static str {
+/// What the null row says of the checks of `variable` at `line` (a check of
+/// `variable` itself or of an interior address `&variable->…`): `proved` when
+/// every one is proved or moved to a proved check, otherwise the worst class
+/// met. A custody statement's line is its first; when the row has no such
+/// check on that line, the checks within three lines decide, reported as
+/// `nearby:<class>` (never counted as proved); `unmatched` when there is none.
+fn premise_standing(
+    row: &qcore_c_gateway::null_deref::NullFunctionRow,
+    line: usize,
+    variable: &str,
+) -> String {
+    use qcore_c_gateway::null_deref::NullCheck;
+    use std::collections::BTreeMap;
     let by_id = row
         .checks
         .iter()
         .map(|check| (check.id, check))
-        .collect::<std::collections::BTreeMap<_, _>>();
-    fn resolve(
-        check: &qcore_c_gateway::null_deref::NullCheck,
-        by_id: &std::collections::BTreeMap<usize, &qcore_c_gateway::null_deref::NullCheck>,
-        depth: usize,
-    ) -> &'static str {
+        .collect::<BTreeMap<_, _>>();
+    fn resolve(check: &NullCheck, by_id: &BTreeMap<usize, &NullCheck>, depth: usize) -> &'static str {
         match check.outcome {
             "proved" => "proved",
             "moved" if depth < 64 => {
                 let mut worst = "proved";
                 for proof in &check.proofs {
-                    let resolved = match proof.strip_prefix("moved:").and_then(|id| id.parse::<usize>().ok()) {
+                    let resolved = match proof
+                        .strip_prefix("moved:")
+                        .and_then(|id| id.parse::<usize>().ok())
+                    {
                         Some(origin) => match by_id.get(&origin) {
-                            Some(origin) if origin.id != check.id => resolve(origin, by_id, depth + 1),
+                            Some(origin) if origin.id != check.id => {
+                                resolve(origin, by_id, depth + 1)
+                            }
                             _ => "unmatched",
                         },
                         None => "proved",
@@ -169,20 +179,42 @@ fn premise_standing(row: &qcore_c_gateway::null_deref::NullFunctionRow, line: us
             other => other,
         }
     }
-    let mut matched = false;
-    let mut standing = "proved";
-    for check in row
+    let names_it = |check: &NullCheck| {
+        check.subject == variable
+            || check
+                .subject
+                .strip_prefix('&')
+                .and_then(|rest| rest.strip_prefix(variable))
+                .is_some_and(|rest| rest.starts_with("->") || rest.starts_with('['))
+    };
+    let judge = |checks: Vec<&NullCheck>| {
+        let mut standing = "proved";
+        for check in checks {
+            let resolved = resolve(check, &by_id, 0);
+            if resolved != "proved" {
+                standing = resolved;
+            }
+        }
+        standing
+    };
+    let exact = row
         .checks
         .iter()
-        .filter(|check| check.line == line && check.subject == variable)
-    {
-        matched = true;
-        let resolved = resolve(check, &by_id, 0);
-        if resolved != "proved" {
-            standing = resolved;
-        }
+        .filter(|check| check.line == line && names_it(check))
+        .collect::<Vec<_>>();
+    if !exact.is_empty() {
+        return judge(exact).to_owned();
     }
-    if matched { standing } else { "unmatched" }
+    let nearby = row
+        .checks
+        .iter()
+        .filter(|check| check.line.abs_diff(line) <= 3 && names_it(check))
+        .collect::<Vec<_>>();
+    if nearby.is_empty() {
+        "unmatched".to_owned()
+    } else {
+        format!("nearby:{}", judge(nearby))
+    }
 }
 
 /// Card NULL-SAFETY-PROPERTY: when the null property is selected, record each
@@ -275,9 +307,10 @@ fn record_null(
                             "line": premise.line,
                             "origin": origin(premise.line),
                             "variable": premise.variable,
-                            "null_property": own.map_or("unmatched", |row| {
-                                premise_standing(row, premise.line, &premise.variable)
-                            }),
+                            "null_property": own.map_or_else(
+                                || "unmatched".to_owned(),
+                                |row| premise_standing(row, premise.line, &premise.variable),
+                            ),
                         })
                     })
                     .collect::<Vec<_>>()
