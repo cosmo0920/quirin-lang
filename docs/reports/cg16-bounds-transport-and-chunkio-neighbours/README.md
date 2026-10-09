@@ -187,4 +187,36 @@ bodies, the frame walk and Git (trust boundary 28; the Rust controls above).
 
 ## 6. Gate
 
-GATE
+Standing gate `g2` ([`scripts/gate.sh`](scripts/gate.sh), every step under the
+shared lock, logs `private/cg16-bounds-transport-and-chunkio-neighbours/gate-g2/`,
+exits copied to [`gate/`](gate/), summary in [`gate.json`](gate.json)), every code
+step at `eb8268df9`:
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| 00 | `cargo check --workspace --all-targets` | 0 | |
+| 01 | submodule update `--init --recursive` | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | |
+| 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| 04 | `python3 scripts/run_test_binaries.py` | 0 | 466 units, 479 summaries, 7,773 passed, 0 failed, 12 ignored (`tests-gate-g2/`) |
+| 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | 305 audits (303 → 305) |
+| 08, 09 | Python suite, docs index check (before the matrix regeneration) | GATE_08 | |
+| 09a, 09b, 10b, 10c | `build_matrix.py . --gate gate.json`, the Python suite, `build_docs_index.py`, `--check` | GATE_09 | |
+
+Provider gate `g2` ([`scripts/provider-gate.sh`](scripts/provider-gate.sh), at
+`eb8268df9`): `cargo check --locked` 0, `cargo test --locked` 0 (129 passed),
+fmt 0, clippy 0, `contracts.py check` 0, `package.py build` 0, `package.py
+verify` 0 for all five packages, `python3 -m unittest discover -s
+providers/tests` 0 (25 tests).
+
+The first gates (`g1`, code at `706a47dac`) failed one step each, both a pin
+this card's new tracked bounds module moved and both updated deliberately:
+standing step 04 (7,772 passed, 1 failed:
+`bounds_contract::the_reserved_spellings_are_unused_by_tracked_contracts`,
+tracked bounds modules 1 → 2) and provider p8
+(`test_the_real_workspace_manifest_is_current`, chunkio's bounds view 1 → 2
+modules); their other steps were 0 (Lean 305). `cargo clean --profile dev` ran
+after the test step; the release targets under `private/` were deleted after
+the measurements.

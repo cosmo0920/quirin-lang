@@ -1,0 +1,13 @@
+{
+  "note": "CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS card gate on base 84ec54d1d, every code step at eb8268df9, scripts docs/reports/cg16-bounds-transport-and-chunkio-neighbours/scripts/gate.sh, provider-gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg16-bounds-transport-and-chunkio-neighbours/gate-g2 and provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 466 units, 479 summaries, 7,773 passed, 0 failed, 12 ignored, exit 0 (private/cg16-bounds-transport-and-chunkio-neighbours/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 305 audits passed (with the new AuditBoundsBodyStanding and AuditBoundsTransport); python suite and docs index check before the matrix regeneration (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate pg2 at eb8268df9: cargo check --locked 0, cargo test --locked 0 (129 passed), fmt 0, clippy 0, contracts.py check 0, package build 0, verify 0 for all five packages, providers/tests 0 (25 tests). The first gates g1 (code at 706a47dac) each failed one pin the new tracked bounds module moved (standing step 04: 7,772 passed, 1 failed; provider p8), both updated deliberately.",
+  "workspace_tests": 7773,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 305,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
