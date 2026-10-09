@@ -1,0 +1,107 @@
+{
+ "only_before": {
+  "bound-untracked-root": {
+   "rows": 126,
+   "functions": 3
+  },
+  "?": {
+   "rows": 84,
+   "functions": 2
+  },
+  "condition": {
+   "rows": 72,
+   "functions": 1
+  },
+  "residual-shape": {
+   "rows": 56,
+   "functions": 1
+  },
+  "bound-untracked-closure": {
+   "rows": 20,
+   "functions": 2
+  },
+  "root-declarations": {
+   "rows": 20,
+   "functions": 2
+  },
+  "elaboration-statement": {
+   "rows": 16,
+   "functions": 2
+  },
+  "call-exit-census": {
+   "rows": 12,
+   "functions": 1
+  },
+  "call-argument": {
+   "rows": 8,
+   "functions": 1
+  },
+  "aggregate-value": {
+   "rows": 4,
+   "functions": 1
+  },
+  "summary-premises-graph": {
+   "rows": 4,
+   "functions": 1
+  }
+ },
+ "only_after": {
+  "residual-access": {
+   "rows": 1862,
+   "functions": 53
+  },
+  "bound-untracked-root": {
+   "rows": 346,
+   "functions": 8
+  },
+  "residual-shape": {
+   "rows": 196,
+   "functions": 6
+  },
+  "call-argument": {
+   "rows": 148,
+   "functions": 6
+  },
+  "storage-duration-address-argument": {
+   "rows": 140,
+   "functions": 5
+  },
+  "typed-place": {
+   "rows": 128,
+   "functions": 2
+  },
+  "condition": {
+   "rows": 36,
+   "functions": 1
+  },
+  "?": {
+   "rows": 36,
+   "functions": 1
+  },
+  "bound-untracked-closure": {
+   "rows": 16,
+   "functions": 2
+  },
+  "root-declarations": {
+   "rows": 16,
+   "functions": 2
+  },
+  "elaboration-statement": {
+   "rows": 12,
+   "functions": 1
+  },
+  "summary-premises": {
+   "rows": 4,
+   "functions": 1
+  },
+  "summary-premises-graph": {
+   "rows": 4,
+   "functions": 1
+  }
+ },
+ "rows": [
+  139962,
+  142484
+ ],
+ "identical_rows": 139540
+}

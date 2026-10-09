@@ -1,0 +1,56 @@
+{
+ "alias_uses_only": 7,
+ "other": 67,
+ "functions": [
+  [
+   "rdkafka_fetcher.c",
+   "rd_kafka_share_ack_type_from_msg_op",
+   [
+    "rkm"
+   ]
+  ],
+  [
+   "rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_has_duplicates",
+   [
+    "p1",
+    "p2"
+   ]
+  ],
+  [
+   "rdkafka_partition.c",
+   "rd_kafka_topic_partition_list_regex_cnt",
+   [
+    "rktpar"
+   ]
+  ],
+  [
+   "snappy.c",
+   "append",
+   [
+    "iov"
+   ]
+  ],
+  [
+   "snappy.c",
+   "peek",
+   [
+    "iv"
+   ]
+  ],
+  [
+   "snappy.c",
+   "sink_peek",
+   [
+    "iov"
+   ]
+  ],
+  [
+   "mk_server/mk_vhost.c",
+   "mk_vhost_fdt_chain_lookup",
+   [
+    "hc"
+   ]
+  ]
+ ]
+}

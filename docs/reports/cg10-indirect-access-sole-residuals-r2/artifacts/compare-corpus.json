@@ -1,0 +1,5301 @@
+{
+ "transitions": {
+  "Unknown -> Safe": 24
+ },
+ "status_moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "update_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1732: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "finalize_checksum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "2924: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_compose_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3196: indirect memory access is outside the resource projection",
+    "3202: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_delete_by_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3260: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_bucket_inc",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5464: indirect memory access is outside the resource projection",
+    "5466: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "occurrence": 1,
+   "function": "metric_hist_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5449: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_get_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5502: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_inc",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5429: indirect memory access is outside the resource projection",
+    "5431: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5493: indirect memory access is outside the resource projection",
+    "5495: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "metric_hist_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5386: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "occurrence": 1,
+   "function": "summary_quantile_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5561: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9269: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9213: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9129: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otlp_kvpair_list_initialize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8586: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_segment_write_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "3614: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_outbufs_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22965: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_set_last_err",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20464: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_update_session_timeout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20524: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgbatch_set_first_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20813: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_acknowledgements_send_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20561: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_bytes_consumed_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20486: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_fetch_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20531: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_heartbeat_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20591: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  }
+ ],
+ "removed": {
+  "indirect memory access is outside the resource projection": 302,
+  "call to uncontracted function `_`": 21,
+  "unresolved resource identity `_`": 3,
+  "use of `_` after its object moved or its parent changed (interior-borrow-ended)": 2,
+  "unmodeled call, aggregate or indirect access in branch condition": 1
+ },
+ "added": {
+  "unresolved resource identity `_`": 131,
+  "indirect memory access is outside the resource projection": 8,
+  "call to uncontracted function `_`": 3,
+  "nullable resource `_` used by a non-null contract": 2,
+  "publication by `_` of `_`, which this function does not hold as one live object": 2
+ },
+ "attribution": {
+  "14d": 8,
+  "callee-summary": 19,
+  "14b": 75,
+  "errno-print": 58,
+  "14a": 105,
+  "14c": 15,
+  "other": 3
+ },
+ "status_attribution": {
+  "14b": 1,
+  "14d": 2,
+  "errno-print": 6,
+  "14c": 7,
+  "callee-summary": 3,
+  "14a": 8
+ },
+ "moving_rows": 266,
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "parse_number",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "1560: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "print",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "2249: call to uncontracted function `update_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "print_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "2530: call to uncontracted function `update_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "print_object",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "2689: call to uncontracted function `update_offset`",
+    "2706: call to uncontracted function `update_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "update_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1732: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2031: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "adjust_layout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "2931: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_content_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3183: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_down",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3420: indirect memory access is outside the resource projection",
+    "3424: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_format_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "3012: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "3012: unresolved resource identity `cf`"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "errno-print"
+   ],
+   "lost": [
+    "3266: indirect memory access is outside the resource projection",
+    "3281: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_resize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3611: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary",
+    "errno-print"
+   ],
+   "lost": [
+    "3563: indirect memory access is outside the resource projection",
+    "3587: call to uncontracted function `finalize_checksum`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "finalize_checksum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "2924: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "mmap_file",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3072: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "update_checksum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "2910: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_apply_acl_and_settings",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3150: indirect memory access is outside the resource projection",
+    "3158: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_close",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3248: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_compose_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3196: indirect memory access is outside the resource projection",
+    "3202: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_delete",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3274: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_delete_by_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3260: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_lookup_group",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3102: indirect memory access is outside the resource projection",
+    "3119: indirect memory access is outside the resource projection",
+    "3125: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_lookup_user",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3061: indirect memory access is outside the resource projection",
+    "3078: indirect memory access is outside the resource projection",
+    "3084: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3030: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3234: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_remap",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3044: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_resize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3320: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "3290: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "occurrence": 1,
+   "function": "cio_file_native_unmap",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2999: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_memfs.c",
+   "occurrence": 1,
+   "function": "cio_memfs_content_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2211: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_memfs.c",
+   "occurrence": 1,
+   "function": "cio_memfs_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2146: indirect memory access is outside the resource projection",
+    "2152: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_memfs.c",
+   "occurrence": 1,
+   "function": "cio_memfs_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14d",
+    "errno-print"
+   ],
+   "lost": [
+    "2194: indirect memory access is outside the resource projection",
+    "2200: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "2200: unresolved resource identity `mf`"
+   ]
+  },
+  {
+   "unit": "cio_meta.c",
+   "occurrence": 1,
+   "function": "cio_meta_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2384: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_scan.c",
+   "occurrence": 1,
+   "function": "cio_scan_stream_files",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2263: indirect memory access is outside the resource projection",
+    "2268: indirect memory access is outside the resource projection",
+    "2274: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_scan.c",
+   "occurrence": 1,
+   "function": "cio_scan_streams",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2324: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_stream.c",
+   "occurrence": 1,
+   "function": "check_stream_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2131: indirect memory access is outside the resource projection",
+    "2136: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_stream.c",
+   "occurrence": 1,
+   "function": "cio_stream_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2200: indirect memory access is outside the resource projection",
+    "2206: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_stream.c",
+   "occurrence": 1,
+   "function": "get_stream_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "2112: indirect memory access is outside the resource projection",
+    "2117: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cat_exp_histogram_values",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "5890: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cat_histogram_values",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5662: indirect memory access is outside the resource projection",
+    "5663: indirect memory access is outside the resource projection",
+    "5664: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_copy_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "5955: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_negative_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "7805: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7805: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_positive_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "7791: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7791: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "7656: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7656: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "8230: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8230: call to uncontracted function `cmt_mpack_consume_double_tag`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_quantile",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "8258: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8258: call to uncontracted function `cmt_mpack_consume_double_tag`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_static_label",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "7337: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7337: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_quantile",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "7526: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7526: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "5754: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "append_sample_to_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "9245: indirect memory access is outside the resource projection",
+    "9254: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "9245: unresolved resource identity `exponential_data_point`",
+    "9254: unresolved resource identity `exponential_data_point`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "7234: indirect memory access is outside the resource projection",
+    "7250: indirect memory access is outside the resource projection",
+    "7254: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7234: unresolved resource identity `number_data_point`",
+    "7250: unresolved resource identity `number_data_point`",
+    "7254: unresolved resource identity `number_data_point`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "apply_metric_metadata_from_otlp_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "7196: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "cfl_variant_binary_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "7842: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7842: unresolved resource identity `result`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "create_exemplar_from_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6984: indirect memory access is outside the resource projection",
+    "6994: indirect memory access is outside the resource projection",
+    "7038: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6984: unresolved resource identity `exemplar`",
+    "6984: unresolved resource identity `variant`",
+    "6994: unresolved resource identity `exemplar`",
+    "6994: unresolved resource identity `variant`",
+    "7038: unresolved resource identity `exemplar`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_instrumentation_scope",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "8130: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8130: unresolved resource identity `scope`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_numerical_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "8416: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8416: unresolved resource identity `data_point`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "8994: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8994: unresolved resource identity `resource`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6353: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "append_metric_to_timeseries",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6972: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6972: unresolved resource identity `sample`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "pack_complex_metric_sample",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "7101: indirect memory access is outside the resource projection",
+    "7315: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6025: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "occurrence": 1,
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "5613: indirect memory access is outside the resource projection",
+    "5614: indirect memory access is outside the resource projection",
+    "5615: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_bucket_inc",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5464: indirect memory access is outside the resource projection",
+    "5466: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "occurrence": 1,
+   "function": "metric_hist_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5449: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_get_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5502: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_inc",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5429: indirect memory access is outside the resource projection",
+    "5431: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_metric_hist_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c",
+    "callee-summary"
+   ],
+   "lost": [
+    "5493: indirect memory access is outside the resource projection",
+    "5495: call to uncontracted function `metric_hist_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "occurrence": 1,
+   "function": "metric_hist_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5386: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "occurrence": 1,
+   "function": "cmt_summary_quantile_get_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5536: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "occurrence": 1,
+   "function": "cmt_summary_quantile_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "5610: call to uncontracted function `summary_quantile_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "occurrence": 1,
+   "function": "summary_quantile_exchange",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "5561: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6766: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_array_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8606: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_kvlist_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8650: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_otel_attrs",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8757: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6799: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6802: unresolved resource identity `list`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_kvlist_to_otlp_kvpair_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary",
+    "errno-print"
+   ],
+   "lost": [
+    "8731: call to uncontracted function `otlp_kvpair_list_initialize`"
+   ],
+   "gained": [
+    "8745: nullable resource `result` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_variant_binary_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "8843: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "8843: unresolved resource identity `result`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_variant_kvpair_to_otlp_kvpair",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8693: indirect memory access is outside the resource projection",
+    "8698: indirect memory access is outside the resource projection",
+    "8704: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_export_service_request",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9318: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_instrumentation_scope",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "errno-print"
+   ],
+   "lost": [
+    "9178: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "errno-print"
+   ],
+   "lost": [
+    "8897: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9279: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9269: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_scope_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9223: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9213: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9139: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "9129: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otel_span_set_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "8998: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otel_span_set_links",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "9098: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "9098: unresolved resource identity `otel_link`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otlp_kvpair_list_initialize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "8586: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_resource_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary",
+    "errno-print"
+   ],
+   "lost": [
+    "9295: call to uncontracted function `initialize_resource_spans`",
+    "9301: unresolved resource identity `rs`"
+   ],
+   "gained": [
+    "9311: nullable resource `rs` used by a non-null contract",
+    "9311: unresolved resource identity `rs`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary",
+    "errno-print"
+   ],
+   "lost": [
+    "9239: call to uncontracted function `initialize_scope_spans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary",
+    "errno-print"
+   ],
+   "lost": [
+    "9154: call to uncontracted function `initialize_spans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_id.c",
+   "occurrence": 1,
+   "function": "ctr_id_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6796: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_id.c",
+   "occurrence": 1,
+   "function": "ctr_id_create_random",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6770: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_link.c",
+   "occurrence": 1,
+   "function": "ctr_link_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6768: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_resource.c",
+   "occurrence": 1,
+   "function": "ctr_resource_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6766: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_resource.c",
+   "occurrence": 1,
+   "function": "ctr_resource_span_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6815: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_scope.c",
+   "occurrence": 1,
+   "function": "ctr_instrumentation_scope_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6818: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_scope.c",
+   "occurrence": 1,
+   "function": "ctr_scope_span_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6766: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6769: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_add_ts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "7048: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_status",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6944: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctraces.c",
+   "occurrence": 1,
+   "function": "ctr_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "errno-print"
+   ],
+   "lost": [
+    "6782: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_fast_extState_fastReset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "987: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_forceExtDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1205: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1742: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_loadDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1093: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "1113: unresolved resource identity `dict`"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_renormDictT",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1135: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_setStreamDecode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1721: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_updateDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "1966: indirect memory access is outside the resource projection",
+    "1973: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4HC_InsertAndGetWiderMatch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "706: indirect memory access is outside the resource projection",
+    "840: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "706: unresolved resource identity `HashTable`",
+    "840: unresolved resource identity `dictCtx`"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4HC_compress_optimal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "1594: indirect memory access is outside the resource projection",
+    "1649: indirect memory access is outside the resource projection",
+    "1669: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "1594: unresolved resource identity `opt`",
+    "1649: unresolved resource identity `opt`",
+    "1669: unresolved resource identity `opt`"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "occurrence": 1,
+   "function": "mk_ptr_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "1866: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "occurrence": 1,
+   "function": "mk_rconf_section_entry_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "1821: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "1826: unresolved resource identity `head`"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "occurrence": 1,
+   "function": "mk_string_itop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "2428: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_clock.c",
+   "occurrence": 1,
+   "function": "mk_clock_worker_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "3779: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "3779: unresolved resource identity `server`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_header.c",
+   "occurrence": 1,
+   "function": "mk_header_prepare",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "5919: indirect memory access is outside the resource projection",
+    "6081: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "5921: unresolved resource identity `sh`",
+    "5940: unresolved resource identity `sh`",
+    "5952: unresolved resource identity `sh`",
+    "5970: unresolved resource identity `sh`",
+    "5976: unresolved resource identity `sh`",
+    "6002: unresolved resource identity `sh`",
+    "6010: unresolved resource identity `sh`",
+    "6021: unresolved resource identity `sh`",
+    "6063: unresolved resource identity `sh`",
+    "6067: unresolved resource identity `sh`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_header.c",
+   "occurrence": 1,
+   "function": "mk_header_response_reset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6120: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_header_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "7132: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7138: unresolved resource identity `parser`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_point_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6126: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6127: unresolved resource identity `header`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_range_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6377: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_range_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6334: indirect memory access is outside the resource projection",
+    "6336: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_request_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6088: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_request_prepare",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6151: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6151: unresolved resource identity `sr`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "header_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "5610: indirect memory access is outside the resource projection",
+    "5749: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "5618: unresolved resource identity `header`",
+    "5620: publication by `mk_list_add` of `header`, which this function does not hold as one live object",
+    "5620: unresolved resource identity `header`",
+    "5759: publication by `mk_list_add` of `header_extra`, which this function does not hold as one live object",
+    "5759: unresolved resource identity `header_extra`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "method_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "5516: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_http_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6846: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6847: unresolved resource identity `h`",
+    "6849: unresolved resource identity `h`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_vhost_set_property",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6778: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_mimetype.c",
+   "occurrence": 1,
+   "function": "mk_mimetype_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "5843: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "5843: unresolved resource identity `new_mime`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "_next_target",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6492: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6492: unresolved resource identity `ctx`",
+    "6493: unresolved resource identity `worker`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_broadcast_signal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "7001: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7001: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_register_thread",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "14b"
+   ],
+   "lost": [
+    "6608: indirect memory access is outside the resource projection",
+    "6610: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6608: unresolved resource identity `ctx`",
+    "6610: unresolved resource identity `worker`",
+    "6613: indirect memory access is outside the resource projection",
+    "6614: unresolved resource identity `worker`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_workers_join",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "7014: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "7014: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_utils.c",
+   "occurrence": 1,
+   "function": "mk_buffer_cat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "5987: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_fdt_chain_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "6044: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6236: indirect memory access is outside the resource projection",
+    "6256: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6236: unresolved resource identity `host`",
+    "6256: unresolved resource identity `host`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_set_single",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "6381: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6381: unresolved resource identity `host`"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_buf_write_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "3628: call to uncontracted function `rd_segment_write_update`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_segment_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "3950: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "3950: call to uncontracted function `rd_hexdump`"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_segment_write_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14d"
+   ],
+   "lost": [
+    "3614: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdbuf.c",
+   "occurrence": 1,
+   "function": "rd_slice_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "3803: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "3803: unresolved resource identity `slice`"
+   ]
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "occurrence": 1,
+   "function": "rd_hdr_iter_next",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "4188: indirect memory access is outside the resource projection",
+    "4190: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_base64str",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "25167: indirect memory access is outside the resource projection",
+    "25168: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "25167: unresolved resource identity `input_uuid`",
+    "25167: unresolved resource identity `uuid`",
+    "25168: unresolved resource identity `input_uuid`",
+    "25168: unresolved resource identity `uuid`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_random",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "25141: indirect memory access is outside the resource projection",
+    "25142: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22338: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22338: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "24249: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "24249: unresolved resource identity `rkq`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_position",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "23976: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "23981: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_enqueue_fetch_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22940: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22940: unresolved resource identity `rk`",
+    "22940: unresolved resource identity `rko_sf`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_select_broker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22799: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ClusterDescription_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "26323: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22779: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22779: unresolved resource identity `rko_fanout`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22715: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22715: unresolved resource identity `rko_fanout`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_fanout_op_distribute",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20804: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_assignment_subtract",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20649: indirect memory access is outside the resource projection",
+    "20663: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "ut_populate_internal_topic_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "14b"
+   ],
+   "lost": [
+    "20681: indirect memory access is outside the resource projection",
+    "20682: indirect memory access is outside the resource projection",
+    "20705: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20705: unresolved resource identity `partition_internal`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "verifyMultipleAssignment0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20834: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "verifyNumPartitionsWithRackMismatch0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20868: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "23542: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "23542: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_buf_retry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22441: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22441: unresolved resource identity `rkbuf`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_connect",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22098: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22098: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_outbufs_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22965: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_resolve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21481: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21481: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_set_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21121: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21121: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_producer_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "22986: call to uncontracted function `rd_kafka_broker_outbufs_space`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_defer_offset_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22686: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22686: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_defer_offset_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22670: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22670: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "22226: call to uncontracted function `rd_kafka_cgrp_set_last_err`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_FindCoordinator",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "20712: call to uncontracted function `rd_kafka_cgrp_set_last_err`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_Heartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "22486: call to uncontracted function `rd_kafka_cgrp_update_session_timeout`",
+    "22508: call to uncontracted function `rd_kafka_cgrp_update_session_timeout`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "22445: call to uncontracted function `rd_kafka_cgrp_set_last_err`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "21294: call to uncontracted function `rd_kafka_cgrp_update_session_timeout`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_set_join_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20482: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_set_last_err",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20464: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_set_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20457: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "23782: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "23782: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_update_committed_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22702: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_update_session_timeout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20524: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_collect_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "21142: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [],
+   "gained": [
+    "21486: unresolved resource identity `_vp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21041: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21041: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_op_incr",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20993: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20993: unresolved resource identity `rkcg`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_topic_err_propagate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "23461: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_cache_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20201: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20201: unresolved resource identity `cce`"
+   ]
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_cache_expire",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20150: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20150: unresolved resource identity `cc`"
+   ]
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_cache_find",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20168: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20168: unresolved resource identity `cce`"
+   ]
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20250: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20250: unresolved resource identity `creq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_fetch_backoff",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20254: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Fetch_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20520: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_ack_type_from_msg_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20858: indirect memory access is outside the resource projection",
+    "20860: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20861: unresolved resource identity `rkm`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_fetch_backoff",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20275: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_idempotence.c",
+   "occurrence": 1,
+   "function": "rd_kafka_idemp_set_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20268: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20268: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_lz4.c",
+   "occurrence": 1,
+   "function": "rd_kafka_lz4_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19850: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19850: unresolved resource identity `slice`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20336: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20336: unresolved resource identity `mdi`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_update_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "21361: indirect memory access is outside the resource projection",
+    "21363: unresolved resource identity `rk`",
+    "21398: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_parse_Metadata0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20756: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20756: unresolved resource identity `rkb`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a",
+    "14b"
+   ],
+   "lost": [
+    "20387: indirect memory access is outside the resource projection",
+    "20388: indirect memory access is outside the resource projection",
+    "20410: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20410: unresolved resource identity `mdpi`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20714: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_classic_member_active",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20746: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_active",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21512: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22838: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_Fetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22509: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22509: unresolved resource identity `resp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "25302: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "25302: unresolved resource identity `session`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "24877: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "24877: unresolved resource identity `session`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_member_active",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21955: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msg_new0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19897: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19897: unresolved resource identity `rkm`"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgbatch_set_first_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20813: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_produceva",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "19968: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_gzip_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20101: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_writer_select_MsgVersion",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19749: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19749: unresolved resource identity `rkm`"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_snappy_compress_slice",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20155: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_store",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20521: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_combine_regexes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22731: indirect memory access is outside the resource projection",
+    "22746: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_leaders",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22270: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_topic_names",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22543: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22519: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_has_duplicates",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22675: indirect memory access is outside the resource projection",
+    "22677: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_log",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22578: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22453: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22453: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_regex_cnt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22705: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_set_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22193: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22214: indirect memory access is outside the resource projection",
+    "22220: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_str",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b",
+    "14c"
+   ],
+   "lost": [
+    "22593: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22627: indirect memory access is outside the resource projection",
+    "22627: use of `d_priv` after its object moved or its parent changed (interior-borrow-ended)",
+    "22627: use of `s_priv` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "gained": [
+    "22638: indirect memory access is outside the resource projection",
+    "22639: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_update_toppars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22250: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppars_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "21477: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assign_co_partitioned",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19820: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19820: unresolved resource identity `member_assignment`",
+    "19820: unresolved resource identity `rktas`"
+   ]
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assign_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19766: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19766: unresolved resource identity `member_assignment`",
+    "19766: unresolved resource identity `rktas`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_SyncGroupRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "21597: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_read_CurrentLeader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [],
+   "gained": [
+    "20697: unresolved resource identity `_vp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_write_topic_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20596: indirect memory access is outside the resource projection",
+    "20632: unresolved resource identity `rktpar`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Produce_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "22917: indirect memory access is outside the resource projection",
+    "22969: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22917: unresolved resource identity `perr`",
+    "22969: unresolved resource identity `rktp`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Produce_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22689: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_make_ListOffsetsRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20890: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20890: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafkap_leader_discovery_set_CurrentLeader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22539: indirect memory access is outside the resource projection",
+    "22542: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22548: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafkap_leader_discovery_set_brokers",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22480: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafkap_leader_discovery_set_topic",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22515: indirect memory access is outside the resource projection",
+    "22517: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22530: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "ut_create_msgs",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "24302: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "24302: unresolved resource identity `rkm`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "create_jws_compact_serialization",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20588: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oauthbearer_enqueue_token_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20249: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oauthbearer_set_token_failure0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20373: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20373: unresolved resource identity `handle`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "20739: indirect memory access is outside the resource projection",
+    "20745: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_assertion_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21511: indirect memory access is outside the resource projection",
+    "21514: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_client_credentials_build_auth_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21261: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_scram_build_client_first_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b",
+    "14d"
+   ],
+   "lost": [
+    "20488: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_scram_get_attr",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14c"
+   ],
+   "lost": [
+    "20215: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_send_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20298: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20298: unresolved resource identity `results`"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_dispatch_ack_callbacks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20286: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20286: unresolved resource identity `ack_batch`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "assignToMembers",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "22211: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "performReassignments",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "21716: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_get_telemetry_subscriptions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20970: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unit_test_telemetry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21806: indirect memory access is outside the resource projection",
+    "21808: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21806: unresolved resource identity `rk`",
+    "21808: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_acknowledgements_send_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20561: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_bytes_consumed_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20486: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_fetch_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20531: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "calculate_share_heartbeat_rate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20591: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "occurrence": 1,
+   "function": "rd_kafka_telemetry_encode_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "21024: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_new0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20039: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20039: unresolved resource identity `rkt`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_new_with_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20184: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20184: unresolved resource identity `rkt`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_set_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20236: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_idemp_msgid_save",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "20373: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20373: unresolved resource identity `partmsgid`"
+   ]
+  },
+  {
+   "unit": "rdkafka_zstd.c",
+   "occurrence": 1,
+   "function": "rd_kafka_zstd_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14a"
+   ],
+   "lost": [
+    "19854: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19854: unresolved resource identity `slice`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "19801: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19802: unresolved resource identity `iov`",
+    "19803: unresolved resource identity `iov`",
+    "19813: unresolved resource identity `iov`",
+    "19814: unresolved resource identity `iov`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "19772: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19773: unresolved resource identity `iv`",
+    "19774: unresolved resource identity `iv`",
+    "19775: unresolved resource identity `iv`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "sink_peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "19820: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19821: unresolved resource identity `iov`",
+    "19822: unresolved resource identity `iov`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "skip",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "14b"
+   ],
+   "lost": [
+    "19783: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "19785: unresolved resource identity `iv`",
+    "19786: unresolved resource identity `iv`"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,179 @@
+{
+ "only_before": {
+  "elaboration-statement": {
+   "rows": 439,
+   "functions": 92
+  },
+  "bound-untracked-root": {
+   "rows": 431,
+   "functions": 42
+  },
+  "uncontracted-access": {
+   "rows": 280,
+   "functions": 57
+  },
+  "bound-untracked-closure": {
+   "rows": 217,
+   "functions": 67
+  },
+  "residual-shape": {
+   "rows": 214,
+   "functions": 34
+  },
+  "root-declarations": {
+   "rows": 211,
+   "functions": 65
+  },
+  "call-argument": {
+   "rows": 114,
+   "functions": 23
+  },
+  "storage-duration-address-argument": {
+   "rows": 105,
+   "functions": 22
+  },
+  "aggregate-value": {
+   "rows": 54,
+   "functions": 17
+  },
+  "call-exit-census": {
+   "rows": 39,
+   "functions": 9
+  },
+  "cast-semantics-census": {
+   "rows": 24,
+   "functions": 13
+  },
+  "?": {
+   "rows": 21,
+   "functions": 11
+  },
+  "condition": {
+   "rows": 14,
+   "functions": 5
+  },
+  "summary-premises-graph": {
+   "rows": 14,
+   "functions": 1
+  },
+  "return-call-access": {
+   "rows": 12,
+   "functions": 4
+  },
+  "union-bitfield": {
+   "rows": 10,
+   "functions": 5
+  },
+  "typed-place": {
+   "rows": 8,
+   "functions": 4
+  },
+  "call-exit-statement": {
+   "rows": 3,
+   "functions": 2
+  },
+  "statement-expression-statement": {
+   "rows": 3,
+   "functions": 2
+  },
+  "condition-desugar": {
+   "rows": 3,
+   "functions": 1
+  },
+  "value-connective-statement": {
+   "rows": 2,
+   "functions": 1
+  },
+  "pointer-store-flow": {
+   "rows": 1,
+   "functions": 1
+  },
+  "nested-call": {
+   "rows": 1,
+   "functions": 1
+  }
+ },
+ "only_after": {
+  "residual-access": {
+   "rows": 5828,
+   "functions": 668
+  },
+  "typed-place": {
+   "rows": 1216,
+   "functions": 171
+  },
+  "call-argument": {
+   "rows": 992,
+   "functions": 123
+  },
+  "residual-shape": {
+   "rows": 768,
+   "functions": 82
+  },
+  "bound-untracked-root": {
+   "rows": 739,
+   "functions": 112
+  },
+  "storage-duration-address-argument": {
+   "rows": 359,
+   "functions": 71
+  },
+  "union-bitfield": {
+   "rows": 220,
+   "functions": 35
+  },
+  "bound-untracked-closure": {
+   "rows": 210,
+   "functions": 65
+  },
+  "root-declarations": {
+   "rows": 204,
+   "functions": 63
+  },
+  "summary-premises-graph": {
+   "rows": 15,
+   "functions": 1
+  },
+  "callback-registration": {
+   "rows": 14,
+   "functions": 14
+  },
+  "return-call-access": {
+   "rows": 12,
+   "functions": 4
+  },
+  "pointer-store-flow": {
+   "rows": 11,
+   "functions": 2
+  },
+  "indirect-call": {
+   "rows": 10,
+   "functions": 6
+  },
+  "uncontracted-access": {
+   "rows": 9,
+   "functions": 3
+  },
+  "condition": {
+   "rows": 6,
+   "functions": 1
+  },
+  "condition-desugar": {
+   "rows": 3,
+   "functions": 1
+  },
+  "?": {
+   "rows": 2,
+   "functions": 2
+  },
+  "return": {
+   "rows": 2,
+   "functions": 2
+  }
+ },
+ "rows": [
+  683320,
+  691720
+ ],
+ "identical_rows": 681100
+}

@@ -1,0 +1,108 @@
+{
+ "readings": {
+  "14a declined": 1135,
+  "14a admitted": 131,
+  "14b admitted": 89
+ },
+ "new_actuals_14c": 19,
+ "new_actuals_14d": 9,
+ "examples_14c": [
+  [
+   "cat_histogram_values",
+   5662,
+   "& metric_dst - > hist_buckets [ i ]"
+  ],
+  [
+   "cat_histogram_values",
+   5663,
+   "& metric_src - > hist_buckets [ i ]"
+  ],
+  [
+   "cat_histogram_values",
+   5664,
+   "& metric_dst - > hist_buckets [ i ]"
+  ],
+  [
+   "cat_summary_values",
+   5700,
+   "& metric_dst - > sum_quantiles [ i ]"
+  ],
+  [
+   "cmt_metric_hist_bucket_inc",
+   5464,
+   "& metric - > hist_buckets [ bucket_id ]"
+  ],
+  [
+   "cmt_metric_hist_get_value",
+   5502,
+   "& metric - > hist_buckets [ bucket_id ]"
+  ],
+  [
+   "cmt_metric_hist_inc",
+   5429,
+   "& metric - > hist_buckets [ bucket_id ]"
+  ],
+  [
+   "cmt_metric_hist_set",
+   5493,
+   "& metric - > hist_buckets [ bucket_id ]"
+  ],
+  [
+   "cmt_summary_quantile_get_value",
+   5536,
+   "& metric - > sum_quantiles [ quantile_id ]"
+  ],
+  [
+   "metric_hist_exchange",
+   5386,
+   "& metric - > hist_buckets [ bucket_id ]"
+  ]
+ ],
+ "examples_14d": [
+  [
+   "LZ4F_updateDict",
+   1966,
+   "dctx - > tmpOutBuffer + dctx - > dictSize"
+  ],
+  [
+   "LZ4F_updateDict",
+   1973,
+   "dctx - > tmpOutBuffer + preserveSize"
+  ],
+  [
+   "cio_memfs_write",
+   2200,
+   "mf - > buf_data + mf - > buf_len"
+  ],
+  [
+   "finalize_checksum",
+   2924,
+   "cf - > map + 2"
+  ],
+  [
+   "method_lookup",
+   5516,
+   "buffer + p - > start"
+  ],
+  [
+   "mk_buffer_cat",
+   5987,
+   "p - > data + len1"
+  ],
+  [
+   "parse_number",
+   1560,
+   "( ( input_buffer ) - > content + ( input_buffer ) - > offset )"
+  ],
+  [
+   "rd_kafka_sasl_scram_build_client_first_message",
+   20500,
+   "out - > ptr + 3"
+  ],
+  [
+   "rd_segment_write_update",
+   3614,
+   "seg - > seg_p + relof"
+  ]
+ ]
+}

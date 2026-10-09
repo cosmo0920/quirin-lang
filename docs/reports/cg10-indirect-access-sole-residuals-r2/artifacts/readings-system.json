@@ -1,0 +1,11 @@
+{
+ "readings": {
+  "14a declined": 84,
+  "14a admitted": 7,
+  "14b admitted": 3
+ },
+ "new_actuals_14c": 0,
+ "new_actuals_14d": 0,
+ "examples_14c": [],
+ "examples_14d": []
+}

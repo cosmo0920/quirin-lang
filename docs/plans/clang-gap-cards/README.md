@@ -277,6 +277,15 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     free 61 corpus functions; 205 functions remain blocked by the access
     refusal alone, ranked in the amended entry
     ([report](../../reports/cg10-indirect-access-sole-residuals/README.md)).
+  - *Status (wave 48, round 21, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2).*
+    Rules 14a (one `None`-result, all-`Borrowed` call inside a typed scalar
+    statement), 14b (an interior pointer of a never-bound root binds the
+    pointer read's alias), 14c (a scalar element address at an actual) and 14d
+    (an interior offset at an actual), with two body-validated neutral
+    declarations, free 24 corpus functions and 2 system rows; 201 functions
+    remain blocked by the access refusal alone, every class above 3 a design
+    refusal, a decision class or a contract question
+    ([report](../../reports/cg10-indirect-access-sole-residuals-r2/README.md)).
 - **CG11: pointer-valued stores.**
   - *Scope.* This is the unsupported coverage queue's FIELD-CUSTODY (P5),
     promoted from candidate. It covers `s->p = q`, `*slot = p` and

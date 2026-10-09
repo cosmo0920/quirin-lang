@@ -1,0 +1,55 @@
+{
+ "only_before": {
+  "bound-untracked-root": {
+   "rows": 40,
+   "functions": 3
+  },
+  "residual-shape": {
+   "rows": 12,
+   "functions": 3
+  },
+  "pointer-store-flow": {
+   "rows": 2,
+   "functions": 1
+  }
+ },
+ "only_after": {
+  "residual-access": {
+   "rows": 903,
+   "functions": 69
+  },
+  "bound-untracked-root": {
+   "rows": 82,
+   "functions": 6
+  },
+  "typed-place": {
+   "rows": 40,
+   "functions": 5
+  },
+  "residual-shape": {
+   "rows": 17,
+   "functions": 4
+  },
+  "call-argument": {
+   "rows": 13,
+   "functions": 3
+  },
+  "storage-duration-address-argument": {
+   "rows": 5,
+   "functions": 2
+  },
+  "union-bitfield": {
+   "rows": 3,
+   "functions": 1
+  },
+  "pointer-store-flow": {
+   "rows": 2,
+   "functions": 1
+  }
+ },
+ "rows": [
+  50407,
+  51418
+ ],
+ "identical_rows": 50353
+}
