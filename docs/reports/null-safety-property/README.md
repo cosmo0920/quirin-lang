@@ -312,7 +312,11 @@ lists.
   13 -> 18), `contract/profiles/cmetrics-counter/source-contracts.json` (the
   cmetrics manifest's digest, `25bd82ef` -> `2a38c6fe`),
   `quirin-provider-fluent-bit/src/lib.rs`'s contract index and
-  `providers/tests/test_contract_load_path.py`'s bounds view expectation.
+  `providers/tests/test_contract_load_path.py`'s bounds view expectation,
+  `scripts/tests/test_contract_corpus.py` (canonical modules 127 -> 130:
+  `qcore-provider-*` 78 -> 80, `quirin-provider-*` 49 -> 50) and the
+  acceptance matrix's derived `contract_modules` (130) and `lean_audits`
+  (308, `AuditNullDeref.lean`), regenerated before the docs steps.
 
 ## 9. Gate
 
@@ -338,7 +342,10 @@ except the suite, 7,817 passed and **15 failed**, each a pin or control this
 card moves deliberately and had not yet updated (the list and the reason for
 each are under "Deliberate test and pin updates", section 8); provider gate
 g1 failed `quirin-provider-fluent-bit`'s contract index test and the load-path
-manifest test for the same reason. Both are fixed in `fa2d839f5`.
+manifest test for the same reason. Both are fixed in `fa2d839f5`. The
+first docs part of g2 (on `68be7cce7`) failed the Python suite twice for
+the same reason (the canonical corpus pin and the matrix's derived audit
+count), both updated before the recorded docs steps.
 
 ## 10. Follow-ups
 

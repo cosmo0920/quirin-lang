@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 127,
+  "contract_modules": 130,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6757,7 +6757,7 @@
   "workspace_tests": 7805,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 307,
+  "lean_audits": 308,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6933,6 +6933,7 @@
    "AuditNeutralFrameRecursion.lean",
    "AuditNeutralPrefixPreservation.lean",
    "AuditNoBuildScope.lean",
+   "AuditNullDeref.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
@@ -7073,7 +7074,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-adfe1fa910cee2615/docs/reports/cg22-callback-registry-contract/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {

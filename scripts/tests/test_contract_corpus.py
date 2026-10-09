@@ -48,9 +48,12 @@ class CanonicalCorpus(unittest.TestCase):
         # 126 -> 127: CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS's
         # chunkio/file_st_bounds.qv (a bounds contract v1 module) in
         # qcore-provider-chunkio (77 -> 78).
-        self.assertEqual(len(modules), 127)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 78)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 49)
+        # 127 -> 130: NULL-SAFETY-PROPERTY's three null_deref.qv modules (bounds
+        # contract v1): cmetrics and librdkafka in qcore-provider-* (78 -> 80),
+        # fluent_bit in quirin-provider-fluent-bit (49 -> 50).
+        self.assertEqual(len(modules), 130)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 80)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 50)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
