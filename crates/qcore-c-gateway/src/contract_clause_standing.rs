@@ -495,7 +495,10 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
         CallbackClause::Registered {
             callback,
             holder: CallbackHolder::Parameter { index },
-        } => (ClauseKind::CallbackChecked, format!("#{callback}, #{index}")),
+        } => (
+            ClauseKind::CallbackChecked,
+            format!("#{callback}, #{index}"),
+        ),
         CallbackClause::Registered {
             callback,
             holder: CallbackHolder::Result,

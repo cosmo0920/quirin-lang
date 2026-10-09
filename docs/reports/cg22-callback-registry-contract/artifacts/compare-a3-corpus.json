@@ -1,0 +1,4961 @@
+{
+ "statuses_before": {
+  "Unknown": 3944,
+  "Safe": 881,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3946,
+  "Safe": 879,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Safe -> Unknown": 2
+ },
+ "status_moves_by_label": {
+  "callee:rd_kafka_topic_partition_list_sort": 2
+ },
+ "removed": {
+  "call to uncontracted function `_`": 427,
+  "unresolved resource identity `_`": 16,
+  "transfer of `_`, which a container holds after its publication": 1
+ },
+ "added": {
+  "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecided)": 136,
+  "indirect memory access is outside the resource projection": 114,
+  "call to `_`: the registry holder `_` is not one this body tracks (callback-registry-undecided)": 100,
+  "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 46,
+  "unresolved resource identity `_`": 6,
+  "call to `_`: the callback `_` is not a closed set of functions (null pointer constant) (callback-undecided)": 6,
+  "loop re-acquisition: an earlier generation that may be live is still held": 6,
+  "nested call `_` inside a modeled call is outside the resource projection": 6,
+  "call to `_`: no registration is in force at `_` on every path (callback-registry-undecided)": 3,
+  "call to `_`: the registry at `_` would take `_`, which this body cannot hand it (callback-element-custody-undecided)": 3,
+  "call to `_`: the callback `_` is not a closed set of functions (formal) (callback-undecided)": 2,
+  "nullable resource `_` used by a non-null contract": 2,
+  "call to `_`: the callback `_` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)": 2,
+  "discarded owned result of resource API `_`": 2,
+  "call to `_`: its body in this unit does not validate the declared callback clause (callback-withdrawn)": 2,
+  "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (retention-undecided)": 1,
+  "arguments do not match resource contract for `_`": 1,
+  "call to uncontracted function `_`": 1
+ },
+ "moving_rows": 230,
+ "status_moves": [
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_sort_by_topic",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "22157: call to `rd_kafka_topic_partition_list_sort`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_sort_by_topic_id",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "22162: call to `rd_kafka_topic_partition_list_sort`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "unit": "chunkio.c",
+   "occurrence": 1,
+   "function": "qsort_stream",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:qsort"
+   ],
+   "lost": [
+    "2391: call to uncontracted function `qsort`"
+   ],
+   "gained": [
+    "2391: call to `qsort`: the callback `compar` is not a closed set of functions (formal) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_basic_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "8382: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "8382: call to `cmt_mpack_unpack_map`: callback `unpack_basic_type_meta` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_basic_type_meta",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "8301: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "8301: call to `cmt_mpack_unpack_map`: callback `unpack_meta_buckets` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_basic_type_values",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8350: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8350: call to `cmt_mpack_unpack_array`: callback `unpack_metric_array_entry` (from `unpack_metric_array_entry`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "8663: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "8663: call to `cmt_mpack_unpack_map`: callback `unpack_context_header` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "8640: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "8640: call to `cmt_mpack_unpack_map`: callback `unpack_context_external_metadata` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8648: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8648: call to `cmt_mpack_unpack_array`: callback `unpack_basic_type_entry` (from `unpack_basic_type_entry`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context_processing_section",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "8626: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "8626: call to `cmt_mpack_unpack_map`: callback `unpack_meta_static_labels` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_negative_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7853: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7853: call to `cmt_mpack_unpack_array`: callback `unpack_exp_histogram_negative_bucket` (from `unpack_exp_histogram_negative_bucket`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_positive_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7829: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7829: call to `cmt_mpack_unpack_array`: callback `unpack_exp_histogram_positive_bucket` (from `unpack_exp_histogram_positive_bucket`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7682: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7682: call to `cmt_mpack_unpack_array`: callback `unpack_histogram_bucket` (from `unpack_histogram_bucket`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8248: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8248: call to `cmt_mpack_unpack_array`: callback `unpack_meta_bucket` (from `unpack_meta_bucket`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8217: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8217: call to `cmt_mpack_unpack_array`: callback `unpack_meta_label` (from `unpack_meta_label`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8276: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8276: call to `cmt_mpack_unpack_array`: callback `unpack_meta_quantile` (from `unpack_meta_quantile`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_static_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "8209: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "8209: call to `cmt_mpack_unpack_array`: callback `unpack_static_label` (from `unpack_static_label`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "7995: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7995: call to `cmt_mpack_unpack_map`: callback `unpack_metric_exp_histogram` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_exp_histogram",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "7923: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7923: call to `cmt_mpack_unpack_map`: callback `unpack_exp_histogram_count` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_histogram",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "7699: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7699: call to `cmt_mpack_unpack_map`: callback `unpack_histogram_buckets` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7493: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7493: call to `cmt_mpack_unpack_array`: callback `unpack_metric_label` (from `unpack_metric_label`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_summary",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "7596: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7596: call to `cmt_mpack_unpack_map`: callback `unpack_summary_count` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_opts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_map"
+   ],
+   "lost": [
+    "7233: call to uncontracted function `cmt_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7233: call to `cmt_mpack_unpack_map`: callback `unpack_opts_desc` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_static_label",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7346: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7346: call to `cmt_mpack_unpack_array`: callback `unpack_static_label_component` (from `unpack_static_label_component`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cmt_mpack_unpack_array"
+   ],
+   "lost": [
+    "7546: call to uncontracted function `cmt_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7546: call to `cmt_mpack_unpack_array`: callback `unpack_summary_quantile` (from `unpack_summary_quantile`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7745: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7745: call to `ctr_mpack_unpack_map`: callback `unpack_resource_spans` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7396: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7396: call to `ctr_mpack_unpack_map`: callback `unpack_event_attributes` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_link",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7479: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7479: call to `ctr_mpack_unpack_map`: callback `unpack_link_attributes` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7266: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7266: call to `ctr_mpack_unpack_map`: callback `unpack_resource_attributes` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7733: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7733: call to `ctr_mpack_unpack_map`: callback `unpack_resource` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource_span_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_array"
+   ],
+   "lost": [
+    "7708: call to uncontracted function `ctr_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7708: call to `ctr_mpack_unpack_array`: callback `unpack_scope_span` (from `unpack_scope_span`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_array"
+   ],
+   "lost": [
+    "7737: call to uncontracted function `ctr_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7737: call to `ctr_mpack_unpack_array`: callback `unpack_resource_span` (from `unpack_resource_span`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_scope_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7699: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7699: call to `ctr_mpack_unpack_map`: callback `unpack_scope_span_instrumentation_scope` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_scope_span_instrumentation_scope",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7339: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7339: call to `ctr_mpack_unpack_map`: callback `unpack_instrumentation_scope_attributes` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_scope_span_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_array"
+   ],
+   "lost": [
+    "7674: call to uncontracted function `ctr_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7674: call to `ctr_mpack_unpack_array`: callback `unpack_span` (from `unpack_span`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7665: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7665: call to `ctr_mpack_unpack_map`: callback `unpack_span_attributes` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span_events",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_array"
+   ],
+   "lost": [
+    "7608: call to uncontracted function `ctr_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7608: call to `ctr_mpack_unpack_array`: callback `unpack_event` (from `unpack_event`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span_links",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_array"
+   ],
+   "lost": [
+    "7612: call to uncontracted function `ctr_mpack_unpack_array`"
+   ],
+   "gained": [
+    "7612: call to `ctr_mpack_unpack_array`: callback `unpack_link` (from `unpack_link`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span_status",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_mpack_unpack_map"
+   ],
+   "lost": [
+    "7631: call to uncontracted function `ctr_mpack_unpack_map`"
+   ],
+   "gained": [
+    "7631: call to `ctr_mpack_unpack_map`: callback `unpack_span_status_code` (from `callbacks`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19647: transfer of `ic`, which a container holds after its publication"
+   ],
+   "gained": [
+    "19628: indirect memory access is outside the resource projection",
+    "19629: unresolved resource identity `ic`",
+    "19647: nullable resource `ic` used by a non-null contract",
+    "19647: unresolved resource identity `ic`"
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "18755: unresolved resource identity `ic`"
+   ],
+   "gained": [
+    "18755: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_thread.c",
+   "occurrence": 1,
+   "function": "mk_http_thread_initialize_tls",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "6011: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "6011: call to `pthread_once`: the callback `mk_http_thread_initialize_tls_once` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "mk_server/monkey.c",
+   "occurrence": 1,
+   "function": "mk_server_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "6085: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "6085: call to `pthread_once`: the callback `mk_set_up_tls_keys` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "encode_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "439: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "439: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_enc_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_encode_varint"
+   ],
+   "lost": [
+    "863: call to uncontracted function `pb_encode_varint`"
+   ],
+   "gained": [
+    "863: call to `pb_encode_varint`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_enc_varint",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_encode_varint"
+   ],
+   "lost": [
+    "880: call to uncontracted function `pb_encode_varint`",
+    "898: call to uncontracted function `pb_encode_varint`"
+   ],
+   "gained": [
+    "880: call to `pb_encode_varint`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)",
+    "898: call to `pb_encode_varint`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_ex",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "716: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "716: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_fixed32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "783: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "783: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_fixed64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "787: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "787: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "827: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "827: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_submessage",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "843: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "843: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_svarint",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_encode_varint"
+   ],
+   "lost": [
+    "779: call to uncontracted function `pb_encode_varint`"
+   ],
+   "gained": [
+    "779: call to `pb_encode_varint`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_encode_varint"
+   ],
+   "lost": [
+    "792: call to uncontracted function `pb_encode_varint`"
+   ],
+   "gained": [
+    "792: call to `pb_encode_varint`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_varint",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "764: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "764: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_varint_32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pb_write"
+   ],
+   "lost": [
+    "757: call to uncontracted function `pb_write`"
+   ],
+   "gained": [
+    "757: call to `pb_write`: the registry holder `stream` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21820: call to uncontracted function `rd_list_add`",
+    "21825: call to uncontracted function `rd_list_destroy`",
+    "21852: call to uncontracted function `rd_list_add`",
+    "21862: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21820: call to `rd_list_add`: the registry holder `& brokers_to_decommission` is not one this body names (callback-registry-undecided)",
+    "21825: call to `rd_list_destroy`: the registry holder `& brokers_to_decommission` is not one this body names (callback-registry-undecided)",
+    "21852: call to `rd_list_add`: the registry holder `& wait_thrds` is not one this body names (callback-registry-undecided)",
+    "21862: call to `rd_list_destroy`: the registry holder `& wait_thrds` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_for_times",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24202: call to uncontracted function `rd_list_init`",
+    "24207: call to uncontracted function `rd_list_destroy`",
+    "24219: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24202: indirect memory access is outside the resource projection",
+    "24207: call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "24219: call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24072: call to uncontracted function `rd_list_init`",
+    "24077: call to uncontracted function `rd_list_destroy`",
+    "24100: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24072: indirect memory access is outside the resource projection",
+    "24077: call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "24100: call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebootstrap_tmr_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22178: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22178: call to `rd_list_destroy`: the registry holder `& additional_brokerlists` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_fanout_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "23292: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23292: call to `rd_list_destroy`: the registry holder `ack_batches` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_timeout_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "23207: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23207: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_merge_ack_lists",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "23183: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "23183: call to `rd_list_add`: the registry holder `dst_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_segregate_and_dispatch_acks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22966: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22966: call to `rd_list_destroy`: the registry holder `ack_batches` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21166: call to uncontracted function `rd_list_destroy`",
+    "21169: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21166: indirect memory access is outside the resource projection",
+    "21169: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_states",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "20975: call to uncontracted function `rd_list_new`",
+    "20986: call to uncontracted function `rd_list_destroy`",
+    "20993: call to uncontracted function `rd_list_destroy`",
+    "21006: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20986: call to `rd_list_destroy`: the registry holder `states_list` is not one this body tracks (callback-registry-undecided)",
+    "20993: call to `rd_list_destroy`: the registry holder `states_list` is not one this body tracks (callback-registry-undecided)",
+    "21006: call to `rd_list_destroy`: the registry holder `states_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_types",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21017: call to uncontracted function `rd_list_new`",
+    "21028: call to uncontracted function `rd_list_destroy`",
+    "21033: call to uncontracted function `rd_list_destroy`",
+    "21040: call to uncontracted function `rd_list_destroy`",
+    "21053: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21028: call to `rd_list_destroy`: the registry holder `types_list` is not one this body tracks (callback-registry-undecided)",
+    "21033: call to `rd_list_destroy`: the registry holder `types_list` is not one this body tracks (callback-registry-undecided)",
+    "21040: call to `rd_list_destroy`: the registry holder `types_list` is not one this body tracks (callback-registry-undecided)",
+    "21053: call to `rd_list_destroy`: the registry holder `types_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_add_ConfigEntry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21870: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21870: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21861: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21861: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21836: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21836: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21832: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "21832: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "25694: call to uncontracted function `rd_list_init`",
+    "25738: call to uncontracted function `rd_list_add`",
+    "25765: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25694: call to `rd_list_init`: the registry holder `& members` is not one this body names (callback-registry-undecided)",
+    "25738: call to `rd_list_add`: the registry holder `& members` is not one this body names (callback-registry-undecided)",
+    "25765: call to `rd_list_destroy`: the registry holder `& members` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "25331: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25331: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "25282: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "25282: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupListing_list_append_dedup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "25028: unresolved resource identity `to_add`",
+    "25029: call to uncontracted function `rd_list_new`",
+    "25030: call to uncontracted function `rd_list_add`",
+    "25032: unresolved resource identity `to_add`",
+    "25037: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25030: call to `rd_list_add` retains `grp` in `to_add`, whose lifetime this body does not decide against it (retention-undecided)",
+    "25030: call to `rd_list_add`: the registry holder `to_add` is not one this body tracks (callback-registry-undecided)",
+    "25037: call to `rd_list_destroy`: the registry holder `to_add` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteAcls_result_response_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "24278: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24278: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteAcls_result_response_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24270: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "24270: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteGroups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "23084: call to uncontracted function `rd_list_destroy`",
+    "23092: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23084: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)",
+    "23092: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "25908: call to uncontracted function `rd_list_destroy`",
+    "25916: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25908: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)",
+    "25916: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "25517: call to uncontracted function `rd_list_init`",
+    "25571: call to uncontracted function `rd_list_add`",
+    "25597: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25517: call to `rd_list_init`: the registry holder `& members` is not one this body names (callback-registry-undecided)",
+    "25571: call to `rd_list_add`: the registry holder `& members` is not one this body names (callback-registry-undecided)",
+    "25597: call to `rd_list_destroy`: the registry holder `& members` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeTopics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "26252: call to uncontracted function `rd_list_destroy`",
+    "26262: call to uncontracted function `rd_list_destroy`",
+    "26273: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "26252: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)",
+    "26262: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)",
+    "26273: call to `rd_list_destroy`: the registry holder `& dup_list` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeUserScramCredentials",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "23849: call to uncontracted function `rd_list_new`",
+    "23861: call to uncontracted function `rd_list_destroy`",
+    "23871: call to uncontracted function `rd_list_destroy`",
+    "23871: unresolved resource identity `userlist`"
+   ],
+   "gained": [
+    "23861: call to `rd_list_destroy`: the registry holder `userlist` is not one this body tracks (callback-registry-undecided)",
+    "23871: call to `rd_list_destroy`: the registry holder `userlist` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ElectLeadersResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "26519: call to uncontracted function `rd_list_init`",
+    "26564: call to uncontracted function `rd_list_add`",
+    "26576: call to uncontracted function `rd_list_destroy`",
+    "26579: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "26519: call to `rd_list_init`: the registry holder `& partitions_arr` is not one this body names (callback-registry-undecided)",
+    "26564: call to `rd_list_add`: the registry holder `& partitions_arr` is not one this body names (callback-registry-undecided)",
+    "26576: call to `rd_list_destroy`: the registry holder `& partitions_arr` is not one this body names (callback-registry-undecided)",
+    "26579: call to `rd_list_destroy`: the registry holder `& partitions_arr` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24929: call to uncontracted function `rd_list_init`",
+    "24930: call to uncontracted function `rd_list_init`",
+    "24932: call to uncontracted function `rd_list_add`",
+    "24971: call to uncontracted function `rd_list_add`",
+    "25000: call to uncontracted function `rd_list_add`",
+    "25005: call to uncontracted function `rd_list_destroy`",
+    "25006: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24929: call to `rd_list_init`: the registry holder `& valid` is not one this body names (callback-registry-undecided)",
+    "24930: call to `rd_list_init`: the registry holder `& errors` is not one this body names (callback-registry-undecided)",
+    "24932: call to `rd_list_add`: the registry holder `& errors` is not one this body names (callback-registry-undecided)",
+    "24971: call to `rd_list_add`: the registry holder `& valid` is not one this body names (callback-registry-undecided)",
+    "25000: call to `rd_list_add`: the registry holder `& errors` is not one this body names (callback-registry-undecided)",
+    "25005: call to `rd_list_destroy`: the registry holder `& valid` is not one this body names (callback-registry-undecided)",
+    "25006: call to `rd_list_destroy`: the registry holder `& errors` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupsResult_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "24830: call to uncontracted function `rd_list_destroy`",
+    "24831: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24830: indirect memory access is outside the resource projection",
+    "24831: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroups_response_merge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "25053: call to uncontracted function `rd_list_init`",
+    "25054: call to uncontracted function `rd_list_init`",
+    "25059: call to uncontracted function `rd_list_destroy`",
+    "25060: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25053: call to `rd_list_init`: the registry holder `& new_valid` is not one this body names (callback-registry-undecided)",
+    "25054: call to `rd_list_init`: the registry holder `& new_errors` is not one this body names (callback-registry-undecided)",
+    "25059: call to `rd_list_destroy`: the registry holder `& new_valid` is not one this body names (callback-registry-undecided)",
+    "25060: call to `rd_list_destroy`: the registry holder `& new_errors` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListOffsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22889: call to uncontracted function `rd_list_new`",
+    "22936: call to uncontracted function `rd_list_destroy`",
+    "22939: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22889: indirect memory access is outside the resource projection",
+    "22936: call to `rd_list_destroy`: the registry holder `topic_partitions_sorted` is not one this body tracks (callback-registry-undecided)",
+    "22939: call to `rd_list_destroy`: the registry holder `topic_partitions_sorted` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListOffsetsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22601: call to uncontracted function `rd_list_new`",
+    "22613: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22613: call to `rd_list_destroy`: the registry holder `result_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21549: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21549: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21556: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21556: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21536: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "21536: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_set_replica_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21588: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21588: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21213: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21213: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21223: call to uncontracted function `rd_list_destroy`",
+    "21224: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21223: indirect memory access is outside the resource projection",
+    "21224: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21196: call to uncontracted function `rd_list_init`",
+    "21200: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "21196: indirect memory access is outside the resource projection",
+    "21200: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_set_replica_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21264: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21264: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_add_config0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21274: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21274: call to `rd_list_add`: the registry holder `rl` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_incremental_add_config0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21290: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21290: call to `rd_list_add`: the registry holder `rl` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_worker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20732: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20732: call to `rd_list_destroy`: the registry holder `nodeids` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_make_ListConsumerGroups_partial",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "26631: call to uncontracted function `rd_list_init`",
+    "26632: call to uncontracted function `rd_list_init`",
+    "26643: call to uncontracted function `rd_list_destroy`",
+    "26644: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "26631: call to `rd_list_init`: the registry holder `& valid` is not one this body names (callback-registry-undecided)",
+    "26632: call to `rd_list_init`: the registry holder `& errors` is not one this body names (callback-registry-undecided)",
+    "26643: call to `rd_list_destroy`: the registry holder `& valid` is not one this body names (callback-registry-undecided)",
+    "26644: call to `rd_list_destroy`: the registry holder `& errors` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [
+    "20630: unresolved resource identity `rk`"
+   ],
+   "gained": [
+    "20581: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "20630: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_subtract",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "20692: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_assignment_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [
+    "20567: unresolved resource identity `rk`"
+   ],
+   "gained": [
+    "20543: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "20567: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_assignment_subtract",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "20647: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "20648: unresolved resource identity `partitions`",
+    "20662: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignor_run",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20426: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20426: call to `rd_list_destroy`: the registry holder `& eligible_topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignors_term",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20577: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20577: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_member_subscription_match",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20318: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20318: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_member_subscriptions_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20374: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20374: call to `rd_list_add`: the registry holder `eligible_topics` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_use_rack_aware_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "20590: call to uncontracted function `rd_list_new`",
+    "20605: call to uncontracted function `rd_list_new`",
+    "20618: call to uncontracted function `rd_list_add`",
+    "20654: call to uncontracted function `rd_list_destroy`",
+    "20655: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20618: call to `rd_list_add`: the registry holder `all_partition_racks` is not one this body tracks (callback-registry-undecided)",
+    "20654: call to `rd_list_destroy`: the registry holder `all_consumer_racks` is not one this body tracks (callback-registry-undecided)",
+    "20655: call to `rd_list_destroy`: the registry holder `all_partition_racks` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "ut_populate_internal_topic_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch",
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "20693: call to uncontracted function `rd_list_new`",
+    "20698: call to uncontracted function `bsearch`",
+    "20702: call to uncontracted function `rd_list_add`",
+    "20712: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20693: loop re-acquisition: an earlier generation that may be live is still held",
+    "20698: call to `bsearch`: callback `rd_kafka_metadata_broker_internal_cmp` (from `rd_kafka_metadata_broker_internal_cmp`) has no contract in force (callback-uncontracted)",
+    "20702: indirect memory access is outside the resource projection",
+    "20712: call to `rd_list_destroy`: the registry holder `curr_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Node_new_from_brokers",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch"
+   ],
+   "lost": [
+    "19760: call to uncontracted function `bsearch`",
+    "19762: call to uncontracted function `bsearch`"
+   ],
+   "gained": [
+    "19760: call to `bsearch`: callback `rd_kafka_metadata_broker_cmp` (from `rd_kafka_metadata_broker_cmp`) has no contract in force (callback-uncontracted)",
+    "19762: call to `bsearch`: callback `rd_kafka_metadata_broker_internal_cmp` (from `rd_kafka_metadata_broker_internal_cmp`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_decommission",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "24224: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "24224: call to `rd_list_add`: the registry holder `wait_thrds` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "23448: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23448: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_share_session_add_remove_toppar",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22538: call to uncontracted function `rd_list_new`"
+   ],
+   "gained": [
+    "22538: call to `rd_list_new`: the registry holder `the returned object` is not one this body tracks (callback-registry-undecided)",
+    "22538: discarded owned result of resource API `rd_list_new`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_brokers_get_nodeids_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21801: unresolved resource identity `nodeids`",
+    "21803: call to uncontracted function `rd_list_destroy`",
+    "21809: unresolved resource identity `nodeids`",
+    "21810: call to uncontracted function `rd_list_new`",
+    "21827: unresolved resource identity `nodeids`",
+    "21829: unresolved resource identity `nodeids`",
+    "21830: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21803: call to `rd_list_destroy`: the registry holder `nodeids` is not one this body tracks (callback-registry-undecided)",
+    "21830: call to `rd_list_destroy`: the registry holder `nodeids` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_brokers_wait_state_change_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21606: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21606: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_buf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19657: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19657: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21944: call to uncontracted function `rd_list_new`"
+   ],
+   "gained": [
+    "21944: call to `rd_list_new`: the registry holder `the returned object` is not one this body tracks (callback-registry-undecided)",
+    "21944: discarded owned result of resource API `rd_list_new`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22021: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22021: call to `rd_list_destroy`: the registry holder `missing_topic_ids` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20513: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20513: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21592: call to uncontracted function `rd_list_init`",
+    "21642: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21592: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21642: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21724: call to uncontracted function `rd_list_init`",
+    "21736: call to uncontracted function `rd_list_destroy`",
+    "21749: call to uncontracted function `rd_list_destroy`",
+    "21768: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21724: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21736: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21749: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21768: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_update_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "24512: call to uncontracted function `rd_list_new`"
+   ],
+   "gained": [
+    "24512: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_modify_subscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "23627: call to uncontracted function `rd_list_new`"
+   ],
+   "gained": [
+    "23627: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_partition_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "22638: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22638: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "23759: call to uncontracted function `rd_list_destroy`",
+    "23779: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23759: indirect memory access is outside the resource projection",
+    "23779: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_timeout_scan",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "23832: call to uncontracted function `rd_list_init`",
+    "23840: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "23832: indirect memory access is outside the resource projection",
+    "23840: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_update_subscribed_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21826: call to uncontracted function `rd_list_new`",
+    "21834: call to uncontracted function `rd_list_destroy`",
+    "21840: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21834: call to `rd_list_destroy`: the registry holder `tinfos` is not one this body tracks (callback-registry-undecided)",
+    "21840: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_offset_commit_timeout_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "23823: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "23823: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "unittest_member_metadata_serdes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "24887: call to uncontracted function `rd_list_new`",
+    "24897: call to uncontracted function `rd_list_add`",
+    "24922: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24897: nested call `rd_kafka_topic_info_new` inside a modeled call is outside the resource projection",
+    "24922: call to `rd_list_destroy`: the registry holder `topics` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_feature.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ApiVersion_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch"
+   ],
+   "lost": [
+    "19800: call to uncontracted function `bsearch`"
+   ],
+   "gained": [
+    "19800: call to `bsearch`: callback `rd_kafka_ApiVersion_key_cmp` (from `rd_kafka_ApiVersion_key_cmp`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_fetch_toppars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "22188: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22188: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21332: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21332: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_reset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21288: call to uncontracted function `rd_list_destroy`",
+    "21302: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21288: indirect memory access is outside the resource projection",
+    "21302: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_update_toppars_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21379: call to uncontracted function `rd_list_destroy`",
+    "21386: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21379: call to `rd_list_destroy`: the registry holder `toppars_to_remove_from` is not one this body tracks (callback-registry-undecided)",
+    "21386: call to `rd_list_destroy`: the registry holder `request_toppars` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_share_fetch_session_clear",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_clear",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21987: call to uncontracted function `rd_list_clear`",
+    "21990: call to uncontracted function `rd_list_destroy`",
+    "21995: call to uncontracted function `rd_list_destroy`",
+    "22000: call to uncontracted function `rd_list_destroy`",
+    "22005: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21987: indirect memory access is outside the resource projection",
+    "21990: indirect memory access is outside the resource projection",
+    "21995: indirect memory access is outside the resource projection",
+    "22000: indirect memory access is outside the resource projection",
+    "22005: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21476: unresolved resource identity `leader_changes`",
+    "21477: call to uncontracted function `rd_list_new`",
+    "21483: call to uncontracted function `rd_list_add`",
+    "21494: call to uncontracted function `rd_list_destroy`",
+    "21494: unresolved resource identity `leader_changes`",
+    "21498: call to uncontracted function `rd_list_destroy`",
+    "21498: unresolved resource identity `leader_changes`"
+   ],
+   "gained": [
+    "21483: call to `rd_list_add`: no registration is in force at `leader_changes` on every path (callback-registry-undecided)",
+    "21483: call to `rd_list_add`: the registry holder `leader_changes` is not one this body tracks (callback-registry-undecided)",
+    "21483: unresolved resource identity `lc`",
+    "21494: call to `rd_list_destroy`: the registry holder `leader_changes` is not one this body tracks (callback-registry-undecided)",
+    "21498: call to `rd_list_destroy`: no registration is in force at `leader_changes` on every path (callback-registry-undecided)",
+    "21498: call to `rd_list_destroy`: the registry holder `leader_changes` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20888: call to uncontracted function `rd_list_init`",
+    "20894: call to uncontracted function `rd_list_add`",
+    "20915: call to uncontracted function `rd_list_add`",
+    "20922: call to uncontracted function `rd_list_destroy`",
+    "20923: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20888: call to `rd_list_init`: the registry holder `& partition_msgs` is not one this body names (callback-registry-undecided)",
+    "20894: call to `rd_list_add`: the registry holder `& partition_msgs` is not one this body names (callback-registry-undecided)",
+    "20915: indirect memory access is outside the resource projection",
+    "20922: call to `rd_list_destroy`: the registry holder `& partition_msgs` is not one this body names (callback-registry-undecided)",
+    "20923: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21191: call to uncontracted function `rd_list_new`",
+    "21192: call to uncontracted function `rd_list_new`",
+    "21219: call to uncontracted function `rd_list_add`",
+    "21244: call to uncontracted function `rd_list_destroy`",
+    "21246: call to uncontracted function `rd_list_destroy`",
+    "21259: call to uncontracted function `rd_list_destroy`",
+    "21259: unresolved resource identity `inflight_acks`",
+    "21260: unresolved resource identity `filtered_msgs`",
+    "21265: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21219: call to `rd_list_add`: the registry at `inflight_acks` would take `batches`, which this body cannot hand it (callback-element-custody-undecided)",
+    "21219: call to `rd_list_add`: the registry holder `inflight_acks` is not one this body tracks (callback-registry-undecided)",
+    "21244: call to `rd_list_destroy`: the registry holder `inflight_acks` is not one this body tracks (callback-registry-undecided)",
+    "21246: call to `rd_list_destroy`: the registry holder `filtered_msgs` is not one this body tracks (callback-registry-undecided)",
+    "21259: call to `rd_list_destroy`: no registration is in force at `inflight_acks` on every path (callback-registry-undecided)",
+    "21259: call to `rd_list_destroy`: the registry holder `inflight_acks` is not one this body tracks (callback-registry-undecided)",
+    "21265: call to `rd_list_destroy`: the registry holder `filtered_msgs` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21128: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21128: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20825: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20825: call to `rd_list_add`: the registry holder `filtered_msgs` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_header.c",
+   "occurrence": 1,
+   "function": "rd_kafka_header_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "19620: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "19620: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_header.c",
+   "occurrence": 1,
+   "function": "rd_kafka_headers_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19565: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19565: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_header.c",
+   "occurrence": 1,
+   "function": "rd_kafka_headers_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19571: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "19571: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_interceptor_method_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "19696: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "19696: call to `rd_list_add`: the registry holder `list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_interceptors_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19700: call to uncontracted function `rd_list_destroy`",
+    "19701: call to uncontracted function `rd_list_destroy`",
+    "19702: call to uncontracted function `rd_list_destroy`",
+    "19703: call to uncontracted function `rd_list_destroy`",
+    "19704: call to uncontracted function `rd_list_destroy`",
+    "19705: call to uncontracted function `rd_list_destroy`",
+    "19706: call to uncontracted function `rd_list_destroy`",
+    "19707: call to uncontracted function `rd_list_destroy`",
+    "19708: call to uncontracted function `rd_list_destroy`",
+    "19709: call to uncontracted function `rd_list_destroy`",
+    "19710: call to uncontracted function `rd_list_destroy`",
+    "19711: call to uncontracted function `rd_list_destroy`",
+    "19712: call to uncontracted function `rd_list_destroy`",
+    "19713: call to uncontracted function `rd_list_destroy`",
+    "19714: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19700: indirect memory access is outside the resource projection",
+    "19701: indirect memory access is outside the resource projection",
+    "19702: indirect memory access is outside the resource projection",
+    "19703: indirect memory access is outside the resource projection",
+    "19704: indirect memory access is outside the resource projection",
+    "19705: indirect memory access is outside the resource projection",
+    "19706: indirect memory access is outside the resource projection",
+    "19707: indirect memory access is outside the resource projection",
+    "19708: indirect memory access is outside the resource projection",
+    "19709: indirect memory access is outside the resource projection",
+    "19710: indirect memory access is outside the resource projection",
+    "19711: indirect memory access is outside the resource projection",
+    "19712: indirect memory access is outside the resource projection",
+    "19713: indirect memory access is outside the resource projection",
+    "19714: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_interceptors_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19717: call to uncontracted function `rd_list_init`",
+    "19720: call to uncontracted function `rd_list_init`",
+    "19723: call to uncontracted function `rd_list_init`",
+    "19725: call to uncontracted function `rd_list_init`",
+    "19728: call to uncontracted function `rd_list_init`",
+    "19731: call to uncontracted function `rd_list_init`",
+    "19734: call to uncontracted function `rd_list_init`",
+    "19737: call to uncontracted function `rd_list_init`",
+    "19740: call to uncontracted function `rd_list_init`",
+    "19743: call to uncontracted function `rd_list_init`",
+    "19746: call to uncontracted function `rd_list_init`",
+    "19749: call to uncontracted function `rd_list_init`",
+    "19752: call to uncontracted function `rd_list_init`",
+    "19755: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "19717: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_conf_set` is not one this body names (callback-registry-undecided)",
+    "19720: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_conf_dup` is not one this body names (callback-registry-undecided)",
+    "19723: indirect memory access is outside the resource projection",
+    "19725: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_new` is not one this body names (callback-registry-undecided)",
+    "19728: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_destroy` is not one this body names (callback-registry-undecided)",
+    "19731: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_send` is not one this body names (callback-registry-undecided)",
+    "19734: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_acknowledgement` is not one this body names (callback-registry-undecided)",
+    "19737: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_consume` is not one this body names (callback-registry-undecided)",
+    "19740: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_commit` is not one this body names (callback-registry-undecided)",
+    "19743: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_request_sent` is not one this body names (callback-registry-undecided)",
+    "19746: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_response_received` is not one this body names (callback-registry-undecided)",
+    "19749: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_thread_start` is not one this body names (callback-registry-undecided)",
+    "19752: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_thread_exit` is not one this body names (callback-registry-undecided)",
+    "19755: call to `rd_list_init`: the registry holder `& conf - > interceptors . on_broker_state_change` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20227: call to uncontracted function `rd_list_init`",
+    "20230: call to uncontracted function `rd_list_add`",
+    "20251: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20227: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "20230: call to `rd_list_add`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "20251: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "20318: call to uncontracted function `rd_list_new`",
+    "20329: call to uncontracted function `rd_list_add`",
+    "20332: call to uncontracted function `rd_list_destroy`",
+    "20342: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20318: loop re-acquisition: an earlier generation that may be live is still held",
+    "20329: indirect memory access is outside the resource projection",
+    "20332: call to `rd_list_destroy`: the registry holder `curr_list` is not one this body tracks (callback-registry-undecided)",
+    "20342: call to `rd_list_destroy`: the registry holder `curr_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_decommission_unavailable_brokers",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20458: call to uncontracted function `rd_list_add`",
+    "20465: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20458: call to `rd_list_add`: the registry holder `& brokers_to_decommission` is not one this body names (callback-registry-undecided)",
+    "20465: call to `rd_list_destroy`: the registry holder `& brokers_to_decommission` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_leader_query_tmr_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21183: call to uncontracted function `rd_list_init`",
+    "21218: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21183: indirect memory access is outside the resource projection",
+    "21218: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21143: call to uncontracted function `rd_list_init`",
+    "21148: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21143: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21148: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_consumer_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21094: call to uncontracted function `rd_list_init`",
+    "21098: call to uncontracted function `rd_list_destroy`",
+    "21101: call to uncontracted function `rd_list_init`",
+    "21116: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21094: call to `rd_list_init`: the registry holder `& topic_ids` is not one this body names (callback-registry-undecided)",
+    "21098: call to `rd_list_destroy`: the registry holder `& topic_ids` is not one this body names (callback-registry-undecided)",
+    "21101: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21116: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_known_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21059: call to uncontracted function `rd_list_init`",
+    "21069: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21059: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "21069: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_topic_ids",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "21035: call to uncontracted function `rd_list_init`",
+    "21043: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21035: call to `rd_list_init`: the registry holder `& q_topic_ids` is not one this body names (callback-registry-undecided)",
+    "21043: call to `rd_list_destroy`: the registry holder `& q_topic_ids` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20989: call to uncontracted function `rd_list_init`",
+    "20996: call to uncontracted function `rd_list_destroy`",
+    "21009: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20989: call to `rd_list_init`: the registry holder `& q_topics` is not one this body names (callback-registry-undecided)",
+    "20996: call to `rd_list_destroy`: the registry holder `& q_topics` is not one this body names (callback-registry-undecided)",
+    "21009: call to `rd_list_destroy`: the registry holder `& q_topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_parse_Metadata0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20808: call to uncontracted function `rd_list_destroy`",
+    "20810: call to uncontracted function `rd_list_destroy`",
+    "20828: call to uncontracted function `rd_list_destroy`",
+    "20830: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20808: call to `rd_list_destroy`: the registry holder `missing_topics` is not one this body tracks (callback-registry-undecided)",
+    "20810: call to `rd_list_destroy`: the registry holder `missing_topic_ids` is not one this body tracks (callback-registry-undecided)",
+    "20828: call to `rd_list_destroy`: the registry holder `missing_topics` is not one this body tracks (callback-registry-undecided)",
+    "20830: call to `rd_list_destroy`: the registry holder `missing_topic_ids` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_populate_metadata_topic_racks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch",
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "20398: call to uncontracted function `rd_list_new`",
+    "20403: call to uncontracted function `bsearch`",
+    "20407: call to uncontracted function `rd_list_add`",
+    "20416: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20398: loop re-acquisition: an earlier generation that may be live is still held",
+    "20403: arguments do not match resource contract for `bsearch`",
+    "20407: indirect memory access is outside the resource projection",
+    "20416: call to `rd_list_destroy`: the registry holder `curr_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_hint",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20548: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20548: nested call `rd_strdup` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_hint_rktparlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20560: call to uncontracted function `rd_list_init`",
+    "20567: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20560: indirect memory access is outside the resource projection",
+    "20567: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20589: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "20589: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_wait_state_change_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20607: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20607: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_clear_requests",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_clear"
+   ],
+   "lost": [
+    "23542: call to uncontracted function `rd_list_clear`"
+   ],
+   "gained": [
+    "23542: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_pidstate_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21578: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21578: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_start_request_tracking",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_clear"
+   ],
+   "lost": [
+    "23514: call to uncontracted function `rd_list_clear`"
+   ],
+   "gained": [
+    "23514: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_stop_request_tracking",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_clear"
+   ],
+   "lost": [
+    "23520: call to uncontracted function `rd_list_clear`"
+   ],
+   "gained": [
+    "23520: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_subscribed_topic_names_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21561: call to uncontracted function `rd_list_destroy`",
+    "21597: call to uncontracted function `rd_list_destroy`",
+    "21602: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21561: indirect memory access is outside the resource projection",
+    "21597: indirect memory access is outside the resource projection",
+    "21602: call to `rd_list_destroy`: the registry holder `new_subscription` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21260: call to uncontracted function `rd_list_new`",
+    "21261: call to uncontracted function `rd_list_new`",
+    "21270: call to uncontracted function `rd_list_add`",
+    "21273: call to uncontracted function `rd_list_new`",
+    "21277: call to uncontracted function `rd_list_add`",
+    "21318: call to uncontracted function `rd_list_destroy`",
+    "21319: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21260: indirect memory access is outside the resource projection",
+    "21261: indirect memory access is outside the resource projection",
+    "21270: nested call `rd_kafka_topic_partition_list_new` inside a modeled call is outside the resource projection",
+    "21273: loop re-acquisition: an earlier generation that may be live is still held",
+    "21277: call to `rd_list_add`: the registry holder `members` is not one this body tracks (callback-registry-undecided)",
+    "21318: call to `rd_list_destroy`: the registry holder `member_ids` is not one this body tracks (callback-registry-undecided)",
+    "21319: call to `rd_list_destroy`: the registry holder `assignment` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "21197: call to uncontracted function `rd_list_destroy`",
+    "21198: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21197: indirect memory access is outside the resource projection",
+    "21198: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "21181: call to uncontracted function `rd_list_new`",
+    "21182: call to uncontracted function `rd_list_new`",
+    "21191: call to uncontracted function `rd_list_destroy`",
+    "21192: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "21191: call to `rd_list_destroy`: the registry holder `member_id_list` is not one this body tracks (callback-registry-undecided)",
+    "21192: call to `rd_list_destroy`: the registry holder `assignment_list` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "25216: call to uncontracted function `rd_list_init`",
+    "25258: call to uncontracted function `rd_list_add`",
+    "25482: call to uncontracted function `rd_list_destroy`",
+    "25493: call to uncontracted function `rd_list_destroy`",
+    "25497: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "25216: call to `rd_list_init`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25258: call to `rd_list_add`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25482: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25493: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25497: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24694: call to uncontracted function `rd_list_init`",
+    "24741: call to uncontracted function `rd_list_add`",
+    "25176: call to uncontracted function `rd_list_destroy`",
+    "25189: call to uncontracted function `rd_list_destroy`",
+    "25194: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24694: call to `rd_list_init`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "24741: call to `rd_list_add`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25176: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25189: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)",
+    "25194: call to `rd_list_destroy`: the registry holder `& ack_entries` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_pid_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "23346: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "23346: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sgrp_write_acquired_records",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24477: call to uncontracted function `rd_list_init`",
+    "24494: call to uncontracted function `rd_list_add`",
+    "24498: call to uncontracted function `rd_list_destroy`",
+    "24508: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24477: call to `rd_list_init`: the registry holder `& msgsets` is not one this body names (callback-registry-undecided)",
+    "24494: call to `rd_list_add`: the registry holder `& msgsets` is not one this body names (callback-registry-undecided)",
+    "24498: call to `rd_list_destroy`: the registry holder `& msgsets` is not one this body names (callback-registry-undecided)",
+    "24508: call to `rd_list_destroy`: the registry holder `& msgsets` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sgrp_write_acquired_records_meta",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "24637: call to uncontracted function `rd_list_init`",
+    "24661: call to uncontracted function `rd_list_add`",
+    "24671: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "24637: call to `rd_list_init`: the registry holder `& ranges` is not one this body names (callback-registry-undecided)",
+    "24661: call to `rd_list_add`: the registry holder `& ranges` is not one this body names (callback-registry-undecided)",
+    "24671: call to `rd_list_destroy`: the registry holder `& ranges` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_assignment_recalculate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22181: call to uncontracted function `rd_list_destroy`",
+    "22188: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22181: call to `rd_list_destroy`: the registry holder `subscribed_members` is not one this body tracks (callback-registry-undecided)",
+    "22188: call to `rd_list_destroy`: the registry holder `all_topics` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_collect_subscribed_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22062: call to uncontracted function `rd_list_new`",
+    "22079: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22079: nested call `rd_strdup` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22091: call to uncontracted function `rd_list_new`",
+    "22100: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22091: indirect memory access is outside the resource projection",
+    "22100: call to `rd_list_add`: the registry holder `subscribed_members` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_member_subscribed_topic_names_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22020: call to uncontracted function `rd_list_destroy`",
+    "22049: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22020: indirect memory access is outside the resource projection",
+    "22049: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_process_share_fetch_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20403: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20403: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_leaders",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "22320: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22320: call to `rd_list_add`: the registry holder `leaders` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_has_duplicates",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22673: call to uncontracted function `rd_kafka_topic_partition_list_sort_by_topic`",
+    "22674: unresolved resource identity `rktparlist`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "22477: call to uncontracted function `rd_list_init`",
+    "22482: call to uncontracted function `rd_list_destroy`",
+    "22504: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22477: indirect memory access is outside the resource projection",
+    "22482: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)",
+    "22504: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22376: call to uncontracted function `rd_list_destroy`",
+    "22380: call to uncontracted function `rd_list_destroy`",
+    "22394: call to uncontracted function `rd_list_destroy`",
+    "22395: call to uncontracted function `rd_list_destroy`",
+    "22413: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22376: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)",
+    "22380: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)",
+    "22394: call to `rd_list_destroy`: the registry holder `leaders` is not one this body tracks (callback-registry-undecided)",
+    "22395: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)",
+    "22413: call to `rd_list_destroy`: the registry holder `leaders` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_sort_by_topic",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "22157: call to `rd_kafka_topic_partition_list_sort`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_sort_by_topic_id",
+   "row": 1,
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort"
+   ],
+   "lost": [],
+   "gained": [
+    "22162: call to `rd_kafka_topic_partition_list_sort`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_member_assigned_partitions_pair_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19585: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19585: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_range_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "19858: call to uncontracted function `rd_list_new`",
+    "19860: call to uncontracted function `rd_list_new`",
+    "19871: call to uncontracted function `rd_list_add`",
+    "19880: call to uncontracted function `rd_list_add`",
+    "19883: call to uncontracted function `rd_list_new`",
+    "19884: call to uncontracted function `rd_list_add`",
+    "19886: call to uncontracted function `rd_list_add`",
+    "19908: call to uncontracted function `rd_list_destroy`",
+    "19909: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19871: nested call `rd_kafka_topic_assignment_state_new` inside a modeled call is outside the resource projection",
+    "19880: call to `rd_list_add`: the registry holder `rktas_current_bucket` is not one this body tracks (callback-registry-undecided)",
+    "19883: loop re-acquisition: an earlier generation that may be live is still held",
+    "19884: call to `rd_list_add`: the registry at `rktas_buckets` would take `rktas_current_bucket`, which this body cannot hand it (callback-element-custody-undecided)",
+    "19884: call to `rd_list_add`: the registry holder `rktas_buckets` is not one this body tracks (callback-registry-undecided)",
+    "19886: call to `rd_list_add`: the registry holder `rktas_current_bucket` is not one this body tracks (callback-registry-undecided)",
+    "19908: call to `rd_list_destroy`: the registry holder `rktas_list` is not one this body tracks (callback-registry-undecided)",
+    "19909: call to `rd_list_destroy`: the registry holder `rktas_buckets` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_assignment_state_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19666: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19666: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_assignment_state_rack_search",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch"
+   ],
+   "lost": [
+    "19706: call to uncontracted function `bsearch`"
+   ],
+   "gained": [
+    "19706: call to `bsearch`: callback `rd_strcmp3` (from `rd_strcmp3`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_parse_ListOffsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20847: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20847: call to `rd_list_add`: the registry holder `result_infos` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_roundrobin_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_roundrobin_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:qsort"
+   ],
+   "lost": [
+    "19578: call to uncontracted function `qsort`",
+    "19580: call to uncontracted function `qsort`"
+   ],
+   "gained": [
+    "19578: call to `qsort`: callback `rd_kafka_assignor_topic_cmp` (from `rd_kafka_assignor_topic_cmp`) has no contract in force (callback-uncontracted)",
+    "19580: call to `qsort`: callback `rd_kafka_group_member_cmp` (from `rd_kafka_group_member_cmp`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "create_jws_compact_serialization",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20529: call to uncontracted function `rd_list_init`",
+    "20547: call to uncontracted function `rd_list_add`",
+    "20608: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20529: call to `rd_list_init`: the registry holder `& scope` is not one this body names (callback-registry-undecided)",
+    "20547: call to `rd_list_add`: the registry holder `& scope` is not one this body names (callback-registry-undecided)",
+    "20608: call to `rd_list_destroy`: the registry holder `& scope` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "parse_ujws_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20494: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20494: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_acks_clear_during_broker_decommission",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20350: call to uncontracted function `rd_list_destroy`",
+    "20364: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20350: indirect memory access is outside the resource projection",
+    "20364: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_ack_details",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy",
+    "callee:rd_list_init",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `rd_list_init`",
+    "19946: call to uncontracted function `rd_list_init`",
+    "19971: call to uncontracted function `rd_list_add`",
+    "20008: call to uncontracted function `rd_list_add`",
+    "20011: unresolved resource identity `ack_details`",
+    "20012: call to uncontracted function `rd_list_new`",
+    "20015: call to uncontracted function `rd_list_add`",
+    "20022: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19938: call to `rd_list_init`: the registry holder `& keys_to_delete` is not one this body names (callback-registry-undecided)",
+    "19946: call to `rd_list_init`: the registry holder `& new_entries` is not one this body names (callback-registry-undecided)",
+    "19971: call to `rd_list_add`: the registry holder `& new_entries` is not one this body names (callback-registry-undecided)",
+    "20008: call to `rd_list_add`: the registry holder `& keys_to_delete` is not one this body names (callback-registry-undecided)",
+    "20015: call to `rd_list_add`: the registry at `ack_details` would take `ack_batch`, which this body cannot hand it (callback-element-custody-undecided)",
+    "20015: call to `rd_list_add`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)",
+    "20022: call to `rd_list_destroy`: the registry holder `& keys_to_delete` is not one this body names (callback-registry-undecided)",
+    "20025: nullable resource `ack_details` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_segregate_acks_by_leader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "19925: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "19925: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_segregate_sync_acks_by_leader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19882: call to uncontracted function `rd_list_add`",
+    "19891: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19882: indirect memory access is outside the resource projection",
+    "19891: call to `rd_list_destroy`: the registry holder `ack_batches` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "balance",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "21965: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "21965: call to `rd_list_add`: the registry holder `sortedCurrentSubscriptions` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "populatePotentialMaps",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_new"
+   ],
+   "lost": [
+    "22056: call to uncontracted function `rd_list_new`",
+    "22061: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "22056: loop re-acquisition: an earlier generation that may be live is still held",
+    "22061: call to `rd_list_add`: the registry holder `consumers` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_partition_internal_find_rack",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:bsearch"
+   ],
+   "lost": [
+    "21374: call to uncontracted function `bsearch`"
+   ],
+   "gained": [
+    "21374: call to `bsearch`: callback `rd_strcmp3` (from `rd_strcmp3`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22318: call to uncontracted function `rd_list_add`",
+    "22327: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22318: call to `rd_list_add`: the registry holder `& sortedCurrentSubscriptions` is not one this body names (callback-registry-undecided)",
+    "22327: call to `rd_list_destroy`: the registry holder `& sortedCurrentSubscriptions` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "sortPartitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_topic_partition_list_sort",
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "22146: call to uncontracted function `rd_list_add`",
+    "22202: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "22125: call to `rd_kafka_topic_partition_list_sort`: callback `toppar_sort_by_list_cnt` (from `toppar_sort_by_list_cnt`) has no contract in force (callback-uncontracted)",
+    "22134: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "22146: call to `rd_list_add`: the registry holder `& sortedConsumers` is not one this body names (callback-registry-undecided)",
+    "22200: call to `rd_kafka_topic_partition_list_sort`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "22202: call to `rd_list_destroy`: the registry holder `& sortedConsumers` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_get_all_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20721: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20721: nested call `rd_kafka_toppar_keep0` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_leader_query0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20991: call to uncontracted function `rd_list_init`",
+    "20996: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20991: call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)",
+    "20996: call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partitions_remove",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20740: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20740: call to `rd_list_destroy`: the registry holder `partitions` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_scan_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "20783: call to uncontracted function `rd_list_init`",
+    "20851: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20783: call to `rd_list_init`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)",
+    "20851: call to `rd_list_destroy`: the registry holder `& query_topics` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_copy_to",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "3277: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "3277: call to `rd_list_add`: the registry holder `dst` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_deduplicate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add",
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "3214: call to uncontracted function `rd_list_add`",
+    "3218: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "3214: call to `rd_list_add`: the registry holder `deduped` is not one this body tracks (callback-registry-undecided)",
+    "3218: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "3146: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "3146: call to `rd_list_destroy`: the registry holder `rl` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_init_int32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "3310: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "3310: call to `rd_list_init`: the registry holder `rl` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "2985: call to uncontracted function `rd_list_init`"
+   ],
+   "gained": [
+    "2985: call to `rd_list_init`: the callback `free_cb` is not a closed set of functions (formal) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "rdports.c",
+   "occurrence": 1,
+   "function": "rd_qsort_r",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:qsort"
+   ],
+   "lost": [
+    "2881: call to uncontracted function `qsort`"
+   ],
+   "gained": [
+    "2881: call to `qsort`: callback `rd_qsort_r_trampoline` (from `rd_qsort_r_trampoline`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_all_accept",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19849: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19849: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_alternating",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19949: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19949: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_gap_acquired",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20053: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20053: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_interleaved",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20137: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20137: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20021: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20021: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_mixed_collation",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19919: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19919: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_multi_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "20089: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "20089: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_details_multi_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy"
+   ],
+   "lost": [
+    "19987: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19987: call to `rd_list_destroy`: the registry holder `ack_details` is not one this body tracks (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_cumulative",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20269: call to uncontracted function `rd_list_add`",
+    "20283: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20269: indirect memory access is outside the resource projection",
+    "20283: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_gaps",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20212: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20212: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20246: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20246: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20175: call to uncontracted function `rd_list_add`",
+    "20185: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20175: indirect memory access is outside the resource projection",
+    "20185: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_single_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_add"
+   ],
+   "lost": [
+    "20153: call to uncontracted function `rd_list_add`"
+   ],
+   "gained": [
+    "20153: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_all_acquired",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19674: call to uncontracted function `rd_list_init`",
+    "19689: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19674: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19689: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_disjoint_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19726: call to uncontracted function `rd_list_init`",
+    "19740: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19726: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19740: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_empty_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19750: call to uncontracted function `rd_list_init`",
+    "19755: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19750: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19755: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_no_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19763: call to uncontracted function `rd_list_init`",
+    "19771: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19763: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19771: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_partial_range",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19700: call to uncontracted function `rd_list_init`",
+    "19714: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19700: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19714: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_range_beyond_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19810: call to uncontracted function `rd_list_init`",
+    "19819: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19810: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19819: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_sparse_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_list_destroy",
+    "callee:rd_list_init"
+   ],
+   "lost": [
+    "19784: call to uncontracted function `rd_list_init`",
+    "19799: call to uncontracted function `rd_list_destroy`"
+   ],
+   "gained": [
+    "19784: call to `rd_list_init`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)",
+    "19799: call to `rd_list_destroy`: the registry holder `& filtered_msgs` is not one this body names (callback-registry-undecided)"
+   ]
+  }
+ ]
+}

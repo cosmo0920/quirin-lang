@@ -163,8 +163,8 @@ the same totals before the refusal texts named rule 11p's reason).
 | route | BEFORE | AFTER | report sha256 | wall (s) |
 | --- | --- | --- | --- | ---: |
 | corpus | 881 / 9 / 3,944 | **879 / 9 / 3,946** | `ab8f5f14…` → `c0320aca…` | 449.3 → 450.2 |
-| system | 87 / 4 / 357 | SYSTEM_A3 | SYSTEM_DIGEST | 59.7 → SYSTEM_S |
-| slice | 45 / 1 / 354, 4 Pending | SLICE_A3 | SLICE_DIGEST | 28.2 → SLICE_S |
+| system | 87 / 4 / 357 | 87 / 4 / 357 | `2efc56d6…` → `d1ec2afd…` (both embed this worktree's paths) | 59.7 → 61.6 |
+| slice | 45 / 1 / 354, 4 Pending | 45 / 1 / 354, 4 Pending | `b81b79d5…` → `1bbafa88…` (both embed this worktree's paths) | 28.2 → 27.0 |
 
 **Every moving function attributed** ([corpus](artifacts/compare-a3-corpus.json),
 [system](artifacts/compare-a3-system.json), [slice](artifacts/compare-a3-slice.json)):
@@ -239,7 +239,28 @@ declared assumptions, 1 held.
 
 ## 5. Parity, compared in full
 
-PARITY_SECTION
+`scripts/parity.py` over the three `QCORE_TYPED_PATH_PARITY` streams, every
+row compared, Clang node addresses erased, against the moving rows
+(`scripts/parity-all.sh`; [corpus](artifacts/parity-a3-corpus.json),
+[system](artifacts/parity-a3-system.json), [slice](artifacts/parity-a3-slice.json)):
+
+| route | rows BEFORE / AFTER | only BEFORE / only AFTER | functions differing | outside the moving functions |
+| --- | --- | --- | ---: | --- |
+| corpus | 683,320 / 682,113 | 2,422 / 1,215 | 207 | rows of the declared members' own bodies (below), `summary-premises-graph` 10 / 10 |
+| system | 139,962 / 140,018 | 120 / 176 | 5 | `summary-premises-graph` 4 / 4 |
+| slice | 50,407 / 50,407 | 54 / 54 | 4 | `summary-premises-graph` 2 / 2 |
+
+Every other differing row is in a function whose leaves moved. Outside them:
+the rows W4's inference of a member's own body emitted before (`pb_write` 60,
+`rd_list_add` 44, the two map unpackers 38 each, the two array unpackers 20
+each, `rd_list_destroy` 12, `rd_list_clear` 8, in their defining units): a
+declaration in the retaining table is never replaced by an inference
+(`legacy_summary.rs`), so the inference runs no longer, while each member's
+own row is analysed and published as before (none of them moves); and the
+`summary-premises-graph` rows (`function` `?`), which describe W4's
+call-graph components and change with rule 13u's callback edges (the same
+number of rows, different components). No verdict-bearing row differs outside
+a moving function.
 
 ## 6. Prediction against outcome
 
@@ -249,7 +270,7 @@ PARITY_SECTION
 | exactly two corrections, the sort callers | the two, as named |
 | `rd_kafka_ApiVersion_check` Safe or Unknown | Unknown (header comparator unsummarised) |
 | no leak, violation, Unsafe added | none |
-| system and slice: no status move | STATUS_SYSTEM_SLICE |
+| system and slice: no status move | none; leaves move only at `msgpack_packer_init` (system: `flb_input_chunk_create`, `flb_input_chunk_map` and `cb_storage_metrics_collect`, each in two units; slice: `flb_tail_file_append`, `flb_tail_mult_process_first`, whose `&file->mult_pck` actual the access gate now refuses) and `pthread_once` over an unprototyped routine (system `flb_engine_evl_init`, slice `do_start`, two units each) |
 | registry callers Unknown (holders through formals) | 239 `callback-registry-undecided` leaves, 5 functions decided alone by them |
 | decoders trade the uncontracted leaf for `callback-uncontracted` | 36 leaves, as predicted |
 
@@ -288,7 +309,28 @@ gains the clause kinds `callback` and `callbackChecked` and the evidence
 
 ## 8. Ledger
 
-LEDGER_SECTION
+`scripts/update_ledger.py` (idempotent; `dimensions.named_followups` 740 →
+**745**):
+
+* **`CG22-CALLBACK-REGISTRY-CONTRACT` amended, not retired.** Its DISCHARGE
+  ("a registry contract vocabulary … checked against bodies, with the relation
+  consumed by route G and a measured re-pin; the msgpack `data` capture
+  re-examined") holds except "checked against bodies" for the clauses no body
+  check reads (rule 13y reads the invocation and a registration in a
+  parameter holder): its remaining discharge is narrowed to those eight
+  declarations' unchecked clauses.
+* Amended: `W48-CALLEE-DECISION-TABLE` (class 1 shape (c) re-sized per
+  member), `W45-CALLEE-CASCADE-RESIDUAL` (523 / 366 → 487 / 335),
+  `W44-CALLEE-CROSS-UNIT-SUMMARY` (three comparators `Safe` in another unit).
+* Registered, with sizes: `CG22-REGISTRY-OUTSIDE-THE-FRAME` (239 / 112 / 5 and
+  the 3 frame-registry elements), `CG22-CALLBACK-CANDIDATE-CONTRACTS` (46 / 44 /
+  17), `CG22-CALLBACK-OPEN-ACTUALS` (10 / 9 / 1),
+  `CG22-OP-CALLBACKS-AND-SERVED-QUEUES` (the op and served-queue members,
+  unchanged sizes; the premise kept), `CG22-MSGPACK-PACK-INVOCATIONS` (system
+  122 / 6 / 0, slice 2 / 1 / 1).
+* `RDKAFKA-SORT-COMPARATOR-EFFECTS`, named in `topic_partition.qv`'s comment,
+  was never registered: discharged by rule 13z's re-declaration, nothing to
+  retire.
 
 ## 9. Gate
 

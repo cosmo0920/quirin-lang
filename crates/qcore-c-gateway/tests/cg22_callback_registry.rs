@@ -161,11 +161,9 @@ fn an_identity_callback_reads_as_its_custody_contract() {
     // summary) puts that requirement on the call: the caller is decided as a
     // direct call of the callback with the same actual is.
     assert_eq!(
-        rows["run_requires"].status,
-        rows["direct_requires"].status,
+        rows["run_requires"].status, rows["direct_requires"].status,
         "{:?} {:?}",
-        rows["run_requires"],
-        rows["direct_requires"]
+        rows["run_requires"], rows["direct_requires"]
     );
     assert_eq!(
         rows["run_requires"].unsupported.is_empty(),
@@ -348,7 +346,9 @@ fn an_element_the_registry_released_is_not_released_again() {
     let row = &rows["site_kept_element"];
     assert_eq!(row.status, AnalysisStatus::Unsafe, "{row:?}");
     assert!(
-        row.kinds.iter().any(|kind| kind.starts_with("DoubleRelease")),
+        row.kinds
+            .iter()
+            .any(|kind| kind.starts_with("DoubleRelease")),
         "{row:?}"
     );
 }

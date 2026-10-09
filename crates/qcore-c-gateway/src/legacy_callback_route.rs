@@ -136,19 +136,21 @@ fn is_identifier(text: &str) -> bool {
 /// registry clause or a retention): a call through which a frame holder may
 /// be named.
 fn names_a_holder(contracts: &ResourceContracts, callee: &str) -> bool {
-    contracts.retaining_contract(callee).is_some_and(|declared| {
-        declared.retains()
-            || declared.callbacks.iter().any(|clause| {
-                clause.needs_registration()
-                    || matches!(
-                        clause,
-                        CallbackClause::Registered {
-                            holder: CallbackHolder::Parameter { .. },
-                            ..
-                        }
-                    )
-            })
-    })
+    contracts
+        .retaining_contract(callee)
+        .is_some_and(|declared| {
+            declared.retains()
+                || declared.callbacks.iter().any(|clause| {
+                    clause.needs_registration()
+                        || matches!(
+                            clause,
+                            CallbackClause::Registered {
+                                holder: CallbackHolder::Parameter { .. },
+                                ..
+                            }
+                        )
+                })
+        })
 }
 
 /// Whether `name` is mentioned in `body` only as the declaration of the
@@ -224,9 +226,7 @@ fn direct_callee(call: &Value) -> Option<&str> {
     loop {
         match kind(node) {
             "ParenExpr" => node = children(node).first()?,
-            "ImplicitCastExpr"
-                if node["castKind"].as_str() == Some("FunctionToPointerDecay") =>
-            {
+            "ImplicitCastExpr" if node["castKind"].as_str() == Some("FunctionToPointerDecay") => {
                 node = children(node).first()?;
             }
             "DeclRefExpr" if node["referencedDecl"]["kind"].as_str() == Some("FunctionDecl") => {
@@ -453,7 +453,12 @@ impl Parser<'_> {
     ) -> Vec<(String, CandidateClass)> {
         candidates
             .iter()
-            .map(|name| (name.clone(), classify(self.contracts.contract(name), actuals)))
+            .map(|name| {
+                (
+                    name.clone(),
+                    classify(self.contracts.contract(name), actuals),
+                )
+            })
             .collect()
     }
 
@@ -512,7 +517,10 @@ impl Parser<'_> {
         let undecided_holder = |index: usize| {
             refusal(
                 function,
-                &format!("the registry holder `{}` is not one this body names", text(index)),
+                &format!(
+                    "the registry holder `{}` is not one this body names",
+                    text(index)
+                ),
                 REGISTRY_UNDECIDED,
             )
         };
@@ -528,10 +536,8 @@ impl Parser<'_> {
                     let classes = resolution
                         .as_ref()
                         .map(|candidates| self.classified(candidates, actuals));
-                    let decision = decide(
-                        classes.as_ref().map(Vec::as_slice).map_err(|_| ()),
-                        false,
-                    );
+                    let decision =
+                        decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
                     if let Decision::Refused(reason, candidate) = decision {
                         let detail = match (&resolution, reason) {
                             (Err(why), UNDECIDED) => format!(
@@ -551,10 +557,8 @@ impl Parser<'_> {
                     let classes = resolution
                         .as_ref()
                         .map(|candidates| self.classified(candidates, actuals));
-                    let decision = decide(
-                        classes.as_ref().map(Vec::as_slice).map_err(|_| ()),
-                        false,
-                    );
+                    let decision =
+                        decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
                     if let Decision::Refused(reason, candidate) = decision {
                         let detail = match (&resolution, reason) {
                             (Err(why), UNDECIDED) => format!(
@@ -569,7 +573,10 @@ impl Parser<'_> {
                         self.require(candidates, actuals, &mut operands.owned);
                     }
                 }
-                CallbackClause::Registered { callback, holder: at } => {
+                CallbackClause::Registered {
+                    callback,
+                    holder: at,
+                } => {
                     let candidates = self
                         .callback_candidates(function, line, *callback, true)
                         .map_err(|why| {
@@ -635,7 +642,9 @@ impl Parser<'_> {
                 CallbackClause::ReleasedIfConstructed { holder: at } => {
                     let holder = holder(*at).ok_or_else(|| undecided_holder(*at))?;
                     operands.texts.push(text(*at));
-                    operands.uses.push(RegistryUse::ReleaseIfConstructed { holder });
+                    operands
+                        .uses
+                        .push(RegistryUse::ReleaseIfConstructed { holder });
                 }
             }
         }
@@ -862,9 +871,9 @@ pub(super) fn apply(
                         [literal] if literal == "__qcore_literal__" => {
                             Some(super::retained_by_route::RetainedSpelling::Literal)
                         }
-                        [name] if is_identifier(name) => {
-                            Some(super::retained_by_route::RetainedSpelling::Name(name.clone()))
-                        }
+                        [name] if is_identifier(name) => Some(
+                            super::retained_by_route::RetainedSpelling::Name(name.clone()),
+                        ),
                         _ => None,
                     };
                     let retained = spelled
@@ -1064,7 +1073,16 @@ fn rebound(body: &[&str], name: &str) -> bool {
             || matches!(
                 next,
                 Some(
-                    "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>="
+                    "=" | "+="
+                        | "-="
+                        | "*="
+                        | "/="
+                        | "%="
+                        | "&="
+                        | "|="
+                        | "^="
+                        | "<<="
+                        | ">>="
                         | "++"
                         | "--"
                 )
@@ -1116,9 +1134,13 @@ fn invocation_validates(
         for (&(start, end), actual) in spans.iter().zip(actuals) {
             let argument = &body[start..end];
             let fits = match actual {
-                CallbackActual::Parameter { index } => parameters.get(*index).is_some_and(|formal| {
-                    !formal.is_empty() && argument == [formal.as_str()] && !rebound(body, formal)
-                }),
+                CallbackActual::Parameter { index } => {
+                    parameters.get(*index).is_some_and(|formal| {
+                        !formal.is_empty()
+                            && argument == [formal.as_str()]
+                            && !rebound(body, formal)
+                    })
+                }
                 CallbackActual::Supplied => !argument.contains(&name.as_str()),
                 CallbackActual::Element => false,
             };
@@ -1133,7 +1155,12 @@ fn invocation_validates(
 /// Rule 13y: `resource_callback_registered(F, H)` with `H` a parameter stands
 /// on a body that names `F` only as the value of stores `H->M = F;`, at least
 /// once, `H` and `F` never rebound.
-fn registration_validates(body: &[&str], parameters: &[String], callback: usize, holder: usize) -> bool {
+fn registration_validates(
+    body: &[&str],
+    parameters: &[String],
+    callback: usize,
+    holder: usize,
+) -> bool {
     let (Some(name), Some(holder)) = (
         parameters.get(callback).filter(|name| !name.is_empty()),
         parameters.get(holder).filter(|name| !name.is_empty()),
@@ -1320,7 +1347,12 @@ mod tests {
         let odd = stream("int f ( int ( * ( * g ) ) ( void ) ) { return 0 ; }");
         let names = parameter_names(&odd, "f").expect("a definition");
         assert_eq!(names, [""]);
-        assert!(!invocation_validates(&words("{ return 0 ; }"), &names, 0, &[]));
+        assert!(!invocation_validates(
+            &words("{ return 0 ; }"),
+            &names,
+            0,
+            &[]
+        ));
     }
 
     #[test]

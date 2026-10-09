@@ -130,7 +130,9 @@ NEW = [
                "rd_kafka_topic_partition_list_sort(list, NULL, NULL) 6 (the body substitutes "
                "rd_kafka_topic_partition_cmp_opaque for a NULL comparator: a clause reading a null "
                "actual as a declared default is missing), pthread_once over a K&R-defined routine "
-               "2 (mk_http_thread_initialize_tls_once(), mk_set_up_tls_keys(): Clang's implicit "
+               "2 (mk_http_thread_initialize_tls_once(), mk_set_up_tls_keys(); system "
+               "flb_engine_evl_init's flb_engine_evl_init_private and slice do_start's "
+               "flb_init_env, two units each: Clang's implicit "
                "BitCast from `void (*)()` to `void (*)(void)` is not read by rule 11p's "
                "resolution), a formal 2 (chunkio's qsort_stream compar, rd_list_new's free_cb: "
                "correct refusals). DISCHARGE: a declared default for a null callback, and rule "
@@ -188,6 +190,11 @@ def main():
         text = AMEND.get(entry["id"])
         if text and MARK not in entry["why"]:
             entry["why"] += text
+    fresh = {entry["id"]: entry for entry in NEW}
+    for entry in entries:
+        # An entry this card registered is rewritten to its current text.
+        if entry["id"] in fresh and entry.get("recorded_by") == CARD:
+            entry.update(fresh[entry["id"]])
     for entry in NEW:
         if entry["id"] not in known:
             entries.append(entry)

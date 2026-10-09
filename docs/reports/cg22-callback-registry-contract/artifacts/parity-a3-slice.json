@@ -1,0 +1,40 @@
+{
+ "rows": [
+  50407,
+  50407
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 54,
+ "only_after": 54,
+ "functions_with_differences": 4,
+ "differences_outside_moving_functions": {
+  "before ?": 2,
+  "after ?": 2
+ },
+ "groups": {
+  "before do_start call-exit-census": 10,
+  "before do_start elaboration-statement": 10,
+  "before flb_tail_mult_process_first call-argument": 10,
+  "after do_start elaboration-statement": 10,
+  "before flb_tail_file_append bound-untracked-closure": 5,
+  "before flb_tail_file_append root-declarations": 5,
+  "before flb_tail_mult_process_first bound-untracked-closure": 5,
+  "before flb_tail_mult_process_first root-declarations": 5,
+  "after flb_tail_file_append bound-untracked-closure": 5,
+  "after flb_tail_file_append root-declarations": 5,
+  "after flb_tail_file_append elaboration-statement": 5,
+  "after flb_tail_file_append uncontracted-access": 5,
+  "after flb_tail_mult_process_first bound-untracked-closure": 5,
+  "after flb_tail_mult_process_first root-declarations": 5,
+  "after flb_tail_mult_process_first elaboration-statement": 5,
+  "after flb_tail_mult_process_first uncontracted-access": 5,
+  "before ? summary-premises-graph": 2,
+  "after ? summary-premises-graph": 2,
+  "before flb_tail_file_append callback-registration": 1,
+  "before flb_tail_mult_process_first callback-registration": 1,
+  "after flb_tail_file_append callback-registration": 1,
+  "after flb_tail_mult_process_first callback-registration": 1
+ }
+}

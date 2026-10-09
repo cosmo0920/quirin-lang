@@ -38,7 +38,9 @@
 use std::collections::BTreeSet;
 
 use qcore_schemas::callback::CallbackActual;
-use qcore_schemas::contract::{ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode};
+use qcore_schemas::contract::{
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+};
 
 /// The minted-name prefix is the retaining one: a callback declaration is a
 /// retaining declaration ([`crate::retained_by::RETAINED_PREFIX`]).
@@ -131,10 +133,9 @@ pub fn requirements(
         .iter()
         .zip(actuals)
         .filter_map(|(mode, actual)| match (mode, actual) {
-            (
-                ResourceParameterMode::Owned { nullable },
-                CallbackActual::Parameter { index },
-            ) => Some((*index, *nullable)),
+            (ResourceParameterMode::Owned { nullable }, CallbackActual::Parameter { index }) => {
+                Some((*index, *nullable))
+            }
             _ => None,
         })
         .collect()
@@ -340,8 +341,18 @@ pub(crate) const DECISION_VECTORS: &[(bool, &[CandidateClass], bool, u8)] = &[
     (true, &[CandidateClass::Identity], false, 2),
     (false, &[], false, 2),
     (false, &[CandidateClass::Identity], false, 0),
-    (false, &[CandidateClass::Identity, CandidateClass::Identity], false, 0),
-    (false, &[CandidateClass::Identity, CandidateClass::Missing], false, 2),
+    (
+        false,
+        &[CandidateClass::Identity, CandidateClass::Identity],
+        false,
+        0,
+    ),
+    (
+        false,
+        &[CandidateClass::Identity, CandidateClass::Missing],
+        false,
+        2,
+    ),
     (false, &[CandidateClass::Effectful], false, 2),
     (false, &[CandidateClass::ReleasesElement], false, 2),
     (false, &[CandidateClass::ReleasesElement], true, 1),
@@ -362,18 +373,36 @@ pub(crate) const REGISTRY_VECTORS: &[(&[RegistryEvent], Option<bool>)] = {
     use RegistryEvent as E;
     &[
         (
-            &[E::Register(C::Releasing), E::Add, E::Invoke, E::Clear, E::Exit],
+            &[
+                E::Register(C::Releasing),
+                E::Add,
+                E::Invoke,
+                E::Clear,
+                E::Exit,
+            ],
             Some(true),
         ),
         (&[E::Register(C::Releasing), E::Add, E::Exit], None),
-        (&[E::Register(C::Releasing), E::Add, E::Clear, E::Exit], None),
+        (
+            &[E::Register(C::Releasing), E::Add, E::Clear, E::Exit],
+            None,
+        ),
         (&[E::Add, E::Exit], Some(false)),
         (&[E::Register(C::Undecided), E::Add, E::Exit], Some(false)),
         (&[E::Register(C::None), E::Add, E::Exit], Some(false)),
-        (&[E::Register(C::None), E::Add, E::Clear, E::Exit], Some(true)),
-        (&[E::Register(C::Neutral), E::Invoke, E::Clear, E::Exit], Some(true)),
+        (
+            &[E::Register(C::None), E::Add, E::Clear, E::Exit],
+            Some(true),
+        ),
+        (
+            &[E::Register(C::Neutral), E::Invoke, E::Clear, E::Exit],
+            Some(true),
+        ),
         (&[E::Invoke, E::Exit], Some(false)),
-        (&[E::Register(C::Undecided), E::Invoke, E::Exit], Some(false)),
+        (
+            &[E::Register(C::Undecided), E::Invoke, E::Exit],
+            Some(false),
+        ),
     ]
 };
 
@@ -405,7 +434,11 @@ mod tests {
                 .enumerate()
                 .map(|(at, class)| (format!("f{at}"), *class))
                 .collect::<Vec<_>>();
-            let resolution = if *open { Err(()) } else { Ok(candidates.as_slice()) };
+            let resolution = if *open {
+                Err(())
+            } else {
+                Ok(candidates.as_slice())
+            };
             assert_eq!(
                 decision_kind(&decide(resolution, *elements)),
                 *kind,
@@ -544,7 +577,10 @@ mod tests {
             &[("released", CallbackActual::Parameter { index: 0 })],
             CandidateClass::Effectful,
         ),
-        (&[("other", CallbackActual::Supplied)], CandidateClass::Effectful),
+        (
+            &[("other", CallbackActual::Supplied)],
+            CandidateClass::Effectful,
+        ),
         (&[], CandidateClass::Identity),
     ];
 
@@ -559,9 +595,8 @@ mod tests {
 
     #[test]
     fn classify_vectors_hold_and_are_the_lean_vectors() {
-        let rows = lean_rows(
-            "def classifyVectors : List (List (Mode × Actual) × CandidateClass) := [",
-        );
+        let rows =
+            lean_rows("def classifyVectors : List (List (Mode × Actual) × CandidateClass) := [");
         let mut rendered = Vec::new();
         for (positions, class) in CLASSIFY_VECTORS {
             let contract = ResourceFunctionContract {
@@ -622,8 +657,14 @@ mod tests {
             CallbackActual::Supplied,
             CallbackActual::Parameter { index: 2 },
         ];
-        assert_eq!(classify(Some(&borrowed), &actuals), CandidateClass::Identity);
-        assert_eq!(classify(Some(&borrowed), &actuals[..2]), CandidateClass::Effectful);
+        assert_eq!(
+            classify(Some(&borrowed), &actuals),
+            CandidateClass::Identity
+        );
+        assert_eq!(
+            classify(Some(&borrowed), &actuals[..2]),
+            CandidateClass::Effectful
+        );
         assert_eq!(classify(None, &actuals), CandidateClass::Missing);
         let free = ResourceFunctionContract {
             parameters: vec![ResourceParameterMode::Released { nullable: true }],

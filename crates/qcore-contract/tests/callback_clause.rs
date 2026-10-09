@@ -110,7 +110,10 @@ fn callback_clauses_load_withheld() {
         "packer_init",
     ] {
         assert!(contracts.contract(name).is_none(), "{name} is withheld");
-        assert!(contracts.retaining_contract(name).is_some(), "{name} is kept");
+        assert!(
+            contracts.retaining_contract(name).is_some(),
+            "{name} is kept"
+        );
     }
     let each = contracts.retaining_contract("each").expect("withheld");
     assert_eq!(
@@ -141,7 +144,9 @@ fn callback_clauses_load_withheld() {
             holder: CallbackHolder::Result,
         }]
     );
-    let destroy = contracts.retaining_contract("list_destroy").expect("withheld");
+    let destroy = contracts
+        .retaining_contract("list_destroy")
+        .expect("withheld");
     assert_eq!(destroy.callbacks.len(), 4);
     assert_eq!(
         destroy.callbacks[0],
@@ -150,7 +155,9 @@ fn callback_clauses_load_withheld() {
             actuals: vec![CallbackActual::Element],
         }
     );
-    let packer = contracts.retaining_contract("packer_init").expect("withheld");
+    let packer = contracts
+        .retaining_contract("packer_init")
+        .expect("withheld");
     assert!(packer.retains());
     assert_eq!(packer.callbacks.len(), 1);
     check_source_assumptions(&contracts).expect("the retained texts reload");
