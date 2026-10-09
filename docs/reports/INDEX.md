@@ -879,6 +879,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [verdict-contract-dependencies](verdict-contract-dependencies/README.md) | VERDICT-CONTRACT-DEPENDENCIES: the declarations each verdict rests on |
 
+| [verdict-contract-premise-annotations](verdict-contract-premise-annotations/README.md) | VERDICT-CONTRACT-PREMISE-ANNOTATIONS: comment-only premises as clauses |
+
 | [verifier-host-closed-input-deadline](verifier-host-closed-input-deadline/README.md) | Verifier host closed-input deadline repair |
 
 | [verifier-host-control-budget](verifier-host-control-budget/README.md) | `VERIFIER-HOST-CONTROL-BUDGET` — the contested host row, explained and repaired |
