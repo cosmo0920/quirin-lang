@@ -27,6 +27,9 @@ pub struct Consulted {
     pub found: BTreeSet<String>,
     /// Names whose lookup found none.
     pub missed: BTreeSet<String>,
+    /// Card NULL-SAFETY-PROPERTY (gateway rule 14n): the named null premises
+    /// (`null-deref:FUNCTION:LINE:VARIABLE`) the logged work relied on.
+    pub null_premises: BTreeSet<String>,
 }
 
 impl Consulted {
@@ -34,13 +37,27 @@ impl Consulted {
     pub fn absorb(&mut self, other: &Self) {
         self.found.extend(other.found.iter().cloned());
         self.missed.extend(other.missed.iter().cloned());
+        self.null_premises
+            .extend(other.null_premises.iter().cloned());
     }
 
     /// Whether the log noted nothing.
     #[must_use]
     pub fn is_empty(&self) -> bool {
-        self.found.is_empty() && self.missed.is_empty()
+        self.found.is_empty() && self.missed.is_empty() && self.null_premises.is_empty()
     }
+}
+
+/// Card NULL-SAFETY-PROPERTY (gateway rule 14n): note that the current work
+/// relied on the named null premise `name`, when a log is open.
+pub fn note_null_premise(name: &str) {
+    LOG.with(|log| {
+        if let Some(current) = log.borrow_mut().as_mut()
+            && !current.null_premises.contains(name)
+        {
+            current.null_premises.insert(name.to_owned());
+        }
+    });
 }
 
 thread_local! {

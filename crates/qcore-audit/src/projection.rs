@@ -117,6 +117,196 @@ fn record_bounds(
     }
 }
 
+/// Card NULL-SAFETY-PROPERTY (gateway rules 14k-14p): the environment
+/// variable that selects the null-dereference property and names its
+/// JSON-lines output. Unset, no null analysis runs and every artifact is
+/// byte-identical.
+pub const NULL_SELECTION: &str = "QCORE_NULL_PROPERTY";
+
+/// The custody status as the null property's four values.
+fn custody_null_value(status: AnalysisStatus) -> qcore_c_gateway::null_deref::NullVerdict {
+    use qcore_c_gateway::null_deref::NullVerdict;
+    match status {
+        AnalysisStatus::Safe => NullVerdict::Safe,
+        AnalysisStatus::Pending => NullVerdict::Pending,
+        AnalysisStatus::Unknown => NullVerdict::Unknown,
+        AnalysisStatus::Unsafe => NullVerdict::Unsafe,
+    }
+}
+
+/// What the null row says of the checks of `variable` at `line`: `proved`
+/// when every one is proved or moved to a proved check, otherwise the worst
+/// class met (`unmatched` when the row has no such check).
+fn premise_standing(row: &qcore_c_gateway::null_deref::NullFunctionRow, line: usize, variable: &str) -> &'static str {
+    let by_id = row
+        .checks
+        .iter()
+        .map(|check| (check.id, check))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    fn resolve(
+        check: &qcore_c_gateway::null_deref::NullCheck,
+        by_id: &std::collections::BTreeMap<usize, &qcore_c_gateway::null_deref::NullCheck>,
+        depth: usize,
+    ) -> &'static str {
+        match check.outcome {
+            "proved" => "proved",
+            "moved" if depth < 64 => {
+                let mut worst = "proved";
+                for proof in &check.proofs {
+                    let resolved = match proof.strip_prefix("moved:").and_then(|id| id.parse::<usize>().ok()) {
+                        Some(origin) => match by_id.get(&origin) {
+                            Some(origin) if origin.id != check.id => resolve(origin, by_id, depth + 1),
+                            _ => "unmatched",
+                        },
+                        None => "proved",
+                    };
+                    if resolved != "proved" {
+                        worst = resolved;
+                    }
+                }
+                worst
+            }
+            other => other,
+        }
+    }
+    let mut matched = false;
+    let mut standing = "proved";
+    for check in row
+        .checks
+        .iter()
+        .filter(|check| check.line == line && check.subject == variable)
+    {
+        matched = true;
+        let resolved = resolve(check, &by_id, 0);
+        if resolved != "proved" {
+            standing = resolved;
+        }
+    }
+    if matched { standing } else { "unmatched" }
+}
+
+/// Card NULL-SAFETY-PROPERTY: when the null property is selected, record each
+/// function's null row beside its custody status, the custody row's own null
+/// premises with what the null row says of each, and the combined verdict of
+/// a request naming both. Reads the custody result; never changes it.
+#[allow(clippy::too_many_arguments)]
+fn record_null(
+    library: &str,
+    file: &str,
+    unit: &C11TranslationUnit<'_>,
+    preprocessed: Option<&str>,
+    functions: &[String],
+    result: &Result<UnrestrictedLegacyResult, LegacyCError>,
+    contracts: &ResourceContracts,
+    locations: Option<&SourceLineMap>,
+    report: &mut AuditReport,
+) {
+    use qcore_c_gateway::null_deref::{
+        NullVerdict, Request, analyze_null_c11, analyze_null_preprocessed, compose, row_verdict,
+    };
+    if std::env::var_os(NULL_SELECTION).is_none() {
+        return;
+    }
+    let bounds = crate::bounds_selection::null_environment();
+    let analysed = match preprocessed {
+        Some(text) => analyze_null_preprocessed(text, unit, functions, contracts, &bounds),
+        None => analyze_null_c11(unit, functions, contracts, &bounds),
+    };
+    let mapped;
+    let locations = match (locations, preprocessed) {
+        (Some(map), _) => Some(map),
+        (None, Some(text)) => {
+            mapped = map_preprocessed_lines(unit, text);
+            Some(&mapped)
+        }
+        (None, None) => None,
+    };
+    let origin = |line: usize| {
+        locations
+            .and_then(|map| map.present(line, file))
+            .map_or(serde_json::Value::Null, serde_json::Value::String)
+    };
+    let custody = summary_of(result);
+    for name in functions {
+        let function = custody.and_then(|summary| summary.functions.get(name));
+        let custody_value = function.map(|function| custody_null_value(function.status));
+        let (row_value, identity, null, own) = match &analysed {
+            Ok(report) => match report.row(name) {
+                Some(row) => {
+                    let mut value = serde_json::to_value(row).unwrap_or(serde_json::Value::Null);
+                    for check in value["checks"].as_array_mut().into_iter().flatten() {
+                        let line = check["line"].as_u64().unwrap_or_default() as usize;
+                        check["origin"] = origin(line);
+                    }
+                    (
+                        value,
+                        serde_json::json!({
+                            "model_version": report.model_version,
+                            "source_sha256": report.source_sha256,
+                            "contracts_sha256": report.contracts_sha256,
+                            "resource_contracts_sha256": report.resource_contracts_sha256,
+                        }),
+                        Some(row_verdict(row)),
+                        Some(row),
+                    )
+                }
+                None => (serde_json::Value::Null, serde_json::Value::Null, None, None),
+            },
+            Err(error) => (
+                serde_json::json!({
+                    "function": name,
+                    "verdict": "Unknown",
+                    "reasons": [format!("null-import-failure: {error}")],
+                    "checks": [],
+                }),
+                serde_json::Value::Null,
+                Some(NullVerdict::Unknown),
+                None,
+            ),
+        };
+        let premises = function
+            .map(|function| {
+                function
+                    .null_premises
+                    .iter()
+                    .map(|premise| {
+                        serde_json::json!({
+                            "name": premise.name(name),
+                            "line": premise.line,
+                            "origin": origin(premise.line),
+                            "variable": premise.variable,
+                            "null_property": own.map_or("unmatched", |row| {
+                                premise_standing(row, premise.line, &premise.variable)
+                            }),
+                        })
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        let combined = compose(
+            Request {
+                custody: true,
+                null: true,
+            },
+            custody_value,
+            null,
+        );
+        let mut row = serde_json::json!({
+            "library": library,
+            "file": file,
+            "function": name,
+            "custody": custody_value.map(NullVerdict::as_str),
+            "null": row_value,
+            "identity": identity,
+            "combined": combined.as_str(),
+        });
+        if !premises.is_empty() {
+            row["custody_null_premises"] = serde_json::Value::Array(premises);
+        }
+        report.record_null(row);
+    }
+}
+
 /// One line of a unit's console account, written to that unit's buffer. A
 /// `String` sink cannot fail.
 macro_rules! say {
@@ -358,6 +548,17 @@ pub fn project_unit_into(
         &result,
         report,
     );
+    record_null(
+        library,
+        file,
+        unit,
+        preprocessed,
+        source_functions,
+        &result,
+        contracts,
+        locations.as_ref(),
+        report,
+    );
     record_projection(
         ProjectionContext {
             library,
@@ -492,7 +693,7 @@ pub fn project_prepared_unit_into(
         }
         other => other,
     };
-    if std::env::var_os(BOUNDS_SELECTION).is_some() {
+    if std::env::var_os(BOUNDS_SELECTION).is_some() || std::env::var_os(NULL_SELECTION).is_some() {
         let view = C11TranslationUnit {
             source: prepared.raw_source(),
             include_paths: prepared.include_paths().to_vec(),
@@ -508,6 +709,18 @@ pub fn project_prepared_unit_into(
             prepared.preprocessed_source().ok(),
             source_functions,
             &result,
+            report,
+        );
+        // Card NULL-SAFETY-PROPERTY (rules 14k-14p).
+        record_null(
+            library,
+            file,
+            &view,
+            prepared.preprocessed_source().ok(),
+            source_functions,
+            &result,
+            contracts,
+            Some(prepared.locations()),
             report,
         );
     }

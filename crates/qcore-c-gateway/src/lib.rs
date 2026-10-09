@@ -87,6 +87,9 @@ mod index_traversal;
 // Card NULL-SAFETY-PROPERTY (rules 14k-14p): the separately selected
 // null-dereference property; no custody route reads it.
 pub mod null_deref;
+// Card NULL-SAFETY-PROPERTY (rule 14n): the named null premises a custody
+// verdict rests on; the hook is `legacy_null_premise.rs`.
+pub mod null_premise;
 // Card CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites; the G
 // hooks are in `legacy_loop_generations.rs`.
 pub mod indexed_collection;

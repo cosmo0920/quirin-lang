@@ -62,7 +62,7 @@ pub const SECTION_KEY: &str = "contract_dependencies";
 pub const PREMISES_KEY: &str = "contract_premises";
 
 /// What the section means, carried in the section itself.
-pub const MEANING: &str = "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rules 13g, 13i-13k): evidence covers the clauses it compares or reads (an equal W4 summary, and the body under the declaration's entry custody matching every exit and Safe, on a reported row (`entry`) or on a body whose W4 summary only refines the declaration (rule 13m, which then records no conflict failure): every parameter and result mode with its kind; rule 11r: every exit class; 12w: the guards of retentions; 13a: slot moves, derived out slots and a borrowed result; 13c: reference keeps and drops; 13d: a returned reference); no evidence covers a container or counted-user clause, a retention, a holder reset, a named premise, a variadic tail or a no-return clause. A clause is `validated` where every unit that examined a body of the declared function validated the declaration, at least one did, and every such unit's evidence covered the clause; a declaration is `validated` only when every clause is, `partly-validated` when some but not all are (`uncovered_clauses`), `held` when held for a human act, and otherwise `declared-assumption` (contract specification C06): there is no analysed body, a body did not validate it, or no clause is covered everywhere. `resting_only_on_validated_declarations` counts Safe rows whose every declaration is fully validated. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). Evidence only: no verdict reads this section or the row fields";
+pub const MEANING: &str = "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rules 13g, 13i-13k): evidence covers the clauses it compares or reads (an equal W4 summary, and the body under the declaration's entry custody matching every exit and Safe, on a reported row (`entry`) or on a body whose W4 summary only refines the declaration (rule 13m, which then records no conflict failure): every parameter and result mode with its kind; rule 11r: every exit class; 12w: the guards of retentions; 13a: slot moves, derived out slots and a borrowed result; 13c: reference keeps and drops; 13d: a returned reference); no evidence covers a container or counted-user clause, a retention, a holder reset, a named premise, a variadic tail or a no-return clause. A clause is `validated` where every unit that examined a body of the declared function validated the declaration, at least one did, and every such unit's evidence covered the clause; a declaration is `validated` only when every clause is, `partly-validated` when some but not all are (`uncovered_clauses`), `held` when held for a human act, and otherwise `declared-assumption` (contract specification C06): there is no analysed body, a body did not validate it, or no clause is covered everywhere. `resting_only_on_validated_declarations` counts Safe rows whose every declaration is fully validated. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). A row's `null_premises` (rule 14n) are the named null premises (`null-deref:FUNCTION:LINE:VARIABLE`) its derivation and its in-unit summaries' relied on, decision 1's moved NULL question; `resting_only_on_a_null_premise` counts Safe rows with no declaration and at least one, `carrying_a_null_premise` every Safe row with one, and neither is ever counted as resting on nothing. Evidence only: no verdict reads this section or the row fields";
 
 /// The premises rule 13e states for a declaration whose result holds a
 /// retained pointer.
@@ -107,8 +107,16 @@ pub fn row_field(dependencies: &RowDependencies) -> Value {
     if !dependencies.summaries.is_empty() {
         field["summaries"] = names(&dependencies.summaries);
     }
+    // Card NULL-SAFETY-PROPERTY (rule 14n): the named null premises the row
+    // rests on (its own and its in-unit summaries'), only when there is one.
+    if !dependencies.null_premises.is_empty() {
+        field[NULL_PREMISES_KEY] = names(&dependencies.null_premises);
+    }
     field
 }
+
+/// The row field's key of the named null premises (rule 14n).
+pub const NULL_PREMISES_KEY: &str = "null_premises";
 
 /// The unit field: what each examined body made of its declaration, for the
 /// declared names only; `None` when the unit examined none.
@@ -232,8 +240,9 @@ pub struct Facts {
     rows: BTreeMap<String, Uses>,
     /// Per declared name: unit outcomes of its bodies, and the evidence.
     bodies: BTreeMap<String, Bodies>,
-    /// `Safe` rows, each as its declarations, held and withdrawn names.
-    safe: Vec<(BTreeSet<String>, usize)>,
+    /// `Safe` rows, each as its declarations, held and withdrawn names, and
+    /// its named null premises (rule 14n).
+    safe: Vec<(BTreeSet<String>, usize, usize)>,
     rows_annotated: usize,
     safe_rows: usize,
 }
@@ -309,7 +318,8 @@ impl Facts {
             }
             if safe {
                 self.safe_rows += 1;
-                self.safe.push((declarations, other));
+                let premises = strings(&field[NULL_PREMISES_KEY]).count();
+                self.safe.push((declarations, other, premises));
             }
         }
         let evidence = &unit[UNIT_KEY];
@@ -546,10 +556,17 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
     let mut on_partly_validated = 0;
     let mut on_assumption = 0;
     let mut on_held_or_withdrawn = 0;
+    let mut on_null_premise_only = 0;
+    let mut carrying_null_premise = 0;
     let is = |name: &String, label: &str| standing.get(name).is_some_and(|value| *value == label);
-    for (rested, other) in &facts.safe {
+    for (rested, other, premises) in &facts.safe {
+        carrying_null_premise += usize::from(*premises > 0);
         if *other > 0 {
             on_held_or_withdrawn += 1;
+        } else if rested.is_empty() && *premises > 0 {
+            // Card NULL-SAFETY-PROPERTY (rule 14n): no declaration, but a
+            // named null premise: never counted as resting on nothing.
+            on_null_premise_only += 1;
         } else if rested.is_empty() {
             none += 1;
         } else if rested.iter().all(|name| is(name, "validated")) {
@@ -613,6 +630,8 @@ pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
             "resting_on_a_partly_validated_declaration": on_partly_validated,
             "resting_on_a_declared_assumption": on_assumption,
             "consulting_a_held_or_withdrawn_declaration": on_held_or_withdrawn,
+            "resting_only_on_a_null_premise": on_null_premise_only,
+            "carrying_a_null_premise": carrying_null_premise,
             "top_declared_assumptions": top,
             "partly_validated_declarations": partly,
         },
@@ -634,14 +653,16 @@ pub fn tally(section: &Value) -> String {
     format!(
         "contract dependencies: {} Safe row(s): {} on no declaration, {} only on validated \
          declarations, {} on a partly validated declaration, {} on a declared assumption, {} \
-         consulting a held or withdrawn declaration; {} declaration(s) consulted ({} validated, \
-         {} partly validated)",
+         consulting a held or withdrawn declaration, {} only on a null premise ({} carrying one); \
+         {} declaration(s) consulted ({} validated, {} partly validated)",
         count("safe_rows"),
         count("resting_on_no_declaration"),
         count("resting_only_on_validated_declarations"),
         count("resting_on_a_partly_validated_declaration"),
         count("resting_on_a_declared_assumption"),
         count("consulting_a_held_or_withdrawn_declaration"),
+        count("resting_only_on_a_null_premise"),
+        count("carrying_a_null_premise"),
         section["counts"]["declarations_consulted"]
             .as_u64()
             .unwrap_or_default(),

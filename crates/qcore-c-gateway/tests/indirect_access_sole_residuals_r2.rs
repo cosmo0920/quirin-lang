@@ -163,15 +163,14 @@ fn rule_14b_reads_an_interior_pointer_of_a_never_bound_root() {
     assert_safe("void subject(struct S *a) { char *p = a->name + a->a; p = 0; }");
     assert_safe("void subject(struct S *a) { long *c; c = &a->counts[2]; c = 0; }");
     // The alias is target-free and possibly null, exactly as a pointer read
-    // binds it: a dereference through it is decided by its own rule (here an
-    // unresolved alias), never by the gate.
+    // binds it: a dereference through it is decided by its own rule, never
+    // by the gate. Card NULL-SAFETY-PROPERTY (rule 14n, decision 1): that
+    // rule now reads the dereference non-null under a named premise (before
+    // it, an unresolved alias); `tests/null_premise_custody.rs` holds the
+    // premise's controls.
     let run = run("int subject(struct S *a) { struct S *n = &a->next[a->a]; return n->a; }");
-    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
-    assert_eq!(
-        run.descriptions,
-        vec!["UnknownAlias { variable: \"n\" }".to_owned()],
-        "{run:?}"
-    );
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+    assert!(run.descriptions.is_empty(), "{run:?}");
 }
 
 #[test]

@@ -1787,6 +1787,19 @@ pub(crate) fn analyze_cfg_with_entry(
     cfg: LegacyCfg,
     entry_custody: &EntryCustody,
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
+    // Card NULL-SAFETY-PROPERTY (rule 14n): the null premises this analysis
+    // relies on are its summary's, whatever route publishes it.
+    let ((mut summary, observations), premises) = crate::null_premise::collecting(|| {
+        analyze_cfg_with_entry_collected(cfg, entry_custody)
+    });
+    summary.null_premises = premises;
+    (summary, observations)
+}
+
+fn analyze_cfg_with_entry_collected(
+    cfg: LegacyCfg,
+    entry_custody: &EntryCustody,
+) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     let context = TransferContext {
         sanctioned: entry_custody.sanctioned_places(),
         result_nullable: entry_custody.result_nullable,
@@ -2157,6 +2170,7 @@ pub(crate) fn analyze_cfg_with_entry(
             exits,
             counted_users: Vec::new(),
             refutations: Vec::new(),
+            null_premises: Vec::new(),
         },
         observations,
     )
@@ -3551,7 +3565,10 @@ pub(super) fn transfer_base(
             });
         for base in bases {
             let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
-            if sanctioned || !indirect_scalar_base_resolves(&state, base) {
+            // Card NULL-SAFETY-PROPERTY (rule 14n): a premised base is read
+            // non-null here, under a named premise.
+            if sanctioned || !null_premise_route::base_resolves(function, node.line, &state, base)
+            {
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
@@ -3565,7 +3582,9 @@ pub(super) fn transfer_base(
         // through keeps its own obligation; the decision is
         // `indirect_chain_access::chain_resolves`, over this state read-only.
         for chain in chains {
-            if let Err(variable) = crate::indirect_chain_access::chain_resolves(&state, chain) {
+            if let Err(variable) =
+                null_premise_route::chain_resolves_premised(function, node.line, &state, chain)
+            {
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,

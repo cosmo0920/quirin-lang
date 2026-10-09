@@ -90,6 +90,15 @@ pub(crate) fn run(
     // and its identity names neither the bounds environment nor its
     // refutation table, so a reused or composed run would omit the rows the
     // selection asks for. Refused, never silently partial.
+    // Card NULL-SAFETY-PROPERTY: likewise for the null selection.
+    if std::env::var_os(crate::projection::NULL_SELECTION).is_some() {
+        return Err(format!(
+            "checkpoints refuse the null selection ({}): a checkpoint carries no null rows and \
+             its identity names no null environment, so a reused or composed run would omit the \
+             requested rows; run without --checkpoints",
+            crate::projection::NULL_SELECTION
+        ));
+    }
     if std::env::var_os(crate::projection::BOUNDS_SELECTION).is_some() {
         return Err(format!(
             "checkpoints refuse the bounds selection ({}): a checkpoint carries no bounds rows, \

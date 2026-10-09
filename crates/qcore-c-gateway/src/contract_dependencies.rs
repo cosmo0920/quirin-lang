@@ -133,6 +133,9 @@ pub struct RowDependencies {
     pub withdrawn: BTreeSet<String>,
     /// In-unit summaries consulted, transitively.
     pub summaries: BTreeSet<String>,
+    /// Card NULL-SAFETY-PROPERTY (rule 14n): the named null premises the
+    /// row's work and its in-unit summaries' work relied on, transitively.
+    pub null_premises: BTreeSet<String>,
 }
 
 #[derive(Debug, Default)]
@@ -557,6 +560,20 @@ pub fn row_dependencies(
             while let Some(current) = queue.pop() {
                 if !visited.insert(current.clone()) {
                     continue;
+                }
+                // Card NULL-SAFETY-PROPERTY (rule 14n): its null premises,
+                // and transitively every in-unit summary's.
+                if let Some(consulted) = record.functions.get(&current) {
+                    dependencies
+                        .null_premises
+                        .extend(consulted.null_premises.iter().cloned());
+                }
+                if let Some(row) = summary.functions.get(&current) {
+                    dependencies.null_premises.extend(
+                        row.null_premises
+                            .iter()
+                            .map(|premise| premise.name(&current)),
+                    );
                 }
                 for spelling in direct(&current) {
                     match read(&spelling, environment) {

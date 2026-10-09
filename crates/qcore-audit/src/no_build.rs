@@ -1076,6 +1076,7 @@ impl NoBuildAudit {
             // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds rows, when the
             // property is selected (nothing otherwise).
             self.report.write_bounds_selection()?;
+            self.report.write_null_selection()?;
             let mut bytes =
                 serde_json::to_vec_pretty(&self.sidecar).map_err(|error| error.to_string())?;
             bytes.push(b'\n');

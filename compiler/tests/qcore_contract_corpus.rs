@@ -1799,7 +1799,8 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                     all_expressions.push(clause.value.expression_source.clone());
                     match &clause.value.kind {
                         SourceContractClauseKind::Requires
-                        | SourceContractClauseKind::QuantCheck => {}
+                        | SourceContractClauseKind::QuantCheck
+                        | SourceContractClauseKind::QuantNullDeref => {}
                         SourceContractClauseKind::Ensures(selector)
                         | SourceContractClauseKind::Quant(selector) => match selector {
                             SourceContractExitSelector::Normal => has_normal = true,

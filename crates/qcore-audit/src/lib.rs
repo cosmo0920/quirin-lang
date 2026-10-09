@@ -40,6 +40,8 @@ pub mod review_hold_reasons;
 // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rules 14f-14h).
 pub mod bounds_evidence;
 pub mod bounds_selection;
+// Card NULL-SAFETY-PROPERTY (rules 14k-14p): the null selection's tally.
+pub mod null_tally;
 pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;

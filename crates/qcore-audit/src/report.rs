@@ -135,6 +135,10 @@ pub struct AuditReport {
     /// evidence for bounds declarations ([`crate::bounds_evidence`]), in unit
     /// order. Never part of the custody document.
     bounds_evidence: Vec<Value>,
+    /// Card NULL-SAFETY-PROPERTY: the null rows of a run that selected the
+    /// null-dereference property (`QCORE_NULL_PROPERTY`), in unit order.
+    /// Never part of the custody document.
+    null: Vec<Value>,
 }
 
 impl AuditReport {
@@ -148,7 +152,38 @@ impl AuditReport {
             plugin_links: None,
             bounds: Vec::new(),
             bounds_evidence: Vec::new(),
+            null: Vec::new(),
         }
+    }
+
+    /// Card NULL-SAFETY-PROPERTY: one function's null row.
+    pub(crate) fn record_null(&mut self, row: Value) {
+        self.null.push(row);
+    }
+
+    /// Card NULL-SAFETY-PROPERTY: write the null selection's rows (JSON
+    /// lines) and their tally beside them, when the run selected the
+    /// property. The custody report is written elsewhere and never reads
+    /// these.
+    pub fn write_null_selection(&self) -> Result<(), String> {
+        let Some(path) = std::env::var_os(crate::projection::NULL_SELECTION) else {
+            return Ok(());
+        };
+        let path = std::path::PathBuf::from(path);
+        let mut lines = String::new();
+        for row in &self.null {
+            lines.push_str(&serde_json::to_string(row).map_err(|e| e.to_string())?);
+            lines.push('\n');
+        }
+        fs::write(&path, lines).map_err(|e| format!("could not write {}: {e}", path.display()))?;
+        let summary = crate::null_tally::summary(&self.null);
+        println!("{}", crate::null_tally::line(&summary));
+        let mut bytes = serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?;
+        bytes.push(b'\n');
+        let summary_path = path.with_extension("summary.json");
+        fs::write(&summary_path, bytes)
+            .map_err(|e| format!("could not write {}: {e}", summary_path.display()))?;
+        Ok(())
     }
 
     /// Card CG16-INDEX-AND-OFFSET-EXTENTS: one function's bounds row.
@@ -288,6 +323,7 @@ impl AuditReport {
             plugin_links: _,
             bounds,
             bounds_evidence,
+            null,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -304,6 +340,7 @@ impl AuditReport {
         self.units.extend(units);
         self.bounds.extend(bounds);
         self.bounds_evidence.extend(bounds_evidence);
+        self.null.extend(null);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
@@ -518,6 +555,24 @@ impl AuditReport {
                     "status": format!("{:?}", function.status),
                     "diagnostics": diagnostics,
                 });
+                // Card NULL-SAFETY-PROPERTY (rule 14n): every dereference
+                // this verdict read non-null under decision 1's moved
+                // question, a named premise. Omitted when there is none, so
+                // every other row is byte-identical.
+                if !function.null_premises.is_empty() {
+                    row["null_premises"] = function
+                        .null_premises
+                        .iter()
+                        .map(|premise| {
+                            json!({
+                                "name": premise.name(&function.function),
+                                "line": premise.line,
+                                "origin": Self::origin(locations, file, premise.line),
+                                "variable": premise.variable,
+                            })
+                        })
+                        .collect();
+                }
                 // Card W45-FB-RETRY-LIFETIME: every counted-user clause
                 // checked against this body, with its verdict. Omitted when
                 // there is none, so every other row is byte-identical.
@@ -658,6 +713,7 @@ impl AuditReport {
             plugin_links: None,
             bounds: Vec::new(),
             bounds_evidence: Vec::new(),
+            null: Vec::new(),
         }
     }
 

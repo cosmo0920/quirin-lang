@@ -69,7 +69,11 @@ pub const SELECTION: &str = "all-bounds-views";
 pub const RULE: &str = "with QCORE_BOUNDS_PROPERTY set, the pinned and configured routes load every bounds view on the load path their resource manifest names (each crate's owned modules the bounds contract v1 loader accepts, generated and checked by providers/contracts.py, disjoint from its resource view), compare each declaration with its crate's bounds-contracts.lock over the audited source (C06.2: in force only where the contract text is the pinned one and the audited sites equal a reviewed identity), hold every declaration not in force (contract-pin-mismatch: Pending at most, never Safe, never accusing), and analyse every unit's bounds rows under that environment";
 
 struct Installed {
+    /// The bounds consumer's view (null-deref clauses removed).
     contracts: Arc<BoundsContracts>,
+    /// Card NULL-SAFETY-PROPERTY: the environment as loaded and pinned, the
+    /// null-dereference property's source of `quant null-deref` clauses.
+    full: Arc<BoundsContracts>,
     record: Value,
 }
 
@@ -82,6 +86,18 @@ pub fn environment() -> Arc<BoundsContracts> {
         .read()
         .ok()
         .and_then(|installed| installed.as_ref().map(|i| Arc::clone(&i.contracts)))
+        .unwrap_or_default()
+}
+
+/// Card NULL-SAFETY-PROPERTY (rule 14o): the installed environment with its
+/// `quant null-deref` clauses (pinned and held exactly as every bounds
+/// declaration), or the empty one.
+#[must_use]
+pub fn null_environment() -> Arc<BoundsContracts> {
+    INSTALLED
+        .read()
+        .ok()
+        .and_then(|installed| installed.as_ref().map(|i| Arc::clone(&i.full)))
         .unwrap_or_default()
 }
 
@@ -127,7 +143,8 @@ fn install(contracts: BoundsContracts, record: Value) -> Result<(), String> {
         .write()
         .map_err(|_| "the bounds environment lock is poisoned".to_owned())?;
     *slot = Some(Installed {
-        contracts: Arc::new(contracts),
+        contracts: Arc::new(contracts.for_bounds()),
+        full: Arc::new(contracts),
         record,
     });
     Ok(())
@@ -386,7 +403,11 @@ pub fn select_for_route(
     manifest_text: &str,
     source_root: &Path,
 ) -> Result<(), String> {
-    if std::env::var_os(crate::projection::BOUNDS_SELECTION).is_none() {
+    // Card NULL-SAFETY-PROPERTY (rule 14o): the null property reads its
+    // clauses from the same views, pinned the same way.
+    if std::env::var_os(crate::projection::BOUNDS_SELECTION).is_none()
+        && std::env::var_os(crate::projection::NULL_SELECTION).is_none()
+    {
         return Ok(());
     }
     let Some(load_path) = manifest_load_path(manifest_path, manifest_text)? else {
@@ -436,7 +457,7 @@ pub fn select_for_route(
         "load_path_sha256": sha256_hex(&fs::read(&load_path).map_err(|e| e.to_string())?),
         "modules": modules,
         "declarations": contracts.functions.keys().collect::<Vec<_>>(),
-        "environment_sha256": contracts.digest(),
+        "environment_sha256": contracts.for_bounds().digest(),
         "pins": pins,
         "trust": "declared bounds assumptions (C09.1: a resolved declaration is a Declared premise, not a proof of its C body), in force only where pinned",
         "rule": RULE,

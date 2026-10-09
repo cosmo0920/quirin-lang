@@ -302,6 +302,10 @@ mod pointer_store_flow;
 // root premise, read off one state, and its census.
 #[path = "legacy_bound_untracked.rs"]
 mod bound_untracked_route;
+// Card NULL-SAFETY-PROPERTY (rule 14n): decision 1's non-null reading of a
+// dereferenced target-free alias, under a named premise.
+#[path = "legacy_null_premise.rs"]
+mod null_premise_route;
 // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): record copies,
 // braced initializers, compound literals and string initializers, asked last.
 #[path = "legacy_aggregate_value.rs"]
@@ -1252,6 +1256,13 @@ pub struct LegacyFunctionSummary {
     /// function's declaration by its own body. Empty for every undeclared
     /// function and every declaration its body does not refute.
     pub refutations: Vec<refuted_contract::BodyRefutation>,
+    /// Card NULL-SAFETY-PROPERTY (gateway rule 14n): every dereference this
+    /// analysis read non-null under decision 1's moved question (a
+    /// target-free, possibly-null borrowed alias), each a named premise
+    /// (`null-deref:FUNCTION:LINE:VARIABLE`) the verdict rests on until the
+    /// null-dereference property proves it. Empty for every function that
+    /// made no such reading.
+    pub null_premises: Vec<crate::null_premise::NullPremise>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

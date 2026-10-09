@@ -133,6 +133,7 @@ fn row(function: &str, applied: &[&str]) -> LegacyFunctionSummary {
         exits: Vec::new(),
         counted_users: Vec::new(),
         refutations: Vec::new(),
+        null_premises: Vec::new(),
     }
 }
 
@@ -146,6 +147,7 @@ fn example() -> (UnitRecord, LegacyProgramSummary, ResourceContracts) {
             Consulted {
                 found: spellings.iter().map(|name| (*name).to_owned()).collect(),
                 missed: BTreeSet::new(),
+                null_premises: BTreeSet::new(),
             },
         );
         record.bodies.insert(

@@ -575,6 +575,7 @@ impl CurrentAudit {
             self.report
                 .write_with_revision_key(path, "fluent_bit_revision")?;
             self.report.write_bounds_selection()?;
+            self.report.write_null_selection()?;
             fs::write(
                 path.with_extension("contracts.json"),
                 serde_json::to_vec_pretty(&self.assumptions).map_err(|error| error.to_string())?,
