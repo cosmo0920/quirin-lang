@@ -87,6 +87,21 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/error_state.qv", "cio_error_reset", 5),
     ("chunkio/file_close.qv", "file_close_no_delete", 17),
     ("chunkio/file_close_delete.qv", "file_close_delete", 13),
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: the neighbouring
+    // `cio_file_st.h` accessors (bounds contract v1, the crate's bounds view):
+    // `get_hash` selector, read frame and derived relation; `infer_content_len`
+    // and `set_content_len` selector, quant check and frame.
+    ("chunkio/file_st_bounds.qv", "cio_file_st_get_hash", 3),
+    (
+        "chunkio/file_st_bounds.qv",
+        "cio_file_st_infer_content_len",
+        3,
+    ),
+    (
+        "chunkio/file_st_bounds.qv",
+        "cio_file_st_set_content_len",
+        3,
+    ),
     ("chunkio/filesystem_attempts.qv", "file_close_result_use", 6),
     ("chunkio/filesystem_attempts.qv", "file_unmap_result_use", 3),
     (
@@ -1663,7 +1678,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `chunkio/meta_len_bounds.qv`, the first bounds contract v1 module
     // (pinned in `bounds-contracts.lock`, outside every resource view).
     // 125 -> 126 by card W43-ABI-ENUM-AND-CONST-PP's `librdkafka/client.qv`.
-    assert_eq!(sources.len(), 126, "unexpected contract corpus size");
+    // 126 -> 127 by card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS'
+    // `chunkio/file_st_bounds.qv` (pinned in `bounds-contracts.lock`, outside
+    // every resource view).
+    assert_eq!(sources.len(), 127, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

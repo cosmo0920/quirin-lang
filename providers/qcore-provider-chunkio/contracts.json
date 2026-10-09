@@ -12,6 +12,7 @@
     "contracts/chunkio/error_state.qv": "4adda5278d32eb6885240e70b47ee5ad4c00526daba43ca84a6b6b8b58f3fff0",
     "contracts/chunkio/file_close.qv": "0c130cdba00a7209fda9961b1510f08661881f9f3dc9d1b625ae9d6cac7c6bd1",
     "contracts/chunkio/file_close_delete.qv": "fc4b113c4744fbb52544da194b71fc6ecce24841f01da1216a37e5217d11f070",
+    "contracts/chunkio/file_st_bounds.qv": "fa82322a2025e0a2ff6eecf0edf95ba412b954d21d7779e0e200f2f68c844176",
     "contracts/chunkio/filesystem_attempts.qv": "f030ac455ffaadc3ad838e1339fe5bb0039875a40f04afe99cf0b4cae0c6ace0",
     "contracts/chunkio/filesystem_chunk_close.qv": "d5be2c58974b6a415d317bd7f4eba318a9c26f1d42621f4856eba1fc2279ddc1",
     "contracts/chunkio/filesystem_constructor_failure_observation.qv": "72c8f0863f7189a2da46227d6629f8a9a65eb45d37306e9c0f98ff53c3130bbf",

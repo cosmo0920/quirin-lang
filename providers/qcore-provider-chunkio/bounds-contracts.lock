@@ -6,6 +6,33 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "cio_file_st_get_hash",
+      "module": "chunkio/file_st_bounds.qv",
+      "contract_sha256": "292cfa0ea2be981a96c2f8943c815ea1b125498352e017c0fc63709ec2202dfe",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_file_st.h",
+              "kind": "definition",
+              "declaration_sha256": "4aba28ab422a798847c9985c6b248c7e81d56e713af844e8732c96070e07bbaf",
+              "body_sha256": "efecb543ad61d76eb2480e9d44b3c1478d8d77aa373c485bff993f968c682326"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cio_file_st_get_meta_len",
       "module": "chunkio/meta_len_bounds.qv",
       "contract_sha256": "e36b7faaaa9fe45d4e73680fff579d3321ee413c09fa2668ea146cfad09c498a",
@@ -27,6 +54,60 @@
               "kind": "definition",
               "declaration_sha256": "ffab6b61e39404b0ced87b321dbf45f8a8f346d362e93aaabd5315569216c109",
               "body_sha256": "add62b50f0416aba3187076c1c56b13a1a04c9a2b526ff2f55813682f788d2e1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cio_file_st_infer_content_len",
+      "module": "chunkio/file_st_bounds.qv",
+      "contract_sha256": "bcd3e3cfb0c09748c594c0fe09411e4a3da98aa0ac231c363ea5ead1f2b90ec9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_file_st.h",
+              "kind": "definition",
+              "declaration_sha256": "228128c346f16bbcef65943484fd427b26eb7043a8d20ce816e51c172747c146",
+              "body_sha256": "6afeaef96bd0a6a204c04452d6fdf94a1d12e350cef2699849aa998669bf1bad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cio_file_st_set_content_len",
+      "module": "chunkio/file_st_bounds.qv",
+      "contract_sha256": "9662a0f54762cf48ce9b2158ee3d054f4294df425294c18b513924e1d2be7198",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_file_st.h",
+              "kind": "definition",
+              "declaration_sha256": "761a241239049c396d9aa141bdb5faefac16d69c61ff46e1dd3e362e1937e2c9",
+              "body_sha256": "d651a7b4de16f875819a5a681ad222fa34985fa36bbb2f1121d8f9fdc1f2cb48"
             }
           ]
         }

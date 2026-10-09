@@ -20,6 +20,7 @@
         "chunkio/error_state.qv",
         "chunkio/file_close.qv",
         "chunkio/file_close_delete.qv",
+        "chunkio/file_st_bounds.qv",
         "chunkio/filesystem_attempts.qv",
         "chunkio/filesystem_chunk_close.qv",
         "chunkio/filesystem_constructor_failure_observation.qv",
@@ -63,6 +64,7 @@
         "chunkio/resource_open_close.qv"
       ],
       "bounds_view": [
+        "chunkio/file_st_bounds.qv",
         "chunkio/meta_len_bounds.qv"
       ]
     },

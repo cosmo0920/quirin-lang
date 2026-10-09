@@ -12,7 +12,9 @@ mod clang_gap;
 use std::collections::BTreeMap;
 
 use clang_gap::*;
-use qcore_c_gateway::index_extent::{BoundsUnitReport, DeclarationBodyEvidence, analyze_bounds_c11};
+use qcore_c_gateway::index_extent::{
+    BoundsUnitReport, DeclarationBodyEvidence, analyze_bounds_c11,
+};
 use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_contract::bounds_contract::{BoundsContracts, load_bounds_contract_sources};
 

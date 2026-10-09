@@ -54,7 +54,12 @@ fn standing_vectors_match_lean() {
         (true, set(&[1]), vec![Validated(set(&[1]))], Standing::Held),
         (false, set(&[1]), vec![Held], Standing::Held),
         (false, set(&[1]), vec![], Standing::DeclaredAssumption),
-        (false, set(&[]), vec![Unvalidated], Standing::DeclaredAssumption),
+        (
+            false,
+            set(&[]),
+            vec![Unvalidated],
+            Standing::DeclaredAssumption,
+        ),
         (
             false,
             set(&[1, 2]),
@@ -112,7 +117,10 @@ fn standing_vectors_match_lean() {
 fn a_unit_outcome_follows_hold_then_refutation_then_coverage() {
     assert_eq!(unit_outcome(true, true, &set(&[1])), UnitOutcome::Held);
     assert_eq!(unit_outcome(false, true, &set(&[1])), UnitOutcome::Failed);
-    assert_eq!(unit_outcome(false, false, &set(&[])), UnitOutcome::Unvalidated);
+    assert_eq!(
+        unit_outcome(false, false, &set(&[])),
+        UnitOutcome::Unvalidated
+    );
     assert_eq!(
         unit_outcome(false, false, &set(&[1])),
         UnitOutcome::Validated(set(&[1]))

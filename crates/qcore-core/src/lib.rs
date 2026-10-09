@@ -27,6 +27,7 @@ pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
 // Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (gateway rule 11z).
+pub mod bounds_body_standing;
 pub mod execution_coverage;
 pub mod extern_c_emit;
 pub mod extern_call;
@@ -34,7 +35,6 @@ pub mod ffi;
 pub mod ffi_c_emit;
 pub mod footprint_mutex;
 pub mod index;
-pub mod bounds_body_standing;
 pub mod index_extent;
 pub mod index_extent_frames;
 pub mod index_quant;

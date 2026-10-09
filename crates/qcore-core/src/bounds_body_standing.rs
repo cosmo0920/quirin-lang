@@ -163,7 +163,7 @@ impl Standing {
 /// run).
 #[must_use]
 pub fn standing(held: bool, clauses: &BTreeSet<String>, units: &[UnitOutcome]) -> Standing {
-    if held || units.iter().any(|u| *u == UnitOutcome::Held) {
+    if held || units.contains(&UnitOutcome::Held) {
         return Standing::Held;
     }
     if units.is_empty() || clauses.is_empty() {

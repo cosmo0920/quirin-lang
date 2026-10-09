@@ -110,6 +110,12 @@ fn malformed_declarations_reject_the_whole_module() {
         FILL.replace("ensures normal", "ensures any"),
         // Inclusion and inheritance (G05a) are not part of this vocabulary.
         FILL.replace("module contract;", "module contract;\n#include \"other.qv\";"),
+        // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14j): an
+        // inheriting declaration is refused too, so neither form reaches a
+        // bounds view un-elaborated.
+        format!(
+            "{FILL}\nextern fn child(p: ptr<mut, u8>, i: usize, n: usize) -> ptr<mut, u8>\ncontract inherit fill;\n"
+        ),
     ];
     for case in cases {
         assert!(load_bounds_contract_sources(&one(&case)).is_err(), "{case}");

@@ -45,8 +45,11 @@ class CanonicalCorpus(unittest.TestCase):
         # (a bounds contract v1 module) in qcore-provider-chunkio (75 -> 76).
         # 125 -> 126: W43-ABI-ENUM-AND-CONST-PP's librdkafka/client.qv in
         # qcore-provider-librdkafka (76 -> 77).
-        self.assertEqual(len(modules), 126)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 77)
+        # 126 -> 127: CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS's
+        # chunkio/file_st_bounds.qv (a bounds contract v1 module) in
+        # qcore-provider-chunkio (77 -> 78).
+        self.assertEqual(len(modules), 127)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 78)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 49)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

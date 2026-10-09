@@ -1536,7 +1536,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 125 -> 126: card W43-ABI-ENUM-AND-CONST-PP adds `librdkafka/client.qv`
     // (twelve librdkafka declarations over enumeration and pointer-to-const
     // prototypes, two of them retaining), entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 126, "corpus module count");
+    // 126 -> 127: card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds
+    // `chunkio/file_st_bounds.qv`, a bounds contract v1 module (the crate's
+    // bounds view, never selected): resource-v1 rejects its three
+    // declarations.
+    assert_eq!(modules.len(), 127, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1784,9 +1788,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // function map (`rd_kafka_q_wait_result`, `rd_kafka_q_purge0`,
     // `rd_kafka_toppar_needs_query`, `rd_kafka_toppar_fetch_backoff`).
     // Selection and rejected unchanged.
+    // 218 -> 221 rejected by card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS:
+    // the three bounds declarations of `chunkio/file_st_bounds.qv`
+    // (`cio_file_st_get_hash`, `cio_file_st_infer_content_len`,
+    // `cio_file_st_set_content_len`) belong to the bounds consumer and are
+    // deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 363, 218)
+        (61, 363, 221)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

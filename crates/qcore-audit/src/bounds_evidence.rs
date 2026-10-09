@@ -29,10 +29,10 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::index_extent::BoundsUnitReport;
-use qcore_contract::bounds_contract::BoundsContracts;
 use qcore_c_gateway::index_extent::bounds_body_standing::{
     self as standing, Rollup, Standing, UnitOutcome,
 };
+use qcore_contract::bounds_contract::BoundsContracts;
 use serde_json::{Value, json};
 
 /// What the section means, carried in the section itself.

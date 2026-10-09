@@ -103,7 +103,11 @@ impl Fixture {
         fs::create_dir_all(root.join("tree")).unwrap();
         fs::write(root.join("tree/meta.h"), HEADER).unwrap();
         fs::write(root.join("tree/use_header.c"), USE_HEADER).unwrap();
-        fs::write(root.join("tree/also_header.c"), USE_HEADER.replace("header_caller", "second_caller")).unwrap();
+        fs::write(
+            root.join("tree/also_header.c"),
+            USE_HEADER.replace("header_caller", "second_caller"),
+        )
+        .unwrap();
         fs::write(root.join("tree/pick.c"), pick).unwrap();
         fs::write(root.join("tree/use_pick.c"), USE_PICK).unwrap();
         let contracts = root.join("providers/quirin-provider-alpha/contracts/alpha");
@@ -155,7 +159,10 @@ impl Fixture {
     }
 
     /// The bounds rows by function, the selection record and the console.
-    fn audit(&self, tips: Option<&str>) -> (std::collections::BTreeMap<String, Value>, Value, String) {
+    fn audit(
+        &self,
+        tips: Option<&str>,
+    ) -> (std::collections::BTreeMap<String, Value>, Value, String) {
         let _ = fs::remove_dir_all(self.0.join("out"));
         fs::create_dir_all(self.0.join("out")).unwrap();
         let console = stdout(&self.quirin(
@@ -179,7 +186,12 @@ impl Fixture {
             .unwrap()
             .lines()
             .map(|line| serde_json::from_str::<Value>(line).unwrap())
-            .map(|row| (row["function"].as_str().unwrap().to_owned(), row["bounds"].clone()))
+            .map(|row| {
+                (
+                    row["function"].as_str().unwrap().to_owned(),
+                    row["bounds"].clone(),
+                )
+            })
             .collect();
         let record =
             serde_json::from_slice(&fs::read(self.0.join("out/bounds.contracts.json")).unwrap())
@@ -271,8 +283,7 @@ fn a_header_body_is_evidence_for_its_declaration_and_not_a_row() {
     // Both header callers, `pick_caller` and `pick` itself (relative to its
     // own declaration) rest only on validated declarations.
     assert_eq!(
-        record["body_evidence"]["safe_rollup"]["resting_only_on_validated_declarations"],
-        4,
+        record["body_evidence"]["safe_rollup"]["resting_only_on_validated_declarations"], 4,
         "{:#}",
         record["body_evidence"]
     );
@@ -295,7 +306,11 @@ fn a_body_refuting_its_declaration_withdraws_it_in_every_unit() {
     let fixture = Fixture::new(PICK_REFUTES);
     fixture.pin(&[]);
     let (rows, record, _) = fixture.audit(None);
-    assert_eq!(record["refutation_table"]["refuted"], json!(["pick"]), "{record:#}");
+    assert_eq!(
+        record["refutation_table"]["refuted"],
+        json!(["pick"]),
+        "{record:#}"
+    );
     assert_eq!(verdict(&rows, "pick_caller"), "Unknown", "{rows:#?}");
     assert!(
         rows["pick_caller"]["reasons"]
@@ -326,8 +341,14 @@ fn a_bounds_tip_entry_is_a_named_assumption_in_force_and_held_otherwise() {
     fixture.vcs(&["checkout", "-q", "-b", "fix"]);
     fixture.pin(&[]);
     let tracked = fixture.pin(&["--function", "hget", "--track-tip", "fix"]);
-    assert!(tracked.contains("tracks the tip `refs/heads/fix`"), "{tracked}");
-    assert!(tracked.contains("targets a future, unreleased release"), "{tracked}");
+    assert!(
+        tracked.contains("tracks the tip `refs/heads/fix`"),
+        "{tracked}"
+    );
+    assert!(
+        tracked.contains("targets a future, unreleased release"),
+        "{tracked}"
+    );
 
     // In force: the audited sites are the tip's.
     let (rows, record, console) = fixture.audit(None);
@@ -344,7 +365,10 @@ fn a_bounds_tip_entry_is_a_named_assumption_in_force_and_held_otherwise() {
         record["pins"]["assumptions"]["tip_tracked"][0]["name"],
         "tip-tracked:hget"
     );
-    assert!(console.contains("bounds contract notice [info]"), "{console}");
+    assert!(
+        console.contains("bounds contract notice [info]"),
+        "{console}"
+    );
     assert_eq!(verdict(&rows, "header_caller"), "Safe");
 
     // The tip moves away from the audited source: held, a warning.
@@ -366,9 +390,15 @@ fn a_bounds_tip_entry_is_a_named_assumption_in_force_and_held_otherwise() {
     assert_eq!(outcome["reason"], "source-changed", "{outcome:#}");
     assert_eq!(outcome["notice"]["severity"], "warning", "{outcome:#}");
     assert_eq!(record["pins"]["assumptions"]["tip_tracked"], json!([]));
-    assert!(console.contains("bounds contract notice [warning]"), "{console}");
+    assert!(
+        console.contains("bounds contract notice [warning]"),
+        "{console}"
+    );
     assert_eq!(verdict(&rows, "header_caller"), "Pending", "{rows:#?}");
-    assert_eq!(record["body_evidence"]["declarations"]["hget"]["body_standing"], "held");
+    assert_eq!(
+        record["body_evidence"]["declarations"]["hget"]["body_standing"],
+        "held"
+    );
 
     // The ref is gone: unresolved, held.
     fixture.vcs(&["branch", "-q", "-D", "fix"]);
@@ -388,10 +418,8 @@ fn a_bounds_tip_entry_is_a_named_assumption_in_force_and_held_otherwise() {
 /// reason), against the C06.2 decision a bounds tip entry is compared by.
 #[test]
 fn tip_vectors_match_lean() {
-    use qcore_audit::contract_tip::{TipEntry, TipRepository, TipReview, TipResolver};
-    use qcore_audit::contract_revision::{
-        ContractLock, LOCK_VERSION, PinStanding, pin_standing,
-    };
+    use qcore_audit::contract_revision::{ContractLock, LOCK_VERSION, PinStanding, pin_standing};
+    use qcore_audit::contract_tip::{TipEntry, TipRepository, TipResolver, TipReview};
     let vectors = [
         (true, true, true, None),
         (true, true, false, Some("source-changed")),
@@ -462,4 +490,44 @@ fn tip_vectors_match_lean() {
         };
         assert_eq!(found, expected, "{text} {resolved} {same}: {standing:?}");
     }
+}
+
+/// Rule 14j: inclusion and inheritance (G05a) stay outside the bounds
+/// vocabulary. A bounds module that includes another and inherits a bounds
+/// declaration is accepted by neither loader, so the generated views leave it
+/// out (the probe), and a load path that names it in a bounds view refuses the
+/// whole selection rather than load it un-elaborated.
+#[test]
+fn an_inheriting_bounds_module_never_reaches_a_bounds_view() {
+    let fixture = Fixture::new(PICK_KEEPS);
+    let contracts = fixture
+        .0
+        .join("providers/quirin-provider-alpha/contracts/alpha");
+    fs::write(
+        contracts.join("child.qv"),
+        "module contract;\n#include \"quirin-provider-alpha:alpha/meta.qv\";\n\
+         extern fn hget2(m: ptr<mut, u8>) -> u8\ncontract inherit hget;\n",
+    )
+    .unwrap();
+    let load_path = fixture.0.join("providers/contract-load-path.json");
+    let mut manifest: Value = serde_json::from_slice(&fs::read(&load_path).unwrap()).unwrap();
+    manifest["crates"][0]["modules"] = json!(["alpha/child.qv", "alpha/heap.qv", "alpha/meta.qv"]);
+    manifest["crates"][0]["published"] =
+        json!({"alpha/meta.qv": qcore_schemas::sha256_hex(BOUNDS.as_bytes())});
+    fs::write(&load_path, serde_json::to_string_pretty(&manifest).unwrap()).unwrap();
+    let probed = qcore_audit::providers::probe_resource_views(&load_path).unwrap();
+    let views = &probed["crates"]["quirin-provider-alpha"];
+    assert_eq!(views["bounds_view"], json!(["alpha/meta.qv"]), "{probed:#}");
+    assert_eq!(
+        views["resource_view"],
+        json!(["alpha/heap.qv"]),
+        "{probed:#}"
+    );
+    manifest["crates"][0]["bounds_view"] = json!(["alpha/child.qv", "alpha/meta.qv"]);
+    fs::write(&load_path, serde_json::to_string_pretty(&manifest).unwrap()).unwrap();
+    let selection =
+        qcore_contract::load_path_manifest::load_contract_load_path_manifest(&load_path)
+            .map_err(|e| e.to_string())
+            .and_then(|manifest| qcore_audit::bounds_selection::load_views(&manifest).map(|_| ()));
+    assert!(selection.is_err(), "{selection:?}");
 }
