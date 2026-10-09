@@ -1,6 +1,6 @@
 {
-  "note": "VERDICT-CONTRACT-PREMISE-ANNOTATIONS card gate on base 9564eeb6d, every code step at 5511ac4fb, scripts docs/reports/verdict-contract-premise-annotations/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/vcpa/gate-g1 and private/vcpa/provider-gate-pg2 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 460 units, 473 summaries, 7,718 passed, 0 failed, 11 ignored, exit 0 (private/vcpa/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 299 audits passed (no Lean change); python suite before the matrix regeneration 08 = 0, docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-pg2, at f2d26a7d5; providers/ as at the code steps: the eleven premises, the re-pinned locks and the synced inventory): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 7718,
+  "note": "VERDICT-CONTRACT-PREMISE-ANNOTATIONS card gate on base 84967949c (rebased from 9564eeb6d), every code step at 5c601a438, scripts docs/reports/verdict-contract-premise-annotations/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/vcpa/gate-g2 and private/vcpa/provider-gate-pg2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 461 units, 474 summaries, 7,728 passed, 0 failed, 11 ignored, exit 0 (private/vcpa/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 300 audits passed (no Lean change); python suite before the matrix regeneration 08 = 0, docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-pg2, at f2d26a7d5; providers/ byte-identical to the code steps' tree (a pre-rebase commit; main changed nothing under providers/): the eleven premises, the re-pinned locks and the synced inventory): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7728,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "complete",
-  "lean_audits": 299,
+  "lean_audits": 300,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

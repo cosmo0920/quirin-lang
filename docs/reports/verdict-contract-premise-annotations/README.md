@@ -289,8 +289,10 @@ step under the shared lock, code steps at `5c601a438`; logs are in
   failed**, 11 ignored, exit 0 (`private/vcpa/tests-gate-g2/`).
 * Both reevaluation probes: 0.
 * `check_lean_audits.py`: **300** audits passed.
-* The docs steps and the matrix regeneration are recorded in
-  [gate/](gate/) (08, 09, 09a, 09b, 10b, 10c).
+* Python suite: 365 OK (08). Docs index `--check`: 0 (09).
+* Then `build_matrix.py --gate gate.json` (09a) 0, the Python suite again
+  (09b) 365 OK, and the docs index build and `--check` (10b, 10c) 0. The
+  exits are in [gate/](gate/), and [gate.json](gate.json) is `g2`'s.
 
 `providers/` is byte-identical between the provider gate `pg2` (below) and
 the rebased tip, and main changed nothing under `providers/`, so `pg2`
@@ -326,7 +328,7 @@ the code steps:
 * Package build: 0. Verify of all five packages: 0.
 * Providers Python suite: 25 OK.
 
-Records: [gate.json](gate.json) and [gate/](gate/).
+`g1`'s exits stay in `private/vcpa/gate-g1/`. The committed [gate.json](gate.json) and [gate/](gate/) are `g2`'s, with `pg2`'s exits.
 
 ## 8. Ledger
 
