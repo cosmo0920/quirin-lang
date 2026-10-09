@@ -1243,6 +1243,9 @@ refusal stays.
     root premise granted would admit it) and every connective return
     (`position: "return-connective"`). `QCore.TypedAccessPathPositionResiduals`;
     [report](../reports/w47-access-path-position-residuals/README.md).
+    Amended by [rule 14c](#constraint-14c): (1)'s callee shape also admits a
+    scalar element `&PATH[I]`; and by [rule 14d](#constraint-14d): an
+    interior offset `P ± n` at an actual is read under (1)'s premise.
 
 <a id="constraint-10o"></a>
 
@@ -6061,6 +6064,122 @@ own anchor here.
     (`the_annotated_walk_is_the_walk`, the memo theorems);
     `function_reading_reuse::tests::the_line_tree_mirrors_the_function`,
     `a_span_is_tokenized_once`.
+
+<a id="constraint-14a"></a>
+
+14a. **A scalar statement whose value holds exactly one call is the call, then
+    the statement's typed reads, only when the call takes no custody.** Card
+    CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (`legacy_residual_access.rs`
+    with the Clang reading in `residual_access_reading.rs`; one thin hook in
+    `legacy_c.rs::expression_statement`, after every statement fallback and
+    before rule 12k; shared items added: `Reader::opaque_call` in
+    `typed_access_path.rs`, read only by this rule, and
+    `StatementIndex::statement_node`, read out of `statement_with` unchanged).
+    For exactly the gate's refusal of a statement with no braces that reads no
+    tracked descriptor, matched to one Clang statement (`T x = E`, `x = E`, or
+    `P = E` with `P` a typed scalar place, never a pointer destination) whose
+    value holds exactly one `CallExpr` with a plain callee: the statement is
+    read by the typed path reader with that call an opaque scalar operand
+    (every per-hop obligation of each place read or stored, no connective, no
+    `?:`, no cast but a scalar one), and the call is lowered alone, as the
+    statement `f(args)` (W44's reads when the gate refuses its actuals). The
+    pair is admitted only when the callee's contract in force (no review, pin
+    or refutation hold) has a `None` result and every declared position
+    `Borrowed`, and the call lowers to exactly that contracted call with no
+    destination; the block is the call (after its reads), then the
+    statement's typed reads and store. C leaves the order of the call and the
+    other operands unspecified (C11 6.5p2, 6.5.2.2p10): a call that takes and
+    releases no custody changes no binding a read is decided on, so either
+    order decides alike. Every other answer keeps the gate's refusal byte for
+    byte with its counters restored. **Do not** admit two calls, a
+    custody-taking or releasing position, an owned or derived result, an
+    uncontracted or held callee, a pointer-valued destination or a
+    conditionally evaluated call under this rule. Parity runs record every
+    reading (`position: "residual-access"`, `rule: "14a"`, the callee and the
+    answer). Premises stated, not proved: faithful Clang extraction and node
+    matching (trust boundary 28). Measured (corpus `66910c10`, main
+    `84ec54d1d` plus the card): 131 readings admitted, 1,135 declined; **+8
+    Unknown → Safe** (`rd_kafka_broker_outbufs_space`, the four
+    `calculate_share_*_rate`, `rd_kafka_cgrp_set_last_err`,
+    `rd_kafka_cgrp_update_session_timeout`, `rd_kafka_msgbatch_set_first_msg`).
+    `QCore.ResidualAccessReadings` (`a_borrowed_call_changes_no_custody`,
+    `a_read_is_decided_alike_on_either_side_of_the_call`,
+    `a_releasing_call_does_not_commute`, `an_admitted_call_takes_no_custody`,
+    `scalar_call_vectors_hold`), bound to `SCALAR_CALL_VECTORS`;
+    [report](../reports/cg10-indirect-access-sole-residuals-r2/README.md).
+
+<a id="constraint-14b"></a>
+
+14b. **A pointer local given an interior pointer of a never-bound root binds
+    the pointer read's target-free alias.** Card
+    CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (same module and hook as rule
+    14a). For the gate's refusal of a call-free statement declaring or
+    assigning a pointer variable by name, whose value is `&PATH` (rule 10n(1)'s
+    address reader: `PATH` a member or element place whose type is not a
+    pointer, an array or a function) or `PATH ± n` (`PATH` a pointer-valued
+    member, element or `*` path, `n` a scalar value), with **every root of the
+    plan never bound** (the statement route's closure, rule 10o): the
+    statement is `IndirectScalarAccess` with `PATH`'s per-hop obligations and
+    a `borrowed_destination`, exactly what a pointer-valued path read
+    `p = s->f;` binds — target-free, unknown, possibly null (C11 6.5.3.2p3:
+    `&*E` may be null). The value points into the object `PATH` reaches, which
+    the never-bound premise puts outside the tracked graph. A release, a
+    publication or a dereference through the alias is decided by its own rule
+    and never by the gate. **Do not** admit a bound root, a cast or call value,
+    the address of a pointer member (a slot) or a member destination under
+    this rule, or bind the alias non-null or to a target. Parity rows as rule
+    14a's (`rule: "14b"`, its form). Measured: 89 readings admitted; **+1
+    Unknown → Safe** (`update_offset`); in most functions the refusal moves to
+    the alias's uses (`append`, `peek`, `sink_peek`,
+    `rd_kafka_share_ack_type_from_msg_op`, `mk_sched_broadcast_signal`: an
+    unresolved identity where the alias is dereferenced, possibly null;
+    `header_lookup`: its publication refused, the alias not one live object).
+    `QCore.ResidualAccessReadings` (`interior_vectors_hold`,
+    `a_bound_root_is_never_read`, `the_interior_alias_is_the_pointer_reads`,
+    `a_release_through_the_alias_discharges_nothing`,
+    `the_alias_is_never_known_non_null`), bound to `INTERIOR_VECTORS`.
+
+<a id="constraint-14c"></a>
+
+14c. **An address handed to a `Borrowed` or data-tail actual may be a scalar
+    element `&PATH[I]`.** Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2
+    (`scalar_element_address.rs`, a thin hook in
+    `typed_position_shapes.rs::address`). It amends rule 10n(1), whose
+    callee shape was exactly a member: the place may also be an element whose
+    Clang type is a builtin scalar or an enumeration, so the array it belongs
+    to holds no pointer a callee writing through the address could reach.
+    Rule 10n(1)'s type test, its per-hop obligations and its never-bound
+    premise on every root stand. **Do not** admit an element of pointer,
+    record or array type, or relax the root premise. Premise stated, not
+    proved: the callee writes within the array the element belongs to (bounds
+    are outside the property, as for every W44 actual). Measured: 19 actuals
+    admitted that the base never read; **+7 Unknown → Safe**
+    (`metric_hist_exchange` in two units, `cmt_metric_hist_get_value`,
+    `summary_quantile_exchange` directly; `cmt_metric_hist_inc`, `_set`,
+    `cmt_metric_hist_bucket_inc` through the summaries they validate).
+    `QCore.ResidualAccessReadings` (`address_vectors_hold`,
+    `a_member_keeps_rule_10n`, `an_element_is_read_only_when_scalar`,
+    `nothing_else_is_read`), bound to `DECISION_VECTORS`.
+
+<a id="constraint-14d"></a>
+
+14d. **An interior offset `P ± n` handed to a `Borrowed` or data-tail actual
+    is read under the address's premise.** Card
+    CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (`residual_access_reading.rs`,
+    a thin hook in `typed_access_positions.rs::StatementIndex::argument`).
+    `memcpy(cf->map + 2, …)`: the actual is read as rule 14b reads the
+    offset, with `P` a pointer-valued path or a plain pointer variable the
+    closure proves never bound, `n` a scalar value, and every root never bound
+    (rule 10n(1)'s address premise). The callee is handed a pointer into the
+    object `P` reaches, which it could be handed as `P`; W44's position
+    premise and its second obligation (`ArgumentReads`, the value pointer
+    valued) apply unchanged. **Do not** read a cast or call operand, a bound
+    root or name, or a custody-taking position under this rule. Measured: 9
+    actuals admitted that the base never read; **+2 Unknown → Safe**
+    (`finalize_checksum`, `rd_segment_write_update`).
+    `QCore.ResidualAccessReadings` (`offset_vectors_hold`,
+    `a_bound_name_is_never_read`, `a_statement_reads_only_a_path_operand`),
+    bound to `OFFSET_VECTORS`.
 
 <a id="constraint-14f"></a>
 
