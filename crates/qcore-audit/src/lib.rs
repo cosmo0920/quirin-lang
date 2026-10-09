@@ -58,7 +58,7 @@ pub mod timeout_teardown;
 pub mod unit_selection;
 // Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: measurement only, compiled out
 // unless the `unit-timing` feature is on.
-#[cfg(feature = "unit-timing")]
+#[cfg(all(feature = "unit-timing", target_os = "linux"))]
 mod unit_timing;
 // Card W45-USER-CONTRACT-PLUGINS: user contract crates on an extending load
 // path, their collisions with shipped contracts, checker plugins, and the

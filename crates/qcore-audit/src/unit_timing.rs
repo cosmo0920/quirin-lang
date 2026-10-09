@@ -1,7 +1,7 @@
 //! Card **DEEP-AST-TRANSPORTS-AND-WALL-TIME**, measurement only (feature
 //! `unit-timing`, off by default and never enabled by any workspace member;
 //! with it off this module and its one call site in `pinned_route` are
-//! compiled out entirely).
+//! compiled out entirely). Linux only (it reads `/proc`).
 //!
 //! When `QCORE_UNIT_TIMING` names a file, each pinned-route unit analysis
 //! appends one JSON line: the unit's source path, the analysing thread's
@@ -50,48 +50,45 @@ impl Span {
     }
 }
 
-/// The analysing thread's stack mapping, from `/proc/self/smaps`: its size
-/// and the memory it has touched (`Rss` plus `Swap`, in KiB). A thread's stack
-/// pages stay resident once touched, so the touched figure is the thread's
-/// high-water mark so far (an over-estimate when the C library hands the
-/// thread a stack an earlier thread already used). `None` when the mapping
-/// holding a local of this frame is not found.
+/// The analysing thread's stack as the C library reports it
+/// (`pthread_getattr_np`: its usable size) and the deepest page of it ever
+/// touched, read from `/proc/self/pagemap` (a page is touched when it is
+/// present or swapped). Pages stay mapped once touched, so the depth from the
+/// stack's top to the lowest touched page is the thread's high-water mark so
+/// far, in KiB (an over-estimate when the C library hands the thread a stack an
+/// earlier thread already used). `None` when either read fails.
 fn stack_touched() -> Option<serde_json::Value> {
-    let marker = 0u8;
-    let address = std::hint::black_box(&marker) as *const u8 as usize;
-    let smaps = std::fs::read_to_string("/proc/self/smaps").ok()?;
-    let mut inside = None;
-    let (mut rss, mut swap) = (None, None);
-    for line in smaps.lines() {
-        let mut fields = line.split_whitespace();
-        let first = fields.next().unwrap_or("");
-        if let Some((low, high)) = first.split_once('-')
-            && let (Ok(low), Ok(high)) = (
-                usize::from_str_radix(low, 16),
-                usize::from_str_radix(high, 16),
-            )
-        {
-            if inside.is_some() {
-                break;
-            }
-            if (low..high).contains(&address) {
-                inside = Some(high - low);
-            }
-            continue;
+    use std::io::{Read, Seek, SeekFrom};
+    let (low, size) = unsafe {
+        let mut attr = std::mem::MaybeUninit::<libc::pthread_attr_t>::uninit();
+        if libc::pthread_getattr_np(libc::pthread_self(), attr.as_mut_ptr()) != 0 {
+            return None;
         }
-        if inside.is_some() {
-            let value = fields.next().and_then(|value| value.parse::<u64>().ok());
-            match first {
-                "Rss:" => rss = value,
-                "Swap:" => swap = value,
-                _ => {}
-            }
+        let mut attr = attr.assume_init();
+        let mut address = std::ptr::null_mut();
+        let mut size = 0usize;
+        let got = libc::pthread_attr_getstack(&attr, &mut address, &mut size);
+        libc::pthread_attr_destroy(&mut attr);
+        if got != 0 {
+            return None;
         }
-    }
-    let size = inside?;
+        (address as usize, size)
+    };
+    const PAGE: usize = 4096;
+    let pages = size / PAGE;
+    let mut map = std::fs::File::open("/proc/self/pagemap").ok()?;
+    map.seek(SeekFrom::Start(((low / PAGE) * 8) as u64)).ok()?;
+    let mut entries = vec![0u8; pages * 8];
+    map.read_exact(&mut entries).ok()?;
+    // The stack grows down: the first touched page from the low end is the
+    // deepest point reached.
+    let lowest = entries.chunks_exact(8).position(|entry| {
+        let bits = u64::from_le_bytes(entry.try_into().expect("eight bytes"));
+        bits & (0b11 << 62) != 0
+    })?;
     Some(serde_json::json!({
-        "mapping_kib": size / 1024,
-        "touched_kib": rss? + swap.unwrap_or(0),
+        "stack_kib": size / 1024,
+        "touched_kib": (pages - lowest) * PAGE / 1024,
     }))
 }
 

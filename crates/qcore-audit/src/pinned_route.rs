@@ -253,7 +253,7 @@ pub fn run(
         }
         Step::Unit(index, entry) => {
             // Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: measurement only.
-            #[cfg(feature = "unit-timing")]
+            #[cfg(all(feature = "unit-timing", target_os = "linux"))]
             let _timing = crate::unit_timing::Span::start(&entry.file);
             let plan = &plans[index];
             let mut output = String::new();
