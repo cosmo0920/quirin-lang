@@ -378,7 +378,34 @@ gains the clause kinds `callback` and `callbackChecked` and the evidence
 
 ## 9. Gate
 
-GATE_SECTION
+Standing gate **g4** on the final tip `cbbaa0abd` (rebased onto `d03c59c73`;
+`scripts/gate-chain.sh g4`, every step under the shared lock, exits in
+[gate/](gate/), logs `private/cg22r/gate-g4/`): `cargo check --workspace
+--all-targets` 0; submodule 0; `cargo fmt --check` 0; `clippy --locked
+--all-targets -D warnings` 0; `run_test_binaries.py` **469 units, 482
+summaries, 7,805 passed, 0 failed, 12 ignored**, exit 0
+(`private/cg22r/tests-g4/`); `reevaluation_probe` 0; `reevaluation_followup`
+0; `check_lean_audits.py` **307** audits passed; `cargo clean --profile dev`
+0 (07z); the Python suite and the docs index (08, 09), then `build_matrix.py
+. --gate gate.json` (09a), the Python suite again (09b) and the docs index
+(10b, 10c), per [gate/](gate/). Provider gate **g4** at the same tip
+(`private/cg22r/provider-gate-g4/`): `cargo check --locked` 0, `cargo test`
+129 passed (exit 0), fmt 0, clippy 0, `contracts.py check` 0, package build 0,
+package verify of all five packages 0, providers Python suite 25 tests OK.
+Clang: `gate/clang-version.txt`.
+
+Earlier attempts, retained and not evidence for the tip: g1 stopped (fmt was
+not clean); g2 (on the original base) failed only
+`source_contract_config::shipped_cmetrics_selection_loads_canonical_policy`
+on the cmetrics inventory digest pin, then updated (section 3), every other
+step 0 (7,776 passed, 304 Lean audits, provider gate g2 0); g3 (on
+`6f64d545e`) 0 except its first suite attempt, refused before any test by a
+stale log directory of the stopped attempt, rerun 0 (7,793 passed), and one
+provider `cargo test` run that failed on the load-sensitive ETXTBSY race
+(`real_packages_preserve_unknown_and_reject_mutations`, "Text file busy",
+constraint 16), 0 in isolation (129 passed,
+`scripts/provider-tests-isolated.sh`); g3 was superseded by the second
+rebase.
 
 ## Files
 
