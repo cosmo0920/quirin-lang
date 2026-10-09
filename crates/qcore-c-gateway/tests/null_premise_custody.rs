@@ -91,8 +91,16 @@ fn run(source: &str) -> Run {
 /// `Safe`, resting on exactly the named premises on these variables.
 fn assert_safe_on(source: &str, variables: &[&str]) {
     let outcome = run(source);
-    assert_eq!(outcome.status, AnalysisStatus::Safe, "{source}\n{outcome:?}");
-    let mut named = outcome.premises.iter().map(|(_, v)| v.as_str()).collect::<Vec<_>>();
+    assert_eq!(
+        outcome.status,
+        AnalysisStatus::Safe,
+        "{source}\n{outcome:?}"
+    );
+    let mut named = outcome
+        .premises
+        .iter()
+        .map(|(_, v)| v.as_str())
+        .collect::<Vec<_>>();
     named.dedup();
     assert_eq!(named, variables, "{source}\n{outcome:?}");
 }
@@ -153,9 +161,8 @@ fn every_other_obligation_is_decided_as_before() {
     let outcome = run("int subject(void) { struct S *p = 0; int v = p->a; return v; }");
     assert!(outcome.premises.is_empty(), "{outcome:?}");
     // A tracked allocation stays the custody rule's question.
-    let outcome = run(
-        "int subject(void) { struct S *p = q_alloc(); int v = p->a; q_free(p); return v; }",
-    );
+    let outcome =
+        run("int subject(void) { struct S *p = q_alloc(); int v = p->a; q_free(p); return v; }");
     assert!(outcome.premises.is_empty(), "{outcome:?}");
     // A store through the alias keeps W42's refusal of a store base that is
     // not one live identity (a non-null target-free base refuses too).

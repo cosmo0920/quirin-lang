@@ -268,8 +268,10 @@ pub(super) struct Walker<'a> {
 
 fn strip(node: &Value) -> &Value {
     let mut node = node;
-    while matches!(kind(node), "ParenExpr" | "ConstantExpr" | "ExprWithCleanups")
-        || (kind(node) == "UnaryOperator" && node["opcode"] == "__extension__")
+    while matches!(
+        kind(node),
+        "ParenExpr" | "ConstantExpr" | "ExprWithCleanups"
+    ) || (kind(node) == "UnaryOperator" && node["opcode"] == "__extension__")
     {
         match kids(node).next() {
             Some(inner) => node = inner,
@@ -390,14 +392,18 @@ impl<'a> Walker<'a> {
             }
             let null = match entries.get(&index) {
                 Some(Entry::Declared(text)) => {
-                    walker.assumptions.insert(format!("declared: `{name}` {text}"));
+                    walker
+                        .assumptions
+                        .insert(format!("declared: `{name}` {text}"));
                     Nullness::proved(Proof::Precondition(format!("declared: {text}")))
                 }
                 Some(Entry::Held(hold)) => {
                     Nullness::proved(Proof::Precondition(format!("held: {hold}")))
                 }
                 Some(Entry::Inferred(text)) => {
-                    walker.assumptions.insert(format!("inferred: `{name}` {text}"));
+                    walker
+                        .assumptions
+                        .insert(format!("inferred: `{name}` {text}"));
                     Nullness::proved(Proof::Precondition(format!("inferred: {text}")))
                 }
                 None => Nullness::maybe(Source::Formal(pname.clone())),
@@ -517,7 +523,9 @@ impl<'a> Walker<'a> {
     fn forget_rooted(state: &mut State, id: &str) {
         let root = format!("t:{id}");
         state.paths.retain(|key, _| {
-            !(key == &root || key.starts_with(&format!("{root}^")) || key.starts_with(&format!("{root}.")))
+            !(key == &root
+                || key.starts_with(&format!("{root}^"))
+                || key.starts_with(&format!("{root}.")))
         });
     }
 
@@ -600,9 +608,9 @@ impl<'a> Walker<'a> {
             let decided = core::check(&value.null, state.definite);
             match (&decided, &value.null) {
                 (Outcome::Proved(_) | Outcome::Moved(_), Nullness::NonNull(proofs))
-                    if proofs.iter().all(|p| {
-                        matches!(p, Proof::Precondition(text) if text.starts_with("held: "))
-                    }) =>
+                    if proofs.iter().all(
+                        |p| matches!(p, Proof::Precondition(text) if text.starts_with("held: ")),
+                    ) =>
                 {
                     let Some(Proof::Precondition(text)) = proofs.first() else {
                         unreachable!("a non-empty proof set")
@@ -635,7 +643,10 @@ impl<'a> Walker<'a> {
         }
         if state.live {
             if let Some(formal) = value.origin {
-                state.firsts[formal] = state.firsts[formal].iter().map(|f| f.dereference()).collect();
+                state.firsts[formal] = state.firsts[formal]
+                    .iter()
+                    .map(|f| f.dereference())
+                    .collect();
             }
             if value.place.is_some() || value.ident.is_some() {
                 let after = core::after_dereference(&value.null, id);
@@ -655,9 +666,8 @@ impl<'a> Walker<'a> {
                         ));
                     }
                     Proof::NonNullResult(name) if name.starts_with("declared:") => {
-                        self.assumptions.insert(format!(
-                            "{name}: a non-null result (resource contract)"
-                        ));
+                        self.assumptions
+                            .insert(format!("{name}: a non-null result (resource contract)"));
                     }
                     _ => {}
                 }
@@ -812,12 +822,12 @@ impl<'a> Walker<'a> {
                 let (Some(first), Some(second)) = (parts.first(), parts.get(1)) else {
                     return Val::address();
                 };
-                let (base, index) = if is_pointer(ty(strip(first))) || !is_pointer(ty(strip(second)))
-                {
-                    (*first, *second)
-                } else {
-                    (*second, *first)
-                };
+                let (base, index) =
+                    if is_pointer(ty(strip(first))) || !is_pointer(ty(strip(second))) {
+                        (*first, *second)
+                    } else {
+                        (*second, *first)
+                    };
                 let value = self.eval(base, state).offset();
                 self.eval(index, state);
                 value
@@ -938,7 +948,11 @@ impl<'a> Walker<'a> {
                     self.reason("null-unsupported-form: ConditionalOperator".into());
                     return Val::scalar();
                 };
-                let (mut on_true, mut on_false) = self.condition(condition, state.clone(), Proof::Tested(self.line(condition)));
+                let (mut on_true, mut on_false) = self.condition(
+                    condition,
+                    state.clone(),
+                    Proof::Tested(self.line(condition)),
+                );
                 let a = self.eval(yes, &mut on_true);
                 let b = self.eval(no, &mut on_false);
                 *state = on_true.join(&on_false);
@@ -954,9 +968,13 @@ impl<'a> Walker<'a> {
                     return Val::scalar();
                 };
                 let value = self.eval(common, state);
-                let (on_true, mut on_false) = self.refine(&value, state.clone(), Proof::Tested(self.line(common)));
+                let (on_true, mut on_false) =
+                    self.refine(&value, state.clone(), Proof::Tested(self.line(common)));
                 let kept = match core::refine(&value.null, true, Proof::Tested(self.line(common))) {
-                    Some(null) => Val { null, ..value.clone() },
+                    Some(null) => Val {
+                        null,
+                        ..value.clone()
+                    },
                     None => value.clone(),
                 };
                 let b = self.eval(no, &mut on_false);
@@ -988,8 +1006,12 @@ impl<'a> Walker<'a> {
             },
             // A type is never evaluated (a `typeof` operand, a trait's types).
             kind_name if kind_name.ends_with("Type") => Val::scalar(),
-            "InitListExpr" | "ParenListExpr" | "DesignatedInitExpr" | "ShuffleVectorExpr"
-            | "ConvertVectorExpr" | "ExtVectorElementExpr" => {
+            "InitListExpr"
+            | "ParenListExpr"
+            | "DesignatedInitExpr"
+            | "ShuffleVectorExpr"
+            | "ConvertVectorExpr"
+            | "ExtVectorElementExpr" => {
                 for child in kids(node) {
                     self.eval(child, state);
                 }
@@ -1120,7 +1142,11 @@ impl<'a> Walker<'a> {
             }
             Some("BitCast" | "NoOp" | "AddressSpaceConversion") => {
                 let value = self.eval(operand, state);
-                if is_pointer(ty(node)) { value } else { Val::scalar() }
+                if is_pointer(ty(node)) {
+                    value
+                } else {
+                    Val::scalar()
+                }
             }
             _ => {
                 let value = self.eval(operand, state);
@@ -1186,7 +1212,11 @@ impl<'a> Walker<'a> {
                     None => false,
                 };
                 Val {
-                    place: if readable && is_pointer(ty(lhs)) { place } else { None },
+                    place: if readable && is_pointer(ty(lhs)) {
+                        place
+                    } else {
+                        None
+                    },
                     null_constant: false,
                     ..value
                 }
@@ -1240,7 +1270,9 @@ impl<'a> Walker<'a> {
                 return value;
             }
             Some(
-                "__builtin_constant_p" | "__builtin_object_size" | "__builtin_dynamic_object_size"
+                "__builtin_constant_p"
+                | "__builtin_object_size"
+                | "__builtin_dynamic_object_size"
                 | "__builtin_classify_type",
             ) => return Val::scalar(),
             _ => {}
@@ -1303,7 +1335,8 @@ impl<'a> Walker<'a> {
             }
         }
         for (position, text, held) in obligations {
-            let (Some(argument), Some(value)) = (arguments.get(position), values.get(position)) else {
+            let (Some(argument), Some(value)) = (arguments.get(position), values.get(position))
+            else {
                 continue;
             };
             let mut probe = state.clone();
@@ -1332,7 +1365,8 @@ impl<'a> Walker<'a> {
         state.definite = false;
         let returns_pointer = is_pointer(ty(node));
         if let Some(callee_name) = &name
-            && (self.env.unit.no_return.contains(callee_name) || ast::builtin_no_return(callee_name))
+            && (self.env.unit.no_return.contains(callee_name)
+                || ast::builtin_no_return(callee_name))
         {
             state.live = false;
         }
@@ -1340,7 +1374,9 @@ impl<'a> Walker<'a> {
             return Val::scalar();
         }
         let Some(callee_name) = name else {
-            return Val::of(Nullness::maybe(Source::UncontractedResult("indirect call".into())));
+            return Val::of(Nullness::maybe(Source::UncontractedResult(
+                "indirect call".into(),
+            )));
         };
         // `__builtin_alloca` returns the address of the space it allocated:
         // the builtin has no failure result (exhausting the stack is not a
@@ -1377,9 +1413,9 @@ impl<'a> Walker<'a> {
                 Nullness::maybe(Source::Allocation(callee_name.clone()))
             }
             Some(ResourceReturnMode::Owned { nullable: false })
-            | Some(ResourceReturnMode::Reallocated { nullable: false, .. }) => {
-                Nullness::proved(Proof::NonNullResult(format!("declared:{callee_name}")))
-            }
+            | Some(ResourceReturnMode::Reallocated {
+                nullable: false, ..
+            }) => Nullness::proved(Proof::NonNullResult(format!("declared:{callee_name}"))),
             Some(ResourceReturnMode::Derived { nullable: true, .. }) => {
                 Nullness::maybe(Source::Lookup(callee_name.clone()))
             }
@@ -1543,7 +1579,8 @@ impl<'a> Walker<'a> {
                     }
                     let id = decl["id"].as_str().unwrap_or("").to_owned();
                     let init = kids(decl).find(|c| !kind(c).ends_with("Attr") && present(c));
-                    let static_storage = matches!(decl["storageClass"].as_str(), Some("static" | "extern"));
+                    let static_storage =
+                        matches!(decl["storageClass"].as_str(), Some("static" | "extern"));
                     match init {
                         Some(init) if !static_storage => {
                             let value = self.eval(init, &mut state);
@@ -1624,7 +1661,9 @@ impl<'a> Walker<'a> {
                     _ => {
                         // A label inside a loop nested in its switch, or no
                         // switch: the jump into it is not read.
-                        self.reason("null-unsupported-form: a case label the walk cannot enter".into());
+                        self.reason(
+                            "null-unsupported-form: a case label the walk cannot enter".into(),
+                        );
                         self.widen_all(state, "case")
                     }
                 };
@@ -1843,12 +1882,17 @@ impl<'a> Walker<'a> {
         });
         let (exit_test, back) = if body_first {
             let after_body = self.stmt(body, head);
-            let frame_continues = self.loops.last().map(|f| f.continues.clone()).expect("frame");
+            let frame_continues = self
+                .loops
+                .last()
+                .map(|f| f.continues.clone())
+                .expect("frame");
             let before_test = after_body.join(&frame_continues);
             match cond {
                 Some(cond) => {
                     let line = self.line(cond);
-                    let (on_true, on_false) = self.condition(cond, before_test, Proof::Tested(line));
+                    let (on_true, on_false) =
+                        self.condition(cond, before_test, Proof::Tested(line));
                     (on_false, on_true)
                 }
                 None => (State::dead(formals), before_test),
@@ -1862,7 +1906,11 @@ impl<'a> Walker<'a> {
                 None => (head, State::dead(formals)),
             };
             let after_body = self.stmt(body, on_true);
-            let frame_continues = self.loops.last().map(|f| f.continues.clone()).expect("frame");
+            let frame_continues = self
+                .loops
+                .last()
+                .map(|f| f.continues.clone())
+                .expect("frame");
             let mut back = after_body.join(&frame_continues);
             if let Some(inc) = inc {
                 self.eval(inc, &mut back);
@@ -1891,7 +1939,10 @@ fn string_literal_first_char(node: &Value) -> Option<bool> {
     }
     let mut operand = strip(kids(node).next()?);
     while kind(operand) == "ImplicitCastExpr"
-        && matches!(operand["castKind"].as_str(), Some("ArrayToPointerDecay" | "NoOp"))
+        && matches!(
+            operand["castKind"].as_str(),
+            Some("ArrayToPointerDecay" | "NoOp")
+        )
     {
         operand = strip(kids(operand).next()?);
     }

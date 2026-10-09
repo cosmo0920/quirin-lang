@@ -152,7 +152,11 @@ fn premise_standing(
         .iter()
         .map(|check| (check.id, check))
         .collect::<BTreeMap<_, _>>();
-    fn resolve(check: &NullCheck, by_id: &BTreeMap<usize, &NullCheck>, depth: usize) -> &'static str {
+    fn resolve(
+        check: &NullCheck,
+        by_id: &BTreeMap<usize, &NullCheck>,
+        depth: usize,
+    ) -> &'static str {
         match check.outcome {
             "proved" => "proved",
             "moved" if depth < 64 => {

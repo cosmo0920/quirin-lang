@@ -44,11 +44,8 @@ contract {
 ";
 
 fn resource() -> ResourceContracts {
-    load_resource_contract_sources(&BTreeMap::from([(
-        "nd.qv".to_owned(),
-        RESOURCE.to_owned(),
-    )]))
-    .expect("the fixture resource contracts load")
+    load_resource_contract_sources(&BTreeMap::from([("nd.qv".to_owned(), RESOURCE.to_owned())]))
+        .expect("the fixture resource contracts load")
 }
 
 fn bounds(text: Option<&str>) -> BoundsContracts {
@@ -76,14 +73,22 @@ fn clang_available() -> bool {
     }
 }
 
-fn rows_with(source: &str, functions: &[&str], clauses: Option<&str>, defines: &[&str]) -> Vec<NullFunctionRow> {
+fn rows_with(
+    source: &str,
+    functions: &[&str],
+    clauses: Option<&str>,
+    defines: &[&str],
+) -> Vec<NullFunctionRow> {
     let text = format!("{DECLARATIONS}\n{source}\n");
     let unit = C11TranslationUnit {
         source: &text,
         definitions: defines.iter().map(|d| (*d).to_owned()).collect(),
         ..Default::default()
     };
-    let functions = functions.iter().map(|f| (*f).to_owned()).collect::<Vec<_>>();
+    let functions = functions
+        .iter()
+        .map(|f| (*f).to_owned())
+        .collect::<Vec<_>>();
     analyze_null_c11(&unit, &functions, &resource(), &bounds(clauses))
         .unwrap_or_else(|error| panic!("fixture rejected: {error}\n{text}"))
         .functions
@@ -105,12 +110,24 @@ fn an_unchecked_allocation_dereferenced_is_a_candidate() {
     if !clang_available() {
         return;
     }
-    let row = subject_row("int subject(void) { struct S *p = nd_alloc(sizeof *p); p->a = 1; return p->a; }");
+    let row = subject_row(
+        "int subject(void) { struct S *p = nd_alloc(sizeof *p); p->a = 1; return p->a; }",
+    );
     assert_eq!(row.verdict, "Unknown", "{row:#?}");
-    assert_eq!(outcomes(&row), vec![("p", "candidate"), ("p", "moved")], "{row:#?}");
-    assert_eq!(row.checks[0].sources, vec!["allocation:nd_alloc".to_owned()]);
+    assert_eq!(
+        outcomes(&row),
+        vec![("p", "candidate"), ("p", "moved")],
+        "{row:#?}"
+    );
+    assert_eq!(
+        row.checks[0].sources,
+        vec!["allocation:nd_alloc".to_owned()]
+    );
     // The second dereference's question is the first's (decision 1).
-    assert_eq!(row.checks[1].proofs, vec![format!("moved:{}", row.checks[0].id)]);
+    assert_eq!(
+        row.checks[1].proofs,
+        vec![format!("moved:{}", row.checks[0].id)]
+    );
 }
 
 #[test]
@@ -127,7 +144,9 @@ fn a_checked_allocation_is_proved() {
     let row = subject_row("int subject(void) { struct S *p = nd_xalloc(8); return p->a; }");
     assert_eq!(row.verdict, "Safe", "{row:#?}");
     assert!(
-        row.assumptions.iter().any(|a| a.starts_with("declared:nd_xalloc")),
+        row.assumptions
+            .iter()
+            .any(|a| a.starts_with("declared:nd_xalloc")),
         "{row:#?}"
     );
 }
@@ -170,10 +189,18 @@ fn a_dereference_then_a_member_address_moves_the_question() {
         "int subject(struct S *s) { if (!s) return 0; struct S *p = s->next; int n = p->a; \
          struct S *k = (struct S *)&p->arr[1]; return n + k->a; }",
     );
-    let first = row.checks.iter().find(|c| c.subject == "p").expect("p checked");
+    let first = row
+        .checks
+        .iter()
+        .find(|c| c.subject == "p")
+        .expect("p checked");
     assert_eq!(first.outcome, "candidate", "{row:#?}");
     assert_eq!(first.sources, vec!["memory-field:s->next".to_owned()]);
-    let through = row.checks.iter().find(|c| c.subject == "k").expect("k checked");
+    let through = row
+        .checks
+        .iter()
+        .find(|c| c.subject == "k")
+        .expect("k checked");
     assert_eq!(through.outcome, "moved", "{row:#?}");
     assert_eq!(through.proofs, vec![format!("moved:{}", first.id)]);
     // Forming `&B->G` is not a dereference: without the earlier read, the
@@ -182,7 +209,11 @@ fn a_dereference_then_a_member_address_moves_the_question() {
         "int subject(struct S *s) { if (!s) return 0; struct S *p = s->next; \
          struct S *k = (struct S *)&p->arr[1]; return k->a; }",
     );
-    let derefs = row.checks.iter().filter(|c| c.subject != "s").collect::<Vec<_>>();
+    let derefs = row
+        .checks
+        .iter()
+        .filter(|c| c.subject != "s")
+        .collect::<Vec<_>>();
     assert_eq!(derefs.len(), 1, "{row:#?}");
     assert_eq!(derefs[0].subject, "k");
     assert_eq!(derefs[0].outcome, "candidate");
@@ -205,8 +236,17 @@ fn a_reassignment_between_does_not_move_the_question() {
         .map(|c| c.outcome)
         .collect::<Vec<_>>();
     assert_eq!(checks, vec!["candidate", "moved", "candidate"], "{row:#?}");
-    let last = row.checks.iter().filter(|c| c.subject == "p").last().expect("p");
-    assert_eq!(last.sources, vec!["memory-field:p->next".to_owned()], "{row:#?}");
+    let last = row
+        .checks
+        .iter()
+        .filter(|c| c.subject == "p")
+        .last()
+        .expect("p");
+    assert_eq!(
+        last.sources,
+        vec!["memory-field:p->next".to_owned()],
+        "{row:#?}"
+    );
     // An offset is no reassignment of its nullness: `p + 1` is non-null
     // exactly when `p` is (C11 6.5.6p8).
     let row = subject_row(
@@ -227,7 +267,8 @@ fn sizeof_of_a_dereference_is_not_a_dereference() {
     if !clang_available() {
         return;
     }
-    let row = subject_row("unsigned long subject(struct S *s) { return sizeof(*s) + sizeof s->a; }");
+    let row =
+        subject_row("unsigned long subject(struct S *s) { return sizeof(*s) + sizeof s->a; }");
     assert!(row.checks.is_empty(), "{row:#?}");
     assert_eq!(row.verdict, "Safe", "{row:#?}");
 }
@@ -287,7 +328,11 @@ contract {
         Some(clause),
         &[],
     );
-    assert_eq!(rows[0].inferred_preconditions, vec!["#q".to_owned()], "{rows:#?}");
+    assert_eq!(
+        rows[0].inferred_preconditions,
+        vec!["#q".to_owned()],
+        "{rows:#?}"
+    );
 }
 
 #[test]
@@ -314,11 +359,20 @@ contract {
         Some(clause),
         &[],
     );
-    assert_eq!(rows[0].clause_standing[0].standing, "stronger-than-necessary", "{rows:#?}");
+    assert_eq!(
+        rows[0].clause_standing[0].standing, "stronger-than-necessary",
+        "{rows:#?}"
+    );
     assert_eq!(rows[0].verdict, "Safe", "never wrong: {rows:#?}");
-    assert_eq!(rows[1].clause_standing[0].standing, "necessary", "{rows:#?}");
+    assert_eq!(
+        rows[1].clause_standing[0].standing, "necessary",
+        "{rows:#?}"
+    );
     assert_eq!(rows[1].verdict, "Safe", "{rows:#?}");
-    assert!(rows[1].scope.contains("declared quant null-deref #s"), "{rows:#?}");
+    assert!(
+        rows[1].scope.contains("declared quant null-deref #s"),
+        "{rows:#?}"
+    );
 }
 
 #[test]
@@ -334,7 +388,11 @@ fn inference_needs_a_dereference_on_every_path() {
         None,
         &[],
     );
-    assert_eq!(rows[0].inferred_preconditions, vec!["#s".to_owned()], "{rows:#?}");
+    assert_eq!(
+        rows[0].inferred_preconditions,
+        vec!["#s".to_owned()],
+        "{rows:#?}"
+    );
     assert_eq!(rows[0].verdict, "Safe", "{rows:#?}");
     assert!(rows[1].inferred_preconditions.is_empty(), "{rows:#?}");
     assert_eq!(rows[1].verdict, "Unknown", "{rows:#?}");
@@ -347,7 +405,11 @@ fn inference_needs_a_dereference_on_every_path() {
     assert_eq!(calls.len(), 1, "{rows:#?}");
     assert!(calls[0].subject.contains("every"), "{rows:#?}");
     // ... which `caller` infers in turn: it passes its formal untested.
-    assert_eq!(rows[2].inferred_preconditions, vec!["#t".to_owned()], "{rows:#?}");
+    assert_eq!(
+        rows[2].inferred_preconditions,
+        vec!["#t".to_owned()],
+        "{rows:#?}"
+    );
 }
 
 #[test]
@@ -370,7 +432,12 @@ fn an_assertion_is_a_guard_only_without_ndebug() {
     );
     let without = rows_with(source, &["subject"], None, &["NDEBUG"]).remove(0);
     assert_eq!(without.verdict, "Unknown", "{without:#?}");
-    assert!(without.assumptions.iter().all(|a| !a.starts_with("asserted:")));
+    assert!(
+        without
+            .assumptions
+            .iter()
+            .all(|a| !a.starts_with("asserted:"))
+    );
 }
 
 #[test]
@@ -390,7 +457,9 @@ fn lookups_and_memory_reads_are_sources() {
     if !clang_available() {
         return;
     }
-    let row = subject_row("int subject(const char *s) { if (!s) return 0; char *c = nd_find(s, 1); return *c; }");
+    let row = subject_row(
+        "int subject(const char *s) { if (!s) return 0; char *c = nd_find(s, 1); return *c; }",
+    );
     let last = row.checks.last().expect("the lookup's dereference");
     assert_eq!(last.sources, vec!["lookup:nd_find".to_owned()], "{row:#?}");
     // A call forgets a path fact; a local's fact survives it.
@@ -430,7 +499,10 @@ fn qualified_formals_errno_and_generic_selections_are_read() {
         "int subject(struct S *s, int k) { if (!s) return 0; return _Generic(k, int: s->a, default: s->next->a); }",
     );
     assert_eq!(row.verdict, "Safe", "{row:#?}");
-    assert!(row.checks.iter().all(|c| c.subject != "s->next"), "{row:#?}");
+    assert!(
+        row.checks.iter().all(|c| c.subject != "s->next"),
+        "{row:#?}"
+    );
 }
 
 #[test]
@@ -455,7 +527,9 @@ fn a_test_of_an_assignment_tests_its_left_operand() {
          if ((e->next = (struct S *)0) != 0) return e->next->a; return 1; }",
     );
     assert!(
-        row.checks.iter().all(|c| !c.outcome.starts_with("violation")),
+        row.checks
+            .iter()
+            .all(|c| !c.outcome.starts_with("violation")),
         "{row:#?}"
     );
 }

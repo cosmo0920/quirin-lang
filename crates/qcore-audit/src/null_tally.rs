@@ -89,12 +89,22 @@ pub fn summary(rows: &[Value]) -> Value {
             .map_or(0, Vec::len);
         inferred += count;
         inferred_functions += usize::from(count > 0);
-        for standing in row["null"]["clause_standing"].as_array().into_iter().flatten() {
-            bump(&mut clause_standing, standing["standing"].as_str().unwrap_or("?"));
+        for standing in row["null"]["clause_standing"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            bump(
+                &mut clause_standing,
+                standing["standing"].as_str().unwrap_or("?"),
+            );
         }
         let own = row["custody_null_premises"].as_array();
         for premise in own.into_iter().flatten() {
-            bump(&mut premises, premise["null_property"].as_str().unwrap_or("?"));
+            bump(
+                &mut premises,
+                premise["null_property"].as_str().unwrap_or("?"),
+            );
         }
         if row["custody"] == "Safe"
             && let Some(own) = own
@@ -183,11 +193,23 @@ mod tests {
         ];
         let summary = summary(&rows);
         assert_eq!(summary["null"]["Safe (unconditional)"], 1);
-        assert_eq!(summary["null"]["Safe (conditional on its preconditions)"], 1);
-        assert_eq!(summary["checks"]["candidates_by_source_kind"]["memory-field"], 1);
-        assert_eq!(summary["custody_null_premises"]["custody_safe_rows_with_an_own_premise"], 3);
+        assert_eq!(
+            summary["null"]["Safe (conditional on its preconditions)"],
+            1
+        );
+        assert_eq!(
+            summary["checks"]["candidates_by_source_kind"]["memory-field"],
+            1
+        );
+        assert_eq!(
+            summary["custody_null_premises"]["custody_safe_rows_with_an_own_premise"],
+            3
+        );
         // A nearby proof is never counted as a discharged premise.
-        assert_eq!(summary["custody_null_premises"]["of_which_every_premise_proved"], 1);
+        assert_eq!(
+            summary["custody_null_premises"]["of_which_every_premise_proved"],
+            1
+        );
         assert_eq!(summary["inference"]["inferred_preconditions"], 1);
         assert!(line(&summary).contains("1 Safe unconditional, 1 Safe conditional"));
     }

@@ -224,7 +224,10 @@ fn a_guard_proves_its_arm_and_contradicts_the_other() {
         refine(&maybe, true, Proof::Tested(4)),
         Some(Nullness::proved(Proof::Tested(4)))
     );
-    assert_eq!(refine(&maybe, false, Proof::Tested(4)), Some(Nullness::Null));
+    assert_eq!(
+        refine(&maybe, false, Proof::Tested(4)),
+        Some(Nullness::Null)
+    );
     let proved = Nullness::proved(Proof::Address);
     assert_eq!(refine(&proved, false, Proof::Tested(4)), None);
     assert_eq!(refine(&Nullness::Null, true, Proof::Tested(4)), None);
@@ -244,7 +247,10 @@ fn the_composition_is_safe_only_when_the_null_row_is() {
         compose(both, Some(NullVerdict::Safe), Some(NullVerdict::Safe)),
         NullVerdict::Safe
     );
-    assert_eq!(compose(both, Some(NullVerdict::Safe), None), NullVerdict::Unknown);
+    assert_eq!(
+        compose(both, Some(NullVerdict::Safe), None),
+        NullVerdict::Unknown
+    );
     assert_eq!(premise_name("peek", 380, "iv"), "null-deref:peek:380:iv");
     let tested_first = BTreeSet::from([First::Other]);
     assert_eq!(clause_standing(&tested_first), "stronger-than-necessary");

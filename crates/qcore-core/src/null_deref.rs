@@ -322,7 +322,10 @@ pub const AWAITING_REVIEW: &str = "awaiting-human-review";
 /// * `Pending` only when held clauses are the sole obstacle;
 /// * `Unknown` otherwise (a candidate is a reason, never an accusation).
 #[must_use]
-pub fn null_verdict(outcomes: &[Outcome], function_reasons: &[String]) -> (NullVerdict, Vec<String>) {
+pub fn null_verdict(
+    outcomes: &[Outcome],
+    function_reasons: &[String],
+) -> (NullVerdict, Vec<String>) {
     let mut reasons = function_reasons.to_vec();
     if outcomes
         .iter()

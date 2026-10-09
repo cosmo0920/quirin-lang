@@ -216,7 +216,9 @@ pub enum BoundsClause {
     /// null-deref #B;` -- the function dereferences the pointer formal `B`,
     /// which must be non-null. Read by the null-dereference property only;
     /// the bounds consumer never reads it ([`BoundsContracts::for_bounds`]).
-    NullDeref { parameter: String },
+    NullDeref {
+        parameter: String,
+    },
 }
 
 impl BoundsClause {

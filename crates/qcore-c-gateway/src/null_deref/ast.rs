@@ -105,7 +105,12 @@ fn strip_qualifiers(ty: &str) -> String {
     // `T *const` spells the qualifier against the star: split it off first.
     ty.replace('*', " * ")
         .split_whitespace()
-        .filter(|word| !matches!(*word, "const" | "volatile" | "restrict" | "__restrict" | "_Nonnull" | "_Nullable"))
+        .filter(|word| {
+            !matches!(
+                *word,
+                "const" | "volatile" | "restrict" | "__restrict" | "_Nonnull" | "_Nullable"
+            )
+        })
         .collect::<Vec<_>>()
         .join(" ")
         .replace(" *", "*")
@@ -272,7 +277,9 @@ pub(super) fn address_taken(node: &Value, out: &mut BTreeSet<String>) {
                 "MemberExpr" if inner["isArrow"] != true => operand = kids(inner).next(),
                 "ArraySubscriptExpr" => {
                     operand = kids(inner)
-                        .find(|c| kind(c) == "ImplicitCastExpr" && c["castKind"] == "ArrayToPointerDecay")
+                        .find(|c| {
+                            kind(c) == "ImplicitCastExpr" && c["castKind"] == "ArrayToPointerDecay"
+                        })
                         .and_then(|c| kids(c).next());
                 }
                 _ => break,
@@ -356,15 +363,14 @@ pub(super) fn render(node: &Value) -> String {
             format!("{left} {} {right}", node["opcode"].as_str().unwrap_or("?"))
         }
         "CallExpr" => {
-            let name = callee_name(node).unwrap_or_else(|| {
-                kids(node).next().map(render).unwrap_or_default()
-            });
+            let name = callee_name(node)
+                .unwrap_or_else(|| kids(node).next().map(render).unwrap_or_default());
             let arguments = kids(node).skip(1).map(render).collect::<Vec<_>>();
             format!("{name}({})", arguments.join(", "))
         }
-        "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" => {
-            node["value"].as_str().map_or_else(|| node["value"].to_string(), str::to_owned)
-        }
+        "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" => node["value"]
+            .as_str()
+            .map_or_else(|| node["value"].to_string(), str::to_owned),
         "StringLiteral" => node["value"].as_str().unwrap_or("\"\"").to_owned(),
         "ConditionalOperator" | "BinaryConditionalOperator" => "(?:)".to_owned(),
         "StmtExpr" => "({...})".to_owned(),

@@ -1789,9 +1789,8 @@ pub(crate) fn analyze_cfg_with_entry(
 ) -> (LegacyFunctionSummary, Vec<ExitObservation>) {
     // Card NULL-SAFETY-PROPERTY (rule 14n): the null premises this analysis
     // relies on are its summary's, whatever route publishes it.
-    let ((mut summary, observations), premises) = crate::null_premise::collecting(|| {
-        analyze_cfg_with_entry_collected(cfg, entry_custody)
-    });
+    let ((mut summary, observations), premises) =
+        crate::null_premise::collecting(|| analyze_cfg_with_entry_collected(cfg, entry_custody));
     summary.null_premises = premises;
     (summary, observations)
 }
@@ -3567,8 +3566,7 @@ pub(super) fn transfer_base(
             let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
             // Card NULL-SAFETY-PROPERTY (rule 14n): a premised base is read
             // non-null here, under a named premise.
-            if sanctioned || !null_premise_route::base_resolves(function, node.line, &state, base)
-            {
+            if sanctioned || !null_premise_route::base_resolves(function, node.line, &state, base) {
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,

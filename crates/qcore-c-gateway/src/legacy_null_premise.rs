@@ -88,7 +88,10 @@ impl ChainView for Premised<'_> {
         decide(
             true,
             BindingClass::TargetFree,
-            self.state.pointers.keys().any(|place| rooted_at(place, root)),
+            self.state
+                .pointers
+                .keys()
+                .any(|place| rooted_at(place, root)),
             self.state.unmodeled,
         ) == Premise::Holds
     }

@@ -123,8 +123,7 @@ mod tests {
         for (t, u, m, i, w, premised) in PREMISED_VECTORS {
             assert_eq!(premised_shape(*t, *u, *m, *i, *w), *premised);
         }
-        let header =
-            "def premisedVectors : List (Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool) := [";
+        let header = "def premisedVectors : List (Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool \u{d7} Bool) := [";
         let start = LEAN.find(header).expect("the Lean vector list") + header.len();
         let body = &LEAN[start..];
         let end = body.find("\n]").expect("the list's end");

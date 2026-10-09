@@ -227,12 +227,7 @@ fn declared_clauses(contracts: &BoundsContracts) -> BTreeMap<String, Declared> {
 /// Callees first: a post-order of the in-unit call graph (a recursive edge
 /// is cut, so its callee's summary is not yet known: no clause, no result).
 fn bottom_up(unit: &ast::Unit) -> Vec<String> {
-    fn visit(
-        name: &str,
-        unit: &ast::Unit,
-        seen: &mut BTreeSet<String>,
-        out: &mut Vec<String>,
-    ) {
+    fn visit(name: &str, unit: &ast::Unit, seen: &mut BTreeSet<String>, out: &mut Vec<String>) {
         if !seen.insert(name.to_owned()) {
             return;
         }
@@ -263,11 +258,7 @@ fn formal_names(definition: &Value) -> Vec<String> {
 }
 
 /// Analyse one definition: its row and its in-unit summary.
-fn analyze_function(
-    env: &Env<'_>,
-    name: &str,
-    definition: &Value,
-) -> (NullFunctionRow, Summary) {
+fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunctionRow, Summary) {
     let names = formal_names(definition);
     let pointers = kids(definition)
         .filter(|c| kind(c) == "ParmVarDecl")
@@ -298,7 +289,10 @@ fn analyze_function(
     let first = Walker::walk(env, name, definition, &entries);
     let mut inferred = Vec::new();
     for (index, exits) in first.exits.iter().enumerate() {
-        if pointers.get(index) == Some(&true) && core::inferred(exits) && !entries.contains_key(&index) {
+        if pointers.get(index) == Some(&true)
+            && core::inferred(exits)
+            && !entries.contains_key(&index)
+        {
             let text = format!("quant null-deref #{}", names[index]);
             inferred.push((index, text));
         }
@@ -373,7 +367,10 @@ fn analyze_function(
         scope,
         assumptions: walked.assumptions.into_iter().collect(),
         checks: walked.checks.into_iter().map(record).collect(),
-        inferred_preconditions: inferred.iter().map(|(index, _)| format!("#{}", names[*index])).collect(),
+        inferred_preconditions: inferred
+            .iter()
+            .map(|(index, _)| format!("#{}", names[*index]))
+            .collect(),
         clause_standing,
         returns_non_null,
         contract_dependencies: dependencies,
