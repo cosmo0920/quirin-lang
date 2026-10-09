@@ -370,6 +370,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [declared-assumption-body-checks](declared-assumption-body-checks/README.md) | DECLARED-ASSUMPTION-BODY-CHECKS: refinement conflicts settled by the declaration's own entry check |
+
 | [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
 
 | [docs-compact-2](docs-compact-2/README.md) | DOCS-COMPACT-2 — second compaction pass over `AGENTS.md`, `CLAUDE.md` and `README.md` |

@@ -1,0 +1,408 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 252,
+   "held": 1,
+   "partly_validated": 31,
+   "rows_annotated": 4834,
+   "validated": 46
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 377,
+   "resting_on_a_partly_validated_declaration": 23,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 63,
+   "safe_rows": 881
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 247,
+   "held": 1,
+   "partly_validated": 31,
+   "rows_annotated": 4834,
+   "validated": 51
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 349,
+   "resting_on_a_partly_validated_declaration": 23,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 91,
+   "safe_rows": 881
+  }
+ },
+ "moved": [
+  {
+   "function": "flb_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 1,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 0
+  },
+  {
+   "function": "mk_mem_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 26,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 26,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 2
+  },
+  {
+   "function": "rd_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 66,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 66,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 23
+  },
+  {
+   "function": "rd_kafka_mem_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 1,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 4
+  },
+  {
+   "function": "rd_strndup",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 13,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 13,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 0
+  }
+ ],
+ "fell": [],
+ "rose_without_new_evidence": [],
+ "validated_with_a_conflict_failure": [],
+ "only_validated_rows_before": 63,
+ "only_validated_rows_after": 91,
+ "only_validated_rows_kept": 63,
+ "only_validated_rows_new": [
+  [
+   50,
+   "lz4.c",
+   "LZ4_freeStream",
+   [
+    "rd_kafka_mem_free"
+   ]
+  ],
+  [
+   50,
+   "lz4.c",
+   "LZ4_freeStreamDecode",
+   [
+    "rd_kafka_mem_free"
+   ]
+  ],
+  [
+   52,
+   "lz4hc.c",
+   "LZ4_freeHC",
+   [
+    "rd_kafka_mem_free"
+   ]
+  ],
+  [
+   52,
+   "lz4hc.c",
+   "LZ4_freeStreamHC",
+   [
+    "rd_kafka_mem_free"
+   ]
+  ],
+  [
+   59,
+   "rdaddr.c",
+   "rd_sockaddr_list_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   67,
+   "rdhdrhistogram.c",
+   "rd_hdr_histogram_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   68,
+   "rdhttp.c",
+   "rd_http_error_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   69,
+   "rdkafka.c",
+   "rd_kafka_Uuid_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupListing_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_ConsumerGroupListing_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_DeleteGroup_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_DeleteGroup_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_DeleteTopic_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   70,
+   "rdkafka_admin.c",
+   "rd_kafka_DeleteTopic_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   73,
+   "rdkafka_aux.c",
+   "rd_kafka_topic_result_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   73,
+   "rdkafka_aux.c",
+   "rd_kafka_topic_result_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   78,
+   "rdkafka_cgrp.c",
+   "PartitionMemberInfo_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   78,
+   "rdkafka_cgrp.c",
+   "rd_kafka_consumer_group_metadata_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   81,
+   "rdkafka_error.c",
+   "rd_kafka_error_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   89,
+   "rdkafka_metadata.c",
+   "rd_kafka_metadata_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   91,
+   "rdkafka_mock.c",
+   "rd_kafka_mock_request_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   91,
+   "rdkafka_mock.c",
+   "rd_kafka_mock_request_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   115,
+   "rdkafka_sticky_assignor.c",
+   "ConsumerGenerationPair_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   121,
+   "rdkafka_topic.c",
+   "rd_kafka_topic_info_destroy_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   132,
+   "rdstring.c",
+   "rd_strtup_destroy",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   132,
+   "rdstring.c",
+   "rd_strtup_free",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   134,
+   "rdunittest_acknowledge.c",
+   "ut_ack_destroy_message",
+   [
+    "rd_free"
+   ]
+  ],
+  [
+   179,
+   "mk_server/mk_stream.c",
+   "mk_channel_release",
+   [
+    "mk_mem_free"
+   ]
+  ]
+ ],
+ "new_rows_without_a_promoted_declaration": []
+}

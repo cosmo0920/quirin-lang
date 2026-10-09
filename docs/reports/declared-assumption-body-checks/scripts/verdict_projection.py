@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""verdict_projection.py BEFORE AFTER OUT.json -- VERDICT-BODY-STANDING-CLAUSE-SCOPE
-(adapted from VERDICT-CONTRACT-DEPENDENCIES): the projection of a route report
+"""verdict_projection.py BEFORE AFTER OUT.json -- DECLARED-ASSUMPTION-BODY-CHECKS
+(copied unchanged from VERDICT-BODY-STANDING-CLAUSE-SCOPE, adapted from
+VERDICT-CONTRACT-DEPENDENCIES; for this card the expected unit-field moves are
+the `conflict` failures rule 13m replaces by `13m` evidence): the projection of a route report
 and its contract sidecar without what this card changes.
 
 The card changes two things: each unit row's `contract_body_evidence` (the

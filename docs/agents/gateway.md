@@ -5851,3 +5851,65 @@ own anchor here.
     (`the_validated_only_rollup_is_a_subset`,
     `validated_implies_previously_validated`);
     [report](../reports/verdict-body-standing-clause-scope/README.md).
+
+<a id="constraint-13m"></a>
+
+13m. **A W4 conflict that only refines a declaration is a body failure
+    unless the declaration's own entry check passes on that body; passing,
+    it is `13m` evidence covering the custody projection.** Card
+    DECLARED-ASSUMPTION-BODY-CHECKS (contract specification C06.5), at the
+    user's direction "make the Safe count more trustworthy rather than larger"
+    (2026-10-09). `crates/qcore-c-gateway/src/legacy_declared_entry_check.rs`:
+    for a function-map declaration that is its own custody projection, in
+    force in the derivation exactly as declared, not refuted (C06.4), not
+    withdrawn by the mode gate and not a withdrawn checked specification
+    (C06.3), whose final W4 summary conflicts with it (`checked`), the body is
+    analysed under the declaration's entry custody on the CFG the reported run
+    builds (a derived result on the derived-return CFG) and passes only when
+    `observations_match_contract` holds at every exit, the result is `Safe`
+    with no diagnostic, no callee double release is found and rule 11y's
+    refusals name nothing. `unit_evidence` records through `recorded`: `13m`
+    and no `conflict` failure when it passed, the failure otherwise; `covers`
+    gives `13m` exactly the clauses of `W4` and `entry`. Shared items:
+    `contract_dependencies::unit_evidence` (takes the check's result),
+    `contract_clause_standing::{EVIDENCE, covers}`; the hook reads
+    `dialect_hook::Extensions` before `unit_evidence`. **Do not** check a
+    declaration with a container or counted-user clause, a contradiction the
+    mode gate withdrew, or a body without a conflict (a scope-only route was
+    measured establishing nothing and withdrawn); never install the
+    declaration in place of the summary or clear the row's
+    `SummaryConflict`. Measured (binary `7b8460cc…`, base `d8a1a2a4e`):
+    `rd_free` (66 units), `mk_mem_free` (26), `rd_strndup` (13),
+    `rd_kafka_mem_free` and `flb_free` validated; `rd_malloc`, `rd_calloc`
+    and `rd_strdup` covered everywhere but `rdhttp.c` (no W4 summary there).
+    `QCore.DeclaredEntryCheck` (`new_evidence_needs_the_entry_check`,
+    `new_evidence_needs_a_conflict`,
+    `a_container_or_counted_user_declaration_is_never_checked`,
+    `a_withdrawn_or_refuted_declaration_is_never_checked`,
+    `a_failed_check_keeps_the_conflict_a_failure`,
+    `a_contradiction_still_fails`, `without_a_passing_check_nothing_changes`,
+    `only_a_conflict_changes`, `the_new_evidence_covers_only_custody`,
+    `recording_vectors_hold`); controls in `tests/declared_entry_check.rs`;
+    [report](../reports/declared-assumption-body-checks/README.md).
+
+<a id="constraint-13n"></a>
+
+13n. **The declared-entry check is evidence only: it runs only while body
+    evidence is collected, with parity rows muted and the dependency recorder
+    suspended, and no verdict reads it.** Card
+    DECLARED-ASSUMPTION-BODY-CHECKS. Shared items:
+    `contract_dependencies::collecting` (a recording is open and no
+    hypothetical analysis runs) and `contract_dependencies::unrecorded` (the
+    recorder taken out and a fresh consultation log opened and discarded
+    around the work), with `typed_access_path::without_parity_rows`. **Do
+    not** run it without a recording, let it note a consultation, a body
+    spelling or evidence of its own, or feed its result to any analysis.
+    Measured (base `d8a1a2a4e`, binaries `f4b6b753…` → `7b8460cc…`): verdict
+    rows identical on all three routes (`97cbdcf3…`, `09b7a59e…`,
+    `ce1be80e…`), report and sidecar projections identical, parity multisets
+    identical (662,667 / 139,962 / 50,407 rows); corpus Safe roll-up 418 /
+    63 / 23 / 377 → 418 / **91** / 23 / **349** (validated 46 → 51,
+    declared assumptions 252 → 247), system 47 / 1 / 4 / 35 → 47 / 2 / 4 /
+    34, slice 29 / 0 / 2 / 14 → 29 / 2 / 2 / 12.
+    `QCore.DeclaredEntryCheck` (`without_a_passing_check_nothing_changes`);
+    `contract_dependencies` unit test `unrecorded_work_leaves_no_trace`.

@@ -1,0 +1,264 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/dabc-before2/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/dabc-a2/resource-diagnostics.json",
+  "before_sha256": "01009cdc8148df08d1c26987c1b3d534b882b9759a3f0e1e12b10c54c5955635",
+  "after_sha256": "3ad490769ad0fc4c7a45318673736e9c24a6a19539599e24ff405f313204b276",
+  "before_bytes": 1673691,
+  "after_bytes": 1676619,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "a48fe10c22279a02fdfe4452db25d787294232905dd149b5b0b59b79b72f7015",
+  "projection_after_sha256": "a48fe10c22279a02fdfe4452db25d787294232905dd149b5b0b59b79b72f7015",
+  "projections_equal": true,
+  "added_bytes": 2928,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/dabc-before2/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/dabc-a2/resource-diagnostics.contracts.json",
+  "before_sha256": "fdf50fe4b5c17d2b23a6a96bca7fa1b75c945ddc198d0c85a8edb4cc87b320b8",
+  "after_sha256": "86d0d5be79c3ebea7a141e705569e5d565ef234d9a232b92bf56ea20c048221b",
+  "before_bytes": 1049796,
+  "after_bytes": 1049885,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "4b6f8183273cab8ae822e917d4953edd69e0707e510270ad6946e67cbe2d063b",
+  "projection_after_sha256": "4b6f8183273cab8ae822e917d4953edd69e0707e510270ad6946e67cbe2d063b",
+  "projections_equal": true,
+  "added_bytes": 89,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "ce1be80eb740d7fdc4122d52a7578a8d92d5ff7fdf4ec4f28eb1080c9fd4c93a",
+  "after": "ce1be80eb740d7fdc4122d52a7578a8d92d5ff7fdf4ec4f28eb1080c9fd4c93a",
+  "equal": true
+ },
+ "unit_field_moves": {
+  "flb_free": [
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_config.c#7",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_db.c#8",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_dockermode.c#9",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_file.c#10",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_file_budget.c#11",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_fs_inotify.c#12",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_fs_stat.c#13",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_multiline.c#14",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/plugins/in_tail/tail_scan.c#15",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_input.c#0",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_input.c#1",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_input_thread.c#2",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_input_thread.c#3",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_lib.c#4",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_lib.c#5",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ]
+  ]
+ }
+}

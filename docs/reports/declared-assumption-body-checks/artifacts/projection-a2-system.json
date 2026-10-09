@@ -1,0 +1,264 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aec57edb5e625291d/private/dabc/before2-system/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aec57edb5e625291d/private/dabc/a2-system/resource-diagnostics.json",
+  "before_sha256": "70aff89b1465919da170eb08988cec45f243a28f8854a68f7f584bc05f7adf8d",
+  "after_sha256": "46fbc8b734b6a46e08edfdfd1968874009f22420830470fd744bff8e0b6cebb6",
+  "before_bytes": 1696218,
+  "after_bytes": 1699146,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "65ab8ab824e63c71cce435eb7b675ed0b0e6813473b4ab2579ad2b599868272e",
+  "projection_after_sha256": "65ab8ab824e63c71cce435eb7b675ed0b0e6813473b4ab2579ad2b599868272e",
+  "projections_equal": true,
+  "added_bytes": 2928,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aec57edb5e625291d/private/dabc/before2-system/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aec57edb5e625291d/private/dabc/a2-system/resource-diagnostics.contracts.json",
+  "before_sha256": "0f81f20832caf43e5c80dc2c857666d521502b1046dbc809be61f5064dde9a28",
+  "after_sha256": "88bc04b544bf96e29c1793e5c6c81ef559ada9d10f8f0f23a8a97e60d6616587",
+  "before_bytes": 1068051,
+  "after_bytes": 1068140,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "4574217a63b27bf67355de19b058b07b33b97ef662a4bb1693c62eca0d75d495",
+  "projection_after_sha256": "4574217a63b27bf67355de19b058b07b33b97ef662a4bb1693c62eca0d75d495",
+  "projections_equal": true,
+  "added_bytes": 89,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "after": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "equal": true
+ },
+ "unit_field_moves": {
+  "flb_free": [
+   [
+    "fluent-bit-system/plugins/in_storage_backlog/sb.c#0",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_engine.c#7",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_engine.c#8",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_engine_dispatch.c#10",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_engine_dispatch.c#9",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#1",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#2",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_output.c#13",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_output.c#14",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_scheduler.c#11",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_scheduler.c#12",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_storage.c#3",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_storage.c#4",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_task.c#5",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_task.c#6",
+    [
+     "failed",
+     [
+      "conflict"
+     ]
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ]
+  ]
+ }
+}

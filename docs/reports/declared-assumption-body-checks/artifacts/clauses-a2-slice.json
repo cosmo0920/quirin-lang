@@ -1,0 +1,92 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 83,
+   "declared_assumption": 69,
+   "held": 9,
+   "partly_validated": 1,
+   "rows_annotated": 404,
+   "validated": 4
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 14,
+   "resting_on_a_partly_validated_declaration": 2,
+   "resting_on_no_declaration": 29,
+   "resting_only_on_validated_declarations": 0,
+   "safe_rows": 45
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 83,
+   "declared_assumption": 68,
+   "held": 9,
+   "partly_validated": 1,
+   "rows_annotated": 404,
+   "validated": 5
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 12,
+   "resting_on_a_partly_validated_declaration": 2,
+   "resting_on_no_declaration": 29,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 45
+  }
+ },
+ "moved": [
+  {
+   "function": "flb_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 15,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 15,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 3
+  }
+ ],
+ "fell": [],
+ "rose_without_new_evidence": [],
+ "validated_with_a_conflict_failure": [],
+ "only_validated_rows_before": 0,
+ "only_validated_rows_after": 2,
+ "only_validated_rows_kept": 0,
+ "only_validated_rows_new": [
+  [
+   4,
+   "src/flb_lib.c",
+   "flb_lib_free",
+   [
+    "flb_free"
+   ]
+  ],
+  [
+   5,
+   "src/flb_lib.c",
+   "flb_lib_free",
+   [
+    "flb_free"
+   ]
+  ]
+ ],
+ "new_rows_without_a_promoted_declaration": []
+}

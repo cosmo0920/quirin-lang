@@ -1,0 +1,85 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 99,
+   "declared_assumption": 84,
+   "held": 2,
+   "partly_validated": 6,
+   "rows_annotated": 448,
+   "validated": 7
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 35,
+   "resting_on_a_partly_validated_declaration": 4,
+   "resting_on_no_declaration": 47,
+   "resting_only_on_validated_declarations": 1,
+   "safe_rows": 87
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 99,
+   "declared_assumption": 83,
+   "held": 2,
+   "partly_validated": 6,
+   "rows_annotated": 448,
+   "validated": 8
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 34,
+   "resting_on_a_partly_validated_declaration": 4,
+   "resting_on_no_declaration": 47,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 87
+  }
+ },
+ "moved": [
+  {
+   "function": "flb_free",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [
+     "conflict"
+    ],
+    "failed_units": 15,
+    "unvalidated_units": 0,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 15,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 1
+  }
+ ],
+ "fell": [],
+ "rose_without_new_evidence": [],
+ "validated_with_a_conflict_failure": [],
+ "only_validated_rows_before": 1,
+ "only_validated_rows_after": 2,
+ "only_validated_rows_kept": 1,
+ "only_validated_rows_new": [
+  [
+   0,
+   "plugins/in_storage_backlog/sb.c",
+   "sb_destroy_chunk",
+   [
+    "flb_free",
+    "sb_destroy_chunk"
+   ]
+  ]
+ ],
+ "new_rows_without_a_promoted_declaration": []
+}
