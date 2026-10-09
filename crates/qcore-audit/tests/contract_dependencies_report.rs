@@ -220,7 +220,7 @@ fn clause_standing_rows() -> Vec<(bool, Vec<String>, Vec<String>, String)> {
 #[test]
 fn lean_clause_standing_vectors_match_the_run_standing() {
     let rows = clause_standing_rows();
-    assert_eq!(rows.len(), 15);
+    assert_eq!(rows.len(), 19);
     for (held, clauses, units, expected) in rows {
         // Each unit of the vector as a unit row the audit folds, its clause
         // coverage computed by the gateway's `covers` (one label per kind).

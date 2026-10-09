@@ -138,6 +138,11 @@ mod uncontracted_access;
 #[path = "legacy_member_release.rs"]
 mod member_release;
 
+// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m-13o): a declaration checked,
+// evidence-only, against a scope-only body or a refinement conflict's body.
+#[path = "legacy_declared_entry_check.rs"]
+pub(crate) mod declared_entry_check;
+
 pub use descriptor_custody::ValidityFact;
 
 // Card W44-BRANCH-CONDITION-CALLS: the desugaring of a refused call-bearing
@@ -3095,18 +3100,34 @@ fn analyze_translation_unit_under_holds(
         .collect::<Vec<_>>();
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
+    // by name, read from each definition's typed AST where the unit spells one.
+    let extensions = dialect_hook::Extensions::of(&tokens);
+    // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m-13o): evidence only.
+    let declared_entry = declared_entry_check::check(
+        &declared_entry_check::Unit {
+            input,
+            rows: &names,
+            scope: &scope,
+            tokens: &tokens,
+            derivation: &derivation,
+            mode: &mode_withdrawn,
+            specifications: &withdrawn_specifications,
+        },
+        |summary, name| {
+            dialect_hook::name_refusals(summary, &tokens, name, &dialect_refusals, &extensions);
+        },
+    );
     crate::contract_dependencies::unit_evidence(
         input,
         &scope,
         &derivation,
         &mode_withdrawn,
         &withdrawn_specifications,
+        &declared_entry,
     );
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
-    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
-    // by name, read from each definition's typed AST where the unit spells one.
-    let extensions = dialect_hook::Extensions::of(&tokens);
     for name in names {
         match analyze_defined_function(&tokens, &name, &derivation) {
             Ok(mut summary) => {

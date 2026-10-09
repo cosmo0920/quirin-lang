@@ -303,6 +303,44 @@ pub(crate) fn hypothetical<R>(work: impl FnOnce() -> R) -> R {
     work()
 }
 
+/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): whether body
+/// evidence is being collected now: a recording is open and no hypothetical
+/// analysis is running. An evidence-only check runs only then.
+pub(crate) fn collecting() -> bool {
+    RECORDER.with(|recorder| {
+        recorder
+            .borrow()
+            .as_ref()
+            .is_some_and(|recorder| recorder.hypothetical == 0)
+    })
+}
+
+/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): run `work` with the
+/// recording suspended and a fresh consultation log that is discarded, so an
+/// evidence-only check adds no consultation, body spelling or evidence to any
+/// row or function of the unit. Its result is recorded by the caller.
+pub(crate) fn unrecorded<R>(work: impl FnOnce() -> R) -> R {
+    struct Resume {
+        recorder: Option<Recorder>,
+        log: Option<Option<Consulted>>,
+    }
+    impl Drop for Resume {
+        fn drop(&mut self) {
+            if let Some(enclosing) = self.log.take() {
+                let _discarded = contract_consultation::close(enclosing);
+            }
+            let recorder = self.recorder.take();
+            RECORDER.with(|current| *current.borrow_mut() = recorder);
+        }
+    }
+    let recorder = RECORDER.with(|current| current.borrow_mut().take());
+    let _resume = Resume {
+        recorder,
+        log: Some(contract_consultation::open()),
+    };
+    work()
+}
+
 /// `name` was given an in-unit summary.
 pub(crate) fn inferred(name: &str) {
     with_recorder(|recorder| {
@@ -599,13 +637,15 @@ pub(crate) fn withdrawn_between(
 /// the environment the unit was analysed under, `scope` its derivation scope,
 /// `derivation` the derivation its rows were analysed over, `mode` the names
 /// the mode gate withdrew and `specifications` the withdrawn checked
-/// specifications.
+/// specifications. Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n):
+/// `declared_entry` is what the declared-entry check established in this unit.
 pub(crate) fn unit_evidence(
     input: &ResourceContracts,
     scope: &[String],
     derivation: &crate::legacy_summary::CustodyDerivation,
     mode: &[String],
     specifications: &BTreeMap<String, crate::legacy_c::checked_spec::Withdrawal>,
+    declared_entry: &crate::legacy_c::declared_entry_check::DeclaredEntry,
 ) {
     if !recording() {
         return;
@@ -645,15 +685,57 @@ pub(crate) fn unit_evidence(
         if environment.functions().get(name) != Some(declared) {
             continue;
         }
-        if derivation.conflict(name).is_some() {
-            failed(name, "conflict");
-        } else if derivation.inferred(name).is_some() {
-            // No conflict means the validated summary is the declaration's
-            // custody projection. Card VERDICT-BODY-STANDING-CLAUSE-SCOPE
-            // (rule 13i): W4 covers exactly the clauses that projection
-            // compares, so a container or counted-user clause beside them
-            // stays uncovered (`contract_clause_standing::covers`).
-            validated(name, "W4");
+        // A conflict is a failure; no conflict with a summary means the
+        // validated summary is the declaration's custody projection. Card
+        // VERDICT-BODY-STANDING-CLAUSE-SCOPE (rule 13i): W4 covers exactly the
+        // clauses that projection compares, so a container or counted-user
+        // clause beside them stays uncovered (`contract_clause_standing::covers`).
+        // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): a conflict
+        // the declaration's own entry check settled is `13n` evidence, and a
+        // scope-only body with no summary that check established is `13m`.
+        use crate::legacy_c::declared_entry_check::{Recorded, recorded};
+        match recorded(
+            derivation.conflict(name).is_some(),
+            derivation.inferred(name).is_some(),
+            declared_entry.established(name),
+        ) {
+            Recorded::Failed => failed(name, "conflict"),
+            Recorded::Evidence(by) => validated(name, by),
+            Recorded::Nothing => {}
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13o): work run unrecorded
+    /// adds no consultation, body spelling or evidence anywhere, and the
+    /// recording resumes afterwards.
+    #[test]
+    fn unrecorded_work_leaves_no_trace() {
+        assert!(!collecting());
+        let recording = Recording::start();
+        assert!(collecting());
+        within("f", || {
+            contract_consultation::note("before", true);
+            unrecorded(|| {
+                assert!(!collecting());
+                contract_consultation::note("hidden", true);
+                within("g", || contract_consultation::note("nested", true));
+                validated("hidden", "13m");
+                examined("hidden");
+            });
+            contract_consultation::note("after", true);
+        });
+        hypothetical(|| assert!(!collecting()));
+        let record = recording.finish();
+        let f = &record.functions["f"];
+        assert!(f.found.contains("before") && f.found.contains("after"));
+        assert!(!f.found.contains("hidden") && !f.found.contains("nested"));
+        assert!(!record.functions.contains_key("g"));
+        assert!(record.validated.is_empty() && record.examined.is_empty());
+        assert!(!collecting());
     }
 }

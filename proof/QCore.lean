@@ -342,6 +342,7 @@ import QCore.ReferenceCount
 import QCore.ReferenceResult
 import QCore.ContractDependencies
 import QCore.BodyClauseStanding
+import QCore.DeclaredEntryCheck
 import QCore.AbiEnumConstPointer
 import QCore.IndirectCalls
 import QCore.VariadicConditions
