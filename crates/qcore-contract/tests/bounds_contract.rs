@@ -180,12 +180,15 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
             );
         }
     }
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds the second:
+    // `chunkio/file_st_bounds.qv`, the neighbouring header accessors.
     assert_eq!(
         bounds_modules.len(),
-        1,
+        2,
         "tracked bounds modules: {bounds_modules:?}"
     );
-    assert!(bounds_modules[0].ends_with("chunkio/meta_len_bounds.qv"));
+    assert!(bounds_modules[0].ends_with("chunkio/file_st_bounds.qv"));
+    assert!(bounds_modules[1].ends_with("chunkio/meta_len_bounds.qv"));
 }
 
 /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a pin not in force holds the whole
