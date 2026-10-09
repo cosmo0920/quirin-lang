@@ -1,0 +1,2246 @@
+{
+ "functions": 228,
+ "alone": {
+  "custody-position:released": 13,
+  "pointer-store:other": 12,
+  "pointer-store:formal-pointer": 10,
+  "elaboration:unlisted form: no value form of this card": 10,
+  "probe-declined": 10,
+  "unclassified:CallArgument": 6,
+  "reader:address": 5,
+  "reader:other": 5,
+  "call-result-store": 5,
+  "elaboration:unlisted form: no unique Clang node for the statement": 3,
+  "pointer-store:arithmetic": 3,
+  "return-contracted-call": 2,
+  "custody-position:owned": 2,
+  "pointer-store:pointer-read": 2,
+  "reader:call": 1,
+  "reader:untyped-base": 1,
+  "reader:untyped-member": 1,
+  "reader:chain": 1,
+  "unclassified:AssignmentValue": 1,
+  "place:storage": 1
+ },
+ "alone_with_every_contract": {
+  "reader:address": 26,
+  "custody-position:released": 13,
+  "pointer-store:other": 12,
+  "pointer-store:formal-pointer": 10,
+  "elaboration:unlisted form: no value form of this card": 10,
+  "probe-declined": 10,
+  "reader:untyped-member": 7,
+  "reader:errno": 6,
+  "reader:?": 6,
+  "reader:other": 6,
+  "unclassified:CallArgument": 6,
+  "reader:cast": 5,
+  "uncontracted:None": 5,
+  "call-result-store": 5,
+  "reader:chain": 4,
+  "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * ": 4,
+  "uncontracted:indirect memory access is outside the resource projection": 4,
+  "reader:call": 3,
+  "elaboration:unlisted form: no unique Clang node for the statement": 3,
+  "pointer-store:arithmetic": 3,
+  "reader:untyped-base": 2,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& timeout_ms` i": 2,
+  "return-contracted-call": 2,
+  "custody-position:owned": 2,
+  "pointer-store:pointer-read": 2,
+  "reader:unreadable": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& ibroker_id` i": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `opaque` in `& o": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& true_or_false": 1,
+  "unclassified:AssignmentValue": 1,
+  "place:storage": 1
+ },
+ "touched": {
+  "reader:address": 50,
+  "custody-position:released": 29,
+  "reader:chain": 23,
+  "reader:?": 22,
+  "reader:untyped-member": 17,
+  "reader:untyped-base": 16,
+  "probe-declined": 15,
+  "pointer-store:other": 15,
+  "elaboration:unlisted form: no value form of this card": 14,
+  "contract:rd_kafka_interceptor_method_add": 14,
+  "call-result-store": 13,
+  "pointer-store:formal-pointer": 13,
+  "reader:cast": 13,
+  "reader:call": 12,
+  "reader:other": 11,
+  "contract:rd_kafka_log0": 11,
+  "reader:errno": 9,
+  "contract:cfl_sds_create": 6,
+  "uncontracted:None": 6,
+  "unclassified:CallArgument": 6,
+  "contract:rd_kafka_timer_start0": 6,
+  "contract:ctr_errno_print": 5,
+  "contract:?": 5,
+  "contract:rd_kafka_confval_set_type": 5,
+  "uncontracted:indirect memory access is outside the resource projection": 5,
+  "pointer-store:arithmetic": 4,
+  "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * ": 4,
+  "contract:rd_kafka_queue_new0": 4,
+  "contract:cio_errno_print": 4,
+  "contract:LZ4F_free": 3,
+  "contract:rd_kafka_topic_partition_list_copy": 3,
+  "return-contracted-call": 3,
+  "elaboration:unlisted form: no unique Clang node for the statement": 3,
+  "pointer-store-flow:unresolved-owner": 3,
+  "reader:unreadable": 2,
+  "contract:cfl_sds_create_len": 2,
+  "contract:LZ4HC_compress_generic": 2,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& timeout_ms` i": 2,
+  "contract:rd_kafka_topic_partition_list_new": 2,
+  "contract:rd_kafka_broker_session_update_toppars_list": 2,
+  "unclassified:AssignmentValue": 2,
+  "custody-position:owned": 2,
+  "place:storage": 2,
+  "pointer-store:pointer-read": 2,
+  "contract:compare": 1,
+  "contract:set_attributes_from_ctr": 1,
+  "contract:set_events_from_ctr": 1,
+  "contract:cfl_list_size": 1,
+  "contract:allocate": 1,
+  "contract:deallocate": 1,
+  "unclassified:AssignmentDestination": 1,
+  "contract:print_string_ptr": 1,
+  "contract:LZ4_prepareTable": 1,
+  "contract:LZ4_saveDict": 1,
+  "contract:LZ4_saveDictHC": 1,
+  "contract:pb_decode_bool": 1,
+  "contract:pb_encode_string": 1,
+  "record-object-place": 1,
+  "contract:EVP_EncodeBlock": 1,
+  "contract:rd_hexdump": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& ibroker_id` i": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `opaque` in `& o": 1,
+  "uncontracted:call to `rd_kafka_confval_set_type` retains `& true_or_false": 1,
+  "contract:rd_list_copy_to": 1,
+  "contract:rd_kafka_ConfigEntry_new": 1,
+  "contract:rd_list_init_copy": 1,
+  "contract:rd_list_destroy": 1,
+  "contract:rd_kafka_MemberDescription_new": 1,
+  "contract:rd_kafka_group_result_new": 1,
+  "contract:cb": 1,
+  "contract:rd_jitter": 1,
+  "contract:rd_kafka_group_member_clear": 1,
+  "contract:rd_kafka_HeartbeatRequest": 1,
+  "contract:rd_kafkap_str_new": 1,
+  "elaboration:place: the typed access-path reader refused it (CG10)": 1,
+  "contract:rd_kafkap_bytes_copy": 1,
+  "contract:rd_kafka_msgq_enq_sorted0": 1,
+  "contract:rd_kafka_gzip_compress": 1,
+  "contract:rd_kafka_lz4_compress": 1,
+  "contract:rd_kafka_snappy_compress_slice": 1,
+  "contract:rd_kafka_zstd_compress": 1,
+  "contract:rd_kafka_offset_reset": 1,
+  "contract:rko_op_cb": 1,
+  "contract:rd_kafka_msgq_insert_msgq": 1,
+  "contract:rd_kafka_q_fwd_set0": 1,
+  "contract:rd_tmpabuf_alloc0": 1,
+  "contract:rd_kafka_timer_override_once": 1,
+  "contract:sizeof": 1,
+  "contract:check_oauthbearer_extension_key": 1,
+  "contract:scram_H": 1,
+  "place:hop": 1,
+  "contract:rd_kafka_timer_schedule_next": 1,
+  "contract:poll": 1,
+  "contract:rd_kafka_interceptors_on_request_sent": 1,
+  "contract:rd_kafka_broker_persistent_connection_add": 1,
+  "contract:rd_kafka_broker_add_logical": 1,
+  "contract:mtx_init": 1,
+  "contract:rd_kafka_broker_monitor_add": 1,
+  "contract:cnd_init": 1,
+  "contract:rd_map_alloc_buckets": 1,
+  "contract:rd_strtup_new": 1,
+  "contract:XXH32_finalize": 1,
+  "contract:XXH64_finalize": 1,
+  "pointer-store:local-pointer": 1,
+  "contract:mk_mimetype_lookup": 1,
+  "pointer-store-flow:owned-field": 1,
+  "contract:send_file": 1
+ },
+ "greedy_fixed_point": [
+  [
+   "custody-position:released",
+   13
+  ],
+  [
+   "pointer-store:other",
+   12
+  ],
+  [
+   "probe-declined",
+   11
+  ],
+  [
+   "pointer-store:formal-pointer",
+   10
+  ],
+  [
+   "elaboration:unlisted form: no value form of this card",
+   10
+  ],
+  [
+   "call-result-store",
+   7
+  ],
+  [
+   "unclassified:CallArgument",
+   6
+  ],
+  [
+   "reader:other",
+   6
+  ],
+  [
+   "reader:address",
+   5
+  ],
+  [
+   "contract:rd_kafka_interceptor_method_add",
+   10
+  ],
+  [
+   "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * ",
+   4
+  ],
+  [
+   "reader:call",
+   4
+  ],
+  [
+   "reader:chain",
+   5
+  ],
+  [
+   "pointer-store:arithmetic",
+   4
+  ],
+  [
+   "contract:rd_kafka_timer_start0",
+   4
+  ],
+  [
+   "return-contracted-call",
+   3
+  ],
+  [
+   "elaboration:unlisted form: no unique Clang node for the statement",
+   3
+  ],
+  [
+   "unclassified:AssignmentValue",
+   2
+  ],
+  [
+   "reader:untyped-member",
+   2
+  ],
+  [
+   "contract:rd_kafka_log0",
+   3
+  ],
+  [
+   "reader:untyped-base",
+   4
+  ],
+  [
+   "reader:cast",
+   3
+  ],
+  [
+   "contract:LZ4F_free",
+   3
+  ],
+  [
+   "pointer-store:pointer-read",
+   2
+  ],
+  [
+   "custody-position:owned",
+   2
+  ],
+  [
+   "contract:rd_kafka_broker_session_update_toppars_list",
+   2
+  ],
+  [
+   "contract:LZ4HC_compress_generic",
+   2
+  ],
+  [
+   "unclassified:AssignmentDestination",
+   1
+  ],
+  [
+   "record-object-place",
+   1
+  ],
+  [
+   "pointer-store:local-pointer",
+   1
+  ],
+  [
+   "place:storage",
+   1
+  ],
+  [
+   "place:hop",
+   1
+  ],
+  [
+   "elaboration:place: the typed access-path reader refused it (CG10)",
+   1
+  ],
+  [
+   "contract:send_file",
+   1
+  ],
+  [
+   "contract:scram_H",
+   1
+  ],
+  [
+   "contract:rd_tmpabuf_alloc0",
+   1
+  ],
+  [
+   "contract:rd_strtup_new",
+   1
+  ],
+  [
+   "contract:rd_kafka_zstd_compress",
+   1
+  ],
+  [
+   "contract:rd_kafka_timer_schedule_next",
+   1
+  ],
+  [
+   "contract:rd_kafka_timer_override_once",
+   1
+  ],
+  [
+   "contract:rd_kafka_snappy_compress_slice",
+   1
+  ],
+  [
+   "contract:rd_kafka_offset_reset",
+   1
+  ],
+  [
+   "contract:rd_kafka_msgq_insert_msgq",
+   1
+  ],
+  [
+   "contract:rd_kafka_msgq_enq_sorted0",
+   1
+  ],
+  [
+   "contract:rd_kafka_lz4_compress",
+   1
+  ],
+  [
+   "contract:rd_kafka_interceptors_on_request_sent",
+   1
+  ],
+  [
+   "contract:rd_kafka_gzip_compress",
+   1
+  ],
+  [
+   "contract:rd_kafka_group_result_new",
+   1
+  ],
+  [
+   "contract:rd_kafka_group_member_clear",
+   1
+  ],
+  [
+   "contract:rd_kafka_MemberDescription_new",
+   1
+  ],
+  [
+   "contract:rd_kafka_HeartbeatRequest",
+   1
+  ],
+  [
+   "contract:rd_jitter",
+   1
+  ],
+  [
+   "contract:rd_hexdump",
+   1
+  ],
+  [
+   "contract:print_string_ptr",
+   1
+  ],
+  [
+   "contract:poll",
+   1
+  ],
+  [
+   "contract:pb_encode_string",
+   1
+  ],
+  [
+   "contract:pb_decode_bool",
+   1
+  ],
+  [
+   "contract:mk_mimetype_lookup",
+   1
+  ],
+  [
+   "contract:cb",
+   1
+  ],
+  [
+   "contract:XXH64_finalize",
+   1
+  ],
+  [
+   "contract:XXH32_finalize",
+   1
+  ],
+  [
+   "contract:LZ4_prepareTable",
+   1
+  ],
+  [
+   "contract:EVP_EncodeBlock",
+   1
+  ]
+ ],
+ "rows": [
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_New_Item",
+   "needs": [
+    "contract:allocate",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_free",
+   "needs": [
+    "contract:deallocate",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "create_reference",
+   "needs": [
+    "pointer-store:other",
+    "unclassified:AssignmentDestination"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "print_string",
+   "needs": [
+    "contract:print_string_ptr",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "suffix_object",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "update_offset",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "chunkio.c",
+   "function": "cio_set_log_callback",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "function": "finalize_checksum",
+   "needs": [
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_compose_path",
+   "needs": [
+    "contract:cio_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_delete_by_path",
+   "needs": [
+    "contract:cio_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_open",
+   "needs": [
+    "contract:cio_errno_print",
+    "probe-declined",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "cio_stream.c",
+   "function": "get_stream_path",
+   "needs": [
+    "contract:cio_errno_print",
+    "probe-declined",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_histogram_values",
+   "needs": [
+    "probe-declined",
+    "reader:address",
+    "reader:call"
+   ]
+  },
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_summary_values",
+   "needs": [
+    "probe-declined",
+    "reader:address",
+    "reader:call"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_counter_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_exp_histogram_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_gauge_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_histogram_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_summary_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_untyped_instance",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_metric_unit",
+   "needs": [
+    "contract:cfl_sds_create",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "function": "append_metric_value",
+   "needs": [
+    "reader:call"
+   ]
+  },
+  {
+   "unit": "cmt_filter.c",
+   "function": "compare_fqname",
+   "needs": [
+    "contract:compare",
+    "reader:unreadable"
+   ]
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "metric_release_storage",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "needs": [
+    "custody-position:released",
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_snapshot_destroy",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "metric_hist_exchange",
+   "needs": [
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_get_value",
+   "needs": [
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "metric_hist_exchange",
+   "needs": [
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "summary_quantile_exchange",
+   "needs": [
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_resource_spans",
+   "needs": [
+    "contract:ctr_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_scope_spans",
+   "needs": [
+    "contract:ctr_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_spans",
+   "needs": [
+    "contract:ctr_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_attributes",
+   "needs": [
+    "call-result-store",
+    "contract:set_attributes_from_ctr",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_events",
+   "needs": [
+    "contract:cfl_list_size",
+    "contract:set_events_from_ctr",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_name",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_trace_state",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_list_initialize",
+   "needs": [
+    "contract:ctr_errno_print",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "ctr_id.c",
+   "function": "ctr_id_set",
+   "needs": [
+    "contract:cfl_sds_create_len",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_link.c",
+   "function": "ctr_link_set_attributes",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_link.c",
+   "function": "ctr_link_set_trace_state",
+   "needs": [
+    "contract:cfl_sds_create",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_resource.c",
+   "function": "ctr_resource_span_set_schema_url",
+   "needs": [
+    "contract:cfl_sds_create",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_scope.c",
+   "function": "ctr_instrumentation_scope_create",
+   "needs": [
+    "contract:cfl_sds_create",
+    "contract:ctr_errno_print",
+    "reader:?",
+    "reader:errno"
+   ]
+  },
+  {
+   "unit": "ctr_scope.c",
+   "function": "ctr_scope_span_set_schema_url",
+   "needs": [
+    "contract:cfl_sds_create",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "function": "ctr_span_set_schema_url",
+   "needs": [
+    "contract:cfl_sds_create",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "function": "ctr_span_set_trace_state",
+   "needs": [
+    "contract:cfl_sds_create_len",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_prepareTable",
+   "needs": [
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_renormDictT",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card",
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_resetStream_fast",
+   "needs": [
+    "contract:LZ4_prepareTable",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeCDict",
+   "needs": [
+    "contract:LZ4F_free",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeCompressionContext",
+   "needs": [
+    "contract:LZ4F_free",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeDecompressionContext",
+   "needs": [
+    "contract:LZ4F_free",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_localSaveDict",
+   "needs": [
+    "contract:LZ4_saveDict",
+    "contract:LZ4_saveDictHC",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4HC_clearTables",
+   "needs": [
+    "reader:other",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_attach_HC_dictionary",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC2_continue",
+   "needs": [
+    "contract:LZ4HC_compress_generic",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC2_limitedOutput_continue",
+   "needs": [
+    "contract:LZ4HC_compress_generic",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_iov.c",
+   "function": "mk_iov_consume",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_create",
+   "needs": [
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_free",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_set",
+   "needs": [
+    "call-result-store",
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_clock.c",
+   "function": "mk_clock_headers_preset",
+   "needs": [
+    "pointer-store:local-pointer",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "cb_copy_chunk",
+   "needs": [
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "request_set",
+   "needs": [
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "free_chunk_header",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_set_property",
+   "needs": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_find",
+   "needs": [
+    "contract:mk_mimetype_lookup",
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_broadcast_signal",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_cb_add",
+   "needs": [
+    "pointer-store-flow:owned-field",
+    "pointer-store:formal-pointer",
+    "reader:unreadable"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "function": "channel_write_in_file",
+   "needs": [
+    "contract:send_file",
+    "reader:address",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_utils.c",
+   "function": "mk_buffer_cat",
+   "needs": [
+    "call-result-store",
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "function": "pb_field_iter_begin",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "function": "buf_read",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "function": "pb_dec_bool",
+   "needs": [
+    "contract:pb_decode_bool",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "buf_write",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "pb_enc_fixed_length_bytes",
+   "needs": [
+    "contract:pb_encode_string",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "pb_ostream_from_buffer",
+   "needs": [
+    "pointer-store:other",
+    "record-object-place"
+   ]
+  },
+  {
+   "unit": "rdbase64.c",
+   "function": "rd_base64_encode",
+   "needs": [
+    "call-result-store",
+    "contract:EVP_EncodeBlock",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "extra_alloc",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_buf_init",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_segment_dump",
+   "needs": [
+    "contract:rd_hexdump",
+    "reader:other",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_segment_write_update",
+   "needs": [
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_log_print",
+   "needs": [
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_ack_commit_cb_register_op",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_simple_consumer_add",
+   "needs": [
+    "contract:?",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_stats_emit_broker_reqs",
+   "needs": [
+    "reader:address",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_toppar_dump",
+   "needs": [
+    "reader:call",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_broker",
+   "needs": [
+    "contract:rd_kafka_confval_set_type",
+    "uncontracted:call to `rd_kafka_confval_set_type` retains `& ibroker_id` i"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_opaque",
+   "needs": [
+    "contract:rd_kafka_confval_set_type",
+    "uncontracted:call to `rd_kafka_confval_set_type` retains `opaque` in `& o"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_operation_timeout",
+   "needs": [
+    "contract:rd_kafka_confval_set_type",
+    "uncontracted:call to `rd_kafka_confval_set_type` retains `& timeout_ms` i"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_request_timeout",
+   "needs": [
+    "contract:rd_kafka_confval_set_type",
+    "uncontracted:call to `rd_kafka_confval_set_type` retains `& timeout_ms` i"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_validate_only",
+   "needs": [
+    "contract:rd_kafka_confval_set_type",
+    "uncontracted:call to `rd_kafka_confval_set_type` retains `& true_or_false"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterConsumerGroupOffsets_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_copy",
+   "needs": [
+    "contract:rd_kafka_ConfigEntry_new",
+    "contract:rd_list_copy_to",
+    "contract:rd_list_destroy",
+    "contract:rd_list_init_copy",
+    "elaboration:unlisted form: no value form of this card",
+    "reader:address",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_member",
+   "needs": [
+    "contract:?",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteGroup_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteTopic_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_result_result",
+   "needs": [
+    "contract:?",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupOffsets_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_MemberDescription_copy",
+   "needs": [
+    "contract:rd_kafka_MemberDescription_new",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_request_op_result_cb_set",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_set_err0",
+   "needs": [
+    "call-result-store",
+    "contract:rd_kafka_log0",
+    "custody-position:released",
+    "reader:address",
+    "reader:call",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_destroy",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_init",
+   "needs": [
+    "contract:rd_kafka_topic_partition_list_new",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_find",
+   "needs": [
+    "contract:?",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_populate_internal_broker_metadata",
+   "needs": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_set_owned",
+   "needs": [
+    "contract:rd_kafka_topic_partition_list_copy",
+    "custody-position:released",
+    "uncontracted:indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_group_result_copy",
+   "needs": [
+    "contract:rd_kafka_group_result_new",
+    "reader:call"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy_array",
+   "needs": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_monitor_op_cb",
+   "needs": [
+    "contract:cb",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_outbufs_space",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_logname",
+   "needs": [
+    "call-result-store",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_update_reconnect_backoff",
+   "needs": [
+    "contract:rd_jitter",
+    "reader:cast"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_weight_usable",
+   "needs": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "needs": [
+    "contract:rd_kafka_topic_partition_list_new",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_leader_reset",
+   "needs": [
+    "contract:rd_kafka_group_member_clear",
+    "contract:rd_kafka_log0",
+    "custody-position:released",
+    "reader:address",
+    "reader:cast",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_heartbeat",
+   "needs": [
+    "contract:rd_kafka_HeartbeatRequest",
+    "reader:call",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_join_state",
+   "needs": [
+    "call-result-store",
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:call",
+    "reader:cast",
+    "reader:chain",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_last_err",
+   "needs": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_member_id",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "contract:rd_kafkap_str_new",
+    "custody-position:released",
+    "reader:?",
+    "reader:address",
+    "reader:cast",
+    "reader:chain",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_start_max_poll_interval_timer",
+   "needs": [
+    "contract:rd_kafka_timer_start0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_update_session_timeout",
+   "needs": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_flags2str",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_disable",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_init_int",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_init_ptr",
+   "needs": [
+    "elaboration:place: the typed access-path reader refused it (CG10)",
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_sw_str_sanitize_inplace",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_session_update_added_partitions",
+   "needs": [
+    "contract:rd_kafka_broker_session_update_toppars_list",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_session_update_removed_partitions",
+   "needs": [
+    "contract:rd_kafka_broker_session_update_toppars_list",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_share_ack_type_from_msg_op",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_destroy",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_set_topic",
+   "needs": [
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_set_topic_cnt",
+   "needs": [
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_idempotence.c",
+   "function": "rd_kafka_idemp_drain_toppar",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:cast",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_idempotence.c",
+   "function": "rd_kafka_idemp_pid_timer_restart",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "contract:rd_kafka_timer_start0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * "
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_dup",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * "
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_conf_set",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * "
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_conf_interceptor_add_on_new",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "uncontracted:call to `rd_kafka_interceptor_method_add` retains `( void * "
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_acknowledgement",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_broker_state_change",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_commit",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_consume",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_destroy",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_request_sent",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_response_received",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_send",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_exit",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_start",
+   "needs": [
+    "contract:rd_kafka_interceptor_method_add",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_failed",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:call",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_partition_clear",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_entry_by_id_cmp",
+   "needs": [
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_find",
+   "needs": [
+    "unclassified:AssignmentValue"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_next",
+   "needs": [
+    "reader:address",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_set_leader0",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_assignment_set",
+   "needs": [
+    "contract:rd_kafkap_bytes_copy",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_rebalance_timer_restart",
+   "needs": [
+    "contract:rd_kafka_timer_start0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_set_state",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:chain",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_current_assignment_set",
+   "needs": [
+    "contract:rd_kafka_topic_partition_list_copy",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+   "needs": [
+    "contract:rd_kafka_topic_partition_list_copy",
+    "custody-position:released",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_msgset_est_record_size",
+   "needs": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_record_release",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "function": "rd_kafka_msgbatch_set_first_msg",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "function": "rd_kafka_msgq_enq_sorted",
+   "needs": [
+    "contract:rd_kafka_msgq_enq_sorted0",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_gzip",
+   "needs": [
+    "contract:rd_kafka_gzip_compress",
+    "reader:address",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_lz4",
+   "needs": [
+    "contract:rd_kafka_lz4_compress",
+    "reader:address",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_snappy",
+   "needs": [
+    "contract:rd_kafka_snappy_compress_slice",
+    "reader:address",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_zstd",
+   "needs": [
+    "contract:rd_kafka_zstd_compress",
+    "reader:address",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_close",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_reset_op_cb",
+   "needs": [
+    "contract:rd_kafka_offset_reset",
+    "reader:address",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "function": "rd_kafka_op_call",
+   "needs": [
+    "contract:rko_op_cb",
+    "pointer-store-flow:unresolved-owner",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "function": "rd_kafka_op_print",
+   "needs": [
+    "reader:call",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_fetch_pos2str",
+   "needs": [
+    "reader:call",
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_grow",
+   "needs": [
+    "custody-position:owned"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_set_metadata_from_rktp_stored",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_insert_msgq",
+   "needs": [
+    "contract:rd_kafka_msgq_insert_msgq",
+    "reader:address",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_reset_base_msgid",
+   "needs": [
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:cast",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_forward",
+   "needs": [
+    "contract:rd_kafka_q_fwd_set0",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_get_consumer",
+   "needs": [
+    "contract:rd_kafka_queue_new0",
+    "uncontracted:indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_get_main",
+   "needs": [
+    "contract:rd_kafka_queue_new0",
+    "uncontracted:indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_get_partition",
+   "needs": [
+    "contract:rd_kafka_queue_new0",
+    "uncontracted:indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_length",
+   "needs": [
+    "contract:?",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafka_ListOffsetRequest_parameters_make",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_Produce_reply_tags_destroy",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_set_topic_cnt",
+   "needs": [
+    "contract:rd_tmpabuf_alloc0",
+    "elaboration:unlisted form: no value form of this card",
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+   "needs": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "function": "rd_kafka_queue_get_sasl",
+   "needs": [
+    "contract:rd_kafka_queue_new0",
+    "uncontracted:indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_init",
+   "needs": [
+    "contract:rd_kafka_timer_override_once",
+    "contract:rd_kafka_timer_start0",
+    "pointer-store:other",
+    "reader:address",
+    "reader:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "do_unittest_illegal_extension_keys_should_fail",
+   "needs": [
+    "contract:check_oauthbearer_extension_key",
+    "contract:sizeof",
+    "reader:untyped-base",
+    "uncontracted:None"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_token_free",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_H",
+   "needs": [
+    "contract:scram_H",
+    "reader:cast",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_conf_validate",
+   "needs": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "ConsumerPair_cmp",
+   "needs": [
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "sort_by_map_elem_val_toppar_list_cnt",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card",
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "ut_testConflictingPreviousAssignments",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "clear_unit_test_data",
+   "needs": [
+    "place:hop",
+    "place:storage"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decoded_int64",
+   "needs": [
+    "place:storage"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_connection_creation_rate",
+   "needs": [
+    "reader:address",
+    "unclassified:AssignmentValue"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_acknowledgements_send_rate",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_bytes_consumed_rate",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_fetch_rate",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_heartbeat_rate",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_timer.c",
+   "function": "rd_kafka_timer_schedule",
+   "needs": [
+    "contract:rd_kafka_timer_schedule_next",
+    "reader:call"
+   ]
+  },
+  {
+   "unit": "rdkafka_timer.c",
+   "function": "rd_kafka_timer_unschedule",
+   "needs": [
+    "pointer-store:pointer-read"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_cmp_rkt",
+   "needs": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_state",
+   "needs": [
+    "call-result-store",
+    "contract:rd_kafka_log0",
+    "reader:address",
+    "reader:chain",
+    "reader:untyped-base",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_poll",
+   "needs": [
+    "contract:poll",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_request_sent",
+   "needs": [
+    "contract:rd_kafka_interceptors_on_request_sent",
+    "reader:cast",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_coord_timer_start",
+   "needs": [
+    "contract:rd_kafka_timer_start0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_schedule_register_partitions",
+   "needs": [
+    "contract:rd_kafka_timer_start0",
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txns_init",
+   "needs": [
+    "contract:cnd_init",
+    "contract:mtx_init",
+    "contract:rd_kafka_broker_add_logical",
+    "contract:rd_kafka_broker_monitor_add",
+    "contract:rd_kafka_broker_persistent_connection_add",
+    "pointer-store-flow:unresolved-owner",
+    "reader:?",
+    "reader:address",
+    "reader:chain",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_dump",
+   "needs": [
+    "reader:address"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_grow",
+   "needs": [
+    "custody-position:owned"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_alloc_buckets",
+   "needs": [
+    "reader:other"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_init",
+   "needs": [
+    "contract:rd_map_alloc_buckets",
+    "pointer-store-flow:unresolved-owner",
+    "reader:?"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_iter_begin",
+   "needs": [
+    "pointer-store:pointer-read"
+   ]
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_strtup_dup",
+   "needs": [
+    "contract:rd_strtup_new",
+    "reader:untyped-base"
+   ]
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH32_digest_endian",
+   "needs": [
+    "contract:XXH32_finalize",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH64_digest_endian",
+   "needs": [
+    "contract:XXH64_finalize",
+    "reader:untyped-member"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "append",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "init_snappy_decompressor",
+   "needs": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "peek",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "needs": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_init_env",
+   "needs": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "sink_peek",
+   "needs": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "writer_set_expected_length",
+   "needs": [
+    "pointer-store:arithmetic"
+   ]
+  }
+ ]
+}
