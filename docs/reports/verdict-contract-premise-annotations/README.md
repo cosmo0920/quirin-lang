@@ -3,8 +3,12 @@
 Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS (wave 48, card-high), the ledger
 entry VERDICT-CONTRACT-DEPENDENCIES registered, under the user's direction of
 2026-10-09: "handle as safe as possible". Base: local `main` at `9564eeb6d`.
-[PREDICTION.md](PREDICTION.md) was committed at `e3679750d`, before any
-contract text changed.
+The card was then rebased onto `84967949c` (VERDICT-BODY-STANDING-CLAUSE-SCOPE,
+gateway rules 13i–13k) and measured again there (§4b).
+[PREDICTION.md](PREDICTION.md) was committed before any contract text
+changed: `e3679750d` before the rebase, `f27e511af` after it. Other commits
+named below by their pre-rebase hash map as follows: `41eb05a27` →
+`82b08525f`, `5511ac4fb` → `08d9c3dbe`, `f2d26a7d5` → `4bfec6ee7`.
 
 **Published property and scope.** No new property and no verdict change:
 custody (`c.custody`) on the pinned corpus, the system route and the
@@ -191,6 +195,62 @@ rows:
 * `mk_vhost_set_property` is Unknown with 2 leaves on both. None of its five
   declarations changed.
 
+## 4b. On the rebased base (`84967949c`)
+
+The base moved under the card. VERDICT-BODY-STANDING-CLAUSE-SCOPE now gives
+body standing per clause (rules 13i–13k), and no body evidence covers a named
+premise (rule 13i). So a declaration that was fully validated becomes
+`partly-validated` when it gains a premise. That consequence follows from the
+landed rules; it was not foreseen in the frozen prediction, which predates
+them.
+
+I measured again with one binary built at the rebased tip,
+`private/vcpa/bin/rebased` `971441aa…`, which equals every `run.json`.
+
+* **BEFORE2** runs with `84967949c`'s six modules and three locks in place
+  ([`scripts/with-base-contracts.sh`](scripts/with-base-contracts.sh)
+  rewrites them, then restores them with their digests asserted).
+* **AFTER2** runs with the card's files.
+* Wall time, BEFORE2 → AFTER2: corpus 461.2 → 513.1 s, system 69.5 → 73.1 s,
+  slice 33.4 → 29.5 s. The run was under shared load, so these are not a cost
+  measurement.
+
+The identity check now also lists rules 13i–13k differences. They are
+allowed only for a changed declaration's own coverage and record, and for the
+counts and Safe roll-up derived from them.
+
+| route | verdict rows (= main's) | rows' `contract_dependencies` | report paths differing (13i coverage / other) | sidecar paths (13i–13k / other) | parity multiset |
+| --- | --- | --- | --- | --- | --- |
+| corpus | `97cbdcf3…` equal | equal | 5 (5 / 0) | 127 (17 / 0) | identical (662,667) |
+| system | `09b7a59e…` equal | equal | 47 (2 / 0; 45 contract-source digests) | 119 (8 / 0) | identical (139,962) |
+| slice | `ce1be80e…` equal | equal | 48 (0 / 0; 48 contract-source digests) | 107 (0 / 0) | identical (50,407) |
+
+The corpus report differs from BEFORE2 (`c1e6e7d1…` → `2a484e21…`) in
+exactly five paths, each a premise clause listed in a unit's
+`contract_body_evidence.clauses` as uncovered:
+
+* `resource_premise(asserted_allocation)` of `rd_kafka_toppar_new0`,
+  `rd_kafka_toppar_desired_add`, `rd_kafka_q_new0` and `ut_create_mock_queue`;
+* `resource_premise(untracked_handback)` of `flb_input_chunk_get_name`.
+
+| standing move | corpus | system | slice |
+| --- | --- | --- | --- |
+| validated → partly-validated | `flb_input_chunk_get_name` (`untracked_handback` uncovered), `ut_create_mock_queue` (`asserted_allocation` uncovered) | `flb_input_chunk_get_name` | none |
+| already partly-validated, one more uncovered clause | `rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`, `rd_kafka_q_new0` | – | – |
+| declarations validated / partly validated | 48 / 29 → **46 / 31** | 8 / 5 → **7 / 6** | 4 / 1, unchanged |
+| Safe rows: none / only validated / partly validated / declared assumption | 418 / 64 / 22 / 377 → **418 / 63 / 23 / 377** | 47 / 3 / 2 / 35 → **47 / 1 / 4 / 35** | 29 / 0 / 2 / 14, unchanged |
+
+The Safe rows that moved rest on `flb_input_chunk_get_name`: 1 in the corpus
+and 2 in the system route. Each now counts as resting on a partly validated
+declaration, because its premise is a stated assumption that no body
+establishes. That is the conservative label. The Safe rows naming each
+premise are unchanged from the table above.
+
+The `mk_vhost_set` tip probe on the rebased binary reads the same:
+`with-base-contracts.sh` for BEFORE, then `tip_rows.py` on `private/vcpa/tip-rebased` and
+`private/vcpa/tip-a2`. Verdict rows and dependencies are identical on both
+copies (`f5a334e4…`, `a5e8e265…`), and the two rows are as above.
+
 ## 5. Prediction against outcome
 
 | prediction | outcome |
@@ -204,6 +264,7 @@ rows:
 | Safe rows per premise = BEFORE's per-declaration Safe rows | held exactly |
 | Lean: none | held |
 | eleven clause pins +1, no count moves; librdkafka inventory only | held |
+| (rebased onto `84967949c`) no verdict or dependency row moves | held on all three routes; not predicted: rule 13i labels two validated declarations `partly-validated` (§4b), and the corpus report is no longer byte-identical (five premise clauses of rule 13i's coverage) |
 
 ## 6. Lean
 
@@ -214,7 +275,28 @@ No `.lean` file changed.
 
 ## 7. Gate
 
-Gate `g1` ran with every step under the shared lock. The code steps ran at
+**On the rebased tip (the gate of record).** After the rebase, `cargo check
+--workspace --all-targets` and the conflict-marker grep are clean. The
+scratchpad `audit_card_lines.sh 9564eeb6d 74e2844f4` listed only this card's
+own STATUS and increment lines: I resolved those conflicts to main's text and
+wrote the lines again with the rebased figures. Gate `g2` ran with every
+step under the shared lock, code steps at `5c601a438`; logs are in
+`private/vcpa/gate-g2/`.
+
+* `cargo check --workspace --all-targets`: 0.
+* Submodule: 0. fmt: 0. clippy `--locked`: 0.
+* `run_test_binaries.py`: 461 units, 474 summaries, **7,728 passed, 0
+  failed**, 11 ignored, exit 0 (`private/vcpa/tests-gate-g2/`).
+* Both reevaluation probes: 0.
+* `check_lean_audits.py`: **300** audits passed.
+* The docs steps and the matrix regeneration are recorded in
+  [gate/](gate/) (08, 09, 09a, 09b, 10b, 10c).
+
+`providers/` is byte-identical between the provider gate `pg2` (below) and
+the rebased tip, and main changed nothing under `providers/`, so `pg2`
+stands.
+
+**On the first base (`9564eeb6d`).** Gate `g1` ran with every step under the shared lock. The code steps ran at
 `5511ac4fb`, which has the final contracts and pins; the later commits change
 records only. Logs are in `private/vcpa/gate-g1/`.
 
@@ -256,7 +338,8 @@ Records: [gate.json](gate.json) and [gate/](gate/).
   sweep added four more premises over seven declarations.
 * `VERDICT-PREMISES-NON-RESOURCE-CONTRACTS` is **registered**: the 15 comment
   lines in 14 non-resource-v1 modules (two crates) that state caller premises
-  of contract families with no premise clause. Ledger 733 → 733.
+  of contract families with no premise clause. Ledger 734 → 734 on the
+  rebased base (733 → 733 at `9564eeb6d`).
 
 ## Files
 

@@ -11,7 +11,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/verdict-contract-premise-annotations"
-BASE = "9564eeb6d"
+BASE = "84967949c (rebased from 9564eeb6d)"
 
 
 def main() -> int:
@@ -50,7 +50,7 @@ def main() -> int:
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (no Lean "
         f"change); python suite before the matrix regeneration 08 = {exits.get('08-python')}, docs index check 09 = {exits.get('09-index')}, then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
-        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ as at the code steps: the eleven premises, the re-pinned locks and the synced inventory): cargo check --locked 0, cargo test {provider_tests} passed "
+        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ byte-identical to the code steps' tree (a pre-rebase commit; main changed nothing under providers/): the eleven premises, the re-pinned locks and the synced inventory): cargo check --locked 0, cargo test {provider_tests} passed "
         "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
         f"package 0, providers Python suite {provider_python.group(1)} tests OK."
     )
