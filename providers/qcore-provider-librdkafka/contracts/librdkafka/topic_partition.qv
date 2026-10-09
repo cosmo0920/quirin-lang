@@ -132,6 +132,26 @@ module contract;
 //     and `rd_qsort_r` are named by these bodies and block no projected
 //     function in the baseline.
 
+// ## Re-declared: the comparator is no longer read as benign
+//
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (contract spec C04.19, gateway rules
+// 13u, 13z). The declaration above read `cmp` as `resource_borrowed` and left
+// what the comparator does to the caller's state unstated
+// (`RDKAFKA-SORT-COMPARATOR-EFFECTS`): its two callers were `Safe` by assuming
+// the comparator benign, which the card's rule forbids. `rd_qsort_r` calls
+// `cmp(a, b, opaque)` during the call only, zero or more times, with two
+// pointers into the list's element array and the caller's `opaque`:
+// `resource_callback_invoked(cmp, _, _, opaque)`. A caller is now decided by
+// the comparator's own contract (rule 13u), so both callers, whose
+// comparators (`rd_kafka_topic_partition_cmp_opaque`,
+// `rd_kafka_topic_partition_by_id_cmp_opaque`) have no contract in force, are
+// `Unknown` (named corrections in the card's report). The body rebinds `cmp`
+// (the `NULL` default) and hands it on to `rd_qsort_r` rather than calling it,
+// so rule 13y's check does not validate it and the declaration is withdrawn in
+// `rdkafka_partition.c` (every call there refuses, `callback-withdrawn`); a
+// `NULL` actual is an open set wherever the declaration stands. The body is
+// byte-identical at `66910c10` and `046accf6`.
+
 // --- the in-place ordering of a topic-partition list ---
 extern fn rd_kafka_topic_partition_list_sort(rktparlist: ptr<mut, u8>, cmp: fnptr, opaque: ptr<mut, u8>) -> unit
 contract {
@@ -139,5 +159,6 @@ contract {
     ensures normal resource_borrowed(rktparlist);
     ensures normal resource_borrowed(cmp);
     ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(cmp, _, _, opaque);
     ensures normal resource_return_none();
 };

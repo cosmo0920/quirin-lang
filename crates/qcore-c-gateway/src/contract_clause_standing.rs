@@ -96,13 +96,20 @@ pub enum ClauseKind {
     VariadicTail,
     /// `resource_no_return`.
     NoReturn,
+    /// Card CG22-CALLBACK-REGISTRY-CONTRACT: a callback clause no body check
+    /// reads (a table dispatch, a registry use, an element clause, a
+    /// constructor's registration).
+    Callback,
+    /// Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a synchronous
+    /// invocation, or a registration in a parameter holder.
+    CallbackChecked,
     /// The retained text could not be reread: a clause nothing covers.
     Unreadable,
 }
 
 impl ClauseKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 17] = [
+    pub const ALL: [Self; 19] = [
         Self::Parameter,
         Self::Result,
         Self::BorrowedResult,
@@ -119,6 +126,8 @@ impl ClauseKind {
         Self::Premise,
         Self::VariadicTail,
         Self::NoReturn,
+        Self::Callback,
+        Self::CallbackChecked,
         Self::Unreadable,
     ];
 
@@ -142,6 +151,8 @@ impl ClauseKind {
             Self::Premise => "premise",
             Self::VariadicTail => "variadicTail",
             Self::NoReturn => "noReturn",
+            Self::Callback => "callback",
+            Self::CallbackChecked => "callbackChecked",
             Self::Unreadable => "unreadable",
         }
     }
@@ -159,8 +170,11 @@ impl ClauseKind {
 
 /// The evidence spellings of rule 13g, in the order the report names them;
 /// card DECLARED-ASSUMPTION-BODY-CHECKS adds `13m` (the declaration's own
-/// entry check on a body whose W4 summary only refines it).
-pub const EVIDENCE: [&str; 8] = ["W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m"];
+/// entry check on a body whose W4 summary only refines it); card
+/// CG22-CALLBACK-REGISTRY-CONTRACT adds `13y` (the callback body check).
+pub const EVIDENCE: [&str; 9] = [
+    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y",
+];
 
 /// Whether the evidence spelled `evidence` covers a clause of `kind` (rule
 /// 13i). Any other spelling covers nothing.
@@ -178,6 +192,8 @@ pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
         ),
         "13c" => kind == ClauseKind::Reference,
         "13d" => kind == ClauseKind::ReferenceResult,
+        // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y).
+        "13y" => kind == ClauseKind::CallbackChecked,
         _ => false,
     }
 }
@@ -447,7 +463,59 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
             ),
         ));
     }
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13y).
+    for clause in &declared.callbacks {
+        clauses.push(callback_clause(clause));
+    }
     clauses
+}
+
+/// One callback clause, labelled by its positions.
+fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
+    use qcore_schemas::callback::{CallbackActual, CallbackClause, CallbackHolder};
+    let actuals = |actuals: &[CallbackActual]| {
+        actuals
+            .iter()
+            .map(|actual| match actual {
+                CallbackActual::Parameter { index } => format!(", #{index}"),
+                CallbackActual::Supplied => ", _".to_owned(),
+                CallbackActual::Element => ", element".to_owned(),
+            })
+            .collect::<String>()
+    };
+    let keyword = clause.keyword();
+    let (kind, arguments) = match clause {
+        CallbackClause::Invoked {
+            callback,
+            actuals: a,
+        } => (
+            ClauseKind::CallbackChecked,
+            format!("#{callback}{}", actuals(a)),
+        ),
+        CallbackClause::Registered {
+            callback,
+            holder: CallbackHolder::Parameter { index },
+        } => (ClauseKind::CallbackChecked, format!("#{callback}, #{index}")),
+        CallbackClause::Registered {
+            callback,
+            holder: CallbackHolder::Result,
+        } => (ClauseKind::Callback, format!("#{callback}, result")),
+        CallbackClause::Table { table, actuals: a } => {
+            (ClauseKind::Callback, format!("#{table}{}", actuals(a)))
+        }
+        CallbackClause::RegistryInvoked { holder, actuals: a } => {
+            (ClauseKind::Callback, format!("#{holder}{}", actuals(a)))
+        }
+        CallbackClause::ElementAdded { element, holder } => {
+            (ClauseKind::Callback, format!("#{element}, #{holder}"))
+        }
+        CallbackClause::Unregistered { holder }
+        | CallbackClause::ElementsDropped { holder }
+        | CallbackClause::ReleasedIfConstructed { holder } => {
+            (ClauseKind::Callback, format!("#{holder}"))
+        }
+    };
+    Clause::new(kind, format!("{keyword}({arguments})"))
 }
 
 /// The clauses of every declaration of `environment` that live only in its
@@ -614,6 +682,8 @@ mod tests {
                     operation: qcore_schemas::reference_count::ReferenceOperation::Kept,
                 }],
                 references_withdrawn: false,
+                callbacks: Vec::new(),
+                callbacks_withdrawn: false,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

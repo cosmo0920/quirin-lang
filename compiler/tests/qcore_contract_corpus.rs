@@ -355,6 +355,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // paths a borrowed declaration cannot delete (constraint 4). Read from
     // `lib/cmetrics/src/cmt_mpack_utils.c:88-113`.
     ("cmetrics/mpack_utils.qv", "cmt_mpack_consume_uint_tag", 4),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: the array and map unpackers.
+    ("cmetrics/mpack_utils.qv", "cmt_mpack_unpack_array", 6),
+    ("cmetrics/mpack_utils.qv", "cmt_mpack_unpack_map", 6),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
@@ -416,6 +419,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: the neutral
     // `ctr_errno_print`.
     ("ctraces/context_lifetime.qv", "ctr_errno_print", 5),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: the array and map unpackers.
+    ("ctraces/context_lifetime.qv", "ctr_mpack_unpack_array", 6),
+    ("ctraces/context_lifetime.qv", "ctr_mpack_unpack_map", 6),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",
@@ -859,6 +865,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdlib.qv", "strtoul", 7),
     ("libc/stdlib.qv", "strtoull", 7),
     ("libc/stdlib.qv", "strtod", 6),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: synchronous comparators.
+    ("libc/stdlib.qv", "bsearch", 9),
+    ("libc/stdlib.qv", "qsort", 8),
     ("libc/string.qv", "strcmp", 5),
     ("libc/string.qv", "strlen", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: scalar byte/string reads. These are
@@ -917,6 +926,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
     ("libc/threads.qv", "cnd_timedwait", 6),
     ("libc/threads.qv", "pthread_sigmask", 6),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: a synchronous initialiser.
+    ("libc/threads.qv", "pthread_once", 6),
     ("libc/time.qv", "time", 4),
     ("libc/time.qv", "timegm", 4),
     ("libc/time.qv", "gmtime_r", 5),
@@ -1161,6 +1172,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_q_purge0", 5),
     ("librdkafka/client.qv", "rd_kafka_toppar_needs_query", 4),
     ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 5),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: lists with a free callback and
+    // nanopb's output stream.
+    ("librdkafka/client.qv", "rd_list_init", 6),
+    ("librdkafka/client.qv", "rd_list_new", 5),
+    ("librdkafka/client.qv", "rd_list_add", 5),
+    ("librdkafka/client.qv", "rd_list_destroy", 7),
+    ("librdkafka/client.qv", "rd_list_clear", 5),
+    ("librdkafka/client.qv", "pb_write", 6),
+    ("librdkafka/client.qv", "pb_encode_varint", 5),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
@@ -1253,10 +1273,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // DECLINED on two grounds: `static` with no header declaration in the very
     // unit that calls it, and a CONDITIONAL release (`if (do_free)`) whose
     // other five sites in that unit pass 0.
+    // CG22-CALLBACK-REGISTRY-CONTRACT: re-declared, 5 -> 6 clauses (the
+    // comparator's synchronous invocation).
     (
         "librdkafka/topic_partition.qv",
         "rd_kafka_topic_partition_list_sort",
-        5,
+        6,
     ),
     ("librdkafka/typed_queue.qv", "rd_kafka_q_enq0", 5),
     ("librdkafka/typed_queue.qv", "rd_kafka_q_deq0", 5),
@@ -1568,7 +1590,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF wrote this declaration and deliberately
     // did not land it at measured payoff zero; this card repaired the blocker
     // it named and measured the payoff, so it lands.
-    ("msgpack/packer.qv", "msgpack_packer_init", 5),
+    // CG22-CALLBACK-REGISTRY-CONTRACT: re-declared, 5 -> 7 clauses (the
+    // retention of `data` and the registration of `callback` in `pk`).
+    ("msgpack/packer.qv", "msgpack_packer_init", 7),
 ];
 
 #[path = "support/contract_corpus.rs"]

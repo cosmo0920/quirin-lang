@@ -338,6 +338,11 @@ pub(crate) mod reference_route;
 // a returned-reference declaration, called from `reference_route::settle`.
 #[path = "legacy_reference_result.rs"]
 pub(crate) mod reference_result_route;
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13y): callback contracts
+// (the call-site decision of invocations and tables, the registry records
+// the transfer keeps, the release refusal, the body checks).
+#[path = "legacy_callback_route.rs"]
+pub(crate) mod callback_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -2248,6 +2253,10 @@ fn analyze_legacy_c_tokens_under_holds(
     // body this unit defines stands only when the body validates it.
     let references_settled = reference_route::settle(tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
+    // whose body this unit defines stands only when the body validates it.
+    let callbacks_settled = callback_route::settle(tokens, contracts);
+    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
     // Card LOADER-ABI-MODES, applied here for the same uniformity reason: this
     // entry point does not pass through the translation-unit pass, so a
     // declaration a body in the same stream contradicts would otherwise still
@@ -2896,6 +2905,10 @@ pub(crate) fn recursive_component_census(
     // body this unit defines stands only when the body validates it.
     let references_settled = reference_route::settle(&tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
+    // whose body this unit defines stands only when the body validates it.
+    let callbacks_settled = callback_route::settle(&tokens, contracts);
+    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
     let definitions = names.clone();
@@ -3042,6 +3055,10 @@ fn analyze_translation_unit_under_holds(
     // body this unit defines stands only when the body validates it.
     let references_settled = reference_route::settle(&tokens, contracts);
     let contracts = references_settled.as_ref().unwrap_or(contracts);
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a callback declaration
+    // whose body this unit defines stands only when the body validates it.
+    let callbacks_settled = callback_route::settle(&tokens, contracts);
+    let contracts = callbacks_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
     // selection narrows `names`, for the derivation scope below.

@@ -359,6 +359,8 @@ pub(super) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
                         derived_outs: Vec::new(),
                         references: Vec::new(),
                         references_withdrawn: false,
+                        callbacks: Vec::new(),
+                        callbacks_withdrawn: false,
                     },
                 )
             })
@@ -446,6 +448,8 @@ mod tests {
                     operation: ReferenceOperation::Kept,
                 }],
                 references_withdrawn: false,
+                callbacks: Vec::new(),
+                callbacks_withdrawn: false,
             },
         );
         contracts.insert_retaining(
@@ -465,6 +469,8 @@ mod tests {
                     operation: ReferenceOperation::Dropped,
                 }],
                 references_withdrawn: false,
+                callbacks: Vec::new(),
+                callbacks_withdrawn: false,
             },
         );
         contracts

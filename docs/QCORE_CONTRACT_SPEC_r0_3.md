@@ -654,7 +654,7 @@ Card CALLEE-RETENTION-CLASS1 (gateway rule 12t), on the user's decision recorded
 
 > **USER DECISION 2026-10-05.** The decision is on `W48-CALLEE-DECISION-TABLE` class 1 ("callbacks and retained pointers"). The user chose **"split by shape"**. The three shapes: **(a) Custody-taking inserts → conditional custody transfer on success**, using the existing relational postconditions (CG23, gateway rule 11r, contract spec on return-code dispositions), no new vocabulary. **(b) A pointer retained in a holder → a new `retained_by(P, holder)` clause.** The caller **keeps** custody, but must establish that P's object outlives the holder (or that the holder is destroyed or reset before P is released). Otherwise the result is **Pending** (a named, human-resolvable reason) or Unknown, **never Safe**. Releasing P while a live holder retains it is a use-after-free hazard. Validate reachability before any Unsafe; it is provisional, never presented as an upstream defect. **(c) Callbacks over retained elements → CG22's callback contracts** (gateway rule 11p); where the callback contract vocabulary does not cover a member, record exactly what is missing, and size it.
 
-Shape (a) is C04.13 with its forwarding; shape (b) is this clause; shape (c) has no vocabulary yet (`CG22-CALLBACK-REGISTRY-CONTRACT`).
+Shape (a) is C04.13 with its forwarding; shape (b) is this clause; shape (c) is C04.19 (card CG22-CALLBACK-REGISTRY-CONTRACT).
 
 ```qcore
 extern fn keep(state: ptr<mut, u8>, src: ptr<const, u8>) -> i32
@@ -686,7 +686,7 @@ contract {
 * **A holder reset or destroyed.** A tracked heap holder releases what it holds when it is released; a `resource_holder_reset(H)` call drops what `H` holds. A tracked holder that still holds at an exit (returned, stored or leaked) may outlive the frame: the exit refuses.
 * **The program-lifetime holder.** `global` keeps only static storage: any other `P` there is undecided.
 
-A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps; since card W43-ABI-ENUM-AND-CONST-PP the guarded form of C04.14.1), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot (since card SLOT-MOVE-AND-INTERIOR-BORROW, C04.16), and a callback the holder invokes over what it keeps (shape (c)).
+A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps; since card W43-ABI-ENUM-AND-CONST-PP the guarded form of C04.14.1), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot (since card SLOT-MOVE-AND-INTERIOR-BORROW, C04.16), and a callback the holder invokes over what it keeps (shape (c), C04.19).
 
 **Checked, never trusted.** A retaining declaration is pinned (C06.2) and evaluated against its pin like every declaration, and compared with the unit's C declaration (C04.1); no inference replaces it in a unit that defines its body. Its body is not yet checked against the retention (`RETAINED-BY-BODY-CHECK`): it is a declared assumption (constraint 4). The Lean model is `QCore.RetainedBy`.
 
@@ -859,6 +859,80 @@ contract {
 **Meaning.** The premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. It is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
+
+### C04.19. Callback contracts
+
+Card CG22-CALLBACK-REGISTRY-CONTRACT (gateway rules 13u–13z), on the user's decision of 2026-10-05 recorded in C04.14: class 1 shape (c), callbacks over retained elements, goes through callback contracts. The callback relation itself is the core's `callback_trace` (rule 11p, `QCore.IndirectCalls`): a registration needs a live context and no earlier teardown, an invocation the registration in force and the context live, the context's release a prior unregistration.
+
+```qcore
+extern fn each(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn list_new(size: i32, free_cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_callback_registered(free_cb, result);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn list_add(rl: ptr<mut, u8>, elem: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(elem);
+    ensures normal resource_element_added(elem, rl);
+    ensures normal resource_return_none();
+};
+
+extern fn list_destroy(rl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_callback_registry_invoked(rl, element);
+    ensures normal resource_elements_dropped(rl);
+    ensures normal resource_callback_unregistered(rl);
+    ensures normal resource_released_if_constructed(rl);
+    ensures normal resource_return_none();
+};
+```
+
+**The clauses.** An actual list `A…` names, position by position, what the callback receives: a parameter of the declaration (the caller's actual there, unchanged), `_` (a value the callee supplies: an index, a pointer it computes into an object it was handed, a buffer of its own) or, in a registry invocation only, `element` (each element the holder holds).
+
+| Clause | Meaning |
+|---|---|
+| `resource_callback_invoked(F, A…)` | **Synchronous invocation.** During the call only, the function pointer `F` is called zero or more times with `(A…)`; nothing keeps it. |
+| `resource_callback_table(T, A…)` | **Table dispatch.** During the call only, function pointers the callee reads from the array `T` designates are called zero or more times with `(A…)`. |
+| `resource_callback_registered(F, H)` | **Registration.** After the call the holder `H` keeps `F` (a null `F`: no callback), replacing any earlier registration. `H` is a parameter (in place) or `result` (a constructor). |
+| `resource_callback_registry_invoked(H, A…)` | During the call, the callback `H` keeps (if any) is called zero or more times with `(A…)`. |
+| `resource_callback_unregistered(H)` | After the call `H` keeps no registration. |
+| `resource_element_added(E, H)` | **Element custody.** `E`'s object becomes an element `H` holds: its custody passes to `H` when `H`'s registered callback releases its `element` argument, otherwise `H` only retains `E` (C04.14). |
+| `resource_elements_dropped(H)` | After the call `H` holds no element. |
+| `resource_released_if_constructed(H)` | **Flag-conditioned self-release.** The call releases `H`'s object exactly when the registration in force was made by a constructor (`result` holder), and nothing when it was made in place (`rd_list_new` sets `RD_LIST_F_ALLOCATED`, `rd_list_init`'s `memset` clears it). |
+
+**Placement** (total-or-reject, grammar G05). `F` names a `fnptr` parameter; one callback is named by at most one invocation or registration. `T`, `H` and `E` name depth-one pointer parameters, `resource_borrowed`, with no kind. A parameter actual is a parameter other than the invoked callback; a declaration with a parameter named `_` or `element` rejects every callback clause; `result` requires `resource_return_owned(nonnull)` and rejects beside a parameter named `result`. An element is not its own holder and is never also retained; a declaration carries at most one clause of each keyword per position and never both a registration in a parameter holder and a registry clause on it; the clauses stand where a retention may (C04.14), beside retentions (`msgpack_packer_init` both retains `data` and registers `callback` in `pk`), never beside a slot or reference clause. A declaration carrying one is **withheld from the function map** with the retaining declarations: a consumer that knows nothing of callbacks sees an uncontracted callee, so **no callback is ever read as a benign borrowed pointer**.
+
+**What a consumer MUST apply** (the C gateway's route G does, rules 13u–13x):
+
+1. **Candidates.** A callback actual is decided only as a closed candidate set: rule 11p's resolution of the actual over Clang's AST (a function designator, a resolved local, a constant table), or, for a table, every designator of an automatic array's braced initializer when the body names the array only as whole table actuals of declared table dispatchers (string and null entries are never called: premise `P-CG22-DEFINED-POINTER-VALUE`). A null constant registers no callback; anywhere else, and for every other actual (a formal, a member read through a pointer, a cast, a call's result), the set is **open** and the call is refused (`callback-undecided`).
+2. **Loop-safe composition.** Every candidate needs a contract in force (a declaration in the function map or a validated in-unit summary; otherwise `callback-uncontracted`), and that contract must be the **identity** on the caller's state: exactly as many parameters as actuals, each `resource_borrowed` with no kind, `resource_return_none()`, no container or counted-user clause (otherwise `callback-effectful`). Then any number of invocations, of any candidates, is the identity, and the call reads as its own custody contract. The one exception is an `element` position of a registry invocation, which may be `resource_released`: the registry's free callback. A callback releasing or keeping anything else is refused, including an object the callee supplies (`rd_kafka_q_serve*`'s ops). **Never `Safe` by assuming a callback benign.**
+3. **Registries.** A registration is recorded on the path for a holder the body names: `&L` for `L` one automatic, non-pointer, non-array object named only as whole `&L` actuals of holder-naming callees, or one tracked live identity (a constructor's result included). A registry clause needs the registration in force on every path reaching the call (registrations join by agreement; a disagreeing join is undecided); otherwise, and for a holder the body cannot name (a formal, a member), the call is refused (`callback-registry-undecided`). An invocation over a registration whose candidates are all the identity changes nothing; over one whose candidates all release the element, it releases every element whose custody the registry took; any other registration is refused.
+4. **Element custody.** An element added to a releasing registry held by a tracked identity is contained in it (C04's containment: the holder's escape carries it, and the registry's invocation releases it); added to a releasing frame registry it is refused (`callback-element-custody-undecided`: a frame object has no identity to own it); added to a registry with no callback or an identity callback it is retained by the holder under C04.14's decision table. A plain release of a holder whose registry still owns elements is refused, never read as releasing them; elements dropped without their release are refused.
+5. **Self-release.** `resource_released_if_constructed(H)` releases the holder (an ordinary release, after the registry's own effects) when the registration in force before the call was a constructor's, and does nothing for an in-place one.
+
+**Checked against bodies (rule 13y).** In a unit that defines the declared function, a synchronous invocation stands only when the body names `F` only as the callee of direct calls (`F(…)` or `(*F)(…)`) whose actuals match `A…` position by position (a parameter word: that formal, never rebound or address-taken; `_`: anything not naming `F`), and a registration in a parameter holder only when the body names `F` only as the value of stores `H->M = F;`, at least once, `F` and `H` never rebound. A body that does not validate withdraws the declaration in that unit (every call there refuses, `callback-withdrawn`; no inference reads the body in its place). The check establishes what the callee does with the pointer; the callback's own contract is the candidate's. Every other callback clause (a table, a registry use, element custody, a constructor's registration) is a declared assumption (constraint 4), pinned (C06.2), and no body evidence covers it (rule 13i).
+
+**Summaries** (rule 13u). A designator a body hands a synchronous invocation or table dispatch is a call-graph edge for W4's bottom-up order, so the callback is summarised before its caller.
+
+**Not in this vocabulary** (recorded in the card's report with sizes): an invocation through a member of an object the caller holds whose registration happened elsewhere (`rd_kafka_op_destroy`'s `rko_op_cb`, `pb_write` over a stream `pb_ostream_from_buffer` returned by value), a type-switched union release (`rd_kafka_op_destroy`), a callback that takes custody of an object the callee supplies (`rd_kafka_q_serve*`), a result returning what a holder retains (`pthread_getspecific`). The Lean model is `QCore.CallbackContracts`.
 
 ## C05. Manifests and immutable assumptions
 

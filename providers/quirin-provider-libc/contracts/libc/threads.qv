@@ -47,8 +47,12 @@ module contract;
 //   `pthread_rwlock_init`/`pthread_rwlock_destroy`, `pthread_attr_init`,
 //   `pthread_key_create` -- open an obligation to destroy an object the caller
 //   owns in place; v1 cannot state it, and a neutral declaration would erase
-//   it. `call_once`/`pthread_once` invoke a caller-supplied function whose
-//   effects the declaration cannot state. `pthread_setspecific` RETAINS its
+//   it. `call_once` invokes a caller-supplied function (`pthread_once` is
+//   declared at the end of this module with a synchronous invocation, card
+//   CG22-CALLBACK-REGISTRY-CONTRACT; `call_once`, which librdkafka's
+//   `rdkafka.c` calls and `tinycthread.c` may define, is not declared here;
+//   recorded in the card report).
+//   `pthread_setspecific` RETAINS its
 //   pointer argument past the call, and `pthread_getspecific` returns that
 //   retained pointer -- an alias this vocabulary cannot state.
 //   (`cnd_timedwait`, `pthread_sigmask` spell `T *__restrict p`, which this
@@ -226,5 +230,32 @@ contract {
     ensures normal resource_borrowed(how);
     ensures normal resource_borrowed(newmask);
     ensures normal resource_borrowed(oldmask);
+    ensures normal resource_return_none();
+};
+
+// ## One-time initialisation
+//
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (contract spec C04.19, gateway rule
+// 13u). Read from `/usr/include/pthread.h:509-510` on the audited host:
+//
+//   extern int pthread_once (pthread_once_t *__once_control,
+//                            void (*__init_routine) (void)) __nonnull ((1, 2));
+//
+// `init_routine` is called at most once across every call with the same
+// `once_control`, by one of them, and the others wait for it (POSIX). From
+// one caller's custody view that is "called during this call, zero or more
+// times, with no actual" (a superset of the paths), and nothing keeps it:
+// `resource_callback_invoked(init_routine)`. The routine's own contract must
+// be the identity (rule 13u), so an initialiser that allocates into a global
+// refuses the call. `once_control` is read and updated in place (a scalar
+// state); the result is a status.
+
+extern fn pthread_once(once_control: ptr<mut, u8>, init_routine: fnptr) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(once_control);
+    ensures normal resource_borrowed(init_routine);
+    ensures normal resource_callback_invoked(init_routine);
     ensures normal resource_return_none();
 };

@@ -260,7 +260,19 @@ pub(crate) fn derive_custody_summaries(
     let candidates = names.iter().cloned().collect::<BTreeSet<_>>();
     let graph = candidates
         .iter()
-        .map(|name| (name.clone(), direct_calls(tokens, name, &candidates)))
+        .map(|name| {
+            let mut callees = direct_calls(tokens, name, &candidates);
+            // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13u): a callback a
+            // synchronous invocation or table dispatch calls is summarised
+            // before its caller.
+            callees.extend(crate::legacy_c::callback_route::callback_edges(
+                tokens,
+                name,
+                &candidates,
+                contracts,
+            ));
+            (name.clone(), callees)
+        })
         .collect::<BTreeMap<_, _>>();
 
     // Card CG23-RELATIONAL-POSTCONDITIONS: a declared return-code

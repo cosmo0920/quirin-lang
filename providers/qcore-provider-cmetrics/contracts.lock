@@ -804,6 +804,87 @@
       ]
     },
     {
+      "function": "cmt_mpack_unpack_array",
+      "module": "cmetrics/mpack_utils.qv",
+      "contract_sha256": "b611fcbd7b9f7c9ba0e4a20e4bf01ec85e7690a9b6a5e4fcf2f4db090b13fa03",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "d66503ea0235fb2c74b80f1fc2e09acc92fb8e81e73935215f426fe041f3927e"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "d66503ea0235fb2c74b80f1fc2e09acc92fb8e81e73935215f426fe041f3927e",
+              "body_sha256": "4f31938bb77d6eb1bab9305a5578992d1fe25b1d20185d6f7da2137da428b124"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cmt_mpack_unpack_map",
+      "module": "cmetrics/mpack_utils.qv",
+      "contract_sha256": "eaac54384063747dec4d7edee97355ca7192cdc90ef5a69da7846e09e79f505b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "21040e7772b68e2b4cb897158376bd02690dec2de62d26a9bd00af95f3f380e0"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "21040e7772b68e2b4cb897158376bd02690dec2de62d26a9bd00af95f3f380e0",
+              "body_sha256": "15924cbb9a27f6d272af692a6e86004e8e024b19f352ee69bbabb7742e0119e7"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "21040e7772b68e2b4cb897158376bd02690dec2de62d26a9bd00af95f3f380e0"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "21040e7772b68e2b4cb897158376bd02690dec2de62d26a9bd00af95f3f380e0",
+              "body_sha256": "b83aff9bd6a26176fb22455047eeb3a098a79d39682a5fafef571e29970862a1"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cmt_summary_get_count_value",
       "module": "cmetrics/metric_values.qv",
       "contract_sha256": "f2863da0a79d44e02e623da446430aec487168e04006ef73ea6180e348e30d44",

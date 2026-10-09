@@ -36,8 +36,10 @@ module contract;
 //   with a derived out slot, card SLOT-MOVE-AND-INTERIOR-BORROW;
 //   W43-LIBC-CONTRACTS had declined them while `ptr<mut, ptr<mut, u8>>`
 //   admitted only `resource_out`.)
-//   `qsort` invokes a caller-supplied comparator whose effects the
-//   declaration cannot state. `realpath` returns either its second argument
+//   (`qsort` and `bsearch` invoke a caller-supplied comparator; they are
+//   declared below with a synchronous invocation, card
+//   CG22-CALLBACK-REGISTRY-CONTRACT; W43-LIBC-CONTRACTS had declined `qsort`
+//   while no clause stated a callback.) `realpath` returns either its second argument
 //   or a fresh `malloc` allocation, a conditional alias.
 //
 // ## What no declaration here says
@@ -204,5 +206,56 @@ contract {
     ensures normal resource_borrowed(nptr);
     ensures normal resource_borrowed(endptr);
     ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## Searching and sorting with a caller's comparator
+//
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (contract spec C04.19, gateway rule
+// 13u). Read from the prototypes the analysed units declare
+// (`/usr/include/stdlib.h:982-999` on the audited host):
+//
+//   extern void *bsearch (const void *__key, const void *__base,
+//                         size_t __nmemb, size_t __size, __compar_fn_t __compar)
+//        __nonnull ((1, 2, 5)) __wur;
+//   extern void qsort (void *__base, size_t __nmemb, size_t __size,
+//                      __compar_fn_t __compar) __nonnull ((1, 4));
+//
+// `__compar_fn_t` is `int (*)(const void *, const void *)`, projected `fnptr`.
+// Both call the comparator during the call only, zero or more times, and
+// keep it nowhere (C11 7.22.5p1-2; glibc's extern inline `bsearch`,
+// `bits/stdlib-bsearch.h`, calls `(*__compar) (__key, __p)`): `bsearch` with
+// the caller's key and a pointer into `base`, `qsort` with two pointers into
+// `base`. A pointer the callee computes into the caller's array is `_` (a
+// value the callee supplies), so the comparator's own contract must be the
+// identity per call for the call to read as the borrowed reading below
+// (rule 13u's loop-safe composition); a comparator with no contract in force,
+// or one that frees or keeps anything, refuses the call. `bsearch` returns
+// NULL or a pointer to an element of `base` (C04.3.1's interior result);
+// `qsort` permutes `base`'s bytes in place, which moves no custody (the
+// caller still owns the array whole). Nothing is allocated or freed.
+
+extern fn bsearch(key: ptr<const, u8>, base: ptr<const, u8>, nmemb: usize, size: usize, compar: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_borrowed(nmemb);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(compar);
+    ensures normal resource_callback_invoked(compar, key, _);
+    ensures normal resource_return_interior(base, nullable);
+};
+
+extern fn qsort(base: ptr<mut, u8>, nmemb: usize, size: usize, compar: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_borrowed(nmemb);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(compar);
+    ensures normal resource_callback_invoked(compar, _, _);
     ensures normal resource_return_none();
 };

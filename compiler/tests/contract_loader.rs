@@ -1803,9 +1803,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // plain declarations, `cio_errno_print` (`chunkio/chunk_residency.qv`) and
     // `ctr_errno_print` (`ctraces/context_lifetime.qv`), pinned and in the
     // function map. Selection and rejected unchanged by it.
+    // 365 -> 379 by card CG22-CALLBACK-REGISTRY-CONTRACT: fourteen callback
+    // declarations (`bsearch`, `qsort`, `pthread_once`; the cmetrics and
+    // ctraces array and map unpackers; `rd_list_init`, `_new`, `_add`,
+    // `_destroy`, `_clear`; `pb_write`, `pb_encode_varint`), all withheld
+    // with the retaining declarations, plus two re-declared in place
+    // (`rd_kafka_topic_partition_list_sort`, `msgpack_packer_init`).
+    // Selection unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 365, 221)
+        (61, 379, 221)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

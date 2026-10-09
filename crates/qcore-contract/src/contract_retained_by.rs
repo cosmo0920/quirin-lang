@@ -301,5 +301,7 @@ pub(super) fn declaration(
         derived_outs: Vec::new(),
         references: Vec::new(),
         references_withdrawn: false,
+        callbacks: Vec::new(),
+        callbacks_withdrawn: false,
     })
 }

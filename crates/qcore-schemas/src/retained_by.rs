@@ -203,6 +203,18 @@ pub struct RetainingContract {
     /// by the loader; omitted when false.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub references_withdrawn: bool,
+    /// Card **CG22-CALLBACK-REGISTRY-CONTRACT** (§C04.19, rules 13u–13x):
+    /// the callback clauses, in clause order. Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub callbacks: Vec<crate::callback::CallbackClause>,
+    /// Card **CG22-CALLBACK-REGISTRY-CONTRACT** (rule 13y): set only in a
+    /// translation unit whose own body of the declaration does not validate
+    /// a checked callback clause. Every call there refuses
+    /// (`callback-withdrawn`); the declaration is not dropped, so no
+    /// inference reads the body in its place. Never set by the loader;
+    /// omitted when false.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub callbacks_withdrawn: bool,
 }
 
 impl RetainingContract {

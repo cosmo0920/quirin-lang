@@ -441,6 +441,87 @@
       ]
     },
     {
+      "function": "ctr_mpack_unpack_array",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "5508027f76045916a3228dd86626bd7d559e0c47657301f9308b3a2200cb5143",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "f675458c7db0641689c7e270e40e2c3a515c38414b4dd4b238ab49ba35b51e8b"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "f675458c7db0641689c7e270e40e2c3a515c38414b4dd4b238ab49ba35b51e8b",
+              "body_sha256": "bc68fe362ecace25387096f8773154f2b28e44ddf81b22d2bce420052c1b0071"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "ctr_mpack_unpack_map",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "743c8abddcbf494cf63e7b3ecb5f7013d0063b5c2e480f50e0388e8565d69cc5",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "a260ac1b72d47b635872e7d71b1f9b1c0256a3539ea0f83561d73b90cd2d0939"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "a260ac1b72d47b635872e7d71b1f9b1c0256a3539ea0f83561d73b90cd2d0939",
+              "body_sha256": "9a52068f7acc533e32f0939e5860ce9cfc9dafb359114e3c3a6113abd20d5e70"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_mpack_utils.h",
+              "kind": "declaration",
+              "declaration_sha256": "a260ac1b72d47b635872e7d71b1f9b1c0256a3539ea0f83561d73b90cd2d0939"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_mpack_utils.c",
+              "kind": "definition",
+              "declaration_sha256": "a260ac1b72d47b635872e7d71b1f9b1c0256a3539ea0f83561d73b90cd2d0939",
+              "body_sha256": "c0ea1c23967738dd9c19408cef8556f0957a28b771d6dd3e1aaaace3ccdfa29a"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "ctr_span_set_dropped_attributes_count",
       "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "a3f2c14fd97029d53b6fbd7e218f31ecad0c0ee15733cb6ec8871f231bdf3938",

@@ -286,6 +286,12 @@ pub(super) struct AbstractState {
     /// the arriving paths disagree on becoming undecided. Empty in every
     /// function that calls no keep, which keeps the join as it was.
     pub(super) references: BTreeMap<usize, crate::reference_count::Family>,
+    /// Card **CG22-CALLBACK-REGISTRY-CONTRACT** (rules 13w, 13x): the
+    /// registrations in force on this path, by holder. A registration not
+    /// made alike on every arriving path joins to undecided. Empty in every
+    /// function that calls no registering callee, which keeps the join as it
+    /// was.
+    pub(super) registries: BTreeMap<callback_route::RegistryKey, callback_route::Registration>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -409,6 +415,7 @@ impl AbstractState {
         self.retained.extend(incoming.retained.iter().cloned());
         slot_move_route::join(self, incoming);
         reference_route::join(self, incoming);
+        callback_route::join(&mut self.registries, &incoming.registries);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -3979,6 +3986,20 @@ pub(super) fn transfer_base(
                         diagnostics,
                     );
                 }
+                // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13w, 13x): the
+                // registry effects.
+                if let Some(callbacks) = &operands.callbacks {
+                    callback_route::apply(
+                        function,
+                        node.line,
+                        called,
+                        callbacks,
+                        destination.as_deref(),
+                        &mut state,
+                        acquisition_lines,
+                        diagnostics,
+                    );
+                }
             }
         }
         LegacyInstruction::OpaqueValue {
@@ -4525,6 +4546,26 @@ pub(super) fn apply_resource_action(
             state,
             diagnostics,
         ) {
+            let held = AbstractPointer {
+                targets: BTreeSet::from([site]),
+                ..AbstractPointer::default()
+            };
+            mark_unresolved_effect(state, &held);
+            state.unmodeled = true;
+            continue;
+        }
+        // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13x): a holder whose
+        // registry owns elements is released only through the registry.
+        if !escape
+            && callback_route::refuse_release_of_registry(
+                function,
+                line,
+                source,
+                site,
+                state,
+                diagnostics,
+            )
+        {
             let held = AbstractPointer {
                 targets: BTreeSet::from([site]),
                 ..AbstractPointer::default()

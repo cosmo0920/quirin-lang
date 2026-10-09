@@ -322,6 +322,9 @@ pub mod slot_move;
 // Card REFCOUNT-RESOURCE-KIND: the reference clauses (§C04.17).
 #[path = "contract_reference_count.rs"]
 mod reference_count;
+// Card CG22-CALLBACK-REGISTRY-CONTRACT: the callback clauses (§C04.19).
+#[path = "contract_callback.rs"]
+mod callback;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1686,6 +1689,9 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card REFCOUNT-RESOURCE-KIND: every `resource_reference_kept(p)` and
     // `resource_reference_dropped(p)`, as written, in clause order.
     let mut reference_clauses: Vec<reference_count::WrittenReference> = Vec::new();
+    // Card CG22-CALLBACK-REGISTRY-CONTRACT: every callback clause, as
+    // written, in clause order.
+    let mut callback_clauses: Vec<callback::WrittenCallback> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1912,6 +1918,13 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         // read.
         if let Some(written) = reference_count::clause(&words) {
             reference_clauses.push(written);
+            continue;
+        }
+        // Card CG22-CALLBACK-REGISTRY-CONTRACT (§C04.19): the callback
+        // clauses, read before the parameter predicates; validated below once
+        // every mode is read.
+        if let Some(written) = callback::clause(&words) {
+            callback_clauses.push(written);
             continue;
         }
         // The variadic data tail is a *whole-declaration* fact, not a parameter
@@ -2317,6 +2330,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         && resets.is_empty()
         && slot_clauses.is_empty()
         && reference_clauses.is_empty()
+        && callback_clauses.is_empty()
     {
         None
     } else {
@@ -2396,6 +2410,33 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             ));
         }
         declared.references = references;
+        // Card CG22-CALLBACK-REGISTRY-CONTRACT (§C04.19): callback clauses
+        // stand beside retentions and plain predicates, never beside a slot
+        // or a reference clause, and an element is never also retained.
+        let callbacks = callback::declaration(
+            &callback_clauses,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?;
+        if !callbacks.is_empty() {
+            if !declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty()
+            {
+                return Err(
+                    "a callback clause stands only beside retentions and plain predicates".into(),
+                );
+            }
+            if callbacks.iter().any(|clause| {
+                matches!(clause, qcore_schemas::callback::CallbackClause::ElementAdded { element, .. }
+                    if declared.retentions.iter().any(|retention| retention.retained == *element))
+            }) {
+                return Err("a registry element is not also a retained pointer".into());
+            }
+        }
+        declared.callbacks = callbacks;
         Some(declared)
     };
     Ok(LoadedDeclaration {

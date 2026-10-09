@@ -69,6 +69,8 @@ mod relational_post;
 // Card CALLEE-RETENTION-CLASS1 (gateway rule 12t): retained pointers; the
 // decisions are here, the G hooks in `legacy_retained_by.rs`.
 pub mod retained_by;
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13y): callback contracts.
+pub mod callback_contracts;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure
 // decisions are here, the G hooks in `legacy_slot_move_borrow.rs`.
 pub mod slot_move_borrow;

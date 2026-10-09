@@ -359,5 +359,46 @@ contract {
     ensures normal resource_borrowed(errnum);
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(line);
+
+// ## The array and map unpackers (card CG22-CALLBACK-REGISTRY-CONTRACT)
+//
+// Contract spec C04.19, gateway rules 13u (synchronous invocation) and 13v
+// (table dispatch); the cmetrics unpackers' reading
+// (`qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv`), over
+// `lib/ctraces/src/ctr_mpack_utils.c`. Each body read at both audited
+// revisions: `ctr_mpack_unpack_array` (`:400-457`) is byte-identical at
+// `66910c10` and `046accf6`; `046accf6` adds to `ctr_mpack_unpack_map`
+// (`:331-398`) a duplicate-key check (a local `handled_entries` array; each
+// handler is then called at most once per map), which changes nothing below.
+//
+// `ctr_mpack_unpack_array(reader, entry_processor_callback, context)` reads
+// an array tag through `reader` and calls `entry_processor_callback(reader,
+// entry_index, context)` once per entry while the previous call succeeded:
+// during the call only, zero or more times, never stored, handed on or
+// rebound (rule 13y checks this against the body). `ctr_mpack_unpack_map`
+// walks the caller's `callback_list` for each key it reads and calls the
+// matching entry's `handler(reader, entry_index, context)`: handlers read
+// from the caller's table during the call only (a declared assumption, not
+// body-checked). `ctr_mpack_unpacker_entry_callback_fn_t` is `int
+// (*)(mpack_reader_t *, size_t, void *)` (`ctr_mpack_utils.h:27-28`),
+// projected `fnptr`; the pointers are `ptr<mut, u8>`; the result is a status.
+
+extern fn ctr_mpack_unpack_array(reader: ptr<mut, u8>, entry_processor_callback: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(entry_processor_callback);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(entry_processor_callback, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn ctr_mpack_unpack_map(reader: ptr<mut, u8>, callback_list: ptr<mut, u8>, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(callback_list);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_table(callback_list, reader, _, context);
     ensures normal resource_return_none();
 };

@@ -59,7 +59,7 @@ pub enum HolderSpelling {
 }
 
 /// The operands of one retaining call, in clause order.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct Operands {
     /// `(retained, its spelling, holder, its spelling)`.
     pub retentions: Vec<(RetainedSpelling, String, HolderSpelling, String)>,
@@ -70,6 +70,28 @@ pub struct Operands {
     /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): the keeps and drops,
     /// applied after the slots ([`super::reference_route`]).
     pub references: Vec<super::reference_route::ReferenceOperand>,
+    /// Card **CG22-CALLBACK-REGISTRY-CONTRACT** (rules 13w, 13x): the
+    /// registry operands, applied after the references
+    /// ([`super::callback_route`]). `None` for every call whose declaration
+    /// carries no registry clause.
+    pub callbacks: Option<Box<super::callback_route::Operands>>,
+}
+
+/// The derived form, with `callbacks` printed only when present, so every
+/// retaining call before card CG22-CALLBACK-REGISTRY-CONTRACT prints (in the
+/// parity stream) exactly as it did.
+impl std::fmt::Debug for Operands {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut out = f.debug_struct("Operands");
+        out.field("retentions", &self.retentions)
+            .field("resets", &self.resets)
+            .field("slots", &self.slots)
+            .field("references", &self.references);
+        if let Some(callbacks) = &self.callbacks {
+            out.field("callbacks", callbacks);
+        }
+        out.finish()
+    }
 }
 
 /// The environment the parser reads: `contracts` plus the custody contract of
@@ -235,6 +257,7 @@ impl Parser<'_> {
             resets: Vec::new(),
             slots: Vec::new(),
             references: Vec::new(),
+            callbacks: None,
         };
         // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
         // operands, or the refusal of a declaration withdrawn in this unit.
@@ -246,6 +269,20 @@ impl Parser<'_> {
             };
             match self.reference_operands(function, &declaration, &owned) {
                 Ok(references) => operands.references = references,
+                Err(description) => return Some(refuse(self, description)),
+            }
+        }
+        // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13x): the
+        // synchronous invocations and table dispatches, decided here, and the
+        // registry operands, or the call's refusal.
+        if !declaration.callbacks.is_empty() || declaration.callbacks_withdrawn {
+            let owned = |index: usize| -> Option<Vec<String>> {
+                actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
+            };
+            let line = tokens.get(call_index).map_or(0, |token| token.line);
+            let frame = |name: &str| self.frame_registry_holder(name);
+            match self.callback_operands(function, &declaration, line, &owned, &frame) {
+                Ok(callbacks) => operands.callbacks = callbacks.map(Box::new),
                 Err(description) => return Some(refuse(self, description)),
             }
         }
@@ -372,7 +409,7 @@ impl Parser<'_> {
 }
 
 /// The one known live identity `name` denotes, if it denotes exactly one.
-fn tracked(state: &AbstractState, name: &str) -> Option<usize> {
+pub(super) fn tracked(state: &AbstractState, name: &str) -> Option<usize> {
     let pointer = state.pointers.get(name)?;
     if pointer.unknown || pointer.may_be_null || !pointer.derivation.is_identity() {
         return None;
@@ -404,7 +441,7 @@ fn holder_class(
     }
 }
 
-fn retained_class(state: &AbstractState, retained: &RetainedSpelling) -> Retained {
+pub(super) fn retained_class(state: &AbstractState, retained: &RetainedSpelling) -> Retained {
     match retained {
         RetainedSpelling::Literal => Retained::Static,
         RetainedSpelling::Formal(name) => match state.pointers.get(name) {

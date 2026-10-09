@@ -56,13 +56,13 @@ open QCore.ContractDependencies (Outcome unitOutcome)
 inductive ClauseKind where
   | parameter | result | borrowedResult | referenceResult | container | countedUser
   | retention | guard | holderReset | slotMove | outDerived | reference | exitClass
-  | premise | variadicTail | noReturn | unreadable
+  | premise | variadicTail | noReturn | callback | callbackChecked | unreadable
   deriving DecidableEq, Repr
 
 def allKinds : List ClauseKind :=
   [.parameter, .result, .borrowedResult, .referenceResult, .container, .countedUser,
    .retention, .guard, .holderReset, .slotMove, .outDerived, .reference, .exitClass,
-   .premise, .variadicTail, .noReturn, .unreadable]
+   .premise, .variadicTail, .noReturn, .callback, .callbackChecked, .unreadable]
 
 /-- The clauses of the custody projection. -/
 def ClauseKind.custody : ClauseKind → Bool
@@ -71,9 +71,10 @@ def ClauseKind.custody : ClauseKind → Bool
 
 /-- The body evidence of rule 13g; card DECLARED-ASSUMPTION-BODY-CHECKS adds
 `r13m`, the declaration's own `entry` check on a body whose W4 summary only
-refines it (`QCore.DeclaredEntryCheck`). -/
+refines it (`QCore.DeclaredEntryCheck`); card CG22-CALLBACK-REGISTRY-CONTRACT
+adds `r13y`, the callback body check (`QCore.CallbackContracts`). -/
 inductive Evidence where
-  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m
+  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y
   deriving DecidableEq, Repr
 
 /-- Whether a piece of evidence covers a clause kind (rule 13i). -/
@@ -86,6 +87,7 @@ def covers : Evidence → ClauseKind → Bool
   | .r13a, k => k == .slotMove || k == .outDerived || k == .borrowedResult
   | .r13c, k => k == .reference
   | .r13d, k => k == .referenceResult
+  | .r13y, k => k == .callbackChecked
 
 /-- The structural checks. -/
 def Evidence.structural : Evidence → Bool
@@ -100,6 +102,7 @@ def reads : Evidence → List ClauseKind
   | .r13a => [.slotMove, .outDerived, .borrowedResult]
   | .r13c => [.reference]
   | .r13d => [.referenceResult]
+  | .r13y => [.callbackChecked]
 
 /-- A structural check's evidence never covers a clause of another kind. -/
 theorem a_structural_check_covers_only_what_it_reads (e : Evidence) (k : ClauseKind)
@@ -117,7 +120,8 @@ theorem nothing_covers_these_clauses (e : Evidence) :
     covers e .container = false ∧ covers e .countedUser = false ∧
       covers e .retention = false ∧ covers e .holderReset = false ∧
       covers e .premise = false ∧ covers e .variadicTail = false ∧
-      covers e .noReturn = false ∧ covers e .unreadable = false := by
+      covers e .noReturn = false ∧ covers e .callback = false ∧
+      covers e .unreadable = false := by
   cases e <;> decide
 
 /-! ## Standing (rule 13j) -/
@@ -332,6 +336,8 @@ def ClauseKind.spelling : ClauseKind → String
   | .premise => "premise"
   | .variadicTail => "variadicTail"
   | .noReturn => "noReturn"
+  | .callback => "callback"
+  | .callbackChecked => "callbackChecked"
   | .unreadable => "unreadable"
 
 def Evidence.spelling : Evidence → String
@@ -343,6 +349,7 @@ def Evidence.spelling : Evidence → String
   | .r13c => "13c"
   | .r13d => "13d"
   | .r13m => "13m"
+  | .r13y => "13y"
 
 /-- (evidence, the clause kinds it covers). -/
 def coverageVectors : List (String × List String) := [
@@ -353,11 +360,12 @@ def coverageVectors : List (String × List String) := [
   ("13a", ["slotMove", "outDerived", "borrowedResult"]),
   ("13c", ["reference"]),
   ("13d", ["referenceResult"]),
-  ("13m", ["parameter", "result", "borrowedResult", "referenceResult"])
+  ("13m", ["parameter", "result", "borrowedResult", "referenceResult"]),
+  ("13y", ["callbackChecked"])
 ]
 
 def allEvidence : List Evidence :=
-  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m]
+  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13y]
 
 theorem coverage_vectors_hold :
     (allEvidence.zip coverageVectors).all (fun (e, v) =>
@@ -382,6 +390,7 @@ def unitOf : String → UnitView
   | "entry+13d" => ⟨false, [.entry, .r13d]⟩
   | "13m" => ⟨false, [.r13m]⟩
   | "13m+13a" => ⟨false, [.r13m, .r13a]⟩
+  | "13y" => ⟨false, [.r13y]⟩
   | _ => ⟨true, []⟩
 
 def kindOf (s : String) : ClauseKind :=
@@ -413,7 +422,9 @@ def clauseStandingVectors : List (Bool × List String × List String × String) 
   (false, ["parameter", "result"], ["13m", "W4", "13m"], "validated"),
   (false, ["parameter", "result"], ["13m", "failed"], "declared-assumption"),
   (false, ["parameter", "borrowedResult"], ["13m+13a", "13m"], "validated"),
-  (false, ["parameter", "container"], ["13m"], "partly-validated")
+  (false, ["parameter", "container"], ["13m"], "partly-validated"),
+  (false, ["parameter", "callbackChecked", "result"], ["13y"], "partly-validated"),
+  (false, ["parameter", "callback", "result"], ["W4"], "partly-validated")
 ]
 
 theorem clause_standing_vectors_hold :

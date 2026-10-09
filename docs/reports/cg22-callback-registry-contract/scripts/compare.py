@@ -20,11 +20,14 @@ import re
 import sys
 
 DECLARED = [
-    # REFCOUNT-FAMILY-BLOCKING-CALLEES: plain declarations between a
-    # reference's acquisition and its drop
-    "rd_kafka_q_pop",  # declared in a1 only, withdrawn before a2
-    "rd_kafka_q_wait_result", "rd_kafka_q_purge0",
-    "rd_kafka_toppar_needs_query", "rd_kafka_toppar_fetch_backoff",
+    # CG22-CALLBACK-REGISTRY-CONTRACT: the callback declarations and the two
+    # re-declared in place (a lost or gained leaf naming one of them).
+    "bsearch", "qsort", "pthread_once",
+    "cmt_mpack_unpack_array", "cmt_mpack_unpack_map",
+    "ctr_mpack_unpack_array", "ctr_mpack_unpack_map",
+    "rd_list_init", "rd_list_new", "rd_list_add", "rd_list_destroy", "rd_list_clear",
+    "pb_write", "pb_encode_varint",
+    "rd_kafka_topic_partition_list_sort", "msgpack_packer_init",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 
@@ -70,7 +73,9 @@ def main():
         for (_, description), count in gained.items():
             added[TEMPLATE.sub("`_`", description)] += count
         function = key[2]
-        lost_text = " ".join(d for (_, d) in lost)
+        # A lost or a gained leaf (a correction gains the refusal that names
+        # the re-declared callee).
+        lost_text = " ".join(d for (_, d) in list(lost) + list(gained))
         labels = sorted({"callee:" + name for name in DECLARED if "`%s`" % name in lost_text})
         if not labels:
             texts = " ".join(d for (_, d) in list(lost) + list(gained))

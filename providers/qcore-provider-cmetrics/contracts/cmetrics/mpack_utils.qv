@@ -112,3 +112,65 @@ contract {
     ensures normal resource_borrowed(output_buffer);
     ensures normal resource_return_none();
 };
+
+// ## The array and map unpackers (card CG22-CALLBACK-REGISTRY-CONTRACT)
+//
+// Contract spec C04.19, gateway rules 13u (synchronous invocation) and 13v
+// (table dispatch). Each body read at both audited revisions
+// (`scripts/body.py` of the card's report): `cmt_mpack_unpack_array` is
+// byte-identical at `66910c10` and `046accf6`; `046accf6` adds to
+// `cmt_mpack_unpack_map` a duplicate-key check (a local `seen` array of table
+// entries; each handler is then called at most once per map), which changes
+// nothing below.
+//
+// `cmt_mpack_unpack_array(reader, entry_processor_callback, context)`
+// (`lib/cmetrics/src/cmt_mpack_utils.c:246-303`) reads an array tag through
+// `reader` (`mpack_read_tag`, `mpack_reader_error`, `mpack_tag_array_count`),
+// refuses more than `CMT_MPACK_MAX_ARRAY_ENTRY_COUNT` entries, then calls
+// `entry_processor_callback(reader, entry_index, context)` once per entry
+// while the previous call returned `CMT_MPACK_SUCCESS`, and finishes the
+// array (`mpack_done_array`). The callback is called during the call only,
+// zero or more times, with the caller's `reader`, an index the body counts and
+// the caller's `context`; it is never stored, never handed on, never
+// rebound: `resource_callback_invoked(entry_processor_callback, reader, _,
+// context)`. Rule 13y checks exactly this against the body in
+// `cmt_mpack_utils.c`. `reader` and `context` are read and handed to the
+// callback only: borrowed. The result is a status.
+//
+// `cmt_mpack_unpack_map(reader, callback_list, context)` (`:177-244`) reads a
+// map tag, refuses more than `CMT_MPACK_MAX_MAP_ENTRY_COUNT` entries, and for
+// each entry reads its key (`cmt_mpack_consume_string_tag`, an sds the body
+// destroys) and walks `callback_list` from its first entry while the entry's
+// `identifier` is not NULL, calling `callback_entry->handler(reader,
+// entry_index, context)` for the entry whose identifier equals the key. The
+// handlers are read from the caller's table, during the call only, zero or
+// more times, with the same three actuals: `resource_callback_table(
+// callback_list, reader, _, context)` (not body-checked: a declared
+// assumption). Route G closes the table only when it is an automatic array
+// whose braced initializer names the handlers and which the caller names
+// nowhere else; the sentinel `{NULL, NULL}` is never called.
+//
+// `cmt_mpack_unpacker_entry_callback_fn_t` is `int (*)(mpack_reader_t *,
+// size_t, void *)` (`cmt_mpack_utils.h:27`), projected `fnptr`; `struct
+// cmt_mpack_map_entry_callback_t *`, `mpack_reader_t *` and `void *` are
+// `ptr<mut, u8>`.
+
+extern fn cmt_mpack_unpack_array(reader: ptr<mut, u8>, entry_processor_callback: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(entry_processor_callback);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(entry_processor_callback, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn cmt_mpack_unpack_map(reader: ptr<mut, u8>, callback_list: ptr<mut, u8>, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(callback_list);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_table(callback_list, reader, _, context);
+    ensures normal resource_return_none();
+};

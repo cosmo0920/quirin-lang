@@ -8,7 +8,7 @@
     {
       "function": "msgpack_packer_init",
       "module": "msgpack/packer.qv",
-      "contract_sha256": "0e8e11c3127b9f6963830a51a141d5aa62b40e3242780a1386bb52b35d0c2c62",
+      "contract_sha256": "fa858925a2fbeab537ee10b169d24c2b12e4d5b33134960c918aabb47e65ff29",
       "identities": [
         {
           "reviewed_at": [

@@ -3560,6 +3560,7 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | retention_predicate
   | slot_predicate
   | reference_predicate
+  | callback_predicate
   | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
     (* card SLOT-MOVE-AND-INTERIOR-BORROW, contract spec C04.3.4 *)
 nullability = "nullable" | "nonnull" ;
@@ -3597,7 +3598,19 @@ slot_predicate =
 (* card REFCOUNT-RESOURCE-KIND, contract specification C04.17 *)
 reference_predicate =
     ("resource_reference_kept" | "resource_reference_dropped"), "(", IDENT, ")" ;
+(* card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19 *)
+callback_predicate =
+    "resource_callback_invoked", "(", IDENT, { ",", callback_actual }, ")"   (* fnptr, actuals *)
+  | "resource_callback_table", "(", IDENT, { ",", callback_actual }, ")"     (* table, actuals *)
+  | "resource_callback_registered", "(", IDENT, ",", (IDENT | "result"), ")"  (* fnptr, holder *)
+  | "resource_callback_registry_invoked", "(", IDENT, { ",", (callback_actual | "element") }, ")"
+  | ("resource_callback_unregistered" | "resource_elements_dropped"
+     | "resource_released_if_constructed"), "(", IDENT, ")"                  (* holder *)
+  | "resource_element_added", "(", IDENT, ",", IDENT, ")" ;                 (* element, holder *)
+callback_actual = IDENT | "_" ;
 ```
+
+The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot or a reference predicate. Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 
 The reference predicates (card REFCOUNT-RESOURCE-KIND, contract specification C04.17) carry static conditions of their own: the named parameter is a depth-one pointer (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carries no kind; a declaration carries at most one reference predicate; a keep's result is `resource_return_alias(p, nonnull)` on the same parameter or `resource_return_none()`, a drop's is `resource_return_none()`; the referenced parameter is never also retained, a slot or a derived out slot's base; a reference predicate stands where a retention predicate may; and the kind `reference` is spelled by `resource_return_kind(reference)` only beside `resource_return_owned` (a returned reference) and never by `resource_kind` on a parameter (the module is rejected). Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 

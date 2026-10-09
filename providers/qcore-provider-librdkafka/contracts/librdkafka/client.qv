@@ -880,3 +880,135 @@ contract {
     ensures normal resource_borrowed(err);
     ensures normal resource_return_none();
 };
+
+// ## Lists with a free callback (card CG22-CALLBACK-REGISTRY-CONTRACT)
+//
+// Contract spec C04.19, gateway rules 13w (registry) and 13x (element custody,
+// flag-conditioned self-release). Each body read at both audited revisions
+// (byte-identical at `66910c10` and `046accf6`, `scripts/body.py` of the
+// card's report), `lib/librdkafka-2.15.0/src/rdlist.c`; prototypes
+// `rdlist.h:72,89,138,216,225`.
+//
+// `rd_list_init(rl, initial_size, free_cb)` (`:53-62`): `memset(rl, 0, …)`
+// (which clears `RD_LIST_F_ALLOCATED`), grows the element array when
+// `initial_size > 0`, stores `rl->rl_free_cb = free_cb` and returns `rl`. The
+// list keeps the callback: `resource_callback_registered(free_cb, rl)`, an
+// in-place registration; rule 13y checks it against this body (the callback
+// is mentioned only as the value of `rl->rl_free_cb = free_cb;`). The result
+// is its argument (`resource_return_alias(rl, nonnull)`).
+//
+// `rd_list_new(initial_size, free_cb)` (`:84-89`): `rl = rd_list_alloc()`
+// (`rd_malloc`, which aborts rather than return NULL), `rd_list_init(rl, …)`,
+// then `rl->rl_flags |= RD_LIST_F_ALLOCATED`, and returns `rl`: a fresh list
+// the caller owns, registered by a constructor:
+// `resource_callback_registered(free_cb, result)` beside
+// `resource_return_owned(nonnull)`.
+//
+// `rd_list_add(rl, elem)` (`:143-150`): grows the array when full, clears
+// `RD_LIST_F_SORTED`, stores a non-NULL `elem` as the next element and returns
+// that slot's element (a preallocated element when `elem` is NULL). `elem`
+// becomes an element `rl` holds: `resource_element_added(elem, rl)` (custody
+// passes to the list when its registered callback releases its argument,
+// otherwise the list only retains `elem`). The result points into what the
+// list holds: `resource_return_borrowed_from(rl, nullable)`.
+//
+// `rd_list_destroy(rl)` (`:316-320`): `rd_list_destroy_elems(rl)` (`:290-306`:
+// when `rl->rl_free_cb` is set, calls it on every non-NULL element, last
+// first, then frees the element array and zeroes the count), then
+// `rd_free(rl)` exactly when `rl->rl_flags & RD_LIST_F_ALLOCATED`:
+// `resource_callback_registry_invoked(rl, element)`,
+// `resource_elements_dropped(rl)`, `resource_callback_unregistered(rl)` (the
+// list is gone, or holds nothing a later call may use) and
+// `resource_released_if_constructed(rl)`. `rd_list_clear(rl)` (`:311-313`) is
+// `rd_list_destroy_elems(rl)` alone: the registry invoked over the elements,
+// which are dropped; the registration stays.
+//
+// Route G decides each of these only where the registration is in force on
+// every path in the calling body: a frame list `&L` named nowhere else, or a
+// list a constructor returned. A list reached through a formal or a member
+// (every list the measured callers destroy) is undecided, never Safe.
+
+extern fn rd_list_init(rl: ptr<mut, u8>, initial_size: i32, free_cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(initial_size);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_callback_registered(free_cb, rl);
+    ensures normal resource_return_alias(rl, nonnull);
+};
+
+extern fn rd_list_new(initial_size: i32, free_cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(initial_size);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_callback_registered(free_cb, result);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn rd_list_add(rl: ptr<mut, u8>, elem: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(elem);
+    ensures normal resource_element_added(elem, rl);
+    ensures normal resource_return_borrowed_from(rl, nullable);
+};
+
+extern fn rd_list_destroy(rl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_callback_registry_invoked(rl, element);
+    ensures normal resource_elements_dropped(rl);
+    ensures normal resource_callback_unregistered(rl);
+    ensures normal resource_released_if_constructed(rl);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_list_clear(rl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_callback_registry_invoked(rl, element);
+    ensures normal resource_elements_dropped(rl);
+    ensures normal resource_return_none();
+};
+
+// ## nanopb's output stream (card CG22-CALLBACK-REGISTRY-CONTRACT)
+//
+// `lib/librdkafka-2.15.0/src/nanopb/pb_encode.c`, each body byte-identical at
+// both audited revisions. `pb_write(stream, buf, count)` (`:83-104`): when
+// `count > 0` and `stream->callback` is set, checks the stream's size limit
+// and calls `stream->callback(stream, buf, count)`; then adds `count` to
+// `stream->bytes_written`. `pb_encode_varint(stream, value)` (`:606-…`)
+// encodes `value` into a local buffer and calls `pb_write(stream, buffer, i)`.
+// Both call, during the call, the callback the stream keeps:
+// `resource_callback_registry_invoked(stream, …)`. The registration is
+// `pb_ostream_from_buffer`, which returns the stream BY VALUE with `callback =
+// &buf_write` (`:61-79`): a by-value aggregate result, which the declared-ABI
+// reader does not read, so no registration is ever in force in a calling
+// body and every call refuses (`callback-registry-undecided`), as every
+// measured caller (a formal `stream`) would anyway. `pb_byte_t *` is
+// `ptr<const, u8>`; `bool` the result, a status; `pb_uint64_t` is `uint64_t`
+// (this build defines no `PB_WITHOUT_64BIT`).
+
+extern fn pb_write(stream: ptr<mut, u8>, buf: ptr<const, u8>, count: usize) -> bool
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_callback_registry_invoked(stream, stream, buf, count);
+    ensures normal resource_return_none();
+};
+
+extern fn pb_encode_varint(stream: ptr<mut, u8>, value: u64) -> bool
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(stream);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_callback_registry_invoked(stream, stream, _, _);
+    ensures normal resource_return_none();
+};

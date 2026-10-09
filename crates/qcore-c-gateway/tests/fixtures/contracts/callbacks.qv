@@ -1,0 +1,94 @@
+module contract;
+
+// Card CG22-CALLBACK-REGISTRY-CONTRACT (gateway rules 13u-13x, contract spec
+// C04.19): synthetic `c_*` callees, one per callback shape. Trusted test
+// assumptions, not facts about any library.
+
+extern fn c_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn c_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn c_opaque(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn c_each(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn c_dispatch(reader: ptr<mut, u8>, table: ptr<mut, u8>, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(table);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_table(table, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn c_list_init(rl: ptr<mut, u8>, size: i32, free_cb: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_callback_registered(free_cb, rl);
+    ensures normal resource_return_none();
+};
+
+extern fn c_list_new(size: i32, free_cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(free_cb);
+    ensures normal resource_callback_registered(free_cb, result);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn c_list_add(rl: ptr<mut, u8>, elem: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(elem);
+    ensures normal resource_element_added(elem, rl);
+    ensures normal resource_return_none();
+};
+
+extern fn c_list_clear(rl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_callback_registry_invoked(rl, element);
+    ensures normal resource_elements_dropped(rl);
+    ensures normal resource_return_none();
+};
+
+extern fn c_list_destroy(rl: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_callback_registry_invoked(rl, element);
+    ensures normal resource_elements_dropped(rl);
+    ensures normal resource_callback_unregistered(rl);
+    ensures normal resource_released_if_constructed(rl);
+    ensures normal resource_return_none();
+};

@@ -32,6 +32,11 @@
       "contract_sha256": "d2842cfc0c7cc4bfb763cb34df2f95582aee84c8608df0c5aa4346b984c40398"
     },
     {
+      "function": "bsearch",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "40a9943df59c7738a05946b10badb102cea040c2e3473b9ff0f02bebb695becd"
+    },
+    {
       "function": "calloc",
       "module": "libc/memory.qv",
       "contract_sha256": "beb03c3611449ac83f20c1ebeffcdcc66adadc385fe9e8cb28b37f9ab2c95fa1"
@@ -342,6 +347,11 @@
       "contract_sha256": "10ca8768c486406e29d97f6dd13213f0d33a58dfb808662bee1798b6a7c3551e"
     },
     {
+      "function": "pthread_once",
+      "module": "libc/threads.qv",
+      "contract_sha256": "9a8845656ca97df78c6ba94adef9868c404b68635fe964e75aab702cacb94200"
+    },
+    {
       "function": "pthread_rwlock_rdlock",
       "module": "libc/threads.qv",
       "contract_sha256": "709206d054c7797d0ff22119ab2868ae067a706fe1bfd0ecc6181ca421bb4466"
@@ -375,6 +385,11 @@
       "function": "pthread_sigmask",
       "module": "libc/threads.qv",
       "contract_sha256": "c699abe5a9342edd5307237672ae2370391f84742ede19c5070460cec663e1e4"
+    },
+    {
+      "function": "qsort",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "f1db0f724e26a76682dce3464c4eb20d0d1f754f6b6e1513ea6f3542854d50ee"
     },
     {
       "function": "rand_r",

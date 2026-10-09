@@ -47,11 +47,30 @@ module contract;
 // release and are deliberately left undeclared: no residual measured by this
 // card or its predecessors reaches them.
 
+// ## Re-declared: a registration and a retention (card CG22-CALLBACK-REGISTRY-CONTRACT)
+//
+// Contract spec C04.14 and C04.19, gateway rules 12t, 13w, 13z. The
+// declaration above read `data` and `callback` as borrowed and forgotten,
+// although the body keeps both in `*pk` for every later `msgpack_pack_*`
+// call, which calls `pk->callback(pk->data, buf, len)`
+// (`CG22-CALLBACK-REGISTRY-CONTRACT`'s DISCHARGE: "the msgpack `data` capture
+// re-examined"). Re-examined: `pk` retains `data`
+// (`resource_retained_by(data, pk)`: the caller keeps custody and must show
+// `data`'s object outlives the packer) and registers `callback`
+// (`resource_callback_registered(callback, pk)`: rule 13y checks the body's
+// `pk->callback = callback;`). The invoking side, the header-inline
+// `msgpack_pack_*` family, is not declared, so no invocation is decided; every
+// measured site (two corpus, three system, two slice) is in a function that
+// is `Unknown` before this card. The body is byte-identical at `66910c10` and
+// `046accf6` (`lib/msgpack-c/include/msgpack/pack.h:130-134`).
+
 extern fn msgpack_packer_init(pk: ptr<mut, u8>, data: ptr<mut, u8>, callback: fnptr) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(pk);
     ensures normal resource_borrowed(data);
     ensures normal resource_borrowed(callback);
+    ensures normal resource_retained_by(data, pk);
+    ensures normal resource_callback_registered(callback, pk);
     ensures normal resource_return_none();
 };
