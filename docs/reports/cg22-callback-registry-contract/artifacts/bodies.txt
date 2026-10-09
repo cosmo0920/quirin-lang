@@ -1,0 +1,863 @@
+==== cmt_mpack_unpack_array  lib/cmetrics/src/cmt_mpack_utils.c:246  (identical at 046accf6)
+int cmt_mpack_unpack_array(mpack_reader_t *reader,
+                           cmt_mpack_unpacker_entry_callback_fn_t entry_processor_callback,
+                           void *context)
+{
+    uint32_t              entry_index;
+    uint32_t              entry_count;
+    mpack_tag_t           tag;
+    int                   result;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader))
+    {
+        return CMT_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_array != mpack_tag_type(&tag)) {
+        return CMT_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_array_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * that in our schema we have the following arrays :
+     *     label text dictionary (strings)
+     *     dimension labels (indexes)
+     *     metric values
+     *         dimension values
+     *
+     * IMO none of these arrays should be huge so I think using 65535 as a limit
+     * gives us more than enough wiggle space (in reality I don't expect any of these
+     * arrays to hold more than 128 values but I could be wrong as that probably depends
+     * on the flush interval)
+     */
+
+    if (CMT_MPACK_MAX_ARRAY_ENTRY_COUNT < entry_count) {
+        return CMT_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = CMT_MPACK_SUCCESS;
+
+    for (entry_index = 0 ;
+         CMT_MPACK_SUCCESS == result && entry_index < entry_count ;
+         entry_index++) {
+        result = entry_processor_callback(reader, entry_index, context);
+    }
+
+    if (CMT_MPACK_SUCCESS == result) {
+        mpack_done_array(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CMT_MPACK_PENDING_ARRAY_ENTRIES;
+        }
+    }
+
+    return result;
+}
+==== cmt_mpack_unpack_map  lib/cmetrics/src/cmt_mpack_utils.c:177  (DIFFERS at 046accf6)
+int cmt_mpack_unpack_map(mpack_reader_t *reader,
+                         struct cmt_mpack_map_entry_callback_t *callback_list,
+                         void *context)
+{
+    struct cmt_mpack_map_entry_callback_t *callback_entry;
+    uint32_t                               entry_index;
+    uint32_t                               entry_count;
+    cfl_sds_t                              key_name;
+    int                                    result;
+    mpack_tag_t                            tag;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader)) {
+        return CMT_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_map != mpack_tag_type(&tag)) {
+        return CMT_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_map_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * how our schema looks and how many entries the different fields have and none
+     * of those exceed the number we set CMT_MPACK_MAX_MAP_ENTRY_COUNT to which is 10.
+     * Making these sanity checks optional or configurable in runtime might be worth
+     * the itme and complexity cost but that's something I don't know at the moment.
+     */
+
+    if (CMT_MPACK_MAX_MAP_ENTRY_COUNT < entry_count) {
+        return CMT_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = 0;
+
+    for (entry_index = 0 ; 0 == result && entry_index < entry_count ; entry_index++) {
+        result = cmt_mpack_consume_string_tag(reader, &key_name);
+
+        if (CMT_MPACK_SUCCESS == result) {
+            callback_entry = callback_list;
+            result = CMT_MPACK_UNEXPECTED_KEY_ERROR;
+
+            while (CMT_MPACK_UNEXPECTED_KEY_ERROR == result &&
+                   NULL != callback_entry->identifier) {
+
+                if (0 == strcmp(callback_entry->identifier, key_name)) {
+                    result = callback_entry->handler(reader, entry_index, context);
+                }
+
+                callback_entry++;
+            }
+
+            cfl_sds_destroy(key_name);
+        }
+    }
+
+    if (CMT_MPACK_SUCCESS == result) {
+        mpack_done_map(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CMT_MPACK_PENDING_MAP_ENTRIES;
+        }
+    }
+
+    return result;
+}
+---- 046accf6 text:
+int cmt_mpack_unpack_map(mpack_reader_t *reader,
+                         struct cmt_mpack_map_entry_callback_t *callback_list,
+                         void *context)
+{
+    struct cmt_mpack_map_entry_callback_t *callback_entry;
+    struct cmt_mpack_map_entry_callback_t *seen[CMT_MPACK_MAX_MAP_ENTRY_COUNT];
+    uint32_t                               seen_count;
+    uint32_t                               seen_index;
+    uint32_t                               entry_index;
+    uint32_t                               entry_count;
+    cfl_sds_t                              key_name;
+    int                                    result;
+    mpack_tag_t                            tag;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader)) {
+        return CMT_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_map != mpack_tag_type(&tag)) {
+        return CMT_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_map_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * how our schema looks and how many entries the different fields have and none
+     * of those exceed the number we set CMT_MPACK_MAX_MAP_ENTRY_COUNT to which is 10.
+     * Making these sanity checks optional or configurable in runtime might be worth
+     * the itme and complexity cost but that's something I don't know at the moment.
+     */
+
+    if (CMT_MPACK_MAX_MAP_ENTRY_COUNT < entry_count) {
+        return CMT_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = 0;
+    seen_count = 0;
+
+    for (entry_index = 0 ; 0 == result && entry_index < entry_count ; entry_index++) {
+        result = cmt_mpack_consume_string_tag(reader, &key_name);
+
+        if (CMT_MPACK_SUCCESS == result) {
+            callback_entry = callback_list;
+            result = CMT_MPACK_UNEXPECTED_KEY_ERROR;
+
+            while (CMT_MPACK_UNEXPECTED_KEY_ERROR == result &&
+                   NULL != callback_entry->identifier) {
+
+                if (0 == strcmp(callback_entry->identifier, key_name)) {
+                    /* Schema fields may only occur once in each map. */
+                    for (seen_index = 0; seen_index < seen_count; seen_index++) {
+                        if (seen[seen_index] == callback_entry) {
+                            result = CMT_MPACK_CORRUPT_INPUT_DATA_ERROR;
+                            break;
+                        }
+                    }
+
+                    if (result == CMT_MPACK_UNEXPECTED_KEY_ERROR) {
+                        seen[seen_count++] = callback_entry;
+                        result = callback_entry->handler(reader, entry_index, context);
+                    }
+                }
+
+                callback_entry++;
+            }
+
+            cfl_sds_destroy(key_name);
+        }
+    }
+
+    if (CMT_MPACK_SUCCESS == result) {
+        mpack_done_map(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CMT_MPACK_PENDING_MAP_ENTRIES;
+        }
+    }
+
+    return result;
+}
+==== ctr_mpack_unpack_array  lib/ctraces/src/ctr_mpack_utils.c:400  (identical at 046accf6)
+int ctr_mpack_unpack_array(mpack_reader_t *reader,
+                           ctr_mpack_unpacker_entry_callback_fn_t entry_processor_callback,
+                           void *context)
+{
+    uint32_t              entry_index;
+    uint32_t              entry_count;
+    mpack_tag_t           tag;
+    int                   result;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader))
+    {
+        return CTR_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_array != mpack_tag_type(&tag)) {
+        return CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_array_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * that in our schema we have the following arrays :
+     *     label text dictionary (strings)
+     *     dimension labels (indexes)
+     *     metric values
+     *         dimension values
+     *
+     * IMO none of these arrays should be huge so I think using 65535 as a limit
+     * gives us more than enough wiggle space (in reality I don't expect any of these
+     * arrays to hold more than 128 values but I could be wrong as that probably depends
+     * on the flush interval)
+     */
+
+    if (CTR_MPACK_MAX_ARRAY_ENTRY_COUNT < entry_count) {
+        return CTR_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = CTR_MPACK_SUCCESS;
+
+    for (entry_index = 0 ;
+         CTR_MPACK_SUCCESS == result && entry_index < entry_count ;
+         entry_index++) {
+        result = entry_processor_callback(reader, entry_index, context);
+    }
+
+    if (CTR_MPACK_SUCCESS == result) {
+        mpack_done_array(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CTR_MPACK_PENDING_ARRAY_ENTRIES;
+        }
+    }
+
+    return result;
+}
+==== ctr_mpack_unpack_map  lib/ctraces/src/ctr_mpack_utils.c:331  (DIFFERS at 046accf6)
+int ctr_mpack_unpack_map(mpack_reader_t *reader,
+                         struct ctr_mpack_map_entry_callback_t *callback_list,
+                         void *context)
+{
+    struct ctr_mpack_map_entry_callback_t *callback_entry;
+    uint32_t                               entry_index;
+    uint32_t                               entry_count;
+    cfl_sds_t                              key_name;
+    int                                    result;
+    mpack_tag_t                            tag;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader)) {
+        return CTR_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_map != mpack_tag_type(&tag)) {
+        return CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_map_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * how our schema looks and how many entries the different fields have and none
+     * of those exceed the number we set CTR_MPACK_MAX_MAP_ENTRY_COUNT to which is 10.
+     * Making these sanity checks optional or configurable in runtime might be worth
+     * the itme and complexity cost but that's something I don't know at the moment.
+     */
+
+    if (CTR_MPACK_MAX_MAP_ENTRY_COUNT < entry_count) {
+        return CTR_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = 0;
+
+    for (entry_index = 0 ; 0 == result && entry_index < entry_count ; entry_index++) {
+        result = ctr_mpack_consume_string_tag(reader, &key_name);
+
+        if (CTR_MPACK_SUCCESS == result) {
+            callback_entry = callback_list;
+            result = CTR_MPACK_UNEXPECTED_KEY_ERROR;
+
+            while (CTR_MPACK_UNEXPECTED_KEY_ERROR == result &&
+                   NULL != callback_entry->identifier) {
+
+                if (0 == strcmp(callback_entry->identifier, key_name)) {
+                    result = callback_entry->handler(reader, entry_index, context);
+                }
+
+                callback_entry++;
+            }
+
+            cfl_sds_destroy(key_name);
+        }
+    }
+
+    if (CTR_MPACK_SUCCESS == result) {
+        mpack_done_map(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CTR_MPACK_PENDING_MAP_ENTRIES;
+        }
+    }
+
+    return result;
+}
+---- 046accf6 text:
+int ctr_mpack_unpack_map(mpack_reader_t *reader,
+                         struct ctr_mpack_map_entry_callback_t *callback_list,
+                         void *context)
+{
+    struct ctr_mpack_map_entry_callback_t *callback_entry;
+    uint32_t                               entry_index;
+    uint32_t                               entry_count;
+    uint32_t                               callback_index;
+    uint8_t                                handled_entries[CTR_MPACK_MAX_MAP_ENTRY_COUNT];
+    cfl_sds_t                              key_name;
+    int                                    result;
+    mpack_tag_t                            tag;
+
+    tag = mpack_read_tag(reader);
+
+    if (mpack_ok != mpack_reader_error(reader)) {
+        return CTR_MPACK_ENGINE_ERROR;
+    }
+
+    if (mpack_type_map != mpack_tag_type(&tag)) {
+        return CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR;
+    }
+
+    entry_count = mpack_tag_map_count(&tag);
+
+    /* This validation only applies to cmetrics and its use cases, we know
+     * how our schema looks and how many entries the different fields have and none
+     * of those exceed the number we set CTR_MPACK_MAX_MAP_ENTRY_COUNT to which is 10.
+     * Making these sanity checks optional or configurable in runtime might be worth
+     * the itme and complexity cost but that's something I don't know at the moment.
+     */
+
+    if (CTR_MPACK_MAX_MAP_ENTRY_COUNT < entry_count) {
+        return CTR_MPACK_CORRUPT_INPUT_DATA_ERROR;
+    }
+
+    result = 0;
+    memset(handled_entries, 0, sizeof(handled_entries));
+
+    for (entry_index = 0 ; 0 == result && entry_index < entry_count ; entry_index++) {
+        result = ctr_mpack_consume_string_tag(reader, &key_name);
+
+        if (CTR_MPACK_SUCCESS == result) {
+            callback_entry = callback_list;
+            callback_index = 0;
+            result = CTR_MPACK_UNEXPECTED_KEY_ERROR;
+
+            while (CTR_MPACK_UNEXPECTED_KEY_ERROR == result &&
+                   NULL != callback_entry->identifier) {
+
+                if (0 == strcmp(callback_entry->identifier, key_name)) {
+                    if (handled_entries[callback_index]) {
+                        result = CTR_MPACK_CORRUPT_INPUT_DATA_ERROR;
+                    }
+                    else {
+                        handled_entries[callback_index] = 1;
+                        result = callback_entry->handler(reader, entry_index, context);
+                    }
+                }
+
+                callback_entry++;
+                callback_index++;
+            }
+
+            cfl_sds_destroy(key_name);
+        }
+    }
+
+    if (CTR_MPACK_SUCCESS == result) {
+        mpack_done_map(reader);
+
+        if (mpack_ok != mpack_reader_error(reader))
+        {
+            return CTR_MPACK_PENDING_MAP_ENTRIES;
+        }
+    }
+
+    return result;
+}
+==== rd_list_init  lib/librdkafka-2.15.0/src/rdlist.c:53  (identical at 046accf6)
+rd_list_t *
+rd_list_init(rd_list_t *rl, int initial_size, void (*free_cb)(void *)) {
+        memset(rl, 0, sizeof(*rl));
+
+        if (initial_size > 0)
+                rd_list_grow(rl, initial_size);
+
+        rl->rl_free_cb = free_cb;
+
+        return rl;
+}
+==== rd_list_new  lib/librdkafka-2.15.0/src/rdlist.c:84  (identical at 046accf6)
+rd_list_t *rd_list_new(int initial_size, void (*free_cb)(void *)) {
+        rd_list_t *rl = rd_list_alloc();
+        rd_list_init(rl, initial_size, free_cb);
+        rl->rl_flags |= RD_LIST_F_ALLOCATED;
+        return rl;
+}
+==== rd_list_add  lib/librdkafka-2.15.0/src/rdlist.c:143  (identical at 046accf6)
+void *rd_list_add(rd_list_t *rl, void *elem) {
+        if (rl->rl_cnt == rl->rl_size)
+                rd_list_grow(rl, rl->rl_size ? rl->rl_size * 2 : 16);
+        rl->rl_flags &= ~RD_LIST_F_SORTED;
+        if (elem)
+                rl->rl_elems[rl->rl_cnt] = elem;
+        return rl->rl_elems[rl->rl_cnt++];
+}
+==== rd_list_destroy  lib/librdkafka-2.15.0/src/rdlist.c:316  (identical at 046accf6)
+void rd_list_destroy(rd_list_t *rl) {
+        rd_list_destroy_elems(rl);
+        if (rl->rl_flags & RD_LIST_F_ALLOCATED)
+                rd_free(rl);
+}
+==== rd_list_clear  lib/librdkafka-2.15.0/src/rdlist.c:311  (identical at 046accf6)
+void rd_list_clear(rd_list_t *rl) {
+        rd_list_destroy_elems(rl);
+}
+==== rd_list_destroy_elems  lib/librdkafka-2.15.0/src/rdlist.c:290  (identical at 046accf6)
+static void rd_list_destroy_elems(rd_list_t *rl) {
+        int i;
+
+        if (!rl->rl_elems)
+                return;
+
+        if (rl->rl_free_cb) {
+                /* Free in reverse order to allow deletions */
+                for (i = rl->rl_cnt - 1; i >= 0; i--)
+                        if (rl->rl_elems[i])
+                                rl->rl_free_cb(rl->rl_elems[i]);
+        }
+
+        rd_free(rl->rl_elems);
+        rl->rl_elems = NULL;
+        rl->rl_cnt   = 0;
+        rl->rl_size  = 0;
+        rl->rl_flags &= ~RD_LIST_F_SORTED;
+}
+==== pb_write  lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:83  (identical at 046accf6)
+bool checkreturn pb_write(pb_ostream_t *stream, const pb_byte_t *buf, size_t count)
+{
+    if (count > 0 && stream->callback != NULL)
+    {
+        if (stream->bytes_written + count < stream->bytes_written ||
+            stream->bytes_written + count > stream->max_size)
+        {
+            PB_RETURN_ERROR(stream, "stream full");
+        }
+
+#ifdef PB_BUFFER_ONLY
+        if (!buf_write(stream, buf, count))
+            PB_RETURN_ERROR(stream, "io error");
+#else        
+        if (!stream->callback(stream, buf, count))
+            PB_RETURN_ERROR(stream, "io error");
+#endif
+    }
+    
+    stream->bytes_written += count;
+    return true;
+}
+==== pb_encode_varint  lib/librdkafka-2.15.0/src/nanopb/pb_encode.c:606  (identical at 046accf6)
+bool checkreturn pb_encode_varint(pb_ostream_t *stream, pb_uint64_t value)
+{
+    if (value <= 0x7F)
+    {
+        /* Fast path: single byte */
+        pb_byte_t byte = (pb_byte_t)value;
+        return pb_write(stream, &byte, 1);
+    }
+    else
+    {
+#ifdef PB_WITHOUT_64BIT
+        return pb_encode_varint_32(stream, value, 0);
+#else
+        return pb_encode_varint_32(stream, (uint32_t)value, (uint32_t)(value >> 32));
+#endif
+    }
+}
+==== rd_kafka_topic_partition_list_sort  lib/librdkafka-2.15.0/src/rdkafka_partition.c:3664  (identical at 046accf6)
+void rd_kafka_topic_partition_list_sort(
+    rd_kafka_topic_partition_list_t *rktparlist,
+    int (*cmp)(const void *, const void *, void *),
+    void *opaque) {
+
+        if (!cmp)
+                cmp = rd_kafka_topic_partition_cmp_opaque;
+
+        rd_qsort_r(rktparlist->elems, rktparlist->cnt,
+                   sizeof(*rktparlist->elems), cmp, opaque);
+}
+==== msgpack_packer_init  lib/msgpack-c/include/msgpack/pack.h:130  (identical at 046accf6)
+inline void msgpack_packer_init(msgpack_packer* pk, void* data, msgpack_packer_write callback)
+{
+    pk->data = data;
+    pk->callback = callback;
+}
+==== rd_kafka_q_serve  lib/librdkafka-2.15.0/src/rdkafka_queue.c:652  (identical at 046accf6)
+int rd_kafka_q_serve(rd_kafka_q_t *rkq,
+                     int timeout_ms,
+                     int max_cnt,
+                     rd_kafka_q_cb_type_t cb_type,
+                     rd_kafka_q_serve_cb_t *callback,
+                     void *opaque) {
+        return rd_kafka_q_serve0(rkq, timeout_ms, max_cnt, cb_type, callback,
+                                 opaque, rd_false);
+}
+==== rd_kafka_q_pop_serve  lib/librdkafka-2.15.0/src/rdkafka_queue.c:507  (identical at 046accf6)
+rd_kafka_op_t *rd_kafka_q_pop_serve(rd_kafka_q_t *rkq,
+                                    rd_ts_t timeout_us,
+                                    int32_t version,
+                                    rd_kafka_q_cb_type_t cb_type,
+                                    rd_kafka_q_serve_cb_t *callback,
+                                    void *opaque) {
+        return rd_kafka_q_pop_serve0(rkq, timeout_us, version, cb_type,
+                                     callback, opaque, rd_false);
+}
+==== rd_kafka_op_destroy  lib/librdkafka-2.15.0/src/rdkafka_op.c:345  (identical at 046accf6)
+void rd_kafka_op_destroy(rd_kafka_op_t *rko) {
+
+        /* Call ops callback with ERR__DESTROY to let it
+         * clean up its resources. */
+        if ((rko->rko_type & RD_KAFKA_OP_CB) && rko->rko_op_cb) {
+                rd_kafka_op_res_t res;
+                rko->rko_err = RD_KAFKA_RESP_ERR__DESTROY;
+                res          = rko->rko_op_cb(rko->rko_rk, NULL, rko);
+                rd_assert(res != RD_KAFKA_OP_RES_YIELD);
+                rd_assert(res != RD_KAFKA_OP_RES_KEEP);
+        }
+
+
+        switch (rko->rko_type & ~RD_KAFKA_OP_FLAGMASK) {
+        case RD_KAFKA_OP_FETCH:
+                rd_kafka_msg_destroy(NULL, &rko->rko_u.fetch.rkm);
+                /* Decrease refcount on rkbuf to eventually rd_free shared buf*/
+                if (rko->rko_u.fetch.rkbuf)
+                        rd_kafka_buf_handle_op(rko, RD_KAFKA_RESP_ERR__DESTROY);
+
+                break;
+
+        case RD_KAFKA_OP_OFFSET_FETCH:
+                if (rko->rko_u.offset_fetch.partitions &&
+                    rko->rko_u.offset_fetch.do_free)
+                        rd_kafka_topic_partition_list_destroy(
+                            rko->rko_u.offset_fetch.partitions);
+                break;
+
+        case RD_KAFKA_OP_OFFSET_COMMIT:
+                RD_IF_FREE(rko->rko_u.offset_commit.partitions,
+                           rd_kafka_topic_partition_list_destroy);
+                RD_IF_FREE(rko->rko_u.offset_commit.reason, rd_free);
+                break;
+
+        case RD_KAFKA_OP_SUBSCRIBE:
+        case RD_KAFKA_OP_GET_SUBSCRIPTION:
+                RD_IF_FREE(rko->rko_u.subscribe.topics,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_ASSIGN:
+        case RD_KAFKA_OP_GET_ASSIGNMENT:
+                RD_IF_FREE(rko->rko_u.assign.partitions,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_REBALANCE:
+                RD_IF_FREE(rko->rko_u.rebalance.partitions,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_NAME:
+                RD_IF_FREE(rko->rko_u.name.str, rd_free);
+                break;
+
+        case RD_KAFKA_OP_CG_METADATA:
+                RD_IF_FREE(rko->rko_u.cg_metadata,
+                           rd_kafka_consumer_group_metadata_destroy);
+                break;
+
+        case RD_KAFKA_OP_ERR:
+        case RD_KAFKA_OP_CONSUMER_ERR:
+                RD_IF_FREE(rko->rko_u.err.errstr, rd_free);
+                rd_kafka_msg_destroy(NULL, &rko->rko_u.err.rkm);
+                break;
+
+                break;
+
+        case RD_KAFKA_OP_THROTTLE:
+                RD_IF_FREE(rko->rko_u.throttle.nodename, rd_free);
+                break;
+
+        case RD_KAFKA_OP_STATS:
+                RD_IF_FREE(rko->rko_u.stats.json, rd_free);
+                break;
+
+        case RD_KAFKA_OP_XMIT_RETRY:
+        case RD_KAFKA_OP_XMIT_BUF:
+        case RD_KAFKA_OP_RECV_BUF:
+                if (rko->rko_u.xbuf.rkbuf)
+                        rd_kafka_buf_handle_op(rko, RD_KAFKA_RESP_ERR__DESTROY);
+
+                RD_IF_FREE(rko->rko_u.xbuf.rkbuf, rd_kafka_buf_destroy);
+                break;
+
+        case RD_KAFKA_OP_DR:
+                rd_kafka_msgq_purge(rko->rko_rk, &rko->rko_u.dr.msgq);
+                if (rko->rko_u.dr.do_purge2)
+                        rd_kafka_msgq_purge(rko->rko_rk, &rko->rko_u.dr.msgq2);
+
+                if (rko->rko_u.dr.rkt)
+                        rd_kafka_topic_destroy0(rko->rko_u.dr.rkt);
+                if (rko->rko_u.dr.presult)
+                        rd_kafka_Produce_result_destroy(rko->rko_u.dr.presult);
+                break;
+
+        case RD_KAFKA_OP_OFFSET_RESET:
+                RD_IF_FREE(rko->rko_u.offset_reset.reason, rd_free);
+                break;
+
+        case RD_KAFKA_OP_METADATA:
+                RD_IF_FREE(rko->rko_u.metadata.md, rd_kafka_metadata_destroy);
+                /* It's not needed to free metadata.mdi because they
+                   are the in the same memory allocation. */
+                break;
+
+        case RD_KAFKA_OP_LOG:
+                rd_free(rko->rko_u.log.str);
+                break;
+
+        case RD_KAFKA_OP_ADMIN_FANOUT:
+                rd_assert(rko->rko_u.admin_request.fanout.outstanding == 0);
+                rd_list_destroy(&rko->rko_u.admin_request.fanout.results);
+        case RD_KAFKA_OP_CREATETOPICS:
+        case RD_KAFKA_OP_DELETETOPICS:
+        case RD_KAFKA_OP_CREATEPARTITIONS:
+        case RD_KAFKA_OP_ALTERCONFIGS:
+        case RD_KAFKA_OP_INCREMENTALALTERCONFIGS:
+        case RD_KAFKA_OP_DESCRIBECONFIGS:
+        case RD_KAFKA_OP_DELETERECORDS:
+        case RD_KAFKA_OP_LISTCONSUMERGROUPS:
+        case RD_KAFKA_OP_DESCRIBECONSUMERGROUPS:
+        case RD_KAFKA_OP_DELETEGROUPS:
+        case RD_KAFKA_OP_DELETECONSUMERGROUPOFFSETS:
+        case RD_KAFKA_OP_CREATEACLS:
+        case RD_KAFKA_OP_DESCRIBEACLS:
+        case RD_KAFKA_OP_DELETEACLS:
+        case RD_KAFKA_OP_ALTERCONSUMERGROUPOFFSETS:
+        case RD_KAFKA_OP_DESCRIBETOPICS:
+        case RD_KAFKA_OP_DESCRIBECLUSTER:
+        case RD_KAFKA_OP_LISTCONSUMERGROUPOFFSETS:
+        case RD_KAFKA_OP_ALTERUSERSCRAMCREDENTIALS:
+        case RD_KAFKA_OP_DESCRIBEUSERSCRAMCREDENTIALS:
+        case RD_KAFKA_OP_LISTOFFSETS:
+        case RD_KAFKA_OP_ELECTLEADERS:
+                rd_kafka_replyq_destroy(&rko->rko_u.admin_request.replyq);
+                rd_list_destroy(&rko->rko_u.admin_request.args);
+                if (rko->rko_u.admin_request.options.match_consumer_group_states
+                        .u.PTR) {
+                        rd_list_destroy(rko->rko_u.admin_request.options
+                                            .match_consumer_group_states.u.PTR);
+                }
+                if (rko->rko_u.admin_request.options.match_consumer_group_types
+                        .u.PTR) {
+                        rd_list_destroy(rko->rko_u.admin_request.options
+                                            .match_consumer_group_types.u.PTR);
+                }
+                rd_assert(!rko->rko_u.admin_request.fanout_parent);
+                RD_IF_FREE(rko->rko_u.admin_request.coordkey, rd_free);
+                break;
+
+        case RD_KAFKA_OP_ADMIN_RESULT:
+                rd_list_destroy(&rko->rko_u.admin_result.args);
+                rd_list_destroy(&rko->rko_u.admin_result.results);
+                RD_IF_FREE(rko->rko_u.admin_result.errstr, rd_free);
+                rd_assert(!rko->rko_u.admin_result.fanout_parent);
+                ;
+                break;
+
+        case RD_KAFKA_OP_MOCK:
+                RD_IF_FREE(rko->rko_u.mock.name, rd_free);
+                RD_IF_FREE(rko->rko_u.mock.str, rd_free);
+                RD_IF_FREE(rko->rko_u.mock.errs, rd_free);
+                if (rko->rko_u.mock.metrics) {
+                        int64_t i;
+                        for (i = 0; i < rko->rko_u.mock.hi; i++)
+                                rd_free(rko->rko_u.mock.metrics[i]);
+                        rd_free(rko->rko_u.mock.metrics);
+                }
+                break;
+
+        case RD_KAFKA_OP_BROKER_MONITOR:
+                rd_kafka_broker_destroy(rko->rko_u.broker_monitor.rkb);
+                break;
+
+        case RD_KAFKA_OP_TXN:
+                RD_IF_FREE(rko->rko_u.txn.group_id, rd_free);
+                RD_IF_FREE(rko->rko_u.txn.offsets,
+                           rd_kafka_topic_partition_list_destroy);
+                RD_IF_FREE(rko->rko_u.txn.cgmetadata,
+                           rd_kafka_consumer_group_metadata_destroy);
+                break;
+
+        case RD_KAFKA_OP_LEADERS:
+                rd_assert(!rko->rko_u.leaders.eonce);
+                rd_assert(!rko->rko_u.leaders.replyq.q);
+                RD_IF_FREE(rko->rko_u.leaders.leaders, rd_list_destroy);
+                RD_IF_FREE(rko->rko_u.leaders.partitions,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_METADATA_UPDATE:
+                RD_IF_FREE(rko->rko_u.metadata.md, rd_kafka_metadata_destroy);
+                /* It's not needed to free metadata.mdi because they
+                   are the in the same memory allocation. */
+                break;
+
+        case RD_KAFKA_OP_SET_TELEMETRY_BROKER:
+                RD_IF_FREE(rko->rko_u.telemetry_broker.rkb,
+                           rd_kafka_broker_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_FETCH: {
+                RD_IF_FREE(rko->rko_u.share_fetch.target_broker,
+                           rd_kafka_broker_destroy);
+                RD_IF_FREE(rko->rko_u.share_fetch.ack_details, rd_list_destroy);
+                break;
+        }
+
+        case RD_KAFKA_OP_TERMINATE:
+                RD_IF_FREE(rko->rko_u.terminated.ack_batches, rd_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_FETCH_FANOUT:
+                RD_IF_FREE(rko->rko_u.share_fetch_fanout.ack_batches,
+                           rd_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_COMMIT_ASYNC_FANOUT:
+                RD_IF_FREE(rko->rko_u.share_commit_async_fanout.ack_batches,
+                           rd_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT:
+                RD_IF_FREE(rko->rko_u.share_commit_sync_fanout.ack_batches,
+                           rd_list_destroy);
+                RD_IF_FREE(rko->rko_u.share_commit_sync_fanout.results,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT_REPLY:
+                RD_IF_FREE(rko->rko_u.share_commit_sync_fanout_reply.results,
+                           rd_kafka_topic_partition_list_destroy);
+                break;
+
+        case RD_KAFKA_OP_SHARE_FETCH_RESPONSE: {
+                if (rko->rko_u.share_fetch_response.message_rkos) {
+                        /* Messages not handed to app, destroy them. */
+                        rd_kafka_op_t *msg_rko;
+                        int mi;
+                        RD_LIST_FOREACH(
+                            msg_rko,
+                            rko->rko_u.share_fetch_response.message_rkos, mi) {
+                                rd_kafka_op_destroy(msg_rko);
+                        }
+                        rd_list_destroy(
+                            rko->rko_u.share_fetch_response.message_rkos);
+                }
+                RD_IF_FREE(rko->rko_u.share_fetch_response.inflight_acks,
+                           rd_list_destroy);
+                break;
+        }
+
+        case RD_KAFKA_OP_SHARE_ACK_COMMIT_CB_EXECUTE:
+                RD_IF_FREE(rko->rko_u.share_ack_commit_cb_execute.partitions,
+                           rd_kafka_share_partition_offsets_list_destroy);
+                break;
+
+        default:
+                break;
+        }
+
+        RD_IF_FREE(rko->rko_rktp, rd_kafka_toppar_destroy);
+
+        RD_IF_FREE(rko->rko_error, rd_kafka_error_destroy);
+
+        rd_kafka_replyq_destroy(&rko->rko_replyq);
+
+#if ENABLE_DEVEL
+        if (rd_atomic32_sub(&rd_kafka_op_cnt, 1) < 0)
+                rd_kafka_assert(NULL, !*"rd_kafka_op_cnt < 0");
+#endif
+
+        rd_free(rko);
+}
+==== rd_kafka_op_destroy  lib/librdkafka-2.15.0/src/rdkafka_admin.c:1467  (identical at 046accf6)
+ * @sa Use rd_kafka_op_destroy() to release it.
+ */
+static rd_kafka_op_t *rd_kafka_admin_request_op_target_all_new(
+    rd_kafka_t *rk,
+    rd_kafka_op_type_t optype,
+    rd_kafka_event_type_t reply_event_type,
+    const struct rd_kafka_admin_worker_cbs *cbs,
+    const struct rd_kafka_admin_fanout_worker_cbs *fanout_cbs,
+    void (*result_free)(void *),
+    const rd_kafka_AdminOptions_t *options,
+    rd_kafka_q_t *rkq) {
+        rd_kafka_op_t *rko, *rko_fanout;
+
+        rko_fanout = rd_kafka_admin_fanout_op_new(rk, optype, reply_event_type,
+                                                  fanout_cbs, options, rkq);
+
+        rko = rd_kafka_admin_request_op_new(rk, optype, reply_event_type, cbs,
+                                            options, rk->rk_ops);
+
+        rko_fanout->rko_u.admin_request.fanout.outstanding = 1;
+        rko->rko_u.admin_request.fanout_parent             = rko_fanout;
+        rko->rko_u.admin_request.broker_id = RD_KAFKA_ADMIN_TARGET_ALL;
+
+        rd_list_init(&rko_fanout->rko_u.admin_request.fanout.results, (int)1,
+                     result_free);
+
+        return rko;
+}

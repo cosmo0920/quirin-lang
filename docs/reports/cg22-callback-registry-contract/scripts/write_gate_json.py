@@ -10,7 +10,7 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/refcount-family-blocking-callees"
+REPORT = REPO / "docs/reports/cg22-callback-registry-contract"
 
 
 def main() -> int:
@@ -35,18 +35,18 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"REFCOUNT-FAMILY-BLOCKING-CALLEES card gate on base 652dc085f, every code step at "
-        f"{head[:9]}, scripts docs/reports/refcount-family-blocking-callees/scripts/gate.sh "
+        f"CG22-CALLBACK-REGISTRY-CONTRACT card gate on base 84ec54d1d, every code step at "
+        f"{head[:9]}, scripts docs/reports/cg22-callback-registry-contract/scripts/gate.sh "
         "(each step under the shared flock), provider-gate.sh and finish-gate.sh, logs "
         f"private/cg22r/gate-{name} and private/cg22r/provider-gate-{provider_name} of this worktree. "
         f"gate-{name}: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/cg22r/tests-gate-{name}); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (no Lean "
-        "change: contracts only); python suite and docs index check per gate/ (08, 09), then "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (QCore.CallbackContracts "
+        "and AuditCallbackContracts added, QCore.BodyClauseStanding extended); python suite and docs index check per gate/ (08, 09), then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
-        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ unchanged since): cargo check --locked 0, cargo test {provider_tests} passed "
+        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ unchanged since when named apart): cargo check --locked 0, cargo test {provider_tests} passed "
         "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
         f"package 0, providers Python suite {provider_python.group(1)} tests OK."
     )

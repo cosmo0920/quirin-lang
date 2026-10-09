@@ -1,158 +1,176 @@
 #!/usr/bin/env python3
-"""REFCOUNT-FAMILY-BLOCKING-CALLEES: amend W45-CALLEE-CASCADE-RESIDUAL,
-W48-CALLEE-DECISION-TABLE, REFCOUNT-REFERENCE-RESULT-BODY-SHAPES,
-RETAINING-CALL-MEMBER-ACTUAL and CG22-CALLBACK-REGISTRY-CONTRACT; register the
-residuals with sizes. The card has no ledger entry of its own (it was briefed
-directly), so nothing is retired. Acceptance matrix, indent=1,
+"""CG22-CALLBACK-REGISTRY-CONTRACT: amend the card's own entry (its DISCHARGE's
+"checked against bodies" holds for the invocation and the registration in a
+parameter holder only, rule 13y, so the entry is amended, not retired),
+W48-CALLEE-DECISION-TABLE (class 1, shape (c)), W45-CALLEE-CASCADE-RESIDUAL and
+W44-CALLEE-CROSS-UNIT-SUMMARY; register the residuals with sizes.
+RDKAFKA-SORT-COMPARATOR-EFFECTS, named in a module comment, was never
+registered: nothing to retire. Acceptance matrix, indent=1,
 ensure_ascii=False; `dimensions.named_followups` = list length. Idempotent."""
 import json
 import pathlib
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 MATRIX = REPO / "docs/reviews/r0_3/acceptance_matrix.json"
-CARD = "REFCOUNT-FAMILY-BLOCKING-CALLEES"
+CARD = "CG22-CALLBACK-REGISTRY-CONTRACT"
 MARK = "AMENDED (" + CARD
-SOURCE = "docs/reports/refcount-family-blocking-callees/README.md"
+SOURCE = "docs/reports/cg22-callback-registry-contract/README.md"
 
-RUN = ("corpus 66910c10 79dc429d 880/9/3,945 -> 36fd1649 881/9/3,944, base 652dc085f, binary "
-       "f0646e94; system 87/4/357 and slice 45/1/354/4 Pending, no row moves")
+RUN = ("corpus 66910c10 ab8f5f14 881/9/3,944 -> c0320aca 879/9/3,946, base 84ec54d1d, binary "
+       "3b204784; system 87/4/357 and slice 45/1/354/4 Pending, no status move")
 
 AMEND = {
+    CARD: (
+        f" {MARK}, {RUN}): the vocabulary is built (contract spec C04.19, grammar G05, gateway "
+        "rules 13u-13z, QCore.CallbackContracts): resource_callback_invoked (synchronous "
+        "invocation, loop-safe composition: every candidate's contract the identity, "
+        "resource_owned a requirement put on the call), resource_callback_table (closed over "
+        "an automatic array's initializer), resource_callback_registered / "
+        "_registry_invoked / _unregistered (a registration in force on every path in the "
+        "calling body, decided as callback_trace requires), resource_element_added / "
+        "resource_elements_dropped (custody into a releasing registry held by a tracked "
+        "identity) and resource_released_if_constructed (RD_LIST_F_ALLOCATED). Route G "
+        "consumes it; the declarations are pinned at both revisions (bsearch, qsort, "
+        "pthread_once; the cmetrics and ctraces array and map unpackers; rd_list_init, _new, "
+        "_add, _destroy, _clear; pb_write, pb_encode_varint; rd_kafka_topic_partition_list_sort "
+        "and msgpack_packer_init re-declared). The msgpack data capture is re-examined: "
+        "msgpack_packer_init retains data in pk and registers callback in pk (rule 13y "
+        "validates the registration); every site is in a function Unknown before. Two named "
+        "corrections (rd_kafka_topic_partition_list_sort_by_topic, _by_topic_id: Safe only by "
+        "reading the comparator as benign). No Unknown -> Safe. Rule 13y checks against bodies "
+        "the invocation (cmt_ and ctr_mpack_unpack_array validated) and a registration in a "
+        "parameter holder (rd_list_init, msgpack_packer_init validated; "
+        "rd_kafka_topic_partition_list_sort withdrawn in rdkafka_partition.c). REMAINING "
+        "DISCHARGE (narrowed): the callback clauses no body check reads are declared "
+        "assumptions: the two map unpackers' tables, rd_list_new's constructor registration, "
+        "rd_list_add's element, rd_list_destroy's and rd_list_clear's registry invocation, "
+        "element drop, unregistration and self-release, pb_write's and pb_encode_varint's "
+        "registry invocation (8 declarations); a structural check of each against its body "
+        "(rdlist.c, cmt_/ctr_mpack_utils.c, nanopb/pb_encode.c), measured. The other residuals "
+        "are CG22-REGISTRY-OUTSIDE-THE-FRAME, CG22-CALLBACK-CANDIDATE-CONTRACTS, "
+        "CG22-CALLBACK-OPEN-ACTUALS, CG22-OP-CALLBACKS-AND-SERVED-QUEUES and "
+        "CG22-MSGPACK-PACK-INVOCATIONS."
+    ),
     "W48-CALLEE-DECISION-TABLE": (
-        f" {MARK}, {RUN}, scripts/withdrawers.py and scripts/family_closure.py over "
-        "artifacts/withdrawers-a2-corpus.json): class 3 gains a shape, a callee that KEEPS (or "
-        "drops) a reference on the object it is handed and stores it in an owner it builds or "
-        "reaches (an op's rko_rktp or rko_replyq, a forwarding queue, the desired list, the "
-        "transaction list, a broker migration op). The brief forbids reading such a member as "
-        "plain borrowed, and C04.17 has no clause for it (a reference clause cannot stand beside "
-        "a retention of the same parameter, and rd_kafka_q_keep into an owner is not a "
-        "retention: the object outlives the holder by the kept reference, not by the caller); "
-        "inside each body the keep is REFCOUNT-KEEP-INTO-PLACE's shape (`rko->rko_rktp = "
-        "rd_kafka_toppar_keep(rktp)`). "
-        "Members, each body read at both revisions (withdrawer appearances in the 62 declared, "
-        "withdrawn reference families / families it breaks first / families it is the only "
-        "withdrawer of): rd_kafka_consumer_close_q 2/2/1, "
-        "rd_kafka_share_fetch_reply_handle_partition_error 2/2/0, rd_kafka_op_set_replyq 2/1/0, "
-        "rd_kafka_consume_stop0 1/1/1, rd_kafka_share_msgset_parse 20/0/0, rd_kafka_msgset_parse "
-        "2/0/0, rd_kafka_fetch_reply_handle_partition_error 2/0/0, "
-        "rd_kafka_fetch_preferred_replica_handle 2/0/0, rd_kafka_txn_add_partition 2/0/0, "
-        "rd_kafka_toppar_enq_msg 2/0/0, rd_kafka_toppar_broker_update 1/0/0, "
-        "rd_kafka_offset_validate 1/0/0, rd_kafka_op_req0 1/0/0 (13 callees; 6 families broken "
-        "first; 1 function the reference route would decide if one member were declared alone, "
-        "rd_kafka_consume_stop over rd_kafka_consume_stop0; 0 Safe). The relink rd_kafka_txn_partition_registered (moves rktp between transaction "
-        "lists without a reference, 1/0/0) is a retention, not this shape. DISCHARGE: a user "
-        "decision on a clause for a reference kept into an owner (or the caller-side reading "
-        "that the caller's own references are untouched), measured."
+        f" {MARK}, {RUN}, scripts/size_members.py over the a3 corpus; leaves naming the callee "
+        "/ functions carrying one / functions it decides alone): class 1 shape (c) has its "
+        "vocabulary (C04.19, rules 13u-13z). Declared: bsearch 6/5/1, qsort 4/3/0, "
+        "pthread_once 2/2/1, cmt_mpack_unpack_array 12/12/5, _map 10/10/3, "
+        "ctr_mpack_unpack_array 5/5/5, _map 9/9/3 (each now `callback-uncontracted`: their "
+        "callbacks have no contract in force, CG22-CALLBACK-CANDIDATE-CONTRACTS), rd_list_init "
+        "50/33/0, rd_list_new 2/2/0, rd_list_add 48/36/0, rd_list_destroy 131/82/1, "
+        "rd_list_clear 0 (refused first by the access gate at its member actual), pb_write "
+        "8/8/2, pb_encode_varint 5/4/2 (each `callback-registry-undecided`: the list or stream "
+        "is reached through a formal or a member, CG22-REGISTRY-OUTSIDE-THE-FRAME). Not "
+        "declared, unchanged: rd_kafka_q_serve0 3/3/2, rd_kafka_q_pop_serve0 3/3/2, "
+        "rd_kafka_q_serve_maybe_consume 2/2/2, rd_kafka_op_destroy 132/83/2 "
+        "(CG22-OP-CALLBACKS-AND-SERVED-QUEUES); pthread_getspecific 16/15/1, "
+        "pthread_setspecific 15/10/1, mk_sched_get_thread_conf 9/9/0 (a result returning what "
+        "a holder retains: still no clause). No function moved to Safe."
     ),
     "W45-CALLEE-CASCADE-RESIDUAL": (
-        f" {MARK}, {RUN}, scripts/rank.py, artifacts/rank-a2-corpus.json): the 523 / 367 "
-        "reproduce. Four pinned declarations (rd_kafka_q_wait_result, rd_kafka_q_purge0, "
-        "rd_kafka_toppar_needs_query, rd_kafka_toppar_fetch_backoff) free 1 "
-        "(rd_kafka_toppar_purge_and_disable_queues, decided by rd_kafka_q_purge0 alone). "
-        "Remaining: 522 Unknown functions blocked by uncontracted calls alone, 366 by one callee "
-        "alone; system 26 / 18, slice 38 / 27 unchanged."
+        f" {MARK}, {RUN}, scripts/rank.py, artifacts/rank-a3-corpus.json): Unknown functions "
+        "blocked by uncontracted calls alone 523 -> 487, by one callee alone 366 -> 335: the 36 "
+        "carry named callback refusals now (rules 13u-13x); none freed."
     ),
-    "REFCOUNT-REFERENCE-RESULT-BODY-SHAPES": (
-        f" {MARK}, {RUN}): one more member, rd_kafka_toppar_broker (rdkafka_partition.c:2716-2729): "
-        "it returns rd_kafka_broker_keep(rktp->rktp_broker) under a condition, a returned broker "
-        "reference of a member read (rule 13d's conditional-keep shape), which every caller drops "
-        "through rd_kafka_broker_destroy, a macro over the rd_refcnt primitive no declaration "
-        "reads. It breaks 1 declared toppar family first and alone "
-        "(rd_kafka_topic_partition_available); 0 Safe. Undeclared."
-    ),
-    "RETAINING-CALL-MEMBER-ACTUAL": (
-        f" {MARK}, {RUN}, artifacts/withdrawers-a2-corpus.json): the largest single breaker of "
-        "declared reference families: 13 of the 62 withdrawn families are broken first at their "
-        "own acquiring rd_kafka_q_new(X->f) (rd_kafka_q_new0 is withheld: it retains rk by its "
-        "result), in rd_kafka_consume_stop0, rd_kafka_seek (2), rd_kafka_op_req and nine "
-        "rdunittest_msgset_errors.c tests (response_q). Reading the member actual is not enough: "
-        "rule 12t refuses a retained P that is a member read (retention-undecided), so each "
-        "also needs a decided P. 3 more families are broken first by that retention-undecided "
-        "at an acquiring rd_kafka_q_new0 (rd_kafka_share_commit_sync, rd_kafka_commit_queue 2)."
-    ),
-    "CG22-CALLBACK-REGISTRY-CONTRACT": (
-        f" {MARK}, {RUN}): rd_kafka_q_wait_result and rd_kafka_q_purge0 are declared (borrowed "
-        "rkq) under a stated served-queue premise: a popped op's own callback they may run "
-        "(rd_kafka_op_handle -> rd_kafka_op_call; rd_kafka_op_destroy's ERR__DESTROY call) takes "
-        "over no reference the caller holds on the served queue (constraint 4). The callbacks are "
-        "not modelled; rd_kafka_q_serve (2 withdrawn families), rd_kafka_q_pop_serve (2) and "
-        "rd_kafka_poll_cb (1), which take or are a callback, stay undeclared here."
+    "W44-CALLEE-CROSS-UNIT-SUMMARY": (
+        f" {MARK}, {RUN}): callback candidates too: three comparators Safe in their own unit "
+        "(rd_kafka_metadata_broker_cmp, rd_kafka_metadata_broker_internal_cmp, rd_strcmp3) "
+        "have no contract in force where bsearch is called (rule 13u's `callback-uncontracted`, "
+        "4 leaves)."
     ),
 }
 
 NEW = [
     {
-        "id": "REFCOUNT-BY-VALUE-AGGREGATE-ABI",
-        "title": "Callees that take or return a C structure by value stay undeclarable, and rd_kafka_replyq_t carries a kept reference",
-        "why": "Registered by " + CARD + " (" + RUN + "; scripts/withdrawers.py, "
-               "scripts/family_closure.py over artifacts/withdrawers-a2-corpus.json). The "
-               "declared-ABI reader projects scalars, pointers, va_list and enumerations (rule "
-               "12u), never a structure passed or returned by value. Six of the twelve callees "
-               "that break a declared reference family first are such callees: "
-               "rd_kafka_toppar_op_seek (rd_kafka_fetch_pos_t and rd_kafka_replyq_t; 4 withdrawn "
-               "families / 3 broken first), rd_kafka_ListOffsetsRequest (replyq; 2/2), "
-               "rd_kafka_replyq_make (returns the replyq; 3/1), rd_kafka_broker_purge_queues "
-               "(replyq; 1/1), rd_kafka_offset_store0 (pos; 1/1, the only withdrawer of "
-               "rd_kafka_offset_store's family), rd_kafka_toppar_op_pause_resume (replyq; 1/1), "
-               "rd_kafka_toppar_pid_change (rd_kafka_pid_t; 1/1), and later withdrawers "
-               "rd_kafka_commit0 (replyq; 2/0), rd_kafka_msgset_create_ProduceRequest (pid; 1/0), "
-               "rd_kafka_toppar_op_fetch_stop (replyq; 1/0). rd_kafka_replyq_t "
-               "(RD_KAFKA_REPLYQ(q, v) is rd_kafka_replyq_make, rdkafka_queue.h:674-691) holds "
-               "rd_kafka_q_keep(q): the callee's op takes that reference over, a transfer through "
-               "a by-value aggregate C04.17 does not spell. Size: 10 callees, 10 families broken "
-               "first, 1 function the reference route would decide (rd_kafka_offset_store), 0 "
-               "Safe. DISCHARGE: an ABI projection of by-value records (CG14-AGGREGATE-VALUE-POSITIONS "
-               "on the caller's side) and a decision on a reference carried inside a by-value "
-               "record, measured.",
+        "id": "CG22-REGISTRY-OUTSIDE-THE-FRAME",
+        "title": "A registry used through a formal or a member has no registration in force in the calling body",
+        "why": "Registered by " + CARD + " (" + RUN + "; scripts/reasons.py, "
+               "artifacts/reasons-a3-corpus.json). Rule 13w decides a registry use only under a "
+               "registration made in the calling body on every path; every measured rd_list and "
+               "nanopb caller reaches the list or stream through a formal or a member "
+               "(rd_list_destroy(&rk->rk_conf.partition_assignors), rd_list_clear("
+               "&mcluster->request_list), pb_write(stream, ...)): 239 "
+               "`callback-registry-undecided` leaves / 112 functions / 5 decided alone "
+               "(rd_list_destroy 131, rd_list_init 49, rd_list_add 44, pb_write 8, "
+               "pb_encode_varint 5, rd_list_new 2), plus 114 access-gate refusals at member "
+               "actuals of the now-classified calls; 3 `callback-element-custody-undecided` "
+               "(rd_list_add of a tracked element into a frame list with a free callback: a frame "
+               "object has no identity to own it). nanopb's registration, pb_ostream_from_buffer, "
+               "returns the stream by value (not read by the declared-ABI reader). DISCHARGE: a "
+               "registration carried by the caller's object (a precondition a summary or a "
+               "type-level invariant states and the caller's caller establishes), or a frame "
+               "registry identity, decided against callback_trace, measured.",
         "source": SOURCE,
         "recorded_by": CARD,
     },
     {
-        "id": "REFCOUNT-Q-POP-OWNED-OP",
-        "title": "rd_kafka_q_pop's owned op result is undeclared: declared, it publishes one leak on an infeasible path",
-        "why": "Registered by " + CARD + " (" + RUN + "; first AFTER a1, binary d59b325d, "
-               "corpus bddf4d59 881/19/3,934, artifacts/compare-a1-corpus.json). "
-               "rd_kafka_q_pop(rkq, timeout_us, version) (rdkafka_queue.c:537-540, through the "
-               "static rd_kafka_q_pop_serve0) borrows rkq and hands its caller the popped op or "
-               "NULL: resource_borrowed(rkq) and resource_return_owned(nullable) state the body. "
-               "Declared, it moved 10 Unknown rows to Unsafe and freed none: "
-               "rd_kafka_metadata (rdkafka_metadata.c:155 to :111) on an infeasible path (the "
-               "route takes the err == 0 edge of `if (err)` and then the err == "
-               "RD_KAFKA_RESP_ERR__DESTROY_BROKER edge of the do-while; the two tests of err are "
-               "not correlated), and nine rdunittest_msgset_errors.c tests whose RD_UT_ASSERT "
-               "on a popped op's member returns 1 with the op live (a leak on a failing test's "
-               "path only, provisional, never an upstream defect). It appears in 15 of the 62 "
-               "withdrawn reference families, never first and never alone. Withdrawn before "
-               "the measured AFTER. DISCHARGE: branch correlation of a variable tested twice "
-               "with constants (or a no-leak reading of the unit-test assertion arm), then the "
-               "declaration, measured.",
+        "id": "CG22-CALLBACK-CANDIDATE-CONTRACTS",
+        "title": "Synchronous invocations refuse because their callbacks have no contract in force",
+        "why": "Registered by " + CARD + " (" + RUN + "; scripts/reasons.py and "
+               "scripts/candidate_status.py over the a3 corpus). 46 `callback-uncontracted` "
+               "leaves / 44 functions / 17 decided alone (the cmetrics and ctraces unpackers 36, "
+               "bsearch 6, qsort 3). Of the 44 candidates named: 40 are Unknown in their own unit "
+               "(the cmetrics and ctraces decoder trees, every table holding at least one "
+               "Unknown handler, and rd_kafka_assignor_topic_cmp, rd_kafka_group_member_cmp, "
+               "rd_qsort_r_trampoline, toppar_sort_by_list_cnt), 3 are Safe in another unit "
+               "(W44-CALLEE-CROSS-UNIT-SUMMARY), 1 is a header static W4 does not summarise "
+               "(rd_kafka_ApiVersion_key_cmp, rdkafka_proto.h:208; rd_kafka_ApiVersion_check "
+               "would be Safe with it). DISCHARGE: the candidates' own verdicts (bottom-up, the "
+               "decoders' leaves first), the cross-unit route, a summary for header statics, "
+               "each measured.",
         "source": SOURCE,
         "recorded_by": CARD,
     },
     {
-        "id": "REFCOUNT-FAMILY-NON-CALLEE-BREAKERS",
-        "title": "Most declared reference families are withdrawn by a refusal that no contract removes",
-        "why": "Registered by " + CARD + " (" + RUN + "; scripts/withdrawers.py, "
-               "artifacts/withdrawers-a2-corpus.json, lexical and approximate). Of 127 plain-name "
-               "reference-drop-unheld leaves, 65 have an origin no declaration covers (an "
-               "undeclared call 35, a member read or list walk 26, a formal 4) and 62 a declared "
-               "origin whose family a refused statement withdrew (rule 13b's refused hand-on). "
-               "Their first withdrawer: an uncontracted callee 17 (12 callees: "
-               "W48-CALLEE-DECISION-TABLE class 3 and REFCOUNT-BY-VALUE-AGGREGATE-ABI); the access "
-               "gate at an acquiring rd_kafka_q_new(X->f) 13 (RETAINING-CALL-MEMBER-ACTUAL); an "
-               "unresolved identity at an acquiring ut_create_mock_toppar(rkshare->...) 9; an "
-               "unresolved identity in the null test of a name two acquisitions join "
-               "(`rktp = rd_kafka_toppar_get(...); if (!rktp) rktp = "
-               "rd_kafka_toppar_desired_get(...); if (unlikely(!rktp))`) 5; the access gate's "
-               "address class at `mtx_lock(&(rktp)->rktp_lock)` (the rd_kafka_toppar_lock and "
-               "rd_kafka_topic_*lock macros; W47-ACCESS-PATH-POSITION-RESIDUALS) 4, and 91 "
-               "withdrawer appearances across all families, so a family with a contracted callee "
-               "is withdrawn again at its next lock line; retention-undecided at an acquiring "
-               "rd_kafka_q_new0 3; loop re-acquisition 3; an unresolved identity at "
-               "rd_kafka_toppar_get2 2; a branch condition 2; others 4. The 11 "
-               "reference-unbalanced leaves (10 functions) sit in the same functions or behind "
-               "access-gate refusals in keep bodies. DISCHARGE: none by contracts; each tracker "
-               "named above re-runs scripts/withdrawers.py on its arbiter.",
+        "id": "CG22-CALLBACK-OPEN-ACTUALS",
+        "title": "Callback actuals rule 11p's resolution leaves open: a null default, an unprototyped designator, a formal",
+        "why": "Registered by " + CARD + " (" + RUN + "; artifacts/reasons-a3-corpus.json). 10 "
+               "`callback-undecided` leaves / 9 functions / 1 decided alone: "
+               "rd_kafka_topic_partition_list_sort(list, NULL, NULL) 6 (the body substitutes "
+               "rd_kafka_topic_partition_cmp_opaque for a NULL comparator: a clause reading a null "
+               "actual as a declared default is missing), pthread_once over a K&R-defined routine "
+               "2 (mk_http_thread_initialize_tls_once(), mk_set_up_tls_keys(): Clang's implicit "
+               "BitCast from `void (*)()` to `void (*)(void)` is not read by rule 11p's "
+               "resolution), a formal 2 (chunkio's qsort_stream compar, rd_list_new's free_cb: "
+               "correct refusals). DISCHARGE: a declared default for a null callback, and rule "
+               "11p reading a compatible-function-type BitCast, each measured.",
+        "source": SOURCE,
+        "recorded_by": CARD,
+    },
+    {
+        "id": "CG22-OP-CALLBACKS-AND-SERVED-QUEUES",
+        "title": "Op callbacks and served queues stay undeclared; the served-queue premise stays",
+        "why": "Registered by " + CARD + " (" + RUN + "; scripts/size_members.py, "
+               "artifacts/bodies.txt, each body read at both revisions). rd_kafka_q_serve0 "
+               "(rdkafka_queue.c:558-649) keeps and drops its forward queue in one body (rule "
+               "13b decides it) but hands each op it moved to a local queue to the callback "
+               "through rd_kafka_op_handle, which must take it over: a callback with custody of "
+               "a callee-supplied object, which rule 13u refuses, so every call would refuse. "
+               "rd_kafka_op_destroy calls rko_op_cb (a member registered by the op's creator, an "
+               "open set under rule 11p) and releases a payload chosen by the op type from a "
+               "union: not tractable. Sizes unchanged (leaves / functions / alone): "
+               "rd_kafka_op_destroy 132/83/2, rd_kafka_q_serve0 3/3/2, rd_kafka_q_pop_serve0 "
+               "3/3/2, rd_kafka_q_serve_maybe_consume 2/2/2, rd_kafka_q_serve 12/10/0, "
+               "rd_kafka_q_pop_serve 2/2/1, rd_kafka_poll_cb 4/4/0. The served-queue premise "
+               "(C04.18) on rd_kafka_q_wait_result and rd_kafka_q_purge0 stays: the op callbacks "
+               "they run are read from op members no registration in the calling body states. "
+               "DISCHARGE: a clause for a callback that takes over an object the callee supplies "
+               "(custody handed to the callback per invocation), a type-switched release, and a "
+               "registration carried by an op, each measured.",
+        "source": SOURCE,
+        "recorded_by": CARD,
+    },
+    {
+        "id": "CG22-MSGPACK-PACK-INVOCATIONS",
+        "title": "msgpack's packer registry has no declared invoking side",
+        "why": "Registered by " + CARD + " (" + RUN + "; scripts/prefix_size.py). "
+               "msgpack_packer_init now registers callback in pk and retains data there; the "
+               "msgpack_pack_* family (header inline bodies calling pk->callback(pk->data, buf, "
+               "len)) is undeclared: system 122 leaves / 6 functions / 0 alone, slice 2 / 1 / 1, "
+               "corpus 0. DISCHARGE: resource_callback_registry_invoked declarations for the "
+               "family, checked against the inline bodies, with the packer a frame registry "
+               "holder, measured.",
         "source": SOURCE,
         "recorded_by": CARD,
     },

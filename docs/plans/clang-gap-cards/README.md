@@ -555,6 +555,17 @@ CG22.
     `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`,
     `CG22-INLINE-FNPTR-LOCAL-DECLARATION`, `CG22-DESIGNATOR-ACTUAL-ELABORATION`.
     [Report](../../reports/cg22-indirect-calls-and-callbacks/README.md).
+  - *Status (wave 48, round 21).* `CG22-CALLBACK-REGISTRY-CONTRACT` built the
+    callback vocabulary (gateway rules 13u–13z, contract spec C04.19):
+    synchronous invocation, table dispatch, registry, element custody and the
+    flag-conditioned self-release, decided fail-closed; no callback is read as
+    benign, so the two `rd_kafka_topic_partition_list_sort_by_*` wrappers this
+    card's declarator had made `Safe` are corrected to Unknown (their
+    comparators have no contract in force): corpus 881 / 9 / 3,944 →
+    **879 / 9 / 3,946**. Residuals `CG22-REGISTRY-OUTSIDE-THE-FRAME`,
+    `CG22-CALLBACK-CANDIDATE-CONTRACTS`, `CG22-CALLBACK-OPEN-ACTUALS`,
+    `CG22-OP-CALLBACKS-AND-SERVED-QUEUES`, `CG22-MSGPACK-PACK-INVOCATIONS`.
+    [Report](../../reports/cg22-callback-registry-contract/README.md).
 - **CG23: relational postconditions.**
   - *Change.* Return-code × multi-resource postconditions, and exit-specific
     summary dispositions.

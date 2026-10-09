@@ -3650,7 +3650,8 @@ own anchor here.
     contract language states no capture and no unregistration, so route G
     has no registry: a registration call stays the call it is (uncontracted
     ones refuse; a declared `Borrowed` context, `msgpack_packer_init`'s
-    `data`, is the contract's word, `CG22-CALLBACK-REGISTRY-CONTRACT`), an
+    `data`, is the contract's word, `CG22-CALLBACK-REGISTRY-CONTRACT`; since
+    that card the contract language states them, rules 13u–13z), an
     invocation through a resolved pointer applies the candidate's contract,
     so a released context is refused as at a direct call, and the relation
     classifies registrations in the parity census only. (4) **The inline
@@ -5787,8 +5788,10 @@ own anchor here.
     class, `12w` guards, `13a` slot moves, derived out slots and a borrowed
     result **of a declaration in the function map** (its hook reads no other
     table: a retaining declaration's borrowed result is an ordinary result
-    clause), `13c` reference keeps and drops, `13d` a returned reference;
-    nothing covers the rest. Shared item: `contract_dependencies::unit_evidence`
+    clause), `13c` reference keeps and drops, `13d` a returned reference,
+    `13y` (card CG22-CALLBACK-REGISTRY-CONTRACT) a synchronous invocation or a
+    registration in a parameter holder (`CallbackChecked`); nothing covers
+    the rest, every other callback clause (`Callback`) included. Shared item: `contract_dependencies::unit_evidence`
     now records `W4` whenever the final derivation's validated summary equals
     the declaration's custody projection, a declaration with container or
     counted-user clauses included (covering its custody clauses only).
@@ -6065,6 +6068,162 @@ own anchor here.
     `function_reading_reuse::tests::the_line_tree_mirrors_the_function`,
     `a_span_is_tokenized_once`.
 
+<a id="constraint-13u"></a>
+
+13u. **A synchronous invocation reads as its callee's custody contract only
+    when every candidate callback's own contract is the identity on the
+    caller's state; it is never read as a benign borrowed pointer.** Card
+    CG22-CALLBACK-REGISTRY-CONTRACT (contract specification C04.19, grammar
+    G05), on the user's decision of 2026-10-05 (class 1 shape (c)).
+    `crates/qcore-c-gateway/src/callback_contracts.rs` (`classify`,
+    `requirements`, `decide`), `legacy_callback_route.rs`
+    (`Parser::callback_operands`, `callback_edges`), loader
+    `crates/qcore-contract/src/contract_callback.rs`, schema
+    `qcore_schemas::callback`; hooks in `legacy_retained_by.rs`
+    (`retaining_call`: a callback declaration is a retaining one, withheld
+    from the function map) and `legacy_summary.rs` (the call-graph edges).
+    `resource_callback_invoked(F, A…)`: during the call only, `F` is called
+    zero or more times with `(A…)` (a parameter word, `_` a value the callee
+    supplies). At a call: the candidates are rule 11p's resolution of the
+    actual over Clang's AST, read at every Clang call of the callee on the
+    statement's line and kept only when all agree (glibc's
+    `__glibc_const_generic` puts one `bsearch` per `_Generic` association
+    there); an open set refuses (`callback-undecided`, naming 11p's reason),
+    a candidate with no contract in force (no declaration in the function
+    map, no validated in-unit summary) refuses (`callback-uncontracted`), a
+    candidate whose contract is not the identity (arity, a mode other than
+    `resource_borrowed`/`resource_owned`, a kind, a result, a side clause)
+    refuses (`callback-effectful`). `resource_owned` is a requirement: met by
+    the callee at `_`, and at a parameter position put on the call itself
+    (the classifier reads that position `resource_owned(n)`, the requirement
+    a direct call of the candidate with that actual carries). Then any number
+    of invocations is the identity and the call is its custody contract so
+    strengthened. A designator at a callback position is a W4 call-graph edge
+    (summarised first). **Do not** read a callback as borrowed, admit a
+    candidate on a summary of another unit, admit a releasing or keeping
+    candidate outside a registry's `element` position, or place a call whose
+    Clang calls disagree. `QCore.CallbackContracts`
+    (`invocations_of_identities_are_identity`,
+    `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
+    `identity_only_borrows_or_requires`, `requirements_are_owned_parameters`);
+    `tests/cg22_callback_registry.rs`.
+
+<a id="constraint-13v"></a>
+
+13v. **A table dispatch closes its candidates only over an automatic array's
+    braced initializer that the body names nowhere but as whole table
+    actuals.** Card CG22-CALLBACK-REGISTRY-CONTRACT.
+    `resource_callback_table(T, A…)`: during the call only, function
+    pointers read from the array `T` designates are called zero or more times
+    with `(A…)` (the cmetrics and ctraces map unpackers). The candidates are
+    every function designator of the actual's initializer
+    (`Parser::table_candidates`): the actual is a named automatic array of
+    the calling function with a braced initializer, every reference to it is
+    a whole table actual of a declared table dispatcher, and every other
+    initializer leaf is a string, a scalar or a null pointer constant (never
+    called: premise `P-CG22-DEFINED-POINTER-VALUE`); anything else is an open
+    set (`callback-undecided`, naming why). The candidates are then decided
+    as rule 13u's. **Do not** close a table that is written, address-taken,
+    passed elsewhere, static or reached through a pointer.
+
+<a id="constraint-13w"></a>
+
+13w. **A registry is used only under a registration in force on every path
+    in the calling body.** Card CG22-CALLBACK-REGISTRY-CONTRACT
+    (`QCore.IndirectCalls.callbackTrace`'s premise: an invocation needs the
+    registration in force). `resource_callback_registered(F, H)` records on
+    the path (`AbstractState::registries`, joined by agreement: a
+    registration not made alike on every arriving path is undecided) the
+    candidates of `F` (a null constant: none) with their contracts, for a
+    holder the body names: `&L` for `L` one automatic, non-pointer,
+    non-array object named only as whole `&L` actuals of holder-naming
+    callees, or one tracked live identity (a constructor's `result`
+    included); any other holder refuses at the call
+    (`callback-registry-undecided`). `resource_callback_registry_invoked(H,
+    A…)`, `resource_callback_unregistered(H)`, `resource_elements_dropped(H)`
+    and `resource_released_if_constructed(H)` read the registration in force
+    before the call; none in force refuses (`callback-registry-undecided`).
+    An invocation over identity candidates changes nothing; over candidates
+    that all release the `element` they receive it releases the elements the
+    registry took (rule 13x); a mixed, uncontracted, effectful or
+    requirement-bearing registration refuses. **Do not** read a registration
+    made in another frame (a holder reached through a formal or a member),
+    or keep one across a join that does not agree.
+    `QCore.CallbackContracts` (`an_invocation_needs_a_registration`,
+    `an_undecided_registration_refuses`, `the_callback_trace_agrees`).
+
+<a id="constraint-13x"></a>
+
+13x. **An element's custody passes to a registry only when the registry
+    releases its elements and is a tracked identity; a list frees itself
+    only when a constructor made its registration.** Card
+    CG22-CALLBACK-REGISTRY-CONTRACT. `resource_element_added(E, H)`: under a
+    releasing registration held by a tracked identity the element is
+    contained in the holder (`attach_contained_resource`: the holder's escape
+    carries it, the registry's invocation releases it); under a releasing
+    frame registration it refuses (`callback-element-custody-undecided`: a
+    frame object has no identity to own it); under no callback or identity
+    callbacks the holder only retains it (rule 12t's decision table, a frame
+    or tracked holder). A plain release of a holder whose registry still owns
+    elements refuses (`refuse_release_of_registry`), never reads as releasing
+    them; elements dropped without their release refuse.
+    `resource_released_if_constructed(H)` (`rd_list_destroy`'s
+    `RD_LIST_F_ALLOCATED`) releases the holder after the registry's effects
+    exactly when the registration in force was a constructor's (`result`
+    holder), and nothing for an in-place one. **Do not** move an element into
+    a frame registry, read a holder's release as releasing its elements, or
+    release a holder whose registration is undecided. `QCore.CallbackContracts`
+    (`a_moved_element_is_released_by_its_registry`,
+    `a_moved_element_left_at_the_exit_is_lost`,
+    `a_moved_element_dropped_without_invocation_is_lost`,
+    `a_retained_element_at_the_exit_is_refused`).
+
+<a id="constraint-13y"></a>
+
+13y. **A synchronous invocation or a registration in a parameter holder
+    stands in a unit that defines its body only when the body validates it.**
+    Card CG22-CALLBACK-REGISTRY-CONTRACT (`callback_route::settle`, beside
+    rules 13a and 13c at the three entries of `legacy_c.rs`). An invocation:
+    the body names `F` only as the callee of direct calls (`F(…)`,
+    `(*F)(…)`) whose actuals match `A…` position by position (a parameter
+    word: that formal, never rebound or address-taken; `_`: anything not
+    naming `F`). A registration: the body names `F` only as the value of
+    stores `H->M = F;`, at least once, `F` and `H` never rebound. Parameter
+    names are read as rule 12w's `definition` reads them, plus an inline
+    `RET (*NAME)(…)` declarator; an unread name never validates. A body that
+    does not validate withdraws the declaration in that unit (every call
+    refuses, `callback-withdrawn`; no inference reads the body in its place).
+    Evidence `13y` covers exactly those clauses (rule 13i,
+    `ClauseKind::CallbackChecked`); every other callback clause is a declared
+    assumption. **Do not** validate a clause on a body that hands `F` on,
+    rebinds it, or stores it anywhere else.
+
+<a id="constraint-13z"></a>
+
+13z. **No declaration reads a callback as benign: the two that did are
+    re-declared, and their callers' `Safe` is corrected.** Card
+    CG22-CALLBACK-REGISTRY-CONTRACT. `rd_kafka_topic_partition_list_sort`
+    gains `resource_callback_invoked(cmp, _, _, opaque)` (its body rebinds
+    `cmp` to a default and hands it to `rd_qsort_r`, so rule 13y withdraws it
+    in `rdkafka_partition.c`); `msgpack_packer_init` gains
+    `resource_retained_by(data, pk)` and `resource_callback_registered(callback,
+    pk)` (rule 13y validates the registration). Members declared:
+    `bsearch`, `qsort`, `pthread_once` (`quirin-provider-libc`), the cmetrics
+    and ctraces array and map unpackers, `rd_list_init`, `_new`, `_add`,
+    `_destroy`, `_clear`, `pb_write`, `pb_encode_varint`; each body read at
+    `66910c10` and `046accf6`, pinned at both. Not declared:
+    `rd_kafka_q_serve*` (its callbacks take over ops the callee supplies) and
+    `rd_kafka_op_destroy` (a member callback registered elsewhere and a
+    type-switched union release); the served-queue premise (C04.18) on
+    `rd_kafka_q_wait_result` and `rd_kafka_q_purge0` stays: the op callbacks
+    they run are read from op members registered by the op's creator, an open
+    set no registration in force decides. Measured (corpus `66910c10`, base
+    `84ec54d1d`): **881 / 9 / 3,944 → 879 / 9 / 3,946**, exactly two
+    `Safe → Unknown` corrections (`rd_kafka_topic_partition_list_sort_by_topic`,
+    `_by_topic_id`, whose comparators have no contract in force), no
+    `Unknown → Safe`, no leak, violation or `Unsafe` added; system 87 / 4 /
+    357 and slice 45 / 1 / 354 / 4 Pending unchanged in status;
+    [report](../reports/cg22-callback-registry-contract/README.md).
 <a id="constraint-14a"></a>
 
 14a. **A scalar statement whose value holds exactly one call is the call, then
