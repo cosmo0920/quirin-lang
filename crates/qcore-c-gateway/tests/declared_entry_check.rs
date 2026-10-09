@@ -9,7 +9,7 @@
 //! * **accepting:** a nullable release wrapper (`free(p)` under
 //!   `resource_released(p, nullable)`), its guarded forms, the same wrapper
 //!   reported as a row (`rd_kafka_mem_free`'s shape), and a nullable-result
-//!   wrapper (glibc's `assert` after `malloc`, `rd_malloc`'s shape) conflict
+//!   wrapper (a failed check of `malloc`'s result ending at the no-return `__assert_fail`, `rd_malloc`'s shape) conflict
 //!   with W4 and are validated by `13m`;
 //! * **refusing:** a wrapper that hands its nullable formal to a non-null
 //!   release keeps its `conflict` failure; a wrapper that keeps its formal,
@@ -23,13 +23,23 @@
 //! The candidates in these fixtures are fixture findings, not claims about
 //! any upstream body.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
+
+use qcore_contract::contract_loader::load_resource_contract_sources;
+
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
+const LIBC_MEMORY: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/memory.qv");
+const LIBC_STDLIB: &str =
+    include_str!("../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv");
 
 use qcore_c_gateway::contract_dependencies::{BodyOutcome, Recording, UnitRecord};
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, LegacyProgramSummary, ResourceContracts,
-    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult,
-    analyze_unrestricted_c11,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11,
 };
 
 fn clang_available() -> bool {
@@ -54,34 +64,34 @@ void sink_nonnull(void *ptr);\n\
 void opaque(void *ptr);\n\
 void *keep;\n";
 
-fn contract(
-    parameters: impl IntoIterator<Item = ResourceParameterMode>,
-    result: ResourceReturnMode,
-) -> ResourceFunctionContract {
-    ResourceFunctionContract::new(parameters, result)
-}
+/// The fixture module: `sink_nonnull` and the declaration `w` under test.
+const SINK: &str = "extern fn sink_nonnull(ptr: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(ptr, nonnull);\n    ensures normal resource_return_none();\n};\n";
 
-fn released(nullable: bool) -> ResourceParameterMode {
-    ResourceParameterMode::Released { nullable }
-}
+/// `w` releases its formal, which may be null.
+const W_RELEASE: &str = "extern fn w(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nullable);\n    ensures normal resource_return_none();\n};\n";
 
-/// `libc`-shaped declarations, and `w` declared as `declared`.
-fn contracts(declared: &ResourceFunctionContract) -> ResourceContracts {
-    let mut contracts = ResourceContracts::default();
-    contracts.insert_contract(
-        "malloc",
-        contract(
-            [ResourceParameterMode::Borrowed],
-            ResourceReturnMode::Owned { nullable: true },
+/// The same with a counted-user clause.
+const W_RELEASE_USERS: &str = "extern fn w(p: ptr<mut, u8>) -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(p, nullable);\n    ensures normal resource_user_neutral();\n    ensures normal resource_return_none();\n};\n";
+
+/// `w` returns a fresh allocation, which may be null.
+const W_ALLOC: &str = "extern fn w(n: usize) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nullable);\n};\n";
+
+/// `w` returns its formal, never null.
+const W_ALIAS: &str = "extern fn w(p: ptr<mut, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(p);\n    ensures normal resource_return_alias(p, nonnull);\n};\n";
+
+/// The libc modules, byte for byte from the provider (`malloc`, `free`, and
+/// `__assert_fail` with its `resource_no_return()`), and the fixture module
+/// declaring `w` as `declared`.
+fn contracts(declared: &str) -> ResourceContracts {
+    load_resource_contract_sources(&BTreeMap::from([
+        ("libc/memory.qv".to_owned(), normalize_newlines(LIBC_MEMORY)),
+        ("libc/stdlib.qv".to_owned(), normalize_newlines(LIBC_STDLIB)),
+        (
+            "fixture/w.qv".to_owned(),
+            format!("module contract;\n{SINK}{declared}"),
         ),
-    );
-    contracts.insert_contract("free", contract([released(true)], ResourceReturnMode::None));
-    contracts.insert_contract(
-        "sink_nonnull",
-        contract([released(false)], ResourceReturnMode::None),
-    );
-    contracts.insert_contract("w", declared.clone());
-    contracts
+    ]))
+    .unwrap_or_else(|error| panic!("contract text rejected: {error}"))
 }
 
 struct Run {
@@ -134,9 +144,9 @@ fn a_nullable_release_wrapper_is_validated_by_its_declared_entry_check() {
     if !clang_available() {
         return;
     }
-    let declared = contract([released(true)], ResourceReturnMode::None);
+    let declared = W_RELEASE;
     let header = "static inline void w(void *p) { free(p); }";
-    let run = run("free", header, USER, &contracts(&declared), true);
+    let run = run("free", header, USER, &contracts(declared), true);
     assert_eq!(
         run.record.body_outcomes().get("w"),
         Some(&BodyOutcome::Validated),
@@ -162,13 +172,12 @@ fn a_nullable_result_wrapper_is_validated_by_its_declared_entry_check() {
     if !clang_available() {
         return;
     }
-    let declared = contract(
-        [ResourceParameterMode::Borrowed],
-        ResourceReturnMode::Owned { nullable: true },
-    );
-    let header = "#include <assert.h>\nstatic inline void *w(size_t n) { void *p = malloc(n); assert(p); return p; }";
+    let declared = W_ALLOC;
+    let header = "#include <assert.h>\n\
+         static inline void *w(size_t n) { void *p = malloc(n); \
+         if (!p) __assert_fail(\"p\", \"w.h\", 1, \"w\"); return p; }";
     let main = "void user(void) { void *p = w(4); free(p); }";
-    let run = run("alloc", header, main, &contracts(&declared), true);
+    let run = run("alloc", header, main, &contracts(declared), true);
     assert_eq!(
         run.record.body_outcomes().get("w"),
         Some(&BodyOutcome::Validated),
@@ -188,7 +197,7 @@ fn guarded_release_wrappers_and_a_conflicting_row_are_validated() {
     if !clang_available() {
         return;
     }
-    let declared = contract([released(true)], ResourceReturnMode::None);
+    let declared = W_RELEASE;
     for (tag, header) in [
         (
             "guard-not",
@@ -199,7 +208,7 @@ fn guarded_release_wrappers_and_a_conflicting_row_are_validated() {
             "static inline void w(void *p) { if (p) free(p); }",
         ),
     ] {
-        let run = run(tag, header, USER, &contracts(&declared), true);
+        let run = run(tag, header, USER, &contracts(declared), true);
         assert_eq!(
             evidence(&run.record, "w"),
             BTreeSet::from(["13m".to_owned()]),
@@ -210,7 +219,7 @@ fn guarded_release_wrappers_and_a_conflicting_row_are_validated() {
     // Reported as a row (`rd_kafka_mem_free`'s shape): the row keeps its
     // `SummaryConflict` and stays non-`Safe`; only the evidence moves.
     let main = format!("void w(void *p) {{ free(p); }}\n{USER}");
-    let run = run("row", "", &main, &contracts(&declared), true);
+    let run = run("row", "", &main, &contracts(declared), true);
     assert_eq!(
         evidence(&run.record, "w"),
         BTreeSet::from(["13m".to_owned()]),
@@ -237,19 +246,10 @@ fn a_declared_alias_the_entry_check_does_not_establish_keeps_its_failure() {
     if !clang_available() {
         return;
     }
-    use qcore_c_gateway::legacy_c::DerivedExtent;
-    let declared = contract(
-        [ResourceParameterMode::Borrowed],
-        ResourceReturnMode::Derived {
-            parameter: 0,
-            extent: DerivedExtent::Exact,
-            nullable: false,
-            const_dropped: false,
-        },
-    );
+    let declared = W_ALIAS;
     let header = "static inline void *w(void *p) { return p; }";
     let main = "void user(void) { void *p = malloc(4); void *q = w(p); (void) q; free(p); }";
-    let run = run("alias", header, main, &contracts(&declared), true);
+    let run = run("alias", header, main, &contracts(declared), true);
     assert!(evidence(&run.record, "w").is_empty(), "{:?}", run.record);
     assert!(
         run.record
@@ -270,9 +270,9 @@ fn a_nullable_formal_handed_to_a_non_null_release_is_not_validated() {
     // nullable release, so the mode gate withdraws nothing); under the
     // declaration's entry the formal may be null where `sink_nonnull`
     // requires it is not, so the check fails and the conflict stays a failure.
-    let declared = contract([released(true)], ResourceReturnMode::None);
+    let declared = W_RELEASE;
     let header = "static inline void w(void *p) { sink_nonnull(p); }";
-    let run = run("nonnull", header, USER, &contracts(&declared), true);
+    let run = run("nonnull", header, USER, &contracts(declared), true);
     assert_ne!(
         run.record.body_outcomes().get("w"),
         Some(&BodyOutcome::Validated),
@@ -296,7 +296,7 @@ fn a_contradicted_or_unmodelled_body_is_not_validated() {
     if !clang_available() {
         return;
     }
-    let declared = contract([released(true)], ResourceReturnMode::None);
+    let declared = W_RELEASE;
     for (tag, header) in [
         // Keeps its formal: a duty contradiction (the mode gate withdraws it).
         ("keep", "static inline void w(void *p) { keep = p; }"),
@@ -311,7 +311,7 @@ fn a_contradicted_or_unmodelled_body_is_not_validated() {
             "static inline void w(void *p) { if (keep) free(p); }",
         ),
     ] {
-        let run = run(tag, header, USER, &contracts(&declared), true);
+        let run = run(tag, header, USER, &contracts(declared), true);
         assert_ne!(
             run.record.body_outcomes().get("w"),
             Some(&BodyOutcome::Validated),
@@ -319,21 +319,22 @@ fn a_contradicted_or_unmodelled_body_is_not_validated() {
             run.record
         );
         let by = evidence(&run.record, "w");
-        assert!(!by.contains("13m") && !by.contains("13m"), "{tag}: {by:?}");
+        assert!(!by.contains("13m"), "{tag}: {by:?}");
     }
 }
 
 #[test]
-fn a_declaration_with_a_container_clause_is_never_checked() {
+fn a_declaration_with_a_counted_user_clause_is_never_checked() {
     if !clang_available() {
         return;
     }
-    let mut declared = contract([released(true)], ResourceReturnMode::None);
-    declared.counted_users.neutral = true;
     let header = "static inline void w(void *p) { free(p); }";
-    let run = run("users", header, USER, &contracts(&declared), true);
-    let by = evidence(&run.record, "w");
-    assert!(!by.contains("13m") && !by.contains("13m"), "{by:?}");
+    let run = run("users", header, USER, &contracts(W_RELEASE_USERS), true);
+    assert!(
+        !evidence(&run.record, "w").contains("13m"),
+        "{:?}",
+        run.record
+    );
 }
 
 #[test]
@@ -341,9 +342,9 @@ fn the_check_is_evidence_only() {
     if !clang_available() {
         return;
     }
-    let declared = contract([released(true)], ResourceReturnMode::None);
+    let declared = W_RELEASE;
     let header = "static inline void w(void *p) { free(p); }";
-    let contracts = contracts(&declared);
+    let contracts = contracts(declared);
     let unrecorded = run("only-a", header, USER, &contracts, false);
     let recorded = run("only-b", header, USER, &contracts, true);
     // Every row identical: status, diagnostics, CFG and exits.
