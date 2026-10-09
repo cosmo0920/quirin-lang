@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "RDHTTP-HEADER-SUMMARY-GAP card gate on base b21f0c9a2, every code step at 531e771c5, scripts docs/reports/rdhttp-header-summary-gap/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/rhsg/gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 463 units, 476 summaries, 7,748 passed, 0 failed, 11 ignored, exit 0 (private/rhsg/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 302 audits passed (with the new AuditDeepUnitAst); python suite before the matrix regeneration 08 = 1 (Lean audits 301 -> 302 in the committed matrix), docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged from the base; provider_tests 129 is CARRIED from VERDICT-CONTRACT-PREMISE-ANNOTATIONS's provider gate pg2 (at f2d26a7d5, carried unchanged by DECLARED-ASSUMPTION-BODY-CHECKS), not measured here.",
-  "workspace_tests": 7748,
+  "note": "DEEP-AST-TRANSPORTS-AND-WALL-TIME card gate on base 5214a3ec3, every code step at 8ba6fc566, scripts docs/reports/deep-ast-transports-and-wall-time/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/dat/gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 463 units, 476 summaries, 7,757 passed, 0 failed, 12 ignored, exit 0 (private/dat/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 303 audits passed (with the new AuditDeepAstTransports); python suite before the matrix regeneration 08 = 1 (Lean audits 302 -> 303 in the committed matrix), docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged from the base; provider_tests 129 is CARRIED from VERDICT-CONTRACT-PREMISE-ANNOTATIONS's provider gate pg2 (at f2d26a7d5, carried unchanged by DECLARED-ASSUMPTION-BODY-CHECKS and RDHTTP-HEADER-SUMMARY-GAP), not measured here.",
+  "workspace_tests": 7757,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 302,
+  "lean_audits": 303,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6848,6 +6848,7 @@
    "AuditDeclaredAbiAgreement.lean",
    "AuditDeclaredEntryCheck.lean",
    "AuditDeclaredModeAgreement.lean",
+   "AuditDeepAstTransports.lean",
    "AuditDeepUnitAst.lean",
    "AuditDenominatorCoverage.lean",
    "AuditDereferencedResult.lean",
@@ -7068,7 +7069,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/docs/reports/rdhttp-header-summary-gap/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa9ebbdc86728c57c/docs/reports/deep-ast-transports-and-wall-time/gate.json)"
  },
  "named_followups": [
   {

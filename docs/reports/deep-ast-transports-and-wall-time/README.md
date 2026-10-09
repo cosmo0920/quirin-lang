@@ -264,7 +264,22 @@ boundary 28).
 
 ## 7. Gate
 
-TBD-GATE
+Gate `g1` ([`scripts/gate.sh`](scripts/gate.sh), every step under the
+shared lock, logs `private/dat/gate-g1/`), every code step at `8ba6fc566`
+(the AFTER binary's code `8f55b9ab8` plus scripts and rules only):
+`cargo check --workspace --all-targets` 0; submodule 0; fmt 0; clippy
+`--locked` 0; `run_test_binaries.py` 463 units, 476 summaries, **7,757
+passed, 0 failed**, 12 ignored, exit 0 (`private/dat/tests-gate-g1/`,
+417.3 s; +9 tests and the one ignored measurement); both reevaluation probes
+0; `check_lean_audits.py` **303** audits passed; `cargo clean --profile dev`
+0. Records at `f6d7f3847`: the Python suite 1 before the matrix regeneration
+(it reads the committed Lean count, 302), the docs index check 0, then
+`build_matrix.py --gate gate.json` 0, the Python suite **365 OK** (09b) and
+the docs index build and check 0. No provider gate: `providers/` is unchanged
+from the base; `gate.json` carries `provider_tests` 129 and says so. Also run
+for the card: `cargo clippy -p qcore-audit --features unit-timing
+--all-targets -- -D warnings` 0. Records: [gate.json](gate.json) and
+[gate/](gate/).
 
 ## 8. Ledger
 
