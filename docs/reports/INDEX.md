@@ -372,6 +372,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [declared-assumption-body-checks](declared-assumption-body-checks/README.md) | DECLARED-ASSUMPTION-BODY-CHECKS: refinement conflicts settled by the declaration's own entry check |
 
+| [deep-ast-transports-and-wall-time](deep-ast-transports-and-wall-time/README.md) | DEEP-AST-TRANSPORTS-AND-WALL-TIME: every Clang JSON transport's nesting, and `rdhttp.c`'s own time |
+
 | [development-docs-structure](development-docs-structure/README.md) | Development documentation structure and retrieval |
 
 | [docs-compact-2](docs-compact-2/README.md) | DOCS-COMPACT-2 — second compaction pass over `AGENTS.md`, `CLAUDE.md` and `README.md` |
