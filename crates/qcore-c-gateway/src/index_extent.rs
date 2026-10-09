@@ -97,6 +97,10 @@ use serde_json::Value;
 /// Card QUANT-INDEX-CHECKS (gateway rule 12l): `quant checks` on both sides
 /// of the call boundary.
 mod quant_checks;
+// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rules 14f-14g): body
+// evidence for declarations, never a verdict.
+mod body_evidence;
+pub use body_evidence::DeclarationBodyEvidence;
 
 /// The property, its verdict values and the composition, for consumers that
 /// reach the core through this gateway (the audit routes).
@@ -140,6 +144,13 @@ pub struct BoundsFunctionRow {
     pub accesses: Vec<AccessRecord>,
     /// The body refutes the function's own `bounds_return_extent`.
     pub refutes_own_contract: bool,
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: the bounds
+    /// declarations the row's analysis could have consulted (its own name
+    /// when declared, every directly called declared name); an
+    /// over-approximation for the roll-up, read by no verdict. Absent when
+    /// empty, so rows that consult none keep their bytes.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub contract_dependencies: Vec<String>,
 }
 
 /// The bounds report of one translation unit.
@@ -152,6 +163,11 @@ pub struct BoundsUnitReport {
     pub target: String,
     pub contracts_sha256: String,
     pub functions: Vec<BoundsFunctionRow>,
+    /// Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS: phase one's check of
+    /// every declared body the unit defines (header definitions included),
+    /// published as evidence for the declaration, never as a row.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub declaration_bodies: Vec<DeclarationBodyEvidence>,
 }
 
 impl BoundsUnitReport {
@@ -1352,7 +1368,7 @@ impl<'a> Analysis<'a> {
                         let target = self.target(inner, state);
                         let same = pointee(&qual(node)).map(|t| strip_qualifiers(&t))
                             == pointee(&qual(inner)).map(|t| strip_qualifiers(&t));
-                        if same {
+                        if same || self.byte_view_of_quant_object(node, inner, &target) {
                             target
                         } else {
                             Target::Missing("a pointer conversion changes the element type".into())
@@ -3535,6 +3551,7 @@ fn analyze_function(
             assumptions: Vec::new(),
             accesses: Vec::new(),
             refutes_own_contract: false,
+            contract_dependencies: body_evidence::dependencies(name, None, contracts),
         };
     };
     let body = kids(function).find(|c| kind(c) == "CompoundStmt");
@@ -3764,6 +3781,7 @@ fn analyze_function(
         assumptions: analysis.assumptions.into_iter().collect(),
         accesses: analysis.records,
         refutes_own_contract: analysis.refuted,
+        contract_dependencies: body_evidence::dependencies(name, Some(function), contracts),
     }
 }
 
@@ -3902,13 +3920,40 @@ fn analyze_on_stack(
     // dependent use (C06.4's two phases, in this unit; a caller composing
     // units passes the union through `BoundsContracts::refuted`).
     let mut refuted = contracts.refuted.clone();
+    // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS (rule 14f): the body
+    // evidence is phase one's check under the declarations as loaded (no
+    // refutation table), so a route's second phase publishes the evidence its
+    // first phase found.
+    let loaded;
+    let as_loaded = if contracts.refuted.is_empty() {
+        contracts
+    } else {
+        loaded = BoundsContracts {
+            refuted: BTreeSet::new(),
+            ..contracts.clone()
+        };
+        &loaded
+    };
+    let selected = functions.iter().collect::<BTreeSet<_>>();
+    let mut declaration_bodies = Vec::new();
     for (name, contract) in &contracts.functions {
-        if declares_checked_relation(contract)
-            && index.functions.contains_key(name)
-            && analyze_function(&index, &target, contracts, preprocessed, name).refutes_own_contract
-        {
+        let checked = declares_checked_relation(contract);
+        let Some(function) = index.functions.get(name) else {
+            continue;
+        };
+        if !checked && !selected.contains(name) {
+            continue;
+        }
+        let row = analyze_function(&index, &target, as_loaded, preprocessed, name);
+        let refutes = if contracts.refuted.is_empty() {
+            row.refutes_own_contract
+        } else {
+            analyze_function(&index, &target, contracts, preprocessed, name).refutes_own_contract
+        };
+        if checked && refutes {
             refuted.insert(name.clone());
         }
+        declaration_bodies.push(body_evidence::evidence(contract, function, &row, as_loaded));
     }
     let withdrawn;
     let contracts = if refuted == contracts.refuted {
@@ -3932,6 +3977,7 @@ fn analyze_on_stack(
         target: target.identity.clone(),
         contracts_sha256: contracts.digest(),
         functions: rows,
+        declaration_bodies,
     })
 }
 

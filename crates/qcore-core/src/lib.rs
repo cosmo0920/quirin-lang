@@ -34,6 +34,7 @@ pub mod ffi;
 pub mod ffi_c_emit;
 pub mod footprint_mutex;
 pub mod index;
+pub mod bounds_body_standing;
 pub mod index_extent;
 pub mod index_extent_frames;
 pub mod index_quant;
