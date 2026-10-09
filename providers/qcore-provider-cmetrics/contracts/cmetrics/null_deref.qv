@@ -1,0 +1,25 @@
+module contract;
+
+// Card NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10, decision 2; contract
+// specification C09.3, grammar G05d, gateway rules 14o-14p). A bounds
+// contract v1 null-dereference check: `quant null-deref #B;` says the function
+// dereferences `B`, so every caller must pass a non-null `B` (otherwise the
+// call is a NULL-dereference candidate). Read only by the null-dereference
+// property (`QCORE_NULL_PROPERTY`); the bounds consumer never reads it, and
+// the resource loader rejects this module.
+//
+// The body was read at the two audited Fluent Bit revisions 66910c10 and
+// 046accf6 (byte-identical at both, `scripts/bodies.py`); the unit's own
+// inference (rule 14p) found `cmt` dereferenced on every terminating path
+// before any NULL test. The metric setters (`cmt_counter_inc`, ...) rank
+// higher but take a `double` or a `char **`, which bounds contract v1 cannot
+// declare without a frame. Pinned with `quirin-audit pin --bounds` at both
+// revisions (`bounds-contracts.lock`).
+
+// cmetrics.c: cfl_list_foreach_safe(head, tmp, &cmt->counters) reads
+// (&cmt->counters)->next, inside cmt's object, before anything tests cmt.
+extern fn cmt_destroy(cmt: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #cmt;
+};

@@ -80,7 +80,8 @@
         "cmetrics/context_lifetime.qv",
         "cmetrics/counter_reset.qv",
         "cmetrics/metric_values.qv",
-        "cmetrics/mpack_utils.qv"
+        "cmetrics/mpack_utils.qv",
+        "cmetrics/null_deref.qv"
       ],
       "published": {},
       "resource_view": [
@@ -88,7 +89,9 @@
         "cmetrics/metric_values.qv",
         "cmetrics/mpack_utils.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [
+        "cmetrics/null_deref.qv"
+      ]
     },
     {
       "name": "qcore-provider-ctraces",
@@ -162,6 +165,7 @@
         "librdkafka/kafka_mem.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
+        "librdkafka/null_deref.qv",
         "librdkafka/queue_destructor.qv",
         "librdkafka/refcount.qv",
         "librdkafka/topic_partition.qv",
@@ -176,7 +180,9 @@
         "librdkafka/memory.qv",
         "librdkafka/topic_partition.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [
+        "librdkafka/null_deref.qv"
+      ]
     },
     {
       "name": "quirin-provider-cfl",
@@ -219,6 +225,7 @@
         "fluent_bit/logging.qv",
         "fluent_bit/loop_owner.qv",
         "fluent_bit/memory.qv",
+        "fluent_bit/null_deref.qv",
         "fluent_bit/output_flush_id.qv",
         "fluent_bit/output_singleplex.qv",
         "fluent_bit/resource_memory.qv",
@@ -253,7 +260,9 @@
         "fluent_bit/task_users.qv",
         "fluent_bit/time.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [
+        "fluent_bit/null_deref.qv"
+      ]
     },
     {
       "name": "quirin-provider-libc",

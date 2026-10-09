@@ -1,0 +1,68 @@
+module contract;
+
+// Card NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10, decision 2; contract
+// specification C09.3, grammar G05d, gateway rules 14o-14p). Bounds contract
+// v1 null-dereference checks: `quant null-deref #B;` says the function
+// dereferences `B`, so every caller must pass a non-null `B` (otherwise the
+// call is a NULL-dereference candidate). Read only by the null-dereference
+// property (`QCORE_NULL_PROPERTY`); the bounds consumer never reads these
+// clauses, and the resource loader rejects this module.
+//
+// Each body was read at the two audited Fluent Bit revisions 66910c10 and
+// 046accf6 (byte-identical at both, `scripts/bodies.py`), and the unit's own
+// inference (rule 14p) found the formal dereferenced on every terminating
+// path before any NULL test at 66910c10. Ranked by the files other than the
+// definition that call it (`scripts/clause_rank.py`). Pinned with
+// `quirin-audit pin --bounds` at both revisions (`bounds-contracts.lock`): a
+// changed body or clause takes the declaration out of force (held).
+
+// rdkafka.c: rd_kafka_destroy(rk) { rd_kafka_destroy_app(rk, 0); }, whose
+// body reads rk->rk_conf before anything tests rk.
+extern fn rd_kafka_destroy(rk: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rk;
+};
+
+// rdkafka_partition.c: the loop condition reads rktparlist->cnt first.
+extern fn rd_kafka_topic_partition_list_destroy(rktparlist: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rktparlist;
+};
+
+// rdkafka_partition.c: forwards to rd_kafka_topic_partition_list_add0, whose
+// body reads rktparlist->cnt before anything tests it.
+extern fn rd_kafka_topic_partition_list_add(rktparlist: ptr<mut, u8>, topic: ptr<const, u8>, partition: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rktparlist;
+};
+
+// rdlist.c: rd_list_destroy_elems(rl) reads rl->rl_elems first.
+extern fn rd_list_destroy(rl: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rl;
+};
+
+// rdlist.c: reads rl->rl_cnt first (elem is tested, so it has no clause).
+extern fn rd_list_add(rl: ptr<mut, u8>, elem: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rl;
+};
+
+// rdkafka_queue.c: reads rkqu->rkqu_is_owner first.
+extern fn rd_kafka_queue_destroy(rkqu: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rkqu;
+};
+
+// rdkafka_msg.c: reads rkmessage->_private first.
+extern fn rd_kafka_message_destroy(rkmessage: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rkmessage;
+};

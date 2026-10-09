@@ -1,0 +1,52 @@
+module contract;
+
+// Card NULL-SAFETY-PROPERTY (USER DECISION 2026-10-10, decision 2; contract
+// specification C09.3, grammar G05d, gateway rules 14o-14p). Bounds contract
+// v1 null-dereference checks: `quant null-deref #B;` says the function
+// dereferences `B`, so every caller must pass a non-null `B` (otherwise the
+// call is a NULL-dereference candidate). Read only by the null-dereference
+// property (`QCORE_NULL_PROPERTY`); the bounds consumer never reads these
+// clauses, and the resource loader rejects this module.
+//
+// Each body was read at the two audited Fluent Bit revisions 66910c10 and
+// 046accf6 (`scripts/bodies.py`; byte-identical except
+// flb_output_set_property, whose first statement reads ins->config at both),
+// and the system route's inference (rule 14p) found the formal dereferenced on
+// every terminating path before any NULL test. Ranked by the plugin and core
+// files that call it (`scripts/clause_rank.py`). Pinned with `quirin-audit pin
+// --bounds` at both revisions (`bounds-contracts.lock`).
+
+// flb_output.c: ins->context = context;
+extern fn flb_output_set_context(ins: ptr<mut, u8>, context: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #ins;
+};
+
+// flb_output.c: if (!ins->host.name) ... (host is read only on that arm).
+extern fn flb_output_net_default(host: ptr<const, u8>, port: i32, ins: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #ins;
+};
+
+// flb_output.c: if (ins->alias) return ins->alias; return ins->name;
+extern fn flb_output_name(ins: ptr<mut, u8>) -> ptr<const, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #ins;
+};
+
+// flb_output.c: struct flb_config *config = ins->config; (both revisions)
+extern fn flb_output_set_property(ins: ptr<mut, u8>, k: ptr<const, u8>, v: ptr<const, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #ins;
+};
+
+// flb_input_chunk.c: ch = (struct cio_chunk *) ic->chunk; return ch->name;
+extern fn flb_input_chunk_get_name(ic: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #ic;
+};
