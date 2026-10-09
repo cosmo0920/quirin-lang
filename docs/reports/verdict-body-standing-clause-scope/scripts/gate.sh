@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate.sh NAME [PART] -- VERDICT-CONTRACT-DEPENDENCIES (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS, from
+# gate.sh NAME [PART] -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from VERDICT-CONTRACT-DEPENDENCIES, itself adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS, from
 # CG10-INDIRECT-ACCESS-SOLE-BLOCKERS's scripts/gate.sh): cargo check and the
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/vbs/gate-NAME/, nothing piped. PART is `code` (steps 00-07)
