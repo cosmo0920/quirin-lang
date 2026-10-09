@@ -1,0 +1,154 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 247,
+   "held": 1,
+   "partly_validated": 31,
+   "rows_annotated": 4834,
+   "validated": 51
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 349,
+   "resting_on_a_partly_validated_declaration": 23,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 91,
+   "safe_rows": 881
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 244,
+   "held": 1,
+   "partly_validated": 31,
+   "rows_annotated": 4834,
+   "validated": 54
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 346,
+   "resting_on_a_partly_validated_declaration": 23,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 94,
+   "safe_rows": 881
+  }
+ },
+ "moved": [
+  {
+   "function": "rd_calloc",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 45,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 46,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 1
+  },
+  {
+   "function": "rd_malloc",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 42,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 43,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 3
+  },
+  {
+   "function": "rd_strdup",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 31,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13m"
+    ],
+    "validated_units": 32,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows": 0
+  }
+ ],
+ "fell": [],
+ "rose_without_new_evidence": [],
+ "validated_with_a_conflict_failure": [],
+ "only_validated_rows_before": 91,
+ "only_validated_rows_after": 94,
+ "only_validated_rows_kept": 91,
+ "only_validated_rows_new": [
+  [
+   69,
+   "rdkafka.c",
+   "rd_kafka_mem_calloc",
+   [
+    "rd_calloc"
+   ]
+  ],
+  [
+   69,
+   "rdkafka.c",
+   "rd_kafka_mem_malloc",
+   [
+    "rd_malloc"
+   ]
+  ],
+  [
+   125,
+   "rdlist.c",
+   "rd_list_alloc",
+   [
+    "rd_malloc"
+   ]
+  ]
+ ],
+ "new_rows_without_a_promoted_declaration": []
+}

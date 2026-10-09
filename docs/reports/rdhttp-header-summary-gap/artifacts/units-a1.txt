@@ -1,0 +1,107 @@
+rd_atomic32_get librdkafka rdhttp.c unvalidated
+rd_atomic32_get librdkafka rdkafka.c unvalidated
+rd_atomic64_get librdkafka rdkafka.c unvalidated
+rd_realloc librdkafka rdkafka.c unvalidated
+rd_atomic32_get librdkafka rdkafka_admin.c unvalidated
+rd_atomic32_get librdkafka rdkafka_assignment.c unvalidated
+rd_atomic32_get librdkafka rdkafka_background.c unvalidated
+rd_atomic32_get librdkafka rdkafka_broker.c unvalidated
+rd_atomic64_get librdkafka rdkafka_broker.c unvalidated
+rd_atomic64_add librdkafka rdkafka_broker.c unvalidated
+rd_atomic32_get librdkafka rdkafka_buf.c unvalidated
+rd_atomic32_get librdkafka rdkafka_cgrp.c unvalidated
+rd_atomic64_get librdkafka rdkafka_cgrp.c unvalidated
+rd_atomic64_add librdkafka rdkafka_cgrp.c unvalidated
+rd_atomic32_get librdkafka rdkafka_conf.c unvalidated
+rd_atomic32_get librdkafka rdkafka_coord.c unvalidated
+rd_atomic64_add librdkafka rdkafka_fetcher.c unvalidated
+rd_atomic32_get librdkafka rdkafka_idempotence.c unvalidated
+rd_atomic64_add librdkafka rdkafka_lz4.c unvalidated
+rd_realloc librdkafka rdkafka_lz4.c unvalidated
+rd_atomic32_get librdkafka rdkafka_metadata.c unvalidated
+rd_atomic32_get librdkafka rdkafka_mock.c unvalidated
+rd_realloc librdkafka rdkafka_mock.c unvalidated
+rd_atomic32_get librdkafka rdkafka_msg.c unvalidated
+rd_atomic64_add librdkafka rdkafka_msg.c unvalidated
+rd_atomic64_add librdkafka rdkafka_msgset_reader.c unvalidated
+rd_atomic64_add librdkafka rdkafka_msgset_writer.c unvalidated
+rd_atomic32_get librdkafka rdkafka_offset.c unvalidated
+rd_atomic32_get librdkafka rdkafka_op.c unvalidated
+rd_atomic32_get librdkafka rdkafka_partition.c unvalidated
+rd_realloc librdkafka rdkafka_partition.c unvalidated
+rd_atomic32_get librdkafka rdkafka_queue.c unvalidated
+rd_atomic32_get librdkafka rdkafka_request.c unvalidated
+rd_atomic32_get librdkafka rdkafka_sasl.c unvalidated
+rd_atomic32_get librdkafka rdkafka_sasl_cyrus.c unvalidated
+rd_realloc librdkafka rdkafka_sasl_cyrus.c unvalidated
+rd_atomic32_get librdkafka rdkafka_sasl_oauthbearer_oidc.c unvalidated
+rd_file_read librdkafka rdkafka_sasl_oauthbearer_oidc.c unvalidated
+rd_atomic32_get librdkafka rdkafka_share_acknowledgement.c unvalidated
+rd_atomic32_get librdkafka rdkafka_telemetry.c unvalidated
+rd_realloc librdkafka rdkafka_telemetry.c unvalidated
+rd_atomic64_add librdkafka rdkafka_telemetry_decode.c unvalidated
+rd_atomic32_get librdkafka rdkafka_telemetry_encode.c unvalidated
+rd_atomic64_get librdkafka rdkafka_telemetry_encode.c unvalidated
+rd_atomic32_get librdkafka rdkafka_timer.c unvalidated
+rd_atomic32_get librdkafka rdkafka_topic.c unvalidated
+rd_atomic32_get librdkafka rdkafka_transport.c unvalidated
+rd_atomic64_get librdkafka rdkafka_txnmgr.c unvalidated
+rd_atomic64_add librdkafka rdkafka_zstd.c unvalidated
+rd_realloc librdkafka rdlist.c unvalidated
+rd_atomic32_get librdkafka rdrand.c unvalidated
+rd_realloc librdkafka rdstring.c unvalidated
+mk_list_add chunkio chunkio.c unvalidated
+mk_list_del chunkio chunkio.c unvalidated
+mk_list_add chunkio cio_chunk.c unvalidated
+mk_list_del chunkio cio_chunk.c unvalidated
+mk_list_add chunkio cio_stream.c unvalidated
+mk_list_del chunkio cio_stream.c unvalidated
+flb_log_check fluent-bit-chunk flb_input_chunk.c unvalidated
+mk_list_add fluent-bit-chunk flb_input_chunk.c unvalidated
+mk_list_del fluent-bit-chunk flb_input_chunk.c unvalidated
+mk_list_del monkey-libevent mk_core/mk_event.c unvalidated
+mk_list_add monkey-libevent mk_core/mk_rconf.c unvalidated
+mk_list_del monkey-libevent mk_core/mk_rconf.c unvalidated
+mk_list_add monkey-libevent mk_core/mk_string.c unvalidated
+mk_list_del monkey-libevent mk_core/mk_string.c unvalidated
+mk_utils_libc_error monkey-libevent mk_core/mk_utils.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_config.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_config.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_fifo.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_fifo.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_header.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_http.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_http.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_http_parser.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_http_parser.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_http_thread.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_http_thread.c unvalidated
+mk_utils_libc_error monkey-libevent mk_server/mk_kernel.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_lib.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_mimetype.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_plugin.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_plugin.c unvalidated
+mk_utils_libc_error monkey-libevent mk_server/mk_scheduler.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_scheduler.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_scheduler.c unvalidated
+mk_utils_libc_error monkey-libevent mk_server/mk_server.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_server.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_server.c unvalidated
+mk_utils_libc_error monkey-libevent mk_server/mk_socket.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_stream.c unvalidated
+mk_list_add monkey-libevent mk_server/mk_vhost.c unvalidated
+mk_list_del monkey-libevent mk_server/mk_vhost.c unvalidated
+1 flb_log_check unvalidated
+18 mk_list_add unvalidated
+17 mk_list_del unvalidated
+5 mk_utils_libc_error unvalidated
+29 rd_atomic32_get unvalidated
+9 rd_atomic64_add unvalidated
+5 rd_atomic64_get unvalidated
+46 rd_calloc validated:13m
+1 rd_file_read unvalidated
+66 rd_free validated:13m
+43 rd_malloc validated:13m
+8 rd_realloc unvalidated
+32 rd_strdup validated:13m
+13 rd_strndup validated:13m

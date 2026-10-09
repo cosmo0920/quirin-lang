@@ -1,0 +1,24 @@
+
+running 4 tests
+test an_asserting_wrapper_is_validated_in_a_shallow_unit ... ok
+test an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit ... FAILED
+test beyond_the_admitted_bound_the_unit_keeps_no_index_and_nothing_validates ... ok
+test a_release_wrapper_without_a_statement_expression_validates_at_every_depth ... ok
+
+failures:
+
+---- an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit stdout ----
+
+thread 'an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit' (1976486) panicked at crates/qcore-c-gateway/tests/deep_unit_ast.rs:204:5:
+assertion `left == right` failed: UnitRecord { functions: {"chain": Consulted { found: {"chain"}, missed: {"chain", "if"} }, "user": Consulted { found: {"free", "user", "w"}, missed: {"user"} }, "w": Consulted { found: {"__assert_fail", "malloc", "w"}, missed: {"(", ";", "__extension__", "if", "sizeof"} }}, bodies: {"chain": {"else", "if", "return", "x"}, "user": {"free", "p", "void", "w"}, "w": {"__PRETTY_FUNCTION__", "__assert_fail", "__extension__", "__qcore_literal__", "else", "if", "malloc", "n", "p", "return", "sizeof", "void"}}, inferred: {"chain", "user"}, examined: {"w"}, validated: {"chain": {"entry"}, "user": {"entry"}}, withdrawn: {}, failed: {} }
+  left: Some(Unvalidated)
+ right: Some(Validated)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit
+
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.91s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --test deep_unit_ast`

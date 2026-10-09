@@ -1,0 +1,47 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 99,
+   "declared_assumption": 83,
+   "held": 2,
+   "partly_validated": 6,
+   "rows_annotated": 448,
+   "validated": 8
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 34,
+   "resting_on_a_partly_validated_declaration": 4,
+   "resting_on_no_declaration": 47,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 87
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 99,
+   "declared_assumption": 83,
+   "held": 2,
+   "partly_validated": 6,
+   "rows_annotated": 448,
+   "validated": 8
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 34,
+   "resting_on_a_partly_validated_declaration": 4,
+   "resting_on_no_declaration": 47,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 87
+  }
+ },
+ "moved": [],
+ "fell": [],
+ "rose_without_new_evidence": [],
+ "validated_with_a_conflict_failure": [],
+ "only_validated_rows_before": 2,
+ "only_validated_rows_after": 2,
+ "only_validated_rows_kept": 2,
+ "only_validated_rows_new": [],
+ "new_rows_without_a_promoted_declaration": []
+}

@@ -560,6 +560,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
 
+| [rdhttp-header-summary-gap](rdhttp-header-summary-gap/README.md) | RDHTTP-HEADER-SUMMARY-GAP: the unit index of a unit nesting beyond the default JSON limit |
+
 | [refcount-family-blocking-callees](refcount-family-blocking-callees/README.md) | REFCOUNT-FAMILY-BLOCKING-CALLEES: the callees that break reference families |
 
 | [refcount-reference-returning-declarations](refcount-reference-returning-declarations/README.md) | REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references and result holders |

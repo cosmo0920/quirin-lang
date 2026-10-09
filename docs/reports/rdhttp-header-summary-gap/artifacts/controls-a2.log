@@ -1,0 +1,10 @@
+     Running tests/deep_unit_ast.rs (target/debug/deps/deep_unit_ast-6a980b12d2f5298b)
+
+running 4 tests
+test an_asserting_wrapper_is_validated_in_a_shallow_unit ... ok
+test an_asserting_wrapper_is_validated_in_a_unit_deeper_than_the_default_limit ... ok
+test beyond_the_admitted_bound_the_unit_keeps_no_index_and_nothing_validates ... ok
+test a_release_wrapper_without_a_statement_expression_validates_at_every_depth ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
+

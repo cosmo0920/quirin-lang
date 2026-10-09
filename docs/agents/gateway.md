@@ -5913,3 +5913,59 @@ own anchor here.
     34, slice 29 / 0 / 2 / 14 → 29 / 2 / 2 / 12.
     `QCore.DeclaredEntryCheck` (`without_a_passing_check_nothing_changes`);
     `contract_dependencies` unit test `unrecorded_work_leaves_no_trace`.
+
+<a id="constraint-13o"></a>
+
+13o. **A unit whose Clang JSON AST nests beyond `serde_json`'s default
+    recursion limit keeps its typed index when it nests at most 256 levels.**
+    Card RDHTTP-HEADER-SUMMARY-GAP, at the user's direction "handle as safe
+    as possible" (raise the checked count without weakening any check).
+    `crates/qcore-c-gateway/src/deep_unit_ast.rs` (hook:
+    `typed_access_path::AstIndex::from_json`): the whole-unit document is
+    parsed as before; only when that parse fails is its nesting measured
+    (`depth`, counted exactly as `serde_json` counts it), and a document of at
+    most `ADMITTED_DEPTH` (256, twice the default 128) is parsed again with
+    the limit disabled on a dedicated 256 MiB stack, as the typed dispatch and
+    index-extent readers already parse. The text and the parser are the same,
+    so the index is the document the default parse would have read without
+    its stack guard; every reader then reads the unit as any other, and no
+    reader's admission changes. Shared items: the hook in `from_json` (one
+    call) and the comment of `typed_access_path::definition_ast`. **Do not**
+    raise the bound without measuring the readers' recursion on the deepest
+    admitted unit, read a different document, or let a unit parse
+    differently because it is deep. Cause isolated: librdkafka's `rdhttp.c`
+    nests 224 levels (four definitions calling `curl_easy_setopt`, whose GCC
+    type-check macro from `curl/typecheck-gcc.h` expands into nested
+    conditionals); without its index no definition of the unit, header
+    bodies included, had a typed reading, so `rd_malloc`'s, `rd_calloc`'s and
+    `rd_strdup`'s `rd_assert(p)` (glibc's `assert`, a statement expression
+    under `gnu17`, rule 11g) was never read, W4 published no summary there and
+    rule 13m had no conflict to check. Measured (binaries `18cf8371…` →
+    `b51d4b20…`, base `b21f0c9a2`): corpus 881 / 9 / 3,944 unchanged, no
+    status move; every report and parity difference is in `rdhttp.c` (13 rows'
+    leaves, all refusals: the four `typed AST is unavailable (CG30)` leaves
+    gone, 939 uncontracted calls now refused, 908 of them the type-check
+    macro's warning functions; no leak or violation added); system and slice verdict rows and parity
+    multisets identical; `rd_malloc`, `rd_calloc`, `rd_strdup` validated
+    (`13m` in `rdhttp.c`), corpus Safe roll-up 418 / 91 / 23 / 349 →
+    418 / **94** / 23 / **346**, declarations 51 → **54** validated,
+    247 → **244** declared assumptions. `QCore.DeepUnitAst`
+    (`an_index_read_before_is_read_after`, `the_index_is_the_document`,
+    `only_the_deep_band_changes`, `depth_vectors_hold`, `band_edges`);
+    controls in `tests/deep_unit_ast.rs`;
+    [report](../reports/rdhttp-header-summary-gap/README.md).
+
+<a id="constraint-13p"></a>
+
+13p. **Beyond the bound, or on a failed reparse, the unit keeps no index and
+    the default parse's error stands; a body it examined without evidence
+    stays `unvalidated` in rule 13g's fold.** Card RDHTTP-HEADER-SUMMARY-GAP.
+    A malformed document, a thread that cannot start and a document nesting
+    more than 256 levels return the default error, so the unit is as before
+    (rule 11y's unreadable-AST refusal included). **Do not** change the
+    fold to skip a unit that examined a body without validating it, or read
+    a partial index. Control: a header wrapper beside an `else if` chain of
+    130 arms (JSON depth 273) stays `Unvalidated`. `QCore.DeepUnitAst`
+    (`beyond_the_bound_there_is_no_index`,
+    `a_unit_without_an_index_keeps_the_declaration_unvalidated`,
+    `the_fold_never_skips_a_unit`).

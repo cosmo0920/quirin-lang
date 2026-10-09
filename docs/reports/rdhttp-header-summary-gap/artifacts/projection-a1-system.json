@@ -1,0 +1,36 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/before-system/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/a1-system/resource-diagnostics.json",
+  "before_sha256": "b438aea019fc5e5927862ddef5d0771ca76eb5e2a9f7e3a30484d0c1ec9b02a8",
+  "after_sha256": "b438aea019fc5e5927862ddef5d0771ca76eb5e2a9f7e3a30484d0c1ec9b02a8",
+  "before_bytes": 1699146,
+  "after_bytes": 1699146,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "9d569ba7674d11a5ea916f448d07f84a51874a3948263b19b31bb29ba0df9a41",
+  "projection_after_sha256": "9d569ba7674d11a5ea916f448d07f84a51874a3948263b19b31bb29ba0df9a41",
+  "projections_equal": true,
+  "added_bytes": 0,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/before-system/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/a1-system/resource-diagnostics.contracts.json",
+  "before_sha256": "3c5a6304eb19fe2f59ccddda0221f925b6d82769f7892a6eb87462a6d86a6e22",
+  "after_sha256": "3c5a6304eb19fe2f59ccddda0221f925b6d82769f7892a6eb87462a6d86a6e22",
+  "before_bytes": 1068140,
+  "after_bytes": 1068140,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "e233797c831a989fb9568dbb55d8cb974db7e656cd8e10345105741aee628249",
+  "projection_after_sha256": "e233797c831a989fb9568dbb55d8cb974db7e656cd8e10345105741aee628249",
+  "projections_equal": true,
+  "added_bytes": 0,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "after": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "equal": true
+ },
+ "unit_field_moves": {}
+}

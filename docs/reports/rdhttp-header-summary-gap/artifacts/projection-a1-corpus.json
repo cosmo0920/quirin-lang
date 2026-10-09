@@ -1,0 +1,116 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/before/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/a1/resource-diagnostics.json",
+  "before_sha256": "fafb116089539036aad8efeff085eaa1ff67d08839939409f7aa9b16ec679e39",
+  "after_sha256": "ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a",
+  "before_bytes": 11596797,
+  "after_bytes": 11817064,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "cd4187bb5cc8cd575ce58e13ef584f296fd6150276cd765f9986ec1f4dbba61d",
+  "projection_after_sha256": "c1cd5ab3dc291c872f78420d6b37d6188dd9bfe1be106a86a1cdc0a251098324",
+  "projections_equal": false,
+  "added_bytes": 220267,
+  "differing_paths_after_projection": [
+   "/diagnostic_counts/unknown_alias",
+   "/diagnostic_counts/unsupported",
+   "/units[68]/diagnostic_counts/unknown_alias",
+   "/units[68]/diagnostic_counts/unsupported",
+   "/units[68]/functions[1]/diagnostics",
+   "/units[68]/functions[2]/diagnostics[4]/description",
+   "/units[68]/functions[2]/diagnostics[5]/category",
+   "/units[68]/functions[2]/diagnostics[5]/description",
+   "/units[68]/functions[3]/diagnostics",
+   "/units[68]/functions[8]/diagnostics",
+   "/units[68]/functions[9]/diagnostics",
+   "/units[68]/functions[10]/diagnostics",
+   "/units[68]/functions[13]/diagnostics",
+   "/units[68]/functions[14]/diagnostics",
+   "/units[68]/functions[15]/diagnostics[0]/category",
+   "/units[68]/functions[15]/diagnostics[0]/description",
+   "/units[68]/functions[15]/diagnostics[1]/category",
+   "/units[68]/functions[15]/diagnostics[1]/description",
+   "/units[68]/functions[15]/diagnostics[2]/description",
+   "/units[68]/functions[16]/diagnostics",
+   "/units[68]/functions[17]/diagnostics[0]/category",
+   "/units[68]/functions[17]/diagnostics[0]/description",
+   "/units[68]/functions[17]/diagnostics[1]/category",
+   "/units[68]/functions[17]/diagnostics[1]/description",
+   "/units[68]/functions[17]/diagnostics[2]/description",
+   "/units[68]/functions[17]/diagnostics[4]/category",
+   "/units[68]/functions[17]/diagnostics[4]/description",
+   "/units[68]/functions[17]/diagnostics[5]/description",
+   "/units[68]/functions[17]/diagnostics[7]/category",
+   "/units[68]/functions[17]/diagnostics[7]/description",
+   "/units[68]/functions[17]/diagnostics[8]/description",
+   "/units[68]/functions[19]/diagnostics",
+   "/units[68]/functions[20]/diagnostics"
+  ]
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/before/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a63e092166f62c310/private/rhsg/a1/resource-diagnostics.contracts.json",
+  "before_sha256": "fbd3469a1d47b4effc17cc4b60772fd5988fa59966746cc8416878ee318a55de",
+  "after_sha256": "29a44fa58e0ae61f6b7588983dfcc10b6b58cc747e569f4fdbc33c5526bca0b9",
+  "before_bytes": 1244961,
+  "after_bytes": 1244861,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "b6287de7e8f2d833966808960f65dde4ba411ca2e2114cce02e013693f0932c2",
+  "projection_after_sha256": "b6287de7e8f2d833966808960f65dde4ba411ca2e2114cce02e013693f0932c2",
+  "projections_equal": true,
+  "added_bytes": -100,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "97cbdcf3c0a2ba007d4cb93555825eb12f2c8c6ae8995026c48b54e7b56c6e49",
+  "after": "321a8913293598ff55f7c02a410818db7537a2cc55346c9bb8e0f4b3074b9199",
+  "equal": false
+ },
+ "unit_field_moves": {
+  "rd_calloc": [
+   [
+    "librdkafka/rdhttp.c#68",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ]
+  ],
+  "rd_malloc": [
+   [
+    "librdkafka/rdhttp.c#68",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ]
+  ],
+  "rd_strdup": [
+   [
+    "librdkafka/rdhttp.c#68",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "13m"
+     ]
+    ]
+   ]
+  ]
+ }
+}

@@ -1,5 +1,9 @@
-"""dabc_rank.py RUN [--all]: rank non-libc declared-assumption and partly-validated
-declarations by corpus Safe rows, with the reason each body is not validated."""
+"""ranking.py RUN [--all] -- RDHTTP-HEADER-SUMMARY-GAP (adapted from DECLARED-ASSUMPTION-BODY-CHECKS's
+dabc_rank.py): rank non-libc declared-assumption and partly-validated
+declarations by corpus Safe rows, with the reason each body is not validated.
+Correction: a declaration whose `bodies` record no examining unit at all (only
+withdrawals, e.g. C06.3-no-body) is `no-examined-body`, not
+`scope-body-no-summary` (the original fell through to the latter)."""
 import collections
 import json
 import sys
@@ -41,6 +45,8 @@ def reason(name):
         return 'conflict'
     if bodies.get('failed_units'):
         return 'failed:' + ','.join(bodies['failed_by'])
+    if not (bodies.get('validated_units') or bodies.get('unvalidated_units')):
+        return 'no-examined-body'
     rows = rows_of.get(name)
     if rows:
         statuses = sorted({status for _, status, _ in rows})
