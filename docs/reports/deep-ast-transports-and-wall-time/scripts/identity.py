@@ -37,7 +37,10 @@ def digest(data):
 
 
 def normalise(data, name, path):
-    data = data.replace(name.encode(), b"RUN")
+    # Only the run's own output paths: a short run name must not rewrite a
+    # digest or any other text that happens to contain it.
+    for own in (f"/private/dat/{name}/", f"/private/dat/{name}-system/", f"/dat-{name}/"):
+        data = data.replace(own.encode(), b"/RUN/")
     if path.name in ("stderr.log", "console.log"):
         data = b"\n".join(TIMING.sub(b"T", line) if b"preparation" in line else line
                           for line in data.split(b"\n"))

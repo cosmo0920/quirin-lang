@@ -365,7 +365,10 @@ impl Parser<'_> {
                 out.push(node);
                 return;
             }
-            for (child, lines) in children(node).iter().zip(&lines.children) {
+            let subtrees = lines.children(node, &|node| index.node_line(node), &|node| {
+                index.node_end_line(node)
+            });
+            for (child, lines) in children(node).iter().zip(subtrees) {
                 walk(index, child, lines, line, wanted, accept, stripped, out);
             }
         }

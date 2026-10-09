@@ -61,15 +61,19 @@ pub(crate) struct FunctionReuse {
 }
 
 /// A node's begin and end line (`None` where the node carries no offset or
-/// one beyond the source), and its children's, in `inner` order.
+/// one beyond the source), and its children's, in `inner` order. The children
+/// are read on first descent, so a walk never computes a line the uncached
+/// walk would not have computed, and a later walk reads it again from here.
+/// A tree is only ever read beside the node it was built from (the walk pairs
+/// each child with its own entry).
 pub(crate) struct LineTree {
     pub(crate) begin: Option<usize>,
     pub(crate) end: Option<usize>,
-    pub(crate) children: Vec<LineTree>,
+    children: OnceLock<Vec<LineTree>>,
 }
 
 impl LineTree {
-    fn build(
+    fn of(
         node: &Value,
         begin: &dyn Fn(&Value) -> Option<usize>,
         end: &dyn Fn(&Value) -> Option<usize>,
@@ -77,11 +81,24 @@ impl LineTree {
         Self {
             begin: begin(node),
             end: end(node),
-            children: children(node)
-                .iter()
-                .map(|child| Self::build(child, begin, end))
-                .collect(),
+            children: OnceLock::new(),
         }
+    }
+
+    /// The lines of `node`'s children (`node` is the node this tree was built
+    /// from), in `inner` order.
+    pub(crate) fn children(
+        &self,
+        node: &Value,
+        begin: &dyn Fn(&Value) -> Option<usize>,
+        end: &dyn Fn(&Value) -> Option<usize>,
+    ) -> &[LineTree] {
+        self.children.get_or_init(|| {
+            children(node)
+                .iter()
+                .map(|child| Self::of(child, begin, end))
+                .collect()
+        })
     }
 }
 
@@ -101,8 +118,8 @@ impl FunctionReuse {
             .unwrap_or(Resolution::Unresolved)
     }
 
-    /// Rule 13t: the function's line tree, built on first use with the
-    /// index's own line readers.
+    /// Rule 13t: the function's line tree (its root's lines; the rest on
+    /// descent), with the index's own line readers.
     pub(crate) fn line_tree(
         &self,
         function: &Value,
@@ -110,7 +127,7 @@ impl FunctionReuse {
         end: &dyn Fn(&Value) -> Option<usize>,
     ) -> &LineTree {
         self.lines
-            .get_or_init(|| LineTree::build(function, begin, end))
+            .get_or_init(|| LineTree::of(function, begin, end))
     }
 
     /// Rule 13t: the tokens of the source span `start..end`, computed by
@@ -288,7 +305,7 @@ mod tests {
         let body = bodies().remove(0);
         let begin = |node: &Value| node["name"].as_str().map(str::len);
         let end = |node: &Value| Some(children(node).len());
-        let tree = LineTree::build(&body, &begin, &end);
+        let reuse = FunctionReuse::default();
         fn check(
             node: &Value,
             tree: &LineTree,
@@ -297,14 +314,22 @@ mod tests {
         ) -> usize {
             assert_eq!(tree.begin, begin(node));
             assert_eq!(tree.end, end(node));
-            assert_eq!(tree.children.len(), children(node).len());
+            let subtrees = tree.children(node, begin, end);
+            assert_eq!(subtrees.len(), children(node).len());
             1 + children(node)
                 .iter()
-                .zip(&tree.children)
+                .zip(subtrees)
                 .map(|(child, sub)| check(child, sub, begin, end))
                 .sum::<usize>()
         }
-        assert!(check(&body, &tree, &begin, &end) > 20);
+        // Built on the first walk, read on the second: the same lines.
+        let first = check(&body, reuse.line_tree(&body, &begin, &end), &begin, &end);
+        let unused = |_: &Value| -> Option<usize> { unreachable!("already read") };
+        let tree = reuse.line_tree(&body, &unused, &unused);
+        assert_eq!(tree.begin, begin(&body));
+        let second = check(&body, tree, &begin, &end);
+        assert_eq!(first, second);
+        assert!(first > 20);
     }
 
     /// Rule 13t: a span is tokenized once; its answer, absent included, is
