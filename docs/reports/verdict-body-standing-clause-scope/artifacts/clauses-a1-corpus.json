@@ -1,0 +1,1587 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 256,
+   "held": 1,
+   "rows_annotated": 4834,
+   "validated": 73
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 378,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 85,
+   "safe_rows": 881
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 330,
+   "declared_assumption": 252,
+   "held": 1,
+   "partly_validated": 29,
+   "rows_annotated": 4834,
+   "validated": 48
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 377,
+   "resting_on_a_partly_validated_declaration": 22,
+   "resting_on_no_declaration": 418,
+   "resting_only_on_validated_declarations": 64,
+   "safe_rows": 881
+  }
+ },
+ "validated_before": 73,
+ "validated_after": 48,
+ "partly_validated_after": 29,
+ "validated_after_is_subset_of_before": true,
+ "structural_alone_before": 28,
+ "before_validated": [
+  {
+   "function": "LZ4_resetStream",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "MK_EVENT_NEW",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "cmt_atomic_compare_exchange",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 18
+  },
+  {
+   "function": "cmt_atomic_load",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 16
+  },
+  {
+   "function": "cmt_atomic_store",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 25
+  },
+  {
+   "function": "cmt_math_d64_to_uint64",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 14
+  },
+  {
+   "function": "cmt_math_uint64_to_d64",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "cmt_metric_get_int64_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_get_start_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_get_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "cmt_metric_get_uint64_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_get_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 8
+  },
+  {
+   "function": "cmt_metric_get_value_type",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_has_start_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_hist_get_count_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "cmt_metric_hist_get_sum_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "cmt_metric_set_double",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "cmt_metric_set_int64",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_set_start_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "cmt_metric_set_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_set_uint64",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_metric_unset_start_timestamp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cmt_summary_get_count_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "cmt_summary_get_sum_value",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "cnd_timedwait_ms",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 5
+  },
+  {
+   "function": "ctr_attributes_set_array",
+   "validated_by_before": [
+    "11r"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "11r"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_on_return(eq, 0)": "validated",
+    "resource_on_return(ne, 0)": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_attributes_set_bool",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_attributes_set_double",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_attributes_set_int64",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_attributes_set_kvlist",
+   "validated_by_before": [
+    "11r"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "11r"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_on_return(eq, 0)": "validated",
+    "resource_on_return(ne, 0)": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_attributes_set_string",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "ctr_id_cmp",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "ctr_id_get_len",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "ctr_span_set_dropped_attributes_count",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "ctr_span_set_dropped_events_count",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "ctr_span_set_dropped_links_count",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "ctr_span_set_flags",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "flb_calloc",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "flb_input_chunk_get_name",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "flb_input_chunk_get_size",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "flb_malloc",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "get_object_item",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_return_borrowed_from(#0, nullable)": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "mk_mem_alloc",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 4
+  },
+  {
+   "function": "mk_mem_alloc_z",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "mk_string_char_search",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "mk_string_char_search_r",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_borrowed(#2)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "mk_string_dup",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "rd_hdr_histogram_record",
+   "validated_by_before": [
+    "W4",
+    "entry"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4",
+    "entry"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_none()": "validated"
+   },
+   "safe_rows": 13
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_groups",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_borrowed_from(#0, nullable)": "validated"
+   },
+   "safe_rows": 4
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_resources",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_borrowed_from(#0, nullable)": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_topics",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_borrowed_from(#0, nullable)": "validated"
+   },
+   "safe_rows": 3
+  },
+  {
+   "function": "rd_kafka_enq_once_trigger",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_reference_dropped(#0)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_q_destroy0",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_reference_dropped(#0)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_q_destroy_owner",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_dropped(#0)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_q_keep",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_alias(#0, nonnull)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_kept(#0)": "validated",
+    "resource_return_alias(#0, nonnull)": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_q_keep_nolock",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_alias(#0, nonnull)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_kept(#0)": "validated",
+    "resource_return_alias(#0, nonnull)": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_q_new0",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)",
+    "resource_retained_by(#0, result)",
+    "resource_retained_by(#2, result)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_borrowed(#3)": "declared-assumption",
+    "resource_retained_by(#0, result)": "declared-assumption",
+    "resource_retained_by(#2, result)": "declared-assumption",
+    "resource_return_owned(nonnull) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_topic_destroy0",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_dropped(#0)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_topic_keep",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_alias(#0, nonnull)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_kept(#0)": "validated",
+    "resource_return_alias(#0, nonnull)": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_topic_partition_get_private",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_return_borrowed_from(#0, nonnull)": "validated"
+   },
+   "safe_rows": 4
+  },
+  {
+   "function": "rd_kafka_toppar_desired_add",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_owned(nonnull) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_desired_get",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_owned(nullable) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_destroy0",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_reference_dropped(#2)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_get0",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)",
+    "resource_borrowed(#4)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_borrowed(#3)": "declared-assumption",
+    "resource_borrowed(#4)": "declared-assumption",
+    "resource_return_owned(nullable) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_get2",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)",
+    "resource_borrowed(#4)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_borrowed(#3)": "declared-assumption",
+    "resource_borrowed(#4)": "declared-assumption",
+    "resource_return_owned(nullable) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_get_avail",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_borrowed(#3)": "declared-assumption",
+    "resource_return_owned(nullable) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_kafka_toppar_keep0",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_return_alias(#2, nonnull)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_reference_kept(#2)": "validated",
+    "resource_return_alias(#2, nonnull)": "declared-assumption"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "rd_kafka_toppar_new0",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_borrowed(#3)": "declared-assumption",
+    "resource_return_owned(nonnull) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "rd_slice_reader0",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_out_derived(#1, #0, nonnull)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 2
+  },
+  {
+   "function": "sds_cat_safe",
+   "validated_by_before": [
+    "13a"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13a"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_return_none()": "declared-assumption",
+    "resource_slot_moved(#0, nullable)": "validated"
+   },
+   "safe_rows": 5
+  },
+  {
+   "function": "ut_create_mock_queue",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_return_owned(nonnull) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "ut_create_mock_toppar",
+   "validated_by_before": [
+    "13d"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13d"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_borrowed(#1)": "declared-assumption",
+    "resource_borrowed(#2)": "declared-assumption",
+    "resource_return_owned(nullable) kind reference": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "ut_destroy_mock_queue",
+   "validated_by_before": [
+    "13c"
+   ],
+   "structural_alone": true,
+   "validated_by_after": [
+    "13c"
+   ],
+   "standing_after": "partly-validated",
+   "uncovered_clauses": [
+    "resource_borrowed(#0)",
+    "resource_return_none()"
+   ],
+   "clauses": {
+    "resource_borrowed(#0)": "declared-assumption",
+    "resource_reference_dropped(#0)": "validated",
+    "resource_return_none()": "declared-assumption"
+   },
+   "safe_rows": 0
+  }
+ ],
+ "partly_validated_not_validated_before": [
+  {
+   "function": "flb_input_chunk_is_mem_overlimit",
+   "standing_before": "declared-assumption",
+   "validated_by_after": [
+    "W4"
+   ],
+   "uncovered_clauses": [
+    "resource_user_neutral()"
+   ]
+  },
+  {
+   "function": "flb_input_chunk_is_up",
+   "standing_before": "declared-assumption",
+   "validated_by_after": [
+    "W4"
+   ],
+   "uncovered_clauses": [
+    "resource_user_neutral()"
+   ]
+  },
+  {
+   "function": "flb_task_get_route_status",
+   "standing_before": "declared-assumption",
+   "validated_by_after": [
+    "W4"
+   ],
+   "uncovered_clauses": [
+    "resource_user_neutral()"
+   ]
+  },
+  {
+   "function": "flb_task_set_route_status",
+   "standing_before": "declared-assumption",
+   "validated_by_after": [
+    "W4"
+   ],
+   "uncovered_clauses": [
+    "resource_user_neutral()"
+   ]
+  }
+ ],
+ "only_validated_rows_before": 85,
+ "only_validated_rows_after": 64,
+ "only_validated_rows_kept": 64,
+ "only_validated_rows_after_not_before": []
+}

@@ -875,6 +875,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [va-loop-and-pointer-arg](va-loop-and-pointer-arg/README.md) | VA-LOOP-AND-POINTER-ARG: `va_arg` in a condition and the never-owned pointer value |
 
+| [verdict-body-standing-clause-scope](verdict-body-standing-clause-scope/README.md) | VERDICT-BODY-STANDING-CLAUSE-SCOPE: body standing per clause |
+
 | [verdict-contract-dependencies](verdict-contract-dependencies/README.md) | VERDICT-CONTRACT-DEPENDENCIES: the declarations each verdict rests on |
 
 | [verifier-host-closed-input-deadline](verifier-host-closed-input-deadline/README.md) | Verifier host closed-input deadline repair |

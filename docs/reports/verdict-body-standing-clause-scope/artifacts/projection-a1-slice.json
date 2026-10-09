@@ -1,0 +1,65 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/vbs-before/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/vbs-a1/resource-diagnostics.json",
+  "before_sha256": "6e514e4c3796780818e5ceabb30005cbab5bf2eee96f0ecd4b9daeb11f147c8b",
+  "after_sha256": "0ea6e1d148aa93163574b6c7a06ded1eec2dbc21d859861074c200ce4224c9f0",
+  "before_bytes": 1666591,
+  "after_bytes": 1673691,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "b3d078c700cb4bc15c5c0a31d14f4db2e09e469a68d49166dc46f3f16e9ff815",
+  "projection_after_sha256": "b3d078c700cb4bc15c5c0a31d14f4db2e09e469a68d49166dc46f3f16e9ff815",
+  "projections_equal": true,
+  "added_bytes": 7100,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/vbs-before/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/vbs-a1/resource-diagnostics.contracts.json",
+  "before_sha256": "9f724213c39cdc119ecc68101ef21a8ccd8bf806c45238da7cb0c46f880f8405",
+  "after_sha256": "b361e27771cdc1bfc677773258cccf852cca46496624e631e3e9139a37e85165",
+  "before_bytes": 1035559,
+  "after_bytes": 1037326,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "e02c0ee0cdcc125a8ec02b8e813dd1307184d7253ba76c6f4aa362e1cdfadc17",
+  "projection_after_sha256": "e02c0ee0cdcc125a8ec02b8e813dd1307184d7253ba76c6f4aa362e1cdfadc17",
+  "projections_equal": true,
+  "added_bytes": 1767,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "ce1be80eb740d7fdc4122d52a7578a8d92d5ff7fdf4ec4f28eb1080c9fd4c93a",
+  "after": "ce1be80eb740d7fdc4122d52a7578a8d92d5ff7fdf4ec4f28eb1080c9fd4c93a",
+  "equal": true
+ },
+ "unit_field_moves": {
+  "flb_input_collector_running": [
+   [
+    "fluent-bit-tail-pause/src/flb_input.c#0",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-tail-pause/src/flb_input.c#1",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ]
+ }
+}

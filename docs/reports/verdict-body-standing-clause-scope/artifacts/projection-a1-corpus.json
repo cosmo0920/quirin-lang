@@ -1,0 +1,97 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/before/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/a1/resource-diagnostics.json",
+  "before_sha256": "96852f4e212567e5c362dee1ef2f1ceed3ba9c992f1be90cd7978141735eb537",
+  "after_sha256": "c1e6e7d1e51c925da0029a440d122f080b2a4d32e88aed3b6bb7f5721fc246f1",
+  "before_bytes": 11358642,
+  "after_bytes": 11548973,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "cd4187bb5cc8cd575ce58e13ef584f296fd6150276cd765f9986ec1f4dbba61d",
+  "projection_after_sha256": "cd4187bb5cc8cd575ce58e13ef584f296fd6150276cd765f9986ec1f4dbba61d",
+  "projections_equal": true,
+  "added_bytes": 190331,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/before/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/a1/resource-diagnostics.contracts.json",
+  "before_sha256": "635956db3f84d1683a86a6527a89afa867b831ef12de192bb70994ef7d69541d",
+  "after_sha256": "e9d7e9ee85e3de6153f57a83e50387c301b2db19a6124436e2260677e212817a",
+  "before_bytes": 1204496,
+  "after_bytes": 1232114,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "db79bb2ce0a351912db0676c9797f32030869b6937011e598c46077d3699018b",
+  "projection_after_sha256": "db79bb2ce0a351912db0676c9797f32030869b6937011e598c46077d3699018b",
+  "projections_equal": true,
+  "added_bytes": 27618,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "97cbdcf3c0a2ba007d4cb93555825eb12f2c8c6ae8995026c48b54e7b56c6e49",
+  "after": "97cbdcf3c0a2ba007d4cb93555825eb12f2c8c6ae8995026c48b54e7b56c6e49",
+  "equal": true
+ },
+ "unit_field_moves": {
+  "flb_input_chunk_is_mem_overlimit": [
+   [
+    "fluent-bit-chunk/flb_input_chunk.c#155",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_input_chunk_is_up": [
+   [
+    "fluent-bit-chunk/flb_input_chunk.c#155",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_task_get_route_status": [
+   [
+    "fluent-bit-chunk/flb_input_chunk.c#155",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_task_set_route_status": [
+   [
+    "fluent-bit-chunk/flb_input_chunk.c#155",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ]
+ }
+}

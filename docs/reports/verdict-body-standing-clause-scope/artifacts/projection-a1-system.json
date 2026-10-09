@@ -1,0 +1,203 @@
+{
+ "report": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/before-system/resource-diagnostics.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/a1-system/resource-diagnostics.json",
+  "before_sha256": "adbdd52be430656b4e1af610e0891bf0f1e06fa6f1b28c2570fcdf981a975a27",
+  "after_sha256": "e64a6af7e10981a1491d87863b3f0d79d4e5c4c80ab460535d5b0d3cf953b6bf",
+  "before_bytes": 1682889,
+  "after_bytes": 1696106,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "9378de8c7aaa4c4c772bde748a71f2875313cffcadc1c98a23f796598d549ff8",
+  "projection_after_sha256": "9378de8c7aaa4c4c772bde748a71f2875313cffcadc1c98a23f796598d549ff8",
+  "projections_equal": true,
+  "added_bytes": 13217,
+  "differing_paths_after_projection": []
+ },
+ "sidecar": {
+  "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/before-system/resource-diagnostics.contracts.json",
+  "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a8990aca55c0cecf7/private/vbs/a1-system/resource-diagnostics.contracts.json",
+  "before_sha256": "b8b3e103518eee19ba91027bf01305ae45fef21c48e0b92aeba48763a2d4d6e4",
+  "after_sha256": "eaeb58731cc750c8710b2595bb664765457419047872dadf4fb37ca90e2687ec",
+  "before_bytes": 1050364,
+  "after_bytes": 1054358,
+  "projector_reproduces_before": true,
+  "projection_before_sha256": "f5f9262d294dfe372546c54ace3db7208aa9ed0e98a795dffa4f30b8d6b45c5b",
+  "projection_after_sha256": "f5f9262d294dfe372546c54ace3db7208aa9ed0e98a795dffa4f30b8d6b45c5b",
+  "projections_equal": true,
+  "added_bytes": 3994,
+  "differing_paths_after_projection": []
+ },
+ "verdict_rows_sha256": {
+  "before": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "after": "09b7a59ebf043c12fa2f0a961406aba7bcf398511b21c3e9dc21591ac49c3247",
+  "equal": true
+ },
+ "unit_field_moves": {
+  "flb_input_chunk_is_mem_overlimit": [
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#1",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#2",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_input_chunk_is_up": [
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#1",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#2",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_task_get_route_status": [
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#1",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#2",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_task_set_route_status": [
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#1",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_input_chunk.c#2",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_output.c#13",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_output.c#14",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ],
+  "flb_task_users_inc": [
+   [
+    "fluent-bit-system/src/flb_output.c#13",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ],
+   [
+    "fluent-bit-system/src/flb_output.c#14",
+    [
+     "unvalidated",
+     []
+    ],
+    [
+     "validated",
+     [
+      "W4"
+     ]
+    ]
+   ]
+  ]
+ }
+}

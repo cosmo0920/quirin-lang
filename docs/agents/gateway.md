@@ -5762,3 +5762,92 @@ own anchor here.
     identical on all three. `QCore.ContractDependencies`
     (`publishing_the_set_changes_no_verdict`,
     `two_sets_publish_the_same_verdict_row`).
+
+<a id="constraint-13i"></a>
+
+13i. **Body evidence validates the clauses it compares or reads, never a
+    whole declaration by itself.** Card VERDICT-BODY-STANDING-CLAUSE-SCOPE
+    (contract specification C06.5), at the user's direction "handle as safe
+    as possible" (2026-10-09), taking the per-clause discharge of
+    `VERDICT-BODY-STANDING-CLAUSE-SCOPE`, not the decision route.
+    `crates/qcore-c-gateway/src/contract_clause_standing.rs`:
+    `declaration_clauses` reads a declaration's tables into clauses (each
+    parameter mode with its kind, the result mode with its kind, each
+    container and counted-user clause, each retention and the guard of a
+    guarded one, each holder reset, slot move, derived out slot and
+    reference clause, each exit class); `text_clauses` adds, from the
+    retained texts, each named premise, a variadic tail and
+    `resource_no_return()` (a literal-argument premise and the loop-owner,
+    thread-synchronization and lifecycle obligations bound callers and are
+    not clauses); `covers` is the whole table: `W4` and `entry` cover the
+    custody projection (parameters and result with kinds), `11r` every exit
+    class, `12w` guards, `13a` slot moves, derived out slots and a borrowed
+    result **of a declaration in the function map** (its hook reads no other
+    table: a retaining declaration's borrowed result is an ordinary result
+    clause), `13c` reference keeps and drops, `13d` a returned reference;
+    nothing covers the rest. Shared item: `contract_dependencies::unit_evidence`
+    now records `W4` whenever the final derivation's validated summary equals
+    the declaration's custody projection, a declaration with container or
+    counted-user clauses included (covering its custody clauses only).
+    **Do not** let a structural check cover a clause of another kind (the
+    `resource_borrowed` formals beside the clause it reads stay uncovered),
+    count a clause covered on evidence from another unit, or read a text
+    the loader refuses as declaring no text clause (`Unreadable`, never
+    covered).
+
+<a id="constraint-13j"></a>
+
+13j. **A declaration is `validated` only when every clause is covered in every
+    unit that validated it; otherwise `partly-validated` (some clause
+    covered everywhere, the rest listed) or a `declared-assumption`.** Card
+    VERDICT-BODY-STANDING-CLAUSE-SCOPE. Each unit row's
+    `contract_body_evidence` gains `clauses`: for every declaration the unit
+    validated, each clause label with the evidence that covered it there
+    (`contract_clause_standing::unit_coverage`, called by
+    `qcore_audit::contract_dependencies::unit_field`). The run folds it
+    (`Facts`; the composer folds the same unit rows): rule 13g's standing is
+    the precondition; under it a clause is `validated` when every validated
+    unit covered it, and the declaration is `validated` only when it has a
+    clause and every clause is (`clause_standing_of`). The sidecar publishes
+    each declaration's `clauses` (per-clause standing) and, for a
+    partly-validated one, `uncovered_clauses`; `counts.partly_validated`.
+    A unit row without `clauses` (a report written before this rule) never
+    makes a declaration validated. **Do not** publish `validated` for a
+    declaration with an uncovered clause, a premise, or no clause.
+    `QCore.BodyClauseStanding` (`validated_needs_every_clause`,
+    `an_uncovered_clause_is_never_validated`,
+    `a_partly_validated_declaration_has_an_uncovered_clause`,
+    `a_declaration_with_a_premise_is_never_validated`,
+    `structural_evidence_alone_never_validates_a_formal`,
+    `a_structural_check_covers_only_what_it_reads`,
+    `a_structural_check_never_covers_a_formal`,
+    `nothing_covers_these_clauses`, `validated_implies_previously_validated`,
+    `coverage_vectors_hold`, `clause_standing_vectors_hold`).
+
+<a id="constraint-13k"></a>
+
+13k. **The Safe roll-up's "only validated" counts rows whose every
+    declaration is fully validated; a row on a partly-validated declaration
+    and no declared assumption is counted apart; no verdict reads any
+    label.** Card VERDICT-BODY-STANDING-CLAUSE-SCOPE:
+    `safe_rollup.resting_on_a_partly_validated_declaration` and
+    `partly_validated_declarations` (each with its Safe rows and uncovered
+    clauses); the console tally names both. Every row counted "only
+    validated" was so counted under rule 13g
+    (`the_validated_only_rollup_is_a_subset`). Only the unit field's
+    evidence and the sidecar section change: removing the unit key restores
+    every report byte for byte (row fields included) and removing the
+    section restores the sidecar. Measured (binary `65d7c0d8…`, base
+    `9564eeb6d`): verdict rows identical on all three routes (`97cbdcf3…`,
+    `09b7a59e…`, `ce1be80e…`), report and sidecar projections identical,
+    parity multisets identical; corpus validated 73 → **48** (25 of the 28
+    structural-alone declarations `partly-validated`, their `resource_borrowed`
+    formals and plain results uncovered; 3 stay validated: two 11r exit-class
+    declarations and the parameterless `ut_create_mock_queue`), partly
+    validated 29 (with 4 counted-user declarations `W4` now covers in part);
+    Safe roll-up 418 / **64** only validated / 22 partly / 377 declared
+    assumption (64 of the previous 85 kept); system 47 / 3 / 2 / 35, slice
+    29 / 0 / 2 / 14. `QCore.BodyClauseStanding`
+    (`the_validated_only_rollup_is_a_subset`,
+    `validated_implies_previously_validated`);
+    [report](../reports/verdict-body-standing-clause-scope/README.md).

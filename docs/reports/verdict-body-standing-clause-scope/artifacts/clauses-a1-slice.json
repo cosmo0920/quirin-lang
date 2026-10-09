@@ -1,0 +1,129 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 83,
+   "declared_assumption": 70,
+   "held": 9,
+   "rows_annotated": 404,
+   "validated": 4
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 16,
+   "resting_on_no_declaration": 29,
+   "resting_only_on_validated_declarations": 0,
+   "safe_rows": 45
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 83,
+   "declared_assumption": 69,
+   "held": 9,
+   "partly_validated": 1,
+   "rows_annotated": 404,
+   "validated": 4
+  },
+  "safe_rollup": {
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 14,
+   "resting_on_a_partly_validated_declaration": 2,
+   "resting_on_no_declaration": 29,
+   "resting_only_on_validated_declarations": 0,
+   "safe_rows": 45
+  }
+ },
+ "validated_before": 4,
+ "validated_after": 4,
+ "partly_validated_after": 1,
+ "validated_after_is_subset_of_before": true,
+ "structural_alone_before": 0,
+ "before_validated": [
+  {
+   "function": "flb_calloc",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "flb_malloc",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 1
+  },
+  {
+   "function": "flb_strdup",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  },
+  {
+   "function": "flb_strndup",
+   "validated_by_before": [
+    "W4"
+   ],
+   "structural_alone": false,
+   "validated_by_after": [
+    "W4"
+   ],
+   "standing_after": "validated",
+   "uncovered_clauses": [],
+   "clauses": {
+    "resource_borrowed(#0)": "validated",
+    "resource_borrowed(#1)": "validated",
+    "resource_return_owned(nullable)": "validated"
+   },
+   "safe_rows": 0
+  }
+ ],
+ "partly_validated_not_validated_before": [
+  {
+   "function": "flb_input_collector_running",
+   "standing_before": "declared-assumption",
+   "validated_by_after": [
+    "W4"
+   ],
+   "uncovered_clauses": [
+    "resource_user_neutral()"
+   ]
+  }
+ ],
+ "only_validated_rows_before": 0,
+ "only_validated_rows_after": 0,
+ "only_validated_rows_kept": 0,
+ "only_validated_rows_after_not_before": []
+}
