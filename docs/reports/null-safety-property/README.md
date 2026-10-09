@@ -316,8 +316,29 @@ lists.
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (filled by
-`scripts/finish-gate.sh`).
+Standing gate **g2** on `fa2d839f5` ([gate.sh](scripts/gate.sh) `g2`, every
+step under the shared lock, exits in [gate/](gate/), logs
+`private/nsp/gate-g2/`): `cargo check --workspace --all-targets` 0; submodule
+0; `cargo fmt --check` 0; `clippy --locked --all-targets -D warnings` 0;
+`run_test_binaries.py` **472 units, 485 summaries, 7,832 passed, 0 failed, 12
+ignored**, exit 0 (`private/nsp/tests-gate-g2/`, 353.7 s inside the lock);
+`reevaluation_probe` 0; `reevaluation_followup` 0; `check_lean_audits.py`
+**308** audits passed; `cargo clean --profile dev` 0 (07z); the Python suite
+and the docs index (08, 09), then `build_matrix.py . --gate gate.json` (09a),
+the Python suite again (09b) and the docs index (10b, 10c), per
+[gate/](gate/) and [gate.json](gate.json). Provider gate **g2** at the same
+tip ([provider-gate.sh](scripts/provider-gate.sh), `private/nsp/provider-gate-g2/`):
+`cargo check --locked` 0, `cargo test` 129 passed (exit 0), fmt 0, clippy 0,
+`contracts.py check` 0, package build 0, package verify of all five packages
+0, providers Python suite 25 tests OK. Clang: `gate/clang-version.txt`.
+
+Earlier attempt, retained and not evidence for the tip: g1 on `498068eb3`
+(logs `private/nsp/gate-g1/`, `private/nsp/tests-gate-g1/`): every step 0
+except the suite, 7,817 passed and **15 failed**, each a pin or control this
+card moves deliberately and had not yet updated (the list and the reason for
+each are under "Deliberate test and pin updates", section 8); provider gate
+g1 failed `quirin-provider-fluent-bit`'s contract index test and the load-path
+manifest test for the same reason. Both are fixed in `fa2d839f5`.
 
 ## 10. Follow-ups
 
