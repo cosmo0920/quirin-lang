@@ -1,0 +1,533 @@
+{
+ "before": "base",
+ "after": "before",
+ "rows": 4921,
+ "identity_changed_rows": 4921,
+ "identity_only_rows": 4917,
+ "contracts_sha256_pairs": [
+  [
+   "79bd0d18298c4dc8671b4306d8d20724a1ddcc73470b02eeb761e7b650dff904",
+   "bd17483647282c3bea4b83bd196689a22b792d3e41f59c1ff73b742f6885ee58",
+   4921
+  ]
+ ],
+ "verdict_moves": [],
+ "same_verdict_other_changes": [
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_format_check",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract"
+   ],
+   "reasons_added": [],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract",
+      3013,
+      "bounds-missing-extent: `cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3014,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3014,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3014,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3014,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`memcmp` argument 1 is a pointer and `memcmp` states no bounds contract",
+      3017,
+      "bounds-missing-extent: `memcmp` argument 1 is a pointer and `memcmp` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`memcmp` argument 1 is a pointer and `memcmp` states no bounds contract",
+      3017,
+      "bounds-missing-extent: `memcmp` argument 1 is a pointer and `memcmp` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`memcmp` argument 2 is a pointer and `memcmp` states no bounds contract",
+      3017,
+      "bounds-missing-extent: `memcmp` argument 2 is a pointer and `memcmp` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`memcmp` argument 2 is a pointer and `memcmp` states no bounds contract",
+      3017,
+      "bounds-missing-extent: `memcmp` argument 2 is a pointer and `memcmp` states no bounds contract"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `ch`",
+      3018,
+      "bounds-missing-extent: no extent established for `ch`"
+     ]
+    },
+    {
+     "before": [
+      "member-access",
+      "no extent established for `ch`",
+      3018,
+      "bounds-missing-extent: no extent established for `ch`"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `cf`",
+      3018,
+      "bounds-missing-extent: no extent established for `cf`"
+     ]
+    },
+    {
+     "before": [
+      "member-access",
+      "no extent established for `cf`",
+      3018,
+      "bounds-missing-extent: no extent established for `cf`"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_log_print` argument 1 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 1 is a pointer and `cio_log_print` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_log_print` argument 1 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 1 is a pointer and `cio_log_print` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_log_print` argument 3 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 3 is a pointer and `cio_log_print` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_log_print` argument 3 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 3 is a pointer and `cio_log_print` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_log_print` argument 5 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 5 is a pointer and `cio_log_print` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_log_print` argument 5 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 5 is a pointer and `cio_log_print` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_log_print` argument 6 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 6 is a pointer and `cio_log_print` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_log_print` argument 6 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 6 is a pointer and `cio_log_print` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_log_print` argument 7 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 7 is a pointer and `cio_log_print` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_log_print` argument 7 is a pointer and `cio_log_print` states no bounds contract",
+      3018,
+      "bounds-missing-extent: `cio_log_print` argument 7 is a pointer and `cio_log_print` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_error_set` argument 1 is a pointer and `cio_error_set` states no bounds contract",
+      3019,
+      "bounds-missing-extent: `cio_error_set` argument 1 is a pointer and `cio_error_set` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_error_set` argument 1 is a pointer and `cio_error_set` states no bounds contract",
+      3019,
+      "bounds-missing-extent: `cio_error_set` argument 1 is a pointer and `cio_error_set` states no bounds contract"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `cf`",
+      3022,
+      "bounds-missing-extent: no extent established for `cf`"
+     ]
+    }
+   ],
+   "judgement_count": [
+    73,
+    72
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_scan_dump",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract"
+   ],
+   "reasons_added": [],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract",
+      3657,
+      "bounds-missing-extent: `cio_file_st_get_hash` argument 1 is a pointer and `cio_file_st_get_hash` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`memcpy` argument 1 is a pointer and `memcpy` states no bounds contract",
+      3658,
+      "bounds-missing-extent: `memcpy` argument 1 is a pointer and `memcpy` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`memcpy` argument 1 is a pointer and `memcpy` states no bounds contract",
+      3658,
+      "bounds-missing-extent: `memcpy` argument 1 is a pointer and `memcpy` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`memcpy` argument 2 is a pointer and `memcpy` states no bounds contract",
+      3658,
+      "bounds-missing-extent: `memcpy` argument 2 is a pointer and `memcpy` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`memcpy` argument 2 is a pointer and `memcpy` states no bounds contract",
+      3658,
+      "bounds-missing-extent: `memcpy` argument 2 is a pointer and `memcpy` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3660,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3660,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`printf` argument 2 is a pointer and `printf` states no bounds contract",
+      3660,
+      "bounds-missing-extent: `printf` argument 2 is a pointer and `printf` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`printf` argument 2 is a pointer and `printf` states no bounds contract",
+      3660,
+      "bounds-missing-extent: `printf` argument 2 is a pointer and `printf` states no bounds contract"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `ctx`",
+      3661,
+      "bounds-missing-extent: no extent established for `ctx`"
+     ]
+    },
+    {
+     "before": [
+      "member-access",
+      "no extent established for `ctx`",
+      3661,
+      "bounds-missing-extent: no extent established for `ctx`"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3662,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3662,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 1 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3662,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract",
+      3662,
+      "bounds-missing-extent: `cio_file_calculate_checksum` argument 2 is a pointer and `cio_file_calculate_checksum` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3665,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3665,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `cf`",
+      3670,
+      "bounds-missing-extent: no extent established for `cf`"
+     ]
+    },
+    {
+     "before": [
+      "member-access",
+      "no extent established for `cf`",
+      3670,
+      "bounds-missing-extent: no extent established for `cf`"
+     ],
+     "after": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3669,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`printf` argument 1 is a pointer and `printf` states no bounds contract",
+      3669,
+      "bounds-missing-extent: `printf` argument 1 is a pointer and `printf` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_down` argument 1 is a pointer and `cio_file_down` states no bounds contract",
+      3672,
+      "bounds-missing-extent: `cio_file_down` argument 1 is a pointer and `cio_file_down` states no bounds contract"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_down` argument 1 is a pointer and `cio_file_down` states no bounds contract",
+      3672,
+      "bounds-missing-extent: `cio_file_down` argument 1 is a pointer and `cio_file_down` states no bounds contract"
+     ],
+     "after": [
+      "member-access",
+      "no extent established for `head`",
+      3645,
+      "bounds-missing-extent: no extent established for `head`"
+     ]
+    }
+   ],
+   "judgement_count": [
+    29,
+    28
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_write",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract",
+      3485,
+      "bounds-missing-extent: `cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+      3485,
+      "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14"
+     ]
+    },
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract",
+      3494,
+      "bounds-missing-extent: `cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+      3494,
+      "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14"
+     ]
+    }
+   ],
+   "judgement_count": [
+    55,
+    55
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "write_init_header",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract",
+      2946,
+      "bounds-missing-extent: `cio_file_st_set_content_len` argument 1 is a pointer and `cio_file_st_set_content_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+      2946,
+      "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14"
+     ]
+    }
+   ],
+   "judgement_count": [
+    15,
+    15
+   ]
+  }
+ ]
+}
