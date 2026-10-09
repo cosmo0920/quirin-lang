@@ -1,0 +1,21 @@
+{
+ "corpus_after": "915 / 9 / 3,910, resource-diagnostics.json ded14632",
+ "system_after": "91 / 4 / 353 (f4f19c2d)",
+ "slice_after": "50 / 1 / 349 / 4 Pending (249aa27a)",
+ "custody_safe_rows_with_formal_candidates": 37,
+ "null_safe": 2661,
+ "top30_real": 27,
+ "top30_guarded": 3,
+ "top30_infeasible": 0,
+ "wall_seconds": {
+  "before": 453.343,
+  "a4": 477.511,
+  "a4-custody": 454.08,
+  "before-system": 60.322,
+  "a4-system": 64.948,
+  "a4-custody-system": 61.031,
+  "before-slice": 26.835,
+  "a4-slice": 29.349,
+  "a4-custody-slice": 26.956
+ }
+}

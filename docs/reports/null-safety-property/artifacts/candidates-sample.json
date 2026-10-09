@@ -1,0 +1,389 @@
+[
+ {
+  "library": "chunkio",
+  "file": "chunkio.c",
+  "function": "qsort_stream",
+  "custody": "Unknown",
+  "origin": "chunkio.c:243",
+  "line": 2386,
+  "kind": "member-access",
+  "subject": "head",
+  "sources": [
+   "memory-field:&stream->chunks->next"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "a circular list's head: `next` of a list head is never NULL (list invariant)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka.c",
+  "function": "rd_kafka_DescribeGroups_resp_cb",
+  "custody": "Unknown",
+  "origin": "rdkafka.c:6750",
+  "line": 24833,
+  "kind": "member-access",
+  "subject": "reply->rkbuf_rkb",
+  "sources": [
+   "memory-field:reply->rkbuf_rkb"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "rd_kafka_buf_read_* reads the buffer's broker, which every received buffer carries (structural invariant)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_op_serve",
+  "custody": "Unknown",
+  "origin": "rdkafka_broker.c:3423",
+  "line": 22632,
+  "kind": "call-precondition",
+  "subject": "&rkb->rkb_rk->rk_terminate at inferred `rd_atomic32_get` quant null-deref #ra",
+  "sources": [
+   "memory-field:rkb->rkb_rk"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "a broker's rk is set at creation (structural invariant)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_metadata.c",
+  "function": "rd_kafka_parse_Metadata0",
+  "custody": "Unknown",
+  "origin": "rdkafka_metadata.c:668",
+  "line": 20556,
+  "kind": "member-access",
+  "subject": "rkbuf->rkbuf_rkb",
+  "sources": [
+   "memory-field:rkbuf->rkbuf_rkb"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "as 2"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "custody": "Unknown",
+  "origin": "rdkafka_mock_handlers.c:4259",
+  "line": 24882,
+  "kind": "member-access",
+  "subject": "mconn->broker",
+  "sources": [
+   "memory-field:mconn->broker"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "a mock connection's broker (structural invariant)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_handle_Produce_parse",
+  "custody": "Unknown",
+  "origin": "rdkafka_request.c:3953",
+  "line": 22721,
+  "kind": "member-access",
+  "subject": "rkbuf->rkbuf_rkb",
+  "sources": [
+   "memory-field:rkbuf->rkbuf_rkb"
+  ],
+  "rank_kind": "memory-field",
+  "reading": "guarded-by-something-unread",
+  "why": "as 2"
+ },
+ {
+  "library": "chunkio",
+  "file": "chunkio.c",
+  "function": "cio_set_log_level",
+  "custody": "Safe",
+  "origin": "chunkio.c:327",
+  "line": 2444,
+  "kind": "member-access",
+  "subject": "ctx",
+  "sources": [
+   "formal:ctx"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "ctx is the caller's: an early return on a bad level leaves a path without a dereference, so the clause is not inferred (caller precondition)"
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "destroy_resource_spans",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:1296",
+  "line": 9473,
+  "kind": "element-access",
+  "subject": "rs",
+  "sources": [
+   "formal:rs"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "rs is read only when resource_span_count > 0 (a count correlated with the pointer)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_admin.c",
+  "function": "rd_kafka_CreatePartitions",
+  "custody": "Unknown",
+  "origin": "rdkafka_admin.c:2719",
+  "line": 21684,
+  "kind": "element-access",
+  "subject": "newps",
+  "sources": [
+   "formal:newps"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "newps is read only when newps_cnt > 0 (a count correlated with the pointer)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_fetcher.c",
+  "function": "rd_kafka_fetch_preferred_replica_handle",
+  "custody": "Unknown",
+  "origin": "rdkafka_fetcher.c:132",
+  "line": 20291,
+  "kind": "member-access",
+  "subject": "rkb",
+  "sources": [
+   "formal:rkb"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "rkb is used only on a logging path (caller precondition the inference cannot state)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_partition.c",
+  "function": "rd_kafka_msgq_insert_msgq",
+  "custody": "Unknown",
+  "origin": "rdkafka_partition.c:884",
+  "line": 20665,
+  "kind": "member-access",
+  "subject": "&destq->rkmq_msgs",
+  "sources": [
+   "formal:destq"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "destq is read only after srcq is found non-empty (caller precondition)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_telemetry_encode.c",
+  "function": "free_metrics",
+  "custody": "Unknown",
+  "origin": "rdkafka_telemetry_encode.c:863",
+  "line": 20892,
+  "kind": "element-access",
+  "subject": "data_points",
+  "sources": [
+   "formal:data_points"
+  ],
+  "rank_kind": "formal",
+  "reading": "guarded-by-something-unread",
+  "why": "data_points is read only when count > 0 (a count correlated with the pointer)"
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_encode_influx.c",
+  "function": "line_protocol_escape",
+  "custody": "Unknown",
+  "origin": "cmt_encode_influx.c:234",
+  "line": 5779,
+  "kind": "dereference",
+  "subject": "__ctype_b_loc()",
+  "sources": [
+   "uncontracted-result:__ctype_b_loc"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "glibc's ctype table pointer (`*__ctype_b_loc()`) is never NULL; no contract states it"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeCluster_result_cluster_id",
+  "custody": "Unknown",
+  "origin": "rdkafka_admin.c:9418",
+  "line": 26315,
+  "kind": "member-access",
+  "subject": "rd_kafka_DescribeCluster_result_description(result)",
+  "sources": [
+   "uncontracted-result:rd_kafka_DescribeCluster_result_description"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "the callee returns a description inside its result argument; uncontracted"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptors_init",
+  "custody": "Unknown",
+  "origin": "rdkafka_interceptor.c:221",
+  "line": 19746,
+  "kind": "member-access",
+  "subject": "rd_list_init(&conf->interceptors.on_response_received, 0, rd_kafka_interceptor_method_destroy)",
+  "sources": [
+   "uncontracted-result:rd_list_init"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "rd_list_init returns its non-null argument; uncontracted in this unit"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_PushTelemetry",
+  "custody": "Unknown",
+  "origin": "rdkafka_mock_handlers.c:2860",
+  "line": 23895,
+  "kind": "call-precondition",
+  "subject": "resp at inferred `rd_kafka_buf_write_i32` quant null-deref #rkbuf",
+  "sources": [
+   "uncontracted-result:rd_kafka_mock_buf_new_response"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "rd_kafka_mock_buf_new_response allocates through rd_calloc, which asserts (W47-ALIAS-NONNULL-ALLOCATOR-RESULTS)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_request.c",
+  "function": "rd_kafka_OffsetFetchRequest",
+  "custody": "Unknown",
+  "origin": "rdkafka_request.c:1522",
+  "line": 21299,
+  "kind": "call-precondition",
+  "subject": "rkbuf at inferred `rd_kafka_buf_write_arraycnt` quant null-deref #rkbuf",
+  "sources": [
+   "uncontracted-result:rd_kafka_buf_new_request0"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "as 16 (rd_kafka_buf_new_request0)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_get_all_partitions",
+  "custody": "Unknown",
+  "origin": "rdkafka_topic.c:1776",
+  "line": 20723,
+  "kind": "call-precondition",
+  "subject": "list at quant null-deref #rl",
+  "sources": [
+   "uncontracted-result:rd_list_new"
+  ],
+  "rank_kind": "uncontracted-result",
+  "reading": "guarded-by-something-unread",
+  "why": "as 16 (rd_list_new)"
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_cat.c",
+  "function": "cmt_cat_copy_label_keys",
+  "custody": "Unknown",
+  "origin": "cmt_cat.c:58",
+  "line": 5603,
+  "kind": "element-access",
+  "subject": "labels",
+  "sources": [
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "as top-30 29 (cmt_cat_copy_label_keys)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "cJSON.c",
+  "function": "cJSON_CreateIntArray",
+  "custody": "Unknown",
+  "origin": "cJSON.c:2634",
+  "line": 3339,
+  "kind": "call-precondition",
+  "subject": "p at inferred `suffix_object` quant null-deref #prev",
+  "sources": [
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "p is set on every iteration after the first, and read only when i > 0 (an index correlated with the pointer)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_serve_pending",
+  "custody": "Unknown",
+  "origin": "rdkafka_assignment.c:638",
+  "line": 20447,
+  "kind": "member-access",
+  "subject": "partitions_to_query",
+  "sources": [
+   "uncontracted-result:rd_kafka_topic_partition_list_new",
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "partitions_to_query is allocated exactly when can_query_offsets, and the function returns early otherwise (a flag correlated with the pointer)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Fetch",
+  "custody": "Unknown",
+  "origin": "rdkafka_mock_handlers.c:615",
+  "line": 22464,
+  "kind": "member-access",
+  "subject": "mpart",
+  "sources": [
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "mpart is found on the paths that read it (mock; a lookup correlated with an earlier test)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "custody": "Unknown",
+  "origin": "rdkafka_mock_handlers.c:4682",
+  "line": 25187,
+  "kind": "call-precondition",
+  "subject": "requested_partitions at quant null-deref #rktparlist",
+  "sources": [
+   "uncontracted-result:rd_kafka_topic_partition_list_new",
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "requested_partitions is assigned before every path reaching the destroy; the null arm of a defensive test contributes the null (rd_kafka_topic_partition_list_new allocates through rd_calloc, which asserts)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_partition.c",
+  "function": "rd_kafka_toppars_pause_resume",
+  "custody": "Unknown",
+  "origin": "rdkafka_partition.c:2637",
+  "line": 21496,
+  "kind": "call-precondition",
+  "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+  "sources": [
+   "uncontracted-result:rd_kafka_q_new0",
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "tmpq is created exactly when !async, and destroyed under the same test (a flag correlated with the pointer)"
+ }
+]

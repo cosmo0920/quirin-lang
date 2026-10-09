@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""write_gate_json.py NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1): gate.json from the
+"""write_gate_json.py NAME -- NULL-SAFETY-PROPERTY (adapted from CG22-CALLBACK-REGISTRY-CONTRACT's): gate.json from the
 standing gate's and the provider gate's logs in private/nsp/ (exits, the
 runner's totals line, the Lean audit count, the provider test count, the
 Python suite's count) and the Clang recording. Fails if any recorded exit is
@@ -10,7 +10,7 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/cg22-callback-registry-contract"
+REPORT = REPO / "docs/reports/null-safety-property"
 
 
 def main() -> int:
@@ -35,16 +35,16 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"CG22-CALLBACK-REGISTRY-CONTRACT card gate on main d03c59c73 (the card rebased; base 84ec54d1d), every code step at "
-        f"{head[:9]}, scripts docs/reports/cg22-callback-registry-contract/scripts/gate.sh "
+        f"NULL-SAFETY-PROPERTY card gate on main 0085fa346 (base), every code step at "
+        f"{head[:9]}, scripts docs/reports/null-safety-property/scripts/gate.sh "
         "(each step under the shared flock), provider-gate.sh and finish-gate.sh, logs "
         f"private/nsp/gate-{name} and private/nsp/provider-gate-{provider_name} of this worktree. "
         f"gate-{name}: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/nsp/tests-{name}); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (QCore.CallbackContracts "
-        "and AuditCallbackContracts added, QCore.BodyClauseStanding extended); python suite and docs index check per gate/ (08, 09), then "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (QCore.NullDeref "
+        "and AuditNullDeref added); python suite and docs index check per gate/ (08, 09), then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
         f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ unchanged since when named apart): cargo check --locked 0, cargo test {provider_tests} passed "
         "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "

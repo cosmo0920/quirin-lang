@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# finish-gate.sh NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): after gate.sh into
+# finish-gate.sh NAME -- NULL-SAFETY-PROPERTY (adapted from CG22-CALLBACK-REGISTRY-CONTRACT's): after gate.sh into
 # private/nsp/gate-NAME and gate.json written: copy the exits, heads and
 # Clang version into gate/, regenerate the matrix with gate.json (09a), rerun
 # the Python suite (09b), the docs index (10b) and its check (10c).
@@ -8,7 +8,7 @@ name="$1"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 logs="$repo/private/nsp/gate-$name"
-report="$repo/docs/reports/cg22-callback-registry-contract"
+report="$repo/docs/reports/null-safety-property"
 cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"

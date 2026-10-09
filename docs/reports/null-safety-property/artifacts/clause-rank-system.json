@@ -1,0 +1,1130 @@
+[
+ {
+  "function": "flb_output_set_http_debug_callbacks",
+  "files_other_than_definitions": 14,
+  "call_sites_other_than_definitions": 14,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_engine_exit",
+  "files_other_than_definitions": 8,
+  "call_sites_other_than_definitions": 12,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_append_raw",
+  "files_other_than_definitions": 6,
+  "call_sites_other_than_definitions": 7,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_get_tag",
+  "files_other_than_definitions": 5,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic",
+   "#tag_buf",
+   "#tag_len"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_output_instance_destroy",
+  "files_other_than_definitions": 5,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_storage_input_create",
+  "files_other_than_definitions": 5,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_task_destroy",
+  "files_other_than_definitions": 4,
+  "call_sites_other_than_definitions": 6,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_retry_destroy",
+  "files_other_than_definitions": 4,
+  "call_sites_other_than_definitions": 6,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#retry"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_sched_event_handler",
+  "files_other_than_definitions": 4,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#event"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_destroy",
+  "files_other_than_definitions": 4,
+  "call_sites_other_than_definitions": 4,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_sched_timer_cleanup",
+  "files_other_than_definitions": 4,
+  "call_sites_other_than_definitions": 4,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#sched"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_get_real_size",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 6,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_output_task_flush",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 4,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#out_ins",
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_engine_flush",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_down",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_output_flush_finished",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_upstream_ha_set",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ha"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_sched_request_create",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_sched_request_invalidate",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_sched_timer_invalidate",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#timer"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_task_running_count",
+  "files_other_than_definitions": 3,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_release_lock",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 6,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_task_queue_destroy",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#queue"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_retry_clean",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 5,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_retry_reschedule",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 4,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#retry"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_engine_shutdown",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_append_raw_local",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_flush",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_get_event_type",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_output_size_subtract",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#o_ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_update_output_instances",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_output_task_singleplex_enqueue",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_storage_input_destroy",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_storage_metrics_update",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 3,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#ctx",
+   "#sm"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_engine_destroy_tasks",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#tasks"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_engine_dispatch",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_engine_dispatch.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine_dispatch.c"
+  ]
+ },
+ {
+  "function": "flb_engine_dispatch_retry",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_engine_dispatch.c"
+  ],
+  "inferred": [
+   "#config",
+   "#retry"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine_dispatch.c"
+  ]
+ },
+ {
+  "function": "flb_engine_exit_status",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_engine_failed",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_has_direct_routes",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_ring_buffer_cleanup",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_ring_buffer_collector",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ctx"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_set_limits",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_set_up",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_set_up_down",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_total_size",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_output_enable_multi_threading",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_exit",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_get_instance",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_init_all",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_net_property_check",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_plugin_property_check",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_pre_run",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_task_flush_error",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#out_ins",
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_task_singleplex_flush_next",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#queue"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_sched_retry_now",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_sched_timer_cb_destroy",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#timer"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_sched_timer_cb_disable",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#timer"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_sched_timer_destroy",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_scheduler.c"
+  ],
+  "inferred": [
+   "#timer"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_scheduler.c"
+  ]
+ },
+ {
+  "function": "flb_storage_chunk_count",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#ctx",
+   "#fs_chunks",
+   "#mem_chunks"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_storage_create",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#ctx"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_storage_destroy",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_storage.c"
+  ],
+  "inferred": [
+   "#ctx"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_storage.c"
+  ]
+ },
+ {
+  "function": "flb_task_create",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#err"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_from_fs_storage",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_map_get_task_id",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_retry_count",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_task_retry_create",
+  "files_other_than_definitions": 2,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_task.c"
+  ],
+  "inferred": [
+   "#task"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_task.c"
+  ]
+ },
+ {
+  "function": "flb_output_flush_id_get",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#ins"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_output_flush_prepare_destroy",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 2,
+  "definitions": [
+   "src/flb_output.c"
+  ],
+  "inferred": [
+   "#out_flush"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_output.c"
+  ]
+ },
+ {
+  "function": "flb_engine_adaptive_flush_interval",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_engine_adaptive_flush_target_level",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_engine_reschedule_retries",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_engine_stop_ingestion",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_engine.c"
+  ],
+  "inferred": [
+   "#config"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_engine.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_create",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#in"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_destroy_corrupted",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_find_space_new_data",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_get_size",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_has_overlimit_routes",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_is_up",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#ic"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ },
+ {
+  "function": "flb_input_chunk_write",
+  "files_other_than_definitions": 1,
+  "call_sites_other_than_definitions": 1,
+  "definitions": [
+   "src/flb_input_chunk.c"
+  ],
+  "inferred": [
+   "#data"
+  ],
+  "units": [
+   "fluent-bit-system/src/flb_input_chunk.c"
+  ]
+ }
+]

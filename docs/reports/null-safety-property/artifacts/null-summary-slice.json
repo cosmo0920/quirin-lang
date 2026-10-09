@@ -1,0 +1,63 @@
+{
+  "checks": {
+    "by_outcome": {
+      "candidate": 1270,
+      "moved": 898,
+      "proved": 3828
+    },
+    "candidates_by_library": {
+      "fluent-bit-tail-pause": 1270
+    },
+    "candidates_by_source_kind": {
+      "formal": 116,
+      "memory-field": 1274,
+      "null-literal": 2,
+      "uncontracted-result": 4,
+      "uninitialized": 2
+    },
+    "functions_with_a_candidate": 229,
+    "functions_with_an_indirect_call": 23,
+    "indirect_calls_not_inventoried": 38
+  },
+  "combined": {
+    "Pending": 2,
+    "Safe": 29,
+    "Unknown": 374,
+    "Unsafe": 1
+  },
+  "custody": {
+    "Pending": 4,
+    "Safe": 50,
+    "Unknown": 349,
+    "Unsafe": 1,
+    "absent": 2
+  },
+  "custody_null_premises": {
+    "by_null_standing": {
+      "candidate": 84,
+      "nearby:candidate": 5,
+      "proved": 76,
+      "unmatched": 1
+    },
+    "custody_safe_rows_with_an_own_premise": 5,
+    "of_which_every_premise_proved": 1
+  },
+  "functions": 406,
+  "functions_by_reason_code": {
+    "null-deref-candidate": 229,
+    "null-import-failure": 2
+  },
+  "inference": {
+    "declared_clause_standing": {},
+    "functions_with_an_inferred_precondition": 293,
+    "inferred_preconditions": 315
+  },
+  "meaning": "the null-dereference property (c.null.deref.v1) of every projected function, reported separately from custody: `null` counts the null rows' verdicts (Safe split into unconditional and conditional on the function's own declared or inferred null-deref preconditions); `combined` joins the custody and null rows of a request naming both, a missing row counting Unknown; `checks` counts every judged dereference by outcome, and every candidate by source kind and by library; `custody_null_premises` counts the named null premises custody rows rest on (rule 14n) by what the null row says of each (`proved` when every check of the variable at that line is proved or moved to a proved check; `nearby:` when only checks within three lines name it, never counted as proved) and the custody Safe rows whose every own premise the null property proves. Unknown and Pending stay in every denominator",
+  "null": {
+    "Safe (conditional on its preconditions)": 103,
+    "Safe (unconditional)": 72,
+    "Unknown": 231
+  },
+  "property": "c.null.deref.v1",
+  "schema_version": 1
+}

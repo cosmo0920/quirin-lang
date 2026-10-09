@@ -1,0 +1,49 @@
+{
+ "rows": [
+  51418,
+  51342
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 109,
+ "only_after": 33,
+ "functions_with_differences": 7,
+ "differences_outside_moving_functions": {
+  "before ?": 3,
+  "after ?": 3,
+  "before ml_flush_callback": 1,
+  "after ml_flush_callback": 1
+ },
+ "groups": {
+  "before flb_input_thread_collectors_signal_start cast-semantics-census": 18,
+  "before collector_start bound-untracked-root": 12,
+  "after collector_start bound-untracked-root": 12,
+  "after dormant_file_unchanged bound-untracked-root": 12,
+  "before dormant_file_unchanged bound-untracked-root": 8,
+  "before dormant_file_unchanged condition": 7,
+  "before flb_input_thread_collectors_signal_start bound-untracked-closure": 6,
+  "before flb_input_thread_collectors_signal_start root-declarations": 6,
+  "before flb_input_thread_collectors_signal_start ?": 6,
+  "before flb_input_thread_collectors_signal_start call-argument": 6,
+  "before flb_input_thread_wait_until_is_ready bound-untracked-closure": 6,
+  "before flb_input_thread_wait_until_is_ready root-declarations": 6,
+  "before flb_input_thread_wait_until_is_ready call-argument": 6,
+  "before flb_tail_file_append condition-desugar": 5,
+  "after flb_tail_file_append condition-desugar": 5,
+  "before dormant_file_unchanged typed-place": 4,
+  "before ? summary-premises-graph": 3,
+  "after ? summary-premises-graph": 3,
+  "before dormant_file_unchanged bound-untracked-closure": 1,
+  "before dormant_file_unchanged root-declarations": 1,
+  "before dormant_file_unchanged elaboration-statement": 1,
+  "before dormant_file_unchanged aggregate-value": 1,
+  "before dormant_file_unchanged residual-access": 1,
+  "before dormant_file_unchanged return": 1,
+  "before dormant_file_unchanged residual-shape": 1,
+  "before dormant_file_unchanged storage-duration-address-return": 1,
+  "before dormant_file_unchanged return-connective": 1,
+  "before ml_flush_callback bound-untracked-root": 1,
+  "after ml_flush_callback bound-untracked-root": 1
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "before": {
+  "tip:mk_vhost_set": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`"
+   ]
+  },
+  "tip:mk_vhost_set_property": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  "master:mk_vhost_set": {
+   "status": "Unknown",
+   "leaves": [
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "call to uncontracted function `mk_vhost_set_property`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`"
+   ]
+  },
+  "master:mk_vhost_set_property": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  }
+ },
+ "after": {
+  "tip:mk_vhost_set": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`"
+   ]
+  },
+  "tip:mk_vhost_set_property": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  "tip:mk_vhost_set:null": {
+   "verdict": "Safe",
+   "scope": "conditional on `mk_vhost_set`'s null-deref preconditions: inferred quant null-deref #ctx",
+   "candidates": []
+  },
+  "tip:mk_vhost_set_property:null": {
+   "verdict": "Unknown",
+   "scope": "unconditional",
+   "candidates": [
+    {
+     "subject": "&vh->server_names at inferred `mk_list_add` quant null-deref #head",
+     "sources": [
+      "formal:vh"
+     ]
+    },
+    {
+     "subject": "vh",
+     "sources": [
+      "formal:vh"
+     ]
+    }
+   ]
+  },
+  "master:mk_vhost_set": {
+   "status": "Unknown",
+   "leaves": [
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "call to uncontracted function `mk_vhost_set_property`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`"
+   ]
+  },
+  "master:mk_vhost_set_property": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  "master:mk_vhost_set:null": {
+   "verdict": "Safe",
+   "scope": "conditional on `mk_vhost_set`'s null-deref preconditions: inferred quant null-deref #ctx",
+   "candidates": []
+  },
+  "master:mk_vhost_set_property:null": {
+   "verdict": "Unknown",
+   "scope": "unconditional",
+   "candidates": [
+    {
+     "subject": "&vh->server_names at inferred `mk_list_add` quant null-deref #head",
+     "sources": [
+      "formal:vh"
+     ]
+    },
+    {
+     "subject": "vh",
+     "sources": [
+      "formal:vh"
+     ]
+    }
+   ]
+  }
+ }
+}

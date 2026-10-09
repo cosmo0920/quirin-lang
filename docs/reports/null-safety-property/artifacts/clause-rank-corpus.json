@@ -1,0 +1,1131 @@
+[
+ {
+  "function": "cmt_gauge_set",
+  "files_other_than_definitions": 64,
+  "call_sites_other_than_definitions": 389,
+  "definitions": [
+   "lib/cmetrics/src/cmt_gauge.c"
+  ],
+  "inferred": [
+   "#gauge"
+  ],
+  "units": [
+   "cmetrics/cmt_gauge.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_poll",
+  "files_other_than_definitions": 40,
+  "call_sites_other_than_definitions": 111,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_flush",
+  "files_other_than_definitions": 40,
+  "call_sites_other_than_definitions": 95,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_topic_name",
+  "files_other_than_definitions": 37,
+  "call_sites_other_than_definitions": 115,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_topic.c"
+  ],
+  "inferred": [
+   "#app_rkt"
+  ],
+  "units": [
+   "librdkafka/rdkafka_topic.c"
+  ]
+ },
+ {
+  "function": "cmt_counter_set",
+  "files_other_than_definitions": 36,
+  "call_sites_other_than_definitions": 174,
+  "definitions": [
+   "lib/cmetrics/src/cmt_counter.c"
+  ],
+  "inferred": [
+   "#counter"
+  ],
+  "units": [
+   "cmetrics/cmt_counter.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_topic_create",
+  "files_other_than_definitions": 35,
+  "call_sites_other_than_definitions": 217,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_producev",
+  "files_other_than_definitions": 34,
+  "call_sites_other_than_definitions": 91,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_msg.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_share_poll",
+  "files_other_than_definitions": 31,
+  "call_sites_other_than_definitions": 257,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rkmessages",
+   "#rkshare"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_message_errstr",
+  "files_other_than_definitions": 31,
+  "call_sites_other_than_definitions": 46,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  ],
+  "inferred": [
+   "#rkmessage"
+  ],
+  "units": [
+   "librdkafka/rdkafka_msg.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_consumer_poll",
+  "files_other_than_definitions": 29,
+  "call_sites_other_than_definitions": 71,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_queue_poll",
+  "files_other_than_definitions": 28,
+  "call_sites_other_than_definitions": 85,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rkqu"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_messages_get",
+  "files_other_than_definitions": 27,
+  "call_sites_other_than_definitions": 189,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#messages"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "mk_event_add",
+  "files_other_than_definitions": 25,
+  "call_sites_other_than_definitions": 42,
+  "definitions": [
+   "lib/monkey/mk_core/mk_event.c"
+  ],
+  "inferred": [
+   "#data",
+   "#loop"
+  ],
+  "units": [
+   "monkey-libevent/mk_core/mk_event.c"
+  ]
+ },
+ {
+  "function": "rd_list_init",
+  "files_other_than_definitions": 24,
+  "call_sites_other_than_definitions": 165,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdlist.c"
+  ],
+  "inferred": [
+   "#rl"
+  ],
+  "units": [
+   "librdkafka/rdlist.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_event_error",
+  "files_other_than_definitions": 23,
+  "call_sites_other_than_definitions": 121,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_event.c"
+  ],
+  "inferred": [
+   "#rkev"
+  ],
+  "units": [
+   "librdkafka/rdkafka_event.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_subscribe",
+  "files_other_than_definitions": 23,
+  "call_sites_other_than_definitions": 46,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_subscription.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_subscription.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_copy",
+  "files_other_than_definitions": 22,
+  "call_sites_other_than_definitions": 78,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  ],
+  "inferred": [
+   "#src"
+  ],
+  "units": [
+   "librdkafka/rdkafka_partition.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_event_error_string",
+  "files_other_than_definitions": 21,
+  "call_sites_other_than_definitions": 85,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_event.c"
+  ],
+  "inferred": [
+   "#rkev"
+  ],
+  "units": [
+   "librdkafka/rdkafka_event.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_produce",
+  "files_other_than_definitions": 21,
+  "call_sites_other_than_definitions": 38,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_msg.c"
+  ],
+  "inferred": [
+   "#rkt"
+  ],
+  "units": [
+   "librdkafka/rdkafka_msg.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_outq_len",
+  "files_other_than_definitions": 21,
+  "call_sites_other_than_definitions": 37,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_consumer_close",
+  "files_other_than_definitions": 21,
+  "call_sites_other_than_definitions": 33,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "ctr_destroy",
+  "files_other_than_definitions": 20,
+  "call_sites_other_than_definitions": 65,
+  "definitions": [
+   "lib/ctraces/src/ctraces.c"
+  ],
+  "inferred": [
+   "#ctx"
+  ],
+  "units": [
+   "ctraces/ctraces.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_op_destroy",
+  "files_other_than_definitions": 19,
+  "call_sites_other_than_definitions": 126,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_op.c"
+  ],
+  "inferred": [
+   "#rko"
+  ],
+  "units": [
+   "librdkafka/rdkafka_op.c"
+  ]
+ },
+ {
+  "function": "cmt_counter_inc",
+  "files_other_than_definitions": 19,
+  "call_sites_other_than_definitions": 91,
+  "definitions": [
+   "lib/cmetrics/src/cmt_counter.c"
+  ],
+  "inferred": [
+   "#counter"
+  ],
+  "units": [
+   "cmetrics/cmt_counter.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_timer_stop",
+  "files_other_than_definitions": 19,
+  "call_sites_other_than_definitions": 43,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_timer.c"
+  ],
+  "inferred": [
+   "#rtmr"
+  ],
+  "units": [
+   "librdkafka/rdkafka_timer.c"
+  ]
+ },
+ {
+  "function": "rd_list_find",
+  "files_other_than_definitions": 19,
+  "call_sites_other_than_definitions": 29,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdlist.c"
+  ],
+  "inferred": [
+   "#rl"
+  ],
+  "units": [
+   "librdkafka/rdlist.c"
+  ]
+ },
+ {
+  "function": "cmt_counter_add",
+  "files_other_than_definitions": 18,
+  "call_sites_other_than_definitions": 83,
+  "definitions": [
+   "lib/cmetrics/src/cmt_counter.c"
+  ],
+  "inferred": [
+   "#counter"
+  ],
+  "units": [
+   "cmetrics/cmt_counter.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_push_request_error_rtts",
+  "files_other_than_definitions": 18,
+  "call_sites_other_than_definitions": 72,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_commit",
+  "files_other_than_definitions": 18,
+  "call_sites_other_than_definitions": 36,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_offset.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_offset.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_partition_set_leader",
+  "files_other_than_definitions": 17,
+  "call_sites_other_than_definitions": 84,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_metadata",
+  "files_other_than_definitions": 17,
+  "call_sites_other_than_definitions": 26,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_metadata.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_metadata.c"
+  ]
+ },
+ {
+  "function": "rd_list_elem",
+  "files_other_than_definitions": 16,
+  "call_sites_other_than_definitions": 114,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdlist.c"
+  ],
+  "inferred": [
+   "#rl"
+  ],
+  "units": [
+   "librdkafka/rdlist.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_assignment",
+  "files_other_than_definitions": 16,
+  "call_sites_other_than_definitions": 90,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_subscription.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_subscription.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_AdminOptions_destroy",
+  "files_other_than_definitions": 16,
+  "call_sites_other_than_definitions": 79,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_admin.c"
+  ],
+  "inferred": [
+   "#options"
+  ],
+  "units": [
+   "librdkafka/rdkafka_admin.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_find",
+  "files_other_than_definitions": 16,
+  "call_sites_other_than_definitions": 37,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  ],
+  "inferred": [
+   "#rktparlist"
+  ],
+  "units": [
+   "librdkafka/rdkafka_partition.c"
+  ]
+ },
+ {
+  "function": "mk_event_del",
+  "files_other_than_definitions": 16,
+  "call_sites_other_than_definitions": 26,
+  "definitions": [
+   "lib/monkey/mk_core/mk_event.c"
+  ],
+  "inferred": [
+   "#event",
+   "#loop"
+  ],
+  "units": [
+   "monkey-libevent/mk_core/mk_event.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_start_request_tracking",
+  "files_other_than_definitions": 15,
+  "call_sites_other_than_definitions": 64,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_push_request_errors",
+  "files_other_than_definitions": 15,
+  "call_sites_other_than_definitions": 62,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "cmt_histogram_observe",
+  "files_other_than_definitions": 15,
+  "call_sites_other_than_definitions": 53,
+  "definitions": [
+   "lib/cmetrics/src/cmt_histogram.c"
+  ],
+  "inferred": [
+   "#histogram"
+  ],
+  "units": [
+   "cmetrics/cmt_histogram.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_request_api_key",
+  "files_other_than_definitions": 15,
+  "call_sites_other_than_definitions": 36,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mreq"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_begin_transaction",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 98,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_txnmgr.c"
+  ]
+ },
+ {
+  "function": "cmt_atomic_load",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 87,
+  "definitions": [
+   "lib/cmetrics/src/cmt_atomic_clang.c",
+   "lib/cmetrics/src/cmt_atomic_gcc.c",
+   "lib/cmetrics/src/cmt_atomic_generic.c",
+   "lib/cmetrics/src/cmt_atomic_msvc.c"
+  ],
+  "inferred": [
+   "#storage"
+  ],
+  "units": [
+   "cmetrics/cmt_atomic_clang.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_init_transactions",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 69,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_txnmgr.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_stop_request_tracking",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 61,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "cio_chunk_is_up",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 43,
+  "definitions": [
+   "lib/chunkio/src/cio_chunk.c"
+  ],
+  "inferred": [
+   "#ch"
+  ],
+  "units": [
+   "chunkio/cio_chunk.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_fatal_error",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 30,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "mk_event_loop_destroy",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 27,
+  "definitions": [
+   "lib/monkey/mk_core/mk_event.c"
+  ],
+  "inferred": [
+   "#loop"
+  ],
+  "units": [
+   "monkey-libevent/mk_core/mk_event.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_poll_set_consumer",
+  "files_other_than_definitions": 13,
+  "call_sites_other_than_definitions": 17,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_commit_transaction",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 81,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_txnmgr.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_abort_transaction",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 68,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_txnmgr.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_txnmgr.c"
+  ]
+ },
+ {
+  "function": "mk_string_build",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 39,
+  "definitions": [
+   "lib/monkey/mk_core/mk_string.c"
+  ],
+  "inferred": [
+   "#buffer"
+  ],
+  "units": [
+   "monkey-libevent/mk_core/mk_string.c"
+  ]
+ },
+ {
+  "function": "cio_chunk_write",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 38,
+  "definitions": [
+   "lib/chunkio/src/cio_chunk.c"
+  ],
+  "inferred": [
+   "#ch"
+  ],
+  "units": [
+   "chunkio/cio_chunk.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_assign",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 32,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_subscription.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_subscription.c"
+  ]
+ },
+ {
+  "function": "cmt_summary_set_default",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 31,
+  "definitions": [
+   "lib/cmetrics/src/cmt_summary.c"
+  ],
+  "inferred": [
+   "#summary"
+  ],
+  "units": [
+   "cmetrics/cmt_summary.c"
+  ]
+ },
+ {
+  "function": "cio_options_init",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 30,
+  "definitions": [
+   "lib/chunkio/src/chunkio.c"
+  ],
+  "inferred": [
+   "#options"
+  ],
+  "units": [
+   "chunkio/chunkio.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_set_down",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 24,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ },
+ {
+  "function": "mk_event_channel_create",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 23,
+  "definitions": [
+   "lib/monkey/mk_core/mk_event.c"
+  ],
+  "inferred": [
+   "#loop"
+  ],
+  "units": [
+   "monkey-libevent/mk_core/mk_event.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_sharegroup_set_auto_offset_reset",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 23,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock_sharegrp.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_queue_yield",
+  "files_other_than_definitions": 12,
+  "call_sites_other_than_definitions": 12,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_queue.c"
+  ],
+  "inferred": [
+   "#rkqu"
+  ],
+  "units": [
+   "librdkafka/rdkafka_queue.c"
+  ]
+ },
+ {
+  "function": "cio_chunk_down",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 39,
+  "definitions": [
+   "lib/chunkio/src/cio_chunk.c"
+  ],
+  "inferred": [
+   "#ch"
+  ],
+  "units": [
+   "chunkio/cio_chunk.c"
+  ]
+ },
+ {
+  "function": "cmt_label_add",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 30,
+  "definitions": [
+   "lib/cmetrics/src/cmetrics.c"
+  ],
+  "inferred": [
+   "#cmt"
+  ],
+  "units": [
+   "cmetrics/cmetrics.c"
+  ]
+ },
+ {
+  "function": "rd_list_sort",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 27,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdlist.c"
+  ],
+  "inferred": [
+   "#rl"
+  ],
+  "units": [
+   "librdkafka/rdlist.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_queue_get_consumer",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 22,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_queue.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka_queue.c"
+  ]
+ },
+ {
+  "function": "XXH64_digest",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 17,
+  "definitions": [
+   "lib/cfl/lib/xxhash/xxhash.h",
+   "lib/librdkafka-2.15.0/src/rdxxhash.c",
+   "lib/zstd-1.5.7/lib/common/xxhash.h"
+  ],
+  "inferred": [
+   "#state_in"
+  ],
+  "units": [
+   "librdkafka/rdxxhash.c"
+  ]
+ },
+ {
+  "function": "rd_slice_init_full",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 14,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdbuf.c"
+  ],
+  "inferred": [
+   "#rbuf"
+  ],
+  "units": [
+   "librdkafka/rdbuf.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_conf_interceptor_add_on_new",
+  "files_other_than_definitions": 11,
+  "call_sites_other_than_definitions": 13,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c"
+  ],
+  "inferred": [
+   "#conf"
+  ],
+  "units": [
+   "librdkafka/rdkafka_interceptor.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_share_commit_async",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 70,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rkshare"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_share_commit_sync",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 55,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#partitions",
+   "#rkshare"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "ctr_id_destroy",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 36,
+  "definitions": [
+   "lib/ctraces/src/ctr_id.c"
+  ],
+  "inferred": [
+   "#cid"
+  ],
+  "units": [
+   "ctraces/ctr_id.c"
+  ]
+ },
+ {
+  "function": "ctr_attributes_destroy",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 28,
+  "definitions": [
+   "lib/ctraces/src/ctr_attributes.c"
+  ],
+  "inferred": [
+   "#attr"
+  ],
+  "units": [
+   "ctraces/ctr_attributes.c"
+  ]
+ },
+ {
+  "function": "cmt_encode_opentelemetry_create",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 23,
+  "definitions": [
+   "lib/cmetrics/src/cmt_encode_opentelemetry.c"
+  ],
+  "inferred": [
+   "#cmt"
+  ],
+  "units": [
+   "cmetrics/cmt_encode_opentelemetry.c"
+  ]
+ },
+ {
+  "function": "rd_list_copy",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 20,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdlist.c"
+  ],
+  "inferred": [
+   "#src"
+  ],
+  "units": [
+   "librdkafka/rdlist.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_topic_partition_get_leader_epoch",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 15,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_partition.c"
+  ],
+  "inferred": [
+   "#rktpar"
+  ],
+  "units": [
+   "librdkafka/rdkafka_partition.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_position",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 14,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#partitions"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "cmt_metric_hist_get_value",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 12,
+  "definitions": [
+   "lib/cmetrics/src/cmt_metric_histogram.c"
+  ],
+  "inferred": [
+   "#metric"
+  ],
+  "units": [
+   "cmetrics/cmt_metric_histogram.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_opaque",
+  "files_other_than_definitions": 10,
+  "call_sites_other_than_definitions": 12,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#rk"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_Uuid_base64str",
+  "files_other_than_definitions": 9,
+  "call_sites_other_than_definitions": 30,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka.c"
+  ],
+  "inferred": [
+   "#uuid"
+  ],
+  "units": [
+   "librdkafka/rdkafka.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_consumer_group_metadata_destroy",
+  "files_other_than_definitions": 9,
+  "call_sites_other_than_definitions": 30,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c"
+  ],
+  "inferred": [
+   "#cgmetadata"
+  ],
+  "units": [
+   "librdkafka/rdkafka_cgrp.c"
+  ]
+ },
+ {
+  "function": "cmt_map_destroy",
+  "files_other_than_definitions": 9,
+  "call_sites_other_than_definitions": 27,
+  "definitions": [
+   "lib/cmetrics/src/cmt_map.c"
+  ],
+  "inferred": [
+   "#map"
+  ],
+  "units": [
+   "cmetrics/cmt_map.c"
+  ]
+ },
+ {
+  "function": "rd_kafka_mock_broker_set_up",
+  "files_other_than_definitions": 9,
+  "call_sites_other_than_definitions": 20,
+  "definitions": [
+   "lib/librdkafka-2.15.0/src/rdkafka_mock.c"
+  ],
+  "inferred": [
+   "#mcluster"
+  ],
+  "units": [
+   "librdkafka/rdkafka_mock.c"
+  ]
+ }
+]

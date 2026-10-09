@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""compare.py BEFORE AFTER OUT.json -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from
-CG10-INDIRECT-ACCESS-SOLE-RESIDUALS' compare.py and attribute_contracts.py):
-every moving function between two route reports (a run directory or its
-resource-diagnostics.json), with the leaves it lost and gained, attributed to
-the card's declarations.
+"""compare.py BEFORE AFTER OUT.json -- NULL-SAFETY-PROPERTY (adapted from
+CG22-CALLBACK-REGISTRY-CONTRACT's, itself from CG10-INDIRECT-ACCESS-SOLE-RESIDUALS'
+compare.py): every moving function between two route reports (a run
+directory or its resource-diagnostics.json), with the leaves it lost and
+gained, attributed to rule 14n.
 
 Rows are keyed by (unit file, the unit's occurrence of that file, function,
 row index within the unit). A function moves when its status or its multiset
 of leaves (line, description) changes. Labels:
-* `callee:F` -- a lost leaf names a callee F this card declared;
+* `null-premise` -- the AFTER row lists its own null premises (rule 14n);
 * `callee-summary:G` -- otherwise, a lost or gained leaf names a function G
   that itself moved to Safe in AFTER (its validated summary now applies);
 * `other` -- none of these (read by hand, in the report).
@@ -19,17 +19,8 @@ import pathlib
 import re
 import sys
 
-DECLARED = [
-    # CG22-CALLBACK-REGISTRY-CONTRACT: the callback declarations and the two
-    # re-declared in place (a lost or gained leaf naming one of them).
-    "bsearch", "qsort", "pthread_once",
-    "cmt_mpack_unpack_array", "cmt_mpack_unpack_map",
-    "ctr_mpack_unpack_array", "ctr_mpack_unpack_map",
-    "rd_list_init", "rd_list_new", "rd_list_add", "rd_list_destroy", "rd_list_clear",
-    "pb_write", "pb_encode_varint",
-    "rd_kafka_topic_partition_list_sort", "msgpack_packer_init",
-]
 TEMPLATE = re.compile(r"`[^`]*`")
+PREMISED = {}
 
 
 def load(path):
@@ -51,11 +42,16 @@ def rows(report):
             leaves = collections.Counter(
                 (d.get("line"), d.get("description", "")) for d in entry.get("diagnostics") or [])
             out[key] = (entry["status"], leaves)
+            PREMISED.setdefault(id(report), set())
+            if entry.get("null_premises"):
+                PREMISED[id(report)].add(key)
     return out
 
 
 def main():
-    before, after = rows(load(sys.argv[1])), rows(load(sys.argv[2]))
+    after_report = load(sys.argv[2])
+    before, after = rows(load(sys.argv[1])), rows(after_report)
+    premised = PREMISED.get(id(after_report), set())
     statuses = [collections.Counter(s for s, _ in table.values()) for table in (before, after)]
     safe_now = {key[2] for key, (status, _) in after.items()
                 if status == "Safe" and before.get(key, ("absent",))[0] != "Safe"}
@@ -76,7 +72,8 @@ def main():
         # A lost or a gained leaf (a correction gains the refusal that names
         # the re-declared callee).
         lost_text = " ".join(d for (_, d) in list(lost) + list(gained))
-        labels = sorted({"callee:" + name for name in DECLARED if "`%s`" % name in lost_text})
+        labels = ["null-premise"] if key in premised else []
+        del lost_text
         if not labels:
             texts = " ".join(d for (_, d) in list(lost) + list(gained))
             labels = sorted({"callee-summary:" + name for name in safe_now

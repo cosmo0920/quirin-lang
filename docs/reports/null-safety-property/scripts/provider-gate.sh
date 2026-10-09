@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# provider-gate.sh NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): the provider gate
+# provider-gate.sh NAME -- NULL-SAFETY-PROPERTY (adapted from CG22-CALLBACK-REGISTRY-CONTRACT's): the provider gate
 # (docs/agents/providers.md; brief-callee-closure-r3.md "Contract placement"):
 # cargo test/fmt/clippy and `cargo check --locked` on providers/, contracts.py
 # check, package build and verify of every package, and the providers Python

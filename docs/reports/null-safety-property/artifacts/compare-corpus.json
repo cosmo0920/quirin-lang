@@ -1,0 +1,5444 @@
+{
+ "statuses_before": {
+  "Unknown": 3922,
+  "Safe": 903,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3910,
+  "Safe": 915,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 12
+ },
+ "status_moves_by_label": {
+  "null-premise": 12
+ },
+ "removed": {
+  "unresolved resource identity `_`": 592,
+  "call to uncontracted function `_`": 13,
+  "indirect memory access is outside the resource projection": 2,
+  "unmodeled call, aggregate or indirect access in branch condition": 1
+ },
+ "added": {},
+ "moving_rows": 287,
+ "status_moves": [
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5645: unresolved resource identity `buckets`",
+    "5646: unresolved resource identity `buckets`",
+    "5647: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_summary_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5691: unresolved resource identity `summary`",
+    "5692: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_is_storage_overlimit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19866: unresolved resource identity `storage`",
+    "19868: unresolved resource identity `storage`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_iov.c",
+   "occurrence": 1,
+   "function": "mk_iov_print",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2184: unresolved resource identity `c`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "fifo_drop_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5346: unresolved resource identity `msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "fifo_is_msg_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5355: unresolved resource identity `msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_broadcast_signal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7001: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignor_topic_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20337: unresolved resource identity `a`",
+    "20337: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_ack_type_from_msg_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20861: unresolved resource identity `rkm`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_regex_cnt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22707: unresolved resource identity `rktpar`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19773: unresolved resource identity `iv`",
+    "19774: unresolved resource identity `iv`",
+    "19775: unresolved resource identity `iv`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "sink_peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19821: unresolved resource identity `iov`",
+    "19822: unresolved resource identity `iov`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "get_array_item",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2770: unresolved resource identity `current_child`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "get_object_item",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2801: unresolved resource identity `current_element`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "print_string_ptr",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2066: unresolved resource identity `input_pointer`",
+    "2068: unresolved resource identity `input_pointer`",
+    "2070: unresolved resource identity `input_pointer`",
+    "2075: unresolved resource identity `input_pointer`",
+    "2099: unresolved resource identity `input_pointer`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_get_content",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2166: unresolved resource identity `mf`",
+    "2176: unresolved resource identity `cf`",
+    "2177: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_get_content_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2223: unresolved resource identity `mf`",
+    "2227: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_get_real_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2240: unresolved resource identity `mf`",
+    "2244: unresolved resource identity `cf`",
+    "2247: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_tx_begin",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2309: unresolved resource identity `mf`",
+    "2310: unresolved resource identity `mf`",
+    "2314: unresolved resource identity `cf`",
+    "2315: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_chunk.c",
+   "occurrence": 1,
+   "function": "cio_chunk_tx_rollback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2342: unresolved resource identity `mf`",
+    "2343: unresolved resource identity `mf`",
+    "2347: unresolved resource identity `cf`",
+    "2348: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "_cio_file_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3355: unresolved resource identity `cf`",
+    "3359: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_down",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3409: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_scan_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3656: unresolved resource identity `cf`",
+    "3657: unresolved resource identity `cf`",
+    "3669: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3471: unresolved resource identity `cf`",
+    "3472: unresolved resource identity `cf`",
+    "3473: unresolved resource identity `cf`",
+    "3475: unresolved resource identity `cf`",
+    "3484: unresolved resource identity `cf`",
+    "3492: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_write_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3511: unresolved resource identity `cf`",
+    "3512: unresolved resource identity `cf`",
+    "3515: unresolved resource identity `cf`",
+    "3517: unresolved resource identity `cf`",
+    "3521: unresolved resource identity `cf`",
+    "3522: unresolved resource identity `cf`",
+    "3529: unresolved resource identity `cf`",
+    "3530: unresolved resource identity `cf`",
+    "3532: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "mmap_file",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "3061: unresolved resource identity `cf`",
+    "3081: unresolved resource identity `cf`",
+    "3098: unresolved resource identity `cf`",
+    "3104: unresolved resource identity `cf`",
+    "3105: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_memfs.c",
+   "occurrence": 1,
+   "function": "cio_memfs_content_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2209: unresolved resource identity `mf`",
+    "2215: unresolved resource identity `mf`",
+    "2217: unresolved resource identity `mf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_memfs.c",
+   "occurrence": 1,
+   "function": "cio_memfs_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2186: unresolved resource identity `mf`",
+    "2188: unresolved resource identity `mf`",
+    "2189: unresolved resource identity `mf`",
+    "2190: unresolved resource identity `mf`",
+    "2200: unresolved resource identity `mf`",
+    "2201: unresolved resource identity `mf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_meta.c",
+   "occurrence": 1,
+   "function": "cio_meta_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2449: unresolved resource identity `mf`",
+    "2452: unresolved resource identity `mf`",
+    "2455: unresolved resource identity `mf`",
+    "2463: unresolved resource identity `cf`",
+    "2467: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_meta.c",
+   "occurrence": 1,
+   "function": "cio_meta_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2418: unresolved resource identity `mf`",
+    "2422: unresolved resource identity `mf`",
+    "2430: unresolved resource identity `cf`",
+    "2434: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_meta.c",
+   "occurrence": 1,
+   "function": "cio_meta_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2399: unresolved resource identity `mf`",
+    "2406: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_meta.c",
+   "occurrence": 1,
+   "function": "cio_meta_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2379: unresolved resource identity `mf`",
+    "2383: unresolved resource identity `mf`",
+    "2387: unresolved resource identity `mf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_counter",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6137: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_exp_histogram",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6369: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_gauge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6176: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_histogram",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6256: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_summary",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6301: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_untyped",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6215: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_basic_type_meta",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8313: unresolved resource identity `decode_context`",
+    "8317: unresolved resource identity `histogram`",
+    "8324: unresolved resource identity `decode_context`",
+    "8324: unresolved resource identity `histogram`",
+    "8328: unresolved resource identity `decode_context`",
+    "8328: unresolved resource identity `exp_histogram`",
+    "8333: unresolved resource identity `decode_context`",
+    "8333: unresolved resource identity `summary`",
+    "8339: unresolved resource identity `counter`",
+    "8339: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context_external_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8603: unresolved resource identity `metrics_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_context_internal_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8585: unresolved resource identity `metrics_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7867: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_negative_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7801: unresolved resource identity `decode_context`",
+    "7805: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_negative_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7775: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_positive_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7787: unresolved resource identity `decode_context`",
+    "7791: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_positive_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7756: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_scale",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7717: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_sum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7900: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_sum_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7883: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_exp_histogram_zero_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7729: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7642: unresolved resource identity `decode_context`",
+    "7648: unresolved resource identity `decode_context`",
+    "7649: unresolved resource identity `histogram`",
+    "7652: unresolved resource identity `histogram`",
+    "7656: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7674: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7628: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_histogram_sum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7611: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8227: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_buckets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8241: unresolved resource identity `decode_context`",
+    "8244: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_opts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8181: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8269: unresolved resource identity `decode_context`",
+    "8272: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_meta_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8134: unresolved resource identity `decode_context`",
+    "8145: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7990: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7935: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7418: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_value_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7441: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_static_label",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7337: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7560: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_quantile",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7521: unresolved resource identity `decode_context`",
+    "7526: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7539: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_quantiles_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7509: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_summary_sum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7576: unresolved resource identity `decode_context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_counter_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7945: unresolved resource identity `counter`",
+    "7946: unresolved resource identity `counter`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_data_point_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7541: unresolved resource identity `attribute`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_exponential_histogram_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8082: unresolved resource identity `positive`",
+    "8087: unresolved resource identity `positive`",
+    "8088: unresolved resource identity `positive`",
+    "8091: unresolved resource identity `negative`",
+    "8097: unresolved resource identity `negative`",
+    "8098: unresolved resource identity `negative`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_exponential_histogram_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8184: unresolved resource identity `exp_histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_gauge_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7971: unresolved resource identity `gauge`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_histogram_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7833: unresolved resource identity `histogram`",
+    "7836: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_histogram_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8005: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_summary_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7709: unresolved resource identity `summary`",
+    "7712: unresolved resource identity `summary`",
+    "7715: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_summary_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7985: unresolved resource identity `summary`",
+    "7990: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_counter_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6673: unresolved resource identity `counter`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_gauge_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6688: unresolved resource identity `gauge`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_histogram_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6935: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_histogram_points",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6749: unresolved resource identity `histogram`",
+    "6800: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_untyped_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6703: unresolved resource identity `untyped`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_statsd.c",
+   "occurrence": 1,
+   "function": "decode_counter_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5780: unresolved resource identity `counter`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_statsd.c",
+   "occurrence": 1,
+   "function": "decode_gauge_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5794: unresolved resource identity `gauge`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_statsd.c",
+   "occurrence": 1,
+   "function": "decode_untyped_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5808: unresolved resource identity `untyped`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "count_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7314: unresolved resource identity `map`",
+    "7322: unresolved resource identity `map`",
+    "7330: unresolved resource identity `map`",
+    "7338: unresolved resource identity `map`",
+    "7346: unresolved resource identity `map`",
+    "7354: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_basic_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7037: unresolved resource identity `opts`",
+    "7038: unresolved resource identity `opts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_histogram_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7138: unresolved resource identity `exp_bucket_counts`",
+    "7152: unresolved resource identity `opts`",
+    "7171: unresolved resource identity `exp_bucket_counts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_summary_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7186: unresolved resource identity `opts`",
+    "7192: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5645: unresolved resource identity `buckets`",
+    "5646: unresolved resource identity `buckets`",
+    "5647: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:append_histogram_metric_value",
+    "callee-summary:append_summary_metric_value"
+   ],
+   "lost": [
+    "5733: call to uncontracted function `append_histogram_metric_value`",
+    "5755: call to uncontracted function `append_histogram_metric_value`",
+    "5762: call to uncontracted function `append_summary_metric_value`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "append_summary_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5691: unresolved resource identity `summary`",
+    "5692: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7070: unresolved resource identity `opts`",
+    "7072: unresolved resource identity `opts`",
+    "7074: unresolved resource identity `opts`",
+    "7076: unresolved resource identity `opts`",
+    "7099: unresolved resource identity `histogram`",
+    "7101: unresolved resource identity `histogram`",
+    "7104: unresolved resource identity `histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7187: unresolved resource identity `histogram`",
+    "7240: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "apply_data_point_metadata_from_otlp_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7226: unresolved resource identity `number_data_point`",
+    "7230: unresolved resource identity `number_data_point`",
+    "7233: unresolved resource identity `number_data_point`",
+    "7234: unresolved resource identity `number_data_point`",
+    "7238: unresolved resource identity `number_data_point`",
+    "7239: unresolved resource identity `number_data_point`",
+    "7242: unresolved resource identity `number_data_point`",
+    "7243: unresolved resource identity `number_data_point`",
+    "7249: unresolved resource identity `number_data_point`",
+    "7250: unresolved resource identity `number_data_point`",
+    "7253: unresolved resource identity `number_data_point`",
+    "7254: unresolved resource identity `number_data_point`",
+    "7260: unresolved resource identity `number_data_point`",
+    "7274: unresolved resource identity `summary_data_point`",
+    "7288: unresolved resource identity `histogram_data_point`",
+    "7327: unresolved resource identity `exp_data_point`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "cfl_variant_array_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7781: unresolved resource identity `array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "cfl_variant_kvlist_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7760: unresolved resource identity `kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_exemplars_from_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7087: unresolved resource identity `array`",
+    "7090: unresolved resource identity `array`",
+    "7095: unresolved resource identity `array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_opentelemetry_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "9059: unresolved resource identity `context`",
+    "9082: unresolved resource identity `scope_metrics_list`",
+    "9083: unresolved resource identity `scope_metrics_list`",
+    "9102: unresolved resource identity `scope_metrics_list`",
+    "9125: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "pack_basic_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "9417: unresolved resource identity `counter`",
+    "9420: unresolved resource identity `counter`",
+    "9423: unresolved resource identity `counter`",
+    "9429: unresolved resource identity `histogram`",
+    "9432: unresolved resource identity `histogram`",
+    "9440: unresolved resource identity `exp_histogram`",
+    "9443: unresolved resource identity `exp_histogram`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "occurrence": 1,
+   "function": "cmt_encode_opentelemetry_split_payload",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6999: unresolved resource identity `resource`",
+    "7003: unresolved resource identity `resource`",
+    "7008: unresolved resource identity `scope`",
+    "7012: unresolved resource identity `scope`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "occurrence": 1,
+   "function": "metrics_batch_view_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6513: unresolved resource identity `scope`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6177: unresolved resource identity `histogram`",
+    "6178: unresolved resource identity `map`",
+    "6179: unresolved resource identity `bucket`",
+    "6183: unresolved resource identity `bucket`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_summary_quantiles",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6227: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "metric_banner",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5922: unresolved resource identity `opts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "pack_complex_metric_sample",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7166: unresolved resource identity `summary`",
+    "7219: unresolved resource identity `exp_bucket_counts`",
+    "7313: unresolved resource identity `exp_bucket_counts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_histogram_bucket",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5860: unresolved resource identity `histogram`",
+    "5861: unresolved resource identity `buckets`",
+    "5866: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6024: unresolved resource identity `bucket_counts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5659: unresolved resource identity `opts`",
+    "5668: unresolved resource identity `opts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_summary_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5936: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_histogram_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5785: unresolved resource identity `buckets`",
+    "5786: unresolved resource identity `buckets`",
+    "5787: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_metric_exemplars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5755: unresolved resource identity `exemplars`",
+    "5759: unresolved resource identity `exemplars`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "append_summary_metric_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5832: unresolved resource identity `summary`",
+    "5833: unresolved resource identity `summary`",
+    "5839: unresolved resource identity `summary`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_histogram_observe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5703: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_histogram_set_default",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5730: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "occurrence": 1,
+   "function": "histogram_get_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5683: unresolved resource identity `buckets`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7393: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_event_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7349: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_instrumentation_scope_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7309: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_link",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7476: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_link_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7449: unresolved resource identity `context`",
+    "7452: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_link_span_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7421: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_link_trace_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7406: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7729: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_resource_span_schema_url",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7713: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_scope_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7696: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_scope_span_schema_url",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7679: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7662: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7553: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_span_trace_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7544: unresolved resource identity `context`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_decode_opentelemetry_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8917: unresolved resource identity `otel_resource_span`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "ctr_encode_msgpack_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7098: unresolved resource identity `resource`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6802: unresolved resource identity `list`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_variant_array_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8782: unresolved resource identity `array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_variant_kvlist_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "8761: unresolved resource identity `kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_status",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6945: unresolved resource identity `status`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_get_event_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20468: unresolved resource identity `buf`",
+    "20471: unresolved resource identity `buf`",
+    "20474: unresolved resource identity `buf`",
+    "20477: unresolved resource identity `buf`",
+    "20480: unresolved resource identity `buf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_is_storage_overlimit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19866: unresolved resource identity `storage`",
+    "19868: unresolved resource identity `storage`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_place_new_chunk",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18581: unresolved resource identity `i_ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_protect",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19938: unresolved resource identity `storage`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_ring_buffer_collector",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20347: unresolved resource identity `cr`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "get_input_chunk_source_name",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18018: unresolved resource identity `chunk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "input_chunk_append_raw",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20204: unresolved resource identity `si`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "input_chunk_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19817: unresolved resource identity `ic`",
+    "19818: unresolved resource identity `ic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "input_chunk_has_magic_bytes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17857: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "update_logs_tag_records_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17749: unresolved resource identity `config`",
+    "17780: unresolved resource identity `config`",
+    "17784: unresolved resource identity `config`",
+    "17787: unresolved resource identity `config`",
+    "17797: unresolved resource identity `config`",
+    "17804: unresolved resource identity `config`",
+    "17806: unresolved resource identity `config`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_clearHash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "531: unresolved resource identity `hashTable`",
+    "532: unresolved resource identity `hashTable`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1744: unresolved resource identity `lz4sd`",
+    "1748: unresolved resource identity `lz4sd`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_unsafe_generic",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1302: unresolved resource identity `match`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_loadDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1113: unresolved resource identity `dict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_setStreamDecode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1722: unresolved resource identity `lz4sd`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4HC_compress_hashChain",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1079: unresolved resource identity `op`",
+    "1083: unresolved resource identity `op`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4HC_compress_optimal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1729: unresolved resource identity `op`",
+    "1733: unresolved resource identity `op`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_iov.c",
+   "occurrence": 1,
+   "function": "mk_iov_print",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2184: unresolved resource identity `c`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_rconf.c",
+   "occurrence": 1,
+   "function": "mk_rconf_section_entry_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1826: unresolved resource identity `head`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "occurrence": 1,
+   "function": "_mk_string_search",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2116: unresolved resource identity `q`",
+    "2116: unresolved resource identity `s`",
+    "2125: unresolved resource identity `s`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "occurrence": 1,
+   "function": "mk_string_build",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2274: unresolved resource identity `ptr`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "occurrence": 1,
+   "function": "mk_string_itop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2416: unresolved resource identity `dst`",
+    "2417: unresolved resource identity `dst`",
+    "2421: unresolved resource identity `dst`",
+    "2425: unresolved resource identity `dst`",
+    "2426: unresolved resource identity `dst`",
+    "2429: unresolved resource identity `dst`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_core/mk_string.c",
+   "occurrence": 1,
+   "function": "mk_string_tolower",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "2463: unresolved resource identity `ip`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "fifo_drop_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5346: unresolved resource identity `msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "fifo_is_msg_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5355: unresolved resource identity `msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_worker_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5370: unresolved resource identity `fw`",
+    "5372: unresolved resource identity `fw`",
+    "5380: unresolved resource identity `fw`",
+    "5382: indirect memory access is outside the resource projection",
+    "5390: unresolved resource identity `fw`",
+    "5391: unresolved resource identity `fw`",
+    "5392: unmodeled call, aggregate or indirect access in branch condition",
+    "5393: indirect memory access is outside the resource projection",
+    "5394: unresolved resource identity `fw`",
+    "5398: call to uncontracted function `fifo_drop_msg`",
+    "5404: call to uncontracted function `fifo_drop_msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_worker_setup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5153: unresolved resource identity `ctx`",
+    "5157: unresolved resource identity `ctx`",
+    "5161: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_header.c",
+   "occurrence": 1,
+   "function": "mk_header_prepare",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5921: unresolved resource identity `sh`",
+    "5940: unresolved resource identity `sh`",
+    "5952: unresolved resource identity `sh`",
+    "5970: unresolved resource identity `sh`",
+    "5976: unresolved resource identity `sh`",
+    "6002: unresolved resource identity `sh`",
+    "6010: unresolved resource identity `sh`",
+    "6021: unresolved resource identity `sh`",
+    "6063: unresolved resource identity `sh`",
+    "6067: unresolved resource identity `sh`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_header_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7138: unresolved resource identity `parser`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_point_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6127: unresolved resource identity `header`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_range_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6337: unresolved resource identity `in`",
+    "6338: unresolved resource identity `in`",
+    "6340: unresolved resource identity `sh`",
+    "6341: unresolved resource identity `in`",
+    "6341: unresolved resource identity `sh`",
+    "6342: unresolved resource identity `in`",
+    "6344: unresolved resource identity `sh`",
+    "6345: unresolved resource identity `in`",
+    "6345: unresolved resource identity `sh`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "header_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5618: unresolved resource identity `header`",
+    "5620: unresolved resource identity `header`",
+    "5759: unresolved resource identity `header_extra`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_http_thread.c",
+   "occurrence": 1,
+   "function": "thread_cb_init_vars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6038: unresolved resource identity `channel`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_http_header",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6847: unresolved resource identity `h`",
+    "6849: unresolved resource identity `h`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_lib_yield",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6502: unresolved resource identity `channel`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_stop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6583: unresolved resource identity `server`",
+    "6590: unresolved resource identity `server`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "_next_target",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6486: unresolved resource identity `ctx`",
+    "6492: unresolved resource identity `ctx`",
+    "6493: unresolved resource identity `worker`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_add_connection",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6565: unresolved resource identity `handler`",
+    "6567: unresolved resource identity `handler`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_broadcast_signal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7001: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_launch_worker_loop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6646: unresolved resource identity `sched`",
+    "6669: unresolved resource identity `server`",
+    "6671: unresolved resource identity `sched`",
+    "6675: unresolved resource identity `server`",
+    "6678: unresolved resource identity `server`",
+    "6679: unresolved resource identity `server`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_register_thread",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6608: unresolved resource identity `ctx`",
+    "6614: unresolved resource identity `worker`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_worker_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6530: unresolved resource identity `worker`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_workers_join",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "7014: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "occurrence": 1,
+   "function": "mk_channel_stream_write",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "5854: unresolved resource identity `channel`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_fdt_chain_lookup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6045: unresolved resource identity `hc`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_fdt_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "6078: unresolved resource identity `ht`",
+    "6087: unresolved resource identity `ht`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_begin_extension",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "446: unresolved resource identity `msg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "decode_static_field",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "657: unresolved resource identity `size`",
+    "664: unresolved resource identity `size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_dec_bytes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1152: unresolved resource identity `dest`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_dec_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "1176: unresolved resource identity `dest`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_check_proto3_default_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "520: unresolved resource identity `p`",
+    "530: unresolved resource identity `bytes`",
+    "570: unresolved resource identity `pCallback`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "occurrence": 1,
+   "function": "rd_hdr_iter_next",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "4176: unresolved resource identity `hdr`",
+    "4179: unresolved resource identity `hdr`",
+    "4180: unresolved resource identity `hdr`",
+    "4183: unresolved resource identity `hdr`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdhttp.c",
+   "occurrence": 1,
+   "function": "rd_http_req_write_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21289: unresolved resource identity `hreq`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdhttp.c",
+   "occurrence": 1,
+   "function": "unittest_http_get_params_append",
+   "row": 1,
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21820: unresolved resource identity `test`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListGroups_resp_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "24908: unresolved resource identity `state`",
+    "24917: unresolved resource identity `state`",
+    "24928: unresolved resource identity `state`",
+    "24937: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_get_offsets_for_times_resp_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "24168: unresolved resource identity `state`",
+    "24184: unresolved resource identity `state`",
+    "24185: unresolved resource identity `state`",
+    "24186: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_list_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25072: unresolved resource identity `grplist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22189: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_wmark_offsets_resp_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "24047: unresolved resource identity `state`",
+    "24049: unresolved resource identity `state`",
+    "24051: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_fanout_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "23285: unresolved resource identity `results`",
+    "23286: unresolved resource identity `results`",
+    "23289: unresolved resource identity `results`",
+    "23290: unresolved resource identity `results`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_timeout_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "23190: unresolved resource identity `rk`",
+    "23194: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_fanout_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22998: unresolved resource identity `rkcg`",
+    "22999: unresolved resource identity `rkcg`",
+    "23001: unresolved resource identity `rkcg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_log_fetch_stall",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22220: unresolved resource identity `rkcg`",
+    "22223: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21967: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreatePartitionsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21599: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21306: unresolved resource identity `rkb`",
+    "21310: unresolved resource identity `reply`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteRecords_result_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22948: unresolved resource identity `rko`",
+    "22951: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21438: unresolved resource identity `rkb`",
+    "21442: unresolved resource identity `reply`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeCluster_result_description",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "26288: unresolved resource identity `rko`",
+    "26291: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22265: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25507: unresolved resource identity `proto_type`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25936: unresolved resource identity `rko`",
+    "25939: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "26172: unresolved resource identity `md`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeTopics_result_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "26118: unresolved resource identity `rko`",
+    "26121: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22088: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "24965: unresolved resource identity `proto_type`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroups_result_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25125: unresolved resource identity `rko`",
+    "25128: unresolved resource identity `rko`",
+    "25130: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroups_result_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25109: unresolved resource identity `rko`",
+    "25112: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_fanout_op_distribute",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20810: unresolved resource identity `rko_fanout`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignor_cmp_str",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20432: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignor_topic_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20337: unresolved resource identity `a`",
+    "20337: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_member_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20225: unresolved resource identity `a`",
+    "20225: unresolved resource identity `b`",
+    "20227: unresolved resource identity `a`",
+    "20227: unresolved resource identity `b`",
+    "20229: unresolved resource identity `a`",
+    "20229: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_handle_SaslHandshake",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22148: unresolved resource identity `mechs`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_dr_msgq0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22472: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_producer_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22998: unresolved resource identity `__n`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_cert_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20500: unresolved resource identity `sconf`",
+    "20502: unresolved resource identity `sconf`",
+    "20504: unresolved resource identity `sconf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_cert_dtor",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20476: unresolved resource identity `conf`",
+    "20480: unresolved resource identity `conf`",
+    "20484: unresolved resource identity `conf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_ssl_passwd_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20169: unresolved resource identity `conf`",
+    "20171: unresolved resource identity `conf`",
+    "20172: unresolved resource identity `conf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_assignor_handle_Metadata_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21430: unresolved resource identity `rkcg`",
+    "21432: unresolved resource identity `rkcg`",
+    "21433: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21966: unresolved resource identity `rkcg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21995: unresolved resource identity `rkcg`",
+    "21996: unresolved resource identity `rkcg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_Heartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22475: unresolved resource identity `rkcg`",
+    "22476: unresolved resource identity `rkcg`",
+    "22479: unresolved resource identity `request`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21486: unresolved resource identity `_vp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_offset_commit_timeout_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "23819: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_anyconf_get0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "25234: unresolved resource identity `dest`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_anyconf_set_modified",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22728: unresolved resource identity `confhdr`",
+    "22730: unresolved resource identity `confhdr`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_share_rpc",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22046: unresolved resource identity `rkcg`",
+    "22052: unresolved resource identity `rko_orig`",
+    "22053: unresolved resource identity `rkb`",
+    "22066: unresolved resource identity `rkb`",
+    "22067: unresolved resource identity `rkb`",
+    "22068: unresolved resource identity `rkb`",
+    "22069: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_ack_type_from_msg_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20861: unresolved resource identity `rkm`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20911: call to uncontracted function `rd_kafka_share_ack_type_from_msg_op`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_refresh_consumer_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21087: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20717: unresolved resource identity `rkmc`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_connection_parse_request",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22206: unresolved resource identity `mcluster`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_connection_read_request",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22119: unresolved resource identity `mcluster`",
+    "22151: unresolved resource identity `mcluster`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_next_request_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22691: unresolved resource identity `mcluster`",
+    "22698: unresolved resource identity `mcluster`",
+    "22704: unresolved resource identity `mcluster`",
+    "22706: unresolved resource identity `mcluster`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_message_setup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20591: unresolved resource identity `rktp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgbatch_ready_produce",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20819: unresolved resource identity `rktp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_msg_v0_1",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19998: unresolved resource identity `rkbuf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20120: unresolved resource identity `rkbuf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_msgs_v2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20126: unresolved resource identity `rkbuf`",
+    "20130: unresolved resource identity `msetr`",
+    "20135: unresolved resource identity `msetr`",
+    "20137: unresolved resource identity `msetr`",
+    "20155: unresolved resource identity `rkbuf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_peek_msg_version",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20289: unresolved resource identity `rkbuf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_op_app_prepare",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20374: unresolved resource identity `rktp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_toppar_enq_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21504: unresolved resource identity `rkt`",
+    "21505: unresolved resource identity `rkt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21963: unresolved resource identity `a`",
+    "21963: unresolved resource identity `b`",
+    "21967: unresolved resource identity `a`",
+    "21967: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_cmp_topic",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21985: unresolved resource identity `a`",
+    "21985: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21591: unresolved resource identity `rktp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22000: unresolved resource identity `a`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_combine_regexes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22749: unresolved resource identity `topic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_regex_cnt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22707: unresolved resource identity `rktpar`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_not_regex",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22714: unresolved resource identity `rktpar`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_leader_unavailable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21554: unresolved resource identity `rkt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_offset_fetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20923: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20771: unresolved resource identity `rkq`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_retry_msgq",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20742: unresolved resource identity `rk`",
+    "20743: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_member_assigned_partitions_pair_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19594: unresolved resource identity `a`",
+    "19594: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_assignment_state_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19677: unresolved resource identity `a`",
+    "19678: unresolved resource identity `b`",
+    "19679: unresolved resource identity `a`",
+    "19679: unresolved resource identity `b`",
+    "19691: unresolved resource identity `a`",
+    "19691: unresolved resource identity `b`",
+    "19695: unresolved resource identity `a`",
+    "19695: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_read_CurrentLeader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20697: unresolved resource identity `_vp`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_make_ListOffsetsRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20864: unresolved resource identity `parameters`",
+    "20865: unresolved resource identity `parameters`",
+    "20866: unresolved resource identity `parameters`",
+    "20867: unresolved resource identity `parameters`",
+    "20889: unresolved resource identity `partitions`",
+    "20890: unresolved resource identity `partitions`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_client_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20840: unresolved resource identity `rkb`",
+    "20842: unresolved resource identity `rk`",
+    "20844: unresolved resource identity `rk`",
+    "20845: unresolved resource identity `rkb`",
+    "20849: unresolved resource identity `rkb`",
+    "20850: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_canon",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20631: unresolved resource identity `rktrans`",
+    "20632: unresolved resource identity `rktrans`",
+    "20638: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_chalprompt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20608: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_getopt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20543: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_getrealm",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20617: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20586: unresolved resource identity `rktrans`",
+    "20595: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20577: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_cb_log",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20556: unresolved resource identity `rktrans`",
+    "20558: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20660: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "parse_ujws_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20458: unresolved resource identity `life_seconds_text`",
+    "20485: unresolved resource identity `extension_key`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20725: unresolved resource identity `state`",
+    "20740: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_oauthbearer_token_refresh_tmr_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20840: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21909: unresolved resource identity `query`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_plain.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_plain_client_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20176: unresolved resource identity `rkb`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_scram_build_client_first_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20498: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_scram_fsm",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20515: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_send_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20297: unresolved resource identity `results`",
+    "20298: unresolved resource identity `results`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ssl_error0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20273: unresolved resource identity `data`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_get_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "22374: unresolved resource identity `state`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_info_topic_cmp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20909: unresolved resource identity `b`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20604: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20397: unresolved resource identity `rk`",
+    "20399: unresolved resource identity `rkt`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "occurrence": 1,
+   "function": "rd_kafka_transport_io_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20538: unresolved resource identity `rkb`",
+    "20569: unresolved resource identity `rktrans`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdlog.c",
+   "occurrence": 1,
+   "function": "rd_hexdump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19634: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19802: unresolved resource identity `iov`",
+    "19803: unresolved resource identity `iov`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "decompress_all_tags",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:peek"
+   ],
+   "lost": [
+    "20249: call to uncontracted function `peek`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "emit_literal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19951: unresolved resource identity `base`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19773: unresolved resource identity `iv`",
+    "19774: unresolved resource identity `iv`",
+    "19775: unresolved resource identity `iv`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "read_uncompressed_length",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:peek"
+   ],
+   "lost": [
+    "20200: call to uncontracted function `peek`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "refill_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20281: call to uncontracted function `peek`",
+    "20301: call to uncontracted function `peek`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "sink_peek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19821: unresolved resource identity `iov`",
+    "19822: unresolved resource identity `iov`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "skip",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19785: unresolved resource identity `iv`",
+    "19786: unresolved resource identity `iv`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "sn_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:peek",
+    "callee-summary:sink_peek"
+   ],
+   "lost": [
+    "20352: call to uncontracted function `peek`",
+    "20368: call to uncontracted function `peek`",
+    "20384: call to uncontracted function `sink_peek`",
+    "20385: unresolved resource identity `dest`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "varint_encode32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19732: unresolved resource identity `ptr`",
+    "19734: unresolved resource identity `ptr`",
+    "19737: unresolved resource identity `ptr`",
+    "19741: unresolved resource identity `ptr`",
+    "19746: unresolved resource identity `ptr`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "varint_parse32_with_limit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19694: unresolved resource identity `ptr`"
+   ],
+   "gained": []
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "rows": [
+  142540,
+  142512
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 76,
+ "only_after": 48,
+ "functions_with_differences": 4,
+ "differences_outside_moving_functions": {
+  "before ?": 4,
+  "after ?": 4
+ },
+ "groups": {
+  "before flb_sched_request_invalidate bound-untracked-root": 24,
+  "after flb_sched_request_invalidate bound-untracked-root": 24,
+  "before schedule_request_now bound-untracked-root": 20,
+  "after schedule_request_now bound-untracked-root": 20,
+  "before flb_input_chunk_is_storage_overlimit condition": 8,
+  "before flb_input_chunk_is_storage_overlimit bound-untracked-closure": 4,
+  "before flb_input_chunk_is_storage_overlimit root-declarations": 4,
+  "before flb_input_chunk_is_storage_overlimit cast-semantics-census": 4,
+  "before flb_input_chunk_is_storage_overlimit ?": 4,
+  "before flb_input_chunk_is_storage_overlimit void-view-readback": 4,
+  "before ? summary-premises-graph": 4,
+  "after ? summary-premises-graph": 4
+ }
+}

@@ -1,0 +1,982 @@
+{
+ "statuses_before": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "statuses_after": {
+  "Unknown": 349,
+  "Safe": 50,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "transitions": {
+  "Unknown -> Safe": 5
+ },
+ "status_moves_by_label": {
+  "null-premise": 5
+ },
+ "removed": {
+  "unresolved resource identity `_`": 97,
+  "unmodeled call, aggregate or indirect access in branch condition": 1
+ },
+ "added": {},
+ "moving_rows": 48,
+ "status_moves": [
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "dormant_file_unchanged",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19612: unresolved resource identity `previous`",
+    "19617: unresolved resource identity `previous`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "flb_input_thread_collectors_signal_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17616: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "flb_input_thread_wait_until_is_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17599: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "flb_input_thread_collectors_signal_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17616: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "flb_input_thread_wait_until_is_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17599: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_collect_pending",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19325: unresolved resource identity `ctx`",
+    "19347: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_collect_static",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19397: unresolved resource identity `ctx`",
+    "19399: unresolved resource identity `ctx`",
+    "19425: unresolved resource identity `ctx`",
+    "19426: unresolved resource identity `ctx`",
+    "19434: unresolved resource identity `ctx`",
+    "19442: unresolved resource identity `ctx`",
+    "19452: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19520: unresolved resource identity `ctx`",
+    "19527: unresolved resource identity `ctx`",
+    "19574: unresolved resource identity `ctx`",
+    "19585: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_pause",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19619: unresolved resource identity `ctx`",
+    "19626: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19640: unresolved resource identity `ctx`",
+    "19643: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_watcher_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19476: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "occurrence": 1,
+   "function": "flb_tail_dmode_pending_flush",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20385: unresolved resource identity `ctx`",
+    "20389: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "dormant_file_unchanged",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19612: unresolved resource identity `previous`",
+    "19617: unresolved resource identity `previous`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20698: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_chunk",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21174: unresolved resource identity `ctx`",
+    "21180: unresolved resource identity `ctx`",
+    "21196: unresolved resource identity `ctx`",
+    "21197: unresolved resource identity `ctx`",
+    "21215: unresolved resource identity `ctx`",
+    "21216: unresolved resource identity `ctx`",
+    "21217: unresolved resource identity `ctx`",
+    "21233: unresolved resource identity `ctx`",
+    "21247: unresolved resource identity `ctx`",
+    "21249: unresolved resource identity `ctx`",
+    "21250: unresolved resource identity `ctx`",
+    "21251: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21564: unresolved resource identity `ctx`",
+    "21566: unresolved resource identity `ctx`",
+    "21581: unresolved resource identity `ctx`",
+    "21585: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_remove",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20997: unresolved resource identity `ctx`",
+    "21011: unresolved resource identity `ctx`",
+    "21019: unresolved resource identity `ctx`",
+    "21020: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_to_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "21412: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "process_content",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20194: unresolved resource identity `data`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "record_append_custom_keys",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19940: unresolved resource identity `ctx`",
+    "19948: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_budget_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18979: unresolved resource identity `budget`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_budget_pressure",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19068: unresolved resource identity `budget`",
+    "19072: unresolved resource identity `budget`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_budget_release",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19056: unresolved resource identity `budget`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_budget_reserve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19019: unresolved resource identity `budget`",
+    "19023: unresolved resource identity `budget`",
+    "19035: unresolved resource identity `budget`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "occurrence": 1,
+   "function": "in_tail_progress_check_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20298: unresolved resource identity `ctx`",
+    "20301: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "occurrence": 1,
+   "function": "tail_fs_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20245: unresolved resource identity `ctx`",
+    "20256: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "occurrence": 1,
+   "function": "tail_fs_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20077: unresolved resource identity `ctx`",
+    "20088: unresolved resource identity `ctx`",
+    "20107: unresolved resource identity `fst`",
+    "20108: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "occurrence": 1,
+   "function": "tail_fs_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20048: unresolved resource identity `ctx`",
+    "20058: unresolved resource identity `fst`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "flb_tail_mult_pending_flush",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20392: unresolved resource identity `ctx`",
+    "20396: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "collector_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19536: unresolved resource identity `event`",
+    "19537: unresolved resource identity `event`",
+    "19549: unresolved resource identity `event`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_collector_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20232: unresolved resource identity `config`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_instance_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19044: unresolved resource identity `ctx`",
+    "19110: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_plugin_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18945: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "collector_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19536: unresolved resource identity `event`",
+    "19537: unresolved resource identity `event`",
+    "19549: unresolved resource identity `event`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_collector_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "20232: unresolved resource identity `config`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_instance_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "19044: unresolved resource identity `ctx`",
+    "19110: unresolved resource identity `ctx`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_plugin_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18945: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "flb_input_thread_collectors_signal_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17616: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "flb_input_thread_collectors_signal_wait",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17631: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "flb_input_thread_wait_until_is_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17599: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "input_thread",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17336: unresolved resource identity `ins`",
+    "17366: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "input_thread_instance_get_status",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17578: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "flb_input_thread_collectors_signal_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17616: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "flb_input_thread_collectors_signal_wait",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17631: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "flb_input_thread_wait_until_is_ready",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17599: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "input_thread",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17336: unresolved resource identity `ins`",
+    "17366: unresolved resource identity `ins`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "input_thread_instance_get_status",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "17578: unresolved resource identity `thi`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_filter_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18651: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_input_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18629: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_output_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18607: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_filter_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18651: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_input_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18629: unresolved resource identity `p`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_output_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "null-premise"
+   ],
+   "lost": [
+    "18607: unresolved resource identity `p`"
+   ],
+   "gained": []
+  }
+ ]
+}

@@ -1,0 +1,79 @@
+{
+ "candidates": 12402,
+ "by_strongest_source_kind": {
+  "allocation": 37,
+  "lookup": 1,
+  "null-literal": 95,
+  "uninitialized": 5,
+  "uncontracted-result": 738,
+  "formal": 1816,
+  "global": 1,
+  "memory-field": 9607,
+  "other": 102
+ },
+ "functions_by_strongest_source_kind": {
+  "allocation": 20,
+  "lookup": 1,
+  "null-literal": 55,
+  "uninitialized": 3,
+  "uncontracted-result": 415,
+  "formal": 920,
+  "global": 1,
+  "memory-field": 1604,
+  "other": 27
+ },
+ "by_library": {
+  "librdkafka": 10225,
+  "cmetrics": 1028,
+  "monkey-libevent": 565,
+  "ctraces": 234,
+  "chunkio": 176,
+  "fluent-bit-chunk": 174
+ },
+ "by_library_and_kind": {
+  "chunkio": {
+   "memory-field": 131,
+   "formal": 44,
+   "other": 1
+  },
+  "cmetrics": {
+   "memory-field": 812,
+   "formal": 188,
+   "null-literal": 12,
+   "other": 11,
+   "uninitialized": 4,
+   "uncontracted-result": 1
+  },
+  "ctraces": {
+   "memory-field": 136,
+   "formal": 86,
+   "allocation": 7,
+   "uncontracted-result": 4,
+   "null-literal": 1
+  },
+  "fluent-bit-chunk": {
+   "memory-field": 149,
+   "formal": 23,
+   "other": 2
+  },
+  "librdkafka": {
+   "memory-field": 8034,
+   "formal": 1326,
+   "uncontracted-result": 709,
+   "null-literal": 77,
+   "other": 76,
+   "allocation": 2,
+   "global": 1
+  },
+  "monkey-libevent": {
+   "memory-field": 345,
+   "formal": 149,
+   "allocation": 28,
+   "uncontracted-result": 24,
+   "other": 12,
+   "null-literal": 5,
+   "lookup": 1,
+   "uninitialized": 1
+  }
+ }
+}

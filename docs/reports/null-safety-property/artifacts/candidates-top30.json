@@ -1,0 +1,483 @@
+[
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "set_event",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:691",
+  "line": 9011,
+  "kind": "member-access",
+  "subject": "event",
+  "sources": [
+   "allocation:calloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "set_events_from_ctr",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:716",
+  "line": 9030,
+  "kind": "element-access",
+  "subject": "event_arr",
+  "sources": [
+   "allocation:calloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_status",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:755",
+  "line": 9061,
+  "kind": "member-access",
+  "subject": "otel_status",
+  "sources": [
+   "allocation:calloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_links",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:792",
+  "line": 9088,
+  "kind": "member-access",
+  "subject": "otel_link",
+  "sources": [
+   "allocation:calloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "ctraces",
+  "file": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_links",
+  "custody": "Unknown",
+  "origin": "ctr_encode_opentelemetry.c:810",
+  "line": 9101,
+  "kind": "element-access",
+  "subject": "otel_links",
+  "sources": [
+   "allocation:calloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_broker.c",
+  "function": "rd_kafka_brokers_learned_ids",
+  "custody": "Unknown",
+  "origin": "rdkafka_broker.c:6555",
+  "line": 24209,
+  "kind": "dereference",
+  "subject": "p++",
+  "sources": [
+   "allocation:malloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "librdkafka",
+  "file": "rdkafka_msg.c",
+  "function": "rd_kafka_produce_batch",
+  "custody": "Unknown",
+  "origin": "rdkafka_msg.c:830",
+  "line": 20273,
+  "kind": "member-access",
+  "subject": "rktp",
+  "sources": [
+   "allocation:rd_kafka_toppar_get_avail",
+   "null-literal"
+  ],
+  "rank_kind": "allocation",
+  "reading": "guarded-by-something-unread",
+  "why": "rktp is set on every path that makes `good > 0` with a single partition (a counter correlated with the pointer)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_section_entry_add",
+  "custody": "Unknown",
+  "origin": "mk_core/mk_rconf.c:92",
+  "line": 1828,
+  "kind": "member-access",
+  "subject": "new",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_core/mk_string.c",
+  "function": "mk_string_split_line",
+  "custody": "Unknown",
+  "origin": "mk_core/mk_string.c:382",
+  "line": 2223,
+  "kind": "member-access",
+  "subject": "new",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_cache.c",
+  "function": "mk_cache_worker_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_cache.c:38",
+  "line": 5603,
+  "kind": "member-access",
+  "subject": "p_tmp",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_http.c",
+  "function": "mk_http_directory_redirect_check",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_http.c:565",
+  "line": 6442,
+  "kind": "element-access",
+  "subject": "location",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_mimetype.c",
+  "function": "mk_mimetype_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_mimetype.c:126",
+  "line": 5863,
+  "kind": "call-precondition",
+  "subject": "name at inferred `mk_mimetype_add` quant null-deref #name",
+  "sources": [
+   "allocation:mk_string_dup"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_plugin.c:219",
+  "line": 6156,
+  "kind": "member-access",
+  "subject": "st",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_api_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_plugin.c:293",
+  "line": 6208,
+  "kind": "member-access",
+  "subject": "api",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_thread_lists_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_scheduler.c:256",
+  "line": 6601,
+  "kind": "call-precondition",
+  "subject": "sched_cs_incomplete at inferred `mk_list_init` quant null-deref #list",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_launch_thread",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_scheduler.c:441",
+  "line": 6695,
+  "kind": "member-access",
+  "subject": "thconf",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_listen_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_server.c:185",
+  "line": 6276,
+  "kind": "call-precondition",
+  "subject": "listeners at inferred `mk_list_init` quant null-deref #list",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_server.c",
+  "function": "mk_server_listen_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_server.c:209",
+  "line": 6292,
+  "kind": "member-access",
+  "subject": "event",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_utils.c",
+  "function": "mk_utils_url_decode",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_utils.c:481",
+  "line": 6040,
+  "kind": "element-access",
+  "subject": "buf",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_fdt_worker_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:90",
+  "line": 5981,
+  "kind": "call-precondition",
+  "subject": "list at inferred `mk_list_init` quant null-deref #list",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_fdt_worker_init",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:96",
+  "line": 5985,
+  "kind": "member-access",
+  "subject": "fdt",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:378",
+  "line": 6202,
+  "kind": "member-access",
+  "subject": "host",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:408",
+  "line": 6219,
+  "kind": "member-access",
+  "subject": "new_alias",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:482",
+  "line": 6274,
+  "kind": "member-access",
+  "subject": "err_page",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:540",
+  "line": 6324,
+  "kind": "member-access",
+  "subject": "h_param",
+  "sources": [
+   "allocation:mk_mem_alloc"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_set_single",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:605",
+  "line": 6375,
+  "kind": "call-precondition",
+  "subject": "&host->error_pages at inferred `mk_list_init` quant null-deref #list",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_set_single",
+  "custody": "Unknown",
+  "origin": "mk_server/mk_vhost.c:610",
+  "line": 6378,
+  "kind": "member-access",
+  "subject": "halias",
+  "sources": [
+   "allocation:mk_mem_alloc_z"
+  ],
+  "rank_kind": "allocation",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "monkey-libevent",
+  "file": "mk_core/mk_utils.c",
+  "function": "mk_print",
+  "custody": "Unknown",
+  "origin": "mk_core/mk_utils.c:249",
+  "line": 2580,
+  "kind": "member-access",
+  "subject": "current",
+  "sources": [
+   "lookup:localtime_r"
+  ],
+  "rank_kind": "lookup",
+  "reading": "real-looking",
+  "why": "the result is dereferenced with no test; NULL only when the call fails (allocation or time conversion)"
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_cat.c",
+  "function": "cmt_cat_copy_label_keys",
+  "custody": "Unknown",
+  "origin": "cmt_cat.c:58",
+  "line": 5603,
+  "kind": "element-access",
+  "subject": "labels",
+  "sources": [
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "labels is NULL only when the label list is empty, and the loop then runs no iteration (a count correlated with the pointer)"
+ },
+ {
+  "library": "cmetrics",
+  "file": "cmt_cat.c",
+  "function": "copy_label_values",
+  "custody": "Unknown",
+  "origin": "cmt_cat.c:93",
+  "line": 5631,
+  "kind": "element-access",
+  "subject": "labels",
+  "sources": [
+   "null-literal"
+  ],
+  "rank_kind": "null-literal",
+  "reading": "guarded-by-something-unread",
+  "why": "as 29 (copy_label_values)"
+ }
+]

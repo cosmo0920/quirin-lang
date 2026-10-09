@@ -1,0 +1,706 @@
+{
+ "rows": 4921,
+ "verdicts": {
+  "Safe (unconditional)": 1219,
+  "Unknown": 2260,
+  "Safe (conditional)": 1442
+ },
+ "reasons": {
+  "null-deref-candidate": 2173,
+  "null-import-failure: no definition of the function in the unit's AST": 87
+ },
+ "candidates": 12402,
+ "candidates_by_source_kind": {
+  "memory-field": 10125,
+  "formal": 1823,
+  "uncontracted-result": 763,
+  "other": 111,
+  "null-literal": 96,
+  "allocation": 37,
+  "uninitialized": 12,
+  "global": 1,
+  "lookup": 1
+ },
+ "candidates_by_library": {
+  "librdkafka": 10225,
+  "cmetrics": 1028,
+  "monkey-libevent": 565,
+  "ctraces": 234,
+  "chunkio": 176,
+  "fluent-bit-chunk": 174
+ },
+ "other_sources": {
+  "other:label:err": 31,
+  "other:label:retry": 24,
+  "other:label:_next_match": 17,
+  "other:label:redo": 12,
+  "other:scalar": 8,
+  "other:label:restart": 7,
+  "other:label:try_pending": 4,
+  "other:label:_Search2": 2,
+  "other:label:_Search3": 2,
+  "other:label:_last_literals": 2,
+  "other:label:parse_more": 1,
+  "other:label:asm": 1
+ },
+ "import_failures": [
+  [
+   "cmetrics",
+   "cmt_log.c",
+   "cmt_winapi_error_print",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "ctraces",
+   "ctr_log.c",
+   "ctr_winapi_error_print",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "cJSON.c",
+   "internal_free",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "cJSON.c",
+   "internal_malloc",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "cJSON.c",
+   "internal_realloc",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_common.c",
+   "pb_validate_utf8",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_decode.c",
+   "allocate_field",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_decode.c",
+   "initialize_pointer_field",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_decode.c",
+   "pb_decode_double_as_float",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_decode.c",
+   "pb_release_single_field",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_decode.c",
+   "pb_release_union_field",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "nanopb/pb_encode.c",
+   "pb_encode_float_as_double",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdbase64.c",
+   "base64_encoding_conversion",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_cert.c",
+   "rd_kafka_print_ssl_errors",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_ssl.c",
+   "rd_kafka_ssl_win_load_cert_store",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_ssl.c",
+   "rd_kafka_ssl_win_load_cert_stores",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_ssl.c",
+   "rd_kafka_transport_libcrypto_THREADID_callback",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_ssl.c",
+   "rd_kafka_transport_ssl_lock_cb",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_sticky_assignor.c",
+   "PartitionMovements_isSticky",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_sticky_assignor.c",
+   "hasCycles",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_events2wsa",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_get_wsa_events",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_io_serve_win32",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_poll_set_wsa",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_set_blocked",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_term",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdkafka_transport.c",
+   "rd_kafka_transport_wsa2events",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdrand.c",
+   "rd_rand_bytes_by_rand_s",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdunittest.c",
+   "rd_ut_QueryPerformanceCounter",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdunittest.c",
+   "rd_ut_QueryPerformanceFrequency",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdunittest.c",
+   "rd_ut_coverage",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdunittest.c",
+   "rd_ut_coverage_check",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "rdunittest.c",
+   "unittest_rdclock",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "snappy.c",
+   "rd_clz",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "snappy.c",
+   "rd_ctz",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "snappy.c",
+   "rd_ctz64",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "snappy.c",
+   "sink_peek_no_sg",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "_cnd_timedwait_win32",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "_thrd_wrapper_function",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "_tinycthread_tss_callback",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "_tinycthread_tss_cleanup",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "_tthread_timespec_get",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "call_once",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_broadcast",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_destroy",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_init",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_signal",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_timedwait",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "cnd_wait",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_destroy",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_init",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_lock",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_timedlock",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_trylock",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "mtx_unlock",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_create",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_current",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_detach",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_equal",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_exit",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_join",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_sleep",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "thrd_yield",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "tss_create",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "tss_delete",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "tss_get",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread.c",
+   "tss_set",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread_extra.c",
+   "cnd_wait_enter",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "librdkafka",
+   "tinycthread_extra.c",
+   "cnd_wait_exit",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "chunkio",
+   "cio_log.c",
+   "cio_winapi_error_print",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "chunkio",
+   "cio_os.c",
+   "cio_os_win32_make_recursive_path",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "chunkio",
+   "cio_utils.c",
+   "cio_utils_recursive_delete_handler",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "fluent-bit-chunk",
+   "flb_input_chunk.c",
+   "sb_get_releasable_output_queue_space",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "fluent-bit-chunk",
+   "flb_input_chunk.c",
+   "sb_release_output_queue_space",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_string.c",
+   "memmem",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_string.c",
+   "memrchr",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_string.c",
+   "strcasestr",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_string.c",
+   "strndup",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_utils.c",
+   "gettimeofday",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_utils.c",
+   "localtime_r",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_utils.c",
+   "mk_utils_print_errno",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_core/mk_utils.c",
+   "mk_utils_trace",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_clock.c",
+   "gmtime_r",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_clock.c",
+   "localtime_r",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_utils.c",
+   "gmtime_r",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_utils.c",
+   "localtime_r",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ],
+  [
+   "monkey-libevent",
+   "mk_server/mk_utils.c",
+   "timegm",
+   "null-import-failure: no definition of the function in the unit's AST"
+  ]
+ ],
+ "custody_premises_by_null_standing": {
+  "candidate": 1000,
+  "proved": 676,
+  "nearby:proved": 41,
+  "nearby:candidate": 62,
+  "unmatched": 21,
+  "excluded": 2
+ },
+ "unmatched_premises": [
+  [
+   "lz4.c",
+   "LZ4_compress_generic_validated",
+   769,
+   "op"
+  ],
+  [
+   "lz4.c",
+   "LZ4_compress_generic_validated",
+   770,
+   "op"
+  ],
+  [
+   "lz4.c",
+   "LZ4_compress_generic_validated",
+   912,
+   "op"
+  ],
+  [
+   "lz4.c",
+   "LZ4_compress_generic_validated",
+   916,
+   "op"
+  ],
+  [
+   "lz4.c",
+   "LZ4_decompress_unsafe_generic",
+   1258,
+   "ip"
+  ],
+  [
+   "lz4hc.c",
+   "LZ4HC_compress_hashChain",
+   1079,
+   "op"
+  ],
+  [
+   "lz4hc.c",
+   "LZ4HC_compress_hashChain",
+   1083,
+   "op"
+  ],
+  [
+   "lz4hc.c",
+   "LZ4HC_compress_optimal",
+   1729,
+   "op"
+  ],
+  [
+   "lz4hc.c",
+   "LZ4HC_compress_optimal",
+   1733,
+   "op"
+  ],
+  [
+   "rdkafka_mock.c",
+   "rd_kafka_mock_next_request_error",
+   22691,
+   "mcluster"
+  ],
+  [
+   "rdkafka_offset.c",
+   "mk_esc_filename",
+   20872,
+   "esc"
+  ],
+  [
+   "rdmurmur2.c",
+   "rd_murmur2",
+   2885,
+   "data"
+  ],
+  [
+   "snappy.c",
+   "refill_tag",
+   20290,
+   "ip"
+  ],
+  [
+   "snappy.c",
+   "varint_encode32",
+   19732,
+   "ptr"
+  ],
+  [
+   "snappy.c",
+   "varint_encode32",
+   19734,
+   "ptr"
+  ],
+  [
+   "snappy.c",
+   "varint_encode32",
+   19737,
+   "ptr"
+  ],
+  [
+   "snappy.c",
+   "varint_encode32",
+   19741,
+   "ptr"
+  ],
+  [
+   "snappy.c",
+   "varint_encode32",
+   19746,
+   "ptr"
+  ],
+  [
+   "snappy.c",
+   "varint_parse32_with_limit",
+   19694,
+   "ptr"
+  ],
+  [
+   "mk_server/mk_fifo.c",
+   "mk_fifo_worker_setup",
+   5153,
+   "ctx"
+  ],
+  [
+   "mk_server/mk_utils.c",
+   "mk_utils_gen_hash",
+   6085,
+   "data"
+  ]
+ ]
+}
