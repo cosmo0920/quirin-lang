@@ -151,6 +151,42 @@ mod tests {
         depth < DEFAULT_LIMIT
     }
 
+    const LEAN: &str = include_str!("../../../proof/QCore/DeepUnitAst.lean");
+
+    /// `QCore.DeepUnitAst.depthVectors` is [`DEPTH_VECTORS`], row for row, in
+    /// Lean's literal spelling (the same escapes as Rust's).
+    #[test]
+    fn lean_depth_vectors_are_the_rust_vectors() {
+        let header = "def depthVectors : List (String × Nat × Bool × Bool) := [";
+        let start = LEAN.find(header).expect("the Lean list exists") + header.len();
+        let body = &LEAN[start..];
+        let body = &body[..body.find("\n]").expect("the Lean list closes")];
+        let rows = body
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with('('))
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect::<Vec<_>>();
+        let expected = DEPTH_VECTORS
+            .iter()
+            .map(|(text, depth, default, after)| {
+                let escaped = text.replace('\\', "\\\\").replace('"', "\\\"");
+                format!("(\"{escaped}\", {depth}, {default}, {after})")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(rows, expected);
+    }
+
+    /// `QCore.DeepUnitAst.band_edges`.
+    #[test]
+    fn band_edges_match_lean() {
+        let reads = |depth: usize| default_reads(depth) || admitted(depth);
+        assert!(default_reads(127) && !default_reads(128));
+        assert!(reads(128) && reads(256) && !reads(257));
+        assert_eq!(ADMITTED_DEPTH, 256);
+        assert!(LEAN.contains("theorem band_edges"));
+    }
+
     #[test]
     fn depth_vectors_hold() {
         for &(text, expected, default, after) in DEPTH_VECTORS {
