@@ -1,0 +1,13 @@
+{
+  "note": "NULL-SAFETY-PROPERTY card gate on main 0085fa346 (base), every code step at fa2d839f5, scripts docs/reports/null-safety-property/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/nsp/gate-g2 and private/nsp/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 472 units, 485 summaries, 7,832 passed, 0 failed, 12 ignored, exit 0 (private/nsp/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 308 audits passed (QCore.NullDeref and AuditNullDeref added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2, at fa2d839f5; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7832,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 308,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
