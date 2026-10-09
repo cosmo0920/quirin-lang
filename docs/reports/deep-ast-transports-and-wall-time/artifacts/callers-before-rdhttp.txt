@@ -1,0 +1,11 @@
+116 thread-samples hold elaboration_node::walk
+43 ::elaboration_node::walk <- ::elaboration_node <- ::call_once <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+41 ::elaboration_node::walk <- ::elaboration_node <- ::elaborated_statement <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+19 ::elaboration_node::walk <- ::elaboration_node <- ::uncast_value_statement <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+11 ::elaboration_node::walk
+2 ::elaboration_node::walk <- ::elaboration_node <- ::elaborate_condition <- ::leaf_plan <- ::condition_plan <- ::planned_condition
+87 thread-samples hold call_exits::walk
+78 qcore_c_gateway::call_exits::walk:: <- qcore_c_gateway::call_exits::resolve <- ::call_exit_census <- ::expression_statement <- ::parse_statement <- ::parse_statement_body
+7 qcore_c_gateway::call_exits::walk::
+1 qcore_c_gateway::call_exits::walk:: <- qcore_c_gateway::call_exits::resolve <- ::call_exit_census <- ::expression_statement <- ::parse_statement
+1 qcore_c_gateway::call_exits::walk:: <- qcore_c_gateway::call_exits::resolve <- ::call_exit_census <- ::expression_statement <- ::parse_statement <- ::parse_block

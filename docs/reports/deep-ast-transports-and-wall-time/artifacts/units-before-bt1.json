@@ -1,0 +1,202 @@
+{
+ "analyses": 185,
+ "span": 549.2,
+ "phases": {
+  "1": {
+   "units": 185,
+   "first_start": 0.0,
+   "last_end": 549.2,
+   "sum_seconds": 2000.6
+  }
+ },
+ "longest": [
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   1,
+   344.0,
+   73.4,
+   417.4
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_admin.c",
+   1,
+   309.9,
+   0.0,
+   309.9
+  ],
+  [
+   "librdkafka-2.15.0/src/rdhttp.c",
+   1,
+   129.7,
+   419.5,
+   549.2
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_request.c",
+   1,
+   113.0,
+   0.0,
+   113.0
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_metadata.c",
+   1,
+   110.3,
+   242.6,
+   352.9
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   1,
+   77.1,
+   146.5,
+   223.6
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   1,
+   73.3,
+   0.0,
+   73.3
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka.c",
+   1,
+   67.3,
+   1.2,
+   68.6
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_broker.c",
+   1,
+   43.4,
+   68.6,
+   112.1
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock.c",
+   1,
+   39.2,
+   174.5,
+   213.7
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_partition.c",
+   1,
+   39.1,
+   135.3,
+   174.5
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   1,
+   33.4,
+   113.0,
+   146.4
+  ]
+ ],
+ "rdhttp": [
+  {
+   "phase": 1,
+   "seconds": 129.74,
+   "start": 419.5,
+   "end": 549.2,
+   "thread": "2196950",
+   "stack": {
+    "mapping_kib": 14364,
+    "touched_kib": 236
+   }
+  }
+ ],
+ "stack": {
+  "stack_kib": [],
+  "max_touched_kib": 596,
+  "threads": 4,
+  "raised_by": [
+   [
+    "cmetrics/src/cmt_decode_prometheus_remote_write.c",
+    1,
+    "2196953",
+    592,
+    596
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_feature.c",
+    1,
+    "2196952",
+    592,
+    596
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_mock.c",
+    1,
+    "2196950",
+    588,
+    592
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_fetcher.c",
+    1,
+    "2196953",
+    588,
+    592
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_admin.c",
+    1,
+    "2196952",
+    0,
+    592
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+    1,
+    "2196951",
+    580,
+    592
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_conf.c",
+    1,
+    "2196950",
+    584,
+    588
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+    1,
+    "2196953",
+    584,
+    588
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_broker.c",
+    1,
+    "2196950",
+    580,
+    584
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_request.c",
+    1,
+    "2196953",
+    0,
+    584
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka.c",
+    1,
+    "2196950",
+    0,
+    580
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    1,
+    "2196951",
+    0,
+    580
+   ]
+  ]
+ }
+}

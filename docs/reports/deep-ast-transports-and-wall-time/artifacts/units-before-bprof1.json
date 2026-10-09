@@ -1,0 +1,162 @@
+{
+ "analyses": 185,
+ "span": 544.5,
+ "phases": {
+  "1": {
+   "units": 185,
+   "first_start": 0.0,
+   "last_end": 544.5,
+   "sum_seconds": 1985.4
+  }
+ },
+ "longest": [
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+   1,
+   340.5,
+   67.8,
+   408.3
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_admin.c",
+   1,
+   302.1,
+   0.0,
+   302.1
+  ],
+  [
+   "librdkafka-2.15.0/src/rdhttp.c",
+   1,
+   132.5,
+   412.1,
+   544.5
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_metadata.c",
+   1,
+   113.5,
+   232.0,
+   345.6
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_request.c",
+   1,
+   103.9,
+   0.0,
+   103.9
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   1,
+   78.6,
+   133.8,
+   212.4
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   1,
+   67.8,
+   0.0,
+   67.8
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka.c",
+   1,
+   61.2,
+   1.2,
+   62.4
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_mock.c",
+   1,
+   39.9,
+   163.0,
+   202.9
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_broker.c",
+   1,
+   39.4,
+   62.4,
+   101.8
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_partition.c",
+   1,
+   39.2,
+   123.9,
+   163.0
+  ],
+  [
+   "librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   1,
+   29.9,
+   103.9,
+   133.8
+  ]
+ ],
+ "rdhttp": [
+  {
+   "phase": 1,
+   "seconds": 132.47,
+   "start": 412.1,
+   "end": 544.5,
+   "thread": "2203420",
+   "stack": {
+    "stack_kib": 2048,
+    "touched_kib": 144
+   }
+  }
+ ],
+ "stack": {
+  "stack_kib": [
+   2048
+  ],
+  "max_touched_kib": 144,
+  "threads": 4,
+  "raised_by": [
+   [
+    "librdkafka-2.15.0/src/rdkafka_request.c",
+    1,
+    "2203420",
+    0,
+    144
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_admin.c",
+    1,
+    "2203418",
+    0,
+    140
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_mock_handlers.c",
+    1,
+    "2203419",
+    136,
+    140
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_cgrp.c",
+    1,
+    "2203419",
+    0,
+    136
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka_mock.c",
+    1,
+    "2203417",
+    132,
+    136
+   ],
+   [
+    "librdkafka-2.15.0/src/rdkafka.c",
+    1,
+    "2203417",
+    0,
+    132
+   ]
+  ]
+ }
+}

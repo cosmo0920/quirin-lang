@@ -19,7 +19,8 @@ this order:
   `from_trait` (the default-limit parse);
 * depth-scan: `deep_unit_ast::depth`;
 * json-unlimited-parse: serde_json under `deep_unit_ast::unlimited`;
-* json-other: any other serde_json/serde frame near the top;
+* json-other: any other deserialisation frame near the top (a reader's
+  `Value` indexing is `serde_json::value::`, counted as a reader);
 * index-and-readers: the rest, reported by the innermost project frame and
   inclusively.
 
@@ -50,7 +51,7 @@ def classify(stack):
     if "deep_unit_ast::unlimited" in joined and re.search(r"serde", joined):
         return "json-unlimited-parse"
     top = " ".join(stack[:14])
-    if re.search(r"serde_json::|serde::de::", top):
+    if re.search(r"serde_json::de::|serde::de::", top):
         if "from_slice" in joined or "from_trait" in joined:
             return "json-default-parse"
         return "json-other"
