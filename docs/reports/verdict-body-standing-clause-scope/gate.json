@@ -1,0 +1,13 @@
+{
+  "note": "VERDICT-BODY-STANDING-CLAUSE-SCOPE card gate on base 9564eeb6d, every code step at e089a6086, scripts docs/reports/verdict-body-standing-clause-scope/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/vbs/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 461 units, 474 summaries, 7,728 passed, 0 failed, 11 ignored, exit 0 (private/vbs/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 300 audits passed (with the new AuditBodyClauseStanding); python suite before the matrix regeneration 08 = 1 (Lean audits 299 -> 300 in the committed matrix), docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged from the base; provider_tests 129 is CARRIED from VERDICT-CONTRACT-DEPENDENCIES's provider gate pg3 (at 58bc2b290), not measured here.",
+  "workspace_tests": 7728,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 300,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

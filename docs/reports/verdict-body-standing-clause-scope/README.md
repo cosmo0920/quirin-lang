@@ -222,7 +222,28 @@ standing `standing_eq_validated`, `standing_eq_partly`,
 
 ## 9. Gate
 
-GATE_PLACEHOLDER
+The first attempt `g1` (at `3360cf4c9`) is **discarded as validation
+evidence**: the shared disk reached 0 bytes free during its test build
+(`No space left on device` in rustc and a crashed `rust-lld`, step 04); steps
+00–03 had exited 0. It was stopped, this card's dev build output was freed
+(`cargo clean --profile dev`), and the gate was rerun once the disk recovered
+above the 40 GB floor (logs kept in `private/vbs/gate-g1-disk-exhausted/`).
+
+Gate `g2` (every step at `e089a6086`, the code of the AFTER binary plus
+formatting, tests and records; each step under the shared lock; logs
+`private/vbs/gate-g2/`): `cargo check --workspace --all-targets` 0; submodule
+0; fmt 0; clippy `--locked` 0; `run_test_binaries.py` 461 units, 474
+summaries, **7,728 passed, 0 failed**, 11 ignored, exit 0
+(`private/vbs/tests-gate-g2/`, 392 s); both reevaluation probes 0;
+`check_lean_audits.py` **300** audits passed; the Python suite 1 before the
+matrix regeneration (it reads the committed Lean count, 299), then
+`build_matrix.py --gate gate.json` 0 and the suite **365 OK** (09b); docs
+index build and `--check` 0. No provider gate: `providers/` is unchanged from
+the base; `gate.json` carries `provider_tests` 129 from
+VERDICT-CONTRACT-DEPENDENCIES's provider gate and says so. Disk fell to 26 GB
+free during `g2`'s test build (shared host); the step completed, and the dev
+build output was freed right after it. Records: [gate.json](gate.json) and
+[gate/](gate/).
 
 ## 10. Ledger
 
