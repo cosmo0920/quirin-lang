@@ -234,7 +234,20 @@ contract, checked on nested documents by
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+Gate `g1` (every code step at `531e771c5`: the AFTER binary's code
+`e6d5bdf8a` plus test-only bindings, Lean and records; each step under the
+shared lock; logs `private/rhsg/gate-g1/`): `cargo check --workspace
+--all-targets` 0; submodule 0; fmt 0; clippy `--locked` 0;
+`run_test_binaries.py` 463 units, 476 summaries, **7,748 passed, 0 failed**,
+11 ignored, exit 0 (`private/rhsg/tests-gate-g1/`, 399.5 s; +10 tests: the
+four controls and six unit tests); both reevaluation probes 0;
+`check_lean_audits.py` **302** audits passed; the Python suite 1 before the
+matrix regeneration (it reads the committed Lean count, 301), then
+`build_matrix.py --gate gate.json` 0 and the suite **365 OK** (09b); docs
+index build and `--check` 0. The dev build output was freed after the test
+step (`cargo clean --profile dev`). No provider gate: `providers/` is
+unchanged from the base; `gate.json` carries `provider_tests` 129 and says
+so. Records: [gate.json](gate.json) and [gate/](gate/).
 
 ## 9. Ledger
 
