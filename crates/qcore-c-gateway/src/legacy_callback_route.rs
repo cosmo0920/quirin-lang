@@ -533,11 +533,14 @@ impl Parser<'_> {
                         false,
                     );
                     if let Decision::Refused(reason, candidate) = decision {
-                        return Err(refusal(
-                            function,
-                            &invocation_detail(reason, candidate.as_deref(), &text(*callback)),
-                            reason,
-                        ));
+                        let detail = match (&resolution, reason) {
+                            (Err(why), UNDECIDED) => format!(
+                                "the callback `{}` is not a closed set of functions ({why})",
+                                text(*callback)
+                            ),
+                            _ => invocation_detail(reason, candidate.as_deref(), &text(*callback)),
+                        };
+                        return Err(refusal(function, &detail, reason));
                     }
                     if let Ok(candidates) = &resolution {
                         self.require(candidates, actuals, &mut operands.owned);
@@ -569,10 +572,13 @@ impl Parser<'_> {
                 CallbackClause::Registered { callback, holder: at } => {
                     let candidates = self
                         .callback_candidates(function, line, *callback, true)
-                        .map_err(|_| {
+                        .map_err(|why| {
                             refusal(
                                 function,
-                                &invocation_detail(UNDECIDED, None, &text(*callback)),
+                                &format!(
+                                    "the callback `{}` is not a closed set of functions ({why})",
+                                    text(*callback)
+                                ),
                                 UNDECIDED,
                             )
                         })?;
