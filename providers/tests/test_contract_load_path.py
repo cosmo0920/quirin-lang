@@ -462,11 +462,15 @@ class LoadPathManifest(unittest.TestCase):
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the one bounds module, in its
-        # crate's bounds view and in no resource view.
+        # crate's bounds view and in no resource view. Card
+        # CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds the second,
+        # `chunkio/file_st_bounds.qv`.
         bounds = {c["name"]: c["bounds_view"] for c in manifest["crates"]}
         self.assertEqual({name: view for name, view in bounds.items() if view},
-                         {"qcore-provider-chunkio": ["chunkio/meta_len_bounds.qv"]})
+                         {"qcore-provider-chunkio": ["chunkio/file_st_bounds.qv",
+                                                     "chunkio/meta_len_bounds.qv"]})
         self.assertNotIn("chunkio/meta_len_bounds.qv", views["qcore-provider-chunkio"])
+        self.assertNotIn("chunkio/file_st_bounds.qv", views["qcore-provider-chunkio"])
         # The real inventories: exactly the two crates that inherit carry pins.
         rows = {row["crate"]: row["includes"] for row in contracts.maintain(load_path=manifest)}
         self.assertEqual(rows, {"qcore-provider-chunkio": 0, "qcore-provider-cmetrics": 0,
