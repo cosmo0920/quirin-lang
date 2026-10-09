@@ -221,7 +221,20 @@ test checks `unrecorded` leaves no trace.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (section filled by the gate run).
+Gate `g1` (every code step at `8f48a1939`, the code of the AFTER binary
+`22980136a` plus records and scripts; each step under the shared lock; logs
+`private/dabc/gate-g1/`): `cargo check --workspace --all-targets` 0;
+submodule 0; fmt 0; clippy `--locked` 0; `run_test_binaries.py` 462 units,
+475 summaries, **7,738 passed, 0 failed**, 11 ignored, exit 0
+(`private/dabc/tests-gate-g1/`, 386.6 s); both reevaluation probes 0;
+`check_lean_audits.py` **301** audits passed; the Python suite 1 before the
+matrix regeneration (it reads the committed Lean count, 300), then
+`build_matrix.py --gate gate.json` 0 and the suite **365 OK** (09b); docs
+index build and `--check` 0. The dev build output was freed after the test
+step (`cargo clean --profile dev`). No provider gate: `providers/` is
+unchanged from the base; `gate.json` carries `provider_tests` 129 from
+VERDICT-CONTRACT-PREMISE-ANNOTATIONS's provider gate and says so. Records:
+[gate.json](gate.json) and [gate/](gate/).
 
 ## 8. Ledger
 

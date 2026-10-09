@@ -1,0 +1,13 @@
+{
+  "note": "DECLARED-ASSUMPTION-BODY-CHECKS card gate on base d8a1a2a4e, every code step at 8f48a1939, scripts docs/reports/declared-assumption-body-checks/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/dabc/gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 462 units, 475 summaries, 7,738 passed, 0 failed, 11 ignored, exit 0 (private/dabc/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 301 audits passed (with the new AuditDeclaredEntryCheck); python suite before the matrix regeneration 08 = 1 (Lean audits 300 -> 301 in the committed matrix), docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged from the base; provider_tests 129 is CARRIED from VERDICT-CONTRACT-PREMISE-ANNOTATIONS's provider gate pg2 (at f2d26a7d5), not measured here.",
+  "workspace_tests": 7738,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 301,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
