@@ -84,6 +84,9 @@ mod elaboration;
 // bounds property; no custody route reads it.
 pub mod index_extent;
 mod index_traversal;
+// Card NULL-SAFETY-PROPERTY (rules 14k-14p): the separately selected
+// null-dereference property; no custody route reads it.
+pub mod null_deref;
 // Card CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites; the G
 // hooks are in `legacy_loop_generations.rs`.
 pub mod indexed_collection;

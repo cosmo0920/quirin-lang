@@ -1,0 +1,1824 @@
+//! The null consumer's walk of one function body (gateway rules 14k–14m,
+//! 14o–14p): a forward, path-joining reading of the typed AST in which every
+//! dereference is a check ([`qcore_core::null_deref::check`]).
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use qcore_core::null_deref::{self as core, First, Nullness, Outcome, Proof, Source};
+use qcore_schemas::contract::{ResourceContracts, ResourceReturnMode};
+use serde_json::Value;
+
+use super::ast::{self, callee_name, is_pointer, kids, render, ty};
+use crate::typed_c_ast::kind;
+
+/// A loop's fixed point is sought this many times before the function is
+/// refused (fail-closed).
+const LOOP_ITERATIONS: usize = 16;
+
+/// Where a value lives, when the walk can name it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub(super) enum Place {
+    /// A tracked local or formal, by declaration id.
+    Var(String),
+    /// A memory path rooted at a variable: `ROOT(^.FIELD|^|.FIELD)*`.
+    Path(String),
+}
+
+/// A value as the walk reads it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct Val {
+    pub(super) null: Nullness,
+    /// The formal whose entry value this is (or an offset of), for the
+    /// inference of the clause (rule 14p).
+    pub(super) origin: Option<usize>,
+    /// Where the value was read from, when it is exactly that place's value.
+    pub(super) place: Option<Place>,
+    /// A null pointer constant (for `p == NULL`).
+    pub(super) null_constant: bool,
+    /// A path fact that survived a non-character scalar store (C11 6.5p7).
+    pub(super) effective_type: bool,
+}
+
+impl Val {
+    fn of(null: Nullness) -> Self {
+        Self {
+            null,
+            origin: None,
+            place: None,
+            null_constant: false,
+            effective_type: false,
+        }
+    }
+
+    fn scalar() -> Self {
+        Self::of(Nullness::maybe(Source::Other("scalar".into())))
+    }
+
+    fn address() -> Self {
+        Self::of(Nullness::proved(Proof::Address))
+    }
+
+    /// `self ± n`: the same nullness and origin, no longer the place's value.
+    fn offset(&self) -> Self {
+        Self {
+            null: core::offset(&self.null),
+            origin: self.origin,
+            place: None,
+            null_constant: false,
+            effective_type: self.effective_type,
+        }
+    }
+
+    fn join(&self, other: &Self) -> Self {
+        Self {
+            null: self.null.join(&other.null),
+            origin: if self.origin == other.origin {
+                self.origin
+            } else {
+                None
+            },
+            place: if self.place == other.place {
+                self.place.clone()
+            } else {
+                None
+            },
+            null_constant: self.null_constant && other.null_constant,
+            effective_type: self.effective_type || other.effective_type,
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct PathFact {
+    null: Nullness,
+    effective_type: bool,
+}
+
+/// The facts on one set of reaching paths.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct State {
+    live: bool,
+    /// Every reaching path is the straight-line prefix from entry.
+    definite: bool,
+    vars: BTreeMap<String, Val>,
+    paths: BTreeMap<String, PathFact>,
+    /// Per formal, what the reaching paths did first with its entry value.
+    firsts: Vec<BTreeSet<First>>,
+}
+
+impl State {
+    fn dead(formals: usize) -> Self {
+        Self {
+            live: false,
+            definite: false,
+            vars: BTreeMap::new(),
+            paths: BTreeMap::new(),
+            firsts: vec![BTreeSet::new(); formals],
+        }
+    }
+
+    fn join(&self, other: &Self) -> Self {
+        if !self.live {
+            return other.clone();
+        }
+        if !other.live {
+            return self.clone();
+        }
+        let vars = self
+            .vars
+            .iter()
+            .filter_map(|(id, value)| other.vars.get(id).map(|o| (id.clone(), value.join(o))))
+            .collect();
+        let paths = self
+            .paths
+            .iter()
+            .filter_map(|(key, fact)| {
+                other.paths.get(key).map(|o| {
+                    (
+                        key.clone(),
+                        PathFact {
+                            null: fact.null.join(&o.null),
+                            effective_type: fact.effective_type || o.effective_type,
+                        },
+                    )
+                })
+            })
+            .collect();
+        let firsts = self
+            .firsts
+            .iter()
+            .zip(&other.firsts)
+            .map(|(a, b)| a.union(b).copied().collect())
+            .collect();
+        Self {
+            live: true,
+            definite: false,
+            vars,
+            paths,
+            firsts,
+        }
+    }
+
+    fn not_definite(mut self) -> Self {
+        self.definite = false;
+        self
+    }
+}
+
+/// One recorded check.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct CheckRecord {
+    pub(super) id: usize,
+    pub(super) kind: &'static str,
+    pub(super) line: usize,
+    pub(super) subject: String,
+    pub(super) outcome: Outcome,
+}
+
+/// A declared `quant null-deref` clause set of one function, as callers and
+/// the body see it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct Declared {
+    pub(super) parameters: usize,
+    /// Position -> the clause text.
+    pub(super) positions: BTreeMap<usize, String>,
+    /// The hold, when the declaration is not in force.
+    pub(super) held: Option<String>,
+}
+
+/// An in-unit summary (rule 14p): the inferred clause positions and whether
+/// every return is non-null.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(super) struct Summary {
+    pub(super) derefs: BTreeSet<usize>,
+    pub(super) returns_non_null: bool,
+}
+
+/// What the walk reads besides the body.
+pub(super) struct Env<'a> {
+    pub(super) unit: &'a ast::Unit,
+    pub(super) resource: &'a ResourceContracts,
+    pub(super) declared: &'a BTreeMap<String, Declared>,
+    pub(super) summaries: &'a BTreeMap<String, Summary>,
+    pub(super) newlines: &'a [usize],
+}
+
+/// The entry fact of a formal under a clause.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) enum Entry {
+    Declared(String),
+    Held(String),
+    Inferred(String),
+}
+
+struct LoopFrame {
+    breaks: State,
+    continues: State,
+    /// A switch's frame: a `break` ends it, a `continue` passes through.
+    switch: bool,
+}
+
+/// What one walk found.
+pub(super) struct Walked {
+    pub(super) checks: Vec<CheckRecord>,
+    pub(super) reasons: Vec<String>,
+    pub(super) assumptions: BTreeSet<String>,
+    /// Per formal, what every terminating path did first.
+    pub(super) exits: Vec<BTreeSet<First>>,
+    pub(super) returns: Option<Nullness>,
+    /// Declared and inferred callees whose clause an actual met.
+    pub(super) consulted: BTreeSet<String>,
+}
+
+pub(super) struct Walker<'a> {
+    env: &'a Env<'a>,
+    function: String,
+    formals: Vec<(String, String, bool)>,
+    tracked: BTreeSet<String>,
+    locals: BTreeSet<String>,
+    recording: bool,
+    sites: BTreeMap<String, usize>,
+    checks: BTreeMap<usize, CheckRecord>,
+    reasons: Vec<String>,
+    assumptions: BTreeSet<String>,
+    loops: Vec<LoopFrame>,
+    /// Each enclosing switch's entry state and the loop depth it was entered at.
+    switches: Vec<(State, usize)>,
+    gotos: BTreeMap<String, State>,
+    backward: BTreeSet<String>,
+    exits: Vec<BTreeSet<First>>,
+    returns: Option<Nullness>,
+    consulted: BTreeSet<String>,
+}
+
+fn strip(node: &Value) -> &Value {
+    let mut node = node;
+    while matches!(kind(node), "ParenExpr" | "ConstantExpr" | "ExprWithCleanups")
+        || (kind(node) == "UnaryOperator" && node["opcode"] == "__extension__")
+    {
+        match kids(node).next() {
+            Some(inner) => node = inner,
+            None => break,
+        }
+    }
+    node
+}
+
+fn present(node: &Value) -> bool {
+    node.as_object().is_some_and(|o| o.contains_key("kind"))
+}
+
+impl<'a> Walker<'a> {
+    /// Analyse `function`'s body with `entries` in force at its formals.
+    pub(super) fn walk(
+        env: &'a Env<'a>,
+        name: &str,
+        function: &Value,
+        entries: &BTreeMap<usize, Entry>,
+    ) -> Walked {
+        let formals = kids(function)
+            .filter(|c| kind(c) == "ParmVarDecl")
+            .map(|c| {
+                (
+                    c["id"].as_str().unwrap_or("").to_owned(),
+                    c["name"].as_str().unwrap_or("").to_owned(),
+                    is_pointer(ty(c)),
+                )
+            })
+            .collect::<Vec<_>>();
+        let body = kids(function).find(|c| kind(c) == "CompoundStmt");
+        let mut taken = BTreeSet::new();
+        let mut locals = BTreeSet::new();
+        let mut tracked = BTreeSet::new();
+        if let Some(body) = body {
+            ast::address_taken(body, &mut taken);
+        }
+        fn declared_locals(node: &Value, out: &mut Vec<Value>) {
+            if kind(node) == "VarDecl" {
+                out.push(node.clone());
+            }
+            for child in kids(node) {
+                declared_locals(child, out);
+            }
+        }
+        let mut declared = Vec::new();
+        if let Some(body) = body {
+            declared_locals(body, &mut declared);
+        }
+        for (id, _, pointer) in &formals {
+            locals.insert(id.clone());
+            if *pointer && !taken.contains(id) {
+                tracked.insert(id.clone());
+            }
+        }
+        for decl in &declared {
+            let Some(id) = decl["id"].as_str() else {
+                continue;
+            };
+            let storage = decl["storageClass"].as_str();
+            if matches!(storage, Some("static" | "extern")) {
+                continue;
+            }
+            locals.insert(id.to_owned());
+            let spelled = ty(decl);
+            if is_pointer(spelled) && !spelled.contains("volatile") && !taken.contains(id) {
+                tracked.insert(id.to_owned());
+            }
+        }
+        let mut backward = BTreeSet::new();
+        if let Some(body) = body {
+            let mut order = 0;
+            let mut labels = BTreeMap::new();
+            let mut gotos = Vec::new();
+            ast::labels_and_gotos(body, &mut order, &mut labels, &mut gotos);
+            for (label, at) in gotos {
+                if labels.get(&label).is_some_and(|defined| *defined < at) {
+                    backward.insert(label);
+                }
+            }
+        }
+        let count = formals.len();
+        let mut walker = Walker {
+            env,
+            function: name.to_owned(),
+            formals,
+            tracked,
+            locals,
+            recording: true,
+            sites: BTreeMap::new(),
+            checks: BTreeMap::new(),
+            reasons: Vec::new(),
+            assumptions: BTreeSet::new(),
+            loops: Vec::new(),
+            switches: Vec::new(),
+            gotos: BTreeMap::new(),
+            backward,
+            exits: vec![BTreeSet::new(); count],
+            returns: None,
+            consulted: BTreeSet::new(),
+        };
+        let mut state = State {
+            live: true,
+            definite: true,
+            vars: BTreeMap::new(),
+            paths: BTreeMap::new(),
+            firsts: vec![BTreeSet::from([First::Pending]); count],
+        };
+        for (index, (id, pname, pointer)) in walker.formals.clone().iter().enumerate() {
+            if !*pointer {
+                continue;
+            }
+            let null = match entries.get(&index) {
+                Some(Entry::Declared(text)) => {
+                    walker.assumptions.insert(format!("declared: `{name}` {text}"));
+                    Nullness::proved(Proof::Precondition(format!("declared: {text}")))
+                }
+                Some(Entry::Held(hold)) => {
+                    Nullness::proved(Proof::Precondition(format!("held: {hold}")))
+                }
+                Some(Entry::Inferred(text)) => {
+                    walker.assumptions.insert(format!("inferred: `{name}` {text}"));
+                    Nullness::proved(Proof::Precondition(format!("inferred: {text}")))
+                }
+                None => Nullness::maybe(Source::Formal(pname.clone())),
+            };
+            if walker.tracked.contains(id) {
+                state.vars.insert(
+                    id.clone(),
+                    Val {
+                        null,
+                        origin: Some(index),
+                        place: Some(Place::Var(id.clone())),
+                        null_constant: false,
+                        effective_type: false,
+                    },
+                );
+            } else {
+                state.paths.insert(
+                    format!("g:{id}"),
+                    PathFact {
+                        null,
+                        effective_type: false,
+                    },
+                );
+            }
+        }
+        match body {
+            Some(body) => {
+                let end = walker.stmt(body, state);
+                if end.live {
+                    walker.exit(&end);
+                }
+            }
+            None => walker.reason("null-import-failure: the definition has no body".into()),
+        }
+        Walked {
+            checks: walker.checks.into_values().collect(),
+            reasons: walker.reasons,
+            assumptions: walker.assumptions,
+            exits: walker.exits,
+            returns: walker.returns,
+            consulted: walker.consulted,
+        }
+    }
+
+    fn reason(&mut self, reason: String) {
+        if !self.reasons.contains(&reason) {
+            self.reasons.push(reason);
+        }
+    }
+
+    fn line(&self, node: &Value) -> usize {
+        node["o"]
+            .as_u64()
+            .map(|offset| {
+                let offset = offset as usize;
+                self.env.newlines.partition_point(|n| *n < offset) + 1
+            })
+            .unwrap_or(0)
+    }
+
+    fn site(&mut self, node: &Value) -> usize {
+        let key = node["id"]
+            .as_str()
+            .map(str::to_owned)
+            .unwrap_or_else(|| format!("@{}", node["o"]));
+        let next = self.sites.len();
+        *self.sites.entry(key).or_insert(next)
+    }
+
+    fn exit(&mut self, state: &State) {
+        for (index, firsts) in state.firsts.iter().enumerate() {
+            self.exits[index].extend(firsts.iter().copied());
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Places and facts
+    // -----------------------------------------------------------------------
+
+    fn set_place(state: &mut State, place: &Place, null: Nullness) {
+        match place {
+            Place::Var(id) => {
+                if let Some(value) = state.vars.get_mut(id) {
+                    value.null = null;
+                }
+            }
+            Place::Path(key) => {
+                state.paths.insert(
+                    key.clone(),
+                    PathFact {
+                        null,
+                        effective_type: false,
+                    },
+                );
+            }
+        }
+    }
+
+    /// Every path rooted at the variable `id` is forgotten (it was written).
+    fn forget_rooted(state: &mut State, id: &str) {
+        let root = format!("t:{id}");
+        state.paths.retain(|key, _| {
+            !(key == &root || key.starts_with(&format!("{root}^")) || key.starts_with(&format!("{root}.")))
+        });
+    }
+
+    /// A store to memory (or a call, or an asm): every path fact is
+    /// forgotten, except across a non-character scalar store, which cannot
+    /// modify a pointer object (C11 6.5p7): those facts are kept, marked.
+    fn memory_written(state: &mut State, wide_scalar: bool) {
+        if wide_scalar {
+            for fact in state.paths.values_mut() {
+                fact.effective_type = true;
+            }
+        } else {
+            state.paths.clear();
+        }
+    }
+
+    fn var_root(&self, id: &str) -> String {
+        if self.tracked.contains(id) {
+            format!("t:{id}")
+        } else {
+            format!("g:{id}")
+        }
+    }
+
+    /// The value read from `place`.
+    fn read_place(&self, place: &Place, text: &str, state: &State) -> Val {
+        match place {
+            Place::Var(id) => state.vars.get(id).cloned().unwrap_or_else(|| Val {
+                place: Some(place.clone()),
+                ..Val::of(Nullness::maybe(Source::Uninitialized(text.to_owned())))
+            }),
+            Place::Path(key) => {
+                let (null, effective_type) = match state.paths.get(key) {
+                    Some(fact) => (fact.null.clone(), fact.effective_type),
+                    None => {
+                        let source = if let Some(id) = key.strip_prefix("g:")
+                            && !key.contains(['^', '.'])
+                        {
+                            if self.locals.contains(id) {
+                                Source::MemoryField(text.to_owned())
+                            } else {
+                                Source::Global(text.to_owned())
+                            }
+                        } else {
+                            Source::MemoryField(text.to_owned())
+                        };
+                        (Nullness::maybe(source), false)
+                    }
+                };
+                Val {
+                    null,
+                    origin: None,
+                    place: Some(place.clone()),
+                    null_constant: false,
+                    effective_type,
+                }
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Checks
+    // -----------------------------------------------------------------------
+
+    /// The check at one dereference of `value` (`node` is the dereferencing
+    /// expression, `subject` the pointer expression). Returns its id.
+    fn check(
+        &mut self,
+        node: &Value,
+        check_kind: &'static str,
+        subject: &Value,
+        value: &Val,
+        state: &mut State,
+    ) -> usize {
+        let id = self.site(node);
+        let outcome = if !state.live {
+            Outcome::Excluded
+        } else {
+            let decided = core::check(&value.null, state.definite);
+            match (&decided, &value.null) {
+                (Outcome::Proved(_) | Outcome::Moved(_), Nullness::NonNull(proofs))
+                    if proofs.iter().all(|p| {
+                        matches!(p, Proof::Precondition(text) if text.starts_with("held: "))
+                    }) =>
+                {
+                    let Some(Proof::Precondition(text)) = proofs.first() else {
+                        unreachable!("a non-empty proof set")
+                    };
+                    Outcome::Held(text.trim_start_matches("held: ").to_owned())
+                }
+                _ => decided,
+            }
+        };
+        if self.recording {
+            if outcome.discharged() {
+                self.note_assumptions(&value.null, value.effective_type);
+            }
+            let record = CheckRecord {
+                id,
+                kind: check_kind,
+                line: self.line(node),
+                subject: render(subject),
+                outcome: outcome.clone(),
+            };
+            match self.checks.get_mut(&id) {
+                Some(existing) if existing.outcome != outcome => {
+                    existing.outcome = worse(&existing.outcome, &outcome);
+                }
+                Some(_) => {}
+                None => {
+                    self.checks.insert(id, record);
+                }
+            }
+        }
+        if state.live {
+            if let Some(formal) = value.origin {
+                state.firsts[formal] = state.firsts[formal].iter().map(|f| f.dereference()).collect();
+            }
+            if let Some(place) = &value.place {
+                let after = core::after_dereference(&value.null, id);
+                Self::set_place(state, place, after);
+            }
+        }
+        id
+    }
+
+    fn note_assumptions(&mut self, null: &Nullness, effective_type: bool) {
+        if let Nullness::NonNull(proofs) = null {
+            for proof in proofs {
+                match proof {
+                    Proof::Asserted(line) => {
+                        self.assumptions.insert(format!(
+                            "asserted: the assertion at line {line} holds (NDEBUG absent, as in the analysed text)"
+                        ));
+                    }
+                    Proof::NonNullResult(name) if name.starts_with("declared:") => {
+                        self.assumptions.insert(format!(
+                            "{name}: a non-null result (resource contract)"
+                        ));
+                    }
+                    _ => {}
+                }
+            }
+            if effective_type {
+                self.assumptions.insert(
+                    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)".into(),
+                );
+            }
+        }
+    }
+
+    /// A NULL test of `value` on both arms.
+    fn refine(&mut self, value: &Val, state: State, proof: Proof) -> (State, State) {
+        let mut on_true = state.clone().not_definite();
+        let mut on_false = state.not_definite();
+        if let Some(formal) = value.origin {
+            for arm in [&mut on_true, &mut on_false] {
+                if arm.live {
+                    arm.firsts[formal] = arm.firsts[formal].iter().map(|f| f.test()).collect();
+                }
+            }
+        }
+        let Some(place) = &value.place else {
+            return (on_true, on_false);
+        };
+        match core::refine(&value.null, true, proof.clone()) {
+            Some(null) => Self::set_place(&mut on_true, place, null),
+            None => on_true.live = false,
+        }
+        match core::refine(&value.null, false, proof) {
+            Some(null) => Self::set_place(&mut on_false, place, null),
+            None => on_false.live = false,
+        }
+        (on_true, on_false)
+    }
+
+    // -----------------------------------------------------------------------
+    // Expressions
+    // -----------------------------------------------------------------------
+
+    /// The place an lvalue designates, after the checks its evaluation makes.
+    fn lvalue(&mut self, node: &Value, state: &mut State) -> Option<Place> {
+        let node = strip(node);
+        match kind(node) {
+            "DeclRefExpr" => {
+                let decl = &node["referencedDecl"];
+                let id = decl["id"].as_str()?;
+                match decl["kind"].as_str() {
+                    Some("VarDecl" | "ParmVarDecl") => {
+                        if self.tracked.contains(id) {
+                            Some(Place::Var(id.to_owned()))
+                        } else {
+                            Some(Place::Path(format!("g:{id}")))
+                        }
+                    }
+                    _ => None,
+                }
+            }
+            "MemberExpr" => {
+                let base = kids(node).next()?;
+                let field = node["name"].as_str().unwrap_or("?");
+                if node["isArrow"] == true {
+                    let value = self.eval(base, state);
+                    self.check(node, "member-access", base, &value, state);
+                    value
+                        .place
+                        .as_ref()
+                        .map(|place| Place::Path(format!("{}^.{field}", self.place_key(place))))
+                } else {
+                    let place = self.lvalue(base, state)?;
+                    Some(Place::Path(format!("{}.{field}", self.place_key(&place))))
+                }
+            }
+            "UnaryOperator" if node["opcode"] == "*" => {
+                let operand = kids(node).next()?;
+                let value = self.eval(operand, state);
+                self.check(node, "dereference", operand, &value, state);
+                value
+                    .place
+                    .as_ref()
+                    .map(|place| Place::Path(format!("{}^", self.place_key(place))))
+            }
+            "ArraySubscriptExpr" => {
+                self.element(node, state);
+                None
+            }
+            _ => {
+                self.eval(node, state);
+                None
+            }
+        }
+    }
+
+    fn place_key(&self, place: &Place) -> String {
+        match place {
+            Place::Var(id) => self.var_root(id),
+            Place::Path(key) => key.clone(),
+        }
+    }
+
+    /// `E1[E2]`: the pointer operand is dereferenced, unless it is an array
+    /// object's decay, whose storage is then reached as an lvalue.
+    fn element(&mut self, node: &Value, state: &mut State) {
+        let parts = kids(node).collect::<Vec<_>>();
+        let (Some(first), Some(second)) = (parts.first(), parts.get(1)) else {
+            self.reason("null-unsupported-form: ArraySubscriptExpr".into());
+            return;
+        };
+        let (base, index) = if is_pointer(ty(strip(first))) || !is_pointer(ty(strip(second))) {
+            (*first, *second)
+        } else {
+            (*second, *first)
+        };
+        let stripped = strip(base);
+        if kind(stripped) == "ImplicitCastExpr" && stripped["castKind"] == "ArrayToPointerDecay" {
+            if let Some(array) = kids(stripped).next() {
+                self.lvalue(array, state);
+            }
+            self.eval(index, state);
+            return;
+        }
+        let value = self.eval(base, state);
+        self.eval(index, state);
+        self.check(node, "element-access", base, &value, state);
+    }
+
+    /// `&operand`.
+    fn address_of(&mut self, operand: &Value, state: &mut State) -> Val {
+        let operand = strip(operand);
+        match kind(operand) {
+            "MemberExpr" => {
+                let Some(base) = kids(operand).next() else {
+                    return Val::address();
+                };
+                if operand["isArrow"] == true {
+                    // Forming `&B->G` is not a dereference of `B` (decision 1).
+                    self.eval(base, state).offset()
+                } else {
+                    self.address_of(base, state).offset()
+                }
+            }
+            "ArraySubscriptExpr" => {
+                let parts = kids(operand).collect::<Vec<_>>();
+                let (Some(first), Some(second)) = (parts.first(), parts.get(1)) else {
+                    return Val::address();
+                };
+                let (base, index) = if is_pointer(ty(strip(first))) || !is_pointer(ty(strip(second)))
+                {
+                    (*first, *second)
+                } else {
+                    (*second, *first)
+                };
+                let value = self.eval(base, state).offset();
+                self.eval(index, state);
+                value
+            }
+            "UnaryOperator" if operand["opcode"] == "*" => match kids(operand).next() {
+                Some(inner) => self.eval(inner, state),
+                None => Val::address(),
+            },
+            "DeclRefExpr" | "CompoundLiteralExpr" | "StringLiteral" | "PredefinedExpr" => {
+                if kind(operand) == "CompoundLiteralExpr" {
+                    for child in kids(operand) {
+                        self.eval(child, state);
+                    }
+                }
+                Val::address()
+            }
+            _ => {
+                self.eval(operand, state);
+                Val::address()
+            }
+        }
+    }
+
+    /// The value read from an lvalue.
+    fn read(&mut self, node: &Value, state: &mut State) -> Val {
+        let pointer = is_pointer(ty(node));
+        let place = self.lvalue(node, state);
+        if !pointer {
+            return Val::scalar();
+        }
+        match place {
+            Some(place) => self.read_place(&place, &render(node), state),
+            None => Val::of(Nullness::maybe(Source::MemoryField(render(node)))),
+        }
+    }
+
+    /// Store `value` to the place `lhs` designates.
+    fn store(&mut self, lhs: &Value, place: Option<Place>, value: &Val, state: &mut State) {
+        match place {
+            Some(Place::Var(id)) => {
+                Self::forget_rooted(state, &id);
+                if is_pointer(ty(lhs)) {
+                    let mut stored = value.clone();
+                    stored.place = Some(Place::Var(id.clone()));
+                    stored.null_constant = false;
+                    state.vars.insert(id, stored);
+                }
+            }
+            Some(Place::Path(key)) => {
+                Self::memory_written(state, ast::is_wide_scalar(ty(lhs)));
+                if is_pointer(ty(lhs)) {
+                    state.paths.insert(
+                        key,
+                        PathFact {
+                            null: value.null.clone(),
+                            effective_type: false,
+                        },
+                    );
+                }
+            }
+            None => Self::memory_written(state, ast::is_wide_scalar(ty(lhs))),
+        }
+    }
+
+    pub(super) fn eval(&mut self, node: &Value, state: &mut State) -> Val {
+        match kind(node) {
+            "ParenExpr" | "ConstantExpr" | "ExprWithCleanups" | "OpaqueValueExpr" => {
+                match kids(node).next() {
+                    Some(inner) => self.eval(inner, state),
+                    None => Val::scalar(),
+                }
+            }
+            "ImplicitCastExpr" | "CStyleCastExpr" | "BuiltinBitCastExpr" => self.cast(node, state),
+            "DeclRefExpr" => match node["referencedDecl"]["kind"].as_str() {
+                Some("FunctionDecl") => Val::address(),
+                Some("VarDecl" | "ParmVarDecl") => self.read(node, state),
+                _ => Val::scalar(),
+            },
+            "IntegerLiteral" => {
+                let mut value = Val::scalar();
+                value.null_constant = node["value"].as_str() == Some("0");
+                value
+            }
+            "CharacterLiteral" | "FloatingLiteral" | "ImaginaryLiteral" | "FixedPointLiteral" => {
+                Val::scalar()
+            }
+            "StringLiteral" | "PredefinedExpr" | "AddrLabelExpr" => Val::address(),
+            "UnaryOperator" => self.unary(node, state),
+            "BinaryOperator" => self.binary(node, state),
+            "CompoundAssignOperator" => {
+                let mut parts = kids(node);
+                let (Some(lhs), Some(rhs)) = (parts.next(), parts.next()) else {
+                    return Val::scalar();
+                };
+                let current = self.read_for_update(lhs, state);
+                self.eval(rhs, state);
+                let place = current.1;
+                let updated = if is_pointer(ty(lhs)) {
+                    current.0.offset()
+                } else {
+                    Val::scalar()
+                };
+                self.store(lhs, place, &updated, state);
+                updated
+            }
+            "ConditionalOperator" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                let [condition, yes, no] = parts.as_slice() else {
+                    self.reason("null-unsupported-form: ConditionalOperator".into());
+                    return Val::scalar();
+                };
+                let (mut on_true, mut on_false) = self.condition(condition, state.clone(), Proof::Tested(self.line(condition)));
+                let a = self.eval(yes, &mut on_true);
+                let b = self.eval(no, &mut on_false);
+                *state = on_true.join(&on_false);
+                match (on_true.live, on_false.live) {
+                    (true, false) => a,
+                    (false, true) => b,
+                    _ => a.join(&b),
+                }
+            }
+            "BinaryConditionalOperator" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                let (Some(common), Some(no)) = (parts.first(), parts.last()) else {
+                    return Val::scalar();
+                };
+                let value = self.eval(common, state);
+                let (on_true, mut on_false) = self.refine(&value, state.clone(), Proof::Tested(self.line(common)));
+                let kept = match core::refine(&value.null, true, Proof::Tested(self.line(common))) {
+                    Some(null) => Val { null, ..value.clone() },
+                    None => value.clone(),
+                };
+                let b = self.eval(no, &mut on_false);
+                *state = on_true.join(&on_false);
+                match (on_true.live, on_false.live) {
+                    (true, false) => kept,
+                    (false, true) => b,
+                    _ => kept.join(&b),
+                }
+            }
+            "CallExpr" => self.call(node, state),
+            "MemberExpr" | "ArraySubscriptExpr" => {
+                // An lvalue in a value position (a discarded `p->f;`): its
+                // evaluation is what checks.
+                self.read(node, state)
+            }
+            "UnaryExprOrTypeTraitExpr" | "OffsetOfExpr" => Val::scalar(),
+            "InitListExpr" | "ParenListExpr" | "DesignatedInitExpr" | "ShuffleVectorExpr"
+            | "ConvertVectorExpr" | "ExtVectorElementExpr" => {
+                for child in kids(node) {
+                    self.eval(child, state);
+                }
+                Val::scalar()
+            }
+            "ImplicitValueInitExpr" | "NoInitExpr" | "ArrayInitIndexExpr" => Val::scalar(),
+            "CompoundLiteralExpr" => {
+                for child in kids(node) {
+                    self.eval(child, state);
+                }
+                Val::scalar()
+            }
+            "StmtExpr" => {
+                let Some(body) = kids(node).next() else {
+                    return Val::scalar();
+                };
+                let parts = kids(body).collect::<Vec<_>>();
+                let Some((last, rest)) = parts.split_last() else {
+                    return Val::scalar();
+                };
+                let mut current = state.clone();
+                for part in rest {
+                    current = self.stmt(part, current);
+                }
+                let value = if is_expression(last) {
+                    self.eval(last, &mut current)
+                } else {
+                    current = self.stmt(last, current);
+                    Val::scalar()
+                };
+                *state = current;
+                value
+            }
+            "VAArgExpr" => {
+                for child in kids(node) {
+                    self.eval(child, state);
+                }
+                Val::of(Nullness::maybe(Source::Other("va_arg".into())))
+            }
+            "AtomicExpr" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                if let Some(pointer) = parts.first() {
+                    let value = self.eval(pointer, state);
+                    self.check(node, "atomic-access", pointer, &value, state);
+                }
+                for part in parts.iter().skip(1) {
+                    self.eval(part, state);
+                }
+                Self::memory_written(state, false);
+                if is_pointer(ty(node)) {
+                    Val::of(Nullness::maybe(Source::MemoryField(render(node))))
+                } else {
+                    Val::scalar()
+                }
+            }
+            other => {
+                self.reason(format!("null-unsupported-form: {other}"));
+                for child in kids(node) {
+                    self.eval(child, state);
+                }
+                Val::of(Nullness::maybe(Source::Other(other.to_owned())))
+            }
+        }
+    }
+
+    /// Read an lvalue that is about to be written (`++`, `+=`): its place and
+    /// current value.
+    fn read_for_update(&mut self, lhs: &Value, state: &mut State) -> (Val, Option<Place>) {
+        let place = self.lvalue(lhs, state);
+        let value = match (&place, is_pointer(ty(lhs))) {
+            (Some(place), true) => self.read_place(place, &render(lhs), state),
+            _ => Val::scalar(),
+        };
+        (value, place)
+    }
+
+    fn cast(&mut self, node: &Value, state: &mut State) -> Val {
+        let Some(operand) = kids(node).next() else {
+            return Val::scalar();
+        };
+        match node["castKind"].as_str() {
+            Some("LValueToRValue") => self.read(operand, state),
+            Some("ArrayToPointerDecay") => {
+                // Forming the address of an array's first element reads no
+                // pointer; an array member of `B->` is `&B->G` (decision 1).
+                let array = strip(operand);
+                if kind(array) == "MemberExpr"
+                    && array["isArrow"] == true
+                    && let Some(base) = kids(array).next()
+                {
+                    return self.eval(base, state).offset();
+                }
+                if kind(array) == "MemberExpr" {
+                    return self.address_of(array, state);
+                }
+                if kind(array) == "UnaryOperator" && array["opcode"] == "*" {
+                    return self.address_of(array, state);
+                }
+                if kind(array) == "ArraySubscriptExpr" {
+                    return self.address_of(array, state);
+                }
+                if matches!(kind(array), "CompoundLiteralExpr" | "StmtExpr" | "CallExpr") {
+                    self.eval(array, state);
+                }
+                Val::address()
+            }
+            Some("FunctionToPointerDecay" | "BuiltinFnToFnPtr") => {
+                self.eval(operand, state);
+                Val::address()
+            }
+            Some("NullToPointer") => {
+                self.eval(operand, state);
+                Val {
+                    null_constant: true,
+                    ..Val::of(Nullness::Null)
+                }
+            }
+            Some("IntegralToPointer") => {
+                let value = self.eval(operand, state);
+                if value.null_constant {
+                    Val {
+                        null_constant: true,
+                        ..Val::of(Nullness::Null)
+                    }
+                } else {
+                    Val::of(Nullness::maybe(Source::Other("integer-to-pointer".into())))
+                }
+            }
+            Some("BitCast" | "NoOp" | "AddressSpaceConversion") => {
+                let value = self.eval(operand, state);
+                if is_pointer(ty(node)) { value } else { Val::scalar() }
+            }
+            _ => {
+                let value = self.eval(operand, state);
+                if is_pointer(ty(node)) {
+                    value
+                } else {
+                    Val {
+                        null_constant: value.null_constant,
+                        ..Val::scalar()
+                    }
+                }
+            }
+        }
+    }
+
+    fn unary(&mut self, node: &Value, state: &mut State) -> Val {
+        let Some(operand) = kids(node).next() else {
+            return Val::scalar();
+        };
+        match node["opcode"].as_str().unwrap_or("") {
+            "*" => self.read(node, state),
+            "&" => self.address_of(operand, state),
+            "++" | "--" => {
+                let (current, place) = self.read_for_update(operand, state);
+                let updated = if is_pointer(ty(operand)) {
+                    current.offset()
+                } else {
+                    Val::scalar()
+                };
+                self.store(operand, place, &updated, state);
+                if node["isPostfix"] == true {
+                    Val {
+                        place: None,
+                        ..current
+                    }
+                } else {
+                    updated
+                }
+            }
+            "__extension__" => self.eval(operand, state),
+            _ => {
+                self.eval(operand, state);
+                Val::scalar()
+            }
+        }
+    }
+
+    fn binary(&mut self, node: &Value, state: &mut State) -> Val {
+        let mut parts = kids(node);
+        let (Some(lhs), Some(rhs)) = (parts.next(), parts.next()) else {
+            return Val::scalar();
+        };
+        match node["opcode"].as_str().unwrap_or("") {
+            "=" => {
+                let place = self.lvalue(lhs, state);
+                let value = self.eval(rhs, state);
+                self.store(lhs, place, &value, state);
+                Val {
+                    place: None,
+                    ..value
+                }
+            }
+            "," => {
+                self.eval(lhs, state);
+                self.eval(rhs, state)
+            }
+            "&&" | "||" => {
+                let (on_true, on_false) =
+                    self.condition(node, state.clone(), Proof::Tested(self.line(node)));
+                *state = on_true.join(&on_false);
+                Val::scalar()
+            }
+            "+" | "-" => {
+                let left = self.eval(lhs, state);
+                let right = self.eval(rhs, state);
+                if is_pointer(ty(node)) {
+                    if is_pointer(ty(lhs)) {
+                        left.offset()
+                    } else {
+                        right.offset()
+                    }
+                } else {
+                    Val::scalar()
+                }
+            }
+            _ => {
+                self.eval(lhs, state);
+                self.eval(rhs, state);
+                Val::scalar()
+            }
+        }
+    }
+
+    fn call(&mut self, node: &Value, state: &mut State) -> Val {
+        let parts = kids(node).collect::<Vec<_>>();
+        let Some((callee, arguments)) = parts.split_first() else {
+            return Val::scalar();
+        };
+        let name = callee_name(node);
+        match name.as_deref() {
+            Some("__builtin_expect" | "__builtin_expect_with_probability") => {
+                let value = arguments
+                    .first()
+                    .map(|a| self.eval(a, state))
+                    .unwrap_or_else(Val::scalar);
+                for rest in arguments.iter().skip(1) {
+                    self.eval(rest, state);
+                }
+                return value;
+            }
+            Some(
+                "__builtin_constant_p" | "__builtin_object_size" | "__builtin_dynamic_object_size"
+                | "__builtin_classify_type",
+            ) => return Val::scalar(),
+            _ => {}
+        }
+        if name.is_none() {
+            // An indirect call: its callee expression is evaluated (a
+            // `s->cb` dereferences `s`); the function pointer itself is not
+            // checked (a registered residual).
+            self.eval(callee, state);
+        }
+        let values = arguments
+            .iter()
+            .map(|argument| self.eval(argument, state))
+            .collect::<Vec<_>>();
+        // The callee's clause: a declaration in the bounds environment (in
+        // force or held), else this unit's inference.
+        let mut obligations = Vec::new();
+        if let Some(callee_name) = &name {
+            if let Some(declared) = self.env.declared.get(callee_name) {
+                self.consulted.insert(callee_name.clone());
+                if declared.parameters == values.len() {
+                    for (position, text) in &declared.positions {
+                        obligations.push((*position, text.clone(), declared.held.clone()));
+                    }
+                } else {
+                    self.reason(format!(
+                        "null-declaration-withdrawn: `{callee_name}`'s declaration does not match the call's arguments"
+                    ));
+                }
+            } else if let Some(summary) = self.env.summaries.get(callee_name)
+                && callee_name != &self.function
+            {
+                for position in &summary.derefs {
+                    if *position < values.len() {
+                        let formal = self
+                            .env
+                            .unit
+                            .definitions
+                            .get(callee_name)
+                            .and_then(|definition| {
+                                kids(definition)
+                                    .filter(|c| kind(c) == "ParmVarDecl")
+                                    .nth(*position)
+                            })
+                            .and_then(|p| p["name"].as_str())
+                            .unwrap_or("?")
+                            .to_owned();
+                        obligations.push((
+                            *position,
+                            format!("inferred `{callee_name}` quant null-deref #{formal}"),
+                            None,
+                        ));
+                    }
+                }
+                if !summary.derefs.is_empty() {
+                    self.consulted.insert(format!("inferred:{callee_name}"));
+                }
+            }
+        }
+        for (position, text, held) in obligations {
+            let (Some(argument), Some(value)) = (arguments.get(position), values.get(position)) else {
+                continue;
+            };
+            let mut probe = state.clone();
+            let check_id = self.check(argument, "call-precondition", argument, value, &mut probe);
+            if let Some(hold) = &held {
+                // A held clause is not in force: it accuses nothing and moves
+                // nothing (Pending at most).
+                if self.recording
+                    && let Some(record) = self.checks.get_mut(&check_id)
+                    && !record.outcome.discharged()
+                    && record.outcome != Outcome::Excluded
+                {
+                    record.outcome = Outcome::Held(hold.clone());
+                }
+            } else {
+                *state = probe;
+            }
+            if self.recording
+                && let Some(record) = self.checks.get_mut(&check_id)
+            {
+                record.subject = format!("{} at {text}", record.subject);
+            }
+        }
+        // A call may write any memory a path names.
+        Self::memory_written(state, false);
+        state.definite = false;
+        let returns_pointer = is_pointer(ty(node));
+        if let Some(callee_name) = &name
+            && (self.env.unit.no_return.contains(callee_name) || ast::builtin_no_return(callee_name))
+        {
+            state.live = false;
+        }
+        if !returns_pointer {
+            return Val::scalar();
+        }
+        let Some(callee_name) = name else {
+            return Val::of(Nullness::maybe(Source::UncontractedResult("indirect call".into())));
+        };
+        if let Some(summary) = self.env.summaries.get(&callee_name)
+            && summary.returns_non_null
+            && callee_name != self.function
+        {
+            return Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                "summary:{callee_name}"
+            ))));
+        }
+        let contract = crate::contract_dependencies::unrecorded(|| {
+            self.env.resource.contract(&callee_name).cloned()
+        });
+        let null = match contract.map(|c| c.result) {
+            Some(ResourceReturnMode::Owned { nullable: true })
+            | Some(ResourceReturnMode::Reallocated { nullable: true, .. }) => {
+                Nullness::maybe(Source::Allocation(callee_name.clone()))
+            }
+            Some(ResourceReturnMode::Owned { nullable: false })
+            | Some(ResourceReturnMode::Reallocated { nullable: false, .. }) => {
+                Nullness::proved(Proof::NonNullResult(format!("declared:{callee_name}")))
+            }
+            Some(ResourceReturnMode::Derived { nullable: true, .. }) => {
+                Nullness::maybe(Source::Lookup(callee_name.clone()))
+            }
+            Some(ResourceReturnMode::Derived {
+                nullable: false,
+                parameter,
+                ..
+            }) => match values.get(parameter) {
+                Some(base) => core::offset(&base.null),
+                None => Nullness::maybe(Source::NullableResult(callee_name.clone())),
+            },
+            Some(ResourceReturnMode::None) | None => {
+                Nullness::maybe(Source::UncontractedResult(callee_name.clone()))
+            }
+        };
+        Val::of(null)
+    }
+
+    /// A condition on both arms.
+    fn condition(&mut self, node: &Value, state: State, proof: Proof) -> (State, State) {
+        let node = strip(node);
+        // A pointer in a boolean context (`!p`'s operand, a `p` Clang left
+        // without a `PointerToBoolean` cast) is a NULL test.
+        if is_pointer(ty(node)) {
+            let mut state = state;
+            let value = self.eval(node, &mut state);
+            return self.refine(&value, state, proof);
+        }
+        match kind(node) {
+            "UnaryOperator" if node["opcode"] == "!" => {
+                let Some(operand) = kids(node).next() else {
+                    return (state.clone(), state);
+                };
+                let (on_true, on_false) = self.condition(operand, state, proof);
+                (on_false, on_true)
+            }
+            "BinaryOperator" => {
+                let mut parts = kids(node);
+                let (Some(lhs), Some(rhs)) = (parts.next(), parts.next()) else {
+                    return (state.clone(), state);
+                };
+                match node["opcode"].as_str().unwrap_or("") {
+                    "&&" => {
+                        let (t1, f1) = self.condition(lhs, state, proof.clone());
+                        let (t2, f2) = self.condition(rhs, t1, proof);
+                        (t2, f1.join(&f2))
+                    }
+                    "||" => {
+                        let (t1, f1) = self.condition(lhs, state, proof.clone());
+                        let (t2, f2) = self.condition(rhs, f1, proof);
+                        (t1.join(&t2), f2)
+                    }
+                    "," => {
+                        let mut state = state;
+                        self.eval(lhs, &mut state);
+                        self.condition(rhs, state, proof)
+                    }
+                    op @ ("==" | "!=") => {
+                        let mut state = state;
+                        let left = self.eval(lhs, &mut state);
+                        let right = self.eval(rhs, &mut state);
+                        let tested = if right.null_constant && is_pointer(ty(strip(lhs))) {
+                            Some(left)
+                        } else if left.null_constant && is_pointer(ty(strip(rhs))) {
+                            Some(right)
+                        } else {
+                            None
+                        };
+                        let Some(tested) = tested else {
+                            return (state.clone().not_definite(), state.not_definite());
+                        };
+                        let (non_null, null) = self.refine(&tested, state, proof);
+                        if op == "!=" {
+                            (non_null, null)
+                        } else {
+                            (null, non_null)
+                        }
+                    }
+                    _ => {
+                        let mut state = state;
+                        self.eval(node, &mut state);
+                        (state.clone().not_definite(), state.not_definite())
+                    }
+                }
+            }
+            "ImplicitCastExpr" if node["castKind"] == "PointerToBoolean" => {
+                let mut state = state;
+                let Some(operand) = kids(node).next() else {
+                    return (state.clone(), state);
+                };
+                let value = self.eval(operand, &mut state);
+                self.refine(&value, state, proof)
+            }
+            "ImplicitCastExpr" | "CStyleCastExpr"
+                if matches!(
+                    node["castKind"].as_str(),
+                    Some("IntegralCast" | "IntegralToBoolean" | "NoOp")
+                ) =>
+            {
+                let Some(operand) = kids(node).next() else {
+                    return (state.clone(), state);
+                };
+                self.condition(operand, state, proof)
+            }
+            "CallExpr"
+                if matches!(
+                    callee_name(node).as_deref(),
+                    Some("__builtin_expect" | "__builtin_expect_with_probability")
+                ) =>
+            {
+                let parts = kids(node).collect::<Vec<_>>();
+                let Some(first) = parts.get(1) else {
+                    return (state.clone(), state);
+                };
+                let (on_true, on_false) = self.condition(first, state, proof);
+                let mut on_true = on_true;
+                let mut on_false = on_false;
+                for rest in parts.iter().skip(2) {
+                    self.eval(rest, &mut on_true);
+                    self.eval(rest, &mut on_false);
+                }
+                (on_true, on_false)
+            }
+            "IntegerLiteral" => {
+                let zero = node["value"].as_str() == Some("0");
+                let dead = State::dead(state.firsts.len());
+                if zero { (dead, state) } else { (state, dead) }
+            }
+            _ => {
+                let mut state = state;
+                self.eval(node, &mut state);
+                (state.clone().not_definite(), state.not_definite())
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Statements
+    // -----------------------------------------------------------------------
+
+    pub(super) fn stmt(&mut self, node: &Value, state: State) -> State {
+        match kind(node) {
+            "CompoundStmt" => {
+                let mut state = state;
+                for child in kids(node) {
+                    state = self.stmt(child, state);
+                }
+                state
+            }
+            "DeclStmt" => {
+                let mut state = state;
+                for decl in kids(node) {
+                    if kind(decl) != "VarDecl" {
+                        continue;
+                    }
+                    let id = decl["id"].as_str().unwrap_or("").to_owned();
+                    let init = kids(decl).find(|c| !kind(c).ends_with("Attr") && present(c));
+                    let static_storage = matches!(decl["storageClass"].as_str(), Some("static" | "extern"));
+                    match init {
+                        Some(init) if !static_storage => {
+                            let value = self.eval(init, &mut state);
+                            if self.tracked.contains(&id) {
+                                state.vars.insert(
+                                    id.clone(),
+                                    Val {
+                                        place: Some(Place::Var(id.clone())),
+                                        null_constant: false,
+                                        ..value
+                                    },
+                                );
+                            } else if is_pointer(ty(decl)) {
+                                state.paths.insert(
+                                    format!("g:{id}"),
+                                    PathFact {
+                                        null: value.null,
+                                        effective_type: false,
+                                    },
+                                );
+                            }
+                        }
+                        Some(_) => {}
+                        None if self.tracked.contains(&id) => {
+                            let name = decl["name"].as_str().unwrap_or("?").to_owned();
+                            state.vars.insert(
+                                id.clone(),
+                                Val {
+                                    place: Some(Place::Var(id.clone())),
+                                    ..Val::of(Nullness::maybe(Source::Uninitialized(name)))
+                                },
+                            );
+                        }
+                        None => {}
+                    }
+                }
+                state
+            }
+            "NullStmt" => state,
+            "IfStmt" => self.if_stmt(node, state),
+            "WhileStmt" => {
+                let parts = kids(node).filter(|c| present(c)).collect::<Vec<_>>();
+                let (Some(cond), Some(body)) = (parts.first(), parts.last()) else {
+                    self.reason("null-unsupported-form: WhileStmt".into());
+                    return state;
+                };
+                self.loop_stmt(Some(cond), body, None, false, state)
+            }
+            "DoStmt" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                let (Some(body), Some(cond)) = (parts.first(), parts.get(1)) else {
+                    self.reason("null-unsupported-form: DoStmt".into());
+                    return state;
+                };
+                self.loop_stmt(Some(cond), body, None, true, state)
+            }
+            "ForStmt" => {
+                let parts = kids(node).collect::<Vec<_>>();
+                if parts.len() != 5 {
+                    self.reason("null-unsupported-form: ForStmt".into());
+                    return state;
+                }
+                let mut state = state;
+                if present(parts[0]) {
+                    state = self.stmt(parts[0], state);
+                }
+                let cond = present(parts[2]).then_some(parts[2]);
+                let inc = present(parts[3]).then_some(parts[3]);
+                self.loop_stmt(cond, parts[4], inc, false, state)
+            }
+            "SwitchStmt" => self.switch_stmt(node, state),
+            "CaseStmt" | "DefaultStmt" => {
+                let entry = self.switches.last().cloned();
+                let mut state = match entry {
+                    Some((entry, depth)) if depth == self.loops.len() => state.join(&entry),
+                    _ => {
+                        // A label inside a loop nested in its switch, or no
+                        // switch: the jump into it is not read.
+                        self.reason("null-unsupported-form: a case label the walk cannot enter".into());
+                        self.widen_all(state, "case")
+                    }
+                };
+                state.definite = false;
+                let sub = kids(node).filter(|c| present(c)).last();
+                let is_case = kind(node) == "CaseStmt";
+                match sub {
+                    Some(sub) if !is_case || kids(node).filter(|c| present(c)).count() > 1 => {
+                        self.stmt(sub, state)
+                    }
+                    _ => state,
+                }
+            }
+            "BreakStmt" => {
+                if let Some(frame) = self.loops.last_mut() {
+                    frame.breaks = frame.breaks.join(&state);
+                } else {
+                    self.reason("null-unsupported-form: a break outside a loop or switch".into());
+                }
+                State::dead(state.firsts.len())
+            }
+            "ContinueStmt" => {
+                if let Some(frame) = self.loops.iter_mut().rev().find(|f| !f.switch) {
+                    frame.continues = frame.continues.join(&state);
+                } else {
+                    self.reason("null-unsupported-form: a continue outside a loop".into());
+                }
+                State::dead(state.firsts.len())
+            }
+            "ReturnStmt" => {
+                let mut state = state;
+                if let Some(value) = kids(node).next() {
+                    let returned = self.eval(value, &mut state);
+                    if state.live && is_pointer(ty(value)) {
+                        self.returns = Some(match &self.returns {
+                            Some(previous) => previous.join(&returned.null),
+                            None => returned.null,
+                        });
+                    }
+                }
+                if state.live {
+                    self.exit(&state);
+                }
+                State::dead(state.firsts.len())
+            }
+            "LabelStmt" => {
+                let label = node["declId"].as_str().unwrap_or("").to_owned();
+                let mut state = state;
+                if self.backward.contains(&label) {
+                    state = self.widen_all(state, &label);
+                } else if let Some(arriving) = self.gotos.get(&label) {
+                    state = state.join(arriving);
+                }
+                state.definite = false;
+                match kids(node).next() {
+                    Some(sub) => self.stmt(sub, state),
+                    None => state,
+                }
+            }
+            "GotoStmt" => {
+                let label = node["targetLabelDeclId"].as_str().unwrap_or("").to_owned();
+                if !self.backward.contains(&label) {
+                    let joined = match self.gotos.get(&label) {
+                        Some(previous) => previous.join(&state),
+                        None => state.clone(),
+                    };
+                    self.gotos.insert(label, joined);
+                }
+                State::dead(state.firsts.len())
+            }
+            "IndirectGotoStmt" => {
+                self.reason("null-unsupported-form: IndirectGotoStmt".into());
+                State::dead(state.firsts.len())
+            }
+            "AttributedStmt" => {
+                let mut state = state;
+                for child in kids(node).filter(|c| !kind(c).ends_with("Attr")) {
+                    state = self.stmt(child, state);
+                }
+                state
+            }
+            "GCCAsmStmt" | "MSAsmStmt" => {
+                let mut state = state;
+                for child in kids(node) {
+                    self.eval(child, &mut state);
+                }
+                let label = "asm".to_owned();
+                self.widen_all(state, &label)
+            }
+            _ => {
+                let mut state = state;
+                self.eval(node, &mut state);
+                state
+            }
+        }
+    }
+
+    /// Every fact forgotten (a label a later `goto` reaches, an asm).
+    fn widen_all(&self, mut state: State, why: &str) -> State {
+        for value in state.vars.values_mut() {
+            *value = Val {
+                place: value.place.clone(),
+                ..Val::of(Nullness::maybe(Source::Other(format!("label:{why}"))))
+            };
+        }
+        state.paths.clear();
+        for firsts in &mut state.firsts {
+            firsts.insert(First::Other);
+        }
+        state.definite = false;
+        state
+    }
+
+    fn if_stmt(&mut self, node: &Value, state: State) -> State {
+        let parts = kids(node).filter(|c| present(c)).collect::<Vec<_>>();
+        let (Some(cond), Some(then)) = (parts.first(), parts.get(1)) else {
+            self.reason("null-unsupported-form: IfStmt".into());
+            return state;
+        };
+        let otherwise = parts.get(2);
+        // `assert(B)` expands to `if (B) ; else __assert_fail(...);`: its
+        // surviving arm is an assertion (a listed premise), not a test.
+        let asserted = kind(then) == "NullStmt"
+            && otherwise.is_some_and(|e| {
+                kind(e) == "CallExpr" && callee_name(e).is_some_and(|n| ast::is_assert_failure(&n))
+            });
+        let line = self.line(cond);
+        let proof = if asserted {
+            Proof::Asserted(line)
+        } else {
+            Proof::Tested(line)
+        };
+        let (on_true, on_false) = self.condition(cond, state, proof);
+        let after_then = self.stmt(then, on_true);
+        let after_else = match otherwise {
+            Some(otherwise) => self.stmt(otherwise, on_false),
+            None => on_false,
+        };
+        after_then.join(&after_else)
+    }
+
+    fn switch_stmt(&mut self, node: &Value, state: State) -> State {
+        let parts = kids(node).filter(|c| present(c)).collect::<Vec<_>>();
+        let (Some(cond), Some(body)) = (parts.first(), parts.last()) else {
+            self.reason("null-unsupported-form: SwitchStmt".into());
+            return state;
+        };
+        let mut state = state;
+        self.eval(cond, &mut state);
+        state.definite = false;
+        let has_default = contains_default(body);
+        let formals = state.firsts.len();
+        self.loops.push(LoopFrame {
+            breaks: State::dead(formals),
+            continues: State::dead(formals),
+            switch: true,
+        });
+        self.switches.push((state.clone(), self.loops.len()));
+        // The body is entered only through its labels.
+        let end = self.stmt(body, State::dead(formals));
+        self.switches.pop();
+        let frame = self.loops.pop().expect("the switch frame");
+        let mut out = end.join(&frame.breaks);
+        if !has_default {
+            out = out.join(&state);
+        }
+        out
+    }
+
+    fn loop_stmt(
+        &mut self,
+        cond: Option<&Value>,
+        body: &Value,
+        inc: Option<&Value>,
+        body_first: bool,
+        entry: State,
+    ) -> State {
+        let entry = entry.not_definite();
+        let formals = entry.firsts.len();
+        let recording = self.recording;
+        self.recording = false;
+        let mut head = entry.clone();
+        let mut converged = false;
+        for _ in 0..LOOP_ITERATIONS {
+            let (_, back) = self.loop_once(cond, body, inc, body_first, head.clone(), formals);
+            let next = entry.join(&back);
+            if next == head {
+                converged = true;
+                break;
+            }
+            head = next;
+        }
+        self.recording = recording;
+        if !converged {
+            self.reason("null-loop-unconverged: a loop's facts did not reach a fixed point".into());
+        }
+        let (exit, _) = self.loop_once(cond, body, inc, body_first, head, formals);
+        exit
+    }
+
+    /// One pass of a loop from `head`: the exit state and the back edge.
+    fn loop_once(
+        &mut self,
+        cond: Option<&Value>,
+        body: &Value,
+        inc: Option<&Value>,
+        body_first: bool,
+        head: State,
+        formals: usize,
+    ) -> (State, State) {
+        self.loops.push(LoopFrame {
+            breaks: State::dead(formals),
+            continues: State::dead(formals),
+            switch: false,
+        });
+        let (exit_test, back) = if body_first {
+            let after_body = self.stmt(body, head);
+            let frame_continues = self.loops.last().map(|f| f.continues.clone()).expect("frame");
+            let before_test = after_body.join(&frame_continues);
+            match cond {
+                Some(cond) => {
+                    let line = self.line(cond);
+                    let (on_true, on_false) = self.condition(cond, before_test, Proof::Tested(line));
+                    (on_false, on_true)
+                }
+                None => (State::dead(formals), before_test),
+            }
+        } else {
+            let (on_true, on_false) = match cond {
+                Some(cond) => {
+                    let line = self.line(cond);
+                    self.condition(cond, head, Proof::Tested(line))
+                }
+                None => (head, State::dead(formals)),
+            };
+            let after_body = self.stmt(body, on_true);
+            let frame_continues = self.loops.last().map(|f| f.continues.clone()).expect("frame");
+            let mut back = after_body.join(&frame_continues);
+            if let Some(inc) = inc {
+                self.eval(inc, &mut back);
+            }
+            (on_false, back)
+        };
+        let frame = self.loops.pop().expect("the loop frame");
+        (exit_test.join(&frame.breaks), back)
+    }
+}
+
+fn contains_default(node: &Value) -> bool {
+    match kind(node) {
+        "DefaultStmt" => true,
+        "SwitchStmt" => false,
+        _ => kids(node).any(contains_default),
+    }
+}
+
+const STATEMENT_KINDS: [&str; 19] = [
+    "CompoundStmt",
+    "DeclStmt",
+    "NullStmt",
+    "IfStmt",
+    "WhileStmt",
+    "DoStmt",
+    "ForStmt",
+    "SwitchStmt",
+    "CaseStmt",
+    "DefaultStmt",
+    "BreakStmt",
+    "ContinueStmt",
+    "ReturnStmt",
+    "LabelStmt",
+    "GotoStmt",
+    "IndirectGotoStmt",
+    "AttributedStmt",
+    "GCCAsmStmt",
+    "MSAsmStmt",
+];
+
+fn is_expression(node: &Value) -> bool {
+    !STATEMENT_KINDS.contains(&kind(node))
+}
+
+/// The worse of two outcomes recorded for one check (a check reached twice).
+fn worse(a: &Outcome, b: &Outcome) -> Outcome {
+    let rank = |o: &Outcome| match o {
+        Outcome::Excluded => 0,
+        Outcome::Proved(_) => 1,
+        Outcome::Moved(_) => 2,
+        Outcome::Held(_) => 3,
+        Outcome::Candidate(_) => 4,
+        Outcome::Violation { reachable: false } => 5,
+        Outcome::Violation { reachable: true } => 6,
+    };
+    match (a, b) {
+        (Outcome::Candidate(x), Outcome::Candidate(y)) => {
+            Outcome::Candidate(x.union(y).cloned().collect())
+        }
+        _ if rank(a) >= rank(b) => a.clone(),
+        _ => b.clone(),
+    }
+}

@@ -212,6 +212,11 @@ pub enum BoundsClause {
         variable: String,
         predicate: qcore_core::index_quant::QuantPredicate,
     },
+    /// Card NULL-SAFETY-PROPERTY (C09.3, USER DECISION 2026-10-10): `quant
+    /// null-deref #B;` -- the function dereferences the pointer formal `B`,
+    /// which must be non-null. Read by the null-dereference property only;
+    /// the bounds consumer never reads it ([`BoundsContracts::for_bounds`]).
+    NullDeref { parameter: String },
 }
 
 impl BoundsClause {
@@ -372,6 +377,47 @@ pub struct BoundsContracts {
 }
 
 impl BoundsContracts {
+    /// Card NULL-SAFETY-PROPERTY (rule 14o): the environment the bounds
+    /// consumer reads. Every `quant null-deref` clause is removed, a
+    /// declaration left with no clause is removed, and a module left with no
+    /// declaration leaves the identity, so a null-dereference module changes
+    /// no bounds row, no bounds dependency and no bounds digest.
+    #[must_use]
+    pub fn for_bounds(&self) -> Self {
+        let mut view = self.clone();
+        let mut kept_modules = std::collections::BTreeSet::new();
+        view.functions.retain(|_, contract| {
+            let before = contract.clauses.len();
+            contract
+                .clauses
+                .retain(|entry| !matches!(entry.clause, BoundsClause::NullDeref { .. }));
+            let keep = !(before > 0 && contract.clauses.is_empty());
+            if keep {
+                kept_modules.insert(contract.module.clone());
+            }
+            keep
+        });
+        let null_only = self
+            .functions
+            .values()
+            .map(|contract| contract.module.clone())
+            .filter(|module| !kept_modules.contains(module))
+            .collect::<std::collections::BTreeSet<_>>();
+        view.sources.retain(|path, _| !null_only.contains(path));
+        view
+    }
+
+    /// Card NULL-SAFETY-PROPERTY: every declaration with a `quant null-deref`
+    /// clause, by name.
+    pub fn null_derefs(&self) -> impl Iterator<Item = (&String, &BoundsFunctionContract)> {
+        self.functions.iter().filter(|(_, contract)| {
+            contract
+                .clauses
+                .iter()
+                .any(|entry| matches!(entry.clause, BoundsClause::NullDeref { .. }))
+        })
+    }
+
     /// The environment's identity: the version and every module digest.
     pub fn digest(&self) -> String {
         let mut text = String::from(BOUNDS_CONTRACT_VERSION);
@@ -770,6 +816,31 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
     )];
     for clause in &contract.clauses {
         let clause = &clause.value;
+        // Card NULL-SAFETY-PROPERTY: the collocated null-dereference check.
+        if clause.kind == SourceContractClauseKind::QuantNullDeref {
+            let tokens = tokens_of(&clause.expression_source)?;
+            let [TokenKind::Symbol(Symbol::Hash), TokenKind::Word(name)] = tokens.as_slice() else {
+                return Err(
+                    "quant-null-deref-shape: a null-dereference check is `quant null-deref #B;`"
+                        .into(),
+                );
+            };
+            let parameter = reader
+                .parameter(&[TokenKind::Word(name.clone())], ParameterKind::Pointer)
+                .map_err(|_| {
+                    format!(
+                        "quant-null-deref-parameter: `#{name}` names no pointer parameter of the declaration"
+                    )
+                })?;
+            let text = format!("quant null-deref #{parameter}");
+            normalised.push(text.clone());
+            clauses.push(BoundsClauseEntry {
+                clause: BoundsClause::NullDeref { parameter },
+                text,
+                review: None,
+            });
+            continue;
+        }
         // Card QUANT-INDEX-CHECKS: the collocated index check.
         if clause.kind == SourceContractClauseKind::QuantCheck {
             let tokens = tokens_of(&clause.expression_source)?;
@@ -865,6 +936,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::Frame { parameter, .. } => format!("frame {parameter}"),
             BoundsClause::ReturnDerived { parameter, .. } => format!("derived {parameter}"),
             BoundsClause::QuantCheck { parameter, .. } => format!("quant {parameter}"),
+            BoundsClause::NullDeref { parameter } => format!("null-deref {parameter}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));

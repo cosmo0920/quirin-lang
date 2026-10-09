@@ -69,6 +69,10 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         BoundsClause::ReturnExtent { .. } => ClauseKind::ReturnExtent,
         BoundsClause::PreservesExtents => ClauseKind::Preserves,
         BoundsClause::GlobalExtent { .. } => ClauseKind::GlobalExtent,
+        // Card NULL-SAFETY-PROPERTY: the bounds consumer reads the
+        // environment without null-deref clauses (`for_bounds`); were one to
+        // reach it, no bounds evidence would cover it, like a preservation.
+        BoundsClause::NullDeref { .. } => ClauseKind::Preserves,
     }
 }
 

@@ -128,6 +128,15 @@ pub enum SourceContractClauseKind {
     /// skips it exactly as it does a `quant` clause. Before this card the
     /// spelling was a parse error (`checks` is no exit selector).
     QuantCheck,
+    /// Card `NULL-SAFETY-PROPERTY` (USER DECISION 2026-10-10): `quant
+    /// null-deref #B;`, a collocated **check** that the function dereferences
+    /// the pointer formal `B`, which must therefore be non-null. Like
+    /// [`Self::QuantCheck`] it carries no exit selector: a check of the body
+    /// and an obligation of its callers. Only the bounds contract v1 consumer
+    /// reads it (`qcore_contract::bounds_contract`); every other consumer
+    /// rejects or skips it as it does a `quant` clause. Before this card the
+    /// spelling was a parse error (`null` is no exit selector).
+    QuantNullDeref,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1139,6 +1148,12 @@ impl<'a> SourceParser<'a> {
                 (SourceContractClauseKind::Requires, cursor + 1)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "checks") {
                 (SourceContractClauseKind::QuantCheck, cursor + 2)
+            } else if self.word(cursor, "quant")
+                && self.word(cursor + 1, "null")
+                && self.symbol(cursor + 2, Symbol::Minus)
+                && self.word(cursor + 3, "deref")
+            {
+                (SourceContractClauseKind::QuantNullDeref, cursor + 4)
             } else if self.word(cursor, "ensures") || self.word(cursor, "quant") {
                 let is_quant = self.word(cursor, "quant");
                 let (selector, next) = self.contract_exit_selector(cursor + 1, close)?;
