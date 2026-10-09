@@ -1,0 +1,187 @@
+{
+ "XXH3_128bits_internal": {
+  "declared": false,
+  "sites": 24,
+  "caller_statuses": {
+   "not-reported": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_hashLong_128b_default",
+   "XXH3_hashLong_128b_withSecret",
+   "XXH3_hashLong_128b_withSeed"
+  ]
+ },
+ "XXH3_64bits_internal": {
+  "declared": false,
+  "sites": 24,
+  "caller_statuses": {
+   "not-reported": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_hashLong_64b_default",
+   "XXH3_hashLong_64b_withSecret",
+   "XXH3_hashLong_64b_withSeed"
+  ]
+ },
+ "co_create": {
+  "declared": false,
+  "sites": 17,
+  "caller_statuses": {
+   "not-reported": 2,
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "input_pre_cb_collect",
+   "output_pre_cb_flush",
+   "sched_timer_coro_cb_run"
+  ]
+ },
+ "XXH3_hashLong_128b_internal": {
+  "declared": false,
+  "sites": 16,
+  "caller_statuses": {
+   "not-reported": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_64b_internal": {
+  "declared": false,
+  "sites": 16,
+  "caller_statuses": {
+   "not-reported": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_consumeStripes": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_128b_withSeed_internal": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_initCustomSecret_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_64b_withSeed_internal": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_initCustomSecret_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_update": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "pthread_key_create": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "libco_in_param_key_destroy"
+  ]
+ },
+ "flb_sched_timer_cb_create": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "not-reported": 1,
+   "Unknown": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "cb_engine_sched_timer",
+   "cb_storage_metrics_collect",
+   "flb_input_chunk_ring_buffer_collector",
+   "flb_time_thread_wakeup"
+  ]
+ },
+ "msgpack_packer_init": {
+  "declared": true,
+  "sites": 3,
+  "caller_statuses": {
+   "Unknown": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "flb_input_chunk_write",
+   "msgpack_sbuffer_write"
+  ]
+ },
+ "pthread_once": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "flb_engine_evl_init_private"
+  ]
+ },
+ "cio_qsort": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "sort_chunk_cmp"
+  ]
+ },
+ "flb_input_set_collector_time": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "cb_queue_chunks"
+  ]
+ }
+}

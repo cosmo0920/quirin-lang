@@ -1,0 +1,146 @@
+{
+ "cmt_mpack_unpack_array": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "ctr_mpack_unpack_array": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "bsearch": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "qsort": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "cmt_mpack_unpack_map": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "ctr_mpack_unpack_map": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_init": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_new": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_add": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_destroy": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_clear": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "pb_write": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "pb_encode_varint": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_poll_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_destroy": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "pthread_once": {
+  "leaves": 2,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "pthread_getspecific": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "pthread_setspecific": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "mk_sched_get_thread_conf": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ }
+}

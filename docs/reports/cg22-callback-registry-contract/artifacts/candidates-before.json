@@ -1,0 +1,431 @@
+{
+ "cmt_decode_msgpack.c::unpack_static_label": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_static_label_component": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_metric_labels": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_metric_label": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_summary_quantiles": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_summary_quantile": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_histogram_buckets": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_histogram_bucket": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_exp_histogram_positive_buckets": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_exp_histogram_positive_bucket": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_exp_histogram_negative_buckets": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_exp_histogram_negative_bucket": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_meta_static_labels": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_static_label": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_meta_labels": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_meta_label": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_meta_buckets": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_meta_bucket": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_meta_quantiles": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_meta_quantile": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_basic_type_values": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_metric_array_entry": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_context_metrics": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_basic_type_entry": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_opts": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_opts_ns": "Unknown",
+    "unpack_opts_ss": "Unknown",
+    "unpack_opts_name": "Unknown",
+    "unpack_opts_desc": "Unknown",
+    "unpack_opts_unit": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_metric_summary": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_summary_quantiles_set": "Unknown",
+    "unpack_summary_quantiles": "Unknown",
+    "unpack_summary_count": "Unknown",
+    "unpack_summary_sum": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_metric_histogram": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_histogram_buckets": "Unknown",
+    "unpack_histogram_count": "Unknown",
+    "unpack_histogram_sum": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_metric_exp_histogram": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_exp_histogram_scale": "Unknown",
+    "unpack_exp_histogram_zero_count": "Unknown",
+    "unpack_exp_histogram_zero_threshold": "Unknown",
+    "unpack_exp_histogram_positive_offset": "Unknown",
+    "unpack_exp_histogram_positive_buckets": "Unknown",
+    "unpack_exp_histogram_negative_offset": "Unknown",
+    "unpack_exp_histogram_negative_buckets": "Unknown",
+    "unpack_exp_histogram_count": "Unknown",
+    "unpack_exp_histogram_sum_set": "Unknown",
+    "unpack_exp_histogram_sum": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_metric": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_metric_ts": "Safe",
+    "unpack_metric_start_ts": "Safe",
+    "unpack_metric_value": "Unknown",
+    "unpack_metric_value_type": "Unknown",
+    "unpack_metric_value_int64": "Unknown",
+    "unpack_metric_value_uint64": "Unknown",
+    "unpack_metric_labels": "Unknown",
+    "unpack_metric_summary": "Unknown",
+    "unpack_metric_histogram": "Unknown",
+    "unpack_metric_exp_histogram": "Unknown",
+    "unpack_metric_hash": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_basic_type_meta": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_meta_ver": "Safe",
+    "unpack_meta_type": "Unknown",
+    "unpack_meta_opts": "Unknown",
+    "unpack_meta_labels": "Unknown",
+    "unpack_meta_buckets": "Unknown",
+    "unpack_meta_quantiles": "Unknown",
+    "unpack_meta_aggregation_type": "Safe"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_basic_type": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_basic_type_meta": "Unknown",
+    "unpack_basic_type_values": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_context_processing_section": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_meta_static_labels": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_context_header": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_context_internal_metadata": "Unknown",
+    "unpack_context_external_metadata": "Unknown",
+    "unpack_context_processing_section": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "cmt_decode_msgpack.c::unpack_context": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_context_header": "Unknown",
+    "unpack_context_metrics": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_span_events": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_event": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_span_links": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_link": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_scope_span_spans": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_span": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_resource_span_scope_spans": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_scope_span": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_resource_spans": [
+  {
+   "kind": "array",
+   "candidates": {
+    "unpack_resource_span": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_resource": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_resource_attributes": "Unknown",
+    "unpack_resource_dropped_attributes_count": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_scope_span_instrumentation_scope": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_instrumentation_scope_name": "Unknown",
+    "unpack_instrumentation_scope_version": "Unknown",
+    "unpack_instrumentation_scope_attributes": "Unknown",
+    "unpack_instrumentation_scope_dropped_attribute_count": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_event": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_event_name": "Unknown",
+    "unpack_event_time_unix_nano": "Unknown",
+    "unpack_event_attributes": "Unknown",
+    "unpack_event_dropped_attributes_count": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_link": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_link_trace_id": "Unknown",
+    "unpack_link_span_id": "Unknown",
+    "unpack_link_trace_state": "Unknown",
+    "unpack_link_attributes": "Unknown",
+    "unpack_link_dropped_attributes_count": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_span_status": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_span_status_code": "Unknown",
+    "unpack_span_status_message": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_span": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_span_trace_id": "Unknown",
+    "unpack_span_span_id": "Unknown",
+    "unpack_span_parent_span_id": "Unknown",
+    "unpack_span_trace_state": "Unknown",
+    "unpack_span_name": "Unknown",
+    "unpack_span_kind": "Unknown",
+    "unpack_span_start_time_unix_nano": "Unknown",
+    "unpack_span_end_time_unix_nano": "Unknown",
+    "unpack_span_attributes": "Unknown",
+    "unpack_span_dropped_attributes_count": "Unknown",
+    "unpack_span_dropped_events_count": "Unknown",
+    "unpack_span_dropped_links_count": "Unknown",
+    "unpack_span_events": "Unknown",
+    "unpack_span_links": "Unknown",
+    "unpack_span_status": "Unknown",
+    "unpack_span_schema_url": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_scope_span": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_scope_span_instrumentation_scope": "Unknown",
+    "unpack_scope_span_spans": "Unknown",
+    "unpack_scope_span_schema_url": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_resource_span": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_resource": "Unknown",
+    "unpack_resource_span_schema_url": "Unknown",
+    "unpack_resource_span_scope_spans": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ],
+ "ctr_decode_msgpack.c::unpack_context": [
+  {
+   "kind": "map",
+   "candidates": {
+    "unpack_resource_spans": "Unknown"
+   },
+   "caller_status": "Unknown",
+   "all_safe": false
+  }
+ ]
+}

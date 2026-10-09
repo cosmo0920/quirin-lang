@@ -1,0 +1,249 @@
+{
+ "XXH3_128bits_internal": {
+  "declared": false,
+  "sites": 39,
+  "caller_statuses": {
+   "not-reported": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_hashLong_128b_default",
+   "XXH3_hashLong_128b_withSecret",
+   "XXH3_hashLong_128b_withSeed"
+  ]
+ },
+ "XXH3_64bits_internal": {
+  "declared": false,
+  "sites": 39,
+  "caller_statuses": {
+   "not-reported": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_hashLong_64b_default",
+   "XXH3_hashLong_64b_withSecret",
+   "XXH3_hashLong_64b_withSeed"
+  ]
+ },
+ "XXH3_hashLong_128b_internal": {
+  "declared": false,
+  "sites": 26,
+  "caller_statuses": {
+   "not-reported": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_64b_internal": {
+  "declared": false,
+  "sites": 26,
+  "caller_statuses": {
+   "not-reported": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "co_create": {
+  "declared": false,
+  "sites": 26,
+  "caller_statuses": {
+   "not-reported": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "input_pre_cb_collect",
+   "output_pre_cb_flush"
+  ]
+ },
+ "flb_sched_timer_cb_create": {
+  "declared": false,
+  "sites": 14,
+  "caller_statuses": {
+   "not-reported": 1,
+   "Unknown": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "cb_thread_sched_timer",
+   "flb_input_rate_gate_timer_callback",
+   "flb_time_thread_wakeup"
+  ]
+ },
+ "XXH3_consumeStripes": {
+  "declared": false,
+  "sites": 13,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_128b_withSeed_internal": {
+  "declared": false,
+  "sites": 13,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_initCustomSecret_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_hashLong_64b_withSeed_internal": {
+  "declared": false,
+  "sites": 13,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_initCustomSecret_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "XXH3_update": {
+  "declared": false,
+  "sites": 13,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "XXH3_accumulate_sse2",
+   "XXH3_scrambleAcc_sse2"
+  ]
+ },
+ "pthread_key_create": {
+  "declared": false,
+  "sites": 13,
+  "caller_statuses": {
+   "not-reported": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "libco_in_param_key_destroy"
+  ]
+ },
+ "flb_input_set_collector_time": {
+  "declared": false,
+  "sites": 8,
+  "caller_statuses": {
+   "Unknown": 3
+  },
+  "safe_callers": [],
+  "designators": [
+   "flb_tail_dmode_pending_flush",
+   "flb_tail_file_purge",
+   "flb_tail_mult_pending_flush",
+   "flb_tail_scan_callback",
+   "in_tail_progress_check_callback",
+   "in_tail_watcher_callback",
+   "tail_fs_check",
+   "tail_fs_event"
+  ]
+ },
+ "flb_input_set_collector_event": {
+  "declared": false,
+  "sites": 3,
+  "caller_statuses": {
+   "Unknown": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "in_tail_collect_pending",
+   "in_tail_collect_static",
+   "tail_fs_event"
+  ]
+ },
+ "msgpack_packer_init": {
+  "declared": true,
+  "sites": 2,
+  "caller_statuses": {
+   "Unknown": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "msgpack_sbuffer_write"
+  ]
+ },
+ "modify_json_cond": {
+  "declared": false,
+  "sites": 2,
+  "caller_statuses": {
+   "Unknown": 2
+  },
+  "safe_callers": [],
+  "designators": [
+   "prepend_sds_to_str",
+   "unesc_ends_with_nl",
+   "use_sds"
+  ]
+ },
+ "flb_ml_stream_create": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "ml_flush_callback"
+  ]
+ },
+ "flb_regex_parse": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "cb_results"
+  ]
+ },
+ "pthread_once": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "flb_init_env"
+  ]
+ },
+ "mk_utils_worker_spawn": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "flb_lib_worker"
+  ]
+ },
+ "flb_tp_thread_create": {
+  "declared": false,
+  "sites": 1,
+  "caller_statuses": {
+   "Unknown": 1
+  },
+  "safe_callers": [],
+  "designators": [
+   "input_thread"
+  ]
+ }
+}
