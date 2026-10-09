@@ -5969,3 +5969,95 @@ own anchor here.
     (`beyond_the_bound_there_is_no_index`,
     `a_unit_without_an_index_keeps_the_declaration_unvalidated`,
     `the_fold_never_skips_a_unit`).
+
+<a id="constraint-13q"></a>
+
+13q. **The analysed-unit filtered launch and the closed-world whole-unit AST
+    read a document within rule 13o's bound the same way.** Card
+    DEEP-AST-TRANSPORTS-AND-WALL-TIME, at the user's direction "handle as safe
+    as possible". `typed_c_ast::unit_declarations` (Clang's name-filtered dump
+    for a consultation of the analysed unit: `typed_access_path::definition_ast`,
+    read by rule 11y's extension fallback and the retention guard's shadow
+    check, and `appended_declarations`, the rule-12u probes) parses the stream
+    as before and, only when that fails, measures the text's nesting (its
+    deepest value's) and reads a text of at most 256 levels again without the
+    limit on a dedicated 256 MiB stack (`deep_unit_ast::values_from_slice`);
+    `typed_c_ast::translation_unit_ast` (rule 11i's closed world) reads its
+    document through `deep_unit_ast::from_slice`. Beyond the bound, or on a
+    failed reparse, the default error stands (rule 13p's shape). The two
+    launches keep separate caches, so a stream only the band reads is never
+    answered to an importer. Every reader of what they return is measured at
+    the bound with the stack high-water mark of a fresh thread (debug build,
+    `deep_ast_transports::stack::high_water`): 236 KiB for an `else if` chain
+    whose filtered stream nests 255 levels, 232 KiB for a nested conditional
+    expression (253), 232 KiB for the closed world at 256, and 232 KiB on
+    librdkafka's `rd_http_ssl_configure` itself (its filtered value nests 221;
+    56 KiB on a shallow definition), each within the controls' 1 MiB budget,
+    half an analysis worker's 2 MiB stack. **Do not** admit the band on a
+    transport whose readers are not measured, raise the bound without
+    measuring them again, or let the importers read the band through the
+    shared cache. Corpus, system and slice outputs identical (no consultation
+    on a deep definition there). `QCore.DeepAstTransports`
+    (`reads_iff_within_the_bound`, `the_band_keeps_every_default_reading`,
+    `nothing_beyond_the_bound`, `a_stream_is_read_iff_every_value_is`,
+    `fits_at_the_bound_fits_within_it`); controls in
+    `deep_ast_transports::tests`;
+    [report](../reports/deep-ast-transports-and-wall-time/README.md).
+
+<a id="constraint-13r"></a>
+
+13r. **Every other Clang JSON transport keeps its limit, each for a recorded
+    reason.** Card DEEP-AST-TRANSPORTS-AND-WALL-TIME. The inventory is
+    `deep_ast_transports::TRANSPORTS` (bound to `QCore.DeepAstTransports.transports`):
+    the source importers' `typed_c_ast::ast_declarations` and `function_ast`
+    (`typed_source`, `boolean_source`, `typed_source_match`, `layout_extents`,
+    `cast_representation`: interpreters whose recursion is not measured deep,
+    over named functions of fixed shapes, so a refusal is the fail-closed
+    answer), `c_numeric_obligations::typed_ast` (no route consumes it) and the
+    FFI layout probe (`ffi_layout`) keep `serde_json`'s default limit. The
+    typed dispatch census and the bounds side pass already parse without a
+    limit on their own 256 MiB stacks, where their readers run too; they are
+    recorded, unchanged (residual `UNBOUNDED-DEPTH-AST-READERS`). **Do not**
+    move a transport between bounds without measuring its readers and
+    updating the table and the Lean list together.
+    `QCore.DeepAstTransports` (`a_default_transport_is_unchanged`,
+    `the_band_transports`); `deep_ast_transports::tests::lean_transports_are_the_rust_transports`.
+
+<a id="constraint-13s"></a>
+
+13s. **A callee's call-exit resolution is computed once per callee per
+    function of one unit index.** Card DEEP-AST-TRANSPORTS-AND-WALL-TIME.
+    `function_reading_reuse::FunctionReuse::resolution` (hook:
+    `legacy_call_exits::call_exit_resolution` through
+    `StatementIndex::call_resolution`) answers `call_exits::resolve(function,
+    callee, no_return_declarations)`: computed by `resolve` on the first ask
+    for that name and stored in the function's entry of the unit index (one
+    Clang document of one launch identity), answered from it after. The
+    measured cost it removes: the parity-only call-exit census walked each
+    function once per uncontracted call statement, 33 % of `rdhttp.c`'s
+    samples (908 calls of 44 warning functions in four macro-expanded
+    definitions). **Do not** key the memo on anything but the callee within
+    one function entry, share it across documents, or store an answer other
+    than `resolve`'s. Measured identity and wall time in the report.
+    `QCore.DeepAstTransports` (`the_memo_answers_as_the_function`,
+    `asking_keeps_the_memo_sound`, `every_ask_is_answered_by_the_function`);
+    `function_reading_reuse::tests::the_memo_is_resolve_for_every_name`.
+
+<a id="constraint-13t"></a>
+
+13t. **`elaboration_node` reads each node's lines from the function's line
+    tree and each span's tokens from a per-function memo.** Card
+    DEEP-AST-TRANSPORTS-AND-WALL-TIME. `Parser::elaboration_node`'s walk takes
+    a node's begin and end line from `function_reading_reuse::LineTree`
+    (built on the walk's first descent into a node, in `inner` order, from
+    `StatementIndex::node_line` and `node_end_line`) and a candidate's tokens
+    from `StatementIndex::node_tokens_once` (one tokenization per source span
+    per function). The tree pairs each child with its own entry and the memo
+    stores `node_tokens`' own answer, so the walk visits, prunes and picks
+    exactly as before. The measured cost it removes: 44 % of `rdhttp.c`'s
+    samples, where the type-check macro puts whole subtrees on one line.
+    **Do not** read a line tree beside a node it was not built from, or
+    reorder the walk. `QCore.DeepAstTransports`
+    (`the_annotated_walk_is_the_walk`, the memo theorems);
+    `function_reading_reuse::tests::the_line_tree_mirrors_the_function`,
+    `a_span_is_tokenized_once`.
