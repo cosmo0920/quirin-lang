@@ -1,0 +1,237 @@
+{
+ "body_evidence_counts": {
+  "declarations": 5,
+  "declared_assumption": 0,
+  "held": 0,
+  "partly_validated": 2,
+  "units_with_evidence": 6,
+  "validated": 3
+ },
+ "calls": [
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_set_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_set_meta_len",
+   "file": "cio_file.c",
+   "function": "adjust_layout",
+   "line": 2929
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_file.c",
+   "function": "cio_file_calculate_checksum",
+   "line": 2892
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_file.c",
+   "function": "cio_file_format_check",
+   "line": 3002
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_file.c",
+   "function": "cio_file_scan_dump",
+   "line": 3656
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+   "callee": "cio_file_st_set_content_len",
+   "file": "cio_file.c",
+   "function": "cio_file_write",
+   "line": 3485
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+   "callee": "cio_file_st_set_content_len",
+   "file": "cio_file.c",
+   "function": "cio_file_write",
+   "line": 3494
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_file.c",
+   "function": "cio_file_write_metadata",
+   "line": 3512
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_file.c",
+   "function": "get_available_size",
+   "line": 2952
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_set_content_len` requires quant checks map, Idx #i: 10 <= #i && #i < 14",
+   "callee": "cio_file_st_set_content_len",
+   "file": "cio_file.c",
+   "function": "write_init_header",
+   "line": 2946
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_meta.c",
+   "function": "cio_meta_cmp",
+   "line": 2463
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_meta.c",
+   "function": "cio_meta_read",
+   "line": 2430
+  },
+  {
+   "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+   "callee": "cio_file_st_get_meta_len",
+   "file": "cio_meta.c",
+   "function": "cio_meta_size",
+   "line": 2406
+  }
+ ],
+ "calls_to_declared_accessors": {
+  "cio_file_st_get_hash": {},
+  "cio_file_st_get_meta_len": {
+   "bounds-missing-extent": 8
+  },
+  "cio_file_st_infer_content_len": {},
+  "cio_file_st_set_content_len": {
+   "bounds-missing-extent": 3
+  },
+  "cio_file_st_set_meta_len": {
+   "bounds-missing-extent": 1
+  }
+ },
+ "calls_total": 12,
+ "declarations": {
+  "cio_file_st_get_hash": {
+   "body_standing": "partly-validated",
+   "body_verdicts": [
+    "Unknown"
+   ],
+   "clauses": {
+    "bounds_frame_reads(map)": "validated",
+    "bounds_return_derived(map, 2, 4, bytes)": "uncovered"
+   },
+   "files": [
+    "chunkio.c",
+    "cio_chunk.c",
+    "cio_file.c",
+    "cio_file_unix.c",
+    "cio_meta.c",
+    "cio_scan.c"
+   ],
+   "units_examined": 6,
+   "units_failed": 0,
+   "units_validated": 6
+  },
+  "cio_file_st_get_meta_len": {
+   "body_standing": "validated",
+   "body_verdicts": [
+    "Safe"
+   ],
+   "clauses": {
+    "bounds_frame_reads(map)": "validated",
+    "quant checks map, Idx #i: 22 <= #i && #i < 24": "validated"
+   },
+   "files": [
+    "chunkio.c",
+    "cio_chunk.c",
+    "cio_file.c",
+    "cio_file_unix.c",
+    "cio_meta.c",
+    "cio_scan.c"
+   ],
+   "units_examined": 6,
+   "units_failed": 0,
+   "units_validated": 6
+  },
+  "cio_file_st_infer_content_len": {
+   "body_standing": "validated",
+   "body_verdicts": [
+    "Safe"
+   ],
+   "clauses": {
+    "bounds_frame_reads(map)": "validated",
+    "quant checks map, Idx #i: 22 <= #i && #i < 24": "validated"
+   },
+   "files": [
+    "chunkio.c",
+    "cio_chunk.c",
+    "cio_file.c",
+    "cio_file_unix.c",
+    "cio_meta.c",
+    "cio_scan.c"
+   ],
+   "units_examined": 6,
+   "units_failed": 0,
+   "units_validated": 6
+  },
+  "cio_file_st_set_content_len": {
+   "body_standing": "partly-validated",
+   "body_verdicts": [
+    "Safe"
+   ],
+   "clauses": {
+    "bounds_frame_writes(map)": "uncovered",
+    "quant checks map, Idx #i: 10 <= #i && #i < 14": "validated"
+   },
+   "files": [
+    "chunkio.c",
+    "cio_chunk.c",
+    "cio_file.c",
+    "cio_file_unix.c",
+    "cio_meta.c",
+    "cio_scan.c"
+   ],
+   "units_examined": 6,
+   "units_failed": 0,
+   "units_validated": 6
+  },
+  "cio_file_st_set_meta_len": {
+   "body_standing": "validated",
+   "body_verdicts": [
+    "Safe"
+   ],
+   "clauses": {
+    "bounds_frame_writes(map)": "validated",
+    "quant checks map, Idx #i: 22 <= #i && #i < 24": "validated"
+   },
+   "files": [
+    "chunkio.c",
+    "cio_chunk.c",
+    "cio_file.c",
+    "cio_file_unix.c",
+    "cio_meta.c",
+    "cio_scan.c"
+   ],
+   "units_examined": 6,
+   "units_failed": 0,
+   "units_validated": 6
+  }
+ },
+ "pins": {
+  "held": 0,
+  "in_force": 5
+ },
+ "refutation_table": null,
+ "rows": 4921,
+ "rows_differing": 11,
+ "rows_differing_other_than_contract_dependencies": 0,
+ "rows_with_contract_dependencies": {
+  "cio_file_st_get_hash, cio_file_st_get_meta_len": 2,
+  "cio_file_st_get_meta_len": 6,
+  "cio_file_st_set_content_len": 2,
+  "cio_file_st_set_meta_len": 1
+ },
+ "safe_rollup": {
+  "resting_on_a_declared_assumption": 0,
+  "resting_on_a_partly_validated_declaration": 0,
+  "resting_on_no_declaration": 162,
+  "resting_only_on_validated_declarations": 0
+ }
+}

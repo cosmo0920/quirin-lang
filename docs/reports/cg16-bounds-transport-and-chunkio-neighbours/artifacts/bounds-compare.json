@@ -1,0 +1,16 @@
+{
+ "before": "before",
+ "after": "after",
+ "rows": 4921,
+ "identity_changed_rows": 0,
+ "identity_only_rows": 0,
+ "contracts_sha256_pairs": [
+  [
+   "bd17483647282c3bea4b83bd196689a22b792d3e41f59c1ff73b742f6885ee58",
+   "bd17483647282c3bea4b83bd196689a22b792d3e41f59c1ff73b742f6885ee58",
+   4921
+  ]
+ ],
+ "verdict_moves": [],
+ "same_verdict_other_changes": []
+}
