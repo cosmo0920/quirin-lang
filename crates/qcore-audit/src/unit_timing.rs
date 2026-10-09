@@ -85,8 +85,8 @@ fn stack_touched() -> Option<serde_json::Value> {
     map.read_exact(&mut entries).ok()?;
     // The stack grows down: the first touched page from the low end is the
     // deepest point reached.
-    let lowest = entries.chunks_exact(8).position(|entry| {
-        let bits = u64::from_le_bytes(entry.try_into().expect("eight bytes"));
+    let lowest = entries.as_chunks::<8>().0.iter().position(|entry| {
+        let bits = u64::from_le_bytes(*entry);
         bits & (0b11 << 62) != 0
     })?;
     Some(serde_json::json!({

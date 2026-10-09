@@ -138,8 +138,8 @@ pub(crate) mod stack {
         map.seek(SeekFrom::Start((low * 8) as u64)).ok()?;
         let mut entries = vec![0u8; (high - low + 1) * 8];
         map.read_exact(&mut entries).ok()?;
-        let lowest = entries.chunks_exact(8).position(|entry| {
-            let bits = u64::from_le_bytes(entry.try_into().expect("eight bytes"));
+        let lowest = entries.as_chunks::<8>().0.iter().position(|entry| {
+            let bits = u64::from_le_bytes(*entry);
             bits & (0b11 << 62) != 0
         })?;
         Some((high - (low + lowest)) * PAGE / 1024)
@@ -476,6 +476,63 @@ int consume(void) {
                 assert!(reason.contains("recursion limit exceeded"), "{reason}")
             }
             other => panic!("expected the default parse's refusal: {other:?}"),
+        }
+    }
+
+    /// The nesting of a value as `deep_unit_ast::depth` counts its JSON text.
+    fn value_depth(value: &Value) -> usize {
+        match value {
+            Value::Array(items) => 1 + items.iter().map(value_depth).max().unwrap_or(0),
+            Value::Object(map) => 1 + map.values().map(value_depth).max().unwrap_or(0),
+            _ => 0,
+        }
+    }
+
+    /// Measurement only, run with `--ignored`: the analysed-unit consultation
+    /// (rule 13q) and its readers on the real definitions of an external
+    /// preprocessed unit. `DAT_DEEP_SOURCE` names the preprocessed text (read
+    /// as the analysed source, `gnu17`, no frontend flags), `DAT_DEEP_FUNCTIONS`
+    /// a comma list of definitions. Each line printed: the definition, its
+    /// filtered value's nesting, whether it was read, the two readers'
+    /// answers, and the readers' stack high-water mark in KiB.
+    #[test]
+    #[ignore = "measurement on an external preprocessed unit"]
+    fn measure_the_readers_on_a_preprocessed_unit() {
+        let (Some(path), Ok(names)) = (
+            std::env::var_os("DAT_DEEP_SOURCE"),
+            std::env::var("DAT_DEEP_FUNCTIONS"),
+        ) else {
+            return;
+        };
+        let source = std::fs::read_to_string(path).expect("the preprocessed unit");
+        for name in names.split(',') {
+            let (text, function) = (source.clone(), name.to_owned());
+            let ((read, extension, shadowed), kib) = high_water(move || {
+                let _scope =
+                    crate::typed_access_path::enter_source(&text, CCompilerDialect::Gnu17, None);
+                let ast = crate::typed_access_path::definition_ast(&function);
+                let extension = ast.as_ref().map(|ast| {
+                    crate::c_frontend_identity::extension_in_ast(
+                        ast,
+                        &crate::typed_access_path::type_id,
+                    )
+                    .map(|(_, spelling)| spelling)
+                });
+                let shadowed =
+                    crate::legacy_c::retention_guard::shadowed_in(&function, "qcore_no_such_name");
+                (ast.is_some(), extension, shadowed)
+            });
+            let (text, function) = (source.clone(), name.to_owned());
+            let (nesting, _) = high_water(move || {
+                let _scope =
+                    crate::typed_access_path::enter_source(&text, CCompilerDialect::Gnu17, None);
+                crate::typed_access_path::definition_ast(&function)
+                    .as_ref()
+                    .map(value_depth)
+            });
+            println!(
+                "{name} nesting {nesting:?} read {read} extension {extension:?} shadowed {shadowed} stack {kib:?} KiB"
+            );
         }
     }
 

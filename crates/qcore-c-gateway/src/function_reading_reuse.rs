@@ -49,12 +49,15 @@ use serde_json::Value;
 use crate::call_exits::Resolution;
 use crate::typed_c_ast::{children, kind};
 
+/// A source span's tokens, or the absent answer, shared.
+pub(crate) type SpanTokens = Option<Arc<Vec<String>>>;
+
 /// One function's reusable readings (see the module documentation).
 #[derive(Default)]
 pub(crate) struct FunctionReuse {
     calls: OnceLock<BTreeMap<String, Resolution>>,
     lines: OnceLock<LineTree>,
-    spans: Mutex<HashMap<(usize, usize), Option<Arc<Vec<String>>>>>,
+    spans: Mutex<HashMap<(usize, usize), SpanTokens>>,
 }
 
 /// A node's begin and end line (`None` where the node carries no offset or
@@ -116,7 +119,7 @@ impl FunctionReuse {
         &self,
         span: (usize, usize),
         tokenize: impl FnOnce() -> Option<Vec<String>>,
-    ) -> Option<Arc<Vec<String>>> {
+    ) -> SpanTokens {
         if let Some(found) = self
             .spans
             .lock()
