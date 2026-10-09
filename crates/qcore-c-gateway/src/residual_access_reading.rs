@@ -1,6 +1,6 @@
-//! Card **CG10-INDIRECT-ACCESS-SOLE-RESIDUALS** round 2 (gateway rules 14a and
-//! 14b): the Clang readings of two statement shapes the lexical gate refused
-//! and no older route read. The gateway half (the call's lowering, the hook
+//! Card **CG10-INDIRECT-ACCESS-SOLE-RESIDUALS** round 2 (gateway rules 14a, 14b and 14d):
+//! the Clang readings of two statement shapes and one actual shape the lexical
+//! gate refused and no older route read. The gateway half (the call's lowering, the hook
 //! and the parity rows) is `legacy_residual_access.rs`.
 //!
 //! ## Rule 14a: one contracted scalar call inside a typed scalar statement
@@ -16,6 +16,14 @@
 //! custody-taking position, so the call changes no binding the reads depend on
 //! and the order C leaves unspecified between the call and the other operands
 //! (C11 6.5p2, 6.5.2.2p10) cannot change any decision.
+//!
+//! ## Rule 14d: the same interior offset at a `Borrowed` actual
+//!
+//! `memcpy(cf->map + 2, …)`: an actual `P ± n` whose pointer operand is a
+//! path or a plain pointer variable, read as rule 10n(1) reads an address
+//! (every root never bound) through `StatementIndex::argument`. The callee is
+//! handed a pointer into the object `P` reaches, which it could be handed as
+//! `P` itself; W44's position premise and second obligation apply unchanged.
 //!
 //! ## Rule 14b: an interior pointer into an untracked object
 //!
@@ -145,6 +153,87 @@ fn strip_value(mut node: &Value) -> Option<&Value> {
     }
 }
 
+/// Whether `value` is `P + n` or `P - n` with a pointer result: rule 14b's
+/// offset form, and rule 14d's actual.
+pub(crate) fn is_interior_offset(value: &Value) -> bool {
+    kind(value) == "BinaryOperator"
+        && matches!(value["opcode"].as_str(), Some("+") | Some("-"))
+        && is_pointer(value)
+}
+
+/// Read `P ± n`: `P` a pointer-valued path read (or, at an actual only, a
+/// plain pointer variable the closure proves never bound), `n` a scalar
+/// value. The caller checks every root of the plan never bound.
+pub(crate) fn read_interior_offset(
+    reader: &mut Reader<'_>,
+    value: &Value,
+    actual: bool,
+    never_bound: &dyn Fn(&str) -> bool,
+) -> Option<()> {
+    let [pointer, offset] = children(value) else {
+        return None;
+    };
+    if !is_pointer(pointer) || !reader.scalar(offset) {
+        return None;
+    }
+    let pointer = strip(pointer)?;
+    let operand = match kind(pointer) {
+        "MemberExpr" | "ArraySubscriptExpr" => OffsetOperand::Path,
+        "UnaryOperator" if pointer["opcode"].as_str() == Some("*") => OffsetOperand::Path,
+        "DeclRefExpr"
+            if matches!(
+                pointer["referencedDecl"]["kind"].as_str(),
+                Some("VarDecl") | Some("ParmVarDecl")
+            ) =>
+        {
+            OffsetOperand::Name(never_bound(pointer["referencedDecl"]["name"].as_str()?))
+        }
+        _ => OffsetOperand::Other,
+    };
+    if !offset_operand_admitted(operand, actual) {
+        return None;
+    }
+    if operand == OffsetOperand::Path {
+        reader.path(pointer, false, true)?;
+    }
+    reader.expression(offset)
+}
+
+/// The pointer operand of `P ± n`, as rules 14b and 14d read it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OffsetOperand {
+    /// A member, element or `*` path, read as a pointer-valued path read.
+    Path,
+    /// A plain pointer variable, with whether the closure proves it never
+    /// bound.
+    Name(bool),
+    /// A cast, a call or anything else.
+    Other,
+}
+
+/// Rule 14b reads a path operand; rule 14d, at an actual, also a plain
+/// pointer variable the closure proves never bound: `out + n` is `out`'s
+/// object, exactly as the plain actual `out` hands it.
+pub(crate) fn offset_operand_admitted(operand: OffsetOperand, actual: bool) -> bool {
+    match operand {
+        OffsetOperand::Path => true,
+        OffsetOperand::Name(never_bound) => actual && never_bound,
+        OffsetOperand::Other => false,
+    }
+}
+
+/// The table the Lean model mirrors: (operand, at an actual, admitted).
+#[cfg(test)]
+pub(crate) const OFFSET_VECTORS: &[(OffsetOperand, bool, bool)] = &[
+    (OffsetOperand::Path, false, true),
+    (OffsetOperand::Path, true, true),
+    (OffsetOperand::Name(true), true, true),
+    (OffsetOperand::Name(true), false, false),
+    (OffsetOperand::Name(false), true, false),
+    (OffsetOperand::Other, true, false),
+    (OffsetOperand::Other, false, false),
+];
+
 impl StatementIndex {
     /// Rule 14a: `node`'s one call and the statement read with it opaque.
     pub(crate) fn scalar_call_statement<'a>(
@@ -224,24 +313,8 @@ impl StatementIndex {
                 reader.address(value, false)?;
                 InteriorForm::Address
             }
-            "BinaryOperator"
-                if matches!(value["opcode"].as_str(), Some("+") | Some("-"))
-                    && is_pointer(value) =>
-            {
-                let [pointer, offset] = children(value) else {
-                    return None;
-                };
-                if !is_pointer(pointer) || !reader.scalar(offset) {
-                    return None;
-                }
-                let pointer = strip(pointer)?;
-                match kind(pointer) {
-                    "MemberExpr" | "ArraySubscriptExpr" => {}
-                    "UnaryOperator" if pointer["opcode"].as_str() == Some("*") => {}
-                    _ => return None,
-                }
-                reader.path(pointer, false, true)?;
-                reader.expression(offset)?;
+            _ if is_interior_offset(value) => {
+                read_interior_offset(&mut reader, value, false, never_bound)?;
                 InteriorForm::Offset
             }
             _ => return None,
@@ -305,6 +378,9 @@ mod tests {
     fn the_decision_vectors_are_the_rust_decisions() {
         for (shape, form, never_bound, admitted) in INTERIOR_VECTORS {
             assert_eq!(interior_admitted(shape, form, *never_bound), *admitted);
+        }
+        for (operand, actual, admitted) in OFFSET_VECTORS {
+            assert_eq!(offset_operand_admitted(*operand, *actual), *admitted);
         }
         for (calls, none_result, borrowed, admitted) in SCALAR_CALL_VECTORS {
             assert_eq!(

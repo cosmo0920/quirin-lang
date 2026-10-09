@@ -213,3 +213,27 @@ fn rule_14c_keeps_the_refusal_for_an_element_that_is_not_a_scalar() {
         "int subject(struct S *a, int i) { return is_count((const char *)&a->next[i]); }",
     );
 }
+
+#[test]
+fn rule_14d_reads_an_interior_offset_at_a_borrowed_actual() {
+    if !clang_available() {
+        return;
+    }
+    assert_safe("int subject(struct S *a) { return is_count(a->name + a->a); }");
+    assert_safe("void subject(struct S *a, char *out) { is_count(out + a->a); }");
+}
+
+#[test]
+fn rule_14d_keeps_the_refusal_for_a_bound_root_or_a_custody_position() {
+    if !clang_available() {
+        return;
+    }
+    // A bound root: the object may be tracked.
+    assert_not_safe(
+        "void subject(void) { struct S *a = q_alloc(); is_count(a->name + 1); q_free(a); }",
+    );
+    // A releasing position: an interior pointer is never what was acquired.
+    assert_not_safe("void subject(struct S *a) { q_free(a->name + 1); }");
+    // A cast operand is not read.
+    assert_keeps_the_gate("int subject(struct S *a) { return is_count((char *)a->next + a->a); }");
+}

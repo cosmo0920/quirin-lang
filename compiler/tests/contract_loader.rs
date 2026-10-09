@@ -966,6 +966,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     ] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: two plain neutral
+    // declarations, `chunkio/chunk_residency.qv` and `ctraces/context_lifetime.qv`;
+    // each borrows every parameter and returns no custody.
+    for name in ["cio_errno_print", "ctr_errno_print"] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1793,9 +1799,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`cio_file_st_get_hash`, `cio_file_st_infer_content_len`,
     // `cio_file_st_set_content_len`) belong to the bounds consumer and are
     // deliberately rejected by resource-v1.
+    // 363 -> 365 by card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: two
+    // plain declarations, `cio_errno_print` (`chunkio/chunk_residency.qv`) and
+    // `ctr_errno_print` (`ctraces/context_lifetime.qv`), pinned and in the
+    // function map. Selection and rejected unchanged by it.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 363, 221)
+        (61, 365, 221)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

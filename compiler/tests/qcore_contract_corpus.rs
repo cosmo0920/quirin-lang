@@ -62,6 +62,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`lib/chunkio/src/cio_file.c:816-883`): marker, borrowed chunk and flag,
     // `none`.
     ("chunkio/chunk_residency.qv", "_cio_file_up", 4),
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: the neutral
+    // `cio_errno_print` (three borrowed formals, no result custody).
+    ("chunkio/chunk_residency.qv", "cio_errno_print", 5),
     // Card W31-CORPUS-CONTRACTS-2: the corpus moves 74 -> 76 modules with this
     // file and `fluent_bit/input_chunk_total_size.qv`, and the resource-v1
     // declaration count 41 -> 43. Deliberate; see
@@ -410,6 +413,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the static
     // forwarder of `cfl_sds_cat_safe` in `ctr_encode_text.c:22-28`.
     ("ctraces/context_lifetime.qv", "sds_cat_safe", 5),
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: the neutral
+    // `ctr_errno_print`.
+    ("ctraces/context_lifetime.qv", "ctr_errno_print", 5),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",

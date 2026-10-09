@@ -394,6 +394,19 @@ impl StatementIndex {
                 address = true;
                 true
             }
+            // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rule 14d): an
+            // interior offset `P ± n` of a pointer the callee could be handed
+            // itself, under the address's never-bound premise.
+            Some(value) if crate::residual_access_reading::is_interior_offset(value) => {
+                crate::residual_access_reading::read_interior_offset(
+                    &mut reader,
+                    value,
+                    true,
+                    &never_bound,
+                )?;
+                address = true;
+                true
+            }
             _ => reader.value(actual)?,
         };
         // A borrowed actual hands nothing out of the body: the never-bound

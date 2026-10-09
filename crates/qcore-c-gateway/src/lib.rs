@@ -146,7 +146,7 @@ mod function_reading_reuse;
 mod typed_access_positions;
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n).
 mod typed_position_shapes;
-// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a, 14b, 14c).
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a-14d).
 mod residual_access_reading;
 mod scalar_element_address;
 // Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.

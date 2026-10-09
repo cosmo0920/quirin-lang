@@ -1,5 +1,5 @@
 /-!
-# Three readings of residual indirect accesses (card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2, gateway rules 14a, 14b, 14c)
+# Four readings of residual indirect accesses (card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2, gateway rules 14a-14d)
 
 The abstract rules implemented by
 `crates/qcore-c-gateway/src/residual_access_reading.rs`,
@@ -19,12 +19,15 @@ The abstract rules implemented by
   no tracked identity.
 * **14c.** An address handed to a callee is read for a member (rule 10n(1))
   or for an element whose type is a scalar, and for nothing else.
+* **14d.** An interior offset `P ± n` is read with a path operand (rule 14b's
+  statement and an actual) or, at an actual only, a plain pointer variable the
+  closure proves never bound.
 
 ## What this is not
 
 A model of the classifier or of Clang. That the Rust's shape tests are these
 decisions is bound by shared vectors (`DECISION_VECTORS`, `INTERIOR_VECTORS`,
-`SCALAR_CALL_VECTORS`); faithful extraction is trust boundary 28.
+`SCALAR_CALL_VECTORS`, `OFFSET_VECTORS`); faithful extraction is trust boundary 28.
 -/
 
 namespace QCore.ResidualAccessReadings
@@ -221,5 +224,41 @@ theorem nothing_else_is_read (p : Place) (s : Bool) (hm : p ≠ .member) (he : p
   | paren => rfl
   | name => rfl
   | deref => rfl
+
+/-! ## 14d: an interior offset at a callee's actual -/
+
+/-- The pointer operand of `P ± n` (`OffsetOperand`). -/
+inductive Operand where
+  | path
+  | name (neverBound : Bool)
+  | other
+  deriving DecidableEq, Repr
+
+/-- Rules 14b and 14d (`offset_operand_admitted`): a path everywhere; a plain
+pointer variable only at an actual and only never bound. -/
+def offsetOperandAdmitted : Operand → Bool → Bool
+  | .path, _ => true
+  | .name n, actual => actual && n
+  | .other, _ => false
+
+/-- The Rust's `OFFSET_VECTORS`. -/
+def offsetVectors : List (Operand × Bool × Bool) :=
+  [(.path, false, true), (.path, true, true), (.name true, true, true),
+   (.name true, false, false), (.name false, true, false), (.other, true, false),
+   (.other, false, false)]
+
+theorem offset_vectors_hold :
+    offsetVectors.all (fun (o, a, r) => offsetOperandAdmitted o a == r) = true := by decide
+
+theorem a_bound_name_is_never_read (actual : Bool) :
+    offsetOperandAdmitted (.name false) actual = false := by
+  cases actual <;> rfl
+
+theorem a_statement_reads_only_a_path_operand (o : Operand)
+    (h : offsetOperandAdmitted o false = true) : o = .path := by
+  cases o with
+  | path => rfl
+  | name n => simp [offsetOperandAdmitted] at h
+  | other => cases h
 
 end QCore.ResidualAccessReadings

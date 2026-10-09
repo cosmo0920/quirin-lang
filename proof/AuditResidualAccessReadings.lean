@@ -1,6 +1,6 @@
 import QCore.ResidualAccessReadings
 
-/-! Audited companion to CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (gateway rules 14a, 14b, 14c). -/
+/-! Audited companion to CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (gateway rules 14a-14d). -/
 
 #print axioms QCore.ResidualAccessReadings.a_borrowed_call_changes_no_custody
 #print axioms QCore.ResidualAccessReadings.a_read_is_decided_alike_on_either_side_of_the_call
@@ -17,3 +17,6 @@ import QCore.ResidualAccessReadings
 #print axioms QCore.ResidualAccessReadings.a_member_keeps_rule_10n
 #print axioms QCore.ResidualAccessReadings.an_element_is_read_only_when_scalar
 #print axioms QCore.ResidualAccessReadings.nothing_else_is_read
+#print axioms QCore.ResidualAccessReadings.offset_vectors_hold
+#print axioms QCore.ResidualAccessReadings.a_bound_name_is_never_read
+#print axioms QCore.ResidualAccessReadings.a_statement_reads_only_a_path_operand
