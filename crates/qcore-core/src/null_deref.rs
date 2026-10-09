@@ -327,10 +327,7 @@ pub fn null_verdict(
     function_reasons: &[String],
 ) -> (NullVerdict, Vec<String>) {
     let mut reasons = function_reasons.to_vec();
-    if outcomes
-        .iter()
-        .any(|o| *o == Outcome::Violation { reachable: true })
-    {
+    if outcomes.contains(&Outcome::Violation { reachable: true }) {
         return (NullVerdict::Unsafe, reasons);
     }
     let mut held = false;

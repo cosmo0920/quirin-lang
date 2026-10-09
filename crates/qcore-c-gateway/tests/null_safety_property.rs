@@ -239,8 +239,7 @@ fn a_reassignment_between_does_not_move_the_question() {
     let last = row
         .checks
         .iter()
-        .filter(|c| c.subject == "p")
-        .last()
+        .rfind(|c| c.subject == "p")
         .expect("p");
     assert_eq!(
         last.sources,
@@ -475,8 +474,7 @@ fn lookups_and_memory_reads_are_sources() {
     let base = row
         .checks
         .iter()
-        .filter(|c| c.subject == "s")
-        .last()
+        .rfind(|c| c.subject == "s")
         .expect("s");
     assert_eq!(base.outcome, "proved", "{row:#?}");
 }

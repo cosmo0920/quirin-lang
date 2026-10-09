@@ -1668,7 +1668,7 @@ impl<'a> Walker<'a> {
                     }
                 };
                 state.definite = false;
-                let sub = kids(node).filter(|c| present(c)).last();
+                let sub = kids(node).rfind(|c| present(c));
                 let is_case = kind(node) == "CaseStmt";
                 match sub {
                     Some(sub) if !is_case || kids(node).filter(|c| present(c)).count() > 1 => {
@@ -1959,7 +1959,7 @@ fn string_literal_first_char(node: &Value) -> Option<bool> {
 fn selected_association(node: &Value) -> Option<&Value> {
     kids(node)
         .find(|c| c["selected"] == true)
-        .and_then(|association| kids(association).last())
+        .and_then(|association| kids(association).next_back())
 }
 
 fn contains_default(node: &Value) -> bool {
