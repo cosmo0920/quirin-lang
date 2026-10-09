@@ -143,12 +143,6 @@ fn type_is_no_return(spelling: &str) -> bool {
 /// `FunctionDecl` with its body). `no_return_declarations` holds the ids of the
 /// unit's function declarations carrying a `noreturn` attribute; block-scope
 /// declarations in the body are read here.
-///
-/// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13s): the analysis reads the
-/// same answers from `function_reading_reuse::call_resolutions` (one walk per
-/// function); this per-callee walk is kept as the reference the table is
-/// tested against for every name.
-#[cfg(test)]
 pub(crate) fn resolve(
     function: &Value,
     callee: &str,
@@ -172,21 +166,8 @@ pub(crate) fn resolve(
     if shadowed || references.is_empty() {
         return Resolution::Unresolved;
     }
-    resolution_of(&references, no_return_declarations, &local)
-}
-
-/// The [`Resolution`] of one callee's references (`referencedDecl` objects,
-/// at least one), given the unit's and the body's `noreturn` declaration ids.
-/// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13s) shares it with the
-/// per-function table (`function_reading_reuse::call_resolutions`); the
-/// text is [`resolve`]'s own, moved.
-pub(crate) fn resolution_of(
-    references: &[Value],
-    no_return_declarations: &BTreeSet<String>,
-    local: &BTreeSet<String>,
-) -> Resolution {
     let mut answers = BTreeSet::new();
-    for declaration in references {
+    for declaration in &references {
         if declaration["kind"].as_str() != Some("FunctionDecl") {
             return Resolution::Unresolved;
         }
@@ -205,7 +186,6 @@ pub(crate) fn resolution_of(
     }
 }
 
-#[cfg(test)]
 fn walk<'a>(node: &'a Value, visit: &mut impl FnMut(&'a Value)) {
     visit(node);
     for child in children(node) {

@@ -1,6 +1,7 @@
 //! Card **DEEP-AST-TRANSPORTS-AND-WALL-TIME** (gateway rules 13s, 13t): one
 //! function's typed readings computed once per index and answered again from
-//! it, so a statement hook no longer re-walks the whole body.
+//! it, so a statement hook no longer re-walks the whole body for an answer it
+//! already has.
 //!
 //! # The cost
 //!
@@ -12,7 +13,8 @@
 //! line and tokenizing every candidate node's source span (44 %). The four
 //! definitions calling `curl_easy_setopt` expand its GCC type-check macro into
 //! subtrees whose every node lies on the call's line, so each walk visited all
-//! of them and tokenized the same span again for each node and each statement.
+//! of them and tokenized the same span again for each node and each statement;
+//! their 908 calls name only 44 distinct warning functions.
 //!
 //! # What this module holds
 //!
@@ -26,38 +28,76 @@
 //! the unit's `noreturn` declaration ids, none of which changes while the
 //! index lives:
 //!
-//! * **Rule 13s.** [`call_resolutions`]: every callee name's
-//!   [`Resolution`], from one walk that gathers what `call_exits::resolve`
-//!   gathers per callee (the body's object names, its `noreturn` function
-//!   declarations, each name's references in walk order). A name with no
-//!   entry is `Unresolved`, as `resolve` answers for a name with no
-//!   reference.
-//! * **Rule 13t.** [`LineTree`]: each node's begin and end line, in the
-//!   function's own child order, so a walk that reads lines from it visits
-//!   exactly the nodes a walk computing them visits; and each source span's
-//!   tokens, tokenized once ([`FunctionReuse::span_tokens`]).
+//! * **Rule 13s.** [`FunctionReuse::resolution`]: `call_exits::resolve` of a
+//!   callee, computed by `resolve` itself on the first ask for that name and
+//!   answered from the memo after ([`Memo`]).
+//! * **Rule 13t.** [`LineTree`]: each node's begin and end line, read on the
+//!   walk's first descent into the node and kept in the function's own child
+//!   order, so a walk that reads lines from it visits exactly the nodes a walk
+//!   computing them visits; and each source span's tokens, tokenized once
+//!   ([`FunctionReuse::span_tokens`], a [`Memo`] too).
 //!
-//! Nothing here is consulted for a decision the uncached readers would not
-//! make: `QCore.DeepAstTransports` states the table's and the tree's
-//! equivalence, and the unit tests compare every name and every node.
+//! A memo stores only what its own computation answered for the key, and a
+//! key is answered from the memo only when that very key was stored: nothing
+//! here is consulted for a decision the uncached readers would not make.
+//! `QCore.DeepAstTransports` states the memo and the line tree's equivalence;
+//! the unit tests compare every name and every node.
 
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeSet, HashMap};
+use std::hash::Hash;
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
 
 use serde_json::Value;
 
 use crate::call_exits::Resolution;
-use crate::typed_c_ast::{children, kind};
+use crate::typed_c_ast::children;
 
 /// A source span's tokens, or the absent answer, shared.
 pub(crate) type SpanTokens = Option<Arc<Vec<String>>>;
 
+/// A pure function's answers by key: the first computation for a key is
+/// stored and every later ask of that key returns it.
+pub(crate) struct Memo<K, V> {
+    answers: Mutex<HashMap<K, V>>,
+}
+
+impl<K, V> Default for Memo<K, V> {
+    fn default() -> Self {
+        Self {
+            answers: Mutex::new(HashMap::new()),
+        }
+    }
+}
+
+impl<K: Eq + Hash, V: Clone> Memo<K, V> {
+    /// The stored answer for `key`, or `compute`'s, stored. `compute` runs
+    /// outside the lock; a concurrent reader computes the same pure answer,
+    /// and the first one stored stands.
+    pub(crate) fn get_or_compute(&self, key: K, compute: impl FnOnce() -> V) -> V {
+        if let Some(found) = self
+            .answers
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .get(&key)
+        {
+            return found.clone();
+        }
+        let found = compute();
+        self.answers
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .entry(key)
+            .or_insert(found)
+            .clone()
+    }
+}
+
 /// One function's reusable readings (see the module documentation).
 #[derive(Default)]
 pub(crate) struct FunctionReuse {
-    calls: OnceLock<BTreeMap<String, Resolution>>,
+    calls: Memo<String, Resolution>,
     lines: OnceLock<LineTree>,
-    spans: Mutex<HashMap<(usize, usize), SpanTokens>>,
+    spans: Memo<(usize, usize), SpanTokens>,
 }
 
 /// A node's begin and end line (`None` where the node carries no offset or
@@ -103,19 +143,17 @@ impl LineTree {
 }
 
 impl FunctionReuse {
-    /// Rule 13s: `call_exits::resolve(function, callee, no_return)`, from the
-    /// function's table.
+    /// Rule 13s: `call_exits::resolve(function, callee, no_return)`, once
+    /// per callee name of this function.
     pub(crate) fn resolution(
         &self,
         function: &Value,
         callee: &str,
         no_return_declarations: &BTreeSet<String>,
     ) -> Resolution {
-        self.calls
-            .get_or_init(|| call_resolutions(function, no_return_declarations))
-            .get(callee)
-            .copied()
-            .unwrap_or(Resolution::Unresolved)
+        self.calls.get_or_compute(callee.to_owned(), || {
+            crate::call_exits::resolve(function, callee, no_return_declarations)
+        })
     }
 
     /// Rule 13t: the function's line tree (its root's lines; the rest on
@@ -137,83 +175,7 @@ impl FunctionReuse {
         span: (usize, usize),
         tokenize: impl FnOnce() -> Option<Vec<String>>,
     ) -> SpanTokens {
-        if let Some(found) = self
-            .spans
-            .lock()
-            .unwrap_or_else(PoisonError::into_inner)
-            .get(&span)
-        {
-            return found.clone();
-        }
-        // Tokenized outside the lock; a concurrent reader computes the same
-        // pure answer, and the first one stored stands.
-        let found = tokenize().map(Arc::new);
-        self.spans
-            .lock()
-            .unwrap_or_else(PoisonError::into_inner)
-            .entry(span)
-            .or_insert(found)
-            .clone()
-    }
-}
-
-/// What one walk of a body says of one name, in `call_exits::resolve`'s
-/// terms.
-#[derive(Default)]
-struct NameFacts {
-    /// A `VarDecl` or `ParmVarDecl` declares the name.
-    shadowed: bool,
-    /// Every `DeclRefExpr` referring to the name, in walk order.
-    references: Vec<Value>,
-}
-
-/// Rule 13s: [`Resolution`] of every name the body refers to or declares as
-/// an object, exactly as `call_exits::resolve` answers it per name.
-pub(crate) fn call_resolutions(
-    function: &Value,
-    no_return_declarations: &BTreeSet<String>,
-) -> BTreeMap<String, Resolution> {
-    let mut names: BTreeMap<String, NameFacts> = BTreeMap::new();
-    let mut local = BTreeSet::new();
-    walk(function, &mut |node| match kind(node) {
-        "VarDecl" | "ParmVarDecl" => {
-            if let Some(name) = node["name"].as_str() {
-                names.entry(name.to_owned()).or_default().shadowed = true;
-            }
-        }
-        "FunctionDecl" if crate::call_exits::declares_no_return(node) => {
-            if let Some(id) = node["id"].as_str() {
-                local.insert(id.to_owned());
-            }
-        }
-        "DeclRefExpr" => {
-            if let Some(name) = node["referencedDecl"]["name"].as_str() {
-                names
-                    .entry(name.to_owned())
-                    .or_default()
-                    .references
-                    .push(node["referencedDecl"].clone());
-            }
-        }
-        _ => {}
-    });
-    names
-        .into_iter()
-        .map(|(name, facts)| {
-            let resolution = if facts.shadowed || facts.references.is_empty() {
-                Resolution::Unresolved
-            } else {
-                crate::call_exits::resolution_of(&facts.references, no_return_declarations, &local)
-            };
-            (name, resolution)
-        })
-        .collect()
-}
-
-fn walk<'a>(node: &'a Value, visit: &mut impl FnMut(&'a Value)) {
-    visit(node);
-    for child in children(node) {
-        walk(child, visit);
+        self.spans.get_or_compute(span, || tokenize().map(Arc::new))
     }
 }
 
@@ -221,6 +183,13 @@ fn walk<'a>(node: &'a Value, visit: &mut impl FnMut(&'a Value)) {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    fn walk<'a>(node: &'a Value, visit: &mut impl FnMut(&'a Value)) {
+        visit(node);
+        for child in children(node) {
+            walk(child, visit);
+        }
+    }
 
     /// Every name a body mentions, and some it does not.
     fn names(function: &Value) -> BTreeSet<String> {
@@ -267,36 +236,43 @@ mod tests {
         ]
     }
 
-    /// Rule 13s: the table answers every name exactly as `resolve` does.
+    /// Rule 13s: the memo answers every name, asked twice, exactly as
+    /// `resolve` does, and the fixture reaches every answer.
     #[test]
-    fn the_table_is_resolve_for_every_name() {
+    fn the_memo_is_resolve_for_every_name() {
         let no_return = BTreeSet::from(["0x3".to_owned()]);
+        let mut seen = BTreeSet::new();
         for body in bodies() {
-            let table = call_resolutions(&body, &no_return);
             let reuse = FunctionReuse::default();
-            for name in names(&body) {
-                let expected = crate::call_exits::resolve(&body, &name, &no_return);
-                assert_eq!(
-                    table.get(&name).copied().unwrap_or(Resolution::Unresolved),
-                    expected,
-                    "{name}"
-                );
-                assert_eq!(
-                    reuse.resolution(&body, &name, &no_return),
-                    expected,
-                    "{name}"
-                );
+            for _ in 0..2 {
+                for name in names(&body) {
+                    let expected = crate::call_exits::resolve(&body, &name, &no_return);
+                    assert_eq!(
+                        reuse.resolution(&body, &name, &no_return),
+                        expected,
+                        "{name}"
+                    );
+                    seen.insert(format!("{expected:?}"));
+                }
             }
         }
-        // The fixture reaches every answer.
-        let table = call_resolutions(&bodies()[0], &no_return);
-        assert_eq!(table["die"], Resolution::NoReturn);
-        assert_eq!(table["held"], Resolution::NoReturn);
-        assert_eq!(table["local"], Resolution::NoReturn);
-        assert_eq!(table["go"], Resolution::Returns);
-        assert_eq!(table["mixed"], Resolution::Unresolved);
-        assert_eq!(table["object"], Resolution::Unresolved);
-        assert_eq!(table["shadow"], Resolution::Unresolved);
+        assert_eq!(seen.len(), 3, "{seen:?}");
+    }
+
+    /// The memo stores the first computation per key and never computes a
+    /// stored key again.
+    #[test]
+    fn a_memo_computes_each_key_once() {
+        let memo = Memo::<u8, u32>::default();
+        let calls = std::cell::Cell::new(0);
+        let compute = |value| {
+            calls.set(calls.get() + 1);
+            value
+        };
+        assert_eq!(memo.get_or_compute(1, || compute(10)), 10);
+        assert_eq!(memo.get_or_compute(1, || unreachable!()), 10);
+        assert_eq!(memo.get_or_compute(2, || compute(20)), 20);
+        assert_eq!(calls.get(), 2);
     }
 
     /// Rule 13t: the tree holds every node's lines in child order.

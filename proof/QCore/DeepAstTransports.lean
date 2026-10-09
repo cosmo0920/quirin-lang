@@ -19,9 +19,11 @@ controls), `deep_unit_ast::values_from_slice` and
 * **Readers.** A reader whose stack use is at most `base + perLevel · d` at
   depth `d`, measured within `budget` at the bound, fits at every admitted
   depth (`fits_at_the_bound_fits_within_it`).
-* **Rule 13s.** The per-function call table built by one walk answers every
-  name exactly as the per-callee walk (`call_exits::resolve`) does
-  (`the_table_is_the_walk`).
+* **Rules 13s, 13t.** A memo of a pure function's answers (a callee's
+  `call_exits::resolve`, a source span's tokens) stores only the function's
+  own answer for a key and answers a key only from that key's entry, so every
+  ask is answered as the function answers it, in any order of asks
+  (`the_memo_answers_as_the_function`, `every_ask_is_answered_by_the_function`).
 * **Rule 13t.** The line tree holds, at every node, the begin and end line
   the walk computed there, in the same child order, so a walk reading it is
   the walk computing them (`the_annotated_walk_is_the_walk`).
@@ -143,80 +145,78 @@ theorem fits_at_the_bound_fits_within_it {base perLevel budget d : Nat}
   have : perLevel * d ≤ perLevel * admittedDepth := Nat.mul_le_mul_left _ within
   omega
 
-/-! ## Rule 13s: the call table -/
+/-! ## Rules 13s, 13t: the memo -/
 
-/-- What one node of a body walk says, in `call_exits::resolve`'s terms: an
-object declaration of a name, a `noreturn` function declaration (by id), or a
-reference to a name's declaration (`d`, abstract). -/
-inductive Event (D : Type) where
-  | object (name : String)
-  | noReturn (id : String)
-  | reference (name : String) (declaration : D)
+/-- A memo of a function `f`'s answers: the stored pairs, newest first. -/
+abbrev Memo (K V : Type) := List (K × V)
 
-/-- One name's facts: whether an object declares it, and its references in
-walk order. -/
-structure Facts (D : Type) where
-  shadowed : Bool
-  references : List D
+/-- What the memo answers for `key`, and the memo after: a stored answer, or
+`f key`, stored (`function_reading_reuse::Memo::get_or_compute`). -/
+def getOrCompute {K V : Type} [BEq K] (f : K → V) (memo : Memo K V) (key : K) :
+    V × Memo K V :=
+  match memo.lookup key with
+  | some v => (v, memo)
+  | none => (f key, (key, f key) :: memo)
 
-/-- The per-callee walk: what `resolve` gathers for `callee`. -/
-def gather {D : Type} (callee : String) : List (Event D) → Facts D
-  | [] => ⟨false, []⟩
-  | .object n :: rest =>
-    let f := gather callee rest
-    ⟨(n == callee) || f.shadowed, f.references⟩
-  | .noReturn _ :: rest => gather callee rest
-  | .reference n d :: rest =>
-    let f := gather callee rest
-    ⟨f.shadowed, if n == callee then d :: f.references else f.references⟩
+/-- Every stored pair is `f`'s own answer for its key. -/
+def Sound {K V : Type} (f : K → V) (memo : Memo K V) : Prop :=
+  ∀ k v, (k, v) ∈ memo → v = f k
 
-/-- The table: every name's facts from one pass over the walk (a finite map,
-modelled as a function), as `function_reading_reuse::call_resolutions`
-builds it. -/
-def table {D : Type} : List (Event D) → String → Facts D
-  | [] => fun _ => ⟨false, []⟩
-  | .object n :: rest => fun name =>
-    let f := table rest name
-    if n == name then ⟨true, f.references⟩ else f
-  | .noReturn _ :: rest => table rest
-  | .reference n d :: rest => fun name =>
-    let f := table rest name
-    if n == name then ⟨f.shadowed, d :: f.references⟩ else f
+theorem lookup_mem {K V : Type} [BEq K] [LawfulBEq K] :
+    ∀ (memo : Memo K V) (key : K) (v : V), memo.lookup key = some v → (key, v) ∈ memo
+  | [], _, _, h => by simp [List.lookup] at h
+  | (k, w) :: rest, key, v, h => by
+    by_cases hk : key = k
+    · subst hk
+      simp [List.lookup] at h
+      subst h
+      exact List.mem_cons_self ..
+    · have : (key == k) = false := beq_false_of_ne hk
+      simp [List.lookup, this] at h
+      exact List.mem_cons_of_mem _ (lookup_mem rest key v h)
 
-/-- Rule 13s: the table answers every name as the per-callee walk does. -/
-theorem the_table_is_the_walk {D : Type} (events : List (Event D)) (name : String) :
-    table events name = gather name events := by
-  induction events with
-  | nil => rfl
-  | cons e rest ih =>
-    cases e with
-    | object n =>
-      simp only [table, gather, ih]
-      by_cases h : n = name
-      · subst h; simp
-      · have hb : (n == name) = false := beq_false_of_ne h
-        cases gather name rest
-        simp [hb]
-    | noReturn _ => simp only [table, gather, ih]
-    | reference n d =>
-      simp only [table, gather, ih]
-      by_cases h : n = name
-      · subst h; simp
-      · have hb : (n == name) = false := beq_false_of_ne h
-        cases gather name rest
-        simp [hb]
+/-- Rules 13s, 13t: a sound memo answers every key as `f` does. -/
+theorem the_memo_answers_as_the_function {K V : Type} [BEq K] [LawfulBEq K]
+    {f : K → V} {memo : Memo K V} (sound : Sound f memo) (key : K) :
+    (getOrCompute f memo key).1 = f key := by
+  unfold getOrCompute
+  split
+  · rename_i v h
+    exact sound key v (lookup_mem memo key v h)
+  · rfl
 
-/-- The resolution of one name from its facts and a decision on its
-references (`call_exits::resolution_of`, abstract): unresolved when shadowed
-or unreferenced, as both readers answer. -/
-def resolution {D R : Type} (unresolved : R) (decide : List D → R) (f : Facts D) : R :=
-  if f.shadowed || f.references.isEmpty then unresolved else decide f.references
+/-- Rules 13s, 13t: asking keeps the memo sound. -/
+theorem asking_keeps_the_memo_sound {K V : Type} [BEq K] [LawfulBEq K]
+    {f : K → V} {memo : Memo K V} (sound : Sound f memo) (key : K) :
+    Sound f (getOrCompute f memo key).2 := by
+  unfold getOrCompute
+  split
+  · exact sound
+  · intro k v hmem
+    rcases List.mem_cons.mp hmem with h | h
+    · cases h; rfl
+    · exact sound k v h
 
-theorem the_table_resolves_as_the_walk {D R : Type} (unresolved : R) (decide : List D → R)
-    (events : List (Event D)) (name : String) :
-    resolution unresolved decide (table events name) =
-      resolution unresolved decide (gather name events) := by
-  rw [the_table_is_the_walk]
+/-- The empty memo is sound, so every memo a run builds is: whatever the
+order of asks, each answer is `f`'s. -/
+theorem the_empty_memo_is_sound {K V : Type} (f : K → V) : Sound f ([] : Memo K V) := by
+  intro k v h; simp at h
+
+/-- A run of asks from the empty memo answers each as `f`. -/
+def askAll {K V : Type} [BEq K] (f : K → V) : Memo K V → List K → List V
+  | _, [] => []
+  | memo, key :: rest =>
+    let (v, memo') := getOrCompute f memo key
+    v :: askAll f memo' rest
+
+theorem every_ask_is_answered_by_the_function {K V : Type} [BEq K] [LawfulBEq K]
+    (f : K → V) : ∀ (memo : Memo K V) (keys : List K), Sound f memo →
+      askAll f memo keys = keys.map f
+  | _, [], _ => rfl
+  | memo, key :: rest, sound => by
+    simp only [askAll, List.map_cons]
+    rw [the_memo_answers_as_the_function sound key,
+      every_ask_is_answered_by_the_function f _ rest (asking_keeps_the_memo_sound sound key)]
 
 /-! ## Rule 13t: the line tree -/
 
