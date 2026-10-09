@@ -214,7 +214,37 @@ No `.lean` file changed.
 
 ## 7. Gate
 
-_Pending: filled in from the gate run._
+Gate `g1` ran with every step under the shared lock. The code steps ran at
+`5511ac4fb`, which has the final contracts and pins; the later commits change
+records only. Logs are in `private/vcpa/gate-g1/`.
+
+* `cargo check --workspace --all-targets`: 0.
+* Submodule: 0. fmt: 0. clippy `--locked`: 0.
+* `run_test_binaries.py`: 460 units, 473 summaries, **7,718 passed, 0
+  failed**, 11 ignored, exit 0 (`private/vcpa/tests-gate-g1/`).
+* Both reevaluation probes: 0.
+* `check_lean_audits.py`: **299** audits passed.
+* Python suite: **365 OK** (08). Docs index `--check`: 0 (09).
+* Then `build_matrix.py --gate gate.json` (09a) 0, the Python suite again
+  (09b) 365 OK, and the docs index build and `--check` (10b, 10c) 0.
+
+Before the gate, the targeted `qcore_contract_corpus` and `contract_loader`
+tests passed (`private/vcpa/targeted-1.log`).
+
+The first provider gate, `pg1`, is **discarded as validation evidence**.
+Steps p1–p4 exited 0. Then the host disk filled ("No space left on device";
+another card's build and this worktree's 50 GB dev target were both on the
+host), and p5–p8 recorded no exit. This worktree's dev target was cleaned
+(`cargo clean --profile dev`), the disk recovered to 75 GB free, and the
+gate was rerun as `pg2` at `f2d26a7d5`, where `providers/` is the same as at
+the code steps:
+
+* `cargo check --locked`: 0. `cargo test`: 129 passed. fmt: 0. clippy: 0.
+* `contracts.py check`: 0.
+* Package build: 0. Verify of all five packages: 0.
+* Providers Python suite: 25 OK.
+
+Records: [gate.json](gate.json) and [gate/](gate/).
 
 ## 8. Ledger
 
