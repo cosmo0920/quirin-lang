@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# identity.sh BEFORE AFTER -- VERDICT-CONTRACT-DEPENDENCIES: the verdict-only
-# projection (verdict_projection.py) and the parity comparison (parity.py) of
-# two runs on the corpus, system and tail-pause slice, the dependency roll-up
-# of AFTER on each, into private/vbs/{projection,parity,rollup}-AFTER-ROUTE.*.
+# identity.sh BEFORE AFTER -- VERDICT-BODY-STANDING-CLAUSE-SCOPE (adapted from
+# VERDICT-CONTRACT-DEPENDENCIES): on the corpus, system and tail-pause slice,
+# the projection without the card's keys (verdict_projection.py), the parity
+# comparison (parity.py) and the clause roll-up against BEFORE
+# (clause_rollup.py), into private/vbs/{projection,parity,clauses}-AFTER-ROUTE.*.
 # Each step's exit is printed; nothing is piped into a step.
 set -u
 before="$1"; after="$2"
@@ -21,6 +22,6 @@ for route in corpus system slice; do
   echo "$route projection exit $?"
   python3 "$here/parity.py" "$pb" "$pa" "$out/parity-$after-$route.json" > "$out/parity-$after-$route.log" 2>&1
   echo "$route parity exit $? $(head -1 "$out/parity-$after-$route.log")"
-  python3 "$here/rollup.py" "$a" "$out/rollup-$after-$route.json" rd_kafka_toppar_purge_and_disable_queues > "$out/rollup-$after-$route.log" 2>&1
-  echo "$route rollup exit $? $(head -1 "$out/rollup-$after-$route.log")"
+  python3 "$here/clause_rollup.py" "$b" "$a" "$out/clauses-$after-$route.json" > "$out/clauses-$after-$route.log" 2>&1
+  echo "$route clauses exit $? $(head -1 "$out/clauses-$after-$route.log")"
 done

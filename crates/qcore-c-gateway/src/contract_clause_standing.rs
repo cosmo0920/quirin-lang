@@ -212,10 +212,16 @@ fn parameter_clause(index: usize, mode: ResourceParameterMode, kind: ResourceKin
             format!("resource_owned(#{index}, {})", nullability(nullable, kind))
         }
         ResourceParameterMode::Consumed { nullable } => {
-            format!("resource_consumed(#{index}, {})", nullability(nullable, kind))
+            format!(
+                "resource_consumed(#{index}, {})",
+                nullability(nullable, kind)
+            )
         }
         ResourceParameterMode::Released { nullable } => {
-            format!("resource_released(#{index}, {})", nullability(nullable, kind))
+            format!(
+                "resource_released(#{index}, {})",
+                nullability(nullable, kind)
+            )
         }
         ResourceParameterMode::Out { nullable } => {
             format!("resource_out(#{index}, {})", nullability(nullable, kind))

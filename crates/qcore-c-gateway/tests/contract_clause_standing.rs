@@ -38,7 +38,10 @@ fn lean_coverage_rows() -> Vec<(String, BTreeSet<String>)> {
         .filter(|line| line.starts_with('('))
         .map(|line| {
             let (evidence, kinds) = line.split_once(", [").expect("a nested list");
-            let evidence = evidence.trim_start_matches('(').trim_matches('"').to_owned();
+            let evidence = evidence
+                .trim_start_matches('(')
+                .trim_matches('"')
+                .to_owned();
             let kinds = kinds
                 .split(']')
                 .next()
@@ -77,7 +80,12 @@ fn lean_coverage_vectors_match_covers() {
     let list = &body[..body.find(']').expect("closes")];
     let lean = list
         .split(',')
-        .map(|kind| kind.trim().trim_start_matches('[').trim().trim_start_matches('.'))
+        .map(|kind| {
+            kind.trim()
+                .trim_start_matches('[')
+                .trim()
+                .trim_start_matches('.')
+        })
         .filter(|kind| !kind.is_empty())
         .collect::<Vec<_>>();
     assert_eq!(
@@ -166,7 +174,10 @@ fn a_release_validated_by_w4_covers_every_clause() {
 fn w4_leaves_a_container_clause_uncovered() {
     let mut contracts = ResourceContracts::default();
     let mut contract = ResourceFunctionContract::new(
-        [ResourceParameterMode::Borrowed, ResourceParameterMode::Borrowed],
+        [
+            ResourceParameterMode::Borrowed,
+            ResourceParameterMode::Borrowed,
+        ],
         ResourceReturnMode::None,
     );
     contract.container_effects.insert(
@@ -210,11 +221,9 @@ contract {
     ensures normal resource_return_none();
 };
 ";
-    let contracts = load_resource_contract_sources(&BTreeMap::from([(
-        "q.qv".to_owned(),
-        module.to_owned(),
-    )]))
-    .expect("the module loads");
+    let contracts =
+        load_resource_contract_sources(&BTreeMap::from([("q.qv".to_owned(), module.to_owned())]))
+            .expect("the module loads");
     let mut record = UnitRecord::default();
     record
         .validated

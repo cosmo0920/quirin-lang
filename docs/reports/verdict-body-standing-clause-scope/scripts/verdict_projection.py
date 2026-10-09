@@ -1,36 +1,35 @@
 #!/usr/bin/env python3
-"""verdict_projection.py BEFORE AFTER OUT.json -- VERDICT-CONTRACT-DEPENDENCIES:
-the verdict-only projection of a route report and its contract sidecar.
+"""verdict_projection.py BEFORE AFTER OUT.json -- VERDICT-BODY-STANDING-CLAUSE-SCOPE
+(adapted from VERDICT-CONTRACT-DEPENDENCIES): the projection of a route report
+and its contract sidecar without what this card changes.
 
-The projection of a report removes exactly what the card adds: each function
-row's `contract_dependencies` key and each unit row's `contract_body_evidence`
-key; of a sidecar (`*.contracts.json`), its `contract_dependencies` and
-`contract_premises` keys. It is written back in the report's own form
-(serde_json's pretty printer: two-space indent, `": "`, no ASCII escaping,
-the report with a trailing newline), which Python reproduces byte for byte
-(checked on BEFORE itself: the projection of a report without the keys is
-that report's bytes). The card's claim is that the projection of AFTER is
-byte-identical to BEFORE, so the SHA-256 of the projection equals BEFORE's
-raw digest. BEFORE and AFTER are run directories or report paths.
+The card changes two things: each unit row's `contract_body_evidence` (the
+per-clause coverage it adds, and the W4 evidence it now records for a
+declaration with container or counted-user clauses) and the sidecar's
+`contract_dependencies` section (the standing labels and the roll-up). The
+projection of a report removes exactly the unit key, **keeping every row's
+`contract_dependencies` field**; of a sidecar, exactly its
+`contract_dependencies` section. It is written back in the report's own form
+(serde_json's pretty printer: two-space indent, `": "`, no ASCII escaping, the
+report with a trailing newline), which Python reproduces byte for byte (checked
+on BEFORE itself). The claim is that the projection of AFTER equals the
+projection of BEFORE byte for byte on every route (no contract input changed,
+so nothing else may differ), and that the **verdict rows** are identical: the
+digest of every unit's (library, file, status, reason, reason_code) and every
+row's (function, status, diagnostics), in report order, printed for both runs.
 
-The sidecar also carries the contract inputs, and the card changed one: the
-served-queue premise is new text in `librdkafka/client.qv`, so that module's
-text and digest, the two declarations' contract digests and the crate lock's
-digest differ. On the current route (system, slice) each unit's
-`compile_configuration` names the contract sources' digests, so those change
-in the report too. Every differing path of both projections is listed, and the
-run passes only when every difference is one of those contract-input paths
-and the **verdict rows** are identical: the digest of every unit's
-(library, file, status, reason, reason_code) and every row's (function,
-status, diagnostics), in report order, is printed for both runs."""
+The unit field itself is compared too (`unit_field`): AFTER's field without its
+`clauses` key against BEFORE's field, listing every declaration that moved
+between `validated`, `unvalidated` and `failed` (expected: only declarations
+newly validated by W4 because their container or counted-user clauses no
+longer stop the W4 record)."""
 import hashlib
 import json
 import pathlib
 import sys
 
-ROW_KEY = "contract_dependencies"
 UNIT_KEY = "contract_body_evidence"
-SIDECAR_KEYS = ("contract_dependencies", "contract_premises")
+SIDECAR_KEYS = ("contract_dependencies",)
 
 
 def report_path(path):
@@ -41,8 +40,6 @@ def report_path(path):
 def project_report(data):
     for unit in data.get("units", []):
         unit.pop(UNIT_KEY, None)
-        for function in unit.get("functions", []):
-            function.pop(ROW_KEY, None)
     return data
 
 
@@ -55,11 +52,6 @@ def project_sidecar(data):
 def dump(data, newline):
     text = json.dumps(data, indent=2, ensure_ascii=False).encode()
     return text + (b"\n" if newline else b"")
-
-
-CONTRACT_INPUT = ("/sources/", "/contract_revision/locks/", "/manifest", "/contracts/")
-CONFIGURATION_INPUT = ("/resource_contract_sources", "/inventory_sha256")
-CHANGED_DECLARATIONS = ("rd_kafka_q_purge0", "rd_kafka_q_wait_result")
 
 
 def differences(x, y, path=""):
@@ -80,21 +72,6 @@ def differences(x, y, path=""):
     return [] if x == y else [path]
 
 
-def contract_input(path, after):
-    """Whether a differing sidecar path is the changed contract input."""
-    if path.startswith(CONTRACT_INPUT) or path.endswith("/module_sha256"):
-        return True
-    if "/compile_configuration/" in path and path.endswith(CONFIGURATION_INPUT):
-        return True
-    if path.endswith("/contract_sha256"):
-        if path.startswith("/contract_revision/contracts/"):
-            return path.split("/")[3] in CHANGED_DECLARATIONS
-        if path.startswith("/contract_revision/pinned_in_force["):
-            index = int(path.split("[")[1].split("]")[0])
-            return after["contract_revision"]["pinned_in_force"][index]["function"] in CHANGED_DECLARATIONS
-    return False
-
-
 def compare(before, after, project, newline):
     raw_before = before.read_bytes()
     raw_after = after.read_bytes()
@@ -105,9 +82,10 @@ def compare(before, after, project, newline):
         "before": str(before), "after": str(after),
         "before_sha256": sha(raw_before), "after_sha256": sha(raw_after),
         "before_bytes": len(raw_before), "after_bytes": len(raw_after),
-        "projector_reproduces_before": projected_before == raw_before,
+        "projector_reproduces_before": dump(json.loads(raw_before), newline) == raw_before,
+        "projection_before_sha256": sha(projected_before),
         "projection_after_sha256": sha(projected_after),
-        "projection_after_equals_before": projected_after == raw_before,
+        "projections_equal": projected_after == projected_before,
         "added_bytes": len(raw_after) - len(raw_before),
         "differing_paths_after_projection": differences(
             json.loads(projected_before), json.loads(projected_after)),
@@ -124,6 +102,30 @@ def verdict_rows(path):
     return json.dumps(rows, sort_keys=True, ensure_ascii=False).encode()
 
 
+def unit_field(before, after):
+    """Per declaration, its unit outcomes before and after where they differ."""
+    def outcomes(path):
+        data = json.loads(path.read_bytes())
+        out = {}
+        for index, unit in enumerate(data.get("units", [])):
+            field = unit.get(UNIT_KEY, {})
+            key = f"{unit.get('library')}/{unit.get('file')}#{index}"
+            for name, by in field.get("validated", {}).items():
+                out[(key, name)] = ("validated", tuple(by))
+            for name in field.get("unvalidated", []):
+                out[(key, name)] = ("unvalidated", ())
+            for name, why in field.get("failed", {}).items():
+                out[(key, name)] = ("failed", tuple(why))
+        return out
+    b, a = outcomes(before), outcomes(after)
+    moved = {}
+    for key in sorted(set(b) | set(a)):
+        if b.get(key) != a.get(key):
+            name = key[1]
+            moved.setdefault(name, []).append([key[0], b.get(key), a.get(key)])
+    return moved
+
+
 def main():
     before, after = report_path(sys.argv[1]), report_path(sys.argv[2])
     record = {"report": compare(before, after, project_report, True)}
@@ -131,20 +133,14 @@ def main():
     sidecar_after = after.with_suffix(".contracts.json")
     if sidecar_before.exists() and sidecar_after.exists():
         record["sidecar"] = compare(sidecar_before, sidecar_after, project_sidecar, False)
-    pathlib.Path(sys.argv[3]).write_text(json.dumps(record, indent=1) + "\n")
     verdicts = [hashlib.sha256(verdict_rows(path)).hexdigest() for path in (before, after)]
     record["verdict_rows_sha256"] = {"before": verdicts[0], "after": verdicts[1],
                                      "equal": verdicts[0] == verdicts[1]}
-    report_other = [path for path in record["report"]["differing_paths_after_projection"]
-                    if not contract_input(path, {})]
-    record["report"]["differences_outside_the_contract_input"] = report_other
-    ok = verdicts[0] == verdicts[1] and not report_other
+    moved = unit_field(before, after)
+    record["unit_field_moves"] = moved
+    ok = verdicts[0] == verdicts[1] and record["report"]["projections_equal"]
     if "sidecar" in record:
-        after_sidecar = json.loads(sidecar_after.read_text())
-        other = [path for path in record["sidecar"]["differing_paths_after_projection"]
-                 if not contract_input(path, after_sidecar)]
-        record["sidecar"]["differences_outside_the_contract_input"] = other
-        ok = ok and not other
+        ok = ok and record["sidecar"]["projections_equal"]
     pathlib.Path(sys.argv[3]).write_text(json.dumps(record, indent=1) + "\n")
     print("verdict rows", verdicts[0], verdicts[1], "equal", verdicts[0] == verdicts[1])
     for name in ("report", "sidecar"):
@@ -152,10 +148,11 @@ def main():
             continue
         part = record[name]
         print(name, part["before_sha256"], "->", part["after_sha256"], "projection",
-              part["projection_after_sha256"], "equal", part["projection_after_equals_before"],
-              "projector", part["projector_reproduces_before"], "added", part["added_bytes"],
-              "of", part["before_bytes"], "differing", len(part["differing_paths_after_projection"]),
-              "outside-input", len(part.get("differences_outside_the_contract_input", [])))
+              part["projection_before_sha256"], part["projection_after_sha256"],
+              "equal", part["projections_equal"], "projector", part["projector_reproduces_before"],
+              "added", part["added_bytes"], "of", part["before_bytes"],
+              "differing", len(part["differing_paths_after_projection"]))
+    print("unit-field moves", len(moved), sorted(moved))
     sys.exit(0 if ok else 1)
 
 

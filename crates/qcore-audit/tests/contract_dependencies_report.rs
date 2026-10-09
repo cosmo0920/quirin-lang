@@ -150,10 +150,16 @@ fn a_partly_validated_declaration_is_counted_apart_and_lists_its_gaps() {
     assert_eq!(keep["body_standing"], "partly-validated");
     assert_eq!(
         keep["uncovered_clauses"],
-        json!(["resource_borrowed(#0)", "resource_return_alias(#0, nonnull)"])
+        json!([
+            "resource_borrowed(#0)",
+            "resource_return_alias(#0, nonnull)"
+        ])
     );
     assert_eq!(keep["clauses"]["resource_reference_kept(#0)"], "validated");
-    assert_eq!(section["declarations"]["release"]["body_standing"], "validated");
+    assert_eq!(
+        section["declarations"]["release"]["body_standing"],
+        "validated"
+    );
     let rollup = &section["safe_rollup"];
     assert_eq!(rollup["resting_only_on_validated_declarations"], 1);
     assert_eq!(rollup["resting_on_a_partly_validated_declaration"], 1);
@@ -168,7 +174,10 @@ fn a_partly_validated_declaration_is_counted_apart_and_lists_its_gaps() {
     // A unit row without clause coverage (a report written before rule 13j)
     // never makes a declaration validated.
     let mut old = units[0].clone();
-    old[UNIT_KEY].as_object_mut().expect("unit field").remove(CLAUSES_KEY);
+    old[UNIT_KEY]
+        .as_object_mut()
+        .expect("unit field")
+        .remove(CLAUSES_KEY);
     let section = render(&Facts::of_rows(&[old]), &revision, &json!({}));
     assert_eq!(
         section["declarations"]["release"]["body_standing"],
@@ -188,8 +197,7 @@ fn clause_standing_rows() -> Vec<(bool, Vec<String>, Vec<String>, String)> {
             .filter(|item| !item.is_empty())
             .collect::<Vec<_>>()
     };
-    body[..body.find("
-]").expect("closes")]
+    body[..body.find("\n]").expect("closes")]
         .lines()
         .map(str::trim)
         .filter(|line| line.starts_with('('))
@@ -253,7 +261,11 @@ fn lean_clause_standing_vectors_match_the_run_standing() {
                        UNIT_KEY: field})
             })
             .collect::<Vec<_>>();
-        let status = if held { "pending-review" } else { "pinned-in-force" };
+        let status = if held {
+            "pending-review"
+        } else {
+            "pinned-in-force"
+        };
         let revision = json!({"contracts": {"d": {"mode": "pinned", "status": status,
                                                    "contract_sha256": "0", "module": "m"}}});
         let mut facts = Facts::of_rows(&rows);
