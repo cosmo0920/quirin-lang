@@ -128,7 +128,14 @@ body rebinds `cmp` to a default and hands it to `rd_qsort_r`). The libc
 declarations have no body in the corpus. Pinned tables: 363 → **377**
 resource-v1 declarations (`compiler/tests/contract_loader.rs`; 28 → 44
 withheld into the retaining table), the per-file clause pins in
-`compiler/tests/qcore_contract_corpus.rs`.
+`compiler/tests/qcore_contract_corpus.rs`, and the cmetrics inventory digest
+the shipped cmetrics-counter source policy binds
+(`contract/profiles/cmetrics-counter/source-contracts.json`, `93dcbddb…` →
+`25bd82ef…`: `mpack_utils.qv` changed; the bound `counter_reset.qv` did not).
+The first gate (g2) failed on exactly that pin
+(`source_contract_config::shipped_cmetrics_selection_loads_canonical_policy`,
+"contract inventory digest mismatch"); it was updated deliberately and the
+gate rerun.
 
 **Not declared.** `rd_kafka_q_serve*` / `rd_kafka_q_pop_serve*`
 (`rdkafka_queue.c:558-649`): the reference part is decidable (rule 13b: the
@@ -158,7 +165,9 @@ calling body, so rule 13w cannot state them as checked clauses. The premise
 
 Binary `bin/a3` (`3b204784…`, `run.json`'s `binary_sha256`), built from
 `a22b07d8a` (the committed source of every rule; `a2`, `e6e07bc2…`, measured
-the same totals before the refusal texts named rule 11p's reason).
+the same totals before the refusal texts named rule 11p's reason). The later
+commits change records, tests and `rustfmt` layout only, no analysis source:
+the gate runs on the final tip.
 
 | route | BEFORE | AFTER | report sha256 | wall (s) |
 | --- | --- | --- | --- | ---: |
