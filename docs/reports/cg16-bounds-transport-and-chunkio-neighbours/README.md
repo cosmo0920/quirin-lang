@@ -202,8 +202,8 @@ step at `eb8268df9`:
 | 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | 07 | `python3 scripts/check_lean_audits.py` | 0 | 305 audits (303 → 305) |
-| 08, 09 | Python suite, docs index check (before the matrix regeneration) | GATE_08 | |
-| 09a, 09b, 10b, 10c | `build_matrix.py . --gate gate.json`, the Python suite, `build_docs_index.py`, `--check` | GATE_09 | |
+| 08, 09 | Python suite, docs index check (before the matrix regeneration) | 1, 0 (08: the committed matrix carried `lean_audits` 303, the expected stale derived value) | |
+| 09a, 09b, 10b, 10c | `build_matrix.py . --gate gate.json`, the Python suite, `build_docs_index.py`, `--check` | 0, 0 (365 OK), 0, 0 | |
 
 Provider gate `g2` ([`scripts/provider-gate.sh`](scripts/provider-gate.sh), at
 `eb8268df9`): `cargo check --locked` 0, `cargo test --locked` 0 (129 passed),
