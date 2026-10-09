@@ -239,7 +239,11 @@ fn a_release_wrapper_without_a_statement_expression_validates_at_every_depth() {
     if !clang_available() {
         return;
     }
-    for (tag, arms) in [("r-shallow", SHALLOW), ("r-deep", DEEP), ("r-beyond", BEYOND)] {
+    for (tag, arms) in [
+        ("r-shallow", SHALLOW),
+        ("r-deep", DEEP),
+        ("r-beyond", BEYOND),
+    ] {
         let main = format!("{}{RELEASE_USER}", chain(arms));
         let run = if arms == BEYOND {
             on_a_large_stack(tag, RELEASING, main, W_RELEASE)

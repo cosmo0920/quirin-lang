@@ -569,7 +569,10 @@ impl<'de> Deserialize<'de> for RetainedRoot {
 impl AstIndex {
     fn from_json(bytes: &[u8], source: &str) -> Result<Self, serde_json::Error> {
         // `from_slice` checks the entire document, including trailing bytes.
-        let RetainedRoot(retained) = serde_json::from_slice(bytes)?;
+        // Card RDHTTP-HEADER-SUMMARY-GAP (rules 13o, 13p): a document the
+        // default recursion limit refuses is read again without it when it
+        // nests within the admitted bound.
+        let RetainedRoot(retained) = crate::deep_unit_ast::from_slice(bytes)?;
         Ok(Self {
             functions: retained.functions,
             fields: Arc::new(retained.fields),
@@ -648,8 +651,9 @@ impl Drop for SourceScope {
 
 /// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): one definition's Clang AST by
 /// Clang's own name filter, for a unit whose whole-unit index is unavailable
-/// (the measured instance: librdkafka's `rdhttp.c`, whose translation-unit
-/// JSON nests 223 deep, beyond `serde_json`'s recursion limit of 128). `None`
+/// (the measured instance was librdkafka's `rdhttp.c`, whose translation-unit
+/// JSON nests over 200 deep, beyond `serde_json`'s recursion limit of 128; card
+/// RDHTTP-HEADER-SUMMARY-GAP's rule 13o now reads that index). `None`
 /// outside an analysed source, on any Clang or JSON failure, and unless
 /// exactly one definition with a body has this exact name.
 pub(crate) fn definition_ast(function: &str) -> Option<Value> {

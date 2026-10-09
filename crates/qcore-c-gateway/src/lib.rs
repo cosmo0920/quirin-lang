@@ -132,6 +132,9 @@ pub mod thread_entry_census;
 pub mod traversal_census;
 mod type_query;
 mod typed_access_path;
+// Card RDHTTP-HEADER-SUMMARY-GAP (rules 13o, 13p): the unit index of a unit
+// nesting beyond serde_json's default recursion limit.
+mod deep_unit_ast;
 // Card W47-ACCESS-PATH-POSITIONS: the typed reader in condition operands,
 // returns and call actuals.
 mod typed_access_positions;
