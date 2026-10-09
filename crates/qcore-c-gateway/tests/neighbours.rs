@@ -618,15 +618,37 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     );
 
     // **The added load-bearing half.** The same actual, made non-conforming by
-    // pointer arithmetic every route refuses, restores the exact measurement this test
+    // a construct every route refuses, restores the exact measurement this test
     // used to pin. The admission is narrow and it is what decides the residual.
-    let arithmetic = source.replace(
+    // **Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round
+    // 2** (rule 14d): the non-conforming spelling was pointer arithmetic,
+    // `storage->stream->name + 0`, which rule 14d now reads at the tail (an
+    // interior offset of a path whose roots are never bound), so it decides
+    // nothing here any more (asserted below); the control is now `*&` over the
+    // same path, which no reader reads.
+    let offset = source.replace(
         "storage->stream->name, name);",
         "storage->stream->name + 0, name);",
     );
+    assert_ne!(offset, source, "the offset substitution did not apply");
+    let read = function(
+        program(&analyze_real(&offset, &real_contracts())),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    assert_eq!(
+        unsupported(&read),
+        Vec::<&str>::new(),
+        "rule 14d reads an interior offset at the tail"
+    );
+    assert!(leaks(&read).is_empty());
+    let arithmetic = source.replace(
+        "storage->stream->name, name);",
+        "*&storage->stream->name, name);",
+    );
     assert_ne!(
         arithmetic, source,
-        "the arithmetic substitution did not apply"
+        "the indirection substitution did not apply"
     );
     let refused = function(
         program(&analyze_real(&arithmetic, &real_contracts())),
@@ -636,7 +658,7 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     assert_eq!(
         unsupported(&refused),
         vec!["indirect memory access is outside the resource projection"],
-        "a pointer-arithmetic tail actual must keep the original refusal"
+        "an unread tail actual must keep the original refusal"
     );
     assert!(leaks(&refused).is_empty());
 

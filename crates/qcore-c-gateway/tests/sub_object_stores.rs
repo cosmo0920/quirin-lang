@@ -242,11 +242,20 @@ fn a_formal_pointer_stored_into_a_member_keeps_its_refusal() {
 
 #[test]
 fn a_none_result_call_stored_into_a_scalar_member_keeps_its_refusal() {
-    // A scalar member takes a scalar expression; a call is read only into a
-    // pointer member.
+    // **Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round
+    // 2** (rule 14a): this was `Unknown` with the gate's refusal. A scalar
+    // statement whose value is one call to a `None`-result, all-`Borrowed`
+    // contract is the call, then the typed scalar store, so the store is read.
     expect(
         "`r->count = x_len(s)`",
         "void w(struct x_rec *r, const char *s) { r->count = x_len(s); }",
+        "Safe",
+        &[],
+    );
+    // Two calls in the value keep the refusal (C leaves their order open).
+    expect(
+        "`r->count = x_len(s) + x_len(s)`",
+        "void w(struct x_rec *r, const char *s) { r->count = x_len(s) + x_len(s); }",
         "Unknown",
         &[GATE],
     );
