@@ -3,9 +3,11 @@
 Card CG22-CALLBACK-REGISTRY-CONTRACT (wave 48, round 21), gateway rules
 **13u–13z**, contract specification **C04.19**, grammar **G05**, Lean
 `QCore.CallbackContracts`. Base: local `main` at `84ec54d1d`
-(DEEP-AST-TRANSPORTS-AND-WALL-TIME's gate records); no later main during the
-card. The [prediction](PREDICTION.md) was frozen and committed (`4c220b5de`)
-before any implementation code.
+(DEEP-AST-TRANSPORTS-AND-WALL-TIME's gate records); rebased onto `6f64d545e`
+(CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS, custody byte-identical at
+`ab8f5f14…`) after the AFTER below and re-measured there (section 4). The
+[prediction](PREDICTION.md) was frozen and committed (`4c220b5de`, rebased as
+`1bc5bc669`) before any implementation code.
 
 ## 1. The decision and what the card built
 
@@ -175,6 +177,15 @@ the gate runs on the final tip.
 | system | 87 / 4 / 357 | 87 / 4 / 357 | `2efc56d6…` → `d1ec2afd…` (both embed this worktree's paths) | 59.7 → 61.6 |
 | slice | 45 / 1 / 354, 4 Pending | 45 / 1 / 354, 4 Pending | `b81b79d5…` → `1bbafa88…` (both embed this worktree's paths) | 28.2 → 27.0 |
 
+**Re-measured on the rebased tip** (`cbd3a45d7` on main `6f64d545e`, binary
+`bin/a4`, `dbe7408e…`, `run.json`'s `binary_sha256`): corpus `c0320aca…`,
+system `d1ec2afd…`, slice `1bbafa88…`, each report byte-identical to a3's;
+every parity stream a3 → a4 multiset-identical with node addresses erased (0
+rows on either side only, `scripts/parity.py`); wall 447.6 s / 60.2 s /
+27.8 s. Contract pins re-checked with a4 (`private/cg22r/pin-a4/`): every
+per-crate check 0 at both revisions, the whole tree 1 only for
+`mk_vhost_set`, `--verify-contracts` 0.
+
 **Every moving function attributed** ([corpus](artifacts/compare-a3-corpus.json),
 [system](artifacts/compare-a3-system.json), [slice](artifacts/compare-a3-slice.json)):
 230 corpus rows move, 2 in status.
@@ -314,7 +325,7 @@ tables by `callback_contracts::tests` (`decisionVectors`, `registryVectors`,
 gains the clause kinds `callback` and `callbackChecked` and the evidence
 `r13y` (its coverage and standing vectors, bound by
 `tests/contract_clause_standing.rs` and the audit's
-`contract_dependencies_report.rs`). Lean audits 303 → **304**.
+`contract_dependencies_report.rs`). Lean audits 303 → **304** on the card's base, **306** after the rebase onto `6f64d545e` (CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS added two).
 
 ## 8. Ledger
 
