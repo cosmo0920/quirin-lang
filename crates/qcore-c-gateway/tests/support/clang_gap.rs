@@ -120,6 +120,9 @@ pub struct G {
     /// The `unsupported` descriptions only.
     pub unsupported: Vec<String>,
     pub calls: Vec<String>,
+    /// Card NULL-SAFETY-PROPERTY (rule 14n): the variables whose dereference
+    /// custody read non-null under a named `null-deref` premise.
+    pub null_premises: Vec<String>,
 }
 
 impl G {
@@ -181,6 +184,7 @@ pub fn g_function(source: &str, function: &str) -> G {
             diagnostics: vec![NOT_PROJECTED.to_owned(), reason],
             unsupported: vec![],
             calls: vec![],
+            null_premises: vec![],
         };
     };
     G {
@@ -206,6 +210,11 @@ pub fn g_function(source: &str, function: &str) -> G {
                 LegacyInstruction::ContractCall { function, .. } => Some(function.clone()),
                 _ => None,
             })
+            .collect(),
+        null_premises: result
+            .null_premises
+            .iter()
+            .map(|premise| premise.variable.clone())
             .collect(),
     }
 }

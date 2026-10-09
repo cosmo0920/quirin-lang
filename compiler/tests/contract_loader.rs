@@ -1546,7 +1546,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `chunkio/file_st_bounds.qv`, a bounds contract v1 module (the crate's
     // bounds view, never selected): resource-v1 rejects its three
     // declarations.
-    assert_eq!(modules.len(), 127, "corpus module count");
+    // 127 -> 130: card NULL-SAFETY-PROPERTY adds the three `null_deref.qv`
+    // modules (cmetrics, fluent_bit, librdkafka), bounds contract v1 modules
+    // (each crate's bounds view, never selected): resource-v1 rejects their
+    // thirteen declarations.
+    assert_eq!(modules.len(), 130, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1810,9 +1814,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // with the retaining declarations, plus two re-declared in place
     // (`rd_kafka_topic_partition_list_sort`, `msgpack_packer_init`).
     // Selection unchanged.
+    // 221 -> 234 rejected by card NULL-SAFETY-PROPERTY: the thirteen
+    // `quant null-deref` declarations of the three `null_deref.qv` modules
+    // belong to the bounds consumer and are deliberately rejected by
+    // resource-v1. Selection and v1 declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 379, 221)
+        (61, 379, 234)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

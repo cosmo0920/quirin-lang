@@ -465,10 +465,15 @@ class LoadPathManifest(unittest.TestCase):
         # crate's bounds view and in no resource view. Card
         # CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds the second,
         # `chunkio/file_st_bounds.qv`.
+        # Card NULL-SAFETY-PROPERTY adds the three `quant null-deref` modules
+        # (bounds contract v1, read only by the null-dereference property).
         bounds = {c["name"]: c["bounds_view"] for c in manifest["crates"]}
         self.assertEqual({name: view for name, view in bounds.items() if view},
                          {"qcore-provider-chunkio": ["chunkio/file_st_bounds.qv",
-                                                     "chunkio/meta_len_bounds.qv"]})
+                                                     "chunkio/meta_len_bounds.qv"],
+                          "qcore-provider-cmetrics": ["cmetrics/null_deref.qv"],
+                          "qcore-provider-librdkafka": ["librdkafka/null_deref.qv"],
+                          "quirin-provider-fluent-bit": ["fluent_bit/null_deref.qv"]})
         self.assertNotIn("chunkio/meta_len_bounds.qv", views["qcore-provider-chunkio"])
         self.assertNotIn("chunkio/file_st_bounds.qv", views["qcore-provider-chunkio"])
         # The real inventories: exactly the two crates that inherit carry pins.

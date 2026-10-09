@@ -703,9 +703,25 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // borrowed tail reads it as a borrowed place (rule 11w, T8) and the tail
     // refusal is gone, while every withdrawn callee keeps its own refusal. The
     // 21 is still measured, in the same run, with the data-tail text.
+    // **Deliberate pin update, card NULL-SAFETY-PROPERTY** (rule 14n, USER
+    // DECISION 2026-10-10, decision 1): 20 -> 19 and data tail 21 -> 20. In
+    // this before-state `storage` (`storage = in->storage`, line 204) is a
+    // target-free, possibly-null borrowed alias; its dereference at line 206
+    // is read non-null under the named premise
+    // `null-deref:flb_input_chunk_create:206:storage` the summary lists, so
+    // its `UnknownAlias storage` is gone. Every withdrawn callee keeps its own
+    // refusal.
+    assert!(
+        before
+            .null_premises
+            .iter()
+            .any(|premise| premise.line == 206 && premise.variable == "storage"),
+        "the premise on `storage` is listed: {:?}",
+        before.null_premises
+    );
     assert_eq!(
         before.diagnostics.len(),
-        20,
+        19,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );
@@ -716,7 +732,7 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     .clone();
     assert_eq!(
         before_data_tail.diagnostics.len(),
-        21,
+        20,
         "the data-tail before-state diagnostic count moved: {:?}",
         before_data_tail.diagnostics
     );

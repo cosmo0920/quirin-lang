@@ -386,13 +386,39 @@ fn substituting_a_dependency_identity_withdraws_the_discharged_arms() {
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Discharged)
             .count();
+        assert_eq!(caller.status, AnalysisStatus::Unknown, "{label}");
+        // **Deliberate move, card NULL-SAFETY-PROPERTY** (rule 14n, USER
+        // DECISION 2026-10-10, decision 1): with the unresolvable member the
+        // read `storage = in->storage` binds a target-free, possibly-null
+        // borrowed alias, whose dereference at `storage->cio` was the only
+        // refusal on the three cleanup arms. It is now read non-null under
+        // the named premise on `storage` the summary lists, so those arms
+        // discharge resting on it; the function stays `Unknown` (the rollback
+        // and success exits are unresolved). The other substitutions still
+        // withdraw every discharge.
+        if label == "the read record gains a member the reader cannot resolve" {
+            assert_eq!(
+                discharged,
+                3,
+                "{label}: the cleanup arms discharge under the premise, exits were {:?}",
+                exit_shape(caller)
+            );
+            assert!(
+                caller
+                    .null_premises
+                    .iter()
+                    .any(|premise| premise.variable == "storage"),
+                "{label}: the premise on `storage` is listed: {:?}",
+                caller.null_premises
+            );
+            continue;
+        }
         assert_eq!(
             discharged,
             0,
             "{label}: the discharge must be withdrawn, exits were {:?}",
             exit_shape(caller)
         );
-        assert_eq!(caller.status, AnalysisStatus::Unknown, "{label}");
     }
 }
 

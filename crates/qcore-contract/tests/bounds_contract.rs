@@ -182,13 +182,36 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     }
     // Card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS adds the second:
     // `chunkio/file_st_bounds.qv`, the neighbouring header accessors.
+    // Card NULL-SAFETY-PROPERTY adds three: the `quant null-deref` modules of
+    // cmetrics, librdkafka and fluent-bit (C09.3).
     assert_eq!(
         bounds_modules.len(),
-        2,
+        5,
         "tracked bounds modules: {bounds_modules:?}"
     );
-    assert!(bounds_modules[0].ends_with("chunkio/file_st_bounds.qv"));
-    assert!(bounds_modules[1].ends_with("chunkio/meta_len_bounds.qv"));
+    let mut names = bounds_modules
+        .iter()
+        .map(|path| {
+            let mut parts = path.iter().rev().take(2).collect::<Vec<_>>();
+            parts.reverse();
+            parts
+                .iter()
+                .map(|part| part.to_string_lossy())
+                .collect::<Vec<_>>()
+                .join("/")
+        })
+        .collect::<Vec<_>>();
+    names.sort();
+    assert_eq!(
+        names,
+        [
+            "chunkio/file_st_bounds.qv",
+            "chunkio/meta_len_bounds.qv",
+            "cmetrics/null_deref.qv",
+            "fluent_bit/null_deref.qv",
+            "librdkafka/null_deref.qv",
+        ]
+    );
 }
 
 /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a pin not in force holds the whole

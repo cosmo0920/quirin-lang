@@ -281,6 +281,39 @@ alias, a bound chain root and a release keep their decisions.
 `qcore-core/tests/null_deref.rs` (5), `null_premise.rs` and `null_tally.rs`
 unit tests.
 
+### Deliberate test and pin updates
+
+Each is commented at its site with this card's name; none turns a refusal
+into `Safe` except under the named premise of rule 14n, which the summary
+lists.
+
+* Rule 14n moves (the possibly-null base `storage`/`s` read non-null under
+  its premise): `borrowed_field_actuals.rs` (the partial-argument and
+  parenthesized-actual rows certify resting on the premise on `storage`; the
+  consumed-alias and released-second-read rows stay `Unknown`, refused by
+  `alias` and `other`, with the premise listed; the later-reassignment row's
+  `storage` refusal is its premise, the uncontracted `b_pick` still refuses);
+  `clang_gap_phase2.rs` (`struct S *s = *v; s->in.x = 1;` certifies on the
+  premise on `s`; the shared `support/clang_gap.rs` reports `null_premises`);
+  `neighbours.rs` (before-state 20 -> 19, data tail 21 -> 20: the premise
+  `null-deref:flb_input_chunk_create:206:storage` replaces `UnknownAlias
+  storage`); `o04_constructor_caller.rs` (with an unresolvable member added to
+  the read record the three cleanup arms discharge on the premise on
+  `storage`, the function stays `Unknown`; the other three substitutions still
+  withdraw every discharge).
+* The three `null_deref.qv` modules: `contract_loader.rs` (modules 127 -> 130,
+  resource-v1 rejected declarations 221 -> 234, selection and v1 declarations
+  unchanged), `qcore_contract_corpus.rs` (corpus 127 -> 130, 13 pinned
+  declarations of 2 clauses each), `bounds_contract.rs` (tracked bounds
+  modules 2 -> 5), `contract_view_census.rs` and `qcore-contract`'s
+  `contract_views.rs` (five functions declared in a resource view and in a
+  `null_deref.qv` module, registered as the checked relation
+  `null_deref_beside`: signature agreement and only null-deref clauses; pairs
+  13 -> 18), `contract/profiles/cmetrics-counter/source-contracts.json` (the
+  cmetrics manifest's digest, `25bd82ef` -> `2a38c6fe`),
+  `quirin-provider-fluent-bit/src/lib.rs`'s contract index and
+  `providers/tests/test_contract_load_path.py`'s bounds view expectation.
+
 ## 9. Gate
 
 See [gate.json](gate.json) and [gate/](gate/) (filled by

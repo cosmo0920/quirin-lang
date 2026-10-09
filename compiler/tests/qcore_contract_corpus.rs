@@ -358,6 +358,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // CG22-CALLBACK-REGISTRY-CONTRACT: the array and map unpackers.
     ("cmetrics/mpack_utils.qv", "cmt_mpack_unpack_array", 6),
     ("cmetrics/mpack_utils.qv", "cmt_mpack_unpack_map", 6),
+    // Card NULL-SAFETY-PROPERTY: `quant null-deref` checks (bounds
+    // contract v1, the crate's bounds view): selector and one check each.
+    ("cmetrics/null_deref.qv", "cmt_destroy", 2),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
@@ -616,6 +619,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/memory.qv", "flb_realloc", 9),
     ("fluent_bit/memory.qv", "flb_realloc_z", 12),
     ("fluent_bit/memory.qv", "flb_free", 5),
+    // Card NULL-SAFETY-PROPERTY: `quant null-deref` checks (bounds
+    // contract v1, the crate's bounds view): selector and one check each.
+    ("fluent_bit/null_deref.qv", "flb_output_set_context", 2),
+    ("fluent_bit/null_deref.qv", "flb_output_net_default", 2),
+    ("fluent_bit/null_deref.qv", "flb_output_name", 2),
+    ("fluent_bit/null_deref.qv", "flb_output_set_property", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_chunk_get_name", 2),
     (
         "fluent_bit/output_flush_id.qv",
         "flb_output_flush_id_get",
@@ -1254,6 +1264,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/memory.qv", "rd_hdr_histogram_record", 4),
     ("librdkafka/memory.qv", "rd_atomic64_add", 4),
     ("librdkafka/memory.qv", "rd_atomic64_get", 3),
+    // Card NULL-SAFETY-PROPERTY: `quant null-deref` checks (bounds
+    // contract v1, the crate's bounds view): selector and one check each.
+    ("librdkafka/null_deref.qv", "rd_kafka_destroy", 2),
+    (
+        "librdkafka/null_deref.qv",
+        "rd_kafka_topic_partition_list_destroy",
+        2,
+    ),
+    (
+        "librdkafka/null_deref.qv",
+        "rd_kafka_topic_partition_list_add",
+        2,
+    ),
+    ("librdkafka/null_deref.qv", "rd_list_destroy", 2),
+    ("librdkafka/null_deref.qv", "rd_list_add", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_queue_destroy", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_message_destroy", 2),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",
@@ -1711,7 +1738,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 126 -> 127 by card CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS'
     // `chunkio/file_st_bounds.qv` (pinned in `bounds-contracts.lock`, outside
     // every resource view).
-    assert_eq!(sources.len(), 127, "unexpected contract corpus size");
+    // 127 -> 130 by card NULL-SAFETY-PROPERTY's three `null_deref.qv` modules
+    // (cmetrics, fluent_bit, librdkafka; bounds contract v1, pinned in each
+    // crate's `bounds-contracts.lock`, outside every resource view).
+    assert_eq!(sources.len(), 130, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

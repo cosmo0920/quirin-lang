@@ -57,6 +57,12 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "cio_error_reset",
         &["chunkio/error_frame.qv", "chunkio/error_state.qv"],
     ),
+    // Card NULL-SAFETY-PROPERTY: `quant null-deref` checks (bounds contract
+    // v1) beside the resource-v1 declarations (relation `null_deref_beside`).
+    (
+        "cmt_destroy",
+        &["cmetrics/context_lifetime.qv", "cmetrics/null_deref.qv"],
+    ),
     (
         "flb_calloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
@@ -66,6 +72,10 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
     (
+        "flb_input_chunk_get_name",
+        &["fluent_bit/input_chunk_name.qv", "fluent_bit/null_deref.qv"],
+    ),
+    (
         "flb_malloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
     ),
@@ -73,6 +83,18 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
     (
         "mk_list_del",
         &["chunkio/list_unlink.qv", "monkey/intrusive_list.qv"],
+    ),
+    (
+        "rd_kafka_topic_partition_list_destroy",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
+    (
+        "rd_list_add",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
+    (
+        "rd_list_destroy",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
     ),
 ];
 
@@ -119,11 +141,12 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
         })
         .collect();
     assert_eq!(actual, expected);
-    // Eleven functions, thirteen pairs, every pair registered exactly once
-    // (W45-FB-RETRY-LIFETIME added `mk_list_del`).
-    assert_eq!(census_pairs(&report.census).len(), 13);
-    assert_eq!(REGISTERED_RELATIONS.len(), 13);
-    assert_eq!(report.relations.len(), 13);
+    // Sixteen functions, eighteen pairs, every pair registered exactly once
+    // (W45-FB-RETRY-LIFETIME added `mk_list_del`; NULL-SAFETY-PROPERTY the
+    // five `quant null-deref` checks beside a resource-v1 declaration).
+    assert_eq!(census_pairs(&report.census).len(), 18);
+    assert_eq!(REGISTERED_RELATIONS.len(), 18);
+    assert_eq!(report.relations.len(), 18);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

@@ -56,8 +56,13 @@ fn m01_mixed_paths_on_a_tracked_root_carry_per_hop_obligations() {
     assert!(run.refused(IND), "{run:?}");
     // A root bound to a target-free value (an opaque read) is refused at the
     // flow, exactly as a direct `s->a` chain is.
+    // Card NULL-SAFETY-PROPERTY (rule 14n, USER DECISION 2026-10-10,
+    // decision 1) moves this row deliberately: `s` is a target-free,
+    // possibly-null borrowed alias, so its dereference is read non-null under
+    // the named premise on `s` the summary lists, and the scalar store
+    // certifies resting on it (the null question is the null property's).
     let run = gs("void subject(struct S **v) { struct S *s = *v; s->in.x = 1; }");
-    assert!(!run.safe(), "{run:?}");
+    assert!(run.safe() && run.null_premises == ["s"], "{run:?}");
 }
 
 #[test]

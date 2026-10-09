@@ -6614,6 +6614,10 @@ own anchor here.
     declaration or module left empty leaves the bounds identity), so no bounds
     row moves. **Do not** admit the clause in resource contract v1 (it would
     change custody's environment digest for a clause custody never reads).
+    A function declared both in a resource view and in a `null_deref.qv`
+    module is a registered checked relation `null_deref_beside` (contract
+    views: signature agreement, and the bounds declaration states only the
+    selector and null-deref checks).
     `QCore.NullDeref` (`caller_obligation_establishes_the_entry`).
 
 <a id="constraint-14p"></a>

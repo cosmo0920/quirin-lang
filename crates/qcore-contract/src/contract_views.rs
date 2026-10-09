@@ -871,6 +871,25 @@ fn pointer_nominal(type_source: &str) -> Option<&str> {
 
 /// Positional agreement of two declarations' signatures: equal arity, equal
 /// ABI category at every position and for the result.
+/// Card NULL-SAFETY-PROPERTY: the bounds declaration of a
+/// [`RelationCheck::NullDerefBeside`] pair states the bounds selector and
+/// `quant null-deref` checks only, so it says nothing custody could read.
+fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
+    let only = !declaration.clauses.is_empty()
+        && declaration.clauses.iter().all(|clause| {
+            (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
+                || clause.kind == "quant null-deref"
+        });
+    if only {
+        Ok(())
+    } else {
+        Err(format!(
+            "`{}` in {} is registered as a null-deref check beside its resource view but states other clauses",
+            declaration.name, declaration.module
+        ))
+    }
+}
+
 fn check_signature_agreement(
     left: &ViewDeclaration,
     right: &ViewDeclaration,
@@ -1088,6 +1107,13 @@ pub enum RelationCheck {
     /// Two lifecycle profiles in different vocabularies; neither entails the
     /// other. Checked: every position's ABI category and the result.
     LifecycleProfiles,
+    /// Card NULL-SAFETY-PROPERTY (gateway rule 14o): a bounds contract v1
+    /// declaration holding only `quant null-deref` checks beside the
+    /// resource-v1 declaration of the same function. The two vocabularies
+    /// state disjoint properties (null dereference, custody) and no consumer
+    /// reads both; checked: every position's ABI category and the result, and
+    /// that the bounds declaration states nothing but null-deref checks.
+    NullDerefBeside,
     /// `contract_NAME`/`NAME` source-shape metadata in the detailed module
     /// against the typed declaration in the view module. Checked: every
     /// recorded C signature alternative against the typed signature, and every
@@ -1236,6 +1262,49 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card NULL-SAFETY-PROPERTY (gateway rule 14o): `quant null-deref`
+    // checks (bounds contract v1) beside the resource-v1 declarations of the
+    // same functions: disjoint properties, checked for signature agreement.
+    RegisteredRelation {
+        function: "cmt_destroy",
+        detailed: "cmetrics/null_deref.qv",
+        view: "cmetrics/context_lifetime.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    RegisteredRelation {
+        function: "flb_input_chunk_get_name",
+        detailed: "fluent_bit/null_deref.qv",
+        view: "fluent_bit/input_chunk_name.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    RegisteredRelation {
+        function: "rd_kafka_topic_partition_list_destroy",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    RegisteredRelation {
+        function: "rd_list_add",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    RegisteredRelation {
+        function: "rd_list_destroy",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // ChunkIO error reset: the generic configured frame policy and the
     // retained Chunk-flavour policy.
     RegisteredRelation {
@@ -1379,6 +1448,17 @@ pub fn check_relation(
                 dropped_premises: Vec::new(),
             })
         }
+        RelationCheck::NullDerefBeside => check_null_deref_only(detailed).and_then(|()| {
+            check_signature_agreement(detailed, view).map(|discharged| RelationEvidence {
+                function: detailed.name.clone(),
+                detailed: detailed.module.clone(),
+                view: view.module.clone(),
+                relation: "null_deref_beside",
+                discharged,
+                assumed_premises: Vec::new(),
+                dropped_premises: Vec::new(),
+            })
+        }),
         RelationCheck::SourceShape {
             projection,
             nominals,

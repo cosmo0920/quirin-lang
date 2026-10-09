@@ -180,6 +180,56 @@ fn refused_by_the_obligation(label: &str, body: &str, base: &str) {
     );
 }
 
+/// Card **NULL-SAFETY-PROPERTY** (gateway rule 14n, USER DECISION
+/// 2026-10-10, decision 1) moves rows whose base `storage` is a target-free,
+/// possibly-null borrowed alias (`storage = in->storage`): its dereference
+/// is read non-null under the named premise `null-deref:w:LINE:storage`, so
+/// `storage`'s own obligation no longer refuses. The load-bearing half is
+/// unchanged: the body never certifies and stays `Unknown`, refused by
+/// another variable's obligation (`refusing`), and the premise is listed.
+fn refused_beside_a_null_premise(label: &str, body: &str, base: &str, refusing: &[&str]) {
+    let result = analyze(body, "w");
+    assert!(
+        !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "{label}: a refused shape must never certify"
+    );
+    let w = function(program(&result), "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+    assert!(
+        w.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if refusing.contains(&variable.as_str())
+        )),
+        "{label}: another obligation must refuse, got {:?}",
+        w.diagnostics
+    );
+    assert!(
+        w.null_premises
+            .iter()
+            .any(|premise| premise.variable == base),
+        "{label}: the premise on `{base}` must be listed, got {:?}",
+        w.null_premises
+    );
+}
+
+/// Card **NULL-SAFETY-PROPERTY** (rule 14n): a row whose only refusal was
+/// `storage`'s possibly-null base now certifies, resting on the named premise
+/// on `storage` the summary lists (the null question is the null-dereference
+/// property's, `docs/reports/null-safety-property/README.md`).
+fn safe_under_a_null_premise(label: &str, body: &str, base: &str) {
+    let certificate = certified(body, "w");
+    let w = function(&certificate.summary, "w");
+    assert_eq!(w.status, AnalysisStatus::Safe, "{label}");
+    assert!(
+        !w.null_premises.is_empty()
+            && w.null_premises
+                .iter()
+                .all(|premise| premise.variable == base),
+        "{label}: Safe rests on the premise on `{base}` only, got {:?}",
+        w.null_premises
+    );
+}
+
 // --------------------------------------------------------------------------
 // Positive
 // --------------------------------------------------------------------------
@@ -304,7 +354,9 @@ fn an_alias_of_a_consumed_base_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused_by_the_obligation(
+    // NULL-SAFETY-PROPERTY (rule 14n): `storage`'s base reading moves to a
+    // named premise; the consumption through `alias` keeps the refusal.
+    refused_beside_a_null_premise(
         "the base is consumed through an alias",
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_storage *alias; struct b_handle *chunk; storage = in->storage; \
@@ -312,6 +364,7 @@ fn an_alias_of_a_consumed_base_is_never_admitted() {
          chunk = b_open(storage->cio, storage->stream, n); if (!chunk) { return 0; } \
          b_close(chunk); return 0; }",
         "storage",
+        &["alias"],
     );
 }
 
@@ -323,7 +376,9 @@ fn a_second_read_of_a_released_field_place_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    refused_by_the_obligation(
+    // NULL-SAFETY-PROPERTY (rule 14n): `storage`'s base reading moves to a
+    // named premise; the release through `other` keeps the refusal.
+    refused_beside_a_null_premise(
         "the same field place was read into two locals and one was released",
         "struct b_handle *w(struct b_instance *in, int n) { struct b_storage *storage; \
          struct b_storage *other; struct b_handle *chunk; storage = in->storage; \
@@ -331,6 +386,7 @@ fn a_second_read_of_a_released_field_place_is_never_admitted() {
          chunk = b_open(storage->cio, storage->stream, n); if (!chunk) { return 0; } \
          b_close(chunk); return 0; }",
         "storage",
+        &["other", "storage/other"],
     );
 }
 
@@ -356,6 +412,9 @@ fn a_store_through_the_field_between_the_read_and_the_call_is_never_admitted() {
 /// before it is admitted (BEFORE: `unknown_alias in` at that read, the
 /// closure being flow-insensitive); `storage`, a possibly-null borrowed alias
 /// at `b_open`'s actuals, keeps its refusal, and the call keeps its own.
+/// Card NULL-SAFETY-PROPERTY (rule 14n) moves `storage`'s refusal to the
+/// named premise `null-deref:w:1:storage`; the uncontracted call still
+/// refuses, so the function stays `Unknown`.
 #[test]
 fn a_later_opaque_reassignment_of_the_base_refuses_only_later_reads() {
     if !clang_available() {
@@ -379,9 +438,13 @@ fn a_later_opaque_reassignment_of_the_base_refuses_only_later_reads() {
         })
     };
     assert!(
-        alias("storage"),
-        "missing storage alias obligation: {:?}",
-        w.diagnostics
+        !alias("storage")
+            && w.null_premises
+                .iter()
+                .any(|premise| premise.variable == "storage"),
+        "storage's base is read under its named premise: {:?} {:?}",
+        w.diagnostics,
+        w.null_premises
     );
     assert!(
         !alias("in"),
@@ -528,8 +591,12 @@ fn every_other_refused_shape_keeps_its_unknown_and_its_diagnostic() {
             );
             continue;
         }
+        // Card NULL-SAFETY-PROPERTY (rule 14n) moves both again: `storage`'s
+        // obligation was their only refusal, and its possibly-null base is
+        // now read non-null under the named premise on `storage`, so they
+        // certify resting on it (the null question is the null property's).
         if MOVED.contains(&label) {
-            refused_by_the_obligation(label, body, "storage");
+            safe_under_a_null_premise(label, body, "storage");
         } else {
             refused(label, body);
         }
