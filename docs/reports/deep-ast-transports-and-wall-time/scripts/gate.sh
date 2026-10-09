@@ -24,8 +24,10 @@ step() {
   echo $? > "$out/$label.exit"
 }
 if [ "$part" != docs ]; then
-  # The caller records HEAD into $out/head and runs step 01 (the submodule
-  # update) itself before this script, its exit in $out/01-submodule.exit.
+  git rev-parse HEAD > "$out/head"
+  git status --porcelain --untracked-files=no > "$out/head-dirty"
+  git submodule update --init --recursive > "$out/01-submodule.log" 2>&1
+  echo $? > "$out/01-submodule.exit"
   step 00-check cargo check --workspace --all-targets
   step 02-fmt cargo fmt --all -- --check
   step 03-clippy cargo clippy --locked --all-targets -- -D warnings
@@ -48,7 +50,7 @@ if [ "$part" != docs ]; then
   echo done > "$out/code-done"
 fi
 if [ "$part" != code ]; then
-  # The caller records HEAD into $out/docs-head.
+  git rev-parse HEAD > "$out/docs-head"
   step 08-python python3 -m unittest discover -s scripts/tests
   step 09-index python3 scripts/build_docs_index.py --check
   echo done > "$out/docs-done"
