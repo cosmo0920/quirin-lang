@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# finish-gate.sh NAME -- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (from DEEP-AST-TRANSPORTS-AND-WALL-TIME) (adapted from RDHTTP-HEADER-SUMMARY-GAP, itself adapted from DECLARED-ASSUMPTION-BODY-CHECKS,
+# finish-gate.sh NAME PROVIDER-NAME -- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (from DEEP-AST-TRANSPORTS-AND-WALL-TIME) (adapted from RDHTTP-HEADER-SUMMARY-GAP, itself adapted from DECLARED-ASSUMPTION-BODY-CHECKS,
 # VERDICT-BODY-STANDING-CLAUSE-SCOPE): after gate.sh into private/cg10r2/gate-NAME and
 # write_gate_json.py NAME: copy the exits, heads and Clang version into gate/,
 # regenerate the matrix with gate.json (09a), rerun the Python suite (09b), the
@@ -15,6 +15,8 @@ cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"
 cp "$logs/clang-version.txt" "$report/gate/clang-version.txt"
+mkdir -p "$report/gate/provider" || exit 2
+cp "$repo/private/cg10r2/provider-gate-$2"/*.exit "$repo/private/cg10r2/provider-gate-$2/head" "$report/gate/provider/"
 python3 docs/reports/remaining-d02/build_matrix.py . --gate "$report/gate.json" > "$logs/09a-matrix.log" 2>&1
 echo $? > "$report/gate/09a-matrix.exit"
 python3 -m unittest discover -s scripts/tests > "$logs/09b-python.log" 2>&1
