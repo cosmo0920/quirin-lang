@@ -285,6 +285,9 @@ pub(crate) struct StatementIndex {
     line_starts: Arc<Vec<usize>>,
     /// Card CG10 (I04): the analysed source's own tokens per line, read once.
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rules 13s, 13t): this
+    /// function's readings computed once per index.
+    reuse: Arc<crate::function_reading_reuse::FunctionReuse>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -421,6 +424,8 @@ struct AstIndex {
 struct FunctionEntry {
     ast: Arc<Value>,
     by_line: OnceCell<Arc<BTreeMap<usize, Vec<Vec<usize>>>>>,
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rules 13s, 13t).
+    reuse: Arc<crate::function_reading_reuse::FunctionReuse>,
 }
 
 #[derive(Default)]
@@ -463,6 +468,7 @@ impl RetainedDeclarations {
                 .push(FunctionEntry {
                     ast: Arc::new(node),
                     by_line: OnceCell::new(),
+                    reuse: Arc::default(),
                 });
         }
     }
@@ -653,7 +659,9 @@ impl Drop for SourceScope {
 /// Clang's own name filter, for a unit whose whole-unit index is unavailable
 /// (the measured instance was librdkafka's `rdhttp.c`, whose translation-unit
 /// JSON nests over 200 deep, beyond `serde_json`'s recursion limit of 128; card
-/// RDHTTP-HEADER-SUMMARY-GAP's rule 13o now reads that index). `None`
+/// RDHTTP-HEADER-SUMMARY-GAP's rule 13o now reads that index; card
+/// DEEP-AST-TRANSPORTS-AND-WALL-TIME's rule 13q reads this filtered stream
+/// within the same bound, `typed_c_ast::unit_declarations`). `None`
 /// outside an analysed source, on any Clang or JSON failure, and unless
 /// exactly one definition with a body has this exact name.
 pub(crate) fn definition_ast(function: &str) -> Option<Value> {
@@ -669,7 +677,7 @@ pub(crate) fn definition_ast(function: &str) -> Option<Value> {
             ..C11TranslationUnit::default()
         };
         let declarations =
-            crate::typed_c_ast::ast_declarations(&context.source, &unit, function).ok()?;
+            crate::typed_c_ast::unit_declarations(&context.source, &unit, function).ok()?;
         let mut definitions = declarations.into_iter().filter(|node| {
             kind(node) == "FunctionDecl"
                 && node["name"].as_str() == Some(function)
@@ -705,7 +713,7 @@ pub(crate) fn appended_declarations(suffix: &str, filter: &str) -> Option<Vec<Va
             dialect: context.dialect,
             ..C11TranslationUnit::default()
         };
-        crate::typed_c_ast::ast_declarations(&probed, &unit, filter).ok()
+        crate::typed_c_ast::unit_declarations(&probed, &unit, filter).ok()
     })
 }
 
@@ -867,8 +875,36 @@ impl StatementIndex {
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
                 line_tokens: Arc::clone(&ast.line_tokens),
+                reuse: Arc::clone(&function.reuse),
             })
         })
+    }
+
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13s):
+    /// `call_exits::resolve(&self.function, callee,
+    /// &self.no_return_declarations)`, from the function's table.
+    pub(crate) fn call_resolution(&self, callee: &str) -> crate::call_exits::Resolution {
+        self.reuse
+            .resolution(&self.function, callee, &self.no_return_declarations)
+    }
+
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13t): every node's
+    /// [`Self::node_line`] and [`Self::node_end_line`], in child order.
+    pub(crate) fn line_tree(&self) -> &crate::function_reading_reuse::LineTree {
+        self.reuse
+            .line_tree(&self.function, &|node| self.node_line(node), &|node| {
+                self.node_end_line(node)
+            })
+    }
+
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13t):
+    /// [`Self::node_tokens`], each source span tokenized once.
+    pub(crate) fn node_tokens_once(&self, node: &Value) -> Option<Arc<Vec<String>>> {
+        let start = offset(&node["range"]["begin"])?;
+        let end = offset(&node["range"]["end"])?
+            .checked_add(node["range"]["end"]["tokLen"].as_u64()? as usize)?;
+        self.reuse
+            .span_tokens((start, end), || self.span_tokens(start, end))
     }
 
     /// Require a unique complete Clang statement whose tokens and internal
@@ -998,6 +1034,12 @@ impl StatementIndex {
         let start = offset(&node["range"]["begin"])?;
         let end = offset(&node["range"]["end"])?
             .checked_add(node["range"]["end"]["tokLen"].as_u64()? as usize)?;
+        self.span_tokens(start, end)
+    }
+
+    /// The tokens of the source span `start..end`, a final `;` dropped (the
+    /// text [`Self::node_tokens`] had, moved).
+    fn span_tokens(&self, start: usize, end: usize) -> Option<Vec<String>> {
         let source = self.source.get(start..end)?;
         let mut found = tokenize(source)
             .into_iter()

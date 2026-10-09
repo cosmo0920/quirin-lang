@@ -187,7 +187,7 @@ fn is_file_scope_enumerator(tokens: &[Token], name: &str) -> bool {
 /// Whether `function`'s own Clang definition declares an object or
 /// parameter named `name` (which would shadow a file-scope constant). `true`
 /// when the definition cannot be read: the refusing answer.
-fn shadowed_in(function: &str, name: &str) -> bool {
+pub(crate) fn shadowed_in(function: &str, name: &str) -> bool {
     fn declares(node: &Value, name: &str) -> bool {
         (matches!(kind(node), "VarDecl" | "ParmVarDecl") && node["name"].as_str() == Some(name))
             || children(node).iter().any(|child| declares(child, name))

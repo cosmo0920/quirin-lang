@@ -135,6 +135,12 @@ mod typed_access_path;
 // Card RDHTTP-HEADER-SUMMARY-GAP (rules 13o, 13p): the unit index of a unit
 // nesting beyond serde_json's default recursion limit.
 mod deep_unit_ast;
+// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rules 13q, 13r): the Clang JSON
+// transports and the nesting each reads.
+mod deep_ast_transports;
+// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rules 13s, 13t): one function's
+// typed readings computed once per unit index.
+mod function_reading_reuse;
 // Card W47-ACCESS-PATH-POSITIONS: the typed reader in condition operands,
 // returns and call actuals.
 mod typed_access_positions;

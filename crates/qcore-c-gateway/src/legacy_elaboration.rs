@@ -46,6 +46,7 @@ use super::{
 use crate::elaboration::{
     self, Context, Elaboration, Event, Operand, Place, Refusal, strip_parens,
 };
+use crate::function_reading_reuse::LineTree;
 use crate::typed_access_path::{StatementIndex, StatementPlan, is_pointer, is_scalar, record_row};
 use crate::typed_c_ast::{children, kind};
 
@@ -328,6 +329,12 @@ impl Parser<'_> {
         fn walk<'i>(
             index: &StatementIndex,
             node: &'i Value,
+            // Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13t): `node`'s
+            // own begin and end line (`index.node_line`, `node_end_line`),
+            // read from the function's line tree, built once, in the same
+            // child order, so this walk visits exactly the nodes it visited
+            // when it computed them.
+            lines: &LineTree,
             line: usize,
             wanted: &[&str],
             accept: &dyn Fn(&Value) -> bool,
@@ -336,14 +343,14 @@ impl Parser<'_> {
         ) {
             // A subtree whose known range lies wholly before or after the
             // line holds no candidate.
-            if index.node_line(node).is_some_and(|begin| begin > line)
-                || index.node_end_line(node).is_some_and(|end| end < line)
+            if lines.begin.is_some_and(|begin| begin > line)
+                || lines.end.is_some_and(|end| end < line)
             {
                 return;
             }
             if accept(node)
-                && index.node_line(node) == Some(line)
-                && index.node_tokens(node).is_some_and(|found| {
+                && lines.begin == Some(line)
+                && index.node_tokens_once(node).is_some_and(|found| {
                     if stripped {
                         let texts = found.iter().map(String::as_str).collect::<Vec<_>>();
                         super::parenthesised_callee::strip_callee_parentheses(&texts)
@@ -358,14 +365,16 @@ impl Parser<'_> {
                 out.push(node);
                 return;
             }
-            for child in children(node) {
-                walk(index, child, line, wanted, accept, stripped, out);
+            for (child, lines) in children(node).iter().zip(&lines.children) {
+                walk(index, child, lines, line, wanted, accept, stripped, out);
             }
         }
+        let lines = index.line_tree();
         let mut found = Vec::new();
         walk(
             index,
             &index.function,
+            lines,
             line,
             wanted,
             accept,
@@ -381,6 +390,7 @@ impl Parser<'_> {
             walk(
                 index,
                 &index.function,
+                lines,
                 line,
                 wanted,
                 accept,

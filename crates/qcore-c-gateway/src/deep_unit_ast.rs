@@ -108,20 +108,68 @@ pub(crate) fn from_slice<T: DeserializeOwned + Send>(bytes: &[u8]) -> Result<T, 
 /// The parse without the default limit, on its own stack. `None` when the
 /// thread cannot start or panics.
 fn unlimited<T: DeserializeOwned + Send>(bytes: &[u8]) -> Option<Result<T, serde_json::Error>> {
+    on_parse_stack(|| {
+        let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+        deserializer.disable_recursion_limit();
+        let value = T::deserialize(&mut deserializer)?;
+        // Trailing bytes are refused, as `from_slice` refuses them.
+        deserializer.end()?;
+        Ok(value)
+    })
+}
+
+/// `parse` on a dedicated thread with [`PARSE_STACK`]. `None` when the thread
+/// cannot start or panics. Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: shared by
+/// the whole-unit reparse and the stream reparse ([`values_from_slice`]).
+fn on_parse_stack<T: Send>(
+    parse: impl FnOnce() -> Result<T, serde_json::Error> + Send,
+) -> Option<Result<T, serde_json::Error>> {
     std::thread::scope(|scope| {
         let parse = std::thread::Builder::new()
             .stack_size(PARSE_STACK)
-            .spawn_scoped(scope, || {
-                let mut deserializer = serde_json::Deserializer::from_slice(bytes);
-                deserializer.disable_recursion_limit();
-                let value = T::deserialize(&mut deserializer)?;
-                // Trailing bytes are refused, as `from_slice` refuses them.
-                deserializer.end()?;
-                Ok(value)
-            })
+            .spawn_scoped(scope, parse)
             .ok()?;
         parse.join().ok()
     })
+}
+
+/// Card **DEEP-AST-TRANSPORTS-AND-WALL-TIME** (rule 13q): the stream of
+/// values Clang's name-filtered dump prints (`-ast-dump-filter`, one JSON
+/// value per selected declaration), read as rule 13o reads a whole-unit
+/// document. The stream is parsed as before (every value, under the default
+/// limit, up to the first error); only when that fails is the text's nesting
+/// measured ([`depth`] of the whole text: the deepest value's), and a text
+/// within [`ADMITTED_DEPTH`] is parsed again without the limit on a dedicated
+/// stack. Otherwise, or when the reparse fails too, the default parse's error
+/// (rule 13p's shape: nothing is read).
+pub(crate) fn values_from_slice<T: DeserializeOwned + Send>(
+    bytes: &[u8],
+) -> Result<Vec<T>, serde_json::Error> {
+    let error = match default_values(bytes) {
+        Ok(values) => return Ok(values),
+        Err(error) => error,
+    };
+    if !admitted(depth(bytes)) {
+        return Err(error);
+    }
+    match on_parse_stack(|| {
+        let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+        deserializer.disable_recursion_limit();
+        deserializer.into_iter::<T>().collect()
+    }) {
+        Some(Ok(values)) => Ok(values),
+        Some(Err(_)) | None => Err(error),
+    }
+}
+
+/// The filtered stream under the default limit, exactly as the transport
+/// read it before rule 13q.
+pub(crate) fn default_values<T: DeserializeOwned>(
+    bytes: &[u8],
+) -> Result<Vec<T>, serde_json::Error> {
+    serde_json::Deserializer::from_slice(bytes)
+        .into_iter::<T>()
+        .collect()
 }
 
 /// Shared vectors with `QCore.DeepUnitAst.depthVectors`: a text, its depth,

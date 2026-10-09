@@ -40,7 +40,10 @@ impl Span {
         std::env::var_os(PATH_VARIABLE)?;
         let thread = std::fs::read_link("/proc/thread-self")
             .ok()
-            .and_then(|link| link.file_name().map(|name| name.to_string_lossy().into_owned()))
+            .and_then(|link| {
+                link.file_name()
+                    .map(|name| name.to_string_lossy().into_owned())
+            })
             .unwrap_or_default();
         Some(Self {
             file: file.to_string_lossy().into_owned(),
@@ -105,7 +108,9 @@ impl Drop for Span {
             "end": end,
             "stack": stack_touched(),
         });
-        let _guard = WRITE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let _guard = WRITE
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         if let Ok(mut out) = std::fs::OpenOptions::new()
             .create(true)
             .append(true)

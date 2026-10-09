@@ -354,5 +354,6 @@ import QCore.RecordObjectPlace
 import QCore.ReturnCallActuals
 import QCore.UncontractedAccessAttribution
 import QCore.DeepUnitAst
+import QCore.DeepAstTransports
 
 /-! The executable formal core of QCore-C revision 0.1. -/

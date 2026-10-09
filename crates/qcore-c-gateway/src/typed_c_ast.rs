@@ -23,6 +23,42 @@ pub fn ast_declarations(
     unit: &C11TranslationUnit<'_>,
     function: &str,
 ) -> Result<Vec<Value>, String> {
+    let command = declarations_command(unit, function)?;
+    FILTERED_DECLARATIONS.with(|cache| {
+        cache.get_or_launch(command, source, |command| {
+            launch_declarations(command, source, crate::deep_unit_ast::default_values)
+        })
+    })
+}
+
+/// Card **DEEP-AST-TRANSPORTS-AND-WALL-TIME** (rule 13q): the same filtered
+/// launch for a consultation of the **analysed unit** (the rule-11y
+/// definition fallback and the retention guard's shadow check through
+/// `typed_access_path::definition_ast`, and the appended probes through
+/// `typed_access_path::appended_declarations`), whose stream is read within
+/// rule 13o's bound ([`crate::deep_unit_ast::values_from_slice`]). The source
+/// importers keep [`ast_declarations`] and the default limit (rule 13r). The
+/// two keep separate launch caches, so a stream only this one reads is never
+/// answered to an importer.
+pub(crate) fn unit_declarations(
+    source: &str,
+    unit: &C11TranslationUnit<'_>,
+    filter: &str,
+) -> Result<Vec<Value>, String> {
+    let command = declarations_command(unit, filter)?;
+    UNIT_DECLARATIONS.with(|cache| {
+        cache.get_or_launch(command, source, |command| {
+            launch_declarations(command, source, crate::deep_unit_ast::values_from_slice)
+        })
+    })
+}
+
+/// The filtered launch's command: the unit's frontend flags and Clang's
+/// substring name filter.
+fn declarations_command(
+    unit: &C11TranslationUnit<'_>,
+    function: &str,
+) -> Result<std::process::Command, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
     command.args([
@@ -38,21 +74,22 @@ pub fn ast_declarations(
         function,
         "-",
     ]);
-    FILTERED_DECLARATIONS.with(|cache| {
-        cache.get_or_launch(command, source, |command| {
-            launch_declarations(command, source)
-        })
-    })
+    Ok(command)
 }
 
 thread_local! {
     static FILTERED_DECLARATIONS: crate::clang_reuse::LaunchCache<Vec<Value>> =
+        const { crate::clang_reuse::LaunchCache::new() };
+    /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13q): the analysed-unit
+    /// consultations' own cache.
+    static UNIT_DECLARATIONS: crate::clang_reuse::LaunchCache<Vec<Value>> =
         const { crate::clang_reuse::LaunchCache::new() };
 }
 
 fn launch_declarations(
     mut command: std::process::Command,
     source: &str,
+    parse: fn(&[u8]) -> Result<Vec<Value>, serde_json::Error>,
 ) -> Result<Vec<Value>, String> {
     let mut child = command
         .stdin(Stdio::piped())
@@ -78,10 +115,7 @@ fn launch_declarations(
             String::from_utf8_lossy(&output.stderr).trim()
         ));
     }
-    serde_json::Deserializer::from_slice(&output.stdout)
-        .into_iter::<Value>()
-        .map(|value| value.map_err(|error| format!("unsupported Clang AST JSON: {error}")))
-        .collect()
+    parse(&output.stdout).map_err(|error| format!("unsupported Clang AST JSON: {error}"))
 }
 
 /// Parse the complete translation-unit AST.
@@ -89,8 +123,13 @@ fn launch_declarations(
 /// Dedicated closed-world source judgments need this form when proving that a
 /// selected object has no unexamined readers or writers.  The result is still
 /// raw Clang transport and conveys no semantic authority by itself.
+///
+/// Card **DEEP-AST-TRANSPORTS-AND-WALL-TIME** (rule 13q): the document is read
+/// as rule 13o reads the unit index ([`crate::deep_unit_ast::from_slice`]):
+/// the default parse first, and only when it fails, a document nesting at most
+/// 256 levels again without the limit on a dedicated stack.
 pub fn translation_unit_ast(source: &str, unit: &C11TranslationUnit<'_>) -> Result<Value, String> {
-    translation_unit_ast_with(source, unit, |bytes| serde_json::from_slice(bytes))
+    translation_unit_ast_with(source, unit, crate::deep_unit_ast::from_slice)
 }
 
 /// Run the same Clang transport while letting an internal reader deserialize
