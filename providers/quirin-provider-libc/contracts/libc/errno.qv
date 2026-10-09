@@ -57,6 +57,10 @@ module contract;
 // A unit that declares `__errno_location` differently, or does not declare it
 // at all, refuses every such site under this declaration exactly as without it.
 //
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `__errno_location` as
+// `requires resource_premise(nested_call_admission, "...")` (contract spec
+// C04.18), so every verdict that rests on the declaration names it.
+//
 // ## What no declaration here says
 //
 // Nothing about the value of `errno`, nothing about which library functions set
@@ -77,6 +81,7 @@ extern fn __errno_location() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
+    requires resource_premise(nested_call_admission, "a dereference of this call's result is read only where the gateway's nested-call admission holds at the call site (premises N1-N10 of cards O04-TRACE and CONSTRUCTOR-RESIDUALS, checked per site): the call is the statement's only nested call and a whole argument of a contracted call at a declared Borrowed position modulo the dereference wrapper (N4-D), its written arity is this declaration's, and the unit's own declaration of the callee returns exactly one pointer level over a scalar type (N10); under them the argument binds, releases, escapes and addresses nothing the projection tracks");
     ensures normal resource_return_none();
 };
 
@@ -105,11 +110,16 @@ contract {
 // this declaration. The census agrees in all 181 units that declare it.
 // Nothing about the message's lifetime past the next call, its text, locale or
 // `errno` is stated.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `strerror` as `requires
+// resource_premise(nested_call_admission, "...")` (contract spec C04.18), so
+// every verdict that rests on the declaration names it.
 
 extern fn strerror(errnum: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
+    requires resource_premise(nested_call_admission, "a call of this function nested whole in another call's argument is read only where card O04-TRACE's nested-call admission holds at the call site; this declaration meets its premises N3 (a contract in force), N6 (result mode None) and N7 (every parameter Borrowed), and the admission checks the rest per site");
     ensures normal resource_borrowed(errnum);
     ensures normal resource_return_none();
 };

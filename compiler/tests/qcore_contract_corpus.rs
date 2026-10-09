@@ -493,10 +493,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `fluent_bit/logging.qv` and `fluent_bit/routes_mask.qv`, and the
     // resource-v1 declaration count 20 -> 25. Deliberate; see
     // `docs/reports/remaining-prod-contracts/README.md`.
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(untracked_handback, ...)`
+    // (contract spec C04.18), one clause: 3 -> 4.
     (
         "fluent_bit/input_chunk_name.qv",
         "flb_input_chunk_get_name",
-        3,
+        4,
     ),
     // Card W29-CORPUS-CONTRACTS: the corpus moves 73 -> 74 modules with this
     // file, and the resource-v1 declaration count 39 -> 41. Deliberate; see
@@ -578,7 +580,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // borrowed arguments, the neutral user clause and the scalar result.
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_pause", 6),
-    ("fluent_bit/loop_owner.qv", "flb_input_collector_resume", 6),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(ingestion_active, ...)`
+    // (contract spec C04.18), one clause: 6 -> 7.
+    ("fluent_bit/loop_owner.qv", "flb_input_collector_resume", 7),
     ("fluent_bit/loop_owner.qv", "flb_input_collector_delete", 6),
     ("fluent_bit/memory.qv", "flb_malloc", 6),
     ("fluent_bit/memory.qv", "flb_calloc", 7),
@@ -592,10 +596,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // Card W45-FB-RETRY-LIFETIME: OR-1 and OR-7 as checked declarations —
     // the marker, one mode per parameter, two exit clauses, the result.
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(synchronous_output_reachability, ...)`
+    // (contract spec C04.18), one clause: 9 -> 10.
     (
         "fluent_bit/output_singleplex.qv",
         "flb_output_task_singleplex_enqueue",
-        9,
+        10,
     ),
     (
         "fluent_bit/output_singleplex.qv",
@@ -729,10 +735,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qv`'s `flb_time_now`.
-    ("libc/errno.qv", "__errno_location", 3),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`
+    // (contract spec C04.18), one clause: 3 -> 4.
+    ("libc/errno.qv", "__errno_location", 4),
     // Card W44-LIBC-RESIDUALS: `strerror`, appended beside the `errno`
     // accessor (the marker, one borrowed scalar, `none`: 3).
-    ("libc/errno.qv", "strerror", 4),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(nested_call_admission, ...)`
+    // (contract spec C04.18), one clause: 4 -> 5.
+    ("libc/errno.qv", "strerror", 5),
     ("libc/math.qv", "ceil", 4),
     ("libc/math.qv", "floor", 4),
     ("libc/math.qv", "fabs", 4),
@@ -997,10 +1007,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/cjson.qv", "cJSON_Delete", 3),
     // Card W45-CALLEE-CASCADE-RESIDUAL: the node constructor (`:241-250`):
     // marker, borrowed hook table, an owned nullable result.
-    ("librdkafka/cjson.qv", "cJSON_New_Item", 3),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(cjson_allocator_hooks, ...)`
+    // (contract spec C04.18), one clause: 3 -> 4.
+    ("librdkafka/cjson.qv", "cJSON_New_Item", 4),
     // Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts,
     // marker, borrowed formals, two return-code classes, `none`.
-    ("librdkafka/cjson.qv", "add_item_to_array", 5),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(cjson_list_invariant, ...)`
+    // (contract spec C04.18), one clause: 5 -> 6.
+    ("librdkafka/cjson.qv", "add_item_to_array", 6),
     ("librdkafka/cjson.qv", "replace_item_in_object", 7),
     // Card SLOT-MOVE-AND-INTERIOR-BORROW: a borrowed child (class 8, rule
     // 12y) and a derived out slot beside a `global` retention (rules 12z, 12t).
@@ -1105,13 +1119,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `rk` and `func` by its result) and one drop.
     ("librdkafka/client.qv", "rd_kafka_toppar_get0", 8),
     ("librdkafka/client.qv", "rd_kafka_toppar_desired_get", 5),
-    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 7),
-    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 5),
+    // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: the four non-null results
+    // (`rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`, `rd_kafka_q_new0`,
+    // `ut_create_mock_queue`) state `requires resource_premise(asserted_allocation,
+    // ...)` (contract spec C04.18), one clause each: 7 -> 8, 5 -> 6, 9 -> 10, 3 -> 4.
+    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 8),
+    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 6),
     ("librdkafka/client.qv", "rd_kafka_toppar_get2", 8),
     ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 7),
-    ("librdkafka/client.qv", "rd_kafka_q_new0", 9),
+    ("librdkafka/client.qv", "rd_kafka_q_new0", 10),
     ("librdkafka/client.qv", "ut_create_mock_toppar", 6),
-    ("librdkafka/client.qv", "ut_create_mock_queue", 3),
+    ("librdkafka/client.qv", "ut_create_mock_queue", 4),
     ("librdkafka/client.qv", "ut_destroy_mock_queue", 4),
     // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: four plain declarations between a
     // reference's acquisition and its drop (marker, borrowed formals, `none`).

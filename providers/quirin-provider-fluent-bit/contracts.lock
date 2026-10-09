@@ -430,7 +430,7 @@
     {
       "function": "flb_input_chunk_get_name",
       "module": "fluent_bit/input_chunk_name.qv",
-      "contract_sha256": "fedbda90012ba980b541c22dc8213ad3d63c37490829fcef18c0e1cbd4e0eed5",
+      "contract_sha256": "557d299c4f04809eb68f142519eefc6bc7913edd0e6bf751f852bdd533761a9a",
       "identities": [
         {
           "reviewed_at": [
@@ -716,7 +716,7 @@
     {
       "function": "flb_input_collector_resume",
       "module": "fluent_bit/loop_owner.qv",
-      "contract_sha256": "556ce52e19898c64adb9f3f05e03a1e913ab54063a097b850a457fc64912585f",
+      "contract_sha256": "6ba11f4a24307590884ea12b68c191e43c09448b843e10d4d50749803ff7d763",
       "identities": [
         {
           "reviewed_at": [
@@ -1064,7 +1064,7 @@
     {
       "function": "flb_output_task_singleplex_enqueue",
       "module": "fluent_bit/output_singleplex.qv",
-      "contract_sha256": "3fa952f42286b313798f24b2fede4b97f8446d41e9eb46da051fd964d97b58d6",
+      "contract_sha256": "21c5a1d7c7581d12b4a315b8638fb792ddd5e38b8ae1aa4295fa5c89cf2a85de",
       "identities": [
         {
           "reviewed_at": [

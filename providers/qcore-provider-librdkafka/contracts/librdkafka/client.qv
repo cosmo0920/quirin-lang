@@ -584,6 +584,12 @@ contract {
 // their result, and the audited compile commands define no `NDEBUG`, so they
 // never return NULL in the audited build. Every body was read at `66910c10`
 // and `046accf6` and is byte-identical (`scripts/body.py`).
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on the four non-null
+// results below (`rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`,
+// `rd_kafka_q_new0`, `ut_create_mock_queue`) as `requires
+// resource_premise(asserted_allocation, "...")` (contract spec C04.18), so
+// every verdict that rests on one of them names it.
 
 // ## Lookups (each returns a kept reference, or NULL)
 //
@@ -627,6 +633,7 @@ contract {
 extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(asserted_allocation, "the result is non-null because it is allocated with rd_calloc (rd.h:139-143), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_borrowed(partition);
     ensures normal resource_borrowed(func);
@@ -644,6 +651,7 @@ contract {
 extern fn rd_kafka_toppar_desired_add(rkt: ptr<mut, u8>, partition: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(asserted_allocation, "the result is non-null because its last source is rd_kafka_toppar_new0's reference, allocated with rd_calloc (rd.h:139-143), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_borrowed(partition);
     ensures normal resource_return_owned(nonnull);
@@ -699,6 +707,7 @@ contract {
 extern fn rd_kafka_q_new0(rk: ptr<mut, u8>, for_consume: u8, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(asserted_allocation, "the result is non-null because it is allocated with rd_malloc (rd.h:145-149), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(for_consume);
     ensures normal resource_borrowed(func);
@@ -731,6 +740,7 @@ contract {
 extern fn ut_create_mock_queue() -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(asserted_allocation, "the result is non-null because it is allocated with rd_calloc (rd.h:139-143), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_return_owned(nonnull);
     ensures normal resource_return_kind(reference);
 };

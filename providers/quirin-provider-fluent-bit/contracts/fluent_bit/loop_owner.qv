@@ -36,7 +36,9 @@ module contract;
 //   `running`;
 // * resume returns 0 without resuming while `config->is_ingestion_active` is
 //   false, otherwise re-registers the collector's own event and sets
-//   `running` (C3's ingestion premise);
+//   `running` (C3's ingestion premise, stated on the declaration as
+//   `requires resource_premise(ingestion_active, "...")`, contract spec
+//   C04.18, card VERDICT-CONTRACT-PREMISE-ANNOTATIONS);
 // * delete pauses, unlinks the collector from `in->collectors` under
 //   `config->collectors_mutex` and frees it.
 //
@@ -76,6 +78,7 @@ contract {
 extern fn flb_input_collector_resume(coll_id: i32, in: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(ingestion_active, "C3: the call returns 0 without resuming the collector while config->is_ingestion_active is false (src/flb_input.c:3221 at 66910c10, :3241 at 046accf6 and 34155955), otherwise it re-registers the collector's own event and sets running; a return of 0 means the collector runs only while ingestion is active");
     requires resource_loop_owner(in, mutate);
     ensures normal resource_borrowed(coll_id);
     ensures normal resource_borrowed(in);

@@ -286,7 +286,7 @@
     {
       "function": "add_item_to_array",
       "module": "librdkafka/cjson.qv",
-      "contract_sha256": "59e12b5a4d04a0a0989a912eca23601ec07a6f34c832a6be3b1759e03f3b15fe",
+      "contract_sha256": "2b4de04915098e8f1f31f50bd51b8f5cffe86ea50858da3f46452d7f1967fd30",
       "identities": [
         {
           "reviewed_at": [
@@ -345,7 +345,7 @@
     {
       "function": "cJSON_New_Item",
       "module": "librdkafka/cjson.qv",
-      "contract_sha256": "012948155e5b0f42faf1b566a3085081fbe5ae90cc1093ad36ca1d29353bb118",
+      "contract_sha256": "9a660d1c34eb20b66ba733701f0384ba17b70265c2bb085c60bd768e651573d5",
       "identities": [
         {
           "reviewed_at": [
@@ -1500,7 +1500,7 @@
     {
       "function": "rd_kafka_q_new0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9aa9a5f8fe6320f2e9fe79c6d8dd770bd13fabfa276639f7e1da4ca544731f4b",
+      "contract_sha256": "fb47bcc70b52ae98f0c609179f4a33ee68e27a85549722e814da578e6fcb80a9",
       "identities": [
         {
           "reviewed_at": [
@@ -1832,7 +1832,7 @@
     {
       "function": "rd_kafka_toppar_desired_add",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "bb2efc06f3c97322a4ea95690d8c97306d52b7e6822c5a6b47356f4d8cf6cec2",
+      "contract_sha256": "f6b9a957bba09ad8e44469b88698384bca9872b8eb8e4fda6fe9cfaeaf5a443b",
       "identities": [
         {
           "reviewed_at": [
@@ -2100,7 +2100,7 @@
     {
       "function": "rd_kafka_toppar_new0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "099c42932f5bde8e4e325bb85f8b5fc4b7fc785e82d9da1bdfd5de1ce3ddbed9",
+      "contract_sha256": "d10b5d4dd0b0ec0e927edf45227baaf86902db4ad233de7f4a2264e703f5ca3e",
       "identities": [
         {
           "reviewed_at": [
@@ -2326,7 +2326,7 @@
     {
       "function": "ut_create_mock_queue",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d58c3b41c39a0fa00550e48bdbf9aad33a66692510e40917b864f968a40553a1",
+      "contract_sha256": "32d3df5b45b01c62c4a086631a0c4f00993669e938e3f1f6b8a8029a15954453",
       "identities": [
         {
           "reviewed_at": [

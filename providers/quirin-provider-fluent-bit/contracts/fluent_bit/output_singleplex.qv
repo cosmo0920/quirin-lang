@@ -29,10 +29,16 @@ module contract;
 // `FLB_OUTPUT_SYNCHRONOUS`, so this function runs in production only for an
 // output (a proxy plugin) that does. Any verdict on it holds under that
 // premise.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on
+// `flb_output_task_singleplex_enqueue` as `requires
+// resource_premise(synchronous_output_reachability, "...")` (contract spec
+// C04.18), so every verdict that rests on the declaration names it.
 
 extern fn flb_output_task_singleplex_enqueue(queue: ptr<mut, u8>, retry: ptr<mut, u8>, task: ptr<mut, u8>, out_ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(synchronous_output_reachability, "in-tree output plugins never set FLB_OUTPUT_SYNCHRONOUS, so this function runs in production only for an output (a proxy plugin) that does; any verdict on it holds under that premise");
     ensures normal resource_borrowed(queue);
     ensures normal resource_consumed(retry, nullable);
     ensures normal resource_borrowed(task);

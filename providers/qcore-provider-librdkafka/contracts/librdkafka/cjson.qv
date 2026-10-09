@@ -184,11 +184,16 @@ contract {
 // NOT CLAIMED: that `hooks->allocate` is `malloc` (a user hook pair is a
 // premise of whoever installed it); anything about `cJSON_InitHooks` changing
 // the hooks between an allocation and its release.
+//
+// Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: stated on `cJSON_New_Item` as
+// `requires resource_premise(cjson_allocator_hooks, "...")` (contract spec
+// C04.18), so every verdict that rests on the declaration names it.
 
 // --- the cJSON node constructor --------------------------------------------
 extern fn cJSON_New_Item(hooks: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(cjson_allocator_hooks, "hooks->allocate returns a fresh allocation or NULL, which cJSON_Delete releases through the matching deallocate hook: malloc and free in global_hooks (cJSON.c:178, :186) unless cJSON_InitHooks installed a user pair, a premise of whoever installed it; nothing is stated about the hooks changing between the allocation and its release");
     ensures normal resource_borrowed(hooks);
     ensures normal resource_return_owned(nullable);
 };
@@ -238,6 +243,9 @@ contract {
 //     non-empty array's `child->prev` is its last element, never NULL. If a
 //     caller broke it, the `child->prev == NULL` arm returns true without
 //     linking `item`, which this declaration would read as a transfer.
+//     Stated on the declaration as `requires
+//     resource_premise(cjson_list_invariant, "...")` (contract spec C04.18,
+//     card VERDICT-CONTRACT-PREMISE-ANNOTATIONS).
 //
 // ## `replace_item_in_object`, read from `cJSON.c:2412-2433` (with
 // `cJSON_ReplaceItemViaPointer`, `:2353-2400`, and `get_object_item`,
@@ -272,6 +280,7 @@ contract {
 extern fn add_item_to_array(array: ptr<mut, u8>, item: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(cjson_list_invariant, "cJSON's list invariant, kept by every cJSON list operation: a non-empty array's child->prev is its last element, never NULL; if a caller broke it, the child->prev == NULL arm returns true without linking item, which this declaration would read as a transfer");
     ensures normal resource_borrowed(array);
     ensures normal resource_on_return(ne, 0, resource_consumed(item, nullable));
     ensures normal resource_on_return(eq, 0, resource_owned(item, nullable));

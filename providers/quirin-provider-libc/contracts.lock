@@ -14,7 +14,7 @@
     {
       "function": "__errno_location",
       "module": "libc/errno.qv",
-      "contract_sha256": "9e00d4065a62fe1dd8aa9d9476ae77ae47c5b179918b7a717a12f15068935d71"
+      "contract_sha256": "d956f076f4c50c66a40cd75f0ed9a408668c3c05e41c4a001c5dded9a6ce9c9e"
     },
     {
       "function": "abort",
@@ -519,7 +519,7 @@
     {
       "function": "strerror",
       "module": "libc/errno.qv",
-      "contract_sha256": "af191a9b5a7c436af614878404a3663f3d2fcace58fc84dc9a7a5437138afd48"
+      "contract_sha256": "e7a5ac0313c48f927d9545e952afba2f0147ac8facdffc1c42eccc86a0f4e055"
     },
     {
       "function": "strerror_r",
