@@ -1,0 +1,1524 @@
+{
+ "hits": 215,
+ "by_class": {
+  "A": 10,
+  "B": 6,
+  "C": 13,
+  "D": 118,
+  "M": 22,
+  "N": 15,
+  "R": 19,
+  "S": 1,
+  "U": 11
+ },
+ "files": 71,
+ "unclassified": [],
+ "stale_manual_entries": [],
+ "rows": [
+  {
+   "file": "contract/profiles/libevent-core/libevent_memory.qv",
+   "line": 3,
+   "text": "// Declared resource-projection assumptions for the pinned `libevent-core`",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+   "line": 5,
+   "text": "// Card NEIGHBOURS. This module declares TRUSTED ASSUMPTIONS about the three",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+   "line": 8,
+   "text": "// loader, and a declaration is a premise. A function-level `Safe` that rests on",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+   "line": 92,
+   "text": "//     would cost a premise and buy nothing — card O04-ARMS' standard, followed",
+   "class": "U",
+   "reason": "cost (a )?premises?|premise with no measured payoff|unpaid"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+   "line": 121,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+   "line": 5,
+   "text": "// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+   "line": 7,
+   "text": "// by this loader, and a declaration is a premise. Any verdict that rests on it",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+   "line": 75,
+   "text": "// function's own body — it only fixes what its CALLERS may assume.",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+   "line": 88,
+   "text": "//     outside their declared wrappers, so declaring them would cost a premise",
+   "class": "U",
+   "reason": "cost (a )?premises?|premise with no measured payoff|unpaid"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/counters.qv",
+   "line": 4,
+   "text": "// Storage/provenance and C unsigned type = usize are caller/build premises.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv",
+   "line": 5,
+   "text": "// exclusive access and actual cross-unit ABI equality remain caller premises.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv",
+   "line": 6,
+   "text": "// caller/audit premises. This is a metadata frame contract, not teardown.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv",
+   "line": 5,
+   "text": "// frames are explicit premises; this is not an OS observation or Safe verdict.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv",
+   "line": 5,
+   "text": "// The earlier zero-delete premise is replaced by one; its custody/frame/ABI",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv",
+   "line": 5,
+   "text": "// are framed premises. Deleting content never frees the record or path storage.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv",
+   "line": 5,
+   "text": "// A syscall result is an input, never an assumed success. These policies do not",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv",
+   "line": 6,
+   "text": "// access are premises; no containing allocation is released by either function.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv",
+   "line": 7,
+   "text": "// Raw helper pointers allow neighbor aliasing under the cell-level premises.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv",
+   "line": 6,
+   "text": "// and binding free to libc are assumptions. The borrowed chunk remains live;",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv",
+   "line": 6,
+   "text": "// Raw nullable Chunk ownership and caller/build premises are explicit; this is",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qv",
+   "line": 4,
+   "text": "// These premises must be bound by a caller; a matching body is not that binding.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+   "line": 3,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv",
+   "line": 4,
+   "text": "// caller provenance and callee effects are explicit conditional premises.",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+   "line": 5,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+   "line": 5,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. TWO TRUSTED ASSUMPTIONS about two upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+   "line": 7,
+   "text": "// this loader, and a declaration is a premise. Any verdict that rests on one is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+   "line": 118,
+   "text": "// undeclared: `cmt_metric_set` was that card's TARGET rather than its premise.",
+   "class": "U",
+   "reason": "cmt_metric_set was that card's target, not a premise; still undeclared"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+   "line": 5,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+   "line": 103,
+   "text": "// declaring them would cost premises and buy nothing. `mpack_read_tag`,",
+   "class": "U",
+   "reason": "the cmt_mpack_* family is not declared"
+  },
+  {
+   "file": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+   "line": 5,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+   "line": 142,
+   "text": "// SIX TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/composition.qv",
+   "line": 50,
+   "text": "// Two consequences the declared text must state, not assume.",
+   "class": "N",
+   "reason": "not resource-v1"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/event_payload.qv",
+   "line": 6,
+   "text": "// write authority remain explicit contextual premises; this policy does not",
+   "class": "N",
+   "reason": "not a resource-v1 module"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+   "line": 5,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+   "line": 19,
+   "text": "// ## What the call sites actually reach — measured, not assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+   "line": 195,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+   "line": 238,
+   "text": "// rule 10g); it is a trusted premise, pinned to the header's text.",
+   "class": "B",
+   "reason": "mk_utils_libc_error: no analysed body checks it: body standing declared-assumption"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/memory.qv",
+   "line": 4,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/memory.qv",
+   "line": 20,
+   "text": "// inherited contract is a trusted assumption of the same strength as that",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+   "line": 3,
+   "text": "// W46-LIBC-EVENT-CONTRACT-GAPS. Trusted custody assumptions for the exact",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+   "line": 8,
+   "text": "// asserted. Source identities in contracts.lock delimit these assumptions.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/string.qv",
+   "line": 5,
+   "text": "// Card MONKEY-VHOST-PROPERTY-CUSTODY. ONE TRUSTED ASSUMPTION about one",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/string.qv",
+   "line": 7,
+   "text": "// `quirin-audit pin` at the reviewed sources: a declaration is a premise, and",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+   "line": 7,
+   "text": "// CONTRACT-PIN-TIP-MODE. ONE TRUSTED ASSUMPTION about one upstream function,",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+   "line": 9,
+   "text": "// nothing: a declaration is a premise, and any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+   "line": 87,
+   "text": "// revision no person reviewed, which every run lists as the named assumption",
+   "class": "R",
+   "reason": "the run's named assumption tip-tracked:mk_vhost_set"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 5,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 13,
+   "text": "// ## Where cJSON lives, measured rather than assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 91,
+   "text": "// arise, and that was checked rather than assumed: each passes the result of",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 117,
+   "text": "// measured, not assumed: a declared contract wins over an inferred summary, a",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 144,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 185,
+   "text": "// premise of whoever installed it); anything about `cJSON_InitHooks` changing",
+   "class": "A",
+   "reason": "cJSON_New_Item: cjson_allocator_hooks"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 237,
+   "text": "//   * PREMISE (cJSON's list invariant, kept by every cJSON list operation): a",
+   "class": "A",
+   "reason": "add_item_to_array: cjson_list_invariant"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+   "line": 269,
+   "text": "// its callers pass `false`/`true` as casts, which no literal premise reads.",
+   "class": "U",
+   "reason": "add_item_to_object is not declared: no literal premise reads its cast arguments"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 516,
+   "text": "// the partition itself **only when `do_free`**. The literal premise (C04.5)",
+   "class": "C",
+   "reason": "rd_kafka_topic_partition_destroy0's literal premise (C04.5), already a clause"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 582,
+   "text": "// arithmetic and the non-null results stay declared assumptions, cited here",
+   "class": "A",
+   "reason": "rd_kafka_toppar_new0, rd_kafka_toppar_desired_add, rd_kafka_q_new0, ut_create_mock_queue: asserted_allocation (the non-null results); the count arithmetic in the same sentence is the declarations' own reference clauses (class D)"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 769,
+   "text": "// THE SERVED-QUEUE PREMISE (a declared assumption, constraint 4).",
+   "class": "C",
+   "reason": "the served-queue premise, already a clause (VERDICT-CONTRACT-DEPENDENCIES)"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 773,
+   "text": "// the served queue or the op: the declarations assume such a callback takes",
+   "class": "C",
+   "reason": "the served-queue premise, already a clause"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 779,
+   "text": "// Card VERDICT-CONTRACT-DEPENDENCIES: both declarations state the premise as",
+   "class": "C",
+   "reason": "the served-queue premise, already a clause"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+   "line": 780,
+   "text": "// `requires resource_premise(served_queue, \"...\")` (contract spec C04.18), so",
+   "class": "C",
+   "reason": "the served-queue premise, already a clause"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+   "line": 6,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+   "line": 8,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+   "line": 115,
+   "text": "// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+   "line": 5,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+   "line": 117,
+   "text": "// THREE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+   "line": 182,
+   "text": "// unsafe decoder stays inside `ostart`, which is the caller's premise by its",
+   "class": "S",
+   "reason": "bounds of the unsafe decoder are not claimed (a bounds property, not custody)"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 5,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 19,
+   "text": "// parameter names included); an inherited contract is a trusted assumption of",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 43,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 98,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 159,
+   "text": "// unchecked premise pinned to the header text, as `rd_atomic32_get` above.",
+   "class": "B",
+   "reason": "unchecked premise pinned to the header text: body standing declared-assumption"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 183,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv",
+   "line": 254,
+   "text": "// declaration: it stays an unchecked premise (rule 10g), pinned to the",
+   "class": "B",
+   "reason": "rd_kafka_crash: no normal exit, so no summary validates it: body standing declared-assumption"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+   "line": 6,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+   "line": 8,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+   "line": 72,
+   "text": "// Recorded because it is the premise a reader would want stated rather than",
+   "class": "M",
+   "reason": "design rationale: custody is tracked through the list pointer, which the projection's model fixes; not an assumption about the C function"
+  },
+  {
+   "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+   "line": 73,
+   "text": "// assumed.",
+   "class": "M",
+   "reason": "the same rationale's last line"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 5,
+   "text": "// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 130,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 173,
+   "text": "// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 257,
+   "text": "// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+   "line": 447,
+   "text": "// there and is a declared assumption everywhere else.",
+   "class": "B",
+   "reason": "withdrawn where its body fails rule 13a, a declared assumption elsewhere: body standing"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+   "line": 5,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-cfl/contracts/cfl/time.qv",
+   "line": 75,
+   "text": "// exercised production text, measured rather than assumed, and this declaration",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 5,
+   "text": "// Card HASH-CONTRACTS. This module declares ONE trusted assumption about ONE",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 6,
+   "text": "// upstream function, `flb_hash_table_add`, and restricts that assumption to the",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 8,
+   "text": "// C body is not analyzed by this loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 67,
+   "text": "// ## The size-0 boundary is enforced, not assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 72,
+   "text": "// that takes the other arm. §C04.5's literal-argument premise states exactly",
+   "class": "C",
+   "reason": "flb_hash_table_add's literal premise (C04.5), already a clause"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 77,
+   "text": "// The premise is a clause of the declaration itself. The loader validates it",
+   "class": "C",
+   "reason": "the literal premise, already a clause"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+   "line": 79,
+   "text": "// malformed literal or a second premise on one parameter rejects this whole",
+   "class": "C",
+   "reason": "the literal premise's loading rule"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+   "line": 6,
+   "text": "// ASSUMPTION about one C function. It verifies nothing: the C body is not",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+   "line": 7,
+   "text": "// analyzed by this loader, and a declaration is a premise. Any verdict that",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+   "line": 28,
+   "text": "// fixes what its CALLERS may assume. `flb_input_chunk_destroy`'s own status is",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+   "line": 120,
+   "text": "//     call rule is reached. Named `AOM-DESTROY-CORRUPTED-UNPAID-PREMISE`.",
+   "class": "U",
+   "reason": "AOM-DESTROY-CORRUPTED-UNPAID-PREMISE names flb_input_chunk_destroy_corrupted, deliberately undeclared (payoff zero); neither declared function rests on it"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+   "line": 6,
+   "text": "// Card AOM-DESTROY-SIBLINGS. This module declares ONE TRUSTED ASSUMPTION about",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+   "line": 8,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on this module",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+   "line": 51,
+   "text": "// fixes what its CALLERS may assume. This function's own status is whatever its",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+   "line": 114,
+   "text": "//     premise. That is the same disposition, on the same rule, that card",
+   "class": "U",
+   "reason": "AOM-DESTROY-CORRUPTED-UNPAID-PREMISE, as in input_chunk_destroy.qv"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+   "line": 116,
+   "text": "//     `AOM-DESTROY-CORRUPTED-UNPAID-PREMISE`.",
+   "class": "U",
+   "reason": "the same note's name"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+   "line": 6,
+   "text": "// Card NEIGHBOURS. This module declares TRUSTED ASSUMPTIONS about the two",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+   "line": 9,
+   "text": "// declaration is a premise. A function-level `Safe` that rests on this module",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+   "line": 24,
+   "text": "// own body; it only fixes what its CALLERS may assume. Card PROD-CONTRACTS",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+   "line": 5,
+   "text": "// Card PROD-CONTRACTS. One TRUSTED ASSUMPTION about one upstream function.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+   "line": 7,
+   "text": "// declaration is a premise. A function-level `Safe` that rests on it is `Safe`",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+   "line": 51,
+   "text": "//     that needs no identity (card O04-TRACE's premises N6/N8) and never binds",
+   "class": "A",
+   "reason": "flb_input_chunk_get_name: untracked_handback (O04-TRACE N6/N8)"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+   "line": 5,
+   "text": "// Card W29-CORPUS-CONTRACTS. TWO TRUSTED ASSUMPTIONS about two upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+   "line": 7,
+   "text": "// this loader, and a declaration is a premise. Any verdict that rests on it is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+   "line": 99,
+   "text": "// function's own body — it only fixes what its CALLERS may assume. Each",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+   "line": 5,
+   "text": "// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPTION about one upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise. Any verdict that rests on it is a",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+   "line": 92,
+   "text": "// only fixes what its CALLERS may assume.",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+   "line": 17,
+   "text": "// are data for the reviewer, not assumptions of any analysis.",
+   "class": "C",
+   "reason": "review-pending reasons (C06.1): data for the reviewer, the declaration justifies neither Safe nor Unsafe"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+   "line": 5,
+   "text": "// Card PROD-CONTRACTS. This module declares TRUSTED ASSUMPTIONS about the two",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+   "line": 7,
+   "text": "// the C bodies are not analyzed by this loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+   "line": 11,
+   "text": "// ## What the call sites actually reach — measured, not assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+   "line": 115,
+   "text": "//     it would be a premise with no measured payoff. Left undeclared.",
+   "class": "U",
+   "reason": "cost (a )?premises?|premise with no measured payoff|unpaid"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+   "line": 39,
+   "text": "//   `running` (C3's ingestion premise);",
+   "class": "A",
+   "reason": "flb_input_collector_resume: ingestion_active (C3)"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+   "line": 28,
+   "text": "// Reachability premise: in-tree output plugins never set",
+   "class": "A",
+   "reason": "flb_output_task_singleplex_enqueue: synchronous_output_reachability"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+   "line": 31,
+   "text": "// premise.",
+   "class": "A",
+   "reason": "the same premise's last line"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv",
+   "line": 4,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv",
+   "line": 18,
+   "text": "// included); an inherited contract is a trusted assumption of the same",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv",
+   "line": 4,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv",
+   "line": 6,
+   "text": "// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumptions for later",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv",
+   "line": 25,
+   "text": "// These are TRUSTED ASSUMPTIONS over code the analyzer could read: both bodies",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+   "line": 5,
+   "text": "// Card PROD-CONTRACTS. TRUSTED ASSUMPTIONS about two upstream functions. This",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+   "line": 7,
+   "text": "// declaration is a premise. A function-level `Safe` that rests on it is `Safe`",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+   "line": 12,
+   "text": "// against, never a premise that replaces it. It is in force in a translation",
+   "class": "M",
+   "reason": "bodies are checked specifications, not premises (rule 11r and kin)"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+   "line": 40,
+   "text": "// after preprocessing): under that premise the release branch is not taken,",
+   "class": "C",
+   "reason": "flb_task_users_release's literal premise (C04.5), already a clause"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+   "line": 42,
+   "text": "// the premise and stays uncontracted, because the release check it runs may",
+   "class": "C",
+   "reason": "the literal premise, already a clause"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+   "line": 79,
+   "text": "// the declaration is the cross-unit premise every declared contract is.",
+   "class": "B",
+   "reason": "a declaration is a cross-unit premise outside its defining unit: body standing"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+   "line": 99,
+   "text": "// audited slice this declaration is a cross-unit premise that no analysed",
+   "class": "B",
+   "reason": "flb_output_thread_pool_flush: unchecked cross-unit declaration (W45-FB-THREAD-POOL-FLUSH-UNCHECKED), body standing declared-assumption"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+   "line": 5,
+   "text": "// Card NEIGHBOURS. This module declares ONE TRUSTED ASSUMPTION about ONE",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+   "line": 7,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+   "line": 36,
+   "text": "// wrote `-> u64` — acceptable as a fixture premise, where the header says so —",
+   "class": "M",
+   "reason": "a gateway fixture's declared type, not production text"
+  },
+  {
+   "file": "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+   "line": 62,
+   "text": "// would cost premises and buy nothing. Named `NEIGHBOURS-UNDECLARED`.",
+   "class": "U",
+   "reason": "cost (a )?premises?|premise with no measured payoff|unpaid"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/dirent.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/dirent.qv",
+   "line": 11,
+   "text": "// Card W43-DESCRIPTOR-RESOURCE-TRACKING. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+   "line": 68,
+   "text": "// `resource_borrowed`. TRUSTED ASSUMPTION; the `__restrict` spellings are read",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 11,
+   "text": "// Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 13,
+   "text": "// loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 15,
+   "text": "// ## What the call sites actually reach — measured, not assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 52,
+   "text": "// premises N1-N10) independently requires, PER CALL SITE, that the call is the",
+   "class": "A",
+   "reason": "__errno_location: nested_call_admission (N1-N10, N4-D)"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 55,
+   "text": "// equals this declaration's, and — premise N10 — that THIS TRANSLATION UNIT's",
+   "class": "A",
+   "reason": "the same premise (N10)"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 68,
+   "text": "// ## Portability, recorded rather than assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 85,
+   "text": "// TRUSTED ASSUMPTION (trust boundary 28). Declared in `<string.h>`, and placed",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/errno.qv",
+   "line": 104,
+   "text": "// nested-call admission (card O04-TRACE's premises N3, N6 and N7) needs exactly",
+   "class": "A",
+   "reason": "strerror: nested_call_admission (N3, N6, N7)"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/math.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/math.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/memory.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/memory.qv",
+   "line": 9,
+   "text": "// Trusted resource-projection assumptions, vocabulary version 1.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. A TRUSTED ASSUMPTION about Linux's `prctl` (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+   "line": 18,
+   "text": "// ## The custody statement, and why it carries a literal premise",
+   "class": "C",
+   "reason": "prctl's literal premise (C04.5), already a clause"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/process.qv",
+   "line": 58,
+   "text": "// TRUSTED ASSUMPTIONS about glibc's `getrlimit` and `setrlimit` (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+   "line": 12,
+   "text": "// ASSUMPTIONS about two C library functions. It verifies nothing: no C body is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+   "line": 13,
+   "text": "// analyzed by this loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+   "line": 52,
+   "text": "// ## Portability, recorded rather than assumed",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+   "line": 6,
+   "text": "// signature, and the libc/C-standard ABI premise is the run's one standing",
+   "class": "R",
+   "reason": "the libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+   "line": 7,
+   "text": "// assumption.",
+   "class": "R",
+   "reason": "the same sentence's last line"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/regex.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/regex.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-RESTRICT-PROTOTYPES. TRUSTED ASSUMPTIONS about POSIX regular",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+   "line": 12,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about POSIX sockets (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+   "line": 155,
+   "text": "// `int` result is `resource_return_none()`. TRUSTED ASSUMPTIONS.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/socket.qv",
+   "line": 191,
+   "text": "// A TRUSTED ASSUMPTION, read from the prototype the analysed units declare:",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 81,
+   "text": "// Each declaration below is a TRUSTED ASSUMPTION about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 204,
+   "text": "// TRUSTED ASSUMPTIONS, read from the prototypes the analysed units declare:",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 257,
+   "text": "// TRUSTED ASSUMPTIONS (trust boundary 28), read from the prototypes the",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdio.qv",
+   "line": 275,
+   "text": "//   to one, which is the tail premise `resource_variadic_data_tail()` states",
+   "class": "C",
+   "reason": "the variadic data tail, already a clause; the va_list members state it for the list"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. Every declaration below is a TRUSTED ASSUMPTION",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+   "line": 13,
+   "text": "// declaration is a premise (trust boundary 28). Each was read from the",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+   "line": 141,
+   "text": "// TRUSTED ASSUMPTIONS, read from the same headers. Each result below is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/string.qv",
+   "line": 303,
+   "text": "// Card CONTRACT-INHERIT-ADOPTION (user-directed declared assumption).",
+   "class": "D",
+   "reason": "strndup: a user-directed declared assumption"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about POSIX (trust boundary",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+   "line": 72,
+   "text": "// ASSUMPTION; the `__restrict` spellings are read by the declared-ABI reader",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+   "line": 95,
+   "text": "// ASSUMPTION. Ranked by the card's callee closure: the Fluent Bit tail-pause",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+   "line": 12,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/threads.qv",
+   "line": 208,
+   "text": "// TRUSTED ASSUMPTIONS; the `__restrict` spellings are read by the declared-ABI",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library (trust",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+   "line": 66,
+   "text": "// NULL. TRUSTED ASSUMPTIONS; the `__restrict` spellings are read by the",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+   "line": 103,
+   "text": "// ASSUMPTIONS; the `__restrict` spellings are read by the declared-ABI reader",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/time.qv",
+   "line": 136,
+   "text": "// ASSUMPTION. Ranked by the card's callee closure: it is the only call in",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+   "line": 6,
+   "text": "// contracts as one standing assumption, the libc/C-standard ABI premise. The",
+   "class": "R",
+   "reason": "libc/C-standard ABI premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+   "line": 11,
+   "text": "// Card W43-LIBC-CONTRACTS. TRUSTED ASSUMPTIONS about the C library and POSIX",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+   "line": 143,
+   "text": "// TRUSTED ASSUMPTIONS, read from the prototypes the analysed units declare",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+   "line": 171,
+   "text": "//   and one declaration carries one literal premise per parameter, so no",
+   "class": "U",
+   "reason": "fcntl's other commands are not declared: one literal premise per parameter"
+  },
+  {
+   "file": "providers/quirin-provider-libc/contracts/libc/unistd.qv",
+   "line": 198,
+   "text": "// A TRUSTED ASSUMPTION, read from the prototype the analysed units declare",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+   "line": 5,
+   "text": "// Card W37-CORPUS-CONTRACTS-4. FOUR TRUSTED ASSUMPTIONS about four upstream",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+   "line": 7,
+   "text": "// this loader, and a declaration is a premise. Any verdict that rests on one is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+   "line": 32,
+   "text": "// compared rather than assumed:",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+   "line": 149,
+   "text": "// baseline's own unit list, not assumed.",
+   "class": "M",
+   "reason": "(measured|compared|checked|enforced),? (rather than|not) assumed|rather than assumed|not assumed|may assume|state, not assume|stated rather than|recorded rather than assumed"
+  },
+  {
+   "file": "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+   "line": 200,
+   "text": "// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading every",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+   "line": 6,
+   "text": "// ASSUMPTION about one C library function. It verifies nothing: no C body is",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  },
+  {
+   "file": "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+   "line": 7,
+   "text": "// analyzed by this loader, and a declaration is a premise.",
+   "class": "D",
+   "reason": "^// ASSUMPTIONS?\\b|custody assumptions for|delimit these assumptions|restricts that assumption|TRUSTED\\s+ASSUMPTION|trusted assumption|a declaration is a premise|declared assumption|resource-projection assumptions|^// declaration is a premise"
+  }
+ ]
+}
