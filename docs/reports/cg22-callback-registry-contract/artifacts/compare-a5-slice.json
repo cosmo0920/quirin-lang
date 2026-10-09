@@ -1,0 +1,102 @@
+{
+ "statuses_before": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "statuses_after": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 2,
+  "unresolved resource identity `_`": 1
+ },
+ "added": {
+  "indirect memory access is outside the resource projection": 2,
+  "call to `_`: the callback `_` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)": 2
+ },
+ "moving_rows": 4,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20792: unresolved resource identity `file`"
+   ],
+   "gained": [
+    "20792: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "flb_tail_mult_process_first",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20096: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "do_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "18999: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "18999: call to `pthread_once`: the callback `flb_init_env` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "do_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "18999: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "18999: call to `pthread_once`: the callback `flb_init_env` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  }
+ ]
+}

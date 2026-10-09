@@ -6217,12 +6217,13 @@ own anchor here.
     type-switched union release); the served-queue premise (C04.18) on
     `rd_kafka_q_wait_result` and `rd_kafka_q_purge0` stays: the op callbacks
     they run are read from op members registered by the op's creator, an open
-    set no registration in force decides. Measured (corpus `66910c10`, base
-    `84ec54d1d`): **881 / 9 / 3,944 → 879 / 9 / 3,946**, exactly two
+    set no registration in force decides. Measured (corpus `66910c10`, rebased
+    onto `d03c59c73`): **905 / 9 / 3,920 → 903 / 9 / 3,922** (on the card's
+    base `84ec54d1d`: 881 / 9 / 3,944 → 879 / 9 / 3,946), exactly two
     `Safe → Unknown` corrections (`rd_kafka_topic_partition_list_sort_by_topic`,
     `_by_topic_id`, whose comparators have no contract in force), no
-    `Unknown → Safe`, no leak, violation or `Unsafe` added; system 87 / 4 /
-    357 and slice 45 / 1 / 354 / 4 Pending unchanged in status;
+    `Unknown → Safe`, no leak, violation or `Unsafe` added; system 89 / 4 /
+    355 and slice 45 / 1 / 354 / 4 Pending unchanged in status;
     [report](../reports/cg22-callback-registry-contract/README.md).
 <a id="constraint-14a"></a>
 

@@ -16,8 +16,8 @@ CARD = "CG22-CALLBACK-REGISTRY-CONTRACT"
 MARK = "AMENDED (" + CARD
 SOURCE = "docs/reports/cg22-callback-registry-contract/README.md"
 
-RUN = ("corpus 66910c10 ab8f5f14 881/9/3,944 -> c0320aca 879/9/3,946, base 84ec54d1d, binary "
-       "3b204784; system 87/4/357 and slice 45/1/354/4 Pending, no status move")
+RUN = ("corpus 66910c10 7a70c7b7 905/9/3,920 -> 24b59d52 903/9/3,922, rebased onto d03c59c73, "
+       "binary e2f26641; system 89/4/355 and slice 45/1/354/4 Pending, no status move")
 
 AMEND = {
     CARD: (
@@ -52,7 +52,7 @@ AMEND = {
         "CG22-MSGPACK-PACK-INVOCATIONS."
     ),
     "W48-CALLEE-DECISION-TABLE": (
-        f" {MARK}, {RUN}, scripts/size_members.py over the a3 corpus; leaves naming the callee "
+        f" {MARK}, {RUN}, scripts/size_members.py over the a5 corpus; leaves naming the callee "
         "/ functions carrying one / functions it decides alone): class 1 shape (c) has its "
         "vocabulary (C04.19, rules 13u-13z). Declared: bsearch 6/5/1, qsort 4/3/0, "
         "pthread_once 2/2/1, cmt_mpack_unpack_array 12/12/5, _map 10/10/3, "
@@ -69,8 +69,8 @@ AMEND = {
         "a holder retains: still no clause). No function moved to Safe."
     ),
     "W45-CALLEE-CASCADE-RESIDUAL": (
-        f" {MARK}, {RUN}, scripts/rank.py, artifacts/rank-a3-corpus.json): Unknown functions "
-        "blocked by uncontracted calls alone 523 -> 487, by one callee alone 366 -> 335: the 36 "
+        f" {MARK}, {RUN}, scripts/rank.py, artifacts/rank-a5-corpus.json): Unknown functions "
+        "blocked by uncontracted calls alone 537 -> 501, by one callee alone 379 -> 348: the 36 "
         "carry named callback refusals now (rules 13u-13x); none freed."
     ),
     "W44-CALLEE-CROSS-UNIT-SUMMARY": (
@@ -86,14 +86,14 @@ NEW = [
         "id": "CG22-REGISTRY-OUTSIDE-THE-FRAME",
         "title": "A registry used through a formal or a member has no registration in force in the calling body",
         "why": "Registered by " + CARD + " (" + RUN + "; scripts/reasons.py, "
-               "artifacts/reasons-a3-corpus.json). Rule 13w decides a registry use only under a "
+               "artifacts/reasons-a5-corpus.json). Rule 13w decides a registry use only under a "
                "registration made in the calling body on every path; every measured rd_list and "
                "nanopb caller reaches the list or stream through a formal or a member "
                "(rd_list_destroy(&rk->rk_conf.partition_assignors), rd_list_clear("
                "&mcluster->request_list), pb_write(stream, ...)): 239 "
                "`callback-registry-undecided` leaves / 112 functions / 5 decided alone "
                "(rd_list_destroy 131, rd_list_init 49, rd_list_add 44, pb_write 8, "
-               "pb_encode_varint 5, rd_list_new 2), plus 114 access-gate refusals at member "
+               "pb_encode_varint 5, rd_list_new 2), plus 118 access-gate refusals at member "
                "actuals of the now-classified calls; 3 `callback-element-custody-undecided` "
                "(rd_list_add of a tracked element into a frame list with a free callback: a frame "
                "object has no identity to own it). nanopb's registration, pb_ostream_from_buffer, "
@@ -108,7 +108,7 @@ NEW = [
         "id": "CG22-CALLBACK-CANDIDATE-CONTRACTS",
         "title": "Synchronous invocations refuse because their callbacks have no contract in force",
         "why": "Registered by " + CARD + " (" + RUN + "; scripts/reasons.py and "
-               "scripts/candidate_status.py over the a3 corpus). 46 `callback-uncontracted` "
+               "scripts/candidate_status.py over the a5 corpus). 46 `callback-uncontracted` "
                "leaves / 44 functions / 17 decided alone (the cmetrics and ctraces unpackers 36, "
                "bsearch 6, qsort 3). Of the 44 candidates named: 40 are Unknown in their own unit "
                "(the cmetrics and ctraces decoder trees, every table holding at least one "
@@ -125,7 +125,7 @@ NEW = [
     {
         "id": "CG22-CALLBACK-OPEN-ACTUALS",
         "title": "Callback actuals rule 11p's resolution leaves open: a null default, an unprototyped designator, a formal",
-        "why": "Registered by " + CARD + " (" + RUN + "; artifacts/reasons-a3-corpus.json). 10 "
+        "why": "Registered by " + CARD + " (" + RUN + "; artifacts/reasons-a5-corpus.json). 10 "
                "`callback-undecided` leaves / 9 functions / 1 decided alone: "
                "rd_kafka_topic_partition_list_sort(list, NULL, NULL) 6 (the body substitutes "
                "rd_kafka_topic_partition_cmp_opaque for a NULL comparator: a clause reading a null "

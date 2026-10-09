@@ -1,0 +1,184 @@
+{
+ "statuses_before": {
+  "Unknown": 355,
+  "Safe": 89,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 355,
+  "Safe": 89,
+  "Unsafe": 4
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 2,
+  "transfer of `_`, which a container holds after its publication": 2,
+  "unresolved resource identity `_`": 2
+ },
+ "added": {
+  "indirect memory access is outside the resource projection": 4,
+  "unresolved resource identity `_`": 4,
+  "call to `_`: the callback `_` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)": 2,
+  "nullable resource `_` used by a non-null contract": 2,
+  "call to `_`: the registry holder `_` is not one this body names (callback-registry-undecided)": 2
+ },
+ "moving_rows": 8,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_evl_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "19005: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "19005: call to `pthread_once`: the callback `flb_engine_evl_init_private` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_evl_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:pthread_once"
+   ],
+   "lost": [
+    "19005: call to uncontracted function `pthread_once`"
+   ],
+   "gained": [
+    "19005: call to `pthread_once`: the callback `flb_engine_evl_init_private` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19684: transfer of `ic`, which a container holds after its publication"
+   ],
+   "gained": [
+    "19665: indirect memory access is outside the resource projection",
+    "19666: unresolved resource identity `ic`",
+    "19684: nullable resource `ic` used by a non-null contract",
+    "19684: unresolved resource identity `ic`"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "18787: unresolved resource identity `ic`"
+   ],
+   "gained": [
+    "18787: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19684: transfer of `ic`, which a container holds after its publication"
+   ],
+   "gained": [
+    "19665: indirect memory access is outside the resource projection",
+    "19666: unresolved resource identity `ic`",
+    "19684: nullable resource `ic` used by a non-null contract",
+    "19684: unresolved resource identity `ic`"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "18787: unresolved resource identity `ic`"
+   ],
+   "gained": [
+    "18787: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "occurrence": 1,
+   "function": "cb_storage_metrics_collect",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:msgpack_packer_init"
+   ],
+   "lost": [],
+   "gained": [
+    "18578: call to `msgpack_packer_init`: the registry holder `& mp_pck` is not one this body names (callback-registry-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "occurrence": 2,
+   "function": "cb_storage_metrics_collect",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:msgpack_packer_init"
+   ],
+   "lost": [],
+   "gained": [
+    "18578: call to `msgpack_packer_init`: the registry holder `& mp_pck` is not one this body names (callback-registry-undecided)"
+   ]
+  }
+ ]
+}

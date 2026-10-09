@@ -1,0 +1,206 @@
+{
+ "cmt_mpack_unpack_array": {
+  "leaves": 12,
+  "functions": 12,
+  "alone": 5,
+  "alone_functions": [
+   "cmt_decode_msgpack.c::unpack_basic_type_values",
+   "cmt_decode_msgpack.c::unpack_context_metrics",
+   "cmt_decode_msgpack.c::unpack_meta_labels",
+   "cmt_decode_msgpack.c::unpack_meta_static_labels",
+   "cmt_decode_msgpack.c::unpack_metric_labels"
+  ]
+ },
+ "ctr_mpack_unpack_array": {
+  "leaves": 5,
+  "functions": 5,
+  "alone": 5,
+  "alone_functions": [
+   "ctr_decode_msgpack.c::unpack_resource_span_scope_spans",
+   "ctr_decode_msgpack.c::unpack_resource_spans",
+   "ctr_decode_msgpack.c::unpack_scope_span_spans",
+   "ctr_decode_msgpack.c::unpack_span_events",
+   "ctr_decode_msgpack.c::unpack_span_links"
+  ]
+ },
+ "bsearch": {
+  "leaves": 7,
+  "functions": 6,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_feature.c::rd_kafka_ApiVersion_check"
+  ]
+ },
+ "qsort": {
+  "leaves": 4,
+  "functions": 3,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "cmt_mpack_unpack_map": {
+  "leaves": 10,
+  "functions": 10,
+  "alone": 3,
+  "alone_functions": [
+   "cmt_decode_msgpack.c::unpack_context",
+   "cmt_decode_msgpack.c::unpack_context_header",
+   "cmt_decode_msgpack.c::unpack_context_processing_section"
+  ]
+ },
+ "ctr_mpack_unpack_map": {
+  "leaves": 9,
+  "functions": 9,
+  "alone": 3,
+  "alone_functions": [
+   "ctr_decode_msgpack.c::unpack_context",
+   "ctr_decode_msgpack.c::unpack_resource",
+   "ctr_decode_msgpack.c::unpack_span_status"
+  ]
+ },
+ "rd_list_init": {
+  "leaves": 65,
+  "functions": 46,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_new": {
+  "leaves": 33,
+  "functions": 26,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_list_add": {
+  "leaves": 79,
+  "functions": 66,
+  "alone": 3,
+  "alone_functions": [
+   "rdkafka_admin.c::rd_kafka_ConfigResource_add_ConfigEntry",
+   "rdkafka_broker.c::rd_kafka_brokers_wait_state_change_async",
+   "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_wait_state_change_async"
+  ]
+ },
+ "rd_list_destroy": {
+  "leaves": 184,
+  "functions": 110,
+  "alone": 3,
+  "alone_functions": [
+   "rdkafka_assignor.c::rd_kafka_assignors_term",
+   "rdkafka_interceptor.c::rd_kafka_interceptors_destroy",
+   "rdlist.c::rd_list_destroy_free"
+  ]
+ },
+ "rd_list_clear": {
+  "leaves": 4,
+  "functions": 4,
+  "alone": 3,
+  "alone_functions": [
+   "rdkafka_mock.c::rd_kafka_mock_clear_requests",
+   "rdkafka_mock.c::rd_kafka_mock_start_request_tracking",
+   "rdkafka_mock.c::rd_kafka_mock_stop_request_tracking"
+  ]
+ },
+ "pb_write": {
+  "leaves": 8,
+  "functions": 8,
+  "alone": 2,
+  "alone_functions": [
+   "nanopb/pb_encode.c::pb_encode_fixed32",
+   "nanopb/pb_encode.c::pb_encode_fixed64"
+  ]
+ },
+ "pb_encode_varint": {
+  "leaves": 5,
+  "functions": 4,
+  "alone": 2,
+  "alone_functions": [
+   "nanopb/pb_encode.c::pb_encode_svarint",
+   "nanopb/pb_encode.c::pb_encode_tag"
+  ]
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_serve",
+   "rdkafka_queue.c::rd_kafka_q_serve_maybe_consume"
+  ]
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop_serve",
+   "rdkafka_queue.c::rd_kafka_q_pop_serve_maybe_consume"
+  ]
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka.c::rd_kafka_poll",
+   "rdkafka.c::rd_kafka_queue_poll_callback"
+  ]
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 12,
+  "functions": 10,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop"
+  ]
+ },
+ "rd_kafka_poll_cb": {
+  "leaves": 4,
+  "functions": 4,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_destroy": {
+  "leaves": 132,
+  "functions": 83,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka_event.c::rd_kafka_event_destroy",
+   "rdunittest_fetcher.c::ut_op_destroy_free"
+  ]
+ },
+ "pthread_once": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "mk_server/mk_http_thread.c::mk_http_thread_initialize_tls"
+  ]
+ },
+ "pthread_getspecific": {
+  "leaves": 16,
+  "functions": 15,
+  "alone": 1,
+  "alone_functions": [
+   "mk_server/mk_plugin.c::mk_plugin_sched_get_thread_conf"
+  ]
+ },
+ "pthread_setspecific": {
+  "leaves": 15,
+  "functions": 10,
+  "alone": 1,
+  "alone_functions": [
+   "mk_server/mk_scheduler.c::mk_sched_set_request_list"
+  ]
+ },
+ "mk_sched_get_thread_conf": {
+  "leaves": 9,
+  "functions": 9,
+  "alone": 0,
+  "alone_functions": []
+ }
+}

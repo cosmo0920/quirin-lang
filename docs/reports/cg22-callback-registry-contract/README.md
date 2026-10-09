@@ -5,7 +5,8 @@ Card CG22-CALLBACK-REGISTRY-CONTRACT (wave 48, round 21), gateway rules
 `QCore.CallbackContracts`. Base: local `main` at `84ec54d1d`
 (DEEP-AST-TRANSPORTS-AND-WALL-TIME's gate records); rebased onto `6f64d545e`
 (CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS, custody byte-identical at
-`ab8f5f14…`) after the AFTER below and re-measured there (section 4). The
+`ab8f5f14…`) and then onto `d03c59c73` (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+round 2, corpus 905 / 9 / 3,920), and re-measured on each (section 4). The
 [prediction](PREDICTION.md) was frozen and committed (`4c220b5de`, rebased as
 `1bc5bc669`) before any implementation code.
 
@@ -165,26 +166,39 @@ calling body, so rule 13w cannot state them as checked clauses. The premise
 
 ## 4. AFTER
 
-Binary `bin/a3` (`3b204784…`, `run.json`'s `binary_sha256`), built from
-`a22b07d8a` (the committed source of every rule; `a2`, `e6e07bc2…`, measured
-the same totals before the refusal texts named rule 11p's reason). The later
-commits change records, tests and `rustfmt` layout only, no analysis source:
-the gate runs on the final tip.
+**Final (the card rebased onto main `d03c59c73`, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+round 2).** BEFORE is that main measured here with `bin/before2`
+(`72d02357…`, built and run from a checkout of `d03c59c73` in this worktree,
+so the contracts it read are main's); AFTER is `bin/a5` (`e2f26641…`, built
+from `a6f335676`, the rebased source of every rule; the later commits change
+records only). Both `run.json`s name their binary.
 
-| route | BEFORE | AFTER | report sha256 | wall (s) |
+| route | BEFORE (`d03c59c73`) | AFTER | report sha256 | wall (s) |
 | --- | --- | --- | --- | ---: |
-| corpus | 881 / 9 / 3,944 | **879 / 9 / 3,946** | `ab8f5f14…` → `c0320aca…` | 449.3 → 450.2 |
-| system | 87 / 4 / 357 | 87 / 4 / 357 | `2efc56d6…` → `d1ec2afd…` (both embed this worktree's paths) | 59.7 → 61.6 |
-| slice | 45 / 1 / 354, 4 Pending | 45 / 1 / 354, 4 Pending | `b81b79d5…` → `1bbafa88…` (both embed this worktree's paths) | 28.2 → 27.0 |
+| corpus | 905 / 9 / 3,920 | **903 / 9 / 3,922** | `7a70c7b7…` → `24b59d52…` | 450.3 (AFTER) |
+| system | 89 / 4 / 355 | 89 / 4 / 355 | `9ff4fdd2…` → `68f80273…` (both embed this worktree's paths) | 59.6 |
+| slice | 45 / 1 / 354, 4 Pending | 45 / 1 / 354, 4 Pending | `62fd3f40…` → `70aefa15…` (both embed this worktree's paths) | 26.7 |
 
-**Re-measured on the rebased tip** (`cbd3a45d7` on main `6f64d545e`, binary
-`bin/a4`, `dbe7408e…`, `run.json`'s `binary_sha256`): corpus `c0320aca…`,
-system `d1ec2afd…`, slice `1bbafa88…`, each report byte-identical to a3's;
-every parity stream a3 → a4 multiset-identical with node addresses erased (0
-rows on either side only, `scripts/parity.py`); wall 447.6 s / 60.2 s /
-27.8 s. Contract pins re-checked with a4 (`private/cg22r/pin-a4/`): every
-per-crate check 0 at both revisions, the whole tree 1 only for
-`mk_vhost_set`, `--verify-contracts` 0.
+The BEFORE reproduces the coordinator's (`7a70c7b7…`, 905 / 9 / 3,920; system
+89 / 4 / 355). The movement is the original base's exactly: two
+`Safe → Unknown` corrections and 228 Unknown rows trading leaves; the member
+sizes, rule keys and callback candidates are the same counts
+([compare](artifacts/compare-a5-corpus.json), [reasons](artifacts/reasons-a5-corpus.json),
+[sizes](artifacts/size-a5-corpus.json)); access-gate refusals at the newly
+classified calls' member actuals are 118 here (114 on the original base).
+
+**On the original base** (`84ec54d1d`, binary `bin/a3`, `3b204784…`, from
+`a22b07d8a`; `a2`, `e6e07bc2…`, measured the same totals before the refusal
+texts named rule 11p's reason): corpus 881 / 9 / 3,944 → **879 / 9 / 3,946**
+(`ab8f5f14…` → `c0320aca…`, 449.3 → 450.2 s), system 87 / 4 / 357
+(`2efc56d6…` → `d1ec2afd…`), slice 45 / 1 / 354, 4 Pending (`b81b79d5…` →
+`1bbafa88…`). After the first rebase (main `6f64d545e`, CG16, custody
+byte-identical there) `bin/a4` (`dbe7408e…`) reproduced a3's three reports
+byte for byte, with every parity stream multiset-identical to a3's (node
+addresses erased). Contract pins re-checked with a4 (`private/cg22r/pin-a4/`):
+every per-crate check 0 at both revisions, the whole tree 1 only for
+`mk_vhost_set`, `--verify-contracts` 0. The attribution below is a3's; a5's
+is the same rows.
 
 **Every moving function attributed** ([corpus](artifacts/compare-a3-corpus.json),
 [system](artifacts/compare-a3-system.json), [slice](artifacts/compare-a3-slice.json)):
@@ -247,9 +261,13 @@ cross-unit summary route, `W44-CALLEE-CROSS-UNIT-SUMMARY`), 1 has no row
 
 **Uncontracted callees** (`scripts/rank.py`): Unknown functions blocked by
 uncontracted calls alone 523 → **487**, by one callee alone 366 → **335** (the
-36 now carry named callback refusals; none freed).
+36 now carry named callback refusals; none freed); on the final base 537 →
+**501** and 379 → **348** ([rank](artifacts/rank-a5-corpus.json)).
 
-**Safe roll-up** ([corpus](artifacts/rollup-a3-corpus.json)): **418 / 94 / 23 /
+**Safe roll-up** on the final base ([corpus](artifacts/rollup-a5-corpus.json)):
+418 / 101 / 23 / 363 of 905 → **418 / 101 / 23 / 361** of 903; 332 → 346
+declarations consulted (57 validated, 35 partly validated, 253 declared
+assumptions, 1 held). On the original base ([corpus](artifacts/rollup-a3-corpus.json)): **418 / 94 / 23 /
 344** of 879 (no declaration / only validated / partly validated / a declared
 assumption): the two corrected rows rested on a declared assumption. 344
 declarations consulted (330 before): 54 validated, 35 partly validated
@@ -270,6 +288,12 @@ row compared, Clang node addresses erased, against the moving rows
 | system | 139,962 / 140,018 | 120 / 176 | 5 | `summary-premises-graph` 4 / 4 |
 | slice | 50,407 / 50,407 | 54 / 54 | 4 | `summary-premises-graph` 2 / 2 |
 
+On the final base (`before2` → `a5`, [corpus](artifacts/parity-a5-corpus.json),
+[system](artifacts/parity-a5-system.json), [slice](artifacts/parity-a5-slice.json)):
+corpus 691,720 / 690,513 rows, 2,442 / 1,235 only on one side, 207 functions,
+the same rows outside the moving functions; system 142,484 / 142,540, 120 /
+176, 5; slice 51,418 / 51,418, 54 / 54, 4.
+
 Every other differing row is in a function whose leaves moved. Outside them:
 the rows W4's inference of a member's own body emitted before (`pb_write` 60,
 `rd_list_add` 44, the two map unpackers 38 each, the two array unpackers 20
@@ -286,7 +310,7 @@ a moving function.
 
 | predicted | measured |
 | --- | --- |
-| corpus 879–880 / 9 / 3,944–3,945 | **879 / 9 / 3,946** |
+| corpus 879–880 / 9 / 3,944–3,945 | **879 / 9 / 3,946** (on the final base 905 / 9 / 3,920 → **903 / 9 / 3,922**) |
 | exactly two corrections, the sort callers | the two, as named |
 | `rd_kafka_ApiVersion_check` Safe or Unknown | Unknown (header comparator unsummarised) |
 | no leak, violation, Unsafe added | none |
@@ -325,7 +349,7 @@ tables by `callback_contracts::tests` (`decisionVectors`, `registryVectors`,
 gains the clause kinds `callback` and `callbackChecked` and the evidence
 `r13y` (its coverage and standing vectors, bound by
 `tests/contract_clause_standing.rs` and the audit's
-`contract_dependencies_report.rs`). Lean audits 303 → **304** on the card's base, **306** after the rebase onto `6f64d545e` (CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS added two).
+`contract_dependencies_report.rs`). Lean audits 303 → **304** on the card's base; **306 → 307** on the final base `d03c59c73` (CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS added two, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 one).
 
 ## 8. Ledger
 

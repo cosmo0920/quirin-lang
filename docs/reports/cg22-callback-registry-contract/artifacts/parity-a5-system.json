@@ -1,0 +1,46 @@
+{
+ "rows": [
+  142484,
+  142540
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 120,
+ "only_after": 176,
+ "functions_with_differences": 5,
+ "differences_outside_moving_functions": {
+  "before ?": 4,
+  "after ?": 4
+ },
+ "groups": {
+  "before flb_input_chunk_map bound-untracked-closure": 16,
+  "before flb_input_chunk_map root-declarations": 16,
+  "after flb_input_chunk_map bound-untracked-closure": 16,
+  "after flb_input_chunk_map root-declarations": 16,
+  "after flb_input_chunk_map elaboration-statement": 16,
+  "after flb_input_chunk_map uncontracted-access": 16,
+  "before flb_input_chunk_create bound-untracked-closure": 12,
+  "before flb_input_chunk_create root-declarations": 12,
+  "before flb_engine_evl_init call-exit-census": 12,
+  "before flb_engine_evl_init elaboration-statement": 12,
+  "before cb_storage_metrics_collect bound-untracked-closure": 12,
+  "before cb_storage_metrics_collect root-declarations": 12,
+  "after flb_input_chunk_create bound-untracked-closure": 12,
+  "after flb_input_chunk_create root-declarations": 12,
+  "after flb_input_chunk_create elaboration-statement": 12,
+  "after flb_input_chunk_create uncontracted-access": 12,
+  "after flb_engine_evl_init elaboration-statement": 12,
+  "after cb_storage_metrics_collect bound-untracked-closure": 12,
+  "after cb_storage_metrics_collect root-declarations": 12,
+  "after cb_storage_metrics_collect elaboration-statement": 12,
+  "before flb_input_chunk_create callback-registration": 4,
+  "before flb_input_chunk_map callback-registration": 4,
+  "before ? summary-premises-graph": 4,
+  "before cb_storage_metrics_collect callback-registration": 4,
+  "after flb_input_chunk_create callback-registration": 4,
+  "after flb_input_chunk_map callback-registration": 4,
+  "after ? summary-premises-graph": 4,
+  "after cb_storage_metrics_collect callback-registration": 4
+ }
+}

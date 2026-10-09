@@ -562,7 +562,8 @@ CG22.
     benign, so the two `rd_kafka_topic_partition_list_sort_by_*` wrappers this
     card's declarator had made `Safe` are corrected to Unknown (their
     comparators have no contract in force): corpus 881 / 9 / 3,944 →
-    **879 / 9 / 3,946**. Residuals `CG22-REGISTRY-OUTSIDE-THE-FRAME`,
+    **879 / 9 / 3,946** on its base, 905 / 9 / 3,920 → **903 / 9 / 3,922**
+    rebased onto `d03c59c73`. Residuals `CG22-REGISTRY-OUTSIDE-THE-FRAME`,
     `CG22-CALLBACK-CANDIDATE-CONTRACTS`, `CG22-CALLBACK-OPEN-ACTUALS`,
     `CG22-OP-CALLBACKS-AND-SERVED-QUEUES`, `CG22-MSGPACK-PACK-INVOCATIONS`.
     [Report](../../reports/cg22-callback-registry-contract/README.md).
