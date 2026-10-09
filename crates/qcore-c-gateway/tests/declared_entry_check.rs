@@ -1,22 +1,24 @@
-//! Card **DECLARED-ASSUMPTION-BODY-CHECKS** (gateway rules 13m–13o): the
-//! declared-entry check of a body the derivation scope holds but no row
-//! reports (13m), and of a body whose W4 summary only refines its declaration
-//! (13n), recorded as body evidence and nothing else (13o).
+//! Card **DECLARED-ASSUMPTION-BODY-CHECKS** (gateway rules 13m, 13n): a W4
+//! conflict that only refines a declaration is settled by the declaration's
+//! own entry check (13m), recorded as body evidence and nothing else (13n).
 //!
 //! Every fixture runs the public C11 entry point under the main-source scope
 //! with its helper in an included header (a `static inline` definition the
 //! selection reaches, as `rd_free` in `rd.h`), inside a [`Recording`]:
 //!
 //! * **accepting:** a nullable release wrapper (`free(p)` under
-//!   `resource_released(p, nullable)`) conflicts with W4's non-null summary
-//!   and its declaration is validated by `13n`; a nullable-result wrapper
-//!   (`assert` after `malloc`) likewise;
+//!   `resource_released(p, nullable)`), its guarded forms, the same wrapper
+//!   reported as a row (`rd_kafka_mem_free`'s shape), and a nullable-result
+//!   wrapper (glibc's `assert` after `malloc`, `rd_malloc`'s shape) conflict
+//!   with W4 and are validated by `13m`;
 //! * **refusing:** a wrapper that hands its nullable formal to a non-null
-//!   release, a wrapper that keeps its formal, one that calls an uncontracted
-//!   function, and a body with a container clause are not validated, and a
-//!   conflict the check does not establish stays a failure;
-//! * **evidence only:** every row is identical with and without a recording,
-//!   and the check adds no consultation to any function.
+//!   release keeps its `conflict` failure; a wrapper that keeps its formal,
+//!   one that calls an uncontracted function, one that releases on one path,
+//!   a declared alias result the entry check does not establish, and a
+//!   declaration with a counted-user clause are never `13m`;
+//! * **evidence only:** every row is identical with and without a recording
+//!   (the conflicting row keeps its `SummaryConflict`), and the check adds no
+//!   consultation to any function.
 //!
 //! The candidates in these fixtures are fixture findings, not claims about
 //! any upstream body.
@@ -50,8 +52,6 @@ void *malloc(size_t size);\n\
 void free(void *ptr);\n\
 void sink_nonnull(void *ptr);\n\
 void opaque(void *ptr);\n\
-void __assert_fail(const char *a, const char *f, unsigned int l, const char *fn);\n\
-#define assert(e) ((e) ? (void)0 : __assert_fail(#e, __FILE__, __LINE__, __func__))\n\
 void *keep;\n";
 
 fn contract(
@@ -79,13 +79,6 @@ fn contracts(declared: &ResourceFunctionContract) -> ResourceContracts {
     contracts.insert_contract(
         "sink_nonnull",
         contract([released(false)], ResourceReturnMode::None),
-    );
-    contracts.insert_contract(
-        "__assert_fail",
-        contract(
-            [ResourceParameterMode::Borrowed; 4],
-            ResourceReturnMode::None,
-        ),
     );
     contracts.insert_contract("w", declared.clone());
     contracts
@@ -152,7 +145,7 @@ fn a_nullable_release_wrapper_is_validated_by_its_declared_entry_check() {
     );
     assert_eq!(
         evidence(&run.record, "w"),
-        BTreeSet::from(["13n".to_owned()])
+        BTreeSet::from(["13m".to_owned()])
     );
     assert!(!run.record.failed.contains_key("w"), "{:?}", run.record);
     // `w` is not a row of the unit: only `user` is reported.
@@ -173,7 +166,7 @@ fn a_nullable_result_wrapper_is_validated_by_its_declared_entry_check() {
         [ResourceParameterMode::Borrowed],
         ResourceReturnMode::Owned { nullable: true },
     );
-    let header = "static inline void *w(size_t n) { void *p = malloc(n); assert(p); return p; }";
+    let header = "#include <assert.h>\nstatic inline void *w(size_t n) { void *p = malloc(n); assert(p); return p; }";
     let main = "void user(void) { void *p = w(4); free(p); }";
     let run = run("alloc", header, main, &contracts(&declared), true);
     assert_eq!(
@@ -182,10 +175,89 @@ fn a_nullable_result_wrapper_is_validated_by_its_declared_entry_check() {
         "{:?}",
         run.record
     );
-    let by = evidence(&run.record, "w");
+    // W4 reads the result non-null after the assertion; the declaration's
+    // nullable result is the weaker statement, which its entry check accepts.
+    assert_eq!(
+        evidence(&run.record, "w"),
+        BTreeSet::from(["13m".to_owned()])
+    );
+}
+
+#[test]
+fn guarded_release_wrappers_and_a_conflicting_row_are_validated() {
+    if !clang_available() {
+        return;
+    }
+    let declared = contract([released(true)], ResourceReturnMode::None);
+    for (tag, header) in [
+        (
+            "guard-not",
+            "static inline void w(void *p) { if (!p) return; free(p); }",
+        ),
+        (
+            "guard-if",
+            "static inline void w(void *p) { if (p) free(p); }",
+        ),
+    ] {
+        let run = run(tag, header, USER, &contracts(&declared), true);
+        assert_eq!(
+            evidence(&run.record, "w"),
+            BTreeSet::from(["13m".to_owned()]),
+            "{tag}: {:?}",
+            run.record
+        );
+    }
+    // Reported as a row (`rd_kafka_mem_free`'s shape): the row keeps its
+    // `SummaryConflict` and stays non-`Safe`; only the evidence moves.
+    let main = format!("void w(void *p) {{ free(p); }}\n{USER}");
+    let run = run("row", "", &main, &contracts(&declared), true);
+    assert_eq!(
+        evidence(&run.record, "w"),
+        BTreeSet::from(["13m".to_owned()]),
+        "{:?}",
+        run.record
+    );
+    let row = &run.summary.functions["w"];
+    assert_ne!(
+        row.status,
+        qcore_c_gateway::legacy_c::AnalysisStatus::Safe,
+        "{row:?}"
+    );
     assert!(
-        by.contains("13n") || by.contains("W4") || by.contains("13m"),
-        "{by:?}"
+        row.diagnostics.iter().any(|diagnostic| matches!(
+            diagnostic.kind,
+            qcore_c_gateway::legacy_c::LegacyDiagnosticKind::SummaryConflict { .. }
+        )),
+        "{row:?}"
+    );
+}
+
+#[test]
+fn a_declared_alias_the_entry_check_does_not_establish_keeps_its_failure() {
+    if !clang_available() {
+        return;
+    }
+    use qcore_c_gateway::legacy_c::DerivedExtent;
+    let declared = contract(
+        [ResourceParameterMode::Borrowed],
+        ResourceReturnMode::Derived {
+            parameter: 0,
+            extent: DerivedExtent::Exact,
+            nullable: false,
+            const_dropped: false,
+        },
+    );
+    let header = "static inline void *w(void *p) { return p; }";
+    let main = "void user(void) { void *p = malloc(4); void *q = w(p); (void) q; free(p); }";
+    let run = run("alias", header, main, &contracts(&declared), true);
+    assert!(evidence(&run.record, "w").is_empty(), "{:?}", run.record);
+    assert!(
+        run.record
+            .failed
+            .get("w")
+            .is_some_and(|why| why.contains("conflict")),
+        "{:?}",
+        run.record
     );
 }
 
@@ -208,7 +280,7 @@ fn a_nullable_formal_handed_to_a_non_null_release_is_not_validated() {
         run.record
     );
     assert!(evidence(&run.record, "w").is_empty(), "{:?}", run.record);
-    // The 13n route ran and kept the conflict a failure.
+    // The 13m route ran and kept the conflict a failure.
     assert!(
         run.record
             .failed
@@ -247,7 +319,7 @@ fn a_contradicted_or_unmodelled_body_is_not_validated() {
             run.record
         );
         let by = evidence(&run.record, "w");
-        assert!(!by.contains("13m") && !by.contains("13n"), "{tag}: {by:?}");
+        assert!(!by.contains("13m") && !by.contains("13m"), "{tag}: {by:?}");
     }
 }
 
@@ -261,7 +333,7 @@ fn a_declaration_with_a_container_clause_is_never_checked() {
     let header = "static inline void w(void *p) { free(p); }";
     let run = run("users", header, USER, &contracts(&declared), true);
     let by = evidence(&run.record, "w");
-    assert!(!by.contains("13m") && !by.contains("13n"), "{by:?}");
+    assert!(!by.contains("13m") && !by.contains("13m"), "{by:?}");
 }
 
 #[test]

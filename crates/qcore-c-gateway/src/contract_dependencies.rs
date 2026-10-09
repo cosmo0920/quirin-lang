@@ -303,7 +303,7 @@ pub(crate) fn hypothetical<R>(work: impl FnOnce() -> R) -> R {
     work()
 }
 
-/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): whether body
+/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13n): whether body
 /// evidence is being collected now: a recording is open and no hypothetical
 /// analysis is running. An evidence-only check runs only then.
 pub(crate) fn collecting() -> bool {
@@ -315,7 +315,7 @@ pub(crate) fn collecting() -> bool {
     })
 }
 
-/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): run `work` with the
+/// Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13n): run `work` with the
 /// recording suspended and a fresh consultation log that is discarded, so an
 /// evidence-only check adds no consultation, body spelling or evidence to any
 /// row or function of the unit. Its result is recorded by the caller.
@@ -637,7 +637,7 @@ pub(crate) fn withdrawn_between(
 /// the environment the unit was analysed under, `scope` its derivation scope,
 /// `derivation` the derivation its rows were analysed over, `mode` the names
 /// the mode gate withdrew and `specifications` the withdrawn checked
-/// specifications. Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n):
+/// specifications. Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13m):
 /// `declared_entry` is what the declared-entry check established in this unit.
 pub(crate) fn unit_evidence(
     input: &ResourceContracts,
@@ -690,14 +690,13 @@ pub(crate) fn unit_evidence(
         // VERDICT-BODY-STANDING-CLAUSE-SCOPE (rule 13i): W4 covers exactly the
         // clauses that projection compares, so a container or counted-user
         // clause beside them stays uncovered (`contract_clause_standing::covers`).
-        // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): a conflict
-        // the declaration's own entry check settled is `13n` evidence, and a
-        // scope-only body with no summary that check established is `13m`.
+        // Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13m): a conflict the
+        // declaration's own entry check settled is `13m` evidence instead.
         use crate::legacy_c::declared_entry_check::{Recorded, recorded};
         match recorded(
             derivation.conflict(name).is_some(),
             derivation.inferred(name).is_some(),
-            declared_entry.established(name),
+            declared_entry.refinements.contains(name),
         ) {
             Recorded::Failed => failed(name, "conflict"),
             Recorded::Evidence(by) => validated(name, by),
@@ -710,7 +709,7 @@ pub(crate) fn unit_evidence(
 mod tests {
     use super::*;
 
-    /// Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13o): work run unrecorded
+    /// Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13n): work run unrecorded
     /// adds no consultation, body spelling or evidence anywhere, and the
     /// recording resumes afterwards.
     #[test]

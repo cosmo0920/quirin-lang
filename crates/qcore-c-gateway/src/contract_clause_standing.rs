@@ -26,9 +26,9 @@
 //!   projection: every parameter mode and kind (and the arity) and the result
 //!   mode and kind. Nothing else: not a container or counted-user clause
 //!   (`ResourceFunctionContract::custody_projection` clears them). Card
-//!   DECLARED-ASSUMPTION-BODY-CHECKS: `13m` and `13n` are the `entry` check
-//!   on a scope-only body and on a refinement conflict's body
-//!   (`legacy_c::declared_entry_check`), and cover the same.
+//!   DECLARED-ASSUMPTION-BODY-CHECKS: `13m` is the `entry` check on a body
+//!   whose W4 summary only refines its declaration
+//!   (`legacy_c::declared_entry_check`), and covers the same.
 //! * `11r` compares each exit class's custody projection with the body's
 //!   summary: every exit class.
 //! * `12w` reads the guards of guarded retentions, not the retentions.
@@ -158,20 +158,18 @@ impl ClauseKind {
 }
 
 /// The evidence spellings of rule 13g, in the order the report names them;
-/// card DECLARED-ASSUMPTION-BODY-CHECKS adds `13m` and `13n` (the declared
-/// entry check of a scope-only body and of a refinement conflict's body).
-pub const EVIDENCE: [&str; 9] = [
-    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13n",
-];
+/// card DECLARED-ASSUMPTION-BODY-CHECKS adds `13m` (the declaration's own
+/// entry check on a body whose W4 summary only refines it).
+pub const EVIDENCE: [&str; 8] = ["W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m"];
 
 /// Whether the evidence spelled `evidence` covers a clause of `kind` (rule
 /// 13i). Any other spelling covers nothing.
 #[must_use]
 pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
     match evidence {
-        // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): the `entry`
-        // check, on the bodies its route never reads.
-        "W4" | "entry" | "13m" | "13n" => kind.is_custody(),
+        // Card DECLARED-ASSUMPTION-BODY-CHECKS (rule 13m): the `entry` check,
+        // on a body whose W4 summary only refines its declaration.
+        "W4" | "entry" | "13m" => kind.is_custody(),
         "11r" => kind == ClauseKind::ExitClass,
         "12w" => kind == ClauseKind::Guard,
         "13a" => matches!(
@@ -578,7 +576,7 @@ mod tests {
             assert_eq!(covers("W4", kind), kind.is_custody());
             assert_eq!(covers("entry", kind), kind.is_custody());
             assert_eq!(covers("13m", kind), kind.is_custody());
-            assert_eq!(covers("13n", kind), kind.is_custody());
+            assert!(!covers("13n", kind));
             assert!(!covers("13c", kind) || kind == ClauseKind::Reference);
             assert!(!covers("12w", kind) || kind == ClauseKind::Guard);
             assert!(!covers("unknown", kind));

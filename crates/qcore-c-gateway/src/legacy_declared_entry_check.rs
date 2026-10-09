@@ -1,52 +1,47 @@
-//! Card **DECLARED-ASSUMPTION-BODY-CHECKS** (gateway rules 13m–13o): a
-//! declaration checked against a body the unit holds, by the check W4 already
-//! validates a summary with, where no existing route read it.
+//! Card **DECLARED-ASSUMPTION-BODY-CHECKS** (gateway rules 13m, 13n): a
+//! declaration whose W4 summary only refines it, checked against its body by
+//! the check W4 already validates a summary with.
 //!
-//! # The check
+//! # The gap
 //!
 //! A W4 summary is published only after its body, analysed under the
 //! summary's entry custody, matches it at every exit
-//! (`observations_match_contract`). The row route records the same check for
-//! a reported row against its own declaration (`entry`, rule 13g). Two bodies
-//! the unit holds were never read that way:
+//! (`observations_match_contract`). Rule 13g records a declaration the unit's
+//! final W4 summary differs from as a `conflict` failure. Some of those
+//! differences contradict no custody duty (the mode gate withdraws nothing:
+//! `LOADER-ABI-MODES-REFINEMENT`): W4 seeds every bound formal non-null and
+//! never weakens it, and reads a guarded result as non-null, so every
+//! nullable wrapper disagrees with its declaration (`rd_free`'s `free(ptr)`
+//! under `resource_released(ptr, nullable)`; `rd_malloc`'s `malloc` and
+//! `rd_assert` under `resource_return_owned(nullable)`). W4's summary is one
+//! validated reading of the body, not the only one.
 //!
-//! * **Rule 13m.** A body in the derivation scope that the unit does not report
-//!   (a header `static inline` definition the selection reaches,
-//!   `callee_scope`), when W4 published no summary of it: nothing analysed it
-//!   under its declaration.
-//! * **Rule 13n.** A body whose W4 summary *disagrees* with its declaration
-//!   without contradicting a custody duty (the mode gate withdraws nothing:
-//!   `LOADER-ABI-MODES-REFINEMENT`). W4 proposes a non-null formal for every
-//!   bound formal and never weakens it, so every nullable wrapper (`rd_free`,
-//!   `free(ptr)` under `resource_released(ptr, nullable)`) disagrees, and
-//!   rule 13g records the disagreement as a failure. W4's summary is one
-//!   validated reading of the body, not the only one: the declaration is
-//!   checked directly instead, and the failure stands unless it passes.
+//! # Rule 13m
 //!
-//! [`check`] analyses each such body under its declaration's entry custody,
-//! on the CFG the reported run would build (the declaration is its contract
-//! in force, so its formals are protected exactly as there; a derived result
-//! is read on the derived-return CFG, as the row route does), and passes only
-//! when every exit matches the declaration, the result is `Safe` with no
-//! diagnostic, no callee double release is found, and the dialect and
-//! extension refusals of rule 11y name nothing. It is the row route's entry
-//! check with every later refusal of the row added, never fewer.
+//! For such a conflict, [`check`] analyses the body under the
+//! **declaration's** entry custody, on the CFG the reported run would build
+//! (the declaration is the contract in force, so its formals are protected
+//! exactly as there; a derived result is read on the derived-return CFG, as
+//! the row route does), and passes only when every exit matches the
+//! declaration, the result is `Safe` with no diagnostic, no callee double
+//! release is found, and the dialect and extension refusals of rule 11y name
+//! nothing: the row route's `entry` check with every later refusal of a row
+//! added. When it passes, the unit records `13m` evidence instead of the
+//! `conflict` failure; otherwise the failure stands. It is read only for a
+//! function-map declaration that is its own custody projection (no container
+//! or counted-user clause), in force in the derivation exactly as declared,
+//! and not refuted (C06.4), withdrawn by the mode gate or a withdrawn checked
+//! specification (C06.3), each of which stays a failure. `13m` covers exactly
+//! what `W4` and `entry` cover: every parameter and result clause (rule 13i).
 //!
-//! # What it may read
-//!
-//! Only a function-map declaration that is its own custody projection (no
-//! container or counted-user clause), in force in the derivation exactly as
-//! declared, not refuted (C06.4), withdrawn by the mode gate, or a withdrawn
-//! checked specification (C06.3). The evidence covers exactly what `W4` and
-//! `entry` cover: every parameter and result clause (rule 13i).
-//!
-//! # Evidence only (rule 13o)
+//! # Rule 13n: evidence only
 //!
 //! The check runs only while body evidence is being collected
 //! ([`crate::contract_dependencies::collecting`]), with parity rows muted and
 //! the recorder suspended ([`crate::contract_dependencies::unrecorded`]): it
 //! adds no parity row, no consultation and no row field, and no analysis reads
-//! its result. A run without a recording never runs it.
+//! its result. A run without a recording never runs it, and the row of a
+//! function whose summary conflicts keeps its `SummaryConflict`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -59,48 +54,22 @@ use super::{
 };
 use crate::legacy_summary::CustodyDerivation;
 
-/// What the declared-entry check established in one unit.
+/// What the declared-entry check established in one unit: the conflicting
+/// declarations whose own entry check passed (rule 13m).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct DeclaredEntry {
-    /// Rule 13m: scope-only bodies with no W4 summary whose declaration the
-    /// body establishes.
-    pub(crate) scope: BTreeSet<String>,
-    /// Rule 13n: refinement conflicts whose declaration the body establishes.
     pub(crate) refinements: BTreeSet<String>,
 }
 
-/// Which rule a candidate is checked under.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Candidate {
-    /// Rule 13m.
-    Scope,
-    /// Rule 13n.
-    Refinement,
-}
-
-/// The rule an eligible declaration's body is checked under (rules 13m, 13n):
-/// a W4 `conflict` under 13n; otherwise, when W4 published no `summary` and
-/// the body is not a reported `row`, under 13m. `QCore.DeclaredEntryCheck.candidate`.
+/// Whether a declaration's body is checked (rule 13m): it is `eligible` and
+/// its W4 summary `conflict`s with it. `QCore.DeclaredEntryCheck.candidate`.
 #[must_use]
-pub(crate) const fn rule(
-    eligible: bool,
-    conflict: bool,
-    summary: bool,
-    row: bool,
-) -> Option<Candidate> {
-    if !eligible {
-        None
-    } else if conflict {
-        Some(Candidate::Refinement)
-    } else if !summary && !row {
-        Some(Candidate::Scope)
-    } else {
-        None
-    }
+pub(crate) const fn checked(eligible: bool, conflict: bool) -> bool {
+    eligible && conflict
 }
 
-/// What a unit records for one examined function-map declaration whose
-/// declaration is in force in its derivation (`unit_evidence`).
+/// What a unit records for one examined function-map declaration in force in
+/// its derivation (`unit_evidence`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Recorded {
     /// The `conflict` failure.
@@ -111,72 +80,46 @@ pub(crate) enum Recorded {
     Nothing,
 }
 
-/// The recording rule (rules 13g, 13m, 13n): a conflict is a failure unless
-/// the declared-entry check `established` it under 13n; an equal W4 `summary`
-/// is `W4`; a scope-only body the check established under 13m is `13m`.
-/// `QCore.DeclaredEntryCheck.evidence` and `failed`.
+/// The recording rule (rules 13g, 13m): a conflict is a failure unless the
+/// declared-entry check `established` the declaration; an equal W4 `summary`
+/// is `W4`. `QCore.DeclaredEntryCheck.evidence` and `failed`.
 #[must_use]
-pub(crate) fn recorded(conflict: bool, summary: bool, established: Option<Candidate>) -> Recorded {
+pub(crate) const fn recorded(conflict: bool, summary: bool, established: bool) -> Recorded {
     if conflict {
-        if established == Some(Candidate::Refinement) {
-            Recorded::Evidence("13n")
+        if established {
+            Recorded::Evidence("13m")
         } else {
             Recorded::Failed
         }
     } else if summary {
         Recorded::Evidence("W4")
-    } else if established == Some(Candidate::Scope) {
-        Recorded::Evidence("13m")
     } else {
         Recorded::Nothing
     }
 }
 
-impl DeclaredEntry {
-    /// The rule the check established `name` under in this unit, if any.
-    #[must_use]
-    pub(crate) fn established(&self, name: &str) -> Option<Candidate> {
-        if self.refinements.contains(name) {
-            Some(Candidate::Refinement)
-        } else if self.scope.contains(name) {
-            Some(Candidate::Scope)
-        } else {
-            None
-        }
-    }
-}
-
-/// The rule `name` is a candidate of, if any (rules 13m, 13n). `input` is the
-/// environment the unit was analysed under, `rows` the reported functions.
+/// The declaration `name` is checked against, if its body is (rule 13m).
+/// `input` is the environment the unit was analysed under.
 pub(crate) fn candidate(
     name: &str,
     input: &ResourceContracts,
-    rows: &BTreeSet<&str>,
     derivation: &CustodyDerivation,
     mode: &BTreeSet<&str>,
     specifications: &BTreeMap<String, checked_spec::Withdrawal>,
-) -> Option<(Candidate, ResourceFunctionContract)> {
+) -> Option<ResourceFunctionContract> {
     let declared = input.functions().get(name)?;
     let eligible = derivation.environment().functions().get(name) == Some(declared)
         && *declared == declared.custody_projection()
         && !input.refuted_by_body().contains_key(name)
         && !mode.contains(name)
         && !specifications.contains_key(name);
-    rule(
-        eligible,
-        derivation.conflict(name).is_some(),
-        derivation.inferred(name).is_some(),
-        rows.contains(name),
-    )
-    .map(|which| (which, declared.clone()))
+    checked(eligible, derivation.conflict(name).is_some()).then(|| declared.clone())
 }
 
 /// One unit's final derivation, as `unit_evidence` reads it.
 pub(crate) struct Unit<'a> {
     /// The environment the unit was analysed under.
     pub(crate) input: &'a ResourceContracts,
-    /// The functions the unit reports.
-    pub(crate) rows: &'a [String],
     /// The derivation scope (`callee_scope::derivation_scope`).
     pub(crate) scope: &'a [String],
     /// The stream the rows are analysed over.
@@ -189,9 +132,9 @@ pub(crate) struct Unit<'a> {
     pub(crate) specifications: &'a BTreeMap<String, checked_spec::Withdrawal>,
 }
 
-/// Run the declared-entry check over the unit's derivation scope (rules
-/// 13m–13o). `refusals` adds rule 11y's refusals of a function to a summary
-/// (the hook the row route applies). Empty when no evidence is collected.
+/// Run the declared-entry check over the unit's derivation scope (rules 13m,
+/// 13n). `refusals` adds rule 11y's refusals of a function to a summary (the
+/// hook the row route applies). Empty when no evidence is collected.
 pub(crate) fn check(
     unit: &Unit<'_>,
     refusals: impl Fn(&mut LegacyFunctionSummary, &str),
@@ -200,11 +143,6 @@ pub(crate) fn check(
     if !crate::contract_dependencies::collecting() {
         return established;
     }
-    let rows = unit
-        .rows
-        .iter()
-        .map(String::as_str)
-        .collect::<BTreeSet<_>>();
     let mode = unit
         .mode
         .iter()
@@ -212,10 +150,9 @@ pub(crate) fn check(
         .collect::<BTreeSet<_>>();
     let names = unit.scope.iter().collect::<BTreeSet<_>>();
     for name in names {
-        let Some((which, declared)) = candidate(
+        let Some(declared) = candidate(
             name,
             unit.input,
-            &rows,
             unit.derivation,
             &mode,
             unit.specifications,
@@ -228,10 +165,7 @@ pub(crate) fn check(
             })
         });
         if holds {
-            match which {
-                Candidate::Scope => established.scope.insert(name.clone()),
-                Candidate::Refinement => established.refinements.insert(name.clone()),
-            };
+            established.refinements.insert(name.clone());
         }
     }
     established
@@ -294,12 +228,12 @@ mod tests {
 
     const LEAN: &str = include_str!("../../../proof/QCore/DeclaredEntryCheck.lean");
 
-    /// `QCore.DeclaredEntryCheck.recordingVectors` against [`rule`] and
-    /// [`recorded`], row for row: (conflict, summary, row, eligible, the
-    /// check passes, what the unit records).
+    /// `QCore.DeclaredEntryCheck.recordingVectors` against [`checked`] and
+    /// [`recorded`], row for row: (conflict, summary, eligible, the check
+    /// passes, what the unit records).
     #[test]
     fn lean_recording_vectors_match_the_recording_rule() {
-        let header = "def recordingVectors : List (Bool × Bool × Bool × Bool × Bool × String) := [";
+        let header = "def recordingVectors : List (Bool × Bool × Bool × Bool × String) := [";
         let start = LEAN.find(header).expect("the Lean list exists") + header.len();
         let body = &LEAN[start..];
         let body = &body[..body.find("\n]").expect("the Lean list closes")];
@@ -316,18 +250,17 @@ mod tests {
                     .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();
-        assert_eq!(rows.len(), 7);
+        assert_eq!(rows.len(), 6);
         for row in rows {
             let flag = |index: usize| row[index] == "true";
-            let (conflict, summary, reported, eligible, holds) =
-                (flag(0), flag(1), flag(2), flag(3), flag(4));
-            let established = rule(eligible, conflict, summary, reported).filter(|_| holds);
+            let (conflict, summary, eligible, holds) = (flag(0), flag(1), flag(2), flag(3));
+            let established = checked(eligible, conflict) && holds;
             let spelled = match recorded(conflict, summary, established) {
                 Recorded::Failed => "failed",
                 Recorded::Evidence(by) => by,
                 Recorded::Nothing => "none",
             };
-            assert_eq!(spelled, row[5], "{row:?}");
+            assert_eq!(spelled, row[4], "{row:?}");
         }
     }
 }

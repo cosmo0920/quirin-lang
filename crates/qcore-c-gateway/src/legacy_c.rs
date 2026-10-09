@@ -138,8 +138,8 @@ mod uncontracted_access;
 #[path = "legacy_member_release.rs"]
 mod member_release;
 
-// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m-13o): a declaration checked,
-// evidence-only, against a scope-only body or a refinement conflict's body.
+// Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): a declaration whose
+// W4 summary only refines it, checked evidence-only against its body.
 #[path = "legacy_declared_entry_check.rs"]
 pub(crate) mod declared_entry_check;
 
@@ -3103,11 +3103,10 @@ fn analyze_translation_unit_under_holds(
     // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
     // by name, read from each definition's typed AST where the unit spells one.
     let extensions = dialect_hook::Extensions::of(&tokens);
-    // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m-13o): evidence only.
+    // Card DECLARED-ASSUMPTION-BODY-CHECKS (rules 13m, 13n): evidence only.
     let declared_entry = declared_entry_check::check(
         &declared_entry_check::Unit {
             input,
-            rows: &names,
             scope: &scope,
             tokens: &tokens,
             derivation: &derivation,

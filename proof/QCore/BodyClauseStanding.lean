@@ -70,10 +70,10 @@ def ClauseKind.custody : ClauseKind → Bool
   | _ => false
 
 /-- The body evidence of rule 13g; card DECLARED-ASSUMPTION-BODY-CHECKS adds
-`r13m` and `r13n`, the `entry` check on a scope-only body and on a refinement
-conflict's body (`QCore.DeclaredEntryCheck`). -/
+`r13m`, the declaration's own `entry` check on a body whose W4 summary only
+refines it (`QCore.DeclaredEntryCheck`). -/
 inductive Evidence where
-  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13n
+  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m
   deriving DecidableEq, Repr
 
 /-- Whether a piece of evidence covers a clause kind (rule 13i). -/
@@ -81,7 +81,6 @@ def covers : Evidence → ClauseKind → Bool
   | .w4, k => k.custody
   | .entry, k => k.custody
   | .r13m, k => k.custody
-  | .r13n, k => k.custody
   | .r11r, k => k == .exitClass
   | .r12w, k => k == .guard
   | .r13a, k => k == .slotMove || k == .outDerived || k == .borrowedResult
@@ -90,12 +89,12 @@ def covers : Evidence → ClauseKind → Bool
 
 /-- The structural checks. -/
 def Evidence.structural : Evidence → Bool
-  | .w4 | .entry | .r13m | .r13n => false
+  | .w4 | .entry | .r13m => false
   | _ => true
 
 /-- The clause kinds a structural check reads. -/
 def reads : Evidence → List ClauseKind
-  | .w4 | .entry | .r13m | .r13n => allKinds.filter ClauseKind.custody
+  | .w4 | .entry | .r13m => allKinds.filter ClauseKind.custody
   | .r11r => [.exitClass]
   | .r12w => [.guard]
   | .r13a => [.slotMove, .outDerived, .borrowedResult]
@@ -344,7 +343,6 @@ def Evidence.spelling : Evidence → String
   | .r13c => "13c"
   | .r13d => "13d"
   | .r13m => "13m"
-  | .r13n => "13n"
 
 /-- (evidence, the clause kinds it covers). -/
 def coverageVectors : List (String × List String) := [
@@ -355,12 +353,11 @@ def coverageVectors : List (String × List String) := [
   ("13a", ["slotMove", "outDerived", "borrowedResult"]),
   ("13c", ["reference"]),
   ("13d", ["referenceResult"]),
-  ("13m", ["parameter", "result", "borrowedResult", "referenceResult"]),
-  ("13n", ["parameter", "result", "borrowedResult", "referenceResult"])
+  ("13m", ["parameter", "result", "borrowedResult", "referenceResult"])
 ]
 
 def allEvidence : List Evidence :=
-  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13n]
+  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m]
 
 theorem coverage_vectors_hold :
     (allEvidence.zip coverageVectors).all (fun (e, v) =>
@@ -384,7 +381,6 @@ def unitOf : String → UnitView
   | "W4+13d" => ⟨false, [.w4, .r13d]⟩
   | "entry+13d" => ⟨false, [.entry, .r13d]⟩
   | "13m" => ⟨false, [.r13m]⟩
-  | "13n" => ⟨false, [.r13n]⟩
   | "13m+13a" => ⟨false, [.r13m, .r13a]⟩
   | _ => ⟨true, []⟩
 
@@ -414,8 +410,8 @@ def clauseStandingVectors : List (Bool × List String × List String × String) 
   (false, ["parameter", "referenceResult"], ["entry+13d"], "validated"),
   (false, ["parameter", "referenceResult"], ["13d"], "partly-validated"),
   (true, ["parameter", "result"], ["W4"], "held"),
-  (false, ["parameter", "result"], ["13n", "W4", "13n"], "validated"),
-  (false, ["parameter", "result"], ["13n", "failed"], "declared-assumption"),
+  (false, ["parameter", "result"], ["13m", "W4", "13m"], "validated"),
+  (false, ["parameter", "result"], ["13m", "failed"], "declared-assumption"),
   (false, ["parameter", "borrowedResult"], ["13m+13a", "13m"], "validated"),
   (false, ["parameter", "container"], ["13m"], "partly-validated")
 ]
