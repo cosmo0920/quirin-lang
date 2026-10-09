@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS card gate on base 84ec54d1d, every code step at eb8268df9, scripts docs/reports/cg16-bounds-transport-and-chunkio-neighbours/scripts/gate.sh, provider-gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg16-bounds-transport-and-chunkio-neighbours/gate-g2 and provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 466 units, 479 summaries, 7,773 passed, 0 failed, 12 ignored, exit 0 (private/cg16-bounds-transport-and-chunkio-neighbours/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 305 audits passed (with the new AuditBoundsBodyStanding and AuditBoundsTransport); python suite and docs index check before the matrix regeneration (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate pg2 at eb8268df9: cargo check --locked 0, cargo test --locked 0 (129 passed), fmt 0, clippy 0, contracts.py check 0, package build 0, verify 0 for all five packages, providers/tests 0 (25 tests). The first gates g1 (code at 706a47dac) each failed one pin the new tracked bounds module moved (standing step 04: 7,772 passed, 1 failed; provider p8), both updated deliberately.",
-  "workspace_tests": 7773,
+  "note": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 card gate on main 6f64d545e (rebased from 84ec54d1d), every code step at 1d4ed0bc7, scripts docs/reports/cg10-indirect-access-sole-residuals-r2/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg10r2/gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 467 units, 480 summaries, 7,785 passed, 0 failed, 12 ignored, exit 0 (private/cg10r2/tests-gate-g3); both reevaluation probes exit 0; check_lean_audits.py 306 audits passed (with the new AuditResidualAccessReadings); python suite before the matrix regeneration 08 = 1 (Lean audits 305 -> 306 in the committed matrix), docs index check 09 = 0, then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate, g1 (pre-rebase, same code but two gateway pins), failed exactly the two pins rule 14a and rule 14d flip (7,767 passed / 2 failed), updated deliberately (f26c53cd7 before the rebase); g2 was stopped in its test step when main moved, not evidence. Provider gate pg2 (providers/ changes) at 1d4ed0bc7: cargo check --locked, cargo test 129 passed, fmt, clippy, contracts.py check, package build and verify of 5 packages (qcore.chunkio, qcore.cmetrics, qcore.ctraces, qcore.libevent, qcore.librdkafka), providers Python 25 tests OK, every exit 0 (private/cg10r2/provider-gate-pg2).",
+  "workspace_tests": 7785,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 305,
+  "lean_audits": 306,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6971,6 +6971,7 @@
    "AuditRelationalForwarding.lean",
    "AuditRelationalPost.lean",
    "AuditReservedSpelling.lean",
+   "AuditResidualAccessReadings.lean",
    "AuditResourceCalls.lean",
    "AuditResourceKinds.lean",
    "AuditRetainedBy.lean",
@@ -7071,7 +7072,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a6b105a007b3dfd51/docs/reports/cg16-bounds-transport-and-chunkio-neighbours/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a474c3df075139af5/docs/reports/cg10-indirect-access-sole-residuals-r2/gate.json)"
  },
  "named_followups": [
   {

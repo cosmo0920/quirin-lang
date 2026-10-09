@@ -230,12 +230,27 @@ constructor, protobuf-c initialisers outside any provider crate).
 Standing gate (`docs/agents/validation.md`) on the rebased tip,
 `scripts/gate.sh g3` then `scripts/write_gate_json.py g3 pg2` and
 `scripts/finish-gate.sh g3 pg2`; logs `private/cg10r2/gate-g3/`, exits copied
-to [gate/](gate/), summary [gate.json](gate.json) (GATE_TABLE). A second
+to [gate/](gate/), summary [gate.json](gate.json) (code steps at `1d4ed0bc7`; later commits change records only):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 467 units, 480 summaries; 7,785 passed, 0 failed, 12 ignored (`private/cg10r2/tests-gate-g3`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 306 audits passed |
+| `python3 -m unittest discover -s scripts/tests` (before the matrix) | 1 | the expected stale `lean_audits` (305 committed, 306 produced) |
+| `build_docs_index.py --check` (before the records' index) | 0 | |
+| `build_matrix.py . --gate gate.json` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py`, `--check` | 0, 0 | | A second
 pre-rebase gate, `gate-g2`, was stopped during its test step when main moved
 (steps 00–03 exit 0) and is not evidence.
 
 **Provider gate** `pg2` on the rebased tip (main's chunkio contracts beside
-this card's; `scripts/provider-gate.sh`): PROVIDER_TABLE. The pre-rebase
+this card's; `scripts/provider-gate.sh`): `cargo check --locked` 0, `cargo test` 129 passed, fmt 0, clippy 0, `providers/contracts.py check` 0, package build 0 and `verify` 0 for all five packages (chunkio, cmetrics, ctraces, libevent, librdkafka), providers Python suite 25 tests OK. The pre-rebase
 `pg1` (at `80f91076a`) passed every step too: 129 tests, five packages
 verified, 25 providers Python tests ([gate/provider/](gate/provider/) holds
 `pg2`'s exits). Targeted runs before the gates: the new
