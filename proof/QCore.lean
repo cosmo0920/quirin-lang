@@ -357,5 +357,6 @@ import QCore.ReturnCallActuals
 import QCore.UncontractedAccessAttribution
 import QCore.DeepUnitAst
 import QCore.DeepAstTransports
+import QCore.ResidualAccessReadings
 
 /-! The executable formal core of QCore-C revision 0.1. -/

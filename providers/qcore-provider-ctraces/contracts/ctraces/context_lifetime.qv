@@ -324,3 +324,40 @@ contract {
     ensures normal resource_slot_moved(buf, nullable);
     ensures normal resource_return_none();
 };
+
+// # Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: `ctr_errno_print`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/ctraces/src/ctr_log.c` is byte-identical at
+// `66910c10` and `046accf6`; `include/ctraces/ctr_log.h` differs only in the
+// file-name macro its logging macros spell, `__FILENAME__` against
+// `__CTR_FILENAME__`, and declares the same prototype at line 38; the only
+// definition of the name in either tree):
+//
+//     int ctr_errno_print(int errnum, const char *file, int line)
+//     {
+//         char buf[256];
+//
+//         strerror_r(errnum, buf, sizeof(buf) - 1);
+//         fprintf(stderr, "[%s:%i errno=%i] %s\n",
+//                 file, line, errnum, buf);
+//         return 0;
+//     }
+//
+// It reads `file`, frees and stores nothing, and returns 0: the neutral
+// element, every formal `resource_borrowed`, `resource_return_none()`.
+// Callers spell it `ctr_errno()`, whose actual is `errno`.
+//
+// ABI: `int ctr_errno_print(int, const char *, int)`; `i32`, `ptr<mut, u8>`,
+// `i32`, `-> i32`.
+//
+// NOT CLAIMED: what is printed, or `file`'s validity.
+
+extern fn ctr_errno_print(errnum: i32, file: ptr<mut, u8>, line: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_none();
+};

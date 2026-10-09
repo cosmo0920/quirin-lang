@@ -223,6 +223,38 @@
           ]
         }
       ]
+    },
+    {
+      "function": "cio_errno_print",
+      "module": "chunkio/chunk_residency.qv",
+      "contract_sha256": "41d4a13ad93cf7e55bd4d8c34305afefc2413e771a904c718e6e51ca2c4188bd",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_log.h",
+              "kind": "declaration",
+              "declaration_sha256": "fc51f5507e3a84637225aa65d5f731fbd126b219bff56a1c61580237e797a8d1"
+            },
+            {
+              "path": "lib/chunkio/src/cio_log.c",
+              "kind": "definition",
+              "declaration_sha256": "fc51f5507e3a84637225aa65d5f731fbd126b219bff56a1c61580237e797a8d1",
+              "body_sha256": "4c8b0375f4aea5981b5dd9c1b0347f26ce51867c583d793ecd5a223ec094b46c"
+            }
+          ]
+        }
+      ]
     }
   ],
   "flexible": []

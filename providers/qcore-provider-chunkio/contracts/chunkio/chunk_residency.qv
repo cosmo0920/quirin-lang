@@ -149,3 +149,42 @@ contract {
     ensures normal resource_borrowed(enforced);
     ensures normal resource_return_none();
 };
+
+// ## Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2: `cio_errno_print`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/chunkio/src/cio_log.c` and
+// `include/chunkio/cio_log.h` are byte-identical at `66910c10` and
+// `046accf6`; the only definition of the name in either tree):
+//
+//     int cio_errno_print(int errnum, const char *file, int line)
+//     {
+//         char buf[256];
+//
+//         strerror_r(errnum, buf, sizeof(buf) - 1);
+//         fprintf(stderr, "[%s:%i errno=%i] %s\n",
+//                 file, line, errnum, buf);
+//         return 0;
+//     }
+//
+// It formats `errnum` into a local buffer and prints it with `file` and
+// `line`: it reads `file`, frees and stores nothing, and returns 0. The
+// neutral element: every formal `resource_borrowed`, the scalar result
+// `resource_return_none()`. Callers spell it `cio_errno()`, whose actual is
+// `errno` (`(*__errno_location())`), read through the libc declaration of
+// `__errno_location` (CONSTRUCTOR-RESIDUALS' nested rule).
+//
+// ABI: `int cio_errno_print(int, const char *, int)`; `i32`, `ptr<mut, u8>`,
+// `i32`, `-> i32`.
+//
+// NOT CLAIMED: what is printed, or `file`'s validity.
+
+// --- print an errno value ---------------------------------------------------
+extern fn cio_errno_print(errnum: i32, file: ptr<mut, u8>, line: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_none();
+};

@@ -247,6 +247,38 @@
       ]
     },
     {
+      "function": "ctr_errno_print",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "055126b6084d145cd22281c66384c807651472ef41d6902ac73f32a4c6ae6325",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_log.h",
+              "kind": "declaration",
+              "declaration_sha256": "090e932c0923d916d27f364137921f03ca3717cf65a25fb1c0d8787ea091583b"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_log.c",
+              "kind": "definition",
+              "declaration_sha256": "090e932c0923d916d27f364137921f03ca3717cf65a25fb1c0d8787ea091583b",
+              "body_sha256": "4c8b0375f4aea5981b5dd9c1b0347f26ce51867c583d793ecd5a223ec094b46c"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "ctr_id_cmp",
       "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "cba1456accd587415e039cb6697ba4b7a69fb5d1fdab1f0ffafd3ff4836ba040",

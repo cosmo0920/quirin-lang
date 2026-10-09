@@ -930,6 +930,24 @@ impl StatementIndex {
         never_bound: impl Fn(&str) -> bool,
         decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<StatementPlan> {
+        let node = self.statement_node(texts, line, occurrence)?;
+        let mut reader = self.reader(&never_bound).recording(decisions);
+        // Card CG11 (rule 10v): only the statement route reads a pointer store.
+        reader.pointer_stores = true;
+        reader.statement(node)?;
+        Some(reader.plan)
+    }
+
+    /// The unique complete Clang statement whose tokens and internal line are
+    /// exactly `texts` and `line`, several told apart by `occurrence`. Card
+    /// CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (shared item, read out of
+    /// [`Self::statement_with`] unchanged).
+    pub(crate) fn statement_node(
+        &self,
+        texts: &[&str],
+        line: usize,
+        occurrence: &dyn Fn() -> Option<crate::typed_place::Occurrence>,
+    ) -> Option<&Value> {
         let matched = self
             .by_line
             .get(&line)?
@@ -941,16 +959,11 @@ impl StatementIndex {
                     .then_some(node)
             })
             .collect::<Vec<_>>();
-        let node = match matched.as_slice() {
-            [node] => *node,
-            [_, _, ..] => self.by_occurrence(&matched, line, &occurrence()?)?,
-            [] => return None,
-        };
-        let mut reader = self.reader(&never_bound).recording(decisions);
-        // Card CG11 (rule 10v): only the statement route reads a pointer store.
-        reader.pointer_stores = true;
-        reader.statement(node)?;
-        Some(reader.plan)
+        match matched.as_slice() {
+            [node] => Some(*node),
+            [_, _, ..] => self.by_occurrence(&matched, line, &occurrence()?),
+            [] => None,
+        }
     }
 
     /// A fresh reader over this function's field and enum facts.
@@ -960,6 +973,7 @@ impl StatementIndex {
             pointer_store_target: false,
             pointer_stores: false,
             aggregate_target: false,
+            opaque_call: None,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
@@ -1243,6 +1257,11 @@ pub(crate) struct Reader<'a> {
     /// [`Reader::path`] reads or stores a whole custody-free record, so the
     /// place's type is not required to be a scalar.
     pub(crate) aggregate_target: bool,
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rule 14a; shared
+    /// item added to this reader): the one call of the statement whose value
+    /// the caller lowers on its own, read here as an opaque scalar operand.
+    /// `None` everywhere else, which keeps every call refused.
+    pub(crate) opaque_call: Option<&'a Value>,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
@@ -1457,6 +1476,16 @@ impl<'a> Reader<'a> {
             "MemberExpr" | "ArraySubscriptExpr" => self.path(node, false, false),
             "UnaryOperator" if node["opcode"].as_str() == Some("*") => {
                 self.path(node, false, false)
+            }
+            // Rule 14a: exactly the call the caller lowers itself, whose
+            // value is a scalar; it reads nothing here.
+            "CallExpr"
+                if self
+                    .opaque_call
+                    .is_some_and(|call| std::ptr::eq(call, node))
+                    && self.scalar(node) =>
+            {
+                Some(())
             }
             _ => None,
         }

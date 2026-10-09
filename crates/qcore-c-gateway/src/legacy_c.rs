@@ -131,6 +131,11 @@ mod return_call_access;
 // last, a re-attribution that never admits.
 #[path = "legacy_uncontracted_access.rs"]
 mod uncontracted_access;
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a, 14b): one
+// contracted scalar call inside a typed scalar statement, and an interior
+// pointer into an untracked object; asked after the statement fallbacks.
+#[path = "legacy_residual_access.rs"]
+mod residual_access;
 
 // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
 // release, a pointer member null test, and the call-site sub-custody guard
@@ -5215,6 +5220,15 @@ impl Parser<'_> {
                 &instruction,
                 use_,
             );
+        }
+        // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (rules 14a, 14b),
+        // asked after every statement fallback, only for the gate's refusal.
+        self.typed_place_origin
+            .set(origin.map(|origin| (origin, tokens.len())));
+        let residual = self.residual_access_statement(tokens, line, &instruction);
+        self.typed_place_origin.set(None);
+        if let Some(statement) = residual {
+            return statement;
         }
         // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,
         // only for the gate's refusal: it names the uncontracted callee where

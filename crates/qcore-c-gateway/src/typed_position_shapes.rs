@@ -120,9 +120,12 @@ impl crate::typed_access_path::Reader<'_> {
         let mut place = children(node).first()?;
         if handed_to_a_callee {
             // O04-B09B10's shape: `& BASE -> FIELD` (or `.`) exactly, a member
-            // and never an element or a parenthesized place, since the callee
-            // may write through it.
-            if kind(place) != "MemberExpr" {
+            // and never a parenthesized place, since the callee may write
+            // through it. Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2
+            // (rule 14c): or an element `& PATH [ I ]` whose type is a
+            // builtin scalar, so the array it belongs to holds no pointer a
+            // write through the address could reach.
+            if !crate::scalar_element_address::admits(place, |node| self.scalar(node)) {
                 return None;
             }
         } else {

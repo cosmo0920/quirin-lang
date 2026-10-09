@@ -1,0 +1,19 @@
+import QCore.ResidualAccessReadings
+
+/-! Audited companion to CG10-INDIRECT-ACCESS-SOLE-RESIDUALS round 2 (gateway rules 14a, 14b, 14c). -/
+
+#print axioms QCore.ResidualAccessReadings.a_borrowed_call_changes_no_custody
+#print axioms QCore.ResidualAccessReadings.a_read_is_decided_alike_on_either_side_of_the_call
+#print axioms QCore.ResidualAccessReadings.a_releasing_call_does_not_commute
+#print axioms QCore.ResidualAccessReadings.scalar_call_vectors_hold
+#print axioms QCore.ResidualAccessReadings.two_calls_are_never_read
+#print axioms QCore.ResidualAccessReadings.an_admitted_call_takes_no_custody
+#print axioms QCore.ResidualAccessReadings.interior_vectors_hold
+#print axioms QCore.ResidualAccessReadings.a_bound_root_is_never_read
+#print axioms QCore.ResidualAccessReadings.the_interior_alias_is_the_pointer_reads
+#print axioms QCore.ResidualAccessReadings.a_release_through_the_alias_discharges_nothing
+#print axioms QCore.ResidualAccessReadings.the_alias_is_never_known_non_null
+#print axioms QCore.ResidualAccessReadings.address_vectors_hold
+#print axioms QCore.ResidualAccessReadings.a_member_keeps_rule_10n
+#print axioms QCore.ResidualAccessReadings.an_element_is_read_only_when_scalar
+#print axioms QCore.ResidualAccessReadings.nothing_else_is_read
