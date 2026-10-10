@@ -557,33 +557,6 @@
       ]
     },
     {
-      "function": "print",
-      "module": "librdkafka/cjson.qv",
-      "contract_sha256": "45f1497d2f89a8f29ed00d90877f71cf2e96acd129caeaecfdccbd5b955994ce",
-      "identities": [
-        {
-          "reviewed_at": [
-            {
-              "kind": "git",
-              "revision": "046accf6aded7906f66a1baf0202da349e521736"
-            },
-            {
-              "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
-            }
-          ],
-          "sites": [
-            {
-              "path": "lib/librdkafka-2.15.0/src/cJSON.c",
-              "kind": "definition",
-              "declaration_sha256": "c36c98da2111837a23b2d087963e2a628e001c312edc6d2a9bf2f32355c16f6e",
-              "body_sha256": "f1b509f8eabeabac33e358d9adc58389e70ee8167cd8bce6baecaa43450c3267"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "function": "rd_atomic32_get",
       "module": "librdkafka/memory.qv",
       "contract_sha256": "979f962b74a71d79acff900e1f77465979ddb042cfe49876fbb5ef6480821cb0",
