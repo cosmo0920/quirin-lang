@@ -6757,7 +6757,7 @@
   "workspace_tests": 7832,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 308,
+  "lean_audits": 310,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6854,6 +6854,7 @@
    "AuditDeepAstTransports.lean",
    "AuditDeepUnitAst.lean",
    "AuditDenominatorCoverage.lean",
+   "AuditDerefDecomposition.lean",
    "AuditDereferencedResult.lean",
    "AuditDerivedOutSlot.lean",
    "AuditDerivedResult.lean",
@@ -6934,6 +6935,7 @@
    "AuditNeutralPrefixPreservation.lean",
    "AuditNoBuildScope.lean",
    "AuditNullDeref.lean",
+   "AuditNullDerefGrade.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
@@ -7074,7 +7076,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a013e1509dac871e8/docs/reports/null-safety-property/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
