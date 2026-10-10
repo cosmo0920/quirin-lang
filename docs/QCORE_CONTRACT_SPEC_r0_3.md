@@ -1676,11 +1676,112 @@ says of each premise whether the null property proves its check. The binding
 itself stays possibly NULL for custody (a release, a publication or an escape
 through it decides as before).
 
+**Grounding: a usage grade read with access and identity** (card
+NULL-DEREF-QTT-GROUNDING; language specification
+[§L07](QCORE_SPEC_r0_3.md#l07-usage-grades), with
+[§L08](QCORE_SPEC_r0_3.md#l08-credit-live-obligations-cost-and-access-quantities)
+and [§L09](QCORE_SPEC_r0_3.md#l09-ownership-identity-and-borrowing)).
+
+> **USER DECISION 2026-10-11.** The user asked which of Quirin's type systems
+> `quant null-deref` belongs to, since `quant` always refers to the
+> quantitative types (the question as the card's brief records it). The
+> decision, verbatim: "We need grounding." The user accepted the integrator's
+> analysis, which this paragraph states normatively: `quant null-deref #B;`
+> is the contract-level projection of a §L07 usage grade, read with §L08–§L09
+> access and identity. It is not a §L06 index or dimension, and not a
+> `credit`, `live` or `cost` axis.
+
+*Placement.* `quant checks P, Idx #i: …` (C09.2) belongs to §L06: static
+dimensions, `Idx + Ordered`, `index.closed`. `quant null-deref #B;` belongs to
+§L07. It introduces no type, no dimension and no axis. The spelling stays as
+a readable shorthand for the reading below, and its `#B` binder names a formal
+as `Idx #i` names an index variable. The two forms stay distinct: `quant
+checks` is an index predicate evaluated by the closed index vocabulary, while
+`quant null-deref` has no index, no predicate and no arithmetic. The bounds
+consumer never reads `quant null-deref`, and the null property never reads
+`quant checks`.
+
+*The use.* A dereference of `B` (every check of "What is checked" made through
+`B`'s value) is a use of `B`'s pointee: an operation on an identity. It needs
+an access share on that identity's footprint (§L08, `FULL = 1024`). A raw
+pointer carries no custody (§L09), so the use needs a live identity to borrow
+from. NULL has no identity, so no share exists for it. Non-NULL is therefore
+the existence precondition of every such use.
+
+*The grade of a body*, for each pointer formal `B`:
+
+1. **A path's demand.** Along one terminating path, each dereference of `B`'s
+   entry value adds one use (§L07: sequential demands add). The account
+   closes at the first NULL test of that value: after it the body holds its
+   own evidence, and later uses are proved by the test, not by the caller. It
+   also closes at the first assignment of `B` (decision 1's reassignment):
+   after it `B` names another value. `B ± n` is the same value (C11
+   6.5.6p8) and adds nothing. Passing the value to a clause position of a
+   callee whose clause is in force (declared and pinned, or inferred in the
+   unit) is §L07 demand substitution: the parameter's `relevant` times the
+   argument's `one` is `relevant`, so it adds a use. A held clause is not in
+   force and adds nothing. Any other call position is `many` times `one`,
+   lower bound 0. A path's demand is the exact interval `[n, n]`, where `n` is
+   the number of uses before the account closes.
+2. **The join.** The body's grade is the least enclosing interval of its
+   terminating paths' demands (§L07: a mutually exclusive branch join is the
+   least enclosing interval, not the sum). Its lower bound is the minimum and
+   its upper bound the maximum (`inf` once a loop can repeat a use). A loop
+   contributes its unrolled paths. A label that a later `goto` reaches counts
+   as a path whose account closed at 0, because the walk forgets every fact
+   there. A body with no terminating path has no grade.
+3. **Only the lower bound is read.** The upper bound never enters an
+   admission.
+
+*The clause is the grade `relevant`.* "Dereferenced on every path before any
+NULL test" is exactly a lower bound of at least 1: the grade `relevant`,
+`[1, inf]`. A dereference on only some paths is `many`, `[0, inf]`. A lower
+bound of 0 imposes no caller obligation, which is why the clause is inferred
+(rule 14p) only when the body's grade is `relevant`. A body with no grade
+infers nothing, so its formal stays possibly NULL in its own row.
+
+*The moved question is sequential demand addition.* On a path where a use has
+occurred (a demand of 1) and `B` is not reassigned, every later use, such as a
+further dereference or `&B->F`, adds to a demand that already requires the
+identity. The identity requirement of a sum is required as soon as one summand
+requires it, and it is required once. The later use therefore inherits the
+identity that the first use required. This is decision 1: the later check is
+`moved` to the first.
+
+*Caller obligation.* A declared `relevant` use admits an actual only if the
+actual's identity exists, that is, only if it is non-NULL. A caller's
+`call-precondition` check is discharged exactly when no value that the walk's
+reading of the actual admits is NULL. A grade whose lower bound is 0 admits
+every actual.
+
+*Callee validation is one-sided.* The body check of a declared clause is
+`relevant`'s admission of the body's grade. It is `necessary` exactly when the
+body's grade has a lower bound of at least 1, otherwise
+`stronger-than-necessary`. Here the clause departs from §L07, deliberately.
+§L07 admission rejects a declared grade that does not contain the actual
+interval (the usage checker refuses `one` on an unused parameter). The
+clause's body check reports instead, and never rejects (decision 2: never
+wrong). The departure is sound. The clause asks the caller for an existing
+identity: a precondition, not a linear demand. A read's access share is
+borrowed and conserved (§L08), not consumed. Asking for a share the body need
+not use therefore spends nothing, and the callee's non-NULL entry reading
+holds for every caller that meets the obligation.
+
 Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
 `moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,
 `caller_obligation_establishes_the_entry`, `an_inferred_clause_is_necessary`,
 `a_relied_on_reading_is_listed`, `combined_safe_needs_null_safe`), audited in
 `proof/AuditNullDeref.lean`, vectors bound to the Rust.
+The grounding: `QCore.NullDerefGrade` (`relevant_accepts_body_iff_inferred`,
+`necessary_iff_relevant`, `zero_lower_imposes_nothing`,
+`a_path_without_a_first_dereference_infers_no_clause`,
+`moved_question_is_sequential_addition`, `branch_join_matches`,
+`caller_obligation_is_grade_admission`,
+`stronger_than_necessary_is_still_sound`), audited in
+`proof/AuditNullDerefGrade.lean`. Its `gradeVectors` are bound to
+`qcore_core::usage` and `qcore_core::null_deref` by
+`crates/qcore-core/tests/null_deref_grade.rs`. That the walk's `First` sets are
+this abstraction of its paths is a review premise (trust boundary 28).
 
 ## C10. Cleanup and OS endpoint contracts
 

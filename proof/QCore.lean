@@ -360,5 +360,6 @@ import QCore.DeepAstTransports
 import QCore.ResidualAccessReadings
 import QCore.CallbackContracts
 import QCore.NullDeref
+import QCore.NullDerefGrade
 
 /-! The executable formal core of QCore-C revision 0.1. -/

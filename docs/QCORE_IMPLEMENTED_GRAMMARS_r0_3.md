@@ -3869,6 +3869,21 @@ reject the clause kind, as they do `quant checks`. A declaration holding only
 null-dereference checks still carries `requires bounds_contract_v1;`, and its
 signature obeys G05b (no floating type; a slot only with a closed frame).
 
+**Grounding** (card NULL-DEREF-QTT-GROUNDING, USER DECISION 2026-10-11: "We
+need grounding."). The production is spelled with `quant` because it is a
+quantitative form, but not the §L06 one that G05c reads. It is the
+contract-level projection of a §L07 usage grade, read with §L08–§L09 access
+and identity ([language §L07](QCORE_SPEC_r0_3.md#l07-usage-grades),
+"Null-dereference demand"; [contract
+§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
+"Grounding"). `quant null-deref #B;` reads as "`B`'s dereference demand has
+grade `relevant`": every terminating path uses `B`'s pointee before any NULL
+test, so every caller must pass an existing identity (non-NULL). The
+production adds no type, dimension, axis, grade literal or predicate. Its
+`#IDENT` binder names a formal as G05c's `Idx #IDENT` names an index variable,
+and the two clauses stay separate kinds (`QuantNullDeref`, `QuantCheck`), each
+read by one consumer only.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

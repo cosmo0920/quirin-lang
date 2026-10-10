@@ -403,6 +403,8 @@ Its conceptual `Idx<N>` relation is not this dimension capability or currently
 accepted type syntax. Human review admits external premises; the consumer must
 still check each covered use, and custody safety alone proves no access bound.
 
+The existing-C quantified index check `quant checks P, Idx #i: …` ([contract §C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks)) belongs to this section. The clause `quant null-deref #B;` does not: it has no index, dimension or predicate, and is a §L07 usage grade ("Null-dereference demand").
+
 The implementation also bounds expression nesting, additive chains, dependency depth, and evaluation recursion. A limit failure is a rejection, not permission to approximate a term as zero. See `quant_index.rs:130–308,315–580` for the exact operational limits.
 
 ## L07. Usage grades
@@ -427,6 +429,17 @@ Unannotated source parameters use `many` in the current driver. Supported explic
 
 A `one` annotation constrains demand, not object lifetime. Resource destruction, implicit error cleanup, aliasing, and cross-thread authority remain separate checks. See `usage.rs`, `QTT_ALIGNMENT.md`, and `driver.rs:354–381,392–675`.
 
+**Null-dereference demand (USER DECISION 2026-10-11, "We need grounding.").** The existing-C contract clause `quant null-deref #B;` ([contract §C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref), grammar [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks)) is the contract-level projection of a usage grade of this section, read with the access and identity of §L08–§L09. It is not a §L06 index or dimension, and not a `credit`, `live` or `cost` axis. It introduces no type: the spelling is a shorthand, and `#B` names a formal as `Idx #i` names an index variable. The rules are normative:
+
+- **Demand of a path.** Each dereference of `B`'s entry value is one use of its pointee, and uses on one path add. The account closes at the first NULL test of that value and at the first assignment of `B`. An offset `B ± n` adds nothing. Passing the value to a callee's clause position in force is demand substitution: `relevant` times `one` adds a use. A path's demand is `[n, n]`.
+- **Demand of a body.** It is the least enclosing interval of its terminating paths' demands, by the branch join above. A body with no terminating path has none.
+- **The clause.** "Dereferenced on every path before any NULL test" is exactly a lower bound of at least 1, the grade `relevant`. A dereference on only some paths is `many`. A lower bound of 0 imposes no caller obligation, so no clause is inferred from it.
+- **The moved question.** Once a demand of 1 has occurred and `B` is not reassigned, later uses (including `&B->F`) add to a demand that already requires the identity. They inherit the identity that the first use required.
+- **Caller obligation.** A declared `relevant` use admits an actual only if the actual's identity exists, that is, only if it is non-NULL (§L08–§L09: NULL has no identity, so no access share exists for it).
+- **Callee validation.** The clause's body check reads the body's lower bound alone. It reports `necessary` or `stronger-than-necessary` and never rejects. This is a stated exception to "a declared grade admits an actual demand only when it contains the actual interval": the clause is an existence precondition on the caller and consumes no share, so a clause stronger than its body is sound.
+
+Lean: `QCore.NullDerefGrade` (`relevant_accepts_body_iff_inferred`, `zero_lower_imposes_nothing`, `moved_question_is_sequential_addition`, `branch_join_matches`, `caller_obligation_is_grade_admission`), over the grades of `QCore.Usage`.
+
 ## L08. Credit, live obligations, cost, and access quantities
 
 `quant<credit,q>` represents capacity that may be split, transferred, and spent according to its contract. Splitting MUST conserve each dimension. A profile may permit explicit abandonment of unused credit, but abandonment cannot discharge live custody.
@@ -437,11 +450,15 @@ A cost quantity is an upper bound, not transferable authority. `cost.total` accu
 
 Access shares authorize operations on a particular identity and footprint. They are neither demand counts nor credit balances. The design uses `FULL = 1024`; `model.concurrent14` implements that constant as `FULL_ACCESS`. A write to ordinary non-atomic memory requires exclusive authority under the relevant access model. Multiple reads may use conserved positive shares. Atomic operations require their own access and lifetime protocol; the fact that two accesses are atomic does not prove publication, reclamation, or resource-lifetime safety.
 
+A dereference through a pointer is a use of an identity's footprint and needs such a share. NULL names no identity, so no share exists for it. The contract clause `quant null-deref #B;` states that existence precondition as a §L07 grade; see §L07, "Null-dereference demand".
+
 The current closed quant resolver is not a credit-flow checker for arbitrary source bodies. The usage checker, flow checker, identity ledger, and concurrency checker have distinct APIs and representations. An implementation MUST make conversions between their numeric ranges explicit and checked.
 
 ## L09. Ownership, identity, and borrowing
 
 The extended language design distinguishes raw pointers, owned resources, and borrows. A raw pointer conveys a representation, not custody. Moving an owned resource transfers its unique responsibility and invalidates the old owning binding. Dropping requires the relevant destruction authority and no incompatible active borrow. Shared and mutable borrows constrain operations without transferring destruction responsibility.
+
+A dereference of a raw pointer is therefore a use under a borrow of a live identity, never an exercise of custody. The null-dereference demand of §L07 reads its caller obligation from this rule: a `relevant` use requires that the actual's identity exist.
 
 An identity in the general design includes a lifetime generation. Reusing a numeric address, file descriptor, slot, or source variable does not revive the old identity. A bounded model with plain integer resource IDs MUST treat each ID as one unique lifetime, or import a separately verified generation mapping. It MUST NOT interpret address equality as generation equality.
 
