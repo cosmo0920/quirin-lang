@@ -1,0 +1,1686 @@
+{
+ "statuses_before": {
+  "Unknown": 3910,
+  "Safe": 915,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3892,
+  "Safe": 933,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 18
+ },
+ "status_moves_by_label": {
+  "callee:cio_file_native_get_size": 2,
+  "callee:cfl_list_size": 2,
+  "callee:unit_test_telemetry": 2,
+  "callee:cmt_atomic_initialize": 1,
+  "callee-summary:is_metric_empty": 1,
+  "callee:cio_stream_size_chunks_up": 1,
+  "callee:rd_kafka_mem_calloc": 1,
+  "callee:rd_bytes_hash": 1,
+  "callee-summary:rd_kafka_Uuid_hash": 1,
+  "callee:rd_kafka_AclBinding_destroy": 1,
+  "callee:rd_kafka_ConfigResource_destroy": 1,
+  "callee:rd_kafka_NewPartitions_destroy": 1,
+  "callee:rd_kafka_NewTopic_destroy": 1,
+  "callee:rd_kafka_UserScramCredentialAlteration_destroy": 1,
+  "callee-summary:unit_test_telemetry_gauge": 1,
+  "callee-summary:unit_test_telemetry_sum": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 120,
+  "unresolved resource identity `_`": 6,
+  "unmodeled call, aggregate or indirect access in branch condition": 5,
+  "indirect memory access is outside the resource projection": 4
+ },
+ "added": {
+  "unresolved resource identity `_`": 16,
+  "indirect memory access is outside the resource projection": 6,
+  "nullable resource `_` used by a non-null contract": 1
+ },
+ "moving_rows": 69,
+ "status_moves": [
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_real_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3209: call to uncontracted function `cio_file_native_get_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_update_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3398: call to uncontracted function `cio_file_native_get_size`",
+    "3400: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmetrics.c",
+   "occurrence": 1,
+   "function": "cmt_initialize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cmt_atomic_initialize"
+   ],
+   "lost": [
+    "5583: call to uncontracted function `cmt_atomic_initialize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "count_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7317: call to uncontracted function `cfl_list_size`",
+    "7325: call to uncontracted function `cfl_list_size`",
+    "7333: call to uncontracted function `cfl_list_size`",
+    "7341: call to uncontracted function `cfl_list_size`",
+    "7349: call to uncontracted function `cfl_list_size`",
+    "7357: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_metric_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:is_metric_empty"
+   ],
+   "lost": [
+    "7941: call to uncontracted function `is_metric_empty`",
+    "7945: call to uncontracted function `is_metric_empty`",
+    "7949: call to uncontracted function `is_metric_empty`",
+    "7953: call to uncontracted function `is_metric_empty`",
+    "7957: call to uncontracted function `is_metric_empty`",
+    "7961: call to uncontracted function `is_metric_empty`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "is_metric_empty",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7922: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19880: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_createStreamHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_mem_calloc"
+   ],
+   "lost": [
+    "1273: call to uncontracted function `rd_kafka_mem_calloc`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_bytes_hash"
+   ],
+   "lost": [
+    "25185: call to uncontracted function `rd_bytes_hash`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_map_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_Uuid_hash"
+   ],
+   "lost": [
+    "25188: call to uncontracted function `rd_kafka_Uuid_hash`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_destroy"
+   ],
+   "lost": [
+    "23445: call to uncontracted function `rd_kafka_AclBinding_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "21842: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewPartitions_destroy"
+   ],
+   "lost": [
+    "21560: call to uncontracted function `rd_kafka_NewPartitions_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewTopic_destroy"
+   ],
+   "lost": [
+    "21229: call to uncontracted function `rd_kafka_NewTopic_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_UserScramCredentialAlteration_destroy"
+   ],
+   "lost": [
+    "23949: call to uncontracted function `rd_kafka_UserScramCredentialAlteration_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unit_test_telemetry_gauge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:unit_test_telemetry"
+   ],
+   "lost": [
+    "22105: call to uncontracted function `unit_test_telemetry`",
+    "22114: call to uncontracted function `unit_test_telemetry`",
+    "22123: call to uncontracted function `unit_test_telemetry`",
+    "22132: call to uncontracted function `unit_test_telemetry`",
+    "22141: call to uncontracted function `unit_test_telemetry`",
+    "22150: call to uncontracted function `unit_test_telemetry`",
+    "22158: call to uncontracted function `unit_test_telemetry`",
+    "22166: call to uncontracted function `unit_test_telemetry`",
+    "22174: call to uncontracted function `unit_test_telemetry`",
+    "22182: call to uncontracted function `unit_test_telemetry`",
+    "22191: call to uncontracted function `unit_test_telemetry`",
+    "22200: call to uncontracted function `unit_test_telemetry`",
+    "22209: call to uncontracted function `unit_test_telemetry`",
+    "22218: call to uncontracted function `unit_test_telemetry`",
+    "22228: call to uncontracted function `unit_test_telemetry`",
+    "22238: call to uncontracted function `unit_test_telemetry`",
+    "22247: call to uncontracted function `unit_test_telemetry`",
+    "22256: call to uncontracted function `unit_test_telemetry`",
+    "22264: call to uncontracted function `unit_test_telemetry`",
+    "22273: call to uncontracted function `unit_test_telemetry`",
+    "22282: call to uncontracted function `unit_test_telemetry`",
+    "22291: call to uncontracted function `unit_test_telemetry`",
+    "22300: call to uncontracted function `unit_test_telemetry`",
+    "22308: call to uncontracted function `unit_test_telemetry`",
+    "22316: call to uncontracted function `unit_test_telemetry`",
+    "22324: call to uncontracted function `unit_test_telemetry`",
+    "22332: call to uncontracted function `unit_test_telemetry`",
+    "22340: call to uncontracted function `unit_test_telemetry`",
+    "22349: call to uncontracted function `unit_test_telemetry`",
+    "22358: call to uncontracted function `unit_test_telemetry`",
+    "22366: call to uncontracted function `unit_test_telemetry`",
+    "22374: call to uncontracted function `unit_test_telemetry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unit_test_telemetry_sum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:unit_test_telemetry"
+   ],
+   "lost": [
+    "22388: call to uncontracted function `unit_test_telemetry`",
+    "22397: call to uncontracted function `unit_test_telemetry`",
+    "22406: call to uncontracted function `unit_test_telemetry`",
+    "22414: call to uncontracted function `unit_test_telemetry`",
+    "22424: call to uncontracted function `unit_test_telemetry`",
+    "22432: call to uncontracted function `unit_test_telemetry`",
+    "22440: call to uncontracted function `unit_test_telemetry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unittest_telemetry_decode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:unit_test_telemetry_gauge",
+    "callee-summary:unit_test_telemetry_sum"
+   ],
+   "lost": [
+    "22452: call to uncontracted function `unit_test_telemetry_gauge`",
+    "22453: call to uncontracted function `unit_test_telemetry_sum`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "_cio_file_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cio_file_update_size"
+   ],
+   "lost": [
+    "3374: call to uncontracted function `cio_file_update_size`"
+   ],
+   "gained": [
+    "3374: unresolved resource identity `cf`"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_calculate_checksum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cio_file_update_size"
+   ],
+   "lost": [
+    "2889: call to uncontracted function `cio_file_update_size`"
+   ],
+   "gained": [
+    "2889: unresolved resource identity `cf`",
+    "2892: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_down",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cio_file_update_size"
+   ],
+   "lost": [
+    "3418: call to uncontracted function `cio_file_update_size`"
+   ],
+   "gained": [
+    "3418: unresolved resource identity `cf`"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_open",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cio_file_update_size"
+   ],
+   "lost": [
+    "3290: call to uncontracted function `cio_file_update_size`",
+    "3300: call to uncontracted function `cio_file_update_size`"
+   ],
+   "gained": [
+    "3290: unresolved resource identity `cf`",
+    "3300: unresolved resource identity `cf`"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_real_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3209: call to uncontracted function `cio_file_native_get_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3561: call to uncontracted function `cio_file_native_get_size`",
+    "3594: call to uncontracted function `cio_file_update_size`"
+   ],
+   "gained": [
+    "3594: unresolved resource identity `cf`"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_update_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3398: call to uncontracted function `cio_file_native_get_size`",
+    "3400: unresolved resource identity `cf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "mmap_file",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cio_file_native_get_size"
+   ],
+   "lost": [
+    "3070: call to uncontracted function `cio_file_native_get_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmetrics.c",
+   "occurrence": 1,
+   "function": "cmt_initialize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cmt_atomic_initialize"
+   ],
+   "lost": [
+    "5583: call to uncontracted function `cmt_atomic_initialize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "cmt_cat_copy_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "5985: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_cat.c",
+   "occurrence": 1,
+   "function": "copy_label_values",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "5616: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "occurrence": 1,
+   "function": "unpack_metric_array_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "8034: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "compute_metric_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7262: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_data_point_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7489: call to uncontracted function `cfl_list_size`",
+    "7529: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_or_create_data_point_metadata_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7325: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "decode_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6541: call to uncontracted function `cfl_list_size`",
+    "6581: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_statsd.c",
+   "occurrence": 1,
+   "function": "decode_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "5712: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "count_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7317: call to uncontracted function `cfl_list_size`",
+    "7325: call to uncontracted function `cfl_list_size`",
+    "7333: call to uncontracted function `cfl_list_size`",
+    "7341: call to uncontracted function `cfl_list_size`",
+    "7349: call to uncontracted function `cfl_list_size`",
+    "7357: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_context_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:count_metrics"
+   ],
+   "lost": [
+    "7372: call to uncontracted function `count_metrics`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7216: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "5823: call to uncontracted function `cfl_list_size`",
+    "5828: unresolved resource identity `map`",
+    "5829: unresolved resource identity `opts`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_basic_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7301: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_metric",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7148: call to uncontracted function `cfl_list_size`",
+    "7268: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_metric_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:is_metric_empty"
+   ],
+   "lost": [
+    "7941: call to uncontracted function `is_metric_empty`",
+    "7945: call to uncontracted function `is_metric_empty`",
+    "7949: call to uncontracted function `is_metric_empty`",
+    "7953: call to uncontracted function `is_metric_empty`",
+    "7957: call to uncontracted function `is_metric_empty`",
+    "7961: call to uncontracted function `is_metric_empty`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "is_metric_empty",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7922: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "pack_basic_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9408: call to uncontracted function `cfl_list_size`",
+    "9416: unresolved resource identity `map`",
+    "9428: unresolved resource identity `map`",
+    "9439: unresolved resource identity `map`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "add_static_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6017: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "format_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "6312: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "pack_complex_metric_sample",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7148: call to uncontracted function `cfl_list_size`",
+    "7269: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "render_remote_write_context_to_sds",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "6561: indirect memory access is outside the resource projection",
+    "6562: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "occurrence": 1,
+   "function": "set_up_time_series_for_label_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6772: call to uncontracted function `cfl_list_size`",
+    "6780: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_labels",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "5805: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "ctr_encode_msgpack_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7089: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_events",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6902: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6800: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_links",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "6934: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7048: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "7035: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otel_span_set_events",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "9037: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "otel_span_set_links",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9076: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_events_from_ctr",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9024: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_resource_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9294: call to uncontracted function `cfl_list_size`",
+    "9305: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "9305: unresolved resource identity `otel_resource_span`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_scope_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9238: call to uncontracted function `cfl_list_size`",
+    "9257: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_spans",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_list_size"
+   ],
+   "lost": [
+    "9153: call to uncontracted function `cfl_list_size`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_text.c",
+   "occurrence": 1,
+   "function": "format_span",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "6964: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19880: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_createStreamDecode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_mem_calloc"
+   ],
+   "lost": [
+    "1711: call to uncontracted function `rd_kafka_mem_calloc`"
+   ],
+   "gained": [
+    "1711: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "1711: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_createHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:LZ4_createStreamHC"
+   ],
+   "lost": [
+    "1449: call to uncontracted function `LZ4_createStreamHC`"
+   ],
+   "gained": [
+    "1452: unresolved resource identity `hc4`"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_createStreamHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_mem_calloc"
+   ],
+   "lost": [
+    "1273: call to uncontracted function `rd_kafka_mem_calloc`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_queue_destroy_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:mk_fifo_queue_destroy"
+   ],
+   "lost": [
+    "5260: call to uncontracted function `mk_fifo_queue_destroy`"
+   ],
+   "gained": [
+    "5260: unresolved resource identity `q`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_queue_id_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:mk_fifo_queue_destroy"
+   ],
+   "lost": [
+    "5249: call to uncontracted function `mk_fifo_queue_destroy`"
+   ],
+   "gained": [
+    "5249: unresolved resource identity `q`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_bytes_hash"
+   ],
+   "lost": [
+    "25185: call to uncontracted function `rd_bytes_hash`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_Uuid_map_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_Uuid_hash"
+   ],
+   "lost": [
+    "25188: call to uncontracted function `rd_kafka_Uuid_hash`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_destroy"
+   ],
+   "lost": [
+    "23451: call to uncontracted function `rd_kafka_AclBinding_destroy`"
+   ],
+   "gained": [
+    "23451: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_destroy"
+   ],
+   "lost": [
+    "23445: call to uncontracted function `rd_kafka_AclBinding_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "22022: call to uncontracted function `rd_kafka_ConfigResource_destroy`",
+    "22027: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": [
+    "22022: unresolved resource identity `config`",
+    "22027: unresolved resource identity `config`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "21848: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": [
+    "21848: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "21842: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "22388: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": [
+    "22388: unresolved resource identity `config`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConfigResource_destroy"
+   ],
+   "lost": [
+    "22143: call to uncontracted function `rd_kafka_ConfigResource_destroy`",
+    "22148: call to uncontracted function `rd_kafka_ConfigResource_destroy`"
+   ],
+   "gained": [
+    "22143: unresolved resource identity `config`",
+    "22148: unresolved resource identity `config`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewPartitions_destroy"
+   ],
+   "lost": [
+    "21566: call to uncontracted function `rd_kafka_NewPartitions_destroy`"
+   ],
+   "gained": [
+    "21566: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewPartitions_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewPartitions_destroy"
+   ],
+   "lost": [
+    "21560: call to uncontracted function `rd_kafka_NewPartitions_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewTopic_destroy"
+   ],
+   "lost": [
+    "21235: call to uncontracted function `rd_kafka_NewTopic_destroy`"
+   ],
+   "gained": [
+    "21235: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_NewTopic_destroy"
+   ],
+   "lost": [
+    "21229: call to uncontracted function `rd_kafka_NewTopic_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_UserScramCredentialAlteration_destroy"
+   ],
+   "lost": [
+    "23956: call to uncontracted function `rd_kafka_UserScramCredentialAlteration_destroy`"
+   ],
+   "gained": [
+    "23956: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_UserScramCredentialAlteration_destroy"
+   ],
+   "lost": [
+    "23949: call to uncontracted function `rd_kafka_UserScramCredentialAlteration_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unit_test_telemetry_gauge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:unit_test_telemetry"
+   ],
+   "lost": [
+    "22105: call to uncontracted function `unit_test_telemetry`",
+    "22114: call to uncontracted function `unit_test_telemetry`",
+    "22123: call to uncontracted function `unit_test_telemetry`",
+    "22132: call to uncontracted function `unit_test_telemetry`",
+    "22141: call to uncontracted function `unit_test_telemetry`",
+    "22150: call to uncontracted function `unit_test_telemetry`",
+    "22158: call to uncontracted function `unit_test_telemetry`",
+    "22166: call to uncontracted function `unit_test_telemetry`",
+    "22174: call to uncontracted function `unit_test_telemetry`",
+    "22182: call to uncontracted function `unit_test_telemetry`",
+    "22191: call to uncontracted function `unit_test_telemetry`",
+    "22200: call to uncontracted function `unit_test_telemetry`",
+    "22209: call to uncontracted function `unit_test_telemetry`",
+    "22218: call to uncontracted function `unit_test_telemetry`",
+    "22228: call to uncontracted function `unit_test_telemetry`",
+    "22238: call to uncontracted function `unit_test_telemetry`",
+    "22247: call to uncontracted function `unit_test_telemetry`",
+    "22256: call to uncontracted function `unit_test_telemetry`",
+    "22264: call to uncontracted function `unit_test_telemetry`",
+    "22273: call to uncontracted function `unit_test_telemetry`",
+    "22282: call to uncontracted function `unit_test_telemetry`",
+    "22291: call to uncontracted function `unit_test_telemetry`",
+    "22300: call to uncontracted function `unit_test_telemetry`",
+    "22308: call to uncontracted function `unit_test_telemetry`",
+    "22316: call to uncontracted function `unit_test_telemetry`",
+    "22324: call to uncontracted function `unit_test_telemetry`",
+    "22332: call to uncontracted function `unit_test_telemetry`",
+    "22340: call to uncontracted function `unit_test_telemetry`",
+    "22349: call to uncontracted function `unit_test_telemetry`",
+    "22358: call to uncontracted function `unit_test_telemetry`",
+    "22366: call to uncontracted function `unit_test_telemetry`",
+    "22374: call to uncontracted function `unit_test_telemetry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unit_test_telemetry_sum",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:unit_test_telemetry"
+   ],
+   "lost": [
+    "22388: call to uncontracted function `unit_test_telemetry`",
+    "22397: call to uncontracted function `unit_test_telemetry`",
+    "22406: call to uncontracted function `unit_test_telemetry`",
+    "22414: call to uncontracted function `unit_test_telemetry`",
+    "22424: call to uncontracted function `unit_test_telemetry`",
+    "22432: call to uncontracted function `unit_test_telemetry`",
+    "22440: call to uncontracted function `unit_test_telemetry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "occurrence": 1,
+   "function": "unittest_telemetry_decode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:unit_test_telemetry_gauge",
+    "callee-summary:unit_test_telemetry_sum"
+   ],
+   "lost": [
+    "22452: call to uncontracted function `unit_test_telemetry_gauge`",
+    "22453: call to uncontracted function `unit_test_telemetry_sum`"
+   ],
+   "gained": []
+  }
+ ]
+}

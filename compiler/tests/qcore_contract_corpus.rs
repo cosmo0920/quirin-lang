@@ -42,6 +42,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (class 2, rule 12x): the slot move,
     // read from `lib/cfl/src/cfl_sds.c:376-389`.
     ("cfl/sds_lifetime.qv", "cfl_sds_cat_safe", 6),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the list counter: marker, borrowed, `none`.
+    ("cfl/sds_lifetime.qv", "cfl_list_size", 3),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -81,6 +83,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // recorded for its wrapper. This lands the ChunkIO-side module card
     // W29-CORPUS-CONTRACTS' `W29-CONTENT-SIZE-UNDECLARED` asked for.
     ("chunkio/chunk_sizes.qv", "cio_chunk_get_content_size", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: two size readers whose bodies are Safe in
+    // their home units: marker, borrowed formals, `none`.
+    ("chunkio/chunk_sizes.qv", "cio_file_native_get_size", 4),
+    ("chunkio/chunk_sizes.qv", "cio_stream_size_chunks_up", 3),
     (
         "chunkio/constructor_failure_observation.qv",
         "native_constructor_failure_observation",
@@ -272,6 +278,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // defaulted: the body has no leading null guard and its first executable
     // statement reads `cmt->counters`.
     ("cmetrics/context_lifetime.qv", "cmt_destroy", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: no parameter: marker, `none`.
+    ("cmetrics/context_lifetime.qv", "cmt_atomic_initialize", 2),
     ("cmetrics/counter_reset.qv", "cmt_counter_allow_reset", 4),
     // Card W37-CORPUS-CONTRACTS-4: two CMetrics metric-value accessors, each
     // the sole blocker of one projected function (`check_staled_timestamp` and
@@ -448,6 +456,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "fluent_bit/hash_table_publication.qv",
         "flb_hash_table_add",
         8,
+    ),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the entry removal: marker, two borrowed,
+    // `none`.
+    (
+        "fluent_bit/hash_table_publication.qv",
+        "flb_hash_table_del",
+        4,
     ),
     // Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED: the corpus moves 71 -> 72
     // modules with this file, and the resource-v1 declaration count 37 -> 38.
@@ -1196,6 +1211,19 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_list_clear", 5),
     ("librdkafka/client.qv", "pb_write", 6),
     ("librdkafka/client.qv", "pb_encode_varint", 5),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: five Admin-API destructors (marker,
+    // released, `none`) and `unit_test_telemetry` (marker, ten borrowed, the
+    // callback invocation, `none`).
+    ("librdkafka/client.qv", "rd_kafka_AclBinding_destroy", 3),
+    ("librdkafka/client.qv", "rd_kafka_ConfigResource_destroy", 3),
+    ("librdkafka/client.qv", "rd_kafka_NewPartitions_destroy", 3),
+    ("librdkafka/client.qv", "rd_kafka_NewTopic_destroy", 3),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_UserScramCredentialAlteration_destroy",
+        3,
+    ),
+    ("librdkafka/client.qv", "unit_test_telemetry", 13),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
@@ -1217,6 +1245,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_metadata_copy_internal",
         5,
     ),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: two callees whose bodies are Safe in their
+    // home units: the hash (marker, two borrowed, `none`) and the calloc
+    // wrapper (marker, three borrowed, an owned nullable result).
+    ("librdkafka/kafka_mem.qv", "rd_bytes_hash", 4),
+    ("librdkafka/kafka_mem.qv", "rd_kafka_mem_calloc", 5),
     // Card W37-CORPUS-CONTRACTS-4: the deprecated in-place LZ4 stream reset,
     // sole blocker of `LZ4_resetStreamState`. ZEROING IS NOT RELEASING — the
     // body is one `MEM_INIT` (memset) through the parameter, and the freeing
@@ -1674,6 +1707,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qv", "mk_mem_alloc", 3),
     ("monkey/memory.qv", "mk_mem_alloc_z", 3),
     ("monkey/memory.qv", "mk_mem_free", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the FIFO queue destructor: marker,
+    // borrowed `ctx`, released `q`, `none`.
+    ("monkey/memory.qv", "mk_fifo_queue_destroy", 4),
     // Deliberate Cycle 18 executable policy pins.
     (
         "monkey/native_platform_matrix.qv",

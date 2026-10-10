@@ -1,0 +1,130 @@
+{
+ "statuses_before": {
+  "Unknown": 353,
+  "Safe": 91,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 351,
+  "Safe": 93,
+  "Unsafe": 4
+ },
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves_by_label": {
+  "callee:cio_stream_size_chunks_up": 2
+ },
+ "removed": {
+  "call to uncontracted function `_`": 2,
+  "unmodeled call, aggregate or indirect access in branch condition": 2
+ },
+ "added": {},
+ "moving_rows": 4,
+ "status_moves": [
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_total_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cio_stream_size_chunks_up"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `cio_stream_size_chunks_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17847: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17847: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  }
+ ]
+}

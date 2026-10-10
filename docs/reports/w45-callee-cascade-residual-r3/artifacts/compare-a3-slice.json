@@ -1,0 +1,215 @@
+{
+ "statuses_before": {
+  "Unknown": 349,
+  "Safe": 50,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "statuses_after": {
+  "Unknown": 347,
+  "Safe": 52,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves_by_label": {
+  "callee:flb_hash_table_del": 2
+ },
+ "removed": {
+  "call to uncontracted function `_`": 10
+ },
+ "added": {
+  "unresolved resource identity `_`": 7
+ },
+ "moving_rows": 8,
+ "status_moves": [
+  {
+   "unit": "plugins/in_tail/tail_scan.c",
+   "occurrence": 1,
+   "function": "flb_tail_scan_unregister_aged_out_inode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "20250: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_scan.c",
+   "occurrence": 1,
+   "function": "flb_tail_scan_unregister_ignored_file_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "dormant_detach_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "19794: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "dormant_retire",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "19803: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": [
+    "19803: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "20953: call to uncontracted function `flb_hash_table_del`",
+    "20957: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": [
+    "20953: unresolved resource identity `file`",
+    "20957: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_reclaim",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "21101: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": [
+    "21101: unresolved resource identity `dormant`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_remove",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "21031: call to uncontracted function `flb_hash_table_del`",
+    "21032: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": [
+    "21031: unresolved resource identity `file`",
+    "21032: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_to_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "21413: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": [
+    "21413: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_scan.c",
+   "occurrence": 1,
+   "function": "flb_tail_scan_unregister_aged_out_inode",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "20250: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_scan.c",
+   "occurrence": 1,
+   "function": "flb_tail_scan_unregister_ignored_file_size",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_hash_table_del"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `flb_hash_table_del`"
+   ],
+   "gained": []
+  }
+ ]
+}

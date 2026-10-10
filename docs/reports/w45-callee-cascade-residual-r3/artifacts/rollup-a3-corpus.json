@@ -1,0 +1,307 @@
+{
+ "before": {
+  "counts": {
+   "declarations_consulted": 346,
+   "declared_assumption": 252,
+   "held": 1,
+   "partly_validated": 36,
+   "rows_annotated": 4834,
+   "validated": 57
+  },
+  "safe_rollup": {
+   "carrying_a_null_premise": 31,
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 367,
+   "resting_on_a_partly_validated_declaration": 24,
+   "resting_on_no_declaration": 399,
+   "resting_only_on_a_null_premise": 24,
+   "resting_only_on_validated_declarations": 101,
+   "safe_rows": 915
+  }
+ },
+ "after": {
+  "counts": {
+   "declarations_consulted": 359,
+   "declared_assumption": 258,
+   "held": 1,
+   "partly_validated": 37,
+   "rows_annotated": 4834,
+   "validated": 63
+  },
+  "safe_rollup": {
+   "carrying_a_null_premise": 32,
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 380,
+   "resting_on_a_partly_validated_declaration": 24,
+   "resting_on_no_declaration": 397,
+   "resting_only_on_a_null_premise": 24,
+   "resting_only_on_validated_declarations": 108,
+   "safe_rows": 933
+  }
+ },
+ "moved": [
+  {
+   "function": "cfl_list_size",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 15,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 3
+  },
+  {
+   "function": "cio_file_native_get_size",
+   "standing_before": null,
+   "standing_after": "validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 3
+  },
+  {
+   "function": "cio_stream_size_chunks_up",
+   "standing_before": null,
+   "standing_after": "validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 2
+  },
+  {
+   "function": "cmt_atomic_initialize",
+   "standing_before": null,
+   "standing_after": "validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 2
+  },
+  {
+   "function": "flb_input_chunk_total_size",
+   "standing_before": "declared-assumption",
+   "standing_after": "validated",
+   "bodies_before": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "mk_fifo_queue_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 0
+  },
+  {
+   "function": "rd_bytes_hash",
+   "standing_before": null,
+   "standing_after": "validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 3
+  },
+  {
+   "function": "rd_kafka_AclBinding_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "rd_kafka_ConfigResource_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "rd_kafka_NewPartitions_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "rd_kafka_NewTopic_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "rd_kafka_UserScramCredentialAlteration_destroy",
+   "standing_before": null,
+   "standing_after": "declared-assumption",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 1,
+    "validated_by": [],
+    "validated_units": 0,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 1
+  },
+  {
+   "function": "rd_kafka_mem_calloc",
+   "standing_before": null,
+   "standing_after": "validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "W4",
+     "entry"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [],
+   "safe_rows_after": 2
+  },
+  {
+   "function": "unit_test_telemetry",
+   "standing_before": null,
+   "standing_after": "partly-validated",
+   "bodies_before": null,
+   "bodies_after": {
+    "failed_by": [],
+    "failed_units": 0,
+    "unvalidated_units": 0,
+    "validated_by": [
+     "13y"
+    ],
+    "validated_units": 1,
+    "withdrawn_units": 0
+   },
+   "uncovered_clauses_after": [
+    "resource_borrowed(#0)",
+    "resource_borrowed(#1)",
+    "resource_borrowed(#2)",
+    "resource_borrowed(#3)",
+    "resource_borrowed(#4)",
+    "resource_borrowed(#5)",
+    "resource_borrowed(#6)",
+    "resource_borrowed(#7)",
+    "resource_borrowed(#8)",
+    "resource_borrowed(#9)",
+    "resource_return_none()"
+   ],
+   "safe_rows_after": 3
+  }
+ ]
+}

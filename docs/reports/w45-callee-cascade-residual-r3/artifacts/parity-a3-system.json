@@ -1,0 +1,38 @@
+{
+ "rows": [
+  142512,
+  142456
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 124,
+ "only_after": 68,
+ "functions_with_differences": 3,
+ "differences_outside_moving_functions": {
+  "before ?": 4,
+  "after ?": 4
+ },
+ "groups": {
+  "before flb_input_chunk_total_size bound-untracked-closure": 12,
+  "before flb_input_chunk_total_size root-declarations": 12,
+  "before flb_input_chunk_total_size elaboration-statement": 12,
+  "before flb_input_chunk_total_size aggregate-value": 12,
+  "before flb_input_chunk_total_size residual-access": 12,
+  "before flb_input_chunk_total_size uncontracted-access": 12,
+  "before flb_task_create bound-untracked-closure": 12,
+  "before flb_task_create root-declarations": 12,
+  "before flb_task_create condition-desugar": 12,
+  "after flb_task_create bound-untracked-closure": 12,
+  "after flb_task_create root-declarations": 12,
+  "after flb_task_create call-argument": 12,
+  "after flb_task_create condition-desugar": 12,
+  "after flb_input_chunk_total_size bound-untracked-closure": 8,
+  "after flb_input_chunk_total_size root-declarations": 8,
+  "before flb_input_chunk_total_size cast-semantics-census": 4,
+  "before flb_input_chunk_total_size ?": 4,
+  "before flb_input_chunk_total_size void-view-readback": 4,
+  "before ? summary-premises-graph": 4,
+  "after ? summary-premises-graph": 4
+ }
+}

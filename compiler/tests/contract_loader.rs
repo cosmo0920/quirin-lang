@@ -972,6 +972,41 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     for name in ["cio_errno_print", "ctr_errno_print"] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: thirteen declarations in the
+    // function map had no previous reading (`unit_test_telemetry`, a callback
+    // declaration, is withheld with the retaining ones): five Admin-API
+    // destructors and `mk_fifo_queue_destroy` release their object, six are
+    // neutral, and `rd_kafka_mem_calloc` returns `rd_calloc`'s owned result.
+    for (name, nullable) in [
+        ("rd_kafka_AclBinding_destroy", false),
+        ("rd_kafka_ConfigResource_destroy", false),
+        ("rd_kafka_NewPartitions_destroy", false),
+        ("rd_kafka_NewTopic_destroy", false),
+        ("rd_kafka_UserScramCredentialAlteration_destroy", true),
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Released { nullable }], R::None),
+        );
+    }
+    old.insert_contract(
+        "mk_fifo_queue_destroy",
+        ResourceFunctionContract::new([P::Borrowed, P::Released { nullable: false }], R::None),
+    );
+    for name in [
+        "rd_bytes_hash",
+        "cfl_list_size",
+        "flb_hash_table_del",
+        "cio_file_native_get_size",
+        "cio_stream_size_chunks_up",
+        "cmt_atomic_initialize",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    old.insert_contract(
+        "rd_kafka_mem_calloc",
+        ResourceFunctionContract::new([], R::Owned { nullable: true }),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1829,9 +1864,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // entries in `librdkafka/null_deref.qv`, likewise rejected.
     // 313 -> 314 rejected by card NULL-TRIAGE-UNRESOLVED-PATHS: the
     // `cfl/null_deref.qv` result range (`cfl_list_size`), likewise rejected.
+    // 379 -> 393 by card W45-CALLEE-CASCADE-RESIDUAL round 3: fourteen
+    // pinned declarations appended to selected modules (librdkafka
+    // `client.qv` six, `kafka_mem.qv` two; libevent `monkey/memory.qv`
+    // `mk_fifo_queue_destroy`; cfl `sds_lifetime.qv` `cfl_list_size`;
+    // fluent-bit `hash_table_publication.qv` `flb_hash_table_del`; chunkio
+    // `chunk_sizes.qv` two; cmetrics `context_lifetime.qv`
+    // `cmt_atomic_initialize`). Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 379, 314)
+        (61, 393, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1859,8 +1901,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`rd_kafka_topic_partition_list_sort`, `msgpack_packer_init`, which
     // leave the function map) are withheld into the same table (C04.19):
     // 28 -> 44.
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: `unit_test_telemetry`, a
+    // synchronous callback invocation, is withheld into the same table: 44 -> 45.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 44);
+    assert_eq!(loaded.retaining().len(), 45);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

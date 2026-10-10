@@ -4,9 +4,8 @@
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/w45r3/gate-NAME/, nothing piped. PART is `code` (steps 00-07)
 # or `docs` (08-09, after the records) or `all` (default). Step 04's suite run
-# writes its logs to private/w45r3/tests-SUITE_NAME/ (default gate-NAME; the first
-# gate, g1, wrote tests-a3) and its wall time (inside the lock)
-# to private/w45r3/tests-SUITE_NAME.seconds (g1: the third AFTER suite timing run).
+# writes its logs to private/w45r3/tests-SUITE_NAME/ (default gate-NAME) and its
+# wall time (inside the lock) to private/w45r3/tests-SUITE_NAME.seconds.
 # Each step runs under the shared heavy lock.
 set -u
 name="$1"
