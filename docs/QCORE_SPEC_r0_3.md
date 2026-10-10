@@ -403,7 +403,7 @@ Its conceptual `Idx<N>` relation is not this dimension capability or currently
 accepted type syntax. Human review admits external premises; the consumer must
 still check each covered use, and custody safety alone proves no access bound.
 
-The existing-C quantified index check `quant checks P, Idx #i: …` ([contract §C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks)) belongs to this section. The clause `quant null-deref #B;` does not: it has no index, dimension or predicate, and is a §L07 usage grade ("Null-dereference demand").
+The existing-C quantified index check `quant checks P, Idx #i: …` ([contract §C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks)) belongs to this section. The clause `quant null-deref #B;` does not: it has no index, dimension or predicate, and is a §L07 usage grade ("Null-dereference demand"). Within a dereference, `quant checks B, Idx #i: #i == 0;` is the extent part (b) of §L07's "three parts", and it entails the existence part, not the converse.
 
 The implementation also bounds expression nesting, additive chains, dependency depth, and evaluation recursion. A limit failure is a rejection, not permission to approximate a term as zero. See `quant_index.rs:130–308,315–580` for the exact operational limits.
 
@@ -440,6 +440,17 @@ A `one` annotation constrains demand, not object lifetime. Resource destruction,
 
 Lean: `QCore.NullDerefGrade` (`relevant_accepts_body_iff_inferred`, `zero_lower_imposes_nothing`, `moved_question_is_sequential_addition`, `branch_join_matches`, `caller_obligation_is_grade_admission`), over the grades of `QCore.Usage`.
 
+**The three parts of a dereference (USER DIRECTION 2026-10-11, "This can be derived from the proven lean. And it can be natural.").** A dereference `*B` or `B->f` is safe only when three parts hold. Each is a projection of the same use, owned by an existing system: (a) existence, `quant null-deref #B;` (this section with §L09); (b) extent, `quant checks B, Idx #i: #i == 0;` (§L06); (c) liveness, `quant live #B;` (§L08 and custody). The relations among the parts are theorems of `QCore.DerefDecomposition`, derived from the existing models with no new rule or axiom:
+
+- (b) entails (a): NULL has no extent (`checks_zero_entails_null_deref`).
+- The converse fails for a one-past-the-end pointer and for an unknown extent (`null_deref_does_not_entail_checks_zero`, `an_unknown_extent_is_never_in_bounds`), so (a) stays the separate, weaker projection.
+- A part's caller demand is the use's grade times the part's per-use demand (`one` when the callee's contract states it). A lower bound of at least 1 therefore obligates (a) and every stated part, and a lower bound of 0 obligates none (`relevant_obligates_a_stated_part`, `zero_lower_obligates_no_part`).
+- Neither (a) nor (b) discharges (c) (`existence_and_extent_do_not_discharge_liveness`).
+
+No analysis uses the first entailment yet; [contract §C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref) states all four.
+
+**Two levels (USER DECISION 2026-10-11, "Two levels").** The shorthand `quant deref #B;` means its decomposition `quant null-deref #B; quant checks B, Idx #i: #i == 0; quant live #B;`. The loader elaborates every shorthand into these canonical parts and merges agreeing overlaps before any consumer reads the declaration (`elaboration_preserves_meaning`, `merging_an_agreeing_overlap_is_idempotent`). `quant null-deref #B;` keeps its meaning, the existence part alone.
+
 ## L08. Credit, live obligations, cost, and access quantities
 
 `quant<credit,q>` represents capacity that may be split, transferred, and spent according to its contract. Splitting MUST conserve each dimension. A profile may permit explicit abandonment of unused credit, but abandonment cannot discharge live custody.
@@ -450,7 +461,7 @@ A cost quantity is an upper bound, not transferable authority. `cost.total` accu
 
 Access shares authorize operations on a particular identity and footprint. They are neither demand counts nor credit balances. The design uses `FULL = 1024`; `model.concurrent14` implements that constant as `FULL_ACCESS`. A write to ordinary non-atomic memory requires exclusive authority under the relevant access model. Multiple reads may use conserved positive shares. Atomic operations require their own access and lifetime protocol; the fact that two accesses are atomic does not prove publication, reclamation, or resource-lifetime safety.
 
-A dereference through a pointer is a use of an identity's footprint and needs such a share. NULL names no identity, so no share exists for it. The contract clause `quant null-deref #B;` states that existence precondition as a §L07 grade; see §L07, "Null-dereference demand".
+A dereference through a pointer is a use of an identity's footprint and needs such a share. NULL names no identity, so no share exists for it. The contract clause `quant null-deref #B;` states that existence precondition as a §L07 grade; see §L07, "Null-dereference demand". The liveness part (c) of a dereference, `quant live #B;`, is this section's `live` obligation. Neither existence nor extent discharges it (§L07, "three parts").
 
 The current closed quant resolver is not a credit-flow checker for arbitrary source bodies. The usage checker, flow checker, identity ledger, and concurrency checker have distinct APIs and representations. An implementation MUST make conversions between their numeric ranges explicit and checked.
 
@@ -458,7 +469,7 @@ The current closed quant resolver is not a credit-flow checker for arbitrary sou
 
 The extended language design distinguishes raw pointers, owned resources, and borrows. A raw pointer conveys a representation, not custody. Moving an owned resource transfers its unique responsibility and invalidates the old owning binding. Dropping requires the relevant destruction authority and no incompatible active borrow. Shared and mutable borrows constrain operations without transferring destruction responsibility.
 
-A dereference of a raw pointer is therefore a use under a borrow of a live identity, never an exercise of custody. The null-dereference demand of §L07 reads its caller obligation from this rule: a `relevant` use requires that the actual's identity exist.
+A dereference of a raw pointer is therefore a use under a borrow of a live identity, never an exercise of custody. The null-dereference demand of §L07 reads its caller obligation from this rule: a `relevant` use requires that the actual's identity exist. That is the existence part (a) of a dereference (§L07, "three parts"). A released identity still exists in this sense, so existence is not liveness.
 
 An identity in the general design includes a lifetime generation. Reusing a numeric address, file descriptor, slot, or source variable does not revive the old identity. A bounded model with plain integer resource IDs MUST treat each ID as one unique lifetime, or import a separately verified generation mapping. It MUST NOT interpret address equality as generation equality.
 

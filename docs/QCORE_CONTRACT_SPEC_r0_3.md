@@ -1767,6 +1767,123 @@ borrowed and conserved (§L08), not consumed. Asking for a share the body need
 not use therefore spends nothing, and the callee's non-NULL entry reading
 holds for every caller that meets the obligation.
 
+**Decomposition: a dereference read through the `quant` family** (card
+NULL-DEREF-QTT-GROUNDING).
+
+> **USER DIRECTION 2026-10-11.** `quant null-deref` is read through the
+> original `quant` family. The relations between the parts are derived from
+> the proven models, never added as rules or axioms. Verbatim: "This can be
+> derived from the proven lean. And it can be natural."
+
+A dereference `*B` or `B->f` is safe only when three parts hold. Each part is a
+projection of the same dereference use, and each is owned by an existing
+system:
+
+| Part | Clause | Owner |
+| --- | --- | --- |
+| (a) existence: `B` names an identity, so it is not NULL | `quant null-deref #B;` | §L07 grade and §L09 identity; the null-dereference property |
+| (b) extent: `B`'s extent covers the dereferenced object | `quant checks B, Idx #i: #i == 0;` (element units of `*B`) | §L06, C09.1–C09.2; the bounds consumer |
+| (c) liveness: the identity has not been released | `quant live #B;` | §L08 and the custody property |
+
+Each entailment is a theorem of `QCore.DerefDecomposition`, derived from
+`QCore.IndexExtent`, `QCore.IndexQuant`, `QCore.NullDeref`,
+`QCore.NullDerefGrade`, `QCore.Usage` and `QCore.BorrowLiveness`. The only
+modelling choice is the concrete pointer value: NULL, or a position in an
+identity's object with the elements that remain from it and that identity's
+custody status.
+
+1. **`checks(B, #i == 0) ⊢ null-deref(B)`.** NULL has no extent, so a caller
+   whose index-0 check is discharged, against a count that is sound for its
+   actual, passes a value that is not NULL. `relevant` admits that value, and
+   `QCore.NullDeref` may read it non-null (`checks_zero_entails_null_deref`,
+   `checks_zero_entails_extent`). **No analysis uses this entailment.**
+   Discharging a NULL obligation from a bounds fact is a later behaviour card,
+   registered as `NULL-DEREF-FROM-INDEX-ZERO-BOUNDS` with this theorem as its
+   basis.
+2. **The converse fails.** A one-past-the-end pointer is not NULL, yet no
+   sound count discharges its index-0 check
+   (`null_deref_does_not_entail_checks_zero`). A non-NULL pointer with no known
+   extent never discharges it either (`an_unknown_extent_is_never_in_bounds`).
+   `quant null-deref` is therefore a separate, weaker projection and is not
+   defined as `checks #i == 0`.
+3. **The grade decides which parts are caller obligations.** A part's caller
+   demand is §L07 demand substitution: the use's grade times the part's
+   per-use demand, which is `one` when the callee's contract states the part
+   and `zero` otherwise. With a lower bound of at least 1 (`relevant`), (a) is
+   an obligation, and so is each of (b) and (c) wherever the contract states
+   it. With a lower bound of 0 (`many`), no part is an obligation
+   (`relevant_obligates_existence`, `relevant_obligates_a_stated_part`,
+   `an_unstated_part_is_never_obligated`, `zero_lower_obligates_no_part`,
+   `body_grade_decides_the_obligations`).
+4. **Liveness is independent.** A released identity can still have (a) and (b),
+   and a sound count can discharge its index-0 check, yet it fails (c), and
+   custody refuses it (`existence_and_extent_do_not_discharge_liveness`,
+   `a_released_identity_is_refused_although_it_exists_and_has_extent`,
+   `each_part_fails_alone`). No theorem lets (a) or (b) discharge liveness.
+
+**Two levels: the shorthand and its parts** (card NULL-DEREF-QTT-GROUNDING;
+grammar [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks)).
+
+> **USER DECISION 2026-10-11.** Contract authors may write either the
+> shorthand form or the decomposed form, and both must mean the same thing.
+> The user chose "Two levels".
+
+| Written | Canonical parts |
+| --- | --- |
+| `quant deref #B;` | `quant null-deref #B;` `quant checks B, Idx #i: #i == 0;` `quant live #B;` |
+| `quant null-deref #B;` | itself: the existence part (a) alone, its meaning and its pins unchanged |
+| `quant checks B, Idx #i: P;` | itself |
+| `quant live #B;` | itself: the liveness part (c) |
+
+* **One canonical form.** The bounds contract v1 loader elaborates every
+  shorthand into canonical parts before any consumer sees the declaration.
+  Consumers, per-clause standing and the dependency sets see only canonical
+  parts, so a shorthand, its decomposition and every mix give the same clause
+  set and the same standing (`crates/qcore-contract/src/deref_parts.rs`).
+* **Overlap.** A part that a shorthand gives and a part written explicitly for
+  the same pointer are merged when they agree; the shorthand's spelling is
+  kept, and the bound variable's spelling is not meaning. Disagreeing parts
+  are refused (`quant-deref-conflict`): a different index check, or a
+  `bounds_extent` beside the shorthand's extent part (one fact per pointer).
+  A repeated shorthand is refused (`duplicate bounds clause for deref B`), as
+  are two written parts with one key (the loader's duplicate rule, unchanged).
+  An unknown `quant WORD #B;` is refused by the parser
+  (`quant-shorthand-unknown`).
+* **Vocabularies.** `quant deref` and `quant live` are admitted in **bounds
+  contract v1 only**, beside `quant checks` and `quant null-deref`. Bounds v1
+  is the one vocabulary that already carries collocated check forms, pins
+  them (`bounds-contracts.lock`) and selects them on the audit routes, and it
+  is the one loader that sees all three parts of one declaration together.
+  Each canonical part reaches its own consumer. The bounds consumer reads the
+  extent part: `BoundsContracts::for_bounds` removes the existence and
+  liveness parts, and a declaration or module left with no clause leaves the
+  bounds identity. The null-dereference property reads the existence part.
+  Custody reads resource v1 only, and the resource v1 loader **refuses** both
+  new forms, as it refuses every `quant` form, rather than ignoring a part it
+  cannot read. The liveness part therefore reaches custody as a **checked
+  restatement**. An audit route admits a bounds declaration stating `quant live
+  #B;` only where the function's own resource v1 declaration in force puts `B`
+  at a `resource_owned` position, with the same arity: the caller must retain
+  a known live resource across the call. Otherwise the route is refused
+  (`quant-live-unbacked`, `quant-live-contradicts-custody`). This follows the
+  precedent of the checked relation `null_deref_beside`. `resource_borrowed`
+  does not back it, because custody's `Borrowed` rule refuses only an identity
+  released on every path, which is weaker than "not released".
+* **Pins.** The pin digest stays over the text as written (`text_sha256`), so
+  rewriting a shorthand as its decomposition changes the text and needs a
+  re-pin. That is the conservative choice. Each declaration also carries a
+  canonical digest (`canonical_sha256`) over its signature and its sorted
+  canonical part set, so a reviewer can see when two texts mean the same. The
+  bounds selection record publishes every canonical digest, and every backed
+  liveness part, only when some declaration states a liveness part. An
+  environment without the new forms writes the record it wrote before.
+* **Lean.** Elaboration preserves meaning in the three-part model, and merging
+  an agreeing overlap is idempotent (`QCore.DerefDecomposition`:
+  `shorthand_means_its_parts`, `elaboration_preserves_meaning`,
+  `merging_an_agreeing_overlap_is_idempotent`, `merge_merge`,
+  `merge_preserves_meaning`, `shorthand_and_decomposition_are_one_canonical_set`,
+  `a_mix_is_the_shorthands_canonical_set`, `one_canonical_set_one_meaning`).
+
 Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
 `moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,
 `caller_obligation_establishes_the_entry`, `an_inferred_clause_is_necessary`,
@@ -1781,7 +1898,11 @@ The grounding: `QCore.NullDerefGrade` (`relevant_accepts_body_iff_inferred`,
 `proof/AuditNullDerefGrade.lean`. Its `gradeVectors` are bound to
 `qcore_core::usage` and `qcore_core::null_deref` by
 `crates/qcore-core/tests/null_deref_grade.rs`. That the walk's `First` sets are
-this abstraction of its paths is a review premise (trust boundary 28).
+this abstraction of its paths is a review premise (trust boundary 28). The decomposition and the two levels: `QCore.DerefDecomposition`, audited in
+`proof/AuditDerefDecomposition.lean`; the loader's correspondence to its
+`elaborate` and `merge` is a review premise as well, pinned by
+`crates/qcore-contract/tests/deref_parts.rs` and
+`crates/qcore-c-gateway/tests/deref_parts_null.rs`.
 
 ## C10. Cleanup and OS endpoint contracts
 

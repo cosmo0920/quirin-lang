@@ -3847,8 +3847,10 @@ gateway rules [14o](agents/gateway.md#constraint-14o) and
 read by `crates/qcore-contract/src/bounds_contract.rs`:
 
 ```ebnf
-bounds_clause   = … | null_deref ;
+bounds_clause   = … | null_deref | deref | live ;
 null_deref      = "quant", "null", "-", "deref", "#", IDENT, ";" ;
+deref           = "quant", "deref", "#", IDENT, ";" ;   (* NULL-DEREF-QTT-GROUNDING *)
+live            = "quant", "live", "#", IDENT, ";" ;    (* NULL-DEREF-QTT-GROUNDING *)
 ```
 
 The structural parser (G01) reads `quant null-deref` as its own clause kind
@@ -3883,6 +3885,42 @@ production adds no type, dimension, axis, grade literal or predicate. Its
 `#IDENT` binder names a formal as G05c's `Idx #IDENT` names an index variable,
 and the two clauses stay separate kinds (`QuantNullDeref`, `QuantCheck`), each
 read by one consumer only.
+
+**Two levels** (card NULL-DEREF-QTT-GROUNDING; USER DECISION 2026-10-11:
+"Two levels"; [contract
+§C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
+"Two levels"). Two more clause kinds, `SourceContractClauseKind::QuantDeref`
+and `QuantLive`. Before this card both spellings were parse errors (`deref`
+and `live` are no exit selectors), so no previously accepted text changes
+meaning. The bounds contract v1 loader elaborates every written form into
+canonical parts (`crates/qcore-contract/src/deref_parts.rs`):
+
+| Written | Canonical parts |
+| --- | --- |
+| `quant deref #B;` | `quant null-deref #B;` · `quant checks B, Idx #i: #i == 0;` · `quant live #B;` |
+| `quant null-deref #B;` | the existence part alone (unchanged) |
+| `quant checks B, Idx #i: P;` | itself (G05c) |
+| `quant live #B;` | the liveness part alone |
+
+Static conditions, each rejecting the whole module with a named diagnostic:
+the clause is exactly `#` and one `IDENT` (`quant-deref-shape`,
+`quant-live-shape`); the `IDENT` is a pointer parameter
+(`quant-deref-parameter`, `quant-live-parameter`); at most one shorthand per
+formal (`duplicate bounds clause for deref P`) and at most one written
+liveness part (`duplicate bounds clause for live P`). A shorthand's part and a
+written part for the same formal are merged when they agree (equal pointers
+and, for the extent part, an equal predicate, the bound variable's spelling
+aside) and are otherwise refused (`quant-deref-conflict`). A `bounds_extent`
+beside a shorthand's extent part is refused as well (`quant-deref-conflict`;
+G05c's `quant-check-with-extent`). The parser refuses `quant WORD #IDENT;`
+with a word that names no form (`quant-shorthand-unknown`). The pinned digest
+(`text_sha256`) covers each line as written (`quant deref #P`, `quant live
+#P`), so a shorthand and its decomposition pin differently. `canonical_sha256`
+covers the signature and the sorted canonical part set, so the two have one
+canonical digest. Resource v1 and every other consumer reject both clause
+kinds. On an audit route, a liveness part is admitted only where the
+function's resource v1 declaration in force states `resource_owned` at that
+position (`quant-live-unbacked`, `quant-live-contradicts-custody`).
 
 ## G06. Observation predicate grammar
 
