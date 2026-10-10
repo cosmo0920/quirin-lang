@@ -52,7 +52,7 @@ view changed; every module was already selected).
 | --- | --- | --- | --- | --- |
 | a | `rd_kafka_AclBinding_destroy`, `_ConfigResource_destroy`, `_NewPartitions_destroy`, `_NewTopic_destroy` | librdkafka `client.qv` | released nonnull | declared assumption: the bodies are Unknown in `rdkafka_admin.c` (no body evidence), none refuted |
 | a | `rd_kafka_UserScramCredentialAlteration_destroy` | same | released nullable (it tests NULL) | declared assumption, as above |
-| b | `mk_fifo_queue_destroy` | libevent `monkey/memory.qv` | `ctx` borrowed, `q` released nonnull | declared assumption (body Unknown in `mk_fifo.c`) |
+| b | `mk_fifo_queue_destroy` | libevent `monkey/intrusive_list.qv` | `ctx` borrowed, `q` released nonnull | declared assumption (body Unknown in `mk_fifo.c`) |
 | c | `unit_test_telemetry` | librdkafka `client.qv` | ten borrowed, `resource_callback_invoked(set_metric_value, _, _)` | partly validated: rule 13y covers the invocation; the borrowed clauses are uncovered |
 | c | `cfl_list_size` | cfl `sds_lifetime.qv` | `head` borrowed, none | declared assumption (the header body is not examined as a row) |
 | c | `flb_hash_table_del` (slice) | fluent-bit `hash_table_publication.qv` | `ht`, `key` borrowed, none | not in the corpus; system and slice consult it |
@@ -105,16 +105,20 @@ yield per contract is 1.
 
 ## 3. Measurement
 
-| route | BEFORE | AFTER (run a3) | `resource-diagnostics.json` |
+| route | BEFORE | AFTER (runs a3, a4) | `resource-diagnostics.json` |
 | --- | --- | --- | --- |
 | corpus | 915 / 9 / 3,910 | **933 / 9 / 3,892** | `ded14632…` → `cdb0267b…` |
-| system | 91 / 4 / 353 | **93 / 4 / 351** | `f8aab120…` → `27e27b95…` |
-| tail-pause slice | 50 / 1 / 349, 4 Pending | **52 / 1 / 347, 4 Pending** | `1654a682…` → `c45ae1d3…` |
+| system | 91 / 4 / 353 | **93 / 4 / 351** | `f8aab120…` → `27e27b95…` (a3), `7ece6fe4…` (a4) |
+| tail-pause slice | 50 / 1 / 349, 4 Pending | **52 / 1 / 347, 4 Pending** | `1654a682…` → `c45ae1d3…` (a3), `6b91084b…` (a4) |
 | null property, corpus | 1,113 / 1,435 / 2,355 / 18, 29 findings | identical (every null verdict and check unchanged) | |
 | null property, system and slice | 84 / 125 / 245 and 71 / 103 / 232 | identical | |
 
 Corpus arbiter wall time 520.7 s BEFORE, 520.1 s AFTER (`--jobs 4`, inside
-the lock).
+the lock). Run a4 is the final tree (after gate g1 moved
+`mk_fifo_queue_destroy` from `monkey/memory.qv` to `monkey/intrusive_list.qv`,
+section 5): its corpus report is byte-identical to a3's (`cdb0267b…`), and
+its system and slice rows and every null row equal a3's (only the
+contract-source identities in their digests differ).
 
 **Corpus: +18 Unknown → Safe, no other status move**
 ([comparison](artifacts/compare-a3-corpus.json), [`scripts/compare.py`](scripts/compare.py)),
@@ -190,7 +194,7 @@ a caller of `cfl_list_size` whose leaves did not change
 
 The round-12 `mk_vhost_set` tip probe was not run: its scratch inputs are no
 longer in the scratchpad, no contract it reads changed except
-`monkey/memory.qv`'s new `mk_fifo_queue_destroy`, which `mk_lib.c` does not
+`monkey/intrusive_list.qv`'s new `mk_fifo_queue_destroy`, which `mk_lib.c` does not
 call.
 
 ## 4. The remaining population and its head
@@ -210,14 +214,33 @@ withdrawn `cio_file_hash`.
 Standing gate (`docs/agents/validation.md`) through [`scripts/gate.sh`](scripts/gate.sh)
 and the provider gate through [`scripts/provider-gate.sh`](scripts/provider-gate.sh);
 exits in [gate/](gate/), summary [gate.json](gate.json), filled in by
-[`scripts/finish-gate.sh`](scripts/finish-gate.sh). See the gate section
-below.
+[`scripts/finish-gate.sh`](scripts/finish-gate.sh).
+
+**Gate g1** (code steps at `a22d2ea01`, logs `private/w45r3/gate-g1/`) was
+red: `run_test_binaries.py` exit 101, 7,890 passed and 6 failed in four
+units, each a pin the new declarations touch, none an analysis result:
+`source_contract_config` (the cmetrics-counter source policy pins
+`qcore-provider-cmetrics/contracts.json`'s digest, `2a38c6fe…` →
+`39db29d6…`, as CG22 and NULL-SAFETY-PROPERTY updated it),
+`contract_inherit_qcore_provider` (2: `monkey/memory.qv` is pinned as
+exactly the three inherited libc wrappers, so `mk_fifo_queue_destroy` moved
+to `monkey/intrusive_list.qv` beside the `mk_list_del` its body calls, and
+was re-pinned at both revisions), `contract_view_census` and
+`contract_views` (2: `cfl_list_size` now has a resource-v1 declaration
+beside its null result range, a multi-module declaration; registered as a
+`null_deref_beside` relation in `qcore_contract::contract_views::REGISTERED_RELATIONS`,
+21 → 22, census 19 → 20 functions). Every other step of g1 exited 0 (check,
+submodule, fmt, clippy, both probes, 313 Lean audits); the provider gate g1
+(at `218fb4d0f`) exited 0 at every step. Gate g2 is the gate of record.
 
 **Deliberate pin updates.** `compiler/tests/contract_loader.rs`: v1
 declarations 379 → 393 (selection 61 and rejected 314 unchanged), the
 retaining table 44 → 45 (`unit_test_telemetry`), and the thirteen
 function-map declarations' previous-mode rows; `compiler/tests/qcore_contract_corpus.rs`:
-fourteen clause rows. Each crate's `contracts.lock` (and, for the
+fourteen clause rows; `compiler/tests/contract_view_census.rs` and
+`crates/qcore-contract/tests/contract_views.rs`: relations 21 → 22
+(`null_deref_beside` 8 → 9); `contract/profiles/cmetrics-counter/source-contracts.json`:
+the cmetrics inventory digest. Each crate's `contracts.lock` (and, for the
 `qcore-provider-*` crates, `contracts.json`) by `pin` and `sync`.
 
 ## 6. Ledger
@@ -233,15 +256,20 @@ member); registered `QR-PRINT-ROUTE-MATCHES-DECLARATION`,
 ## Files
 
 * Contracts: `providers/qcore-provider-librdkafka/contracts/librdkafka/{client,kafka_mem}.qv`,
-  `providers/qcore-provider-libevent/contracts/monkey/memory.qv`,
+  `providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv`,
   `providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv`,
   `providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv`,
   `providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv`,
   `providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv`;
   their `contracts.lock` and `contracts.json`.
-* Pins: `compiler/tests/contract_loader.rs`, `compiler/tests/qcore_contract_corpus.rs`.
+* Pins: `compiler/tests/contract_loader.rs`, `compiler/tests/qcore_contract_corpus.rs`,
+  `compiler/tests/contract_view_census.rs`, `crates/qcore-contract/tests/contract_views.rs`,
+  `contract/profiles/cmetrics-counter/source-contracts.json`; the view registry
+  `crates/qcore-contract/src/contract_views.rs` (one `REGISTERED_RELATIONS` row).
+* Records: `docs/STATUS.md`, `docs/development/increments/wave-48-part6.md`,
+  `docs/reviews/r0_3/acceptance_matrix.json`, `docs/reports/INDEX.md`.
 * Scripts: `build.sh`, `measure.sh`, `measure-binary.sh`, `heavy.sh`,
   `rank.py`, `body.py`, `pin.sh`, `sync.sh`, `compare.py`,
   `parity.py`, `parity-all.sh`, `clause_rollup.py`, `totals.py`,
   `targeted.sh`, `gate.sh`, `provider-gate.sh`, `finish-gate.sh`,
-  `write_gate_json.py`, `update_ledger.py`.
+  `write_gate_json.py`, `update_ledger.py`, `records.py`.
