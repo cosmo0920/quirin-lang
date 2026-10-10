@@ -1883,6 +1883,55 @@ grammar [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks))
   `merging_an_agreeing_overlap_is_idempotent`, `merge_merge`,
   `merge_preserves_meaning`, `shorthand_and_decomposition_are_one_canonical_set`,
   `a_mix_is_the_shorthands_canonical_set`, `one_canonical_set_one_meaning`).
+**Triage** (card NULL-CANDIDATE-TRIAGE, gateway rules
+[14r](agents/gateway.md#constraint-14r)–[14w](agents/gateway.md#constraint-14w);
+user decisions "move the NULL question", decision 2 and "handle as safe as
+possible"). Candidates are shrunk only by checked knowledge, never by
+suppression:
+
+* *Findings.* A candidate carrying an allocation, a nullable or lookup
+  result, a null constant, an uninitialized local or a global is searched
+  for a path from the function's entry that reaches it with the pointer NULL
+  under a named condition (an allocation that fails, a lookup that misses, a
+  null constant, the null arm of the function's own test). A branch is taken
+  only when the search decides its condition and agrees, or when every value
+  it reads is unconstrained on the path; a condition over a value an earlier
+  decision related is correlated and leaves the path unresolved. A validated
+  path makes the check a `finding` and its row `Unsafe`, **provisional**,
+  labelled `null-on-allocation-failure` (the path needs an allocation to
+  fail) or `null-on-normal-path`; it is published with its path, condition
+  and source excerpts and is never an upstream defect. Every other searched
+  candidate stays a candidate with its reason (`infeasible`, `unresolved`,
+  `indeterminate`: an uninitialized value is not a NULL dereference).
+* *Declared non-null members* (G05e): `requires null_member_nonnull(TAG,
+  FIELD);` in bounds contract v1, hosted on the record's constructor and
+  pinned with it, says every `struct TAG`'s `FIELD` is non-null where it is
+  read. It is checked against every store the analysed units make to the
+  member (assignments, updates, initializer lists, an omitted member being a
+  null store); one not proved non-null withdraws it for the whole run. Its
+  `construction` clause (a zero-initialised or indeterminate object's member
+  is never read before its first store) is a premise, so it is at best
+  `partly-validated`, never `validated`.
+* *Declared non-null results* (G05e): `ensures normal null_result_nonnull();`
+  is checked against every analysed body that defines the function under
+  C06.5's fold (validated where every body returns non-null on every path,
+  withdrawn where one returns null on a path).
+* *Cross-unit travel.* An external-linkage definition analysed in exactly
+  one unit exports its inferred clauses and whether every return is
+  non-null; a caller in another unit then carries a `call-precondition`
+  check at each matching actual, and a candidate whose every source is the
+  untested result of such callees is proved. Travel adds checks after every
+  unit is analysed and never re-analyses a caller, so it never improves a
+  row except by those sole-source proofs.
+* *Withdrawal.* A row whose dependency set names a withdrawn declaration is
+  never `Safe` or `Pending`, and a check the declaration proved is a
+  candidate again.
+
+Lean: `QCore.NullTriage` (`a_validated_path_is_satisfiable`,
+`triage_never_makes_safe`, `unsafe_only_for_a_violation_or_a_finding`,
+`member_invariant_holds`, `a_member_declaration_is_never_validated`,
+`a_withdrawn_dependency_is_never_safe`, `travel_never_improves_a_row`),
+audited in `proof/AuditNullTriage.lean`, vectors bound to the Rust.
 
 Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
 `moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,

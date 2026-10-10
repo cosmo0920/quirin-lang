@@ -3921,6 +3921,34 @@ canonical digest. Resource v1 and every other consumer reject both clause
 kinds. On an audit route, a liveness part is admitted only where the
 function's resource v1 declaration in force states `resource_owned` at that
 position (`quant-live-unbacked`, `quant-live-contradicts-custody`).
+## G05e. Null-property member and result declarations
+
+Card NULL-CANDIDATE-TRIAGE, contract specification
+[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
+gateway rules [14t](agents/gateway.md#constraint-14t) and
+[14u](agents/gateway.md#constraint-14u). Two more clauses of G05b, read by
+`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NullMember`,
+`BoundsClause::NullResult`):
+
+```ebnf
+bounds_pre  = … | "null_member_nonnull", "(", IDENT, ",", IDENT, ")" ;
+bounds_post = … | "null_result_nonnull", "(", ")" ;
+```
+
+Static conditions, each rejecting the whole module: the first `IDENT` of
+`null_member_nonnull` is a C struct tag, never a parameter of the
+declaration, and the second a member name (`null-member-shape`); at most one
+per (tag, member) per declaration; `null_result_nonnull()` is an `ensures
+normal` postcondition of a declaration with a pointer result
+(`null-result-pointer`), at most one. Both words were absent from every
+tracked contract module when introduced (the reserved-spelling census
+exempts modules the bounds loader accepts). The clauses are part of the
+declaration digest and pinned with it. Only the null property reads them:
+`BoundsContracts::for_bounds()` removes them like `quant null-deref`, and
+`resource_*` consumers reject the module. A declaration beside a
+resource-v1 declaration of the same function is a registered
+`null_deref_beside` relation (it states only the selector and null-property
+clauses).
 
 ## G06. Observation predicate grammar
 

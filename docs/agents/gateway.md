@@ -6667,3 +6667,127 @@ own anchor here.
     `checks_zero_entails_null_deref`,
     `existence_and_extent_do_not_discharge_liveness`); grounding
     `QCore.NullDerefGrade`.
+
+<a id="constraint-14r"></a>
+
+14r. **A strong-source NULL-dereference candidate is a finding only when a
+    path search validates a path to it with the pointer NULL under a named
+    condition.** Card NULL-CANDIDATE-TRIAGE (contract specification C09.3;
+    `null_deref/witness.rs`, `qcore_core::null_triage`). A candidate whose
+    sources include an allocation, a nullable or lookup result, a null
+    constant, an uninitialized local or a global is searched from the
+    function's entry, one path at a time (at most 1,024 paths, 40,000 nodes
+    each, 64 iterations a loop). A branch is taken only when the search
+    decides its condition (a constant, an enumeration constant, a NULL test
+    of a pointer the path fixed, an interval of a value narrowed by earlier
+    comparisons with constants, a repeated pointer comparison) and agrees,
+    or when every value it reads is unconstrained on the path (a formal, a
+    call's result, a memory value read since the last call or store); a
+    condition over a value an earlier decision related (a local assigned
+    from an expression, another value it was compared with, a memory
+    spelling decided before a call and read again after it) is correlated
+    and the path is unresolved (`admit`). The NULL condition is named: an
+    allocation that fails, a lookup that misses, a null constant, the null
+    arm of the function's own test. Outcome per candidate (`triage` on the
+    row): `finding` (with its decisions, its NULL event and the
+    dereference), `infeasible` (every path explored, none reaches it NULL
+    under a named condition), `unresolved` (with the reason) or
+    `indeterminate` (an uninitialized value reaches it: not a NULL finding).
+    **Do not** take a correlated branch, name a formal's or a memory
+    value's possible null-ness as a NULL condition without the function's
+    own test, or present a finding as an upstream defect.
+    `QCore.NullTriage` (`a_validated_path_is_satisfiable`,
+    `a_validated_finding_faults`, `a_correlated_condition_is_never_taken`,
+    `interval_path_is_satisfiable`; `admitVectors`).
+
+<a id="constraint-14s"></a>
+
+14s. **A finding makes its row provisional `Unsafe`, labelled by class; it
+    is never a `Safe` and never an upstream defect.** Card
+    NULL-CANDIDATE-TRIAGE. The check's outcome is `finding`, the row's
+    verdict the join of its checks' verdict with `Unsafe`
+    (`triaged_verdict`), its reason `null-deref-finding` (provisional). The
+    class is `null-on-allocation-failure` when the path needs an allocation
+    to fail (the dereferenced value's, or any other the path tested NULL),
+    otherwise `null-on-normal-path`. Each finding is published with its
+    file, line, function, path, condition and source excerpts from the
+    pinned revision (`docs/reports/null-candidate-triage/artifacts/findings.json`).
+    **Do not** count a finding as anything but provisional until a person
+    reviews it. `QCore.NullTriage` (`triage_never_makes_safe`,
+    `unsafe_only_for_a_violation_or_a_finding`).
+
+<a id="constraint-14t"></a>
+
+14t. **A declared non-null member is read non-null and checked at every
+    store the analysed units make; a store not proved non-null withdraws it
+    for the run.** Card NULL-CANDIDATE-TRIAGE (grammar G05e).
+    `requires null_member_nonnull(TAG, FIELD);` in bounds contract v1 (a
+    type-level declaration its host function, the record's constructor,
+    carries; pinned in the crate's `bounds-contracts.lock`): a read of
+    `E->FIELD` or `E.FIELD` of a `struct TAG` (through typedefs) with no fact
+    of its own on the path is non-null (proof `result:member:TAG.FIELD`, the
+    assumption `declared-member:`, the row's dependency `member:TAG.FIELD`,
+    carried through in-unit summaries). Every assignment, compound update and
+    initializer list (an omitted member is a null store) to the member is a
+    store check in `member_stores`; the run's fold (rule 14w) withdraws the
+    declaration when one is not discharged. Its standing is never
+    `validated`: the clause `construction` (a zero-initialised or
+    indeterminate object's member is never read before its first store) is a
+    premise no store covers; `partly-validated` when every examined store is
+    proved, `declared-assumption` when no analysed unit stores it.
+    **Do not** read a held or withdrawn member declaration, or label one
+    `validated`. `QCore.NullTriage` (`member_invariant_holds`,
+    `a_member_declaration_is_never_validated`, `a_failed_store_withdraws`;
+    `memberVectors`).
+
+<a id="constraint-14u"></a>
+
+14u. **A declared non-null result is checked against every analysed body
+    that defines the function.** Card NULL-CANDIDATE-TRIAGE (grammar G05e).
+    `ensures normal null_result_nonnull();` (bounds contract v1, a pointer
+    result): every caller reads the result non-null (proof
+    `result:declared-result:NAME`, dependency `result:NAME`). Each unit that
+    analyses a body is evidence (`validated` when every return is non-null,
+    `refuted` when a return is null on a path, else `unvalidated`); rule
+    13g's fold gives `validated`, `withdrawn` (a refutation) or
+    `declared-assumption`. **Do not** read a withdrawn result non-null.
+    `QCore.NullTriage` (`a_refuting_unit_withdraws`,
+    `validated_needs_a_validating_body`; `resultVectors`).
+
+<a id="constraint-14v"></a>
+
+14v. **An inferred clause and a non-null result travel to callers in other
+    units only from an external definition analysed in exactly one unit.**
+    Card NULL-CANDIDATE-TRIAGE (completes rule 14p across units). Each unit
+    exports every analysed definition (`definitions`: linkage, parameter
+    count, inferred clause positions, whether every return is non-null and
+    the declarations its summary rests on) and records each pointer actual
+    of a call to a function it neither defines nor declares
+    (`external_calls`, judged as a check would be). After every unit, a
+    caller in another unit gains a `call-precondition` check at each actual
+    in an exported clause position (same parameter count), and a candidate
+    whose every source is the untested result of exported callees whose
+    every return is non-null (no summary resting on a withdrawn declaration)
+    is proved (`result:cross-unit:NAME`). A name two units define, a static
+    or `inline` definition, and a mismatched arity export nothing. Travel
+    never re-analyses a caller: it adds checks (never improving a row) and
+    proves only sole-source result candidates. **Do not** carry a summary
+    from an ambiguous or internal definition. `QCore.NullTriage`
+    (`travel_never_improves_a_row`).
+
+<a id="constraint-14w"></a>
+
+14w. **The null property's run fold: standings, withdrawals and travel,
+    after every unit and before the rows are written; custody never reads
+    it.** Card NULL-CANDIDATE-TRIAGE (`qcore_audit::null_fold`). The audit
+    keeps each unit's null evidence (`record_null_evidence`), folds it in
+    `write_null_selection`: member and result standings (rules 14t, 14u),
+    the withdrawn set, travel (rule 14v), then every changed row's verdict
+    recomputed from its checks (`triaged_verdict`, `demote`: a row whose
+    dependency set names a withdrawn declaration is never `Safe` or
+    `Pending`, and a check a withdrawn declaration proved is a candidate
+    again, source `withdrawn:`), its custody premises' standings and its
+    combined verdict. The summary's `fold` section publishes all of it.
+    **Do not** let a withdrawn declaration leave a row `Safe`, or let the
+    fold change a custody byte. `QCore.NullTriage`
+    (`a_withdrawn_dependency_is_never_safe`).
