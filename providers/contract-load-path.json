@@ -193,6 +193,7 @@
       "modules": [
         "cfl/arena_lifetime.qv",
         "cfl/intrusive_list.qv",
+        "cfl/null_deref.qv",
         "cfl/sds_lifetime.qv",
         "cfl/time.qv"
       ],
@@ -201,7 +202,9 @@
         "cfl/sds_lifetime.qv",
         "cfl/time.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [
+        "cfl/null_deref.qv"
+      ]
     },
     {
       "name": "quirin-provider-fluent-bit",

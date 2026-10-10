@@ -1,0 +1,25 @@
+module contract;
+
+// Card NULL-TRIAGE-UNRESOLVED-PATHS (contract specification C09.3, grammar
+// G05e, gateway rule 15c). A bounds contract v1 declaration read only by the
+// null-dereference property (`QCORE_NULL_PROPERTY`): the integer result of
+// `cfl_list_size` lies in [0, 2147483647]. The null path search reads it as a
+// bound (it decides a comparison the range excludes, e.g. `s < 0`), never as
+// a range the function is known to return. The bounds consumer never reads
+// it, and the resource loader rejects this module.
+//
+// The body was read at the two audited Fluent Bit revisions 66910c10 and
+// 046accf6 (lib/cfl/include/cfl/cfl_list.h, byte-identical at both): it
+// returns the constant 0 when `head` is NULL, otherwise `ret`, an `int` that
+// starts at 0 and is only incremented (`ret++` in the loop's increment); a
+// defined execution never overflows a signed counter, so every return is at
+// least 0. The definition is `static inline` in the header, so every unit
+// that includes it analyses the body: the run checks the declaration against
+// each one (rule 13g's fold; a body returning a constant outside the range
+// withdraws it). Pinned with `quirin-audit pin --bounds` at both revisions
+// (`bounds-contracts.lock`).
+extern fn cfl_list_size(head: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    ensures normal nonnull_result_range(0, 2147483647);
+};

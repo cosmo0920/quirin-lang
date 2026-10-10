@@ -53,6 +53,9 @@ namespace QCore.NullDeref
 inductive Proof where
   | tested | asserted | precondition | nonNullResult | address
   | moved (site : Nat)
+  /-- Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): every path explored, none
+  reaches the dereference NULL (`QCore.NullTriagePaths.exhaustive_search_is_sound`). -/
+  | infeasible
   deriving DecidableEq, Repr
 
 /-- Where a possibly-null value may come from. -/

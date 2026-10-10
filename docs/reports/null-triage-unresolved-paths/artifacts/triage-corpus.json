@@ -1,0 +1,2008 @@
+{
+ "searched": 139,
+ "by_status": {
+  "unresolved": 101,
+  "finding": 29,
+  "infeasible": 9
+ },
+ "findings_by_class": {
+  "null-on-allocation-failure": 24,
+  "null-on-normal-path": 5
+ },
+ "reasons": [
+  {
+   "status": "unresolved",
+   "reason": "a correlated condition at line",
+   "count": 16
+  },
+  {
+   "status": "infeasible",
+   "reason": "every path explored",
+   "count": 9
+  },
+  {
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "count": 5
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "count": 5
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22311: its range is a bound, not a range the callee is known to return",
+   "count": 4
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `count_metrics_with_matching_label_set` at line 6768: its range is a bound, not a range the callee is known to return",
+   "count": 3
+  },
+  {
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "count": 3
+  },
+  {
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "count": 3
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22135: its range is a bound, not a range the callee is known to return",
+   "count": 3
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_metric_has_start_timestamp` at line 9183: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `check_staled_timestamp` at line 7083: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_list_cnt` at line 22036: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20513: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22631: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 25217: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20856: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 21768: its range is a bound, not a range the callee is known to return",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `cfl_list_size` at line 5617: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7039 at line 7099, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7040 at line 7116, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7038 at line 7120, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7041 at line 7130, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_labels_count` at line 6106: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_labels_count` at line 5974: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24919: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 22705 at line 22713, but only along a condition over a value the search does not follow at line 22672: `rko_fanout->rko_type & ~(int)1 << 29 | (int)1 << 30 == RD_KAFKA_OP_ADMIN_FANOUT` (an expression `rko_fanout->rko_type & ~(int)1 << 29 | (int)1 << 30`)",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `offsets` reads NULL, as the test at line 20268 admits at line 20296, but only along a condition over the result of `rd_kafka_handle_OffsetFetch` at line 20262: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rko->rko_rktp` reads NULL, as the test at line 24349 admits at line 24392, but only along a condition over the result of `rd_atomic32_get` at line 24343: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rko->rko_rktp` reads NULL, as the test at line 24349 admits at line 24398, but only along a condition over the result of `rd_atomic32_get` at line 24343: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 23037: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22526: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rd_kafka_mock_sharegroup_get` returns NULL, as the test at line 24885 admits at line 25060, but only along a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rd_kafka_mock_sharegroup_get` returns NULL, as the test at line 24885 admits at line 25164, but only along a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 23262: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `rd_kafka_toppar_get_avail` at line 20210 fails (returns NULL) at line 20273, but only along a correlated condition at line 20223: `msgflags & 8` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `isBalanced` at line 21711: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20408 at line 20425, but only along a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20408 at line 20430, but only along a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the formal `rkb` is NULL at entry, as the function's own test at line 21207 admits at line 21219, but only along a condition over the result of `rd_slice_read` at line 21155: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the formal `rkb` is NULL at entry, as the function's own test at line 21207 admits at line 21228, but only along a condition over the result of `rd_slice_read` at line 21155: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 1827 fails (returns NULL) at line 1828, but only along a condition over the result of `mk_list_is_empty` at line 1822: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 2222 fails (returns NULL) at line 2223, but only along a condition over the result of `strlen` at line 2206: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the lookup `localtime_r` at line 2577 misses (returns NULL) at line 2580, but only along a condition over the result of `isatty` at line 2569: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `read` at line 6523: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6155 fails (returns NULL) at line 6156, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6162 fails (returns NULL) at line 6163, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6169 fails (returns NULL) at line 6170, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6176 fails (returns NULL) at line 6177, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6183 fails (returns NULL) at line 6184, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6290 fails (returns NULL) at line 6292, but only along a condition over the result of `mk_socket_server` at line 6286: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the pointer is uninitialised on a path reaching line 6391, but only along a correlated condition at line 6390: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the pointer is uninitialised on a path reaching line 6471, but only along a correlated condition at line 6469: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6040, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6049, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6054, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "a condition over the result of `mk_file_get_info` at line 6412: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6273 fails (returns NULL) at line 6274, but only along a condition over the result of `stat` at line 6237: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  },
+  {
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6323 fails (returns NULL) at line 6324, but only along a condition over the result of `stat` at line 6237: its range is a bound, not a range the callee is known to return",
+   "count": 1
+  }
+ ],
+ "not_findings": [
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_copy_label_keys",
+   "origin": "cmt_cat.c:58",
+   "line": 5603,
+   "kind": "element-access",
+   "subject": "labels",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 266,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "copy_label_values",
+   "origin": "cmt_cat.c:93",
+   "line": 5631,
+   "kind": "element-access",
+   "subject": "labels",
+   "status": "unresolved",
+   "reason": "a condition over the result of `cfl_list_size` at line 5617: its range is a bound, not a range the callee is known to return",
+   "paths": 134,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:151",
+   "line": 7099,
+   "kind": "member-access",
+   "subject": "histogram",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7039 at line 7099, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 1123,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:173",
+   "line": 7116,
+   "kind": "member-access",
+   "subject": "exp_histogram",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7040 at line 7116, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 1123,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:179",
+   "line": 7120,
+   "kind": "member-access",
+   "subject": "summary",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7038 at line 7120, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 1123,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:192",
+   "line": 7130,
+   "kind": "member-access",
+   "subject": "counter",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 7041 at line 7130, but only along a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 1123,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_data_point_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:2848",
+   "line": 8920,
+   "kind": "element-access",
+   "subject": "data_point_list",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 8918: `data_point_slot_index < data_point_slot_count` (an incremented value)",
+   "paths": 1057,
+   "sources": [
+    "memory-field:metric->.exponential_histogram->data_points",
+    "memory-field:metric->.gauge->data_points",
+    "memory-field:metric->.histogram->data_points",
+    "memory-field:metric->.sum->data_points",
+    "memory-field:metric->.summary->data_points",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_sample_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:3371",
+   "line": 9347,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_metric_has_start_timestamp` at line 9183: its range is a bound, not a range the callee is known to return",
+   "paths": 1033,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_sample_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:3371",
+   "line": 9347,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_metric_has_start_timestamp` at line 9183: its range is a bound, not a range the callee is known to return",
+   "paths": 1033,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus.c",
+   "function": "format_metric",
+   "origin": "cmt_encode_prometheus.c:332",
+   "line": 6099,
+   "kind": "member-access",
+   "subject": "label_k",
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_labels_count` at line 6106: its range is a bound, not a range the callee is known to return",
+   "paths": 1167,
+   "sources": [
+    "memory-field:&label_k->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "cmt_encode_prometheus_remote_write.c:951",
+   "line": 7165,
+   "kind": "member-access",
+   "subject": "additional_label",
+   "status": "unresolved",
+   "reason": "a condition over the result of `check_staled_timestamp` at line 7083: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "cmt_encode_prometheus_remote_write.c:1105",
+   "line": 7293,
+   "kind": "member-access",
+   "subject": "histogram",
+   "status": "unresolved",
+   "reason": "a condition over the result of `check_staled_timestamp` at line 7083: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:532",
+   "line": 6850,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a condition over the result of `count_metrics_with_matching_label_set` at line 6768: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:532",
+   "line": 6850,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a condition over the result of `count_metrics_with_matching_label_set` at line 6768: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:545",
+   "line": 6858,
+   "kind": "member-access",
+   "subject": "label_name",
+   "status": "unresolved",
+   "reason": "a condition over the result of `count_metrics_with_matching_label_set` at line 6768: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_text.c",
+   "function": "format_metric",
+   "origin": "cmt_encode_text.c:560",
+   "line": 5999,
+   "kind": "member-access",
+   "subject": "label_k",
+   "status": "unresolved",
+   "reason": "a condition over the result of `cmt_labels_count` at line 5974: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "memory-field:&label_k->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_k"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateDoubleArray",
+   "origin": "cJSON.c:2714",
+   "line": 3407,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 778,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateFloatArray",
+   "origin": "cJSON.c:2674",
+   "line": 3373,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 778,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateIntArray",
+   "origin": "cJSON.c:2634",
+   "line": 3339,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 778,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateStringArray",
+   "origin": "cJSON.c:2754",
+   "line": 3441,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 778,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "parse_array",
+   "origin": "cJSON.c:1545",
+   "line": 2474,
+   "kind": "member-access",
+   "subject": "current_item",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 2451: `input_buffer->content + input_buffer->offset[0] == 93` reads a value an earlier decision constrained",
+   "paths": 650,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "parse_object",
+   "origin": "cJSON.c:1703",
+   "line": 2597,
+   "kind": "member-access",
+   "subject": "current_item",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 2574: `input_buffer->offset + 0 < input_buffer->length` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4.c",
+   "function": "LZ4_compress_generic_validated",
+   "origin": "lz4.c:1075",
+   "line": 747,
+   "kind": "call-precondition",
+   "subject": "match at inferred `LZ4_read32` quant null-deref #ptr",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 674: `inputSize < LZ4_minLength` reads a value an earlier decision constrained",
+   "paths": 1155,
+   "sources": [
+    "null-literal",
+    "other:label:_next_match"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:1672",
+   "line": 2074,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 30,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:1960",
+   "line": 2309,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 30,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:2002",
+   "line": 2339,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 30,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4831",
+   "line": 23588,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 1033,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4841",
+   "line": 23596,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 1033,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4862",
+   "line": 23610,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 1033,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "origin": "rdkafka_admin.c:7577",
+   "line": 25003,
+   "kind": "call-precondition",
+   "subject": "&rko_result->rko_u.admin_result.results at quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24919: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+   "origin": "rdkafka_admin.c:4362",
+   "line": 22713,
+   "kind": "member-access",
+   "subject": "result_element",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 22705 at line 22713, but only along a condition over a value the search does not follow at line 22672: `rko_fanout->rko_type & ~(int)1 << 29 | (int)1 << 30 == RD_KAFKA_OP_ADMIN_FANOUT` (an expression `rko_fanout->rko_type & ~(int)1 << 29 | (int)1 << 30`)",
+   "paths": 1025,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_handle_OffsetFetch",
+   "origin": "rdkafka_assignment.c:316",
+   "line": 20296,
+   "kind": "member-access",
+   "subject": "offsets",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `offsets` reads NULL, as the test at line 20268 admits at line 20296, but only along a condition over the result of `rd_kafka_handle_OffsetFetch` at line 20262: its range is a bound, not a range the callee is known to return",
+   "paths": 56,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_serve_pending",
+   "origin": "rdkafka_assignment.c:638",
+   "line": 20447,
+   "kind": "member-access",
+   "subject": "partitions_to_query",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20406: `i >= 0` (an expression `rk->rk_consumer.assignment.pending->cnt - 1` that may wrap or overflow)",
+   "paths": 1033,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_op_serve",
+   "origin": "rdkafka_cgrp.c:7455",
+   "line": 24392,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_cgrp_partition_add` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rko->rko_rktp` reads NULL, as the test at line 24349 admits at line 24392, but only along a condition over the result of `rd_atomic32_get` at line 24343: its range is a bound, not a range the callee is known to return",
+   "paths": 602,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_op_serve",
+   "origin": "rdkafka_cgrp.c:7470",
+   "line": 24398,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_cgrp_partition_del` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rko->rko_rktp` reads NULL, as the test at line 24349 admits at line 24398, but only along a condition over the result of `rd_atomic32_get` at line 24343: its range is a bound, not a range the callee is known to return",
+   "paths": 602,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_share_rpc",
+   "origin": "rdkafka_fetcher.c:3256",
+   "line": 22054,
+   "kind": "call-precondition",
+   "subject": "ack_details at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_list_cnt` at line 22036: its range is a bound, not a range the callee is known to return",
+   "paths": 1053,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_share_rpc",
+   "origin": "rdkafka_fetcher.c:3298",
+   "line": 22072,
+   "kind": "call-precondition",
+   "subject": "ack_details at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_list_cnt` at line 22036: its range is a bound, not a range the callee is known to return",
+   "paths": 1053,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_topic_filter",
+   "origin": "rdkafka_metadata.c:1401",
+   "line": 20942,
+   "kind": "member-access",
+   "subject": "rkmce",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20920: `i < match->cnt` reads a value an earlier decision constrained",
+   "paths": 1033,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_parse_Metadata0",
+   "origin": "rdkafka_metadata.c:980",
+   "line": 20716,
+   "kind": "call-precondition",
+   "subject": "requested_topics at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20513: its range is a bound, not a range the callee is known to return",
+   "paths": 1087,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_parse_Metadata0",
+   "origin": "rdkafka_metadata.c:1011",
+   "line": 20734,
+   "kind": "call-precondition",
+   "subject": "requested_topic_ids at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20513: its range is a bound, not a range the callee is known to return",
+   "paths": 1087,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_validate_records",
+   "origin": "rdkafka_mock.c:541",
+   "line": 21619,
+   "kind": "member-access",
+   "subject": "mpidstate",
+   "status": "infeasible",
+   "reason": "every path explored (699; 350 end without reaching it NULL, 0 fault earlier, 347 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 706,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "ut_cgrp_consumer_member_next_assignment0",
+   "origin": "rdkafka_mock.c:3701",
+   "line": 23672,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 23670: `j < current_assignment->cnt` reads a value an earlier decision constrained",
+   "paths": 1361,
+   "sources": [
+    "global:mtopic"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:498",
+   "line": 22389,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22311: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:515",
+   "line": 22402,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22311: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:610",
+   "line": 22459,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22311: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:615",
+   "line": 22464,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22311: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_FindCoordinator",
+   "origin": "rdkafka_mock_handlers.c:1560",
+   "line": 23062,
+   "kind": "member-access",
+   "subject": "mrkb",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 23037: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ListOffsets",
+   "origin": "rdkafka_mock_handlers.c:778",
+   "line": 22563,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22526: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "origin": "rdkafka_mock_handlers.c:1380",
+   "line": 22932,
+   "kind": "call-precondition",
+   "subject": "requested_topics at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22910: `rkbuf->rkbuf_reqhdr.ApiVersion >= 2` reads a value an earlier decision constrained",
+   "paths": 1047,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "origin": "rdkafka_mock_handlers.c:1468",
+   "line": 23006,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22910: `rkbuf->rkbuf_reqhdr.ApiVersion >= 2` reads a value an earlier decision constrained",
+   "paths": 1047,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetFetch",
+   "origin": "rdkafka_mock_handlers.c:961",
+   "line": 22673,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22631: its range is a bound, not a range the callee is known to return",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetFetch",
+   "origin": "rdkafka_mock_handlers.c:961",
+   "line": 22673,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22631: its range is a bound, not a range the callee is known to return",
+   "paths": 1031,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:213",
+   "line": 22195,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22135: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:235",
+   "line": 22209,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22135: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:242",
+   "line": 22214,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 22135: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "origin": "rdkafka_mock_handlers.c:4931",
+   "line": 25347,
+   "kind": "member-access",
+   "subject": "&sgrp->fetch_sessions",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 25217: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "origin": "rdkafka_mock_handlers.c:4932",
+   "line": 25348,
+   "kind": "member-access",
+   "subject": "sgrp",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 25217: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4093",
+   "line": 24783,
+   "kind": "call-precondition",
+   "subject": "forgotten_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4328",
+   "line": 24923,
+   "kind": "call-precondition",
+   "subject": "sgrp at inferred `rd_kafka_mock_sgrp_partmeta_find` quant null-deref #sgrp",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4512",
+   "line": 25060,
+   "kind": "call-precondition",
+   "subject": "sgrp at inferred `rd_kafka_mock_sgrp_partmeta_find` quant null-deref #sgrp",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rd_kafka_mock_sharegroup_get` returns NULL, as the test at line 24885 admits at line 25060, but only along a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4645",
+   "line": 25163,
+   "kind": "member-access",
+   "subject": "&sgrp->fetch_sessions",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4646",
+   "line": 25164,
+   "kind": "member-access",
+   "subject": "sgrp",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: `rd_kafka_mock_sharegroup_get` returns NULL, as the test at line 24885 admits at line 25164, but only along a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4665",
+   "line": 25174,
+   "kind": "call-precondition",
+   "subject": "requested_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4682",
+   "line": 25187,
+   "kind": "call-precondition",
+   "subject": "requested_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 24695: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_SyncGroup",
+   "origin": "rdkafka_mock_handlers.c:1894",
+   "line": 23297,
+   "kind": "member-access",
+   "subject": "mcgrp",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 23262: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "origin": "rdkafka_mock_handlers.c:1964",
+   "line": 23343,
+   "kind": "member-access",
+   "subject": "TransactionalId",
+   "status": "infeasible",
+   "reason": "every path explored (7; 4 end without reaching it NULL, 0 fault earlier, 0 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 7,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_produce_batch",
+   "origin": "rdkafka_msg.c:830",
+   "line": 20273,
+   "kind": "member-access",
+   "subject": "rktp",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `rd_kafka_toppar_get_avail` at line 20210 fails (returns NULL) at line 20273, but only along a correlated condition at line 20223: `msgflags & 8` reads a value an earlier decision constrained",
+   "paths": 1051,
+   "sources": [
+    "allocation:rd_kafka_toppar_get_avail",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_commit",
+   "origin": "rdkafka_offset.c:409",
+   "line": 20361,
+   "kind": "call-precondition",
+   "subject": "repq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "infeasible",
+   "reason": "every path explored (9; 5 end without reaching it NULL, 0 fault earlier, 4 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 14,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_delegate",
+   "origin": "rdkafka_partition.c:1326",
+   "line": 20864,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20856: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "uncontracted-result:rd_kafka_broker_internal",
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_delegate",
+   "origin": "rdkafka_partition.c:1363",
+   "line": 20877,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_atomic32_get` at line 20856: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_migrate",
+   "origin": "rdkafka_partition.c:1234",
+   "line": 20828,
+   "kind": "member-access",
+   "subject": "dest_rkb",
+   "status": "infeasible",
+   "reason": "every path explored (229; 115 end without reaching it NULL, 0 fault earlier, 110 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 252,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_handle_Offset",
+   "origin": "rdkafka_partition.c:1612",
+   "line": 21009,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "infeasible",
+   "reason": "every path explored (431; 216 end without reaching it NULL, 0 fault earlier, 216 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 448,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_handle_Offset",
+   "origin": "rdkafka_partition.c:1624",
+   "line": 21011,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "infeasible",
+   "reason": "every path explored (431; 216 end without reaching it NULL, 0 fault earlier, 216 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 448,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_lag_handle_Offset",
+   "origin": "rdkafka_partition.c:104",
+   "line": 20266,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "infeasible",
+   "reason": "every path explored (9; 5 end without reaching it NULL, 0 fault earlier, 5 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 10,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_offset_request",
+   "origin": "rdkafka_partition.c:1738",
+   "line": 21058,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "infeasible",
+   "reason": "every path explored (35; 18 end without reaching it NULL, 0 fault earlier, 18 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 36,
+   "sources": null
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppars_pause_resume",
+   "origin": "rdkafka_partition.c:2637",
+   "line": 21496,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 21482: `rk->rk_conf.debug & 4` reads a value an earlier decision constrained",
+   "paths": 1083,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_range_assignor_assign_cb",
+   "origin": "rdkafka_range_assignor.c:542",
+   "line": 19880,
+   "kind": "call-precondition",
+   "subject": "rktas_current_bucket at quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 19867: `ti < eligible_topic_cnt` reads a value an earlier decision constrained",
+   "paths": 1025,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:231",
+   "line": 20271,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:232",
+   "line": 20272,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:235",
+   "line": 20275,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:236",
+   "line": 20276,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:239",
+   "line": 20279,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:247",
+   "line": 20285,
+   "kind": "dereference",
+   "subject": "d",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 1031,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "performReassignments",
+   "origin": "rdkafka_sticky_assignor.c:983",
+   "line": 21760,
+   "kind": "member-access",
+   "subject": "&rkri->member_id_to_rack_id",
+   "status": "unresolved",
+   "reason": "a condition over the result of `isBalanced` at line 21711: its range is a bound, not a range the callee is known to return",
+   "paths": 1029,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "origin": "rdkafka_topic.c:1162",
+   "line": 20425,
+   "kind": "element-access",
+   "subject": "rktps",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20408 at line 20425, but only along a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "origin": "rdkafka_topic.c:1173",
+   "line": 20430,
+   "kind": "element-access",
+   "subject": "rktps",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20408 at line 20430, but only along a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "origin": "rdkafka_txnmgr.c:1863",
+   "line": 21219,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the formal `rkb` is NULL at entry, as the function's own test at line 21207 admits at line 21219, but only along a condition over the result of `rd_slice_read` at line 21155: its range is a bound, not a range the callee is known to return",
+   "paths": 1031,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "origin": "rdkafka_txnmgr.c:1883",
+   "line": 21228,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the formal `rkb` is NULL at entry, as the function's own test at line 21207 admits at line 21228, but only along a condition over the result of `rd_slice_read` at line 21155: its range is a bound, not a range the callee is known to return",
+   "paths": 1031,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_FindCoordinator",
+   "origin": "rdkafka_txnmgr.c:2975",
+   "line": 21799,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 21768: its range is a bound, not a range the callee is known to return",
+   "paths": 1045,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_FindCoordinator",
+   "origin": "rdkafka_txnmgr.c:2991",
+   "line": 21811,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "a condition over the result of `rd_slice_read` at line 21768: its range is a bound, not a range the callee is known to return",
+   "paths": 1045,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "origin": "mk_core/mk_rconf.c:92",
+   "line": 1828,
+   "kind": "member-access",
+   "subject": "new",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 1827 fails (returns NULL) at line 1828, but only along a condition over the result of `mk_list_is_empty` at line 1822: its range is a bound, not a range the callee is known to return",
+   "paths": 4,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "origin": "mk_core/mk_string.c:382",
+   "line": 2223,
+   "kind": "member-access",
+   "subject": "new",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 2222 fails (returns NULL) at line 2223, but only along a condition over the result of `strlen` at line 2206: its range is a bound, not a range the callee is known to return",
+   "paths": 398,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_utils.c",
+   "function": "mk_print",
+   "origin": "mk_core/mk_utils.c:249",
+   "line": 2580,
+   "kind": "member-access",
+   "subject": "current",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the lookup `localtime_r` at line 2577 misses (returns NULL) at line 2580, but only along a condition over the result of `isatty` at line 2569: its range is a bound, not a range the callee is known to return",
+   "paths": 28,
+   "sources": [
+    "lookup:localtime_r"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_lib_worker",
+   "origin": "mk_server/mk_lib.c:156",
+   "line": 6521,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a condition over the result of `read` at line 6523: its range is a bound, not a range the callee is known to return",
+   "paths": 390,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_start",
+   "origin": "mk_server/mk_lib.c:202",
+   "line": 6553,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "infeasible",
+   "reason": "every path explored (9; 5 end without reaching it NULL, 0 fault earlier, 5 through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 10,
+   "sources": null
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:219",
+   "line": 6156,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6155 fails (returns NULL) at line 6156, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 1075,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:226",
+   "line": 6163,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6162 fails (returns NULL) at line 6163, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 1075,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:233",
+   "line": 6170,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6169 fails (returns NULL) at line 6170, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 1075,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:240",
+   "line": 6177,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6176 fails (returns NULL) at line 6177, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 1075,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:247",
+   "line": 6184,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6183 fails (returns NULL) at line 6184, but only along a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 1075,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "origin": "mk_server/mk_server.c:209",
+   "line": 6292,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6290 fails (returns NULL) at line 6292, but only along a condition over the result of `mk_socket_server` at line 6286: its range is a bound, not a range the callee is known to return",
+   "paths": 26,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "origin": "mk_server/mk_server.c:363",
+   "line": 6391,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the pointer is uninitialised on a path reaching line 6391, but only along a correlated condition at line 6390: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 1039,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "origin": "mk_server/mk_server.c:456",
+   "line": 6437,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6469: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 1071,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "origin": "mk_server/mk_server.c:508",
+   "line": 6471,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the pointer is uninitialised on a path reaching line 6471, but only along a correlated condition at line 6469: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 1071,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "origin": "mk_server/mk_utils.c:481",
+   "line": 6040,
+   "kind": "element-access",
+   "subject": "buf",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6040, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "origin": "mk_server/mk_utils.c:490",
+   "line": 6049,
+   "kind": "element-access",
+   "subject": "buf",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6049, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "origin": "mk_server/mk_utils.c:495",
+   "line": 6054,
+   "kind": "element-access",
+   "subject": "buf",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL) at line 6054, but only along a condition over the result of `mk_string_char_search` at line 6025: its range is a bound, not a range the callee is known to return",
+   "paths": 1025,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_init",
+   "origin": "mk_server/mk_vhost.c:663",
+   "line": 6421,
+   "kind": "call-precondition",
+   "subject": "&p_host->_head at inferred `mk_list_add` quant null-deref #_new",
+   "status": "unresolved",
+   "reason": "a condition over the result of `mk_file_get_info` at line 6412: its range is a bound, not a range the callee is known to return",
+   "paths": 1027,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "mk_server/mk_vhost.c:482",
+   "line": 6274,
+   "kind": "member-access",
+   "subject": "err_page",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc_z` at line 6273 fails (returns NULL) at line 6274, but only along a condition over the result of `stat` at line 6237: its range is a bound, not a range the callee is known to return",
+   "paths": 1037,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "mk_server/mk_vhost.c:540",
+   "line": 6324,
+   "kind": "member-access",
+   "subject": "h_param",
+   "status": "unresolved",
+   "reason": "an inexact path reaches the dereference NULL: the allocation `mk_mem_alloc` at line 6323 fails (returns NULL) at line 6324, but only along a condition over the result of `stat` at line 6237: its range is a bound, not a range the callee is known to return",
+   "paths": 1037,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  }
+ ]
+}

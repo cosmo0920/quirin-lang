@@ -35,7 +35,7 @@ Frozen before any implementation code. Base: local `main` at `c77efedbe`
    takes an arm only when the difference interval admits it (today both arms
    are taken whatever the ranges: a widening, corrected here). Floating
    values stay inexact.
-4. **A result-range contract** `ensures normal null_result_range(LO, HI);`
+4. **A result-range contract** `ensures normal nonnull_result_range(LO, HI);`
    (bounds contract v1, null property only) for `cfl_list_size`
    (`quirin-provider-cfl`, a new bounds view), pinned at both revisions and
    checked against every analysed body (a monotone counter from a

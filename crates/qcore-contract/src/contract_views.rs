@@ -892,6 +892,9 @@ fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
                         || clause.expression.starts_with("nonnull_member_scope(")))
                 || (clause.kind == "normal"
                     && clause.expression.replace(' ', "") == "nonnull_result()")
+                // Card NULL-TRIAGE-UNRESOLVED-PATHS: the result range (G05e).
+                || (clause.kind == "normal"
+                    && clause.expression.starts_with("nonnull_result_range("))
         });
     if only {
         Ok(())

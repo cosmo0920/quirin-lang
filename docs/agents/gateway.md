@@ -6882,3 +6882,100 @@ own anchor here.
     **Do not** read an entry fact the declaration does not state, or drop
     a caller's check because the callee's member is stable.
     `QCore.NullMemberScope` (`a_scoped_use_sees_non_null`).
+<a id="constraint-15q"></a>
+
+15q. **A call's integer result is bounded, never free.** Card
+    NULL-TRIAGE-UNRESOLVED-PATHS (contract specification C09.3, grammar G05e;
+    `null_deref/witness.rs`, `null_deref/range.rs`). In the path search
+    (rule 14r) a non-pointer call result is a value the callee chooses: its
+    range is a **bound**, the C type's range (an unsigned or `size_t` result
+    is never negative), narrowed by a declared `ensures normal
+    nonnull_result_range(LO, HI);` in force (not held, not refuted by this
+    unit's own body: `range:NAME` joins the row's dependencies) and by this
+    unit's validated summary of the callee's body (every `return` a constant
+    or a local signed counter that starts at constants and only grows by
+    non-negative constants). A comparison the bound decides takes its one arm;
+    any other comparison over a call result is inexact (rule 15r). A declared
+    range is checked against every analysed body under rule 13g's fold
+    (`validated` when the body's summary lies inside it, `withdrawn` when a
+    `return` gives a constant outside it, otherwise a declared assumption;
+    the fold's `result_range_declarations`); a withdrawn range makes every
+    check it proved a candidate again (`result:declared-range:NAME`).
+    **Do not** read a call's result as any value of its type, or a declared
+    range as values the callee returns. `QCore.NullTriagePaths`
+    (`a_call_result_never_contributes`,
+    `a_witness_holds_whatever_the_callees_return`,
+    `a_bound_excludes_its_outside_arm`, `counter_stays_above`).
+
+<a id="constraint-15r"></a>
+
+15r. **A condition the search cannot read exactly is explored on both arms
+    and never makes a witness.** Card NULL-TRIAGE-UNRESOLVED-PATHS
+    (`qcore_core::null_paths::explore`). A call result its bound does not
+    decide, a correlated value or pointer test (rule 14r), a value the search
+    does not follow (an unfollowed expression, a floating value, a mask of
+    several bits, a value of unknown range), an ordered pointer comparison
+    and a switch over such a value end a path of the search's first, exact
+    phase (rule 14r's reading, so its witnesses are found in the same order
+    and budget as before). When that phase neither validates a path nor
+    ends every path without reaching the dereference NULL, a second phase
+    explores both arms (each case) of every such condition, marks the path
+    inexact with the first reason, and draws only an infeasibility proof
+    from it (rule 15t): a path so marked that reaches the dereference NULL
+    (or reaches it uninitialised) leaves the candidate `unresolved` ("an
+    inexact path reaches the dereference NULL: …"). Only an exact path
+    (decided arms and arms over unconstrained entry values) is a finding or
+    `indeterminate` (`conclude`). **Do not** take an inexact arm as
+    evidence that an execution takes it. `QCore.NullTriagePaths`
+    (`an_inexact_arm_is_never_exact`, `a_finding_needs_an_exact_path`).
+
+<a id="constraint-15s"></a>
+
+15s. **Relational facts are followed only when exact.** Card
+    NULL-TRIAGE-UNRESOLVED-PATHS (`qcore_core::null_paths::relation_arms`).
+    `x + k` and `x - k` of a followed value are followed as an offset only
+    when no value of its range wraps or overflows in the expression's type
+    (also through a conversion that holds every value); `a + b` of two atoms
+    only when the sum interval lies in the type. A comparison of two
+    independent, unconstrained entry values over hole-free intervals (or of
+    an offset with another, or of a sum with a constant) takes an arm only
+    when the difference (sum) interval meets the arm's set; any other
+    relation is inexact. Before this card a comparison of two values took
+    both arms whatever their ranges (a widening, corrected here). Both values
+    are constrained after the decision (a later condition over either is
+    correlated). **Do not** follow a call's result, a value with excluded
+    points or a floating value in a relation. `QCore.NullTriagePaths`
+    (`difference_attains`, `sum_attains`, `lt_arm_is_attained`,
+    `an_unmet_arm_has_no_value`; `armsVectors`).
+
+<a id="constraint-15t"></a>
+
+15t. **A proved-infeasible candidate is removed, resting on everything the
+    search read.** Card NULL-TRIAGE-UNRESOLVED-PATHS
+    (`qcore_core::null_paths::{conclude, removes}`, `null_deref.rs`). A
+    candidate is `infeasible` only when every path was explored to its end
+    (no loop bound, budget, unread form, uninitialised test or label the
+    search cannot enter cut one) and none, exact or inexact, reached the
+    dereference NULL. Its check becomes `proved` with the proof
+    `path-search:infeasible`, plus `result:member:`, `result:declared-result:`,
+    `result:declared-range:` and `result:declared:` proofs for the
+    declarations the explored paths read (all of them also join the row's
+    dependency set), and the row lists the assumption `path-search:` (the
+    search's facts are a review premise, trust boundary 28). A withdrawal
+    makes the check a candidate again (rule 14w). The loop budget (64
+    iterations), the path budget (1,024) and the step budget (40,000) are
+    unchanged (rule 11x): their exhaustion leaves the candidate unresolved.
+    **Do not** remove a candidate on a search that was cut. `QCore.NullTriagePaths`
+    (`exhaustive_search_is_sound`, `infeasible_needs_a_complete_empty_search`).
+
+<a id="constraint-15u"></a>
+
+15u. **A cached memory value dies with the variable it spells.** Card
+    NULL-TRIAGE-UNRESOLVED-PATHS (`witness.rs`, `forget_mentions`). The path
+    search caches a memory value by its spelling until a call or a store;
+    an assignment or a declaration of a followed variable now also forgets
+    every cached spelling that names it (before this card `p->n` kept its
+    value across `p = q`, which could decide a test wrongly in either
+    direction). **Do not** reuse a cached memory value after a variable it
+    names was assigned. Premise (trust boundary 28): the search's memory
+    facts, so forgotten, hold for the C program.

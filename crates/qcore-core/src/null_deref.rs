@@ -128,6 +128,11 @@ pub enum Proof {
     /// A dominating dereference: the check with this id. The question is
     /// moved there (user decision 1).
     Moved(usize),
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): the path search explored
+    /// every path of the body and none reaches the dereference with the
+    /// pointer NULL (the check's other proofs name the declarations the
+    /// search read).
+    Infeasible,
 }
 
 /// A pointer's nullness at a program point.

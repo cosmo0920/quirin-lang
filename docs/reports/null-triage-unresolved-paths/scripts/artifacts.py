@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """artifacts.py -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE): the report's artifacts from the b0
-(BEFORE) and a4 (AFTER) runs (private/ntu/, the slice under the shared
+(BEFORE) and a2 (AFTER) runs (private/ntu/, the slice under the shared
 prepared attempt). Run from the repository root after triage.py and
 compare.py. The findings artifact carries, per finding, the file, line,
 function, class, NULL condition, path (each step with its original line)
@@ -14,7 +14,7 @@ import shutil
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 PRIVATE = REPO / "private/ntu"
-OUT = REPO / "docs/reports/null-candidate-triage/artifacts"
+OUT = REPO / "docs/reports/null-triage-unresolved-paths/artifacts"
 SOURCE = pathlib.Path("/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib")
 LIBRARY_DIRS = {
     "librdkafka": "librdkafka-2.15.0/src",
@@ -54,7 +54,7 @@ def copy(source, name):
     shutil.copyfile(source, OUT / name)
 
 
-triage = json.loads((PRIVATE / "triage-a4.json").read_text())
+triage = json.loads((PRIVATE / "a2-triage.json").read_text())
 findings = []
 for entry in triage["findings"]:
     path = entry.get("path") or []
@@ -85,11 +85,5 @@ for entry in triage["findings"]:
 }, indent=1, ensure_ascii=False) + "\n")
 for route, name in (("", "corpus"), ("-system", "system"), ("-slice", "slice")):
     copy(PRIVATE / f"b0{route}-null.summary.json", f"null-summary-before-{name}.json")
-    copy(PRIVATE / f"a4{route}-null.summary.json", f"null-summary-after-{name}.json")
-    compared = json.loads((PRIVATE / f"compare-{name}.json").read_text())
-    (OUT / f"compare-{name}.json").write_text(json.dumps(compared, indent=1, ensure_ascii=False) + "\n")
-with open(OUT / "candidates-after.json.gz", "wb") as raw:
-    with gzip.GzipFile(filename="candidates.json", mode="wb", fileobj=raw, mtime=0) as packed:
-        packed.write((PRIVATE / "cand-a4.json").read_bytes())
-copy(PRIVATE / "cand-a4-by-kind.json", "candidates-by-kind-after.json")
+    copy(PRIVATE / f"a2{route}-null.summary.json", f"null-summary-after-{name}.json")
 print(len(findings), "findings")

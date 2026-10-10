@@ -26,6 +26,17 @@
 //! condition, an unread form, the budget) or `indeterminate` (a path reaches
 //! it with the pointer uninitialised). Nothing here changes a check the walk
 //! made; the consumer records the result beside the candidate.
+//!
+//! Card **NULL-TRIAGE-UNRESOLVED-PATHS** (gateway rules 15q–15u) adds the
+//! *inexact* reading ([`qcore_core::null_paths`]): a condition the search
+//! cannot read exactly (a call's integer result its bound does not decide, a
+//! correlated value, a value it does not follow, an ordered pointer
+//! comparison) no longer ends the path. Both arms are explored, which
+//! over-approximates the executions, and the path is marked inexact: it is
+//! never a witness, but an exploration that ends every path without reaching
+//! the dereference NULL proves the candidate infeasible. A call's integer
+//! result is never free: its range is a bound (its type, a checked
+//! result-range contract, this unit's validated summary of the callee).
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -69,6 +80,11 @@ pub struct Search {
     pub reason: String,
     pub witness: Option<Witness>,
     pub runs: usize,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): every declaration the
+    /// explored paths read (`member:`, `result:`, `range:`, `declared:`,
+    /// `inferred:` and declared-clause names); an infeasibility proof rests
+    /// on all of them.
+    pub consulted: BTreeSet<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -102,9 +118,26 @@ enum P {
 enum S {
     Const(i128),
     Atom(usize),
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): `atom + k`, built only
+    /// when no value of the atom's range wraps or overflows in the
+    /// expression's type, so a comparison of it is a comparison of the atom
+    /// with a shifted constant.
+    Off(usize, i128),
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): `a + b` of two distinct
+    /// atoms whose sum interval lies inside the expression's type.
+    Sum(usize, usize),
     /// A value the search does not follow (an expression of atoms, an
     /// indeterminate local, a non-integer).
     Opaque(String),
+}
+
+/// The atom and constant offset of a linear value.
+fn lin(s: &S) -> Option<(usize, i128)> {
+    match s {
+        S::Atom(a) => Some((*a, 0)),
+        S::Off(a, k) => Some((*a, *k)),
+        _ => None,
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -125,6 +158,13 @@ struct AtomInfo {
     constrained: bool,
     range: Option<(i128, i128)>,
     holes: BTreeSet<i128>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): a call's result (the
+    /// callee's name). Its range is a **bound** (the C type's range, a
+    /// checked result-range contract, a validated in-unit summary): it
+    /// decides a comparison it excludes, and is never evidence that the
+    /// callee returns any value in it, so no other comparison over it is
+    /// taken on a witness path.
+    call: Option<String>,
 }
 
 /// The values of one arm of `x OP k`: an interval, or everything but `k`.
@@ -200,6 +240,9 @@ enum End {
     Indeterminate(String),
     /// The path ended without reaching the dereference NULL.
     Ended,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): a path that took an
+    /// inexact arm reached the dereference NULL: no witness.
+    InexactReach(String),
     /// The path faulted at an earlier dereference of a null pointer.
     Faulted,
     Unresolved(String),
@@ -220,7 +263,8 @@ struct Run<'a, 'e> {
     function: &'a str,
     target: &'a str,
     contains: &'a BTreeSet<*const Value>,
-    tracked: &'a BTreeSet<String>,
+    /// The followed variables: declaration id -> name.
+    tracked: &'a BTreeMap<String, String>,
     decisions: &'a [bool],
     used: usize,
     steps: usize,
@@ -236,6 +280,16 @@ struct Run<'a, 'e> {
     path: Vec<PathStep>,
     /// The arm a branch prefers to try first (the one holding the target).
     steer: Option<bool>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): the first inexact arm
+    /// the path took (a call's result, a correlated value, a value the
+    /// search does not follow): the path is explored, never a witness.
+    inexact: Option<String>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): every declaration the
+    /// run read (an infeasibility proof rests on all of them).
+    consulted: BTreeSet<String>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): the second phase, which
+    /// explores inexact arms; the first (exact) phase ends a path at one.
+    explore_inexact: bool,
 }
 
 fn strip(node: &Value) -> &Value {
@@ -270,7 +324,7 @@ fn node_key(node: &Value) -> String {
 }
 
 /// The value range of a C integer type, from its spelling.
-fn int_range(spelled: &str) -> Option<(i128, i128)> {
+pub(super) fn int_range(spelled: &str) -> Option<(i128, i128)> {
     let words = spelled
         .split_whitespace()
         .filter(|w| !matches!(*w, "const" | "volatile"))
@@ -349,18 +403,23 @@ fn compare(op: &str, a: i128, b: i128) -> Option<bool> {
 impl<'a, 'e> Run<'a, 'e> {
     /// A C integer type's range, an enumeration typedef's included.
     fn int_range(&self, spelled: &str) -> Option<(i128, i128)> {
-        int_range(spelled).or_else(|| {
-            let bare = spelled
-                .split_whitespace()
-                .filter(|w| !matches!(*w, "const" | "volatile"))
-                .collect::<Vec<_>>()
-                .join(" ");
-            self.env
-                .unit
-                .enum_typedefs
-                .contains(&bare)
-                .then_some((i128::from(i32::MIN), i128::from(i32::MAX)))
-        })
+        let bare = spelled
+            .split_whitespace()
+            .filter(|w| !matches!(*w, "const" | "volatile"))
+            .collect::<Vec<_>>()
+            .join(" ");
+        // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): an enumeration type
+        // (spelled `enum TAG` or through a typedef) has its compatible
+        // integer type's range; one whose range the unit does not state is
+        // not followed (before the card it read as `int`, which an
+        // enumeration with no negative enumerator is not).
+        if let Some(range) = self.env.unit.enum_ranges.get(&bare) {
+            return Some(*range);
+        }
+        if bare.starts_with("enum ") || self.env.unit.enum_typedefs.contains(&bare) {
+            return None;
+        }
+        int_range(spelled)
     }
 
     fn tick(&mut self) -> R<()> {
@@ -387,12 +446,54 @@ impl<'a, 'e> Run<'a, 'e> {
     }
 
     fn new_atom(&mut self, range: Option<(i128, i128)>, constrained: bool) -> usize {
+        self.new_value(range, constrained, None)
+    }
+
+    /// A new atom; `call` names the callee whose result it is (rule 15q).
+    fn new_value(
+        &mut self,
+        range: Option<(i128, i128)>,
+        constrained: bool,
+        call: Option<String>,
+    ) -> usize {
         self.atoms.push(AtomInfo {
             constrained,
             range,
             holes: BTreeSet::new(),
+            call,
         });
         self.atoms.len() - 1
+    }
+
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): take an arm of a
+    /// condition the search cannot read exactly. Both arms are explored (an
+    /// over-approximation, sound for an infeasibility proof); the path is no
+    /// longer a witness.
+    fn inexact_take(&mut self, node: &Value, reason: String) -> R<bool> {
+        // The exact phase keeps rule 14r's reading: the path ends unresolved.
+        if !self.explore_inexact {
+            return Err(End::Unresolved(reason));
+        }
+        let prefer = self.steer.unwrap_or(false);
+        let arm = self.decide(prefer)?;
+        self.note(node, arm);
+        debug_assert_eq!(
+            qcore_core::null_paths::explore(qcore_core::null_paths::Reading::Inexact, arm),
+            qcore_core::null_paths::Step::TakenInexact
+        );
+        self.inexact.get_or_insert(reason);
+        Ok(arm)
+    }
+
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15u): a tracked variable is
+    /// assigned: a cached memory value whose spelling names it no longer
+    /// designates the same object.
+    fn forget_mentions(&mut self, id: &str) {
+        let Some(name) = self.tracked.get(id).cloned() else {
+            self.forget_memory();
+            return;
+        };
+        self.memory.retain(|text, _| !mentions(text, &name));
     }
 
     /// The next decision, or the request for one (`prefer` first).
@@ -421,7 +522,7 @@ impl<'a, 'e> Run<'a, 'e> {
             return None;
         }
         let id = node["referencedDecl"]["id"].as_str()?;
-        self.tracked.contains(id).then(|| id.to_owned())
+        self.tracked.contains_key(id).then(|| id.to_owned())
     }
 
     /// Give every holder of value `id` the pointer value `p`.
@@ -534,8 +635,14 @@ impl<'a, 'e> Run<'a, 'e> {
                 }
             }),
             PlaceKey::Mem(text) => {
-                let declared = self.member_declared(node).is_some();
-                self.read_memory(text, ty(node), declared)
+                let member = self.member_declared(node);
+                if let Some(member) = &member
+                    && is_pointer(ty(node))
+                    && !self.memory.contains_key(text)
+                {
+                    self.consulted.insert(format!("member:{member}"));
+                }
+                self.read_memory(text, ty(node), member.is_some())
             }
         }
     }
@@ -543,6 +650,7 @@ impl<'a, 'e> Run<'a, 'e> {
     fn write(&mut self, place: Option<PlaceKey>, value: V) {
         match place {
             Some(PlaceKey::Var(id)) => {
+                self.forget_mentions(&id);
                 self.vars.insert(id, value);
             }
             Some(PlaceKey::Mem(text)) => {
@@ -577,13 +685,28 @@ impl<'a, 'e> Run<'a, 'e> {
                     line: *at,
                 }),
                 P::Uninit => {
-                    return Err(End::Indeterminate(format!(
-                        "the pointer is uninitialised on a path reaching line {line}"
-                    )));
+                    let why =
+                        format!("the pointer is uninitialised on a path reaching line {line}");
+                    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): only an
+                    // exact path shows an indeterminate value.
+                    return Err(match &self.inexact {
+                        Some(inexact) => {
+                            End::InexactReach(format!("{why}, but only along {inexact}"))
+                        }
+                        None => End::Indeterminate(why),
+                    });
                 }
                 _ => None,
             };
             if let Some(why) = why {
+                // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): a path that
+                // took an inexact arm is no witness.
+                if let Some(inexact) = &self.inexact {
+                    return Err(End::InexactReach(format!(
+                        "{} at line {line}, but only along {inexact}",
+                        why.condition
+                    )));
+                }
                 let allocation = why.allocation || self.needs_allocation_failure;
                 let mut path = self.path.clone();
                 if !path
@@ -933,10 +1056,37 @@ impl<'a, 'e> Run<'a, 'e> {
                                 }
                                 (_, Some(range)) => {
                                     let constrained = self.atoms[atom].constrained;
+                                    let call = self.atoms[atom].call.clone();
                                     self.atoms[atom].constrained = true;
-                                    V::Int(S::Atom(self.new_atom(Some(range), constrained)))
+                                    V::Int(S::Atom(self.new_value(Some(range), constrained, call)))
                                 }
                                 (_, None) => V::Int(S::Opaque("a conversion".into())),
+                            }
+                        }
+                        // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): an
+                        // offset or a sum survives a conversion whose target
+                        // admits every value it may take.
+                        V::Int(S::Off(atom, k)) => {
+                            let target = self.int_range(ty(node));
+                            match (self.atoms[atom].range, target) {
+                                (Some((lo, hi)), Some((tlo, thi)))
+                                    if lo.checked_add(k).is_some_and(|a| tlo <= a)
+                                        && hi.checked_add(k).is_some_and(|b| b <= thi) =>
+                                {
+                                    V::Int(S::Off(atom, k))
+                                }
+                                _ => V::Int(S::Opaque("a conversion of an offset".into())),
+                            }
+                        }
+                        V::Int(S::Sum(a, b)) => {
+                            let target = self.int_range(ty(node));
+                            match (self.atoms[a].range, self.atoms[b].range, target) {
+                                (Some((alo, ahi)), Some((blo, bhi)), Some((tlo, thi)))
+                                    if tlo <= alo + blo && ahi + bhi <= thi =>
+                                {
+                                    V::Int(S::Sum(a, b))
+                                }
+                                _ => V::Int(S::Opaque("a conversion of a sum".into())),
                             }
                         }
                         V::Int(s) => V::Int(s),
@@ -1099,6 +1249,21 @@ impl<'a, 'e> Run<'a, 'e> {
                         arith(op, a, b)
                             .map_or_else(|| S::Opaque("an arithmetic result".into()), S::Const),
                     ),
+                    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): `x + k`,
+                    // `x - k`, `k + x` of a linear value, and `a + b` of two
+                    // atoms, followed when no value wraps or overflows.
+                    (V::Int(x), V::Int(S::Const(k)))
+                        if matches!(op, "+" | "-") && lin(&x).is_some() =>
+                    {
+                        let k = if op == "+" { Some(k) } else { k.checked_neg() };
+                        V::Int(self.offset(&x, k, ty(node), node))
+                    }
+                    (V::Int(S::Const(k)), V::Int(x)) if op == "+" && lin(&x).is_some() => {
+                        V::Int(self.offset(&x, Some(k), ty(node), node))
+                    }
+                    (V::Int(S::Atom(a)), V::Int(S::Atom(b))) if op == "+" && a != b => {
+                        V::Int(self.sum(a, b, ty(node), node))
+                    }
                     // `a & K` of an unconstrained `a`: a new value in
                     // [0, K] (every one reachable from some `a`), `a`
                     // itself constrained.
@@ -1111,10 +1276,11 @@ impl<'a, 'e> Run<'a, 'e> {
                                 .is_some_and(|(lo, hi)| lo <= 0 && hi >= k) =>
                     {
                         let constrained = self.atoms[a].constrained;
+                        let call = self.atoms[a].call.clone();
                         self.atoms[a].constrained = true;
                         if k & (k - 1) == 0 {
                             // A single bit: the result is 0 or K.
-                            V::Int(S::Atom(self.new_atom(Some((0, k)), constrained)))
+                            V::Int(S::Atom(self.new_value(Some((0, k)), constrained, call)))
                         } else {
                             V::Int(S::Opaque(format!("a mask `{}`", render(node))))
                         }
@@ -1163,11 +1329,16 @@ impl<'a, 'e> Run<'a, 'e> {
             if let Some(declared) = self.env.declared.get(callee_name) {
                 if declared.held.is_none() && declared.parameters == values.len() {
                     positions.extend(declared.positions.keys().copied());
+                    self.consulted.insert(callee_name.clone());
                 }
             } else if let Some(summary) = self.env.summaries.get(callee_name)
                 && callee_name != self.function
             {
                 positions.extend(summary.derefs.iter().copied());
+                if !summary.derefs.is_empty() {
+                    self.consulted.extend(summary.dependencies.iter().cloned());
+                    self.consulted.insert(format!("inferred:{callee_name}"));
+                }
             }
         }
         for position in positions {
@@ -1185,8 +1356,15 @@ impl<'a, 'e> Run<'a, 'e> {
         let line = self.line(node);
         let id = self.fresh_id();
         if !is_pointer(ty(node)) {
+            // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): a call's integer
+            // result is bounded (its type, a checked result-range contract,
+            // an in-unit validated summary), never free.
             return Ok(match self.int_range(ty(node)) {
-                Some(range) => V::Int(S::Atom(self.new_atom(Some(range), false))),
+                Some(range) => {
+                    let callee = name.clone().unwrap_or_else(|| "an indirect call".into());
+                    let bound = self.result_bound(&callee, range);
+                    V::Int(S::Atom(self.new_value(Some(bound), false, Some(callee))))
+                }
                 None => V::Int(S::Opaque(format!("a result of type `{}`", ty(node)))),
             });
         }
@@ -1209,12 +1387,14 @@ impl<'a, 'e> Run<'a, 'e> {
             .get(&callee_name)
             .is_some_and(|r| r.held.is_none())
         {
+            self.consulted.insert(format!("result:{callee_name}"));
             return Ok(V::Ptr(P::NonNull, id));
         }
         if let Some(summary) = self.env.summaries.get(&callee_name)
             && summary.returns_non_null
             && callee_name != self.function
         {
+            self.consulted.extend(summary.dependencies.iter().cloned());
             return Ok(V::Ptr(P::NonNull, id));
         }
         let contract = crate::contract_dependencies::unrecorded(|| {
@@ -1230,7 +1410,10 @@ impl<'a, 'e> Run<'a, 'e> {
                 | ResourceReturnMode::Reallocated {
                     nullable: false, ..
                 },
-            ) => P::NonNull,
+            ) => {
+                self.consulted.insert(format!("declared:{callee_name}"));
+                P::NonNull
+            }
             Some(ResourceReturnMode::Derived { nullable: true, .. }) => {
                 P::Opaque(Origin::Lookup(callee_name, line), false)
             }
@@ -1247,6 +1430,31 @@ impl<'a, 'e> Run<'a, 'e> {
             }
         };
         Ok(V::Ptr(p, id))
+    }
+
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): the bound of a call's
+    /// integer result: its type's range, narrowed by a result-range
+    /// declaration in force (not held, not refuted by this unit's body) and
+    /// by this unit's validated summary of the callee's body.
+    fn result_bound(&mut self, callee: &str, (lo, hi): (i128, i128)) -> (i128, i128) {
+        let (mut lo, mut hi) = (lo, hi);
+        if let Some(declared) = self.env.ranges.get(callee)
+            && declared.held.is_none()
+            && !declared.refuted
+            && declared.lo.max(lo) <= declared.hi.min(hi)
+        {
+            lo = lo.max(declared.lo);
+            hi = hi.min(declared.hi);
+            self.consulted.insert(format!("range:{callee}"));
+        }
+        if callee != self.function
+            && let Some((slo, shi)) = self.env.range_summaries.get(callee).copied()
+            && slo.max(lo) <= shi.min(hi)
+        {
+            lo = lo.max(slo);
+            hi = hi.min(shi);
+        }
+        (lo, hi)
     }
 
     // -------------------------------------------------------------------
@@ -1282,14 +1490,23 @@ impl<'a, 'e> Run<'a, 'e> {
             P::Null(_) => Ok(false),
             P::NonNull => Ok(true),
             P::Uninit => Err(End::Unresolved("a test of an uninitialised pointer".into())),
-            P::Opaque(_, true) => Err(End::Unresolved(format!(
-                "a correlated test at line {line}: `{}` was tested before a call on the path",
-                render(node)
-            ))),
-            P::Opaque(origin, false) => {
-                let prefer = self.steer.unwrap_or(false);
-                let arm = self.decide(prefer)?;
-                self.note(node, arm);
+            P::Opaque(origin, constrained) => {
+                let arm = if constrained {
+                    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): explored
+                    // on both arms, inexactly.
+                    self.inexact_take(
+                        node,
+                        format!(
+                            "a correlated test at line {line}: `{}` was tested before a call on the path",
+                            render(node)
+                        ),
+                    )?
+                } else {
+                    let prefer = self.steer.unwrap_or(false);
+                    let arm = self.decide(prefer)?;
+                    self.note(node, arm);
+                    arm
+                };
                 if arm {
                     self.set_ident(id, &P::NonNull);
                 } else {
@@ -1470,20 +1687,27 @@ impl<'a, 'e> Run<'a, 'e> {
     ) -> R<bool> {
         let line = self.line(node);
         let (left, right) = (render(strip(lhs)), render(strip(rhs)));
+        if left == right && matches!(op, "==" | "!=" | "<=" | ">=" | "<" | ">") {
+            return Ok(matches!(op, "==" | "<=" | ">="));
+        }
         if !matches!(op, "==" | "!=") {
+            // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): explored on both
+            // arms, inexactly (no same-object reading exists here).
+            return self.inexact_take(
+                node,
+                format!("an ordered pointer comparison at line {line}"),
+            );
+        }
+        if matches!(p, P::Uninit) || matches!(q, P::Uninit) {
             return Err(End::Unresolved(format!(
-                "an ordered pointer comparison at line {line}"
+                "a comparison of an uninitialised pointer at line {line}"
             )));
         }
-        if left == right {
-            return Ok(op == "==");
-        }
-        if matches!(p, P::Opaque(_, true) | P::Uninit)
-            || matches!(q, P::Opaque(_, true) | P::Uninit)
-        {
-            return Err(End::Unresolved(format!(
-                "a correlated pointer comparison at line {line}"
-            )));
+        if matches!(p, P::Opaque(_, true)) || matches!(q, P::Opaque(_, true)) {
+            return self.inexact_take(
+                node,
+                format!("a correlated pointer comparison at line {line}"),
+            );
         }
         // A side's identity: its value (a read of a variable or of memory)
         // or, for an address it forms afresh, its spelling.
@@ -1510,9 +1734,12 @@ impl<'a, 'e> Run<'a, 'e> {
         };
         let (lk, rk) = (identity(lhs, pid), identity(rhs, qid));
         if (lk.contains('#') && compared(&lk)) || (rk.contains('#') && compared(&rk)) {
-            return Err(End::Unresolved(format!(
-                "a correlated pointer comparison at line {line}"
-            )));
+            let arm = self.inexact_take(
+                node,
+                format!("a correlated pointer comparison at line {line}"),
+            )?;
+            self.decided.insert(key, (Vec::new(), arm));
+            return Ok(arm);
         }
         // Two distinct, unconstrained pointer values may be equal or not.
         let prefer = self.steer.unwrap_or(false);
@@ -1528,9 +1755,22 @@ impl<'a, 'e> Run<'a, 'e> {
     fn atoms_of(s: &S) -> Option<Vec<usize>> {
         match s {
             S::Const(_) => Some(Vec::new()),
-            S::Atom(a) => Some(vec![*a]),
+            S::Atom(a) | S::Off(a, _) => Some(vec![*a]),
+            S::Sum(a, b) => Some(vec![*a, *b]),
             S::Opaque(_) => None,
         }
+    }
+
+    /// What an unfollowed side is, for the reason.
+    fn describe(a: &S, b: &S) -> String {
+        [a, b]
+            .iter()
+            .filter_map(|s| match s {
+                S::Opaque(what) => Some(what.clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+            .join("; ")
     }
 
     fn integer_test(&mut self, node: &Value, a: S, op: &str, b: S) -> R<bool> {
@@ -1539,11 +1779,29 @@ impl<'a, 'e> Run<'a, 'e> {
             return compare(op, *x, *y)
                 .ok_or_else(|| End::Unresolved("an unread comparison".into()));
         }
-        let (Some(mut atoms), Some(more)) = (Self::atoms_of(&a), Self::atoms_of(&b)) else {
+        if !matches!(op, "==" | "!=" | "<" | "<=" | ">" | ">=") {
             return Err(End::Unresolved(format!(
-                "a condition over a value the search does not follow at line {line}: `{}`",
-                render(node)
+                "an unread comparison at line {line}"
             )));
+        }
+        // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): a value the search
+        // does not follow is explored on both arms, inexactly.
+        let (Some(mut atoms), Some(more)) = (Self::atoms_of(&a), Self::atoms_of(&b)) else {
+            let what = Self::describe(&a, &b);
+            for atom in Self::atoms_of(&a)
+                .into_iter()
+                .chain(Self::atoms_of(&b))
+                .flatten()
+            {
+                self.atoms[atom].constrained = true;
+            }
+            return self.inexact_take(
+                node,
+                format!(
+                    "a condition over a value the search does not follow at line {line}: `{}` ({what})",
+                    render(node)
+                ),
+            );
         };
         atoms.extend(more);
         atoms.sort_unstable();
@@ -1554,54 +1812,103 @@ impl<'a, 'e> Run<'a, 'e> {
         {
             return Ok(*arm);
         }
-        if atoms.iter().any(|atom| self.atoms[*atom].constrained) {
-            return Err(End::Unresolved(format!(
-                "a correlated condition at line {line}: `{key}` reads a value an earlier decision constrained"
-            )));
-        }
         for side in kids(node) {
             self.decided_texts.insert(render(strip(side)));
         }
         self.decided_texts.insert(render(strip(node)));
-        match (&a, &b) {
-            (S::Atom(x), S::Atom(y)) if x == y => {
-                compare(op, 0, 0).ok_or_else(|| End::Unresolved("an unread comparison".into()))
-            }
-            (S::Atom(x), S::Const(k)) | (S::Const(k), S::Atom(x)) => {
-                let op = if matches!(a, S::Const(_)) {
-                    flip(op)
-                } else {
-                    op
-                };
-                let (Some(on_true), Some(on_false)) =
-                    (arm_set(op, *k, true), arm_set(op, *k, false))
-                else {
-                    return Err(End::Unresolved(format!(
-                        "an unread comparison at line {line}"
-                    )));
-                };
-                if self.atoms[*x].range.is_none() {
-                    return Err(End::Unresolved(format!(
-                        "a comparison over a value of unknown range at line {line}"
-                    )));
-                }
-                let can_true = self.atoms[*x].admits(on_true);
-                let can_false = self.atoms[*x].admits(on_false);
-                let arm = self.take(node, can_true, can_false)?;
-                self.atoms[*x].narrow(if arm { on_true } else { on_false });
-                Ok(arm)
-            }
-            _ => {
-                // Two distinct unconstrained values: both arms are feasible;
-                // the values are related from now on.
-                let arm = self.take(node, true, true)?;
-                for atom in &atoms {
-                    self.atoms[*atom].constrained = true;
-                }
-                self.decided.insert(key, (atoms, arm));
-                Ok(arm)
-            }
+        if atoms.iter().any(|atom| self.atoms[*atom].constrained) {
+            let arm = self.inexact_take(
+                node,
+                format!(
+                    "a correlated condition at line {line}: `{key}` reads a value an earlier decision constrained"
+                ),
+            )?;
+            self.decided.insert(key, (atoms, arm));
+            return Ok(arm);
         }
+        // One linear value against a constant: `x + k OP c` is `x OP c - k`.
+        let single = match (&a, &b) {
+            (x, S::Const(c)) => lin(x).map(|(atom, k)| (atom, op, c.checked_sub(k))),
+            (S::Const(c), x) => lin(x).map(|(atom, k)| (atom, flip(op), c.checked_sub(k))),
+            _ => None,
+        };
+        if let Some((x, op, c)) = single {
+            let arms = c.and_then(|c| Some((arm_set(op, c, true)?, arm_set(op, c, false)?)));
+            let Some((on_true, on_false)) = arms else {
+                return Err(End::Unresolved(format!(
+                    "an unread comparison at line {line}"
+                )));
+            };
+            if self.atoms[x].range.is_none() {
+                return self.inexact_take(
+                    node,
+                    format!("a comparison over a value of unknown range at line {line}"),
+                );
+            }
+            let can_true = self.atoms[x].admits(on_true);
+            let can_false = self.atoms[x].admits(on_false);
+            let arm = match (&self.atoms[x].call, can_true && can_false) {
+                // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): a call's
+                // result is bounded, never free: an arm its bound does not
+                // decide is inexact.
+                (Some(callee), true) => {
+                    let callee = callee.clone();
+                    self.inexact_take(
+                        node,
+                        format!(
+                            "a condition over the result of `{callee}` at line {line}: its range is a bound, not a range the callee is known to return"
+                        ),
+                    )?
+                }
+                _ => self.take(node, can_true, can_false)?,
+            };
+            self.atoms[x].narrow(if arm { on_true } else { on_false });
+            return Ok(arm);
+        }
+        // The same atom on both sides: `x + k1 OP x + k2`.
+        if let (Some((x, k1)), Some((y, k2))) = (lin(&a), lin(&b))
+            && x == y
+        {
+            return compare(op, k1, k2)
+                .ok_or_else(|| End::Unresolved("an unread comparison".into()));
+        }
+        // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): two independent
+        // values over hole-free intervals: `x + k1 OP y + k2` is
+        // `x - y OP k2 - k1`, and `a + b OP c` a sum; an arm is taken only
+        // when the difference (sum) interval admits it.
+        let relation = match (lin(&a), lin(&b), &a, &b) {
+            (Some((x, k1)), Some((y, k2)), _, _) => {
+                k2.checked_sub(k1).map(|c| (x, y, false, op, c))
+            }
+            (_, _, S::Sum(x, y), S::Const(c)) => Some((*x, *y, true, op, *c)),
+            (_, _, S::Const(c), S::Sum(x, y)) => Some((*x, *y, true, flip(op), *c)),
+            _ => None,
+        };
+        let exact = relation.and_then(|(x, y, sum, op, c)| {
+            let (xi, yi) = (&self.atoms[x], &self.atoms[y]);
+            if xi.call.is_some()
+                || yi.call.is_some()
+                || !xi.holes.is_empty()
+                || !yi.holes.is_empty()
+            {
+                return None;
+            }
+            qcore_core::null_paths::relation_arms(xi.range?, yi.range?, sum, op, c)
+        });
+        let arm = match exact {
+            Some((can_true, can_false)) => self.take(node, can_true, can_false)?,
+            None => self.inexact_take(
+                node,
+                format!(
+                    "a relation at line {line} the search does not read exactly: `{key}` (a call's result, an excluded value or a value of unknown range)"
+                ),
+            )?,
+        };
+        for atom in &atoms {
+            self.atoms[*atom].constrained = true;
+        }
+        self.decided.insert(key, (atoms, arm));
+        Ok(arm)
     }
 
     /// The arm a path takes when `can_true` and `can_false` say which are
@@ -1670,7 +1977,8 @@ impl<'a, 'e> Run<'a, 'e> {
                     match init {
                         Some(init) => {
                             let value = self.eval(init)?;
-                            if self.tracked.contains(&id) {
+                            if self.tracked.contains_key(&id) {
+                                self.forget_mentions(&id);
                                 self.vars.insert(id, value);
                             } else {
                                 let name = decl["name"].as_str().unwrap_or("?").to_owned();
@@ -1678,6 +1986,7 @@ impl<'a, 'e> Run<'a, 'e> {
                             }
                         }
                         None => {
+                            self.forget_mentions(&id);
                             self.vars.remove(&id);
                         }
                     }
@@ -1881,31 +2190,66 @@ impl<'a, 'e> Run<'a, 'e> {
                 .find(|(_, case)| *case == k)
                 .map(|(index, _)| *index)
                 .or(default),
-            V::Int(S::Atom(atom)) => {
-                if self.atoms[atom].constrained {
-                    return Err(End::Unresolved(format!(
-                        "a correlated switch at line {line}"
-                    )));
-                }
-                if self.atoms[atom].range.is_none() {
-                    return Err(End::Unresolved(format!(
-                        "a switch over a value of unknown range at line {line}"
-                    )));
-                }
+            V::Int(s) => {
+                // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15r): a linear value
+                // of an unconstrained entry atom is read exactly (case `k`
+                // is `atom == k - offset`); any other value (a call's result
+                // its bound does not decide, a correlated or unfollowed
+                // value) is explored case by case, inexactly.
+                let linear = lin(&s).filter(|(atom, _)| self.atoms[*atom].range.is_some());
+                let exact = linear.is_some_and(|(atom, _)| {
+                    !self.atoms[atom].constrained && self.atoms[atom].call.is_none()
+                });
+                let why = match (&s, linear) {
+                    (_, Some((atom, _))) if self.atoms[atom].constrained => {
+                        format!("a correlated switch at line {line}")
+                    }
+                    (_, Some((atom, _))) => format!(
+                        "a switch over the result of `{}` at line {line}: its range is a bound",
+                        self.atoms[atom].call.clone().unwrap_or_default()
+                    ),
+                    (S::Opaque(what), None) => format!(
+                        "a switch over a value the search does not follow at line {line} ({what})"
+                    ),
+                    _ => format!("a switch over a value the search does not follow at line {line}"),
+                };
                 let mut chosen = None;
                 for (index, k) in &cases {
-                    let can_take = self.atoms[atom].admits(ArmSet::Interval(*k, *k));
-                    let can_pass = self.atoms[atom].admits(ArmSet::Except(*k));
+                    let (can_take, can_pass) = match linear {
+                        Some((atom, off)) => match k.checked_sub(off) {
+                            Some(at) => (
+                                self.atoms[atom].admits(ArmSet::Interval(at, at)),
+                                self.atoms[atom].admits(ArmSet::Except(at)),
+                            ),
+                            None => (false, true),
+                        },
+                        None => (true, true),
+                    };
                     let take = match (can_take, can_pass) {
                         (false, _) => false,
                         (true, false) => true,
-                        (true, true) => {
+                        (true, true) if exact => {
                             let prefer = self.holds_target(children[*index]);
                             self.decide(prefer)?
                         }
+                        (true, true) => {
+                            if !self.explore_inexact {
+                                return Err(End::Unresolved(why));
+                            }
+                            let prefer = self.holds_target(children[*index]);
+                            let take = self.decide(prefer)?;
+                            self.inexact.get_or_insert(why.clone());
+                            take
+                        }
                     };
-                    if !take {
-                        self.atoms[atom].narrow(ArmSet::Except(*k));
+                    if let Some((atom, off)) = linear
+                        && let Some(at) = k.checked_sub(off)
+                    {
+                        if take {
+                            self.atoms[atom].narrow(ArmSet::Interval(at, at));
+                        } else {
+                            self.atoms[atom].narrow(ArmSet::Except(at));
+                        }
                     }
                     if take {
                         self.path.push(PathStep {
@@ -1913,7 +2257,13 @@ impl<'a, 'e> Run<'a, 'e> {
                             step: "decision",
                             text: format!("`{}` is {k}", render(cond)),
                         });
-                        self.pin(cond, atom, *k);
+                        if let Some(id) = self.var_id(cond_operand(cond)) {
+                            self.vars.insert(id, V::Int(S::Const(*k)));
+                        } else if linear.is_some_and(|(_, off)| off == 0) {
+                            let text = render(strip(cond_operand(cond)));
+                            self.memory.insert(text.clone(), V::Int(S::Const(*k)));
+                            self.decided_texts.insert(text);
+                        }
                         chosen = Some(*index);
                         break;
                     }
@@ -1928,7 +2278,7 @@ impl<'a, 'e> Run<'a, 'e> {
                 self.decided_texts.insert(render(strip(cond)));
                 chosen.or(default)
             }
-            _ => {
+            V::Ptr(..) => {
                 return Err(End::Unresolved(format!(
                     "a switch over a value the search does not follow at line {line}"
                 )));
@@ -1947,18 +2297,6 @@ impl<'a, 'e> Run<'a, 'e> {
     fn block_from_label(&mut self, children: &[&Value], start: usize) -> R<Flow> {
         self.block(children, start)
     }
-
-    /// The path decided `cond == k` for the atom `atom`.
-    fn pin(&mut self, cond: &Value, atom: usize, k: i128) {
-        self.atoms[atom].narrow(ArmSet::Interval(k, k));
-        if let Some(id) = self.var_id(cond_operand(cond)) {
-            self.vars.insert(id, V::Int(S::Const(k)));
-        } else {
-            let text = render(strip(cond_operand(cond)));
-            self.memory.insert(text.clone(), V::Int(S::Const(k)));
-            self.decided_texts.insert(text);
-        }
-    }
 }
 
 /// The operand under value-preserving casts.
@@ -1976,6 +2314,57 @@ fn cond_operand(node: &Value) -> &Value {
         }
     }
     node
+}
+
+impl Run<'_, '_> {
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): `x + k` of a linear
+    /// value `x`, exact only when every value of `x`'s range plus `k` lies
+    /// in the expression's type (no wrap, no overflow).
+    fn offset(&self, x: &S, k: Option<i128>, spelled: &str, node: &Value) -> S {
+        let opaque = || S::Opaque(format!("an expression `{}`", render(node)));
+        let (Some((atom, base)), Some(k)) = (lin(x), k) else {
+            return opaque();
+        };
+        let Some(total) = base.checked_add(k) else {
+            return opaque();
+        };
+        let (Some((lo, hi)), Some((tlo, thi))) = (self.atoms[atom].range, self.int_range(spelled))
+        else {
+            return opaque();
+        };
+        match (lo.checked_add(total), hi.checked_add(total)) {
+            (Some(a), Some(b)) if tlo <= a && b <= thi => {
+                if total == 0 {
+                    S::Atom(atom)
+                } else {
+                    S::Off(atom, total)
+                }
+            }
+            _ => S::Opaque(format!(
+                "an expression `{}` that may wrap or overflow",
+                render(node)
+            )),
+        }
+    }
+
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): `a + b` of two atoms,
+    /// exact only when the sum interval lies in the expression's type.
+    fn sum(&self, a: usize, b: usize, spelled: &str, node: &Value) -> S {
+        let (Some((alo, ahi)), Some((blo, bhi)), Some((tlo, thi))) = (
+            self.atoms[a].range,
+            self.atoms[b].range,
+            self.int_range(spelled),
+        ) else {
+            return S::Opaque(format!("an expression `{}`", render(node)));
+        };
+        match (alo.checked_add(blo), ahi.checked_add(bhi)) {
+            (Some(lo), Some(hi)) if tlo <= lo && hi <= thi => S::Sum(a.min(b), a.max(b)),
+            _ => S::Opaque(format!(
+                "an expression `{}` that may overflow",
+                render(node)
+            )),
+        }
+    }
 }
 
 fn arith(op: &str, a: i128, b: i128) -> Option<i128> {
@@ -2068,46 +2457,160 @@ pub(super) fn search(
     entries: &BTreeMap<usize, Entry>,
     target: &str,
 ) -> Search {
+    let unresolved_without = |reason: &str| Search {
+        triage: Triage::Unresolved,
+        reason: reason.into(),
+        witness: None,
+        runs: 0,
+        consulted: BTreeSet::new(),
+    };
     let Some(body) = kids(definition).find(|c| kind(c) == "CompoundStmt") else {
-        return Search {
-            triage: Triage::Unresolved,
-            reason: "the definition has no body".into(),
-            witness: None,
-            runs: 0,
-        };
+        return unresolved_without("the definition has no body");
     };
     let mut contains = BTreeSet::new();
     if !ancestors(body, target, &mut contains) {
+        return unresolved_without("the dereference is not in the body");
+    }
+    let tracked = tracked_variables(definition, body, &env.unit.enum_typedefs);
+    let context = Context {
+        env,
+        function,
+        definition,
+        body,
+        entries,
+        target,
+        contains: &contains,
+        tracked: &tracked,
+    };
+    // Phase 1 (rule 14r as amended by rule 15q): exact paths only; an
+    // inexact condition ends its path unresolved.
+    let exact = phase(&context, false);
+    if let Some(found) = exact.finding {
+        return found;
+    }
+    if let Some(reason) = exact.indeterminate {
         return Search {
-            triage: Triage::Unresolved,
-            reason: "the dereference is not in the body".into(),
+            triage: Triage::Indeterminate,
+            reason,
             witness: None,
-            runs: 0,
+            runs: exact.runs,
+            consulted: exact.consulted,
         };
     }
-    let formals = kids(definition)
+    if exact.unresolved.is_none() {
+        // Every exact path ended without reaching it NULL.
+        return Search {
+            triage: Triage::Infeasible,
+            reason: exact.infeasible_reason(),
+            witness: None,
+            runs: exact.runs,
+            consulted: exact.consulted,
+        };
+    }
+    // Phase 2 (rule 15r): inexact arms explored on both sides; only an
+    // infeasibility proof is drawn from it.
+    let explored = phase(&context, true);
+    let runs = exact.runs + explored.runs;
+    // An exact path the first phase's budget did not reach is still a
+    // witness (its arms are the same in both phases).
+    if let Some(mut found) = explored.finding {
+        found.runs = runs;
+        return found;
+    }
+    if let Some(reason) = explored.indeterminate {
+        return Search {
+            triage: Triage::Indeterminate,
+            reason,
+            witness: None,
+            runs,
+            consulted: explored.consulted,
+        };
+    }
+    match qcore_core::null_paths::conclude(explored.explored) {
+        "infeasible" => Search {
+            triage: Triage::Infeasible,
+            reason: explored.infeasible_reason(),
+            witness: None,
+            runs,
+            consulted: explored.consulted,
+        },
+        _ => Search {
+            triage: Triage::Unresolved,
+            reason: explored
+                .inexact_reach
+                .or(exact.unresolved)
+                .unwrap_or_else(|| "the search did not conclude".into()),
+            witness: None,
+            runs,
+            consulted: BTreeSet::new(),
+        },
+    }
+}
+
+/// What one search reads, for both phases.
+struct Context<'c, 'e> {
+    env: &'c Env<'e>,
+    function: &'c str,
+    definition: &'c Value,
+    body: &'c Value,
+    entries: &'c BTreeMap<usize, Entry>,
+    target: &'c str,
+    contains: &'c BTreeSet<*const Value>,
+    tracked: &'c BTreeMap<String, String>,
+}
+
+/// One phase's result.
+#[derive(Default)]
+struct Phase {
+    finding: Option<Search>,
+    indeterminate: Option<String>,
+    unresolved: Option<String>,
+    inexact_reach: Option<String>,
+    explored: qcore_core::null_paths::Explored,
+    consulted: BTreeSet<String>,
+    runs: usize,
+    ended: usize,
+    faulted: usize,
+    inexact_paths: usize,
+}
+
+impl Phase {
+    fn infeasible_reason(&self) -> String {
+        format!(
+            "every path explored ({}; {} end without reaching it NULL, {} fault earlier, {} through an inexact arm): no path reaches the dereference with the pointer NULL under a named condition",
+            self.runs, self.ended, self.faulted, self.inexact_paths
+        )
+    }
+}
+
+/// Run every path of one phase (depth first, under the budget).
+fn phase(context: &Context<'_, '_>, explore_inexact: bool) -> Phase {
+    let formals = kids(context.definition)
         .filter(|c| kind(c) == "ParmVarDecl")
         .collect::<Vec<_>>();
-    let tracked = &tracked_variables(definition, body, &env.unit.enum_typedefs);
+    let mut out = Phase {
+        explored: qcore_core::null_paths::Explored {
+            complete: true,
+            ..Default::default()
+        },
+        ..Default::default()
+    };
     let mut stack: Vec<Vec<bool>> = vec![Vec::new()];
-    let mut runs = 0;
-    let mut unresolved: Option<String> = None;
-    let mut indeterminate: Option<String> = None;
     let mut allocation_witness: Option<Witness> = None;
-    let mut ended = 0usize;
-    let mut faulted = 0usize;
     while let Some(decisions) = stack.pop() {
-        if runs >= MAX_RUNS {
-            unresolved.get_or_insert_with(|| format!("the search budget ({MAX_RUNS} paths)"));
+        if out.runs >= MAX_RUNS {
+            out.unresolved
+                .get_or_insert_with(|| format!("the search budget ({MAX_RUNS} paths)"));
+            out.explored.complete = false;
             break;
         }
-        runs += 1;
+        out.runs += 1;
         let mut run = Run {
-            env,
-            function,
-            target,
-            contains: &contains,
-            tracked,
+            env: context.env,
+            function: context.function,
+            target: context.target,
+            contains: context.contains,
+            tracked: context.tracked,
             decisions: &decisions,
             used: 0,
             steps: 0,
@@ -2120,6 +2623,9 @@ pub(super) fn search(
             needs_allocation_failure: false,
             path: Vec::new(),
             steer: None,
+            inexact: None,
+            consulted: BTreeSet::new(),
+            explore_inexact,
         };
         for (index, formal) in formals.iter().enumerate() {
             let id = formal["id"].as_str().unwrap_or("").to_owned();
@@ -2127,7 +2633,7 @@ pub(super) fn search(
             let spelled = ty(formal);
             let value = if is_pointer(spelled) {
                 let fresh = run.fresh_id();
-                match entries.get(&index) {
+                match context.entries.get(&index) {
                     Some(Entry::Declared(_) | Entry::Inferred(_)) => V::Ptr(P::NonNull, fresh),
                     _ => V::Ptr(P::Opaque(Origin::Formal(name.clone()), false), fresh),
                 }
@@ -2137,19 +2643,23 @@ pub(super) fn search(
                     None => V::Int(S::Opaque(format!("a formal of type `{spelled}`"))),
                 }
             };
-            if tracked.contains(&id) {
+            if context.tracked.contains_key(&id) {
                 run.vars.insert(id, value);
             } else {
                 run.memory.insert(name, value);
             }
         }
-        let end = match run.stmt(body) {
+        let end = match run.stmt(context.body) {
             Ok(Flow::Goto(_)) => {
                 End::Unresolved("a jump to a label the search cannot enter".into())
             }
             Ok(_) => End::Ended,
             Err(end) => end,
         };
+        out.consulted.append(&mut run.consulted);
+        if run.inexact.is_some() && !matches!(end, End::Need(_)) {
+            out.inexact_paths += 1;
+        }
         match end {
             End::Need(prefer) => {
                 let mut other = decisions.clone();
@@ -2160,58 +2670,47 @@ pub(super) fn search(
                 stack.push(first);
             }
             End::Witness(witness) => {
+                out.explored.exact_reach = true;
                 if witness.class == FindingClass::NormalPath.as_str() {
-                    return Search {
+                    out.finding = Some(Search {
                         triage: Triage::Finding(FindingClass::NormalPath),
                         reason: witness.condition.clone(),
                         witness: Some(witness),
-                        runs,
-                    };
+                        runs: out.runs,
+                        consulted: std::mem::take(&mut out.consulted),
+                    });
+                    return out;
                 }
                 allocation_witness.get_or_insert(witness);
             }
             End::Indeterminate(reason) => {
-                indeterminate.get_or_insert(reason);
+                out.explored.complete = false;
+                out.indeterminate.get_or_insert(reason);
             }
-            End::Ended => ended += 1,
-            End::Faulted => faulted += 1,
+            End::Ended => out.ended += 1,
+            End::Faulted => out.faulted += 1,
+            End::InexactReach(reason) => {
+                out.explored.inexact_reach = true;
+                out.inexact_reach.get_or_insert_with(|| {
+                    format!("an inexact path reaches the dereference NULL: {reason}")
+                });
+            }
             End::Unresolved(reason) => {
-                unresolved.get_or_insert(reason);
+                out.explored.complete = false;
+                out.unresolved.get_or_insert(reason);
             }
         }
     }
     if let Some(witness) = allocation_witness {
-        return Search {
+        out.finding = Some(Search {
             triage: Triage::Finding(FindingClass::AllocationFailure),
             reason: witness.condition.clone(),
             witness: Some(witness),
-            runs,
-        };
+            runs: out.runs,
+            consulted: std::mem::take(&mut out.consulted),
+        });
     }
-    if let Some(reason) = indeterminate {
-        return Search {
-            triage: Triage::Indeterminate,
-            reason,
-            witness: None,
-            runs,
-        };
-    }
-    if let Some(reason) = unresolved {
-        return Search {
-            triage: Triage::Unresolved,
-            reason,
-            witness: None,
-            runs,
-        };
-    }
-    Search {
-        triage: Triage::Infeasible,
-        reason: format!(
-            "every path explored ({runs}; {ended} end without reaching it NULL, {faulted} fault earlier): no path reaches the dereference with the pointer NULL under a named condition"
-        ),
-        witness: None,
-        runs,
-    }
+    out
 }
 
 /// The formals and automatic locals the search follows as values: pointers
@@ -2220,7 +2719,7 @@ fn tracked_variables(
     definition: &Value,
     body: &Value,
     enums: &BTreeSet<String>,
-) -> BTreeSet<String> {
+) -> BTreeMap<String, String> {
     fn locals<'v>(node: &'v Value, out: &mut Vec<&'v Value>) {
         if kind(node) == "VarDecl" {
             out.push(node);
@@ -2243,8 +2742,17 @@ fn tracked_variables(
             !spelled.contains("volatile")
                 && (is_pointer(spelled) || int_range(spelled).is_some() || enums.contains(spelled))
         })
-        .filter_map(|decl| decl["id"].as_str())
-        .filter(|id| !taken.contains(*id))
-        .map(str::to_owned)
+        .filter_map(|decl| Some((decl["id"].as_str()?, decl["name"].as_str().unwrap_or(""))))
+        .filter(|(id, _)| !taken.contains(*id))
+        .map(|(id, name)| (id.to_owned(), name.to_owned()))
         .collect()
+}
+
+/// Whether the spelling `text` names the identifier `name` (as a whole
+/// token).
+fn mentions(text: &str, name: &str) -> bool {
+    !name.is_empty()
+        && text
+            .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+            .any(|token| token == name)
 }

@@ -178,6 +178,14 @@ pub(super) struct Unit {
     /// (`T_t` -> `struct T_s`), for a member access whose base type the AST
     /// spells through a typedef.
     pub(super) typedefs: BTreeMap<String, String>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15s): each enumeration type's
+    /// value range, its compatible integer type's (C11 6.7.2.2p4, as Clang
+    /// chooses it: `unsigned int` when no enumerator is negative, else
+    /// `int`; a wider one when an enumerator needs it), by spelling (`enum
+    /// TAG` and every typedef name of it).
+    pub(super) enum_ranges: BTreeMap<String, (i128, i128)>,
+    /// The same, by `EnumDecl` id (for a typedef of an anonymous enum).
+    pub(super) enum_ranges_by_id: BTreeMap<String, (i128, i128)>,
 }
 
 const NO_RETURN_BUILTINS: [&str; 12] = [
@@ -228,6 +236,15 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
             {
                 unit.enum_typedefs.insert(name.to_owned());
             }
+            // Card NULL-TRIAGE-UNRESOLVED-PATHS: a typedef naming an
+            // enumeration directly (through elaboration, never a pointer or an
+            // array of it) has the enumeration's range.
+            if let Some(name) = decl["name"].as_str()
+                && let Some(range) = typedef_enum_range(unit, decl)
+            {
+                unit.enum_typedefs.insert(name.to_owned());
+                unit.enum_ranges.insert(name.to_owned(), range);
+            }
             if let Some(name) = decl["name"].as_str() {
                 unit.typedefs
                     .entry(name.to_owned())
@@ -250,6 +267,8 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
 /// the first zero).
 fn read_enum(unit: &mut Unit, decl: &Value) {
     let mut next: Option<i128> = Some(0);
+    let mut values = Vec::new();
+    let mut complete = true;
     for constant in kids(decl).filter(|c| kind(c) == "EnumConstantDecl") {
         let explicit = kids(constant)
             .next()
@@ -262,7 +281,71 @@ fn read_enum(unit: &mut Unit, decl: &Value) {
         if let (Some(id), Some(value)) = (constant["id"].as_str(), value) {
             unit.enum_values.insert(id.to_owned(), value);
         }
+        match value {
+            Some(value) => values.push(value),
+            None => complete = false,
+        }
         next = value.and_then(|v| v.checked_add(1));
+    }
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS: the enumeration's compatible type,
+    // only when every enumerator's value is known and there is no fixed
+    // underlying type to read instead.
+    if !complete || values.is_empty() || decl.get("fixedUnderlyingType").is_some() {
+        return;
+    }
+    let (lo, hi) = (
+        values.iter().copied().min().unwrap_or(0),
+        values.iter().copied().max().unwrap_or(0),
+    );
+    let (int_lo, int_hi) = (i128::from(i32::MIN), i128::from(i32::MAX));
+    let range = if lo >= 0 && hi <= i128::from(u32::MAX) {
+        (0, i128::from(u32::MAX))
+    } else if lo >= int_lo && hi <= int_hi {
+        (int_lo, int_hi)
+    } else {
+        return;
+    };
+    if let Some(id) = decl["id"].as_str() {
+        unit.enum_ranges_by_id.insert(id.to_owned(), range);
+    }
+    if let Some(name) = decl["name"].as_str() {
+        unit.enum_ranges.insert(format!("enum {name}"), range);
+    }
+}
+
+/// The range of the enumeration a typedef names directly: its type chain is
+/// elaboration, parentheses and qualification over an enumeration type (an
+/// `EnumType` or the elaborated type's owned `EnumDecl`), or over another
+/// typedef with such a range.
+fn typedef_enum_range(unit: &Unit, decl: &Value) -> Option<(i128, i128)> {
+    let mut node = kids(decl).next()?;
+    loop {
+        match kind(node) {
+            "ElaboratedType" => {
+                if node["ownedTagDecl"]["kind"] == "EnumDecl"
+                    && let Some(range) = node["ownedTagDecl"]["id"]
+                        .as_str()
+                        .and_then(|id| unit.enum_ranges_by_id.get(id))
+                {
+                    return Some(*range);
+                }
+            }
+            "EnumType" => {
+                return node["decl"]["id"]
+                    .as_str()
+                    .and_then(|id| unit.enum_ranges_by_id.get(id))
+                    .copied();
+            }
+            "TypedefType" => {
+                return node["decl"]["name"]
+                    .as_str()
+                    .and_then(|name| unit.enum_ranges.get(name))
+                    .copied();
+            }
+            "ParenType" | "QualType" => {}
+            _ => return None,
+        }
+        node = kids(node).next()?;
     }
 }
 

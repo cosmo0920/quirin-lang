@@ -1998,6 +1998,47 @@ Lean: `QCore.NullMemberScope` (`stable_fact_persists`,
 to `qcore_core::null_member_scope`. That the walk keeps exactly the facts
 named above and records every store kind is a review premise (trust
 boundary 28), pinned by `crates/qcore-c-gateway/tests/null_member_invariant_scope.rs`.
+**Exact and inexact paths** (card NULL-TRIAGE-UNRESOLVED-PATHS, gateway rules
+[15q](agents/gateway.md#constraint-15q)–[15u](agents/gateway.md#constraint-15u);
+"no finding is made by widening what a free value may be", "no candidate is
+removed except by checked knowledge"):
+
+* *A call's result is never free.* A call's integer result has a **bound**,
+  never an achievable range: its C type's range (an unsigned or `size_t`
+  result is never negative), narrowed by a declared result range in force
+  and by the unit's validated summary of the callee's body (every return a
+  constant or a local counter that starts at constants and only grows). The
+  bound decides a comparison it excludes; any other comparison over the
+  result is inexact.
+* *Declared result ranges* (G05e): `ensures normal nonnull_result_range(LO,
+  HI);` in bounds contract v1 states the integer result lies in `[LO, HI]`.
+  It is checked against every analysed body of the function under C06.5's
+  fold (validated where the body's summary lies inside it, withdrawn where a
+  body returns a constant outside it); a refuting body takes it out of force
+  in its own unit. The name is the user's (USER DECISION 2026-10-11:
+  "null_result_range -> this contract element's name a bit of strange so
+  nonnull_result_range would be good."); the earlier spelling
+  `null_result_range` was never on main and is refused like any unknown
+  clause, with no alias.
+* *Inexact exploration.* A condition the search cannot read exactly (a call
+  result its bound does not decide, a correlated value, a value it does not
+  follow, an ordered pointer comparison, a switch over such a value) is
+  explored on both arms, which over-approximates the executions; a path that
+  took such an arm is never a witness. Exact relational facts are followed:
+  `x ± k` without wrap, and a comparison of two independent values (or a
+  sum) whose difference (sum) interval decides which arms exist.
+* *Removal.* A candidate whose every path was explored to its end (no loop
+  bound, budget, unread form or label the search cannot enter) without
+  reaching the dereference NULL is **infeasible** and removed: its check is
+  proved (`path-search:infeasible`), resting on every declaration the
+  explored paths read, so a withdrawal makes it a candidate again.
+
+Lean: `QCore.NullTriagePaths` (`a_call_result_never_contributes`,
+`a_witness_holds_whatever_the_callees_return`,
+`a_bound_excludes_its_outside_arm`, `exhaustive_search_is_sound`,
+`difference_attains`, `sum_attains`, `counter_stays_above`,
+`a_finding_needs_an_exact_path`, `infeasible_needs_a_complete_empty_search`),
+audited in `proof/AuditNullTriagePaths.lean`, vectors bound to the Rust.
 
 Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
 `moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,

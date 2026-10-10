@@ -3955,6 +3955,24 @@ resource-v1 declaration of the same function is a registered
 `null_deref_beside` relation (it states only the selector and null-property
 clauses).
 
+Card NULL-TRIAGE-UNRESOLVED-PATHS (gateway rule
+[15q](agents/gateway.md#constraint-15q)) adds one postcondition:
+
+```ebnf
+bounds_post = … | "nonnull_result_range", "(", signed, ",", signed, ")" ;
+signed      = ["-"], DIGITS ;
+```
+
+Static conditions, each rejecting the whole module: the declaration has a
+scalar result (`nonnull-result-range-scalar`); both bounds are canonical
+decimal literals (no suffix, base or leading zero, never `-0`, inside the
+64-bit range: `nonnull-result-range-shape`) and `LO <= HI`
+(`nonnull-result-range-empty`); at most one per declaration. The word was absent
+from every tracked contract module when introduced. The clause is part of
+the declaration digest and pinned with it; only the null property reads it
+(`for_bounds()` removes it), and `resource_*` consumers reject the module.
+The first tracked use is `providers/quirin-provider-cfl/contracts/cfl/null_deref.qv`
+(`cfl_list_size`, in the crate's new `bounds_view`).
 ## G05f. Scoped member invariants
 
 Card NULL-MEMBER-INVARIANT-SCOPE, contract specification

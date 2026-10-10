@@ -83,6 +83,8 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         BoundsClause::NonnullMemberStable { .. } | BoundsClause::NonnullMemberScope { .. } => {
             ClauseKind::Preserves
         }
+        // Card NULL-TRIAGE-UNRESOLVED-PATHS: likewise the result range.
+        BoundsClause::NonnullResultRange { .. } => ClauseKind::Preserves,
     }
 }
 

@@ -10,6 +10,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qv", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qv", "cfl_list_add", 4),
     ("cfl/intrusive_list.qv", "cfl_list_del", 5),
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS: `cfl_list_size`'s integer result
+    // range (bounds contract v1, the crate's new bounds view, read only by
+    // the null property): selector and one range. Read from
+    // `lib/cfl/include/cfl/cfl_list.h:200-212` at both revisions.
+    ("cfl/null_deref.qv", "cfl_list_size", 2),
     // Card W36-CORPUS-CONTRACTS-3: the CFL dynamic string's release, the
     // highest function-cover callee in the baseline (8 projected functions name
     // it and nothing else). Read from `lib/cfl/src/cfl_sds.c:249-275`;
@@ -1987,7 +1992,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 127 -> 130 by card NULL-SAFETY-PROPERTY's three `null_deref.qv` modules
     // (cmetrics, fluent_bit, librdkafka; bounds contract v1, pinned in each
     // crate's `bounds-contracts.lock`, outside every resource view).
-    assert_eq!(sources.len(), 130, "unexpected contract corpus size");
+    // 130 -> 131 by card NULL-TRIAGE-UNRESOLVED-PATHS' `cfl/null_deref.qv`
+    // (bounds contract v1, pinned in the cfl crate's new `bounds-contracts.lock`).
+    assert_eq!(sources.len(), 131, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

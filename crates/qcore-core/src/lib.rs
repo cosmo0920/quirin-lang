@@ -51,6 +51,7 @@ pub mod native_library_header;
 pub mod null_deref;
 // Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z).
 pub mod null_member_scope;
+pub mod null_paths;
 pub mod null_triage;
 pub mod obs_reordering;
 pub mod os_endpoint;

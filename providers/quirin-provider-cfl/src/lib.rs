@@ -30,6 +30,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/cfl/intrusive_list.qv"),
     ),
     (
+        "cfl/null_deref.qv",
+        include_str!("../contracts/cfl/null_deref.qv"),
+    ),
+    (
         "cfl/sds_lifetime.qv",
         include_str!("../contracts/cfl/sds_lifetime.qv"),
     ),

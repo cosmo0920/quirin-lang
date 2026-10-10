@@ -1,0 +1,177 @@
+{
+  "checks": {
+    "by_outcome": {
+      "candidate": 12804,
+      "excluded": 137,
+      "finding": 29,
+      "moved": 16678,
+      "proved": 61656
+    },
+    "candidates_by_library": {
+      "chunkio": 199,
+      "cmetrics": 1099,
+      "ctraces": 307,
+      "fluent-bit-chunk": 229,
+      "librdkafka": 10347,
+      "monkey-libevent": 623
+    },
+    "candidates_by_source_kind": {
+      "allocation": 16,
+      "formal": 2480,
+      "global": 1,
+      "lookup": 1,
+      "memory-field": 10128,
+      "null-literal": 121,
+      "other": 117,
+      "uncontracted-result": 508,
+      "uninitialized": 12
+    },
+    "functions_with_a_candidate": 2289,
+    "functions_with_an_indirect_call": 185,
+    "indirect_calls_not_inventoried": 235
+  },
+  "combined": {
+    "Safe": 805,
+    "Unknown": 4089,
+    "Unsafe": 27
+  },
+  "custody": {
+    "Safe": 915,
+    "Unknown": 3910,
+    "Unsafe": 9,
+    "absent": 87
+  },
+  "custody_null_premises": {
+    "by_null_standing": {
+      "candidate": 885,
+      "excluded": 2,
+      "finding": 2,
+      "nearby:candidate": 59,
+      "nearby:proved": 44,
+      "proved": 789,
+      "unmatched": 21
+    },
+    "custody_safe_rows_with_an_own_premise": 12,
+    "of_which_every_premise_proved": 1
+  },
+  "fold": {
+    "meaning": "the run's fold of the null property (card NULL-CANDIDATE-TRIAGE, rules 14t-14v), after every unit and before the rows were written: each declared non-null member's standing (`withdrawn` when a store some analysed unit made is not proved non-null, `partly-validated` when every examined store is proved and the zero-initialised construction premise stays uncovered, `declared-assumption` when no analysed unit stores it); each declared non-null result's standing (rule 13g's fold over the analysed bodies); each declared integer result range's standing (card NULL-TRIAGE-UNRESOLVED-PATHS, rule 15v, the same fold over the bodies' range evidence); the rows a withdrawn declaration demoted; and cross-unit travel: the caller checks an external definition's inferred clauses added, and the candidates an external definition's non-null result proved. Nothing here is read by custody",
+    "member_declarations": {
+      "rd_kafka_cgrp_s.rkcg_rk": {
+        "clauses": {
+          "construction": "declared-assumption",
+          "stores": "validated"
+        },
+        "failures": [],
+        "host": "rd_kafka_cgrp_new",
+        "standing": "partly-validated",
+        "stores_examined": 1,
+        "stores_not_proved": 0
+      },
+      "rd_kafka_topic_s.rkt_rk": {
+        "clauses": {
+          "construction": "declared-assumption",
+          "stores": "validated"
+        },
+        "failures": [],
+        "host": "rd_kafka_topic_new0",
+        "standing": "partly-validated",
+        "stores_examined": 2,
+        "stores_not_proved": 0
+      },
+      "rd_kafka_topic_s.rkt_topic": {
+        "clauses": {
+          "construction": "declared-assumption",
+          "stores": "validated"
+        },
+        "failures": [],
+        "host": "rd_kafka_topic_new0",
+        "standing": "partly-validated",
+        "stores_examined": 2,
+        "stores_not_proved": 0
+      },
+      "rd_kafka_toppar_s.rktp_rkt": {
+        "clauses": {
+          "construction": "declared-assumption",
+          "stores": "validated"
+        },
+        "failures": [],
+        "host": "rd_kafka_toppar_new0",
+        "standing": "partly-validated",
+        "stores_examined": 2,
+        "stores_not_proved": 0
+      },
+      "rd_kafka_transport_s.rktrans_rkb": {
+        "clauses": {
+          "construction": "declared-assumption",
+          "stores": "validated"
+        },
+        "failures": [],
+        "host": "rd_kafka_transport_new",
+        "standing": "partly-validated",
+        "stores_examined": 1,
+        "stores_not_proved": 0
+      }
+    },
+    "result_declarations": {
+      "rd_kafka_topic_keep": {
+        "bodies_examined": 64,
+        "refuted": 0,
+        "standing": "declared-assumption",
+        "validated": 0
+      }
+    },
+    "result_range_declarations": {
+      "cfl_list_size": {
+        "bodies_examined": 45,
+        "refuted": 0,
+        "standing": "validated",
+        "validated": 45
+      }
+    },
+    "rows_changed": 1394,
+    "travel": {
+      "ambiguous_external_definitions": 3,
+      "candidates_proved_by_a_cross_unit_result": 462,
+      "clause_checks_added_by_outcome": {
+        "candidate": 1902,
+        "moved": 883,
+        "proved": 3340
+      },
+      "exported_definitions": 2590,
+      "rows_with_an_added_clause_check": 1364,
+      "rows_with_such_a_proof": 267
+    },
+    "verdict_moves": {
+      "Safe -> Unknown": 216,
+      "Unknown -> Safe": 25
+    },
+    "withdrawal": {
+      "checks_made_candidates": 0,
+      "rows_demoted": 0
+    },
+    "withdrawn": []
+  },
+  "functions": 4921,
+  "functions_by_reason_code": {
+    "null-deref-candidate": 2296,
+    "null-deref-finding": 18,
+    "null-import-failure": 87
+  },
+  "inference": {
+    "declared_clause_standing": {
+      "necessary": 16
+    },
+    "functions_with_an_inferred_precondition": 2926,
+    "inferred_preconditions": 3524
+  },
+  "meaning": "the null-dereference property (c.null.deref.v1) of every projected function, reported separately from custody: `null` counts the null rows' verdicts (Safe split into unconditional and conditional on the function's own declared or inferred null-deref preconditions); `combined` joins the custody and null rows of a request naming both, a missing row counting Unknown; `checks` counts every judged dereference by outcome, and every candidate by source kind and by library; `custody_null_premises` counts the named null premises custody rows rest on (rule 14n) by what the null row says of each (`proved` when every check of the variable at that line is proved or moved to a proved check; `nearby:` when only checks within three lines name it, never counted as proved) and the custody Safe rows whose every own premise the null property proves. Unknown and Pending stay in every denominator",
+  "null": {
+    "Safe (conditional on its preconditions)": 1423,
+    "Safe (unconditional)": 1115,
+    "Unknown": 2365,
+    "Unsafe": 18
+  },
+  "property": "c.null.deref.v1",
+  "schema_version": 1
+}

@@ -364,5 +364,6 @@ import QCore.NullDerefGrade
 import QCore.DerefDecomposition
 import QCore.NullTriage
 import QCore.NullMemberScope
+import QCore.NullTriagePaths
 
 /-! The executable formal core of QCore-C revision 0.1. -/

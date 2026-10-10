@@ -37,7 +37,7 @@ use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
 use serde_json::{Value, json};
 
 /// What the fold section means, carried in it.
-pub const MEANING: &str = "the run's fold of the null property (card NULL-CANDIDATE-TRIAGE, rules 14t-14v), after every unit and before the rows were written: each declared non-null member's standing (`withdrawn` when a store some analysed unit made is not proved non-null, `partly-validated` when every examined store is proved and the zero-initialised construction premise stays uncovered, `declared-assumption` when no analysed unit stores it); each declared non-null result's standing (rule 13g's fold over the analysed bodies); the rows a withdrawn declaration demoted; and cross-unit travel: the caller checks an external definition's inferred clauses added, and the candidates an external definition's non-null result proved. Nothing here is read by custody";
+pub const MEANING: &str = "the run's fold of the null property (card NULL-CANDIDATE-TRIAGE, rules 14t-14v), after every unit and before the rows were written: each declared non-null member's standing (`withdrawn` when a store some analysed unit made is not proved non-null, `partly-validated` when every examined store is proved and the zero-initialised construction premise stays uncovered, `declared-assumption` when no analysed unit stores it); each declared non-null result's standing (rule 13g's fold over the analysed bodies); each declared integer result range's standing (card NULL-TRIAGE-UNRESOLVED-PATHS, rule 15q, the same fold over the bodies' range evidence); the rows a withdrawn declaration demoted; and cross-unit travel: the caller checks an external definition's inferred clauses added, and the candidates an external definition's non-null result proved. Nothing here is read by custody";
 
 fn verdict_of(text: &str) -> NullVerdict {
     match text {
@@ -226,10 +226,18 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
     // ---- declarations
     let declarations = crate::null_member_scope_fold::declarations(environment);
     let mut results: BTreeMap<String, bool> = BTreeMap::new();
+    let mut ranges: BTreeMap<String, bool> = BTreeMap::new();
     for (name, contract) in environment.null_declarations() {
         for entry in &contract.clauses {
-            if let BoundsClause::NonnullResult = &entry.clause {
-                results.insert(name.clone(), contract.held());
+            match &entry.clause {
+                BoundsClause::NonnullResult => {
+                    results.insert(name.clone(), contract.held());
+                }
+                // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q).
+                BoundsClause::NonnullResultRange { .. } => {
+                    ranges.insert(name.clone(), contract.held());
+                }
+                _ => {}
             }
         }
     }
@@ -273,6 +281,39 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             refuted.insert(format!("result:{name}"));
         }
         result_section.insert(
+            name.clone(),
+            json!({
+                "standing": standing,
+                "bodies_examined": units.len(),
+                "validated": units.iter().filter(|u| **u == ResultEvidence::Validated).count(),
+                "refuted": units.iter().filter(|u| **u == ResultEvidence::Refuted).count(),
+            }),
+        );
+    }
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): each declared result
+    // range, by rule 13g's fold over the bodies the units examined.
+    let mut range_section = serde_json::Map::new();
+    for (name, held) in &ranges {
+        let units = definitions
+            .get(name)
+            .into_iter()
+            .flatten()
+            .filter_map(|(_, d)| match d["result_range"].as_str() {
+                Some("validated") => Some(ResultEvidence::Validated),
+                Some("refuted") => Some(ResultEvidence::Refuted),
+                Some(_) => Some(ResultEvidence::Unvalidated),
+                None => None,
+            })
+            .collect::<Vec<_>>();
+        let standing = if *held {
+            "held"
+        } else {
+            result_standing(&units)
+        };
+        if standing == "withdrawn" {
+            refuted.insert(format!("range:{name}"));
+        }
+        range_section.insert(
             name.clone(),
             json!({
                 "standing": standing,
@@ -522,6 +563,9 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
                         .or_else(|| {
                             p.strip_prefix("result:stable:")
                                 .map(|m| format!("stable:{m}"))
+                        .or_else(|| {
+                            p.strip_prefix("result:declared-range:")
+                                .map(|r| format!("range:{r}"))
                         })
                 })
                 .filter(|d| withdrawn.contains(d))
@@ -576,6 +620,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
         "meaning": MEANING,
         "member_declarations": member_section,
         "result_declarations": result_section,
+        "result_range_declarations": range_section,
         "withdrawn": withdrawn,
         "withdrawal": {
             "checks_made_candidates": demoted_checks,

@@ -163,7 +163,9 @@ fn a_repeated_condition_over_unchanged_values_is_decided() {
         "int subject(int c) { struct S *p = 0; if (c) p = nd_xalloc(sizeof *p); nd_use(0); if (c) p->a = 1; return 0; }",
     );
     assert_eq!(statuses(&row), vec![("infeasible", None)], "{row:#?}");
-    assert_eq!(row.verdict, "Unknown");
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): an infeasible candidate
+    // is removed (before that card the row stayed `Unknown`).
+    assert_eq!(row.verdict, "Safe");
     // A flag assigned with the pointer decides the later test too.
     let row = subject(
         "int subject(int c) { int ok = 0; struct S *p = 0; if (c) { p = nd_xalloc(sizeof *p); ok = 1; } if (ok) p->a = 1; return 0; }",

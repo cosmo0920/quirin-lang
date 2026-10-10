@@ -72,6 +72,7 @@ use crate::typed_c_ast::kind;
 
 mod ast;
 mod scope;
+mod range;
 mod walk;
 mod witness;
 
@@ -126,6 +127,11 @@ pub struct DefinitionSummary {
     pub returns_null_on_a_path: bool,
     /// The declarations its summary rests on.
     pub dependencies: Vec<String>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): this body's evidence on
+    /// the function's declared result range (`validated`, `unvalidated`,
+    /// `refuted`), when one is declared.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub result_range: Option<&'static str>,
 }
 
 /// One judged check.
@@ -247,7 +253,32 @@ fn render_proof(proof: &Proof) -> String {
         Proof::NonNullResult(name) => format!("result:{name}"),
         Proof::Address => "address".into(),
         Proof::Moved(site) => format!("moved:{site}"),
+        Proof::Infeasible => "path-search:infeasible".into(),
     }
+}
+
+/// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): the proofs of a check the
+/// path search removed: the search itself and, for each declaration it read
+/// that the run's fold may withdraw, the proof naming it (so a withdrawal
+/// makes the check a candidate again, rule 14w).
+fn infeasibility_proofs(consulted: &BTreeSet<String>) -> BTreeSet<Proof> {
+    let mut proofs = BTreeSet::from([Proof::Infeasible]);
+    for name in consulted {
+        let proof = if let Some(member) = name.strip_prefix("member:") {
+            Some(format!("member:{member}"))
+        } else if let Some(result) = name.strip_prefix("result:") {
+            Some(format!("declared-result:{result}"))
+        } else if let Some(range) = name.strip_prefix("range:") {
+            Some(format!("declared-range:{range}"))
+        } else {
+            name.strip_prefix("declared:")
+                .map(|declared| format!("declared:{declared}"))
+        };
+        if let Some(proof) = proof {
+            proofs.insert(Proof::NonNullResult(proof));
+        }
+    }
+    proofs
 }
 
 fn record(check: walk::CheckRecord) -> NullCheck {
@@ -453,18 +484,12 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
         }
         Walker::walk(env, name, definition, &entries)
     };
-    let outcomes = walked
-        .checks
-        .iter()
-        .map(|check| check.outcome.clone())
-        .collect::<Vec<_>>();
-    let mut reasons = reasons_before;
-    reasons.extend(walked.reasons.iter().cloned());
-    let (verdict, mut reasons) = core::null_verdict(&outcomes, &reasons);
     // Card NULL-CANDIDATE-TRIAGE (rule 14r): each strong-source candidate's
     // path search; a validated path is a finding (provisional `Unsafe`).
+    let mut walked = walked;
     let mut triage = Vec::new();
-    for check in &walked.checks {
+    let mut removed_by_search = BTreeSet::new();
+    for check in &mut walked.checks {
         let Outcome::Candidate(sources) = &check.outcome else {
             continue;
         };
@@ -475,6 +500,13 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
             continue;
         }
         let found = witness::search(env, name, definition, &entries, &check.key);
+        // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15t): a proved-infeasible
+        // candidate is removed: its check is proved by the search, resting
+        // on every declaration the explored paths read.
+        if qcore_core::null_paths::removes(&found.triage) {
+            check.outcome = Outcome::Proved(infeasibility_proofs(&found.consulted));
+            removed_by_search.extend(found.consulted.iter().cloned());
+        }
         triage.push(TriageRecord {
             check: check.id,
             status: found.triage.as_str(),
@@ -487,6 +519,20 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
             paths: found.runs,
         });
     }
+    if !removed_by_search.is_empty() || triage.iter().any(|t| t.status == "infeasible") {
+        walked.assumptions.insert(
+            "path-search: every path of the body was explored and none reaches the removed dereference NULL (rule 15t; the search's facts, cached memory values forgotten at every call, store and variable assignment, are a review premise)".into(),
+        );
+        walked.consulted.extend(removed_by_search);
+    }
+    let outcomes = walked
+        .checks
+        .iter()
+        .map(|check| check.outcome.clone())
+        .collect::<Vec<_>>();
+    let mut reasons = reasons_before;
+    reasons.extend(walked.reasons.iter().cloned());
+    let (verdict, mut reasons) = core::null_verdict(&outcomes, &reasons);
     let findings = triage.iter().filter(|t| t.status == "finding").count();
     let verdict = qcore_core::null_triage::triaged_verdict(verdict, findings);
     if findings > 0 {
@@ -542,6 +588,7 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
         returns_non_null,
         returns_null_on_a_path,
         dependencies: walked.consulted.iter().cloned().collect(),
+        result_range: None,
     };
     let finding_ids = triage
         .iter()
@@ -672,6 +719,26 @@ fn analyze_on_stack(
     let declared = declared_clauses(bounds);
     let (members, results) = declared_members_and_results(bounds);
     let (stable, scopes) = scope::declared_stable_and_scopes(bounds);
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): declared result ranges,
+    // each checked against this unit's own body of the function (a refuting
+    // body takes it out of force here; the run's fold withdraws it), and this
+    // unit's validated summaries of integer result ranges.
+    let mut ranges = range::declared_ranges(bounds);
+    let mut range_evidence = BTreeMap::new();
+    for (name, decl) in &mut ranges {
+        if let Some(definition) = read.definitions.get(name) {
+            let evidence = range::evidence(definition, &read, decl);
+            decl.refuted = evidence == qcore_core::null_triage::ResultEvidence::Refuted;
+            range_evidence.insert(name.clone(), range::evidence_name(evidence));
+        }
+    }
+    let range_summaries = read
+        .definitions
+        .iter()
+        .filter_map(|(name, definition)| {
+            range::summary(definition, &read).map(|range| (name.clone(), range))
+        })
+        .collect::<BTreeMap<_, _>>();
     let mut summaries = BTreeMap::new();
     let mut rows = BTreeMap::new();
     let mut member_stores = Vec::new();
@@ -693,8 +760,11 @@ fn analyze_on_stack(
             results: &results,
             stable: &stable,
             scopes: &scopes,
+            ranges: &ranges,
+            range_summaries: &range_summaries,
         };
-        let analysed = analyze_function(&env, &name, definition);
+        let mut analysed = analyze_function(&env, &name, definition);
+        analysed.export.result_range = range_evidence.get(&name).copied();
         member_stores.extend(analysed.member_stores);
         stable_stores.extend(analysed.stable_stores);
         if selected.contains(&name) {

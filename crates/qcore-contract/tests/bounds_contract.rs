@@ -184,9 +184,11 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     // `chunkio/file_st_bounds.qv`, the neighbouring header accessors.
     // Card NULL-SAFETY-PROPERTY adds three: the `quant null-deref` modules of
     // cmetrics, librdkafka and fluent-bit (C09.3).
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS adds cfl's (`cfl_list_size`'s result
+    // range, G05e).
     assert_eq!(
         bounds_modules.len(),
-        5,
+        6,
         "tracked bounds modules: {bounds_modules:?}"
     );
     let mut names = bounds_modules
@@ -205,6 +207,7 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     assert_eq!(
         names,
         [
+            "cfl/null_deref.qv",
             "chunkio/file_st_bounds.qv",
             "chunkio/meta_len_bounds.qv",
             "cmetrics/null_deref.qv",

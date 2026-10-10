@@ -311,6 +311,12 @@ pub(super) struct Env<'a> {
     pub(super) stable: &'a BTreeMap<(String, String), StableDecl>,
     /// Card NULL-MEMBER-INVARIANT-SCOPE: function-scope entries, by function.
     pub(super) scopes: &'a BTreeMap<String, ScopeDecl>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): declared integer result
+    /// ranges, by function (the path search reads them as bounds).
+    pub(super) ranges: &'a BTreeMap<String, super::range::RangeDecl>,
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): this unit's validated
+    /// summaries of integer result ranges, by function.
+    pub(super) range_summaries: &'a BTreeMap<String, (i128, i128)>,
 }
 
 /// The entry fact of a formal under a clause.

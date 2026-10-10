@@ -522,6 +522,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [null-safety-property](null-safety-property/README.md) | NULL-SAFETY-PROPERTY |
 
+| [null-triage-unresolved-paths](null-triage-unresolved-paths/README.md) | NULL-TRIAGE-UNRESOLVED-PATHS |
+
 ## O
 
 | Card directory | Original report title |

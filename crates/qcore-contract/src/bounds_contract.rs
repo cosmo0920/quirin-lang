@@ -116,7 +116,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 16] = [
+pub const RESERVED_SPELLINGS: [&str; 17] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -135,6 +135,8 @@ pub const RESERVED_SPELLINGS: [&str; 16] = [
     // Card NULL-MEMBER-INVARIANT-SCOPE (G05f).
     "nonnull_member_stable",
     "nonnull_member_scope",
+    // Card NULL-TRIAGE-UNRESOLVED-PATHS (G05e).
+    "nonnull_result_range",
 ];
 
 const SCALAR_TYPES: [&str; 11] = [
@@ -272,6 +274,16 @@ pub enum BoundsClause {
         field: String,
         parameter: String,
     },
+    /// Card NULL-TRIAGE-UNRESOLVED-PATHS (C09.3, grammar G05e, rule 15q):
+    /// `ensures normal nonnull_result_range(LO, HI);` -- the function's integer
+    /// result lies in `[LO, HI]`, checked against every analysed body that
+    /// defines it. The null path search reads it as a bound (it decides a
+    /// comparison it excludes), never as a range the function returns. Null
+    /// property only.
+    NonnullResultRange {
+        lo: i128,
+        hi: i128,
+    },
 }
 
 impl BoundsClause {
@@ -285,6 +297,7 @@ impl BoundsClause {
                 | Self::NonnullResult
                 | Self::NonnullMemberStable { .. }
                 | Self::NonnullMemberScope { .. }
+                | Self::NonnullResultRange { .. }
         )
     }
 }
@@ -656,6 +669,23 @@ fn canonical_literal(group: &[TokenKind]) -> Option<u128> {
     }
 }
 
+/// Card NULL-TRIAGE-UNRESOLVED-PATHS: a canonical decimal literal with an
+/// optional leading `-` (never `-0`), inside the 64-bit range.
+fn signed_literal(group: &[TokenKind]) -> Option<i128> {
+    let (negative, digits) = match group {
+        [TokenKind::Symbol(Symbol::Minus), rest @ ..] => (true, rest),
+        rest => (false, rest),
+    };
+    let value = i128::try_from(canonical_literal(digits)?).ok()?;
+    if negative && value == 0 {
+        return None;
+    }
+    let value = if negative { -value } else { value };
+    (i128::from(i64::MIN)..=i128::from(u64::MAX))
+        .contains(&value)
+        .then_some(value)
+}
+
 fn unit(group: &[TokenKind]) -> Result<BoundsUnit, String> {
     match single_word(group) {
         Some("elements") => Ok(BoundsUnit::Elements),
@@ -719,9 +749,17 @@ fn render(tokens: &[TokenKind]) -> String {
             TokenKind::Symbol(Symbol::LeftParen) => "(".into(),
             TokenKind::Symbol(Symbol::RightParen) => ")".into(),
             TokenKind::Symbol(Symbol::Comma) => ",".into(),
+            // Card NULL-TRIAGE-UNRESOLVED-PATHS: a negative literal's sign
+            // (no tracked bounds text spelled one before).
+            TokenKind::Symbol(Symbol::Minus) => "-".into(),
             other => format!("{other:?}"),
         };
-        if !out.is_empty() && !matches!(piece.as_str(), "(" | ")" | ",") && !out.ends_with('(') {
+        if !out.is_empty()
+            && !matches!(piece.as_str(), "(" | ")" | ",")
+            && !out.ends_with('(')
+            && !out.ends_with(" -")
+            && !out.ends_with("(-")
+        {
             out.push(' ');
         }
         out.push_str(&piece);
@@ -871,6 +909,25 @@ impl Reader<'_> {
                     );
                 }
                 Ok(BoundsClause::NonnullResult)
+            }
+            // Card NULL-TRIAGE-UNRESOLVED-PATHS (G05e): an integer result's
+            // range, two canonical (optionally negative) decimal literals.
+            (false, "nonnull_result_range", [lo, hi]) => {
+                if self.result != Some(ParameterKind::Scalar) {
+                    return Err(
+                        "nonnull-result-range-scalar: a result range needs a scalar result".into(),
+                    );
+                }
+                let (Some(lo), Some(hi)) = (signed_literal(lo), signed_literal(hi)) else {
+                    return Err(
+                        "nonnull-result-range-shape: `nonnull_result_range(LO, HI)` takes two canonical decimal literals"
+                            .into(),
+                    );
+                };
+                if lo > hi {
+                    return Err("nonnull-result-range-empty: LO exceeds HI".into());
+                }
+                Ok(BoundsClause::NonnullResultRange { lo, hi })
             }
             (false, "bounds_frame_reads" | "bounds_frame_writes" | "bounds_frame_moves", [p]) => {
                 let parameter = single_word(p)
@@ -1108,6 +1165,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 field,
                 parameter,
             } => format!("nonnull-member-scope {parameter} {tag}.{field}"),
+            BoundsClause::NonnullResultRange { .. } => "nonnull-result-range".into(),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));

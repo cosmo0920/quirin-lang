@@ -1,0 +1,141 @@
+{
+ "rows_before": 4921,
+ "rows_after": 4921,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Unknown": 2363,
+  "Safe (unconditional)": 1115,
+  "Safe (conditional)": 1421,
+  "Unsafe": 22
+ },
+ "verdicts_after": {
+  "Unknown": 2365,
+  "Safe (unconditional)": 1115,
+  "Safe (conditional)": 1423,
+  "Unsafe": 18
+ },
+ "moves": {
+  "Unsafe -> Unknown": 5,
+  "Unknown -> Safe (conditional)": 2,
+  "Unknown -> Unsafe": 1
+ },
+ "moves_by_cause": {
+  "Unsafe -> Unknown": {
+   "unattributed": 5
+  },
+  "Unknown -> Safe (conditional)": {
+   "unattributed": 2
+  },
+  "Unknown -> Unsafe": {
+   "declared-member": 1,
+   "finding": 1,
+   "travelled-clause-discharged": 1
+  }
+ },
+ "candidates_by_kind_before": {
+  "memory-field": 9611,
+  "formal": 2467,
+  "null-literal": 130,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 5,
+  "global": 1,
+  "allocation": 10
+ },
+ "candidates_by_kind_after": {
+  "memory-field": 9611,
+  "formal": 2467,
+  "null-literal": 119,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 4,
+  "global": 1,
+  "allocation": 16,
+  "lookup": 1
+ },
+ "safe_to_non_safe": 0,
+ "moving": [
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "copy_label_values",
+   "move": "Unsafe -> Unknown",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_commit",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "declared-member",
+    "finding",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "move": "Unsafe -> Unknown",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "move": "Unsafe -> Unknown",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_utils.c",
+   "function": "mk_print",
+   "move": "Unsafe -> Unknown",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "move": "Unsafe -> Unknown",
+   "causes": [
+    "unattributed"
+   ],
+   "safe_to_non_safe": false
+  }
+ ]
+}
