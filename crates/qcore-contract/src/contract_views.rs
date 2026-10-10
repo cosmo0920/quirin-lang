@@ -1299,6 +1299,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result
+    // beside the resource-v1 declaration of the same function.
+    RegisteredRelation {
+        function: "rd_kafka_topic_keep",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     RegisteredRelation {
         function: "rd_kafka_topic_partition_list_destroy",
         detailed: "librdkafka/null_deref.qv",

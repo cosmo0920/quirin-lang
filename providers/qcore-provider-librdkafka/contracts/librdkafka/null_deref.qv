@@ -81,18 +81,14 @@ contract {
 // candidates.json.gz); every store was read at 66910c10 and 046accf6.
 // Not declared on measured grounds: rd_kafka_buf_s.rkbuf_rkb (3,474
 // candidates; rdkafka_broker.c resets it to NULL after a response is
-// handled) and msetr_rkb (stores rkbuf->rkbuf_rkb).
-
-// rdkafka_broker.c: rd_kafka_broker_add stores `rkb->rkb_rk = rk` after
-// reading rk's configuration; rdkafka_feature.c's unit test stores `&rk`.
-extern fn rd_kafka_broker_add(rk: ptr<mut, u8>, source: i32, proto: i32, name: ptr<const, u8>, port: u16, nodeid: i32) -> ptr<mut, u8>
-contract {
-    requires bounds_contract_v1;
-    requires null_member_nonnull(rd_kafka_broker_s, rkb_rk);
-};
+// handled), msetr_rkb (stores rkbuf->rkbuf_rkb) and rd_kafka_broker_s.rkb_rk
+// (682; the run's store check withdrew it: rd_kafka_broker_find_by_nodeid0_fl
+// builds a lookup key `rd_kafka_broker_t skel = {.rkb_nodeid = ...}` whose
+// rkb_rk is NULL, and three unit tests build brokers without it).
 
 // rdkafka_partition.c: rd_kafka_toppar_new0 stores `rktp->rktp_rkt =
-// rd_kafka_topic_keep(rkt)`, which dereferences rkt first.
+// rd_kafka_topic_keep(rkt)` (a declared non-null result, below) and
+// `rktp->rktp_rkt = rkt` after reading rkt.
 extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
@@ -121,4 +117,75 @@ extern fn rd_kafka_transport_new(rkb: ptr<mut, u8>, s: i32, errstr: ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
     requires null_member_nonnull(rd_kafka_transport_s, rktrans_rkb);
+};
+
+// Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result,
+// `ensures normal null_result_nonnull();`, checked against every analysed
+// body that defines the function (rule 13g's fold: validated where every
+// return is non-null in every unit that examined it; a body that returns
+// NULL on a path withdraws it).
+// rdkafka_topic.h: rd_kafka_topic_keep reads rkt (`rd_kafka_rkt_get_lw(rkt)`
+// reads its magic, `rd_refcnt_add(&rkt->rkt_refcnt)` its count) and returns
+// it; a NULL rkt faults before the return.
+extern fn rd_kafka_topic_keep(rkt: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    ensures normal null_result_nonnull();
+};
+
+// Card NULL-CANDIDATE-TRIAGE (NULL-CLAUSE-COVERAGE, brief task 3): the next
+// `quant null-deref` declarations by NULL-SAFETY-PROPERTY's clause ranking
+// (files other than the definition that call them), each admissible in
+// bounds v1 (pointer and integer parameters only), each body read at
+// 66910c10 and 046accf6 (byte-identical, `scripts/bodies.py`) and
+// dereferencing the formal before anything tests it on every path; the
+// unit's own inference agrees at 66910c10.
+
+// rdkafka.c: reads rk->rk_type first.
+extern fn rd_kafka_flush(rk: ptr<mut, u8>, timeout_ms: i32) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rk;
+};
+
+// rdkafka_msg.c: reads rkmessage->err first.
+extern fn rd_kafka_message_errstr(rkmessage: ptr<const, u8>) -> ptr<const, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rkmessage;
+};
+
+// rdkafka.c: reads rkqu->rkqu_q first.
+extern fn rd_kafka_queue_poll(rkqu: ptr<mut, u8>, timeout_ms: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rkqu;
+};
+
+// rdkafka_event.c: returns rkev->rko_err.
+extern fn rd_kafka_event_error(rkev: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rkev;
+};
+
+// rdkafka.c: rd_kafka_curr_msgs_cnt(rk) reads rk->rk_curr_msgs first.
+extern fn rd_kafka_outq_len(rk: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rk;
+};
+
+// rdkafka_op.c: reads rko->rko_type first.
+extern fn rd_kafka_op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #rko;
+};
+
+// rdkafka_topic.c: rd_kafka_rkt_is_lw(app_rkt) reads its magic first.
+extern fn rd_kafka_topic_name(app_rkt: ptr<const, u8>) -> ptr<const, u8>
+contract {
+    requires bounds_contract_v1;
+    quant null-deref #app_rkt;
 };
