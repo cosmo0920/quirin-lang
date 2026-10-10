@@ -113,10 +113,13 @@ fn an_unchecked_allocation_dereferenced_is_a_candidate() {
     let row = subject_row(
         "int subject(void) { struct S *p = nd_alloc(sizeof *p); p->a = 1; return p->a; }",
     );
-    assert_eq!(row.verdict, "Unknown", "{row:#?}");
+    // Card NULL-CANDIDATE-TRIAGE (rule 14r): the candidate's path is
+    // validated (NULL only when the allocation fails), so the check is a
+    // finding and the row provisional `Unsafe`; its sources are unchanged.
+    assert_eq!(row.verdict, "Unsafe", "{row:#?}");
     assert_eq!(
         outcomes(&row),
-        vec![("p", "candidate"), ("p", "moved")],
+        vec![("p", "finding"), ("p", "moved")],
         "{row:#?}"
     );
     assert_eq!(

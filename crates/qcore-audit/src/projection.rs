@@ -296,7 +296,11 @@ fn record_null(
                     // Card NULL-CANDIDATE-TRIAGE: every witness step's
                     // original line, for the reviewer.
                     for triage in value["triage"].as_array_mut().into_iter().flatten() {
-                        for step in triage["witness"]["path"].as_array_mut().into_iter().flatten() {
+                        for step in triage["witness"]["path"]
+                            .as_array_mut()
+                            .into_iter()
+                            .flatten()
+                        {
                             let line = step["line"].as_u64().unwrap_or_default() as usize;
                             step["origin"] = origin(line);
                         }

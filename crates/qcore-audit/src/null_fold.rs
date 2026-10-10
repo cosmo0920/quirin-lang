@@ -26,14 +26,14 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
 use qcore_c_gateway::null_deref::core_model::{
-    NullVerdict, Outcome, Request, compose, null_verdict, AWAITING_REVIEW, CANDIDATE,
-    UNREACHED_VIOLATION,
+    AWAITING_REVIEW, CANDIDATE, NullVerdict, Outcome, Request, UNREACHED_VIOLATION, compose,
+    null_verdict,
 };
 use qcore_c_gateway::null_deref::null_triage::{
     FINDING, ResultEvidence, WITHDRAWN, demote, member_standing, result_standing, triaged_verdict,
 };
+use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
 use serde_json::{Value, json};
 
 /// What the fold section means, carried in it.
@@ -205,7 +205,10 @@ fn premise_standing(checks: &[Value], line: u64, variable: &str) -> String {
 }
 
 fn restand_premises(row: &mut Value) {
-    let checks = row["null"]["checks"].as_array().cloned().unwrap_or_default();
+    let checks = row["null"]["checks"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
     if let Some(premises) = row["custody_null_premises"].as_array_mut() {
         for premise in premises {
             let line = premise["line"].as_u64().unwrap_or_default();
@@ -293,7 +296,10 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
         for definition in unit["definitions"].as_array().into_iter().flatten() {
             let name = definition["function"].as_str().unwrap_or("").to_owned();
             names.insert(name.clone());
-            definitions.entry(name).or_default().push((index, definition));
+            definitions
+                .entry(name)
+                .or_default()
+                .push((index, definition));
         }
         unit_defines.push(names);
     }
@@ -507,7 +513,10 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             if let Some(checks) = row["null"]["checks"].as_array_mut() {
                 checks.push(check);
             }
-            add_dependencies(row, &BTreeSet::from([format!("cross-unit-inferred:{callee}")]));
+            add_dependencies(
+                row,
+                &BTreeSet::from([format!("cross-unit-inferred:{callee}")]),
+            );
             *travelled_checks.entry(outcome).or_default() += 1;
             travelled_rows.insert(row_at);
             changed.insert(row_at);
@@ -631,12 +640,24 @@ mod tests {
     #[test]
     fn a_cross_unit_result_proves_a_sole_source_candidate_only() {
         let mut rows = vec![
-            row("a.c", "f", json!([
-                {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g"]},
-            ]), json!([]), "Unknown"),
-            row("a.c", "h", json!([
-                {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g", "formal:q"]},
-            ]), json!([]), "Unknown"),
+            row(
+                "a.c",
+                "f",
+                json!([
+                    {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g"]},
+                ]),
+                json!([]),
+                "Unknown",
+            ),
+            row(
+                "a.c",
+                "h",
+                json!([
+                    {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g", "formal:q"]},
+                ]),
+                json!([]),
+                "Unknown",
+            ),
         ];
         let evidence = vec![
             json!({"library": "l", "file": "a.c", "member_stores": [], "external_calls": [],
@@ -647,15 +668,27 @@ mod tests {
         ];
         let section = fold(&mut rows, &evidence, &BoundsContracts::default());
         assert_eq!(rows[0]["null"]["verdict"], "Safe");
-        assert_eq!(rows[0]["null"]["checks"][0]["proofs"][0], "result:cross-unit:g");
+        assert_eq!(
+            rows[0]["null"]["checks"][0]["proofs"][0],
+            "result:cross-unit:g"
+        );
         // A second source keeps the candidate.
         assert_eq!(rows[1]["null"]["verdict"], "Unknown");
-        assert_eq!(section["travel"]["candidates_proved_by_a_cross_unit_result"], 1);
+        assert_eq!(
+            section["travel"]["candidates_proved_by_a_cross_unit_result"],
+            1
+        );
     }
 
     #[test]
     fn clause_travel_adds_a_check_and_never_improves_a_row() {
-        let mut rows = vec![row("a.c", "f", json!([{"id": 0, "line": 2, "subject": "x", "outcome": "proved", "proofs": ["tested:1"]}]), json!([]), "Safe")];
+        let mut rows = vec![row(
+            "a.c",
+            "f",
+            json!([{"id": 0, "line": 2, "subject": "x", "outcome": "proved", "proofs": ["tested:1"]}]),
+            json!([]),
+            "Safe",
+        )];
         let evidence = vec![
             json!({"library": "l", "file": "a.c", "member_stores": [], "definitions": [{"function": "f", "external": true, "parameters": 0, "inferred": [], "returns_non_null": false, "returns_null_on_a_path": false, "dependencies": []}],
                    "external_calls": [{"function": "f", "callee": "g", "position": 0, "arguments": 1, "line": 5, "subject": "p", "outcome": "candidate", "sources": ["formal:p"]}]}),
@@ -665,15 +698,24 @@ mod tests {
         let section = fold(&mut rows, &evidence, &BoundsContracts::default());
         assert_eq!(rows[0]["null"]["verdict"], "Unknown");
         assert_eq!(rows[0]["null"]["checks"].as_array().unwrap().len(), 2);
-        assert_eq!(section["travel"]["clause_checks_added_by_outcome"]["candidate"], 1);
+        assert_eq!(
+            section["travel"]["clause_checks_added_by_outcome"]["candidate"],
+            1
+        );
         assert_eq!(section["verdict_moves"]["Safe -> Unknown"], 1);
     }
 
     #[test]
     fn an_ambiguous_definition_exports_nothing() {
-        let mut rows = vec![row("a.c", "f", json!([
-            {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g"]},
-        ]), json!([]), "Unknown")];
+        let mut rows = vec![row(
+            "a.c",
+            "f",
+            json!([
+                {"id": 0, "line": 3, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:g"]},
+            ]),
+            json!([]),
+            "Unknown",
+        )];
         let g = json!({"function": "g", "external": true, "parameters": 0, "inferred": [], "returns_non_null": true, "returns_null_on_a_path": false, "dependencies": []});
         let evidence = vec![
             json!({"library": "l", "file": "a.c", "member_stores": [], "external_calls": [], "definitions": []}),

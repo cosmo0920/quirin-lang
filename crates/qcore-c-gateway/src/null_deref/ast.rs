@@ -284,11 +284,12 @@ pub(super) fn constant_value(node: &Value, enums: &BTreeMap<String, i128>) -> Op
         "ParenExpr" | "ConstantExpr" | "ImplicitCastExpr" | "CStyleCastExpr" => {
             constant_value(first()?, enums)
         }
-        "DeclRefExpr" if node["referencedDecl"]["kind"] == "EnumConstantDecl" => node
-            ["referencedDecl"]["id"]
-            .as_str()
-            .and_then(|id| enums.get(id))
-            .copied(),
+        "DeclRefExpr" if node["referencedDecl"]["kind"] == "EnumConstantDecl" => {
+            node["referencedDecl"]["id"]
+                .as_str()
+                .and_then(|id| enums.get(id))
+                .copied()
+        }
         "UnaryOperator" => {
             let value = constant_value(first()?, enums)?;
             match node["opcode"].as_str()? {

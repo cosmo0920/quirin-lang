@@ -59,10 +59,10 @@ use qcore_core::null_deref::{self as core, Nullness, Outcome, Proof, Source};
 use qcore_schemas::contract::ResourceContracts;
 use serde_json::Value;
 
-pub use qcore_core::null_deref::{NULL_PROPERTY, NullVerdict, Request, compose};
 /// Card NULL-CANDIDATE-TRIAGE: the core decisions the audit's run fold
 /// reads (the null property's model and the triage's).
 pub use qcore_core::null_deref as core_model;
+pub use qcore_core::null_deref::{NULL_PROPERTY, NullVerdict, Request, compose};
 pub use qcore_core::null_triage;
 
 use crate::legacy_c::C11TranslationUnit;
@@ -73,8 +73,8 @@ mod walk;
 mod witness;
 
 use ast::kids;
-pub use walk::{ExternalCall, MemberStore};
 use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
+pub use walk::{ExternalCall, MemberStore};
 pub use witness::{PathStep, Witness};
 
 /// Card NULL-CANDIDATE-TRIAGE (rule 14r): the source kinds a candidate
@@ -509,8 +509,8 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
         returns_non_null,
         dependencies: walked.consulted.clone(),
     };
-    let external = definition["storageClass"].as_str() != Some("static")
-        && definition["inline"] != true;
+    let external =
+        definition["storageClass"].as_str() != Some("static") && definition["inline"] != true;
     let export = DefinitionSummary {
         function: name.to_owned(),
         external,

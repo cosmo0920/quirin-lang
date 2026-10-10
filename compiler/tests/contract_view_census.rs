@@ -84,8 +84,18 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "mk_list_del",
         &["chunkio/list_unlink.qv", "monkey/intrusive_list.qv"],
     ),
+    // Card NULL-CANDIDATE-TRIAGE: the toppar constructor's member
+    // declaration and rd_kafka_topic_keep's non-null result.
+    (
+        "rd_kafka_topic_keep",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
     (
         "rd_kafka_topic_partition_list_destroy",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
+    (
+        "rd_kafka_toppar_new0",
         &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
     ),
     (
@@ -141,12 +151,13 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
         })
         .collect();
     assert_eq!(actual, expected);
-    // Sixteen functions, eighteen pairs, every pair registered exactly once
+    // Eighteen functions, twenty pairs, every pair registered exactly once
     // (W45-FB-RETRY-LIFETIME added `mk_list_del`; NULL-SAFETY-PROPERTY the
-    // five `quant null-deref` checks beside a resource-v1 declaration).
-    assert_eq!(census_pairs(&report.census).len(), 18);
-    assert_eq!(REGISTERED_RELATIONS.len(), 18);
-    assert_eq!(report.relations.len(), 18);
+    // five `quant null-deref` checks beside a resource-v1 declaration;
+    // NULL-CANDIDATE-TRIAGE a member and a result declaration).
+    assert_eq!(census_pairs(&report.census).len(), 20);
+    assert_eq!(REGISTERED_RELATIONS.len(), 20);
+    assert_eq!(report.relations.len(), 20);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

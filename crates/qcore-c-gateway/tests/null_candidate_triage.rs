@@ -124,9 +124,16 @@ fn an_unchecked_allocation_is_a_finding_on_allocation_failure() {
     let witness = row.triage[0].witness.as_ref().expect("a witness");
     assert!(witness.condition.contains("nd_alloc"), "{witness:#?}");
     // The path names its decision (the early return's arm) and its event.
-    assert!(witness.path.iter().any(|s| s.step == "decision"), "{witness:#?}");
+    assert!(
+        witness.path.iter().any(|s| s.step == "decision"),
+        "{witness:#?}"
+    );
     assert_eq!(witness.path.last().map(|s| s.step), Some("dereference"));
-    assert!(row.reasons.iter().any(|r| r.starts_with("null-deref-finding")));
+    assert!(
+        row.reasons
+            .iter()
+            .any(|r| r.starts_with("null-deref-finding"))
+    );
 }
 
 #[test]
@@ -258,8 +265,15 @@ fn a_declared_member_is_read_non_null_and_every_store_is_evidence() {
             .any(|c| c.proofs.contains(&"result:member:S.next".to_owned())),
         "{row:#?}"
     );
-    assert!(row.contract_dependencies.contains(&"member:S.next".to_owned()));
-    assert!(row.assumptions.iter().any(|a| a.starts_with("declared-member:S.next")));
+    assert!(
+        row.contract_dependencies
+            .contains(&"member:S.next".to_owned())
+    );
+    assert!(
+        row.assumptions
+            .iter()
+            .any(|a| a.starts_with("declared-member:S.next"))
+    );
     // `keep` stores a formal it never tested (not proved); `link` stores an
     // address (proved).
     let stores = unit
@@ -303,7 +317,10 @@ fn a_declared_result_is_non_null_for_callers_and_its_body_is_exported() {
     );
     let row = &unit.functions[0];
     assert_eq!(row.verdict, "Safe", "{row:#?}");
-    assert!(row.contract_dependencies.contains(&"result:nd_get".to_owned()));
+    assert!(
+        row.contract_dependencies
+            .contains(&"result:nd_get".to_owned())
+    );
     let export = unit
         .definitions
         .iter()

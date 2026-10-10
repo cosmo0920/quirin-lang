@@ -1281,6 +1281,21 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/null_deref.qv", "rd_list_add", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_queue_destroy", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_message_destroy", 2),
+    // Card NULL-CANDIDATE-TRIAGE (rules 14t-14u): non-null members (each the
+    // selector and one member clause, two on the topic constructor), a
+    // non-null result, and seven more `quant null-deref` checks.
+    ("librdkafka/null_deref.qv", "rd_kafka_toppar_new0", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_topic_new0", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_cgrp_new", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_transport_new", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_topic_keep", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_flush", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_message_errstr", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_queue_poll", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_event_error", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_outq_len", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_op_destroy", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_topic_name", 2),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",

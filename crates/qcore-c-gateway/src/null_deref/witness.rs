@@ -517,7 +517,9 @@ impl<'a, 'e> Run<'a, 'e> {
                 }
                 Ok(None)
             }
-            other => Err(End::Unresolved(format!("an lvalue the search does not read: {other}"))),
+            other => Err(End::Unresolved(format!(
+                "an lvalue the search does not read: {other}"
+            ))),
         }
     }
 
@@ -584,7 +586,10 @@ impl<'a, 'e> Run<'a, 'e> {
             if let Some(why) = why {
                 let allocation = why.allocation || self.needs_allocation_failure;
                 let mut path = self.path.clone();
-                if !path.iter().any(|s| s.step == "null-event" && s.line == why.line) {
+                if !path
+                    .iter()
+                    .any(|s| s.step == "null-event" && s.line == why.line)
+                {
                     path.push(PathStep {
                         line: why.line,
                         step: "null-event",
@@ -655,7 +660,11 @@ impl<'a, 'e> Run<'a, 'e> {
     fn eval(&mut self, node: &Value) -> R<V> {
         self.tick()?;
         match kind(node) {
-            "ParenExpr" | "ConstantExpr" | "ExprWithCleanups" | "FullExpr" | "OpaqueValueExpr"
+            "ParenExpr"
+            | "ConstantExpr"
+            | "ExprWithCleanups"
+            | "FullExpr"
+            | "OpaqueValueExpr"
             | "MaterializeTemporaryExpr" => match kids(node).next() {
                 Some(inner) => self.eval(inner),
                 None => Ok(V::Int(S::Opaque("an empty expression".into()))),
@@ -705,17 +714,17 @@ impl<'a, 'e> Run<'a, 'e> {
                 let updated = match (current, right) {
                     (V::Ptr(p, id), _) => V::Ptr(
                         match p {
-                            P::Null(_) | P::Uninit => P::Opaque(Origin::Other("offset".into()), true),
+                            P::Null(_) | P::Uninit => {
+                                P::Opaque(Origin::Other("offset".into()), true)
+                            }
                             other => other,
                         },
                         id,
                     ),
-                    (V::Int(S::Const(a)), V::Int(S::Const(b))) => {
-                        V::Int(arith(op.trim_end_matches('='), a, b).map_or_else(
-                            || S::Opaque("an arithmetic result".into()),
-                            S::Const,
-                        ))
-                    }
+                    (V::Int(S::Const(a)), V::Int(S::Const(b))) => V::Int(
+                        arith(op.trim_end_matches('='), a, b)
+                            .map_or_else(|| S::Opaque("an arithmetic result".into()), S::Const),
+                    ),
                     _ => V::Int(S::Opaque("an updated value".into())),
                 };
                 self.write(place, updated.clone());
@@ -808,9 +817,7 @@ impl<'a, 'e> Run<'a, 'e> {
                     V::Int(S::Opaque("va_arg".into()))
                 })
             }
-            kind_name if kind_name.ends_with("Type") => {
-                Ok(V::Int(S::Opaque("a type".into())))
-            }
+            kind_name if kind_name.ends_with("Type") => Ok(V::Int(S::Opaque("a type".into()))),
             other => Err(End::Unresolved(format!("an unread form: {other}"))),
         }
     }
@@ -1018,11 +1025,9 @@ impl<'a, 'e> Run<'a, 'e> {
                         },
                         *id,
                     ),
-                    V::Int(S::Const(a)) => V::Int(S::Const(if node["opcode"] == "++" {
-                        a + 1
-                    } else {
-                        a - 1
-                    })),
+                    V::Int(S::Const(a)) => {
+                        V::Int(S::Const(if node["opcode"] == "++" { a + 1 } else { a - 1 }))
+                    }
                     V::Int(_) => V::Int(S::Opaque("an incremented value".into())),
                 };
                 self.write(place, updated.clone());
@@ -1099,7 +1104,11 @@ impl<'a, 'e> Run<'a, 'e> {
                     // itself constrained.
                     (V::Int(S::Atom(a)), V::Int(S::Const(k)))
                     | (V::Int(S::Const(k)), V::Int(S::Atom(a)))
-                        if op == "&" && k > 0 && self.atoms[a].range.is_some_and(|(lo, hi)| lo <= 0 && hi >= k) =>
+                        if op == "&"
+                            && k > 0
+                            && self.atoms[a]
+                                .range
+                                .is_some_and(|(lo, hi)| lo <= 0 && hi >= k) =>
                     {
                         let constrained = self.atoms[a].constrained;
                         self.atoms[a].constrained = true;
@@ -1250,7 +1259,11 @@ impl<'a, 'e> Run<'a, 'e> {
         self.path.push(PathStep {
             line,
             step: "decision",
-            text: format!("`{}` is {}", render(node), if arm { "true" } else { "false" }),
+            text: format!(
+                "`{}` is {}",
+                render(node),
+                if arm { "true" } else { "false" }
+            ),
         });
     }
 
@@ -1310,7 +1323,9 @@ impl<'a, 'e> Run<'a, 'e> {
                         ),
                         Origin::Other(other) => (
                             false,
-                            format!("`{what}` ({other}) is NULL, as the test at line {line} admits"),
+                            format!(
+                                "`{what}` ({other}) is NULL, as the test at line {line} admits"
+                            ),
                         ),
                     };
                     if allocation {
@@ -1378,15 +1393,11 @@ impl<'a, 'e> Run<'a, 'e> {
                                 self.pointer_compare(node, lhs, rhs, op, (p, id), (q, qid))
                             }
                             (V::Int(a), V::Int(b)) => self.integer_test(node, a, op, b),
-                            (V::Ptr(p, id), V::Int(S::Const(0)))
-                                if matches!(op, "==" | "!=") =>
-                            {
+                            (V::Ptr(p, id), V::Int(S::Const(0))) if matches!(op, "==" | "!=") => {
                                 let non_null = self.pointer_test(lhs, p, id)?;
                                 Ok(if op == "!=" { non_null } else { !non_null })
                             }
-                            (V::Int(S::Const(0)), V::Ptr(q, qid))
-                                if matches!(op, "==" | "!=") =>
-                            {
+                            (V::Int(S::Const(0)), V::Ptr(q, qid)) if matches!(op, "==" | "!=") => {
                                 let non_null = self.pointer_test(rhs, q, qid)?;
                                 Ok(if op == "!=" { non_null } else { !non_null })
                             }
@@ -1467,7 +1478,8 @@ impl<'a, 'e> Run<'a, 'e> {
         if left == right {
             return Ok(op == "==");
         }
-        if matches!(p, P::Opaque(_, true) | P::Uninit) || matches!(q, P::Opaque(_, true) | P::Uninit)
+        if matches!(p, P::Opaque(_, true) | P::Uninit)
+            || matches!(q, P::Opaque(_, true) | P::Uninit)
         {
             return Err(End::Unresolved(format!(
                 "a correlated pointer comparison at line {line}"
@@ -1556,8 +1568,13 @@ impl<'a, 'e> Run<'a, 'e> {
                 compare(op, 0, 0).ok_or_else(|| End::Unresolved("an unread comparison".into()))
             }
             (S::Atom(x), S::Const(k)) | (S::Const(k), S::Atom(x)) => {
-                let op = if matches!(a, S::Const(_)) { flip(op) } else { op };
-                let (Some(on_true), Some(on_false)) = (arm_set(op, *k, true), arm_set(op, *k, false))
+                let op = if matches!(a, S::Const(_)) {
+                    flip(op)
+                } else {
+                    op
+                };
+                let (Some(on_true), Some(on_false)) =
+                    (arm_set(op, *k, true), arm_set(op, *k, false))
                 else {
                     return Err(End::Unresolved(format!(
                         "an unread comparison at line {line}"
@@ -1788,14 +1805,14 @@ impl<'a, 'e> Run<'a, 'e> {
     ) -> R<Flow> {
         let mut first = true;
         for _ in 0..LOOP_BOUND {
-            if !(body_first && first) {
-                if let Some(cond) = cond {
-                    self.steer = Some(self.holds_target(body));
-                    let arm = self.test(cond);
-                    self.steer = None;
-                    if !arm? {
-                        return Ok(Flow::Normal);
-                    }
+            if !(body_first && first)
+                && let Some(cond) = cond
+            {
+                self.steer = Some(self.holds_target(body));
+                let arm = self.test(cond);
+                self.steer = None;
+                if !arm? {
+                    return Ok(Flow::Normal);
                 }
             }
             first = false;
@@ -1854,7 +1871,9 @@ impl<'a, 'e> Run<'a, 'e> {
             }
         }
         if nested_label(body) {
-            return Err(End::Unresolved("a case label inside a nested statement".into()));
+            return Err(End::Unresolved(
+                "a case label inside a nested statement".into(),
+            ));
         }
         let start = match value {
             V::Int(S::Const(k)) => cases
@@ -2125,7 +2144,9 @@ pub(super) fn search(
             }
         }
         let end = match run.stmt(body) {
-            Ok(Flow::Goto(_)) => End::Unresolved("a jump to a label the search cannot enter".into()),
+            Ok(Flow::Goto(_)) => {
+                End::Unresolved("a jump to a label the search cannot enter".into())
+            }
             Ok(_) => End::Ended,
             Err(end) => end,
         };

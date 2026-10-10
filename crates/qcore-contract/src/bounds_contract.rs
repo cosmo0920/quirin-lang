@@ -794,9 +794,8 @@ impl Reader<'_> {
                     .ok_or(
                         "null-member-shape: `null_member_nonnull(TAG, FIELD)` names a C struct tag",
                     )?;
-                let field = single_word(field).ok_or(
-                    "null-member-shape: `null_member_nonnull(TAG, FIELD)` names a member",
-                )?;
+                let field = single_word(field)
+                    .ok_or("null-member-shape: `null_member_nonnull(TAG, FIELD)` names a member")?;
                 Ok(BoundsClause::NullMember {
                     tag: tag.to_owned(),
                     field: field.to_owned(),

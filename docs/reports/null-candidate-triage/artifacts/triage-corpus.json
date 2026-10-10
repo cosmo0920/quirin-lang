@@ -1,0 +1,1717 @@
+{
+ "searched": 139,
+ "by_status": {
+  "unresolved": 104,
+  "finding": 33,
+  "infeasible": 2
+ },
+ "findings_by_class": {
+  "null-on-normal-path": 3,
+  "null-on-allocation-failure": 30
+ },
+ "reasons": [
+  {
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line",
+   "count": 47
+  },
+  {
+   "status": "unresolved",
+   "reason": "a correlated condition at line",
+   "count": 32
+  },
+  {
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "count": 14
+  },
+  {
+   "status": "unresolved",
+   "reason": "a switch over a value",
+   "count": 4
+  },
+  {
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "count": 3
+  },
+  {
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "count": 3
+  },
+  {
+   "status": "infeasible",
+   "reason": "every path explored",
+   "count": 2
+  },
+  {
+   "status": "unresolved",
+   "reason": "a correlated test at line",
+   "count": 1
+  }
+ ],
+ "not_findings": [
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "cmt_cat_copy_label_keys",
+   "origin": "cmt_cat.c:58",
+   "line": 5603,
+   "kind": "element-access",
+   "subject": "labels",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 133,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:151",
+   "line": 7099,
+   "kind": "member-access",
+   "subject": "histogram",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 99,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:173",
+   "line": 7116,
+   "kind": "member-access",
+   "subject": "exp_histogram",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 99,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:179",
+   "line": 7120,
+   "kind": "member-access",
+   "subject": "summary",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 99,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_msgpack.c",
+   "function": "pack_header",
+   "origin": "cmt_encode_msgpack.c:192",
+   "line": 7130,
+   "kind": "member-access",
+   "subject": "counter",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7097: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 99,
+   "sources": [
+    "memory-field:map->parent",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_data_point_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:2848",
+   "line": 8920,
+   "kind": "element-access",
+   "subject": "data_point_list",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 8896: `metric->data_case == OPENTELEMETRY__PROTO__METRICS__V1__METRIC__DATA_SUM`",
+   "paths": 3,
+   "sources": [
+    "memory-field:metric->.exponential_histogram->data_points",
+    "memory-field:metric->.gauge->data_points",
+    "memory-field:metric->.histogram->data_points",
+    "memory-field:metric->.sum->data_points",
+    "memory-field:metric->.summary->data_points",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_sample_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:3371",
+   "line": 9347,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_opentelemetry.c",
+   "function": "append_sample_to_metric",
+   "origin": "cmt_encode_opentelemetry.c:3371",
+   "line": 9347,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus.c",
+   "function": "format_metric",
+   "origin": "cmt_encode_prometheus.c:332",
+   "line": 6099,
+   "kind": "member-access",
+   "subject": "label_k",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 6106: `static_labels + defined_labels > 0`",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_k->_head->next",
+    "memory-field:&map->label_keys->next",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "cmt_encode_prometheus_remote_write.c:951",
+   "line": 7165,
+   "kind": "member-access",
+   "subject": "additional_label",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7331: `label_value_count > original_label_value_count` reads a value an earlier decision constrained",
+   "paths": 61,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "origin": "cmt_encode_prometheus_remote_write.c:1105",
+   "line": 7293,
+   "kind": "member-access",
+   "subject": "histogram",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 7215: `map->type == 2` reads a value an earlier decision constrained",
+   "paths": 61,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:532",
+   "line": 6850,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6854: `label_name_index >= label_name_count` reads a value an earlier decision constrained",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:532",
+   "line": 6850,
+   "kind": "member-access",
+   "subject": "&label_name->_head",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6854: `label_name_index >= label_name_count` reads a value an earlier decision constrained",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_prometheus_remote_write.c",
+   "function": "set_up_time_series_for_label_set",
+   "origin": "cmt_encode_prometheus_remote_write.c:545",
+   "line": 6858,
+   "kind": "member-access",
+   "subject": "label_name",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6849: `label_name_index < label_name_count` reads a value an earlier decision constrained",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_name->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_name"
+   ]
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_text.c",
+   "function": "format_metric",
+   "origin": "cmt_encode_text.c:560",
+   "line": 5999,
+   "kind": "member-access",
+   "subject": "label_k",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 1024,
+   "sources": [
+    "memory-field:&label_k->_head->next",
+    "memory-field:&map->label_keys->next",
+    "uninitialized:label_k"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateDoubleArray",
+   "origin": "cJSON.c:2714",
+   "line": 3407,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 389,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateFloatArray",
+   "origin": "cJSON.c:2674",
+   "line": 3373,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 389,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateIntArray",
+   "origin": "cJSON.c:2634",
+   "line": 3339,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 389,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "cJSON_CreateStringArray",
+   "origin": "cJSON.c:2754",
+   "line": 3441,
+   "kind": "call-precondition",
+   "subject": "p at inferred `suffix_object` quant null-deref #prev",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 389,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "parse_array",
+   "origin": "cJSON.c:1545",
+   "line": 2474,
+   "kind": "member-access",
+   "subject": "current_item",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 2451: `input_buffer->offset + 0 < input_buffer->length`",
+   "paths": 5,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "cJSON.c",
+   "function": "parse_object",
+   "origin": "cJSON.c:1703",
+   "line": 2597,
+   "kind": "member-access",
+   "subject": "current_item",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 2568: `input_buffer->offset + 0 < input_buffer->length`",
+   "paths": 3,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4.c",
+   "function": "LZ4_compress_generic_validated",
+   "origin": "lz4.c:1075",
+   "line": 747,
+   "kind": "call-precondition",
+   "subject": "match at inferred `LZ4_read32` quant null-deref #ptr",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 640: `dictDirective == usingDictCtx`",
+   "paths": 1,
+   "sources": [
+    "null-literal",
+    "other:label:_next_match"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:1672",
+   "line": 2074,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 15,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:1960",
+   "line": 2309,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 15,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_decompress",
+   "origin": "lz4frame.c:2002",
+   "line": 2339,
+   "kind": "call-precondition",
+   "subject": "selectedIn at inferred `LZ4F_readLE32` quant null-deref #src",
+   "status": "unresolved",
+   "reason": "a case label inside a nested statement",
+   "paths": 15,
+   "sources": [
+    "formal:srcBuffer",
+    "memory-field:dctx->tmpIn",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4831",
+   "line": 23588,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 9,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4841",
+   "line": 23596,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 9,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "origin": "rdkafka.c:4862",
+   "line": 23610,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "an ordered pointer comparison at line 23560",
+   "paths": 9,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "origin": "rdkafka_admin.c:7577",
+   "line": 25003,
+   "kind": "call-precondition",
+   "subject": "&rko_result->rko_u.admin_result.results at quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24919: `__len0 > &reply->rkbuf_reader->end - rd_slice_abs_offset(&reply->rkbuf_reader)`",
+   "paths": 117,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+   "origin": "rdkafka_admin.c:4362",
+   "line": 22713,
+   "kind": "member-access",
+   "subject": "result_element",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22672: `rko_fanout->rko_type & ~(int)1 << 29 | (int)1 << 30 == RD_KAFKA_OP_ADMIN_FANOUT`",
+   "paths": 1,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_handle_OffsetFetch",
+   "origin": "rdkafka_assignment.c:316",
+   "line": 20296,
+   "kind": "member-access",
+   "subject": "offsets",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20255: `err == RD_KAFKA_RESP_ERR__DESTROY`",
+   "paths": 3,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_serve_pending",
+   "origin": "rdkafka_assignment.c:638",
+   "line": 20447,
+   "kind": "member-access",
+   "subject": "partitions_to_query",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20406: `i >= 0`",
+   "paths": 9,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_op_serve",
+   "origin": "rdkafka_cgrp.c:7455",
+   "line": 24392,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_cgrp_partition_add` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24342: `rko->rko_type == RD_KAFKA_OP_RECV_BUF`",
+   "paths": 1,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_op_serve",
+   "origin": "rdkafka_cgrp.c:7470",
+   "line": 24398,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_cgrp_partition_del` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24342: `rko->rko_type == RD_KAFKA_OP_RECV_BUF`",
+   "paths": 1,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_share_rpc",
+   "origin": "rdkafka_fetcher.c:3256",
+   "line": 22054,
+   "kind": "call-precondition",
+   "subject": "ack_details at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22081: `rkb->rkb_rk->rk_conf.debug & 1024` reads a value an earlier decision constrained",
+   "paths": 341,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_share_rpc",
+   "origin": "rdkafka_fetcher.c:3298",
+   "line": 22072,
+   "kind": "call-precondition",
+   "subject": "ack_details at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22081: `rkb->rkb_rk->rk_conf.debug & 1024` reads a value an earlier decision constrained",
+   "paths": 341,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_topic_filter",
+   "origin": "rdkafka_metadata.c:1401",
+   "line": 20942,
+   "kind": "member-access",
+   "subject": "rkmce",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20920: `i < match->cnt` reads a value an earlier decision constrained",
+   "paths": 11,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_parse_Metadata0",
+   "origin": "rdkafka_metadata.c:980",
+   "line": 20716,
+   "kind": "call-precondition",
+   "subject": "requested_topics at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20543: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 1024,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_parse_Metadata0",
+   "origin": "rdkafka_metadata.c:1011",
+   "line": 20734,
+   "kind": "call-precondition",
+   "subject": "requested_topic_ids at inferred `rd_list_cnt` quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20543: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 1024,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_validate_records",
+   "origin": "rdkafka_mock.c:541",
+   "line": 21619,
+   "kind": "member-access",
+   "subject": "mpidstate",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21597: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "ut_cgrp_consumer_member_next_assignment0",
+   "origin": "rdkafka_mock.c:3701",
+   "line": 23672,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 23670: `j < current_assignment->cnt` reads a value an earlier decision constrained",
+   "paths": 337,
+   "sources": [
+    "global:mtopic"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:498",
+   "line": 22389,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22311: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:515",
+   "line": 22402,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22311: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:610",
+   "line": 22459,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22311: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Fetch",
+   "origin": "rdkafka_mock_handlers.c:615",
+   "line": 22464,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22311: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_FindCoordinator",
+   "origin": "rdkafka_mock_handlers.c:1560",
+   "line": 23062,
+   "kind": "member-access",
+   "subject": "mrkb",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 23037: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 43,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ListOffsets",
+   "origin": "rdkafka_mock_handlers.c:778",
+   "line": 22563,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22526: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 45,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "origin": "rdkafka_mock_handlers.c:1380",
+   "line": 22932,
+   "kind": "call-precondition",
+   "subject": "requested_topics at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22910: `rkbuf->rkbuf_reqhdr.ApiVersion >= 2` reads a value an earlier decision constrained",
+   "paths": 23,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Metadata",
+   "origin": "rdkafka_mock_handlers.c:1468",
+   "line": 23006,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 22910: `rkbuf->rkbuf_reqhdr.ApiVersion >= 2` reads a value an earlier decision constrained",
+   "paths": 23,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetFetch",
+   "origin": "rdkafka_mock_handlers.c:961",
+   "line": 22673,
+   "kind": "member-access",
+   "subject": "mtopic",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22631: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 75,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_OffsetFetch",
+   "origin": "rdkafka_mock_handlers.c:961",
+   "line": 22673,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22631: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 75,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:213",
+   "line": 22195,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22135: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 87,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:235",
+   "line": 22209,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22135: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 87,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_Produce",
+   "origin": "rdkafka_mock_handlers.c:242",
+   "line": 22214,
+   "kind": "member-access",
+   "subject": "mpart",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 22135: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 87,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_partition_find",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "origin": "rdkafka_mock_handlers.c:4931",
+   "line": 25347,
+   "kind": "member-access",
+   "subject": "&sgrp->fetch_sessions",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 25217: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "origin": "rdkafka_mock_handlers.c:4932",
+   "line": 25348,
+   "kind": "member-access",
+   "subject": "sgrp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 25217: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4093",
+   "line": 24783,
+   "kind": "call-precondition",
+   "subject": "forgotten_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4328",
+   "line": 24923,
+   "kind": "call-precondition",
+   "subject": "sgrp at inferred `rd_kafka_mock_sgrp_partmeta_find` quant null-deref #sgrp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_mock_sharegroup_get",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4512",
+   "line": 25060,
+   "kind": "call-precondition",
+   "subject": "sgrp at inferred `rd_kafka_mock_sgrp_partmeta_find` quant null-deref #sgrp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4645",
+   "line": 25163,
+   "kind": "member-access",
+   "subject": "&sgrp->fetch_sessions",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4646",
+   "line": 25164,
+   "kind": "member-access",
+   "subject": "sgrp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4665",
+   "line": 25174,
+   "kind": "call-precondition",
+   "subject": "requested_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "origin": "rdkafka_mock_handlers.c:4682",
+   "line": 25187,
+   "kind": "call-precondition",
+   "subject": "requested_partitions at quant null-deref #rktparlist",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 24695: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 31,
+   "sources": [
+    "uncontracted-result:rd_kafka_topic_partition_list_new",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_SyncGroup",
+   "origin": "rdkafka_mock_handlers.c:1894",
+   "line": 23297,
+   "kind": "member-access",
+   "subject": "mcgrp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 23262: `__len0 > &rkbuf->rkbuf_reader->end - rd_slice_abs_offset(&rkbuf->rkbuf_reader)`",
+   "paths": 37,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_new",
+   "origin": "rdkafka_mock_handlers.c:1964",
+   "line": 23343,
+   "kind": "member-access",
+   "subject": "TransactionalId",
+   "status": "infeasible",
+   "reason": "every path explored (7; 4 end without reaching it NULL, 0 fault earlier): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_produce_batch",
+   "origin": "rdkafka_msg.c:830",
+   "line": 20273,
+   "kind": "member-access",
+   "subject": "rktp",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20217: `all_err`",
+   "paths": 13,
+   "sources": [
+    "allocation:rd_kafka_toppar_get_avail",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_commit",
+   "origin": "rdkafka_offset.c:409",
+   "line": 20361,
+   "kind": "call-precondition",
+   "subject": "repq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20358: `err`",
+   "paths": 5,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_delegate",
+   "origin": "rdkafka_partition.c:1326",
+   "line": 20864,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20872: `rktp->rktp_rkt->rkt_rk->rk_conf.debug & 4` reads a value an earlier decision constrained",
+   "paths": 105,
+   "sources": [
+    "uncontracted-result:rd_kafka_broker_internal",
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_delegate",
+   "origin": "rdkafka_partition.c:1363",
+   "line": 20877,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20872: `rktp->rktp_rkt->rkt_rk->rk_conf.debug & 4` reads a value an earlier decision constrained",
+   "paths": 105,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_broker_migrate",
+   "origin": "rdkafka_partition.c:1234",
+   "line": 20828,
+   "kind": "member-access",
+   "subject": "dest_rkb",
+   "status": "unresolved",
+   "reason": "a correlated test at line 20810: `rktp->rktp_next_broker` was tested before a call on the path",
+   "paths": 25,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_handle_Offset",
+   "origin": "rdkafka_partition.c:1612",
+   "line": 21009,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20948: `err != RD_KAFKA_RESP_ERR__DESTROY`",
+   "paths": 1,
+   "sources": [
+    "null-literal",
+    "uninitialized:rktpar"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_handle_Offset",
+   "origin": "rdkafka_partition.c:1624",
+   "line": 21011,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20948: `err != RD_KAFKA_RESP_ERR__DESTROY`",
+   "paths": 1,
+   "sources": [
+    "null-literal",
+    "uninitialized:rktpar"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_lag_handle_Offset",
+   "origin": "rdkafka_partition.c:104",
+   "line": 20266,
+   "kind": "member-access",
+   "subject": "rktpar",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 20258: `err == RD_KAFKA_RESP_ERR__IN_PROGRESS`",
+   "paths": 1,
+   "sources": [
+    "null-literal",
+    "uninitialized:rktpar"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_offset_request",
+   "origin": "rdkafka_partition.c:1738",
+   "line": 21058,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21039: `rkb->rkb_source == RD_KAFKA_INTERNAL`",
+   "paths": 9,
+   "sources": [
+    "memory-field:rktp->rktp_leader",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "origin": "rdkafka_partition.c:2197",
+   "line": 21277,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_toppar_fetch_start` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a switch over a value the search does not follow at line 21275",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "origin": "rdkafka_partition.c:2202",
+   "line": 21281,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_toppar_fetch_stop` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a switch over a value the search does not follow at line 21275",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "origin": "rdkafka_partition.c:2206",
+   "line": 21284,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_toppar_seek` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a switch over a value the search does not follow at line 21275",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_serve",
+   "origin": "rdkafka_partition.c:2210",
+   "line": 21287,
+   "kind": "call-precondition",
+   "subject": "rktp at inferred `rd_kafka_toppar_pause_resume` quant null-deref #rktp",
+   "status": "unresolved",
+   "reason": "a switch over a value the search does not follow at line 21275",
+   "paths": 13,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppars_pause_resume",
+   "origin": "rdkafka_partition.c:2637",
+   "line": 21496,
+   "kind": "call-precondition",
+   "subject": "tmpq at inferred `rd_kafka_q_destroy_owner` quant null-deref #rkq",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21473: `async`",
+   "paths": 1,
+   "sources": [
+    "uncontracted-result:rd_kafka_q_new0",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_range_assignor_assign_cb",
+   "origin": "rdkafka_range_assignor.c:542",
+   "line": 19880,
+   "kind": "call-precondition",
+   "subject": "rktas_current_bucket at quant null-deref #rl",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 19867: `ti < eligible_topic_cnt` reads a value an earlier decision constrained",
+   "paths": 1,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:231",
+   "line": 20271,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:232",
+   "line": 20272,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:235",
+   "line": 20275,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:236",
+   "line": 20276,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:239",
+   "line": 20279,
+   "kind": "dereference",
+   "subject": "d++",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_safe_string",
+   "origin": "rdkafka_sasl_scram.c:247",
+   "line": 20285,
+   "kind": "dereference",
+   "subject": "d",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20265: `*s` reads a value an earlier decision constrained",
+   "paths": 7,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "performReassignments",
+   "origin": "rdkafka_sticky_assignor.c:983",
+   "line": 21760,
+   "kind": "member-access",
+   "subject": "&rkri->member_id_to_rack_id",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 21804: `i < reassignablePartitions->cnt` reads a value an earlier decision constrained",
+   "paths": 1024,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "origin": "rdkafka_topic.c:1162",
+   "line": 20425,
+   "kind": "element-access",
+   "subject": "rktps",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "paths": 3,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "origin": "rdkafka_topic.c:1173",
+   "line": 20430,
+   "kind": "element-access",
+   "subject": "rktps",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 20401: `rkt->rkt_partition_cnt != 0` reads a value an earlier decision constrained",
+   "paths": 3,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "origin": "rdkafka_txnmgr.c:1863",
+   "line": 21219,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21149: `err == RD_KAFKA_RESP_ERR__DESTROY`",
+   "paths": 1,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "origin": "rdkafka_txnmgr.c:1883",
+   "line": 21228,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21149: `err == RD_KAFKA_RESP_ERR__DESTROY`",
+   "paths": 1,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_FindCoordinator",
+   "origin": "rdkafka_txnmgr.c:2975",
+   "line": 21799,
+   "kind": "call-precondition",
+   "subject": "&rkb->rkb_refcnt at inferred `rd_refcnt_sub0` quant null-deref #R",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21764: `err`",
+   "paths": 1,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_handle_FindCoordinator",
+   "origin": "rdkafka_txnmgr.c:2991",
+   "line": 21811,
+   "kind": "member-access",
+   "subject": "rkb",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 21764: `err`",
+   "paths": 1,
+   "sources": [
+    "formal:rkb",
+    "null-literal"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_lib_worker",
+   "origin": "mk_server/mk_lib.c:156",
+   "line": 6521,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6520: `__i < server->lib_evl->n_events` reads a value an earlier decision constrained",
+   "paths": 7,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_start",
+   "origin": "mk_server/mk_lib.c:202",
+   "line": 6553,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "infeasible",
+   "reason": "every path explored (9; 5 end without reaching it NULL, 0 fault earlier): no path reaches the dereference with the pointer NULL under a named condition",
+   "paths": 9,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:219",
+   "line": 6156,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 67,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:226",
+   "line": 6163,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 67,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:233",
+   "line": 6170,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 67,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:240",
+   "line": 6177,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 67,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_load",
+   "origin": "mk_server/mk_plugin.c:247",
+   "line": 6184,
+   "kind": "member-access",
+   "subject": "st",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6151: `plugin->hooks & 256` reads a value an earlier decision constrained",
+   "paths": 67,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "origin": "mk_server/mk_server.c:363",
+   "line": 6391,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6390: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 19,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "origin": "mk_server/mk_server.c:456",
+   "line": 6437,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6469: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 59,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "origin": "mk_server/mk_server.c:508",
+   "line": 6471,
+   "kind": "member-access",
+   "subject": "event",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6469: `evl->n_events > 0` reads a value an earlier decision constrained",
+   "paths": 59,
+   "sources": [
+    "memory-field:__ctx->fired[0].data",
+    "memory-field:__ctx->fired[__i].data",
+    "null-literal",
+    "uninitialized:event"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "origin": "mk_server/mk_utils.c:481",
+   "line": 6040,
+   "kind": "element-access",
+   "subject": "buf",
+   "status": "unresolved",
+   "reason": "a condition over a value the search does not follow at line 6035: `i + 2 < uri.len`",
+   "paths": 13,
+   "sources": [
+    "allocation:mk_mem_alloc_z"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_init",
+   "origin": "mk_server/mk_vhost.c:663",
+   "line": 6421,
+   "kind": "call-precondition",
+   "subject": "&p_host->_head at inferred `mk_list_add` quant null-deref #_new",
+   "status": "unresolved",
+   "reason": "a correlated condition at line 6431: `ent->d_name[0] == 46` reads a value an earlier decision constrained",
+   "paths": 169,
+   "sources": [
+    "null-literal"
+   ]
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "origin": "mk_server/mk_vhost.c:540",
+   "line": 6324,
+   "kind": "member-access",
+   "subject": "h_param",
+   "status": "unresolved",
+   "reason": "a loop's iteration bound",
+   "paths": 1024,
+   "sources": [
+    "allocation:mk_mem_alloc"
+   ]
+  }
+ ]
+}

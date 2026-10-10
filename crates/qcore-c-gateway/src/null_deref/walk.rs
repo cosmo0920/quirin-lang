@@ -1052,10 +1052,10 @@ impl<'a> Walker<'a> {
             outcome: outcome.class(),
             sources,
         };
+        // A store reached twice keeps its worse record: a discharged one
+        // never replaces a recorded failure.
         match self.member_stores.get_mut(&id) {
-            Some(existing) if outcome.discharged() => {
-                let _ = existing;
-            }
+            Some(_) if outcome.discharged() => {}
             Some(existing) => *existing = record,
             None => {
                 self.member_stores.insert(id, record);
@@ -1644,10 +1644,9 @@ impl<'a> Walker<'a> {
                     Outcome::Candidate(sources) => {
                         (sources.iter().map(Source::render).collect(), Vec::new())
                     }
-                    Outcome::Proved(proofs) | Outcome::Moved(proofs) => (
-                        Vec::new(),
-                        proofs.iter().map(super::render_proof).collect(),
-                    ),
+                    Outcome::Proved(proofs) | Outcome::Moved(proofs) => {
+                        (Vec::new(), proofs.iter().map(super::render_proof).collect())
+                    }
                     _ => (Vec::new(), Vec::new()),
                 };
                 let site = self.site(node);

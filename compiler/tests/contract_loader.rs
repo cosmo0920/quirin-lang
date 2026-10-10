@@ -1818,9 +1818,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `quant null-deref` declarations of the three `null_deref.qv` modules
     // belong to the bounds consumer and are deliberately rejected by
     // resource-v1. Selection and v1 declarations unchanged.
+    // 234 -> 246 rejected by card NULL-CANDIDATE-TRIAGE: twelve more
+    // declarations in `librdkafka/null_deref.qv` (four member hosts, one
+    // non-null result, seven `quant null-deref` checks), likewise rejected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 379, 234)
+        (61, 379, 246)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

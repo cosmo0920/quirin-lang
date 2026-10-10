@@ -1,0 +1,3045 @@
+{
+ "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+ "findings": 33,
+ "by_class": {
+  "null-on-normal-path": 3,
+  "null-on-allocation-failure": 30
+ },
+ "functions": 22,
+ "entries": [
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "copy_label_values",
+   "line": "cmt_cat.c:93",
+   "check": "element-access",
+   "subject": "labels",
+   "class": "null-on-normal-path",
+   "condition": "a null pointer constant at line 5613",
+   "path": [
+    {
+     "origin": "cmt_cat.c:76",
+     "step": "decision",
+     "text": "`s == 0` is false"
+    },
+    {
+     "origin": "cmt_cat.c:81",
+     "step": "decision",
+     "text": "`s > 0` is false"
+    },
+    {
+     "origin": "cmt_cat.c:91",
+     "step": "decision",
+     "text": "`head != &metric->labels` is true"
+    },
+    {
+     "origin": "cmt_cat.c:70",
+     "step": "null-event",
+     "text": "a null pointer constant at line 5613"
+    },
+    {
+     "origin": "cmt_cat.c:93",
+     "step": "dereference",
+     "text": "labels[i]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/cmetrics/src/cmt_cat.c",
+    "lines": [
+     "   91      cfl_list_foreach(head, &metric->labels) {",
+     "   92          label = cfl_list_entry(head, struct cmt_map_label, _head);",
+     "   93>         labels[i] = label->name;",
+     "   94          i++;",
+     "   95      }"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/cmetrics/src/cmt_cat.c",
+    "lines": [
+     "   68      int i;",
+     "   69      int s;",
+     "   70>     char **labels = NULL;",
+     "   71      struct cfl_list *head;",
+     "   72      struct cmt_map_label *label;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "ctr_variant_binary_to_otlp_any_value",
+   "line": "ctr_encode_opentelemetry.c:492",
+   "check": "member-access",
+   "subject": "result",
+   "class": "null-on-allocation-failure",
+   "condition": "a null pointer constant at line 8847",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:482",
+     "step": "decision",
+     "text": "`result` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:486",
+     "step": "decision",
+     "text": "`result->.bytes_value.data` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:488",
+     "step": "null-event",
+     "text": "a null pointer constant at line 8847"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:492",
+     "step": "dereference",
+     "text": "result->"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  490          }",
+     "  491  ",
+     "  492>         memcpy(result->bytes_value.data, value->data.as_bytes, result->bytes_value.len);",
+     "  493      }",
+     "  494  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  486          if (result->bytes_value.data == NULL) {",
+     "  487              otlp_any_value_destroy(result);",
+     "  488>             result = NULL;",
+     "  489  ",
+     "  490          }"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "line": "ctr_encode_opentelemetry.c:792",
+   "check": "member-access",
+   "subject": "otel_link",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9083 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:782",
+     "step": "decision",
+     "text": "`head != links` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:788",
+     "step": "decision",
+     "text": "`link->trace_id` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:785",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9083 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:792",
+     "step": "dereference",
+     "text": "otel_link->trace_id"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  790              link_trace_id = ctr_id_get_buf(link->trace_id);",
+     "  791  ",
+     "  792>             otel_link->trace_id.len = link_trace_id_size;",
+     "  793              otel_link->trace_id.data = link_trace_id;",
+     "  794          }"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  783          link = cfl_list_entry(head, struct ctrace_link, _head);",
+     "  784  ",
+     "  785>         otel_link = calloc(1, sizeof(Opentelemetry__Proto__Trace__V1__Span__Link));",
+     "  786          opentelemetry__proto__trace__v1__span__link__init(otel_link);",
+     "  787  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "line": "ctr_encode_opentelemetry.c:800",
+   "check": "member-access",
+   "subject": "otel_link",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9083 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:782",
+     "step": "decision",
+     "text": "`head != links` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:788",
+     "step": "decision",
+     "text": "`link->trace_id` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:796",
+     "step": "decision",
+     "text": "`link->span_id` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:785",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9083 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:800",
+     "step": "dereference",
+     "text": "otel_link->span_id"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  798              link_span_id = ctr_id_get_buf(link->span_id);",
+     "  799  ",
+     "  800>             otel_link->span_id.len = link_span_id_size;",
+     "  801              otel_link->span_id.data = link_span_id;",
+     "  802          }"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  783          link = cfl_list_entry(head, struct ctrace_link, _head);",
+     "  784  ",
+     "  785>         otel_link = calloc(1, sizeof(Opentelemetry__Proto__Trace__V1__Span__Link));",
+     "  786          opentelemetry__proto__trace__v1__span__link__init(otel_link);",
+     "  787  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "line": "ctr_encode_opentelemetry.c:804",
+   "check": "member-access",
+   "subject": "otel_link",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9083 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:782",
+     "step": "decision",
+     "text": "`head != links` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:788",
+     "step": "decision",
+     "text": "`link->trace_id` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:796",
+     "step": "decision",
+     "text": "`link->span_id` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:785",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9083 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:804",
+     "step": "dereference",
+     "text": "otel_link->trace_state"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  802          }",
+     "  803  ",
+     "  804>         otel_link->trace_state = link->trace_state;",
+     "  805  ",
+     "  806          otel_link->n_attributes = get_attributes_count(link->attr);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  783          link = cfl_list_entry(head, struct ctrace_link, _head);",
+     "  784  ",
+     "  785>         otel_link = calloc(1, sizeof(Opentelemetry__Proto__Trace__V1__Span__Link));",
+     "  786          opentelemetry__proto__trace__v1__span__link__init(otel_link);",
+     "  787  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "line": "ctr_encode_opentelemetry.c:810",
+   "check": "element-access",
+   "subject": "otel_links",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9079 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:782",
+     "step": "decision",
+     "text": "`head != links` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:788",
+     "step": "decision",
+     "text": "`link->trace_id` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:796",
+     "step": "decision",
+     "text": "`link->span_id` is false"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:778",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9079 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:810",
+     "step": "dereference",
+     "text": "otel_links[link_index++]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  808          otel_link->dropped_attributes_count = link->dropped_attr_count;",
+     "  809  ",
+     "  810>         otel_links[link_index++] = otel_link;",
+     "  811      }",
+     "  812  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  776      Opentelemetry__Proto__Trace__V1__Span__Link *otel_link;",
+     "  777  ",
+     "  778>     otel_links = calloc(count, sizeof(Opentelemetry__Proto__Trace__V1__Span__Link *));",
+     "  779  ",
+     "  780      link_index = 0;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_status",
+   "line": "ctr_encode_opentelemetry.c:755",
+   "check": "member-access",
+   "subject": "otel_status",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9059 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:752",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9059 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:755",
+     "step": "dereference",
+     "text": "otel_status->code"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  753      opentelemetry__proto__trace__v1__status__init(otel_status);",
+     "  754  ",
+     "  755>     otel_status->code = status.code;",
+     "  756      otel_status->message = status.message;",
+     "  757  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  750      Opentelemetry__Proto__Trace__V1__Status *otel_status;",
+     "  751  ",
+     "  752>     otel_status = calloc(1, sizeof(Opentelemetry__Proto__Trace__V1__Status));",
+     "  753      opentelemetry__proto__trace__v1__status__init(otel_status);",
+     "  754  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "set_event",
+   "line": "ctr_encode_opentelemetry.c:691",
+   "check": "member-access",
+   "subject": "event",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9009 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:688",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9009 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:691",
+     "step": "dereference",
+     "text": "event->time_unix_nano"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  689      opentelemetry__proto__trace__v1__span__event__init(event);",
+     "  690  ",
+     "  691>     event->time_unix_nano = ctr_event->time_unix_nano;",
+     "  692      event->name = ctr_event->name;",
+     "  693      event->n_attributes = ctr_attributes_count(ctr_event->attr);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  686      Opentelemetry__Proto__Trace__V1__Span__Event *event;",
+     "  687  ",
+     "  688>     event = calloc(1, sizeof(Opentelemetry__Proto__Trace__V1__Span__Event));",
+     "  689      opentelemetry__proto__trace__v1__span__event__init(event);",
+     "  690  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "set_events_from_ctr",
+   "line": "ctr_encode_opentelemetry.c:716",
+   "check": "element-access",
+   "subject": "event_arr",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `calloc` at line 9026 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "ctr_encode_opentelemetry.c:714",
+     "step": "decision",
+     "text": "`head != events` is true"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:711",
+     "step": "null-event",
+     "text": "the allocation `calloc` at line 9026 fails (returns NULL)"
+    },
+    {
+     "origin": "ctr_encode_opentelemetry.c:716",
+     "step": "dereference",
+     "text": "event_arr[event_index++]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  714      cfl_list_foreach(head, events) {",
+     "  715          ctr_event = cfl_list_entry(head, struct ctrace_span_event, _head);",
+     "  716>         event_arr[event_index++] = set_event(ctr_event);",
+     "  717      }",
+     "  718  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/ctraces/src/ctr_encode_opentelemetry.c",
+    "lines": [
+     "  709      Opentelemetry__Proto__Trace__V1__Span__Event **event_arr;",
+     "  710  ",
+     "  711>     event_arr = calloc(count, sizeof(Opentelemetry__Proto__Trace__V1__Span__Event *));",
+     "  712  ",
+     "  713      event_index = 0;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_fetch_reply_op",
+   "line": "rdkafka.c:3501",
+   "check": "member-access",
+   "subject": "reply_rkb",
+   "class": "null-on-normal-path",
+   "condition": "`rko_orig->rko_u.share_fetch.target_broker` reads NULL, as the test at line 22870 admits",
+   "path": [
+    {
+     "origin": "rdkafka.c:3460",
+     "step": "decision",
+     "text": "`rk->rk_conf.debug & 256` is true"
+    },
+    {
+     "origin": "rdkafka.c:3460",
+     "step": "decision",
+     "text": "`reply_rkb` is false"
+    },
+    {
+     "origin": "rdkafka.c:3484",
+     "step": "decision",
+     "text": "`ack_details` is false"
+    },
+    {
+     "origin": "rdkafka.c:3460",
+     "step": "null-event",
+     "text": "`rko_orig->rko_u.share_fetch.target_broker` reads NULL, as the test at line 22870 admits"
+    },
+    {
+     "origin": "rdkafka.c:3501",
+     "step": "dereference",
+     "text": "reply_rkb->rkb_share_fetch_enqueued"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "lines": [
+     " 3499              rk, rko_orig->rko_u.share_fetch.ack_details);",
+     " 3500  ",
+     " 3501>         reply_rkb->rkb_share_fetch_enqueued = rd_false;",
+     " 3502  ",
+     " 3503          if (should_fetch)"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+    "lines": [
+     " 3458          rd_dassert(thrd_is_current(rk->rk_thread) ||",
+     " 3459                     rko_orig->rko_err == RD_KAFKA_RESP_ERR__DESTROY);",
+     " 3460>         rd_kafka_dbg(rk, CGRP, \"SHAREFETCH\",",
+     " 3461                       \"Share fetch reply: %s, should_fetch=%d, \"",
+     " 3462                       \"records_fetched=%d, should_leave=%d, broker=%s\","
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_brokers_learned_ids",
+   "line": "rdkafka_broker.c:6555",
+   "check": "dereference",
+   "subject": "p++",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `malloc` at line 24206 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "rdkafka_broker.c:6554",
+     "step": "decision",
+     "text": "`rkb = rd_list_elem(&rk->rk_broker_by_id, i)` is true"
+    },
+    {
+     "origin": "rdkafka_broker.c:6552",
+     "step": "null-event",
+     "text": "the allocation `malloc` at line 24206 fails (returns NULL)"
+    },
+    {
+     "origin": "rdkafka_broker.c:6555",
+     "step": "dereference",
+     "text": "*p++"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "lines": [
+     " 6553          p   = ids;",
+     " 6554          RD_LIST_FOREACH(rkb, &rk->rk_broker_by_id, i) {",
+     " 6555>                 *p++ = rkb->rkb_nodeid;",
+     " 6556                  (*cntp)++;",
+     " 6557          }"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+    "lines": [
+     " 6550          *cntp = 0;",
+     " 6551          rd_kafka_rdlock(rk);",
+     " 6552>         ids = malloc(sizeof(*ids) * rd_list_cnt(&rk->rk_broker_by_id));",
+     " 6553          p   = ids;",
+     " 6554          RD_LIST_FOREACH(rkb, &rk->rk_broker_by_id, i) {"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "line": "mk_core/mk_rconf.c:92",
+   "check": "member-access",
+   "subject": "new",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 1827 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_core/mk_rconf.c:82",
+     "step": "decision",
+     "text": "`mk_list_is_empty(&conf->sections) == 0` is false"
+    },
+    {
+     "origin": "mk_core/mk_rconf.c:91",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 1827 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_core/mk_rconf.c:92",
+     "step": "dereference",
+     "text": "new->key"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_core/mk_rconf.c",
+    "lines": [
+     "   90      /* Alloc new entry */",
+     "   91      new = mk_mem_alloc(sizeof(struct mk_rconf_entry));",
+     "   92>     new->key = mk_string_dup(key);",
+     "   93      new->val = mk_string_dup(val);",
+     "   94  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_core/mk_rconf.c",
+    "lines": [
+     "   89  ",
+     "   90      /* Alloc new entry */",
+     "   91>     new = mk_mem_alloc(sizeof(struct mk_rconf_entry));",
+     "   92      new->key = mk_string_dup(key);",
+     "   93      new->val = mk_string_dup(val);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "line": "mk_core/mk_string.c:382",
+   "check": "member-access",
+   "subject": "new",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 2222 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_core/mk_string.c:347",
+     "step": "decision",
+     "text": "`line` is true"
+    },
+    {
+     "origin": "mk_core/mk_string.c:352",
+     "step": "decision",
+     "text": "`list` is true"
+    },
+    {
+     "origin": "mk_core/mk_string.c:359",
+     "step": "decision",
+     "text": "`i < len` is true"
+    },
+    {
+     "origin": "mk_core/mk_string.c:362",
+     "step": "decision",
+     "text": "`end >= 0` is false"
+    },
+    {
+     "origin": "mk_core/mk_string.c:381",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 2222 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_core/mk_string.c:382",
+     "step": "dereference",
+     "text": "new->val"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_core/mk_string.c",
+    "lines": [
+     "  380          /* Alloc node */",
+     "  381          new = mk_mem_alloc(sizeof(struct mk_string_line));",
+     "  382>         new->val = val;",
+     "  383          new->len = val_len;",
+     "  384  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_core/mk_string.c",
+    "lines": [
+     "  379  ",
+     "  380          /* Alloc node */",
+     "  381>         new = mk_mem_alloc(sizeof(struct mk_string_line));",
+     "  382          new->val = val;",
+     "  383          new->len = val_len;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_utils.c",
+   "function": "mk_print",
+   "line": "mk_core/mk_utils.c:249",
+   "check": "member-access",
+   "subject": "current",
+   "class": "null-on-normal-path",
+   "condition": "the lookup `localtime_r` at line 2577 misses (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_core/mk_utils.c:214",
+     "step": "decision",
+     "text": "`type` matches no case"
+    },
+    {
+     "origin": "mk_core/mk_utils.c:237",
+     "step": "decision",
+     "text": "`isatty(1)` is false"
+    },
+    {
+     "origin": "mk_core/mk_utils.c:246",
+     "step": "null-event",
+     "text": "the lookup `localtime_r` at line 2577 misses (returns NULL)"
+    },
+    {
+     "origin": "mk_core/mk_utils.c:249",
+     "step": "dereference",
+     "text": "current->tm_year"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_core/mk_utils.c",
+    "lines": [
+     "  247      printf(\"%s[%s%i/%02i/%02i %02i:%02i:%02i%s]%s \",",
+     "  248             bold_color, reset_color,",
+     "  249>            current->tm_year + 1900,",
+     "  250             current->tm_mon + 1,",
+     "  251             current->tm_mday,"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_core/mk_utils.c",
+    "lines": [
+     "  244      now = time(NULL);",
+     "  245      struct tm result;",
+     "  246>     current = localtime_r(&now, &result);",
+     "  247      printf(\"%s[%s%i/%02i/%02i %02i:%02i:%02i%s]%s \",",
+     "  248             bold_color, reset_color,"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "line": "mk_server/mk_cache.c:38",
+   "check": "member-access",
+   "subject": "p_tmp",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 5602 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_cache.c:37",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 5602 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_cache.c:38",
+     "step": "dereference",
+     "text": "p_tmp->data"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_cache.c",
+    "lines": [
+     "   36      /* Cache header request -> last modified */",
+     "   37      p_tmp = mk_mem_alloc_z(sizeof(mk_ptr_t));",
+     "   38>     p_tmp->data = mk_mem_alloc_z(32);",
+     "   39      p_tmp->len = -1;",
+     "   40      MK_TLS_SET(mk_tls_cache_header_lm, p_tmp);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_cache.c",
+    "lines": [
+     "   35  ",
+     "   36      /* Cache header request -> last modified */",
+     "   37>     p_tmp = mk_mem_alloc_z(sizeof(mk_ptr_t));",
+     "   38      p_tmp->data = mk_mem_alloc_z(32);",
+     "   39      p_tmp->len = -1;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "line": "mk_server/mk_cache.c:44",
+   "check": "member-access",
+   "subject": "p_tmp",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 5606 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_cache.c:43",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 5606 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_cache.c:44",
+     "step": "dereference",
+     "text": "p_tmp->data"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_cache.c",
+    "lines": [
+     "   42      /* Cache header request -> content length */",
+     "   43      p_tmp = mk_mem_alloc_z(sizeof(mk_ptr_t));",
+     "   44>     p_tmp->data = mk_mem_alloc_z(MK_UTILS_INT2MKP_BUFFER_LEN);",
+     "   45      p_tmp->len = -1;",
+     "   46      MK_TLS_SET(mk_tls_cache_header_cl, p_tmp);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_cache.c",
+    "lines": [
+     "   41  ",
+     "   42      /* Cache header request -> content length */",
+     "   43>     p_tmp = mk_mem_alloc_z(sizeof(mk_ptr_t));",
+     "   44      p_tmp->data = mk_mem_alloc_z(MK_UTILS_INT2MKP_BUFFER_LEN);",
+     "   45      p_tmp->len = -1;"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http.c",
+   "function": "mk_http_directory_redirect_check",
+   "line": "mk_server/mk_http.c:565",
+   "check": "element-access",
+   "subject": "location",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 6440 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_http.c:545",
+     "step": "decision",
+     "text": "`sr->uri_processed.data[sr->uri_processed.len - 1] == 47` is false"
+    },
+    {
+     "origin": "mk_server/mk_http.c:549",
+     "step": "decision",
+     "text": "`sr->host.data` is true"
+    },
+    {
+     "origin": "mk_server/mk_http.c:549",
+     "step": "decision",
+     "text": "`sr->host.len <= 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_http.c:555",
+     "step": "decision",
+     "text": "`host` is true"
+    },
+    {
+     "origin": "mk_server/mk_http.c:563",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 6440 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_http.c:565",
+     "step": "dereference",
+     "text": "location[sr->uri_processed.len]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_http.c",
+    "lines": [
+     "  563      location = mk_mem_alloc(sr->uri_processed.len + 2);",
+     "  564      memcpy(location, sr->uri_processed.data, sr->uri_processed.len);",
+     "  565>     location[sr->uri_processed.len]     = '/';",
+     "  566      location[sr->uri_processed.len + 1] = '\\0';",
+     "  567  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_http.c",
+    "lines": [
+     "  561       * Add ending slash to the location string",
+     "  562       */",
+     "  563>     location = mk_mem_alloc(sr->uri_processed.len + 2);",
+     "  564      memcpy(location, sr->uri_processed.data, sr->uri_processed.len);",
+     "  565      location[sr->uri_processed.len]     = '/';"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_init",
+   "line": "mk_server/mk_mimetype.c:126",
+   "check": "call-precondition",
+   "subject": "name at inferred `mk_mimetype_add` quant null-deref #name",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_string_dup` at line 5861 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_mimetype.c:125",
+     "step": "decision",
+     "text": "`server->mimetype_default_str` is true"
+    },
+    {
+     "origin": "mk_server/mk_mimetype.c:124",
+     "step": "null-event",
+     "text": "the allocation `mk_string_dup` at line 5861 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_mimetype.c:126",
+     "step": "dereference",
+     "text": "name"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_mimetype.c",
+    "lines": [
+     "  124      name = mk_string_dup(MIMETYPE_DEFAULT_NAME);",
+     "  125      if (server->mimetype_default_str) {",
+     "  126>         ret = mk_mimetype_add(server, name, server->mimetype_default_str);",
+     "  127      }",
+     "  128      else {"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_mimetype.c",
+    "lines": [
+     "  122      rb_tree_new(&server->mimetype_rb_head, rbtree_compare);",
+     "  123  ",
+     "  124>     name = mk_string_dup(MIMETYPE_DEFAULT_NAME);",
+     "  125      if (server->mimetype_default_str) {",
+     "  126          ret = mk_mimetype_add(server, name, server->mimetype_default_str);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_init",
+   "line": "mk_server/mk_mimetype.c:129",
+   "check": "call-precondition",
+   "subject": "name at inferred `mk_mimetype_add` quant null-deref #name",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_string_dup` at line 5861 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_mimetype.c:125",
+     "step": "decision",
+     "text": "`server->mimetype_default_str` is false"
+    },
+    {
+     "origin": "mk_server/mk_mimetype.c:124",
+     "step": "null-event",
+     "text": "the allocation `mk_string_dup` at line 5861 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_mimetype.c:129",
+     "step": "dereference",
+     "text": "name"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_mimetype.c",
+    "lines": [
+     "  127      }",
+     "  128      else {",
+     "  129>         ret = mk_mimetype_add(server, name, MIMETYPE_DEFAULT_TYPE);",
+     "  130      }",
+     "  131      if (ret < 0) {"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_mimetype.c",
+    "lines": [
+     "  122      rb_tree_new(&server->mimetype_rb_head, rbtree_compare);",
+     "  123  ",
+     "  124>     name = mk_string_dup(MIMETYPE_DEFAULT_NAME);",
+     "  125      if (server->mimetype_default_str) {",
+     "  126          ret = mk_mimetype_add(server, name, server->mimetype_default_str);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_api_init",
+   "line": "mk_server/mk_plugin.c:293",
+   "check": "member-access",
+   "subject": "api",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6206 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_plugin.c:281",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6206 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_plugin.c:293",
+     "step": "dereference",
+     "text": "api->_error"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_plugin.c",
+    "lines": [
+     "  291  ",
+     "  292      /* Error helper */",
+     "  293>     api->_error = mk_print;",
+     "  294  ",
+     "  295      /* HTTP callbacks */"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_plugin.c",
+    "lines": [
+     "  279  ",
+     "  280      /* Create an instance of the API */",
+     "  281>     api = mk_mem_alloc_z(sizeof(struct plugin_api));",
+     "  282  ",
+     "  283  #ifndef _WIN32"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_thread",
+   "line": "mk_server/mk_scheduler.c:441",
+   "check": "member-access",
+   "subject": "thconf",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6694 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_scheduler.c:440",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6694 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_scheduler.c:441",
+     "step": "dereference",
+     "text": "thconf->server"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_scheduler.c",
+    "lines": [
+     "  439      /* Thread data */",
+     "  440      thconf = mk_mem_alloc_z(sizeof(struct mk_sched_thread_conf));",
+     "  441>     thconf->server = server;",
+     "  442  ",
+     "  443      pthread_attr_init(&attr);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_scheduler.c",
+    "lines": [
+     "  438  ",
+     "  439      /* Thread data */",
+     "  440>     thconf = mk_mem_alloc_z(sizeof(struct mk_sched_thread_conf));",
+     "  441      thconf->server = server;",
+     "  442  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_thread_lists_init",
+   "line": "mk_server/mk_scheduler.c:256",
+   "check": "call-precondition",
+   "subject": "sched_cs_incomplete at inferred `mk_list_init` quant null-deref #list",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 6600 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_scheduler.c:255",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 6600 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_scheduler.c:256",
+     "step": "dereference",
+     "text": "sched_cs_incomplete"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_scheduler.c",
+    "lines": [
+     "  254      /* mk_tls_sched_cs_incomplete */",
+     "  255      sched_cs_incomplete = mk_mem_alloc(sizeof(struct mk_list));",
+     "  256>     mk_list_init(sched_cs_incomplete);",
+     "  257      MK_TLS_SET(mk_tls_sched_cs_incomplete, sched_cs_incomplete);",
+     "  258  }"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_scheduler.c",
+    "lines": [
+     "  253  ",
+     "  254      /* mk_tls_sched_cs_incomplete */",
+     "  255>     sched_cs_incomplete = mk_mem_alloc(sizeof(struct mk_list));",
+     "  256      mk_list_init(sched_cs_incomplete);",
+     "  257      MK_TLS_SET(mk_tls_sched_cs_incomplete, sched_cs_incomplete);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "line": "mk_server/mk_server.c:185",
+   "check": "call-precondition",
+   "subject": "listeners at inferred `mk_list_init` quant null-deref #list",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 6275 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_server.c:180",
+     "step": "decision",
+     "text": "`server` is true"
+    },
+    {
+     "origin": "mk_server/mk_server.c:184",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 6275 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_server.c:185",
+     "step": "dereference",
+     "text": "listeners"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_server.c",
+    "lines": [
+     "  183  ",
+     "  184      listeners = mk_mem_alloc(sizeof(struct mk_list));",
+     "  185>     mk_list_init(listeners);",
+     "  186  ",
+     "  187      if (server->scheduler_mode == MK_SCHEDULER_REUSEPORT) {"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_server.c",
+    "lines": [
+     "  182      }",
+     "  183  ",
+     "  184>     listeners = mk_mem_alloc(sizeof(struct mk_list));",
+     "  185      mk_list_init(listeners);",
+     "  186  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "line": "mk_server/mk_server.c:209",
+   "check": "member-access",
+   "subject": "event",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6290 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_server.c:180",
+     "step": "decision",
+     "text": "`server` is true"
+    },
+    {
+     "origin": "mk_server/mk_server.c:187",
+     "step": "decision",
+     "text": "`server->scheduler_mode == 1` is false"
+    },
+    {
+     "origin": "mk_server/mk_server.c:191",
+     "step": "decision",
+     "text": "`head != &server->listeners` is true"
+    },
+    {
+     "origin": "mk_server/mk_server.c:198",
+     "step": "decision",
+     "text": "`server_fd >= 0` is true"
+    },
+    {
+     "origin": "mk_server/mk_server.c:199",
+     "step": "decision",
+     "text": "`mk_socket_set_tcp_defer_accept(server_fd) != 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_server.c:205",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6290 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_server.c:209",
+     "step": "dereference",
+     "text": "event->fd"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_server.c",
+    "lines": [
+     "  207              /* configure the internal event_state */",
+     "  208              event = &listener->event;",
+     "  209>             event->fd   = server_fd;",
+     "  210              event->type = MK_EVENT_LISTENER;",
+     "  211              event->mask = MK_EVENT_EMPTY;"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_server.c",
+    "lines": [
+     "  203              }",
+     "  204  ",
+     "  205>             listener = mk_mem_alloc_z(sizeof(struct mk_server_listen));",
+     "  206  ",
+     "  207              /* configure the internal event_state */"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "line": "mk_server/mk_utils.c:490",
+   "check": "element-access",
+   "subject": "buf",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_utils.c:461",
+     "step": "decision",
+     "text": "`tmp = mk_string_char_search(uri.data, 37, uri.len) < 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:468",
+     "step": "decision",
+     "text": "`i > 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:473",
+     "step": "decision",
+     "text": "`i < uri.len` is true"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:474",
+     "step": "decision",
+     "text": "`uri.data[i] == 37` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:467",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:490",
+     "step": "dereference",
+     "text": "buf[buf_idx]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_utils.c",
+    "lines": [
+     "  488          }",
+     "  489          else {",
+     "  490>             buf[buf_idx] = uri.data[i];",
+     "  491          }",
+     "  492          i++;"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_utils.c",
+    "lines": [
+     "  465      i = tmp;",
+     "  466  ",
+     "  467>     buf = mk_mem_alloc_z(uri.len + 1);",
+     "  468      if (i > 0) {",
+     "  469          memcpy(buf, uri.data, i);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "line": "mk_server/mk_utils.c:495",
+   "check": "element-access",
+   "subject": "buf",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_utils.c:461",
+     "step": "decision",
+     "text": "`tmp = mk_string_char_search(uri.data, 37, uri.len) < 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:468",
+     "step": "decision",
+     "text": "`i > 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:473",
+     "step": "decision",
+     "text": "`i < uri.len` is false"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:467",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6029 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_utils.c:495",
+     "step": "dereference",
+     "text": "buf[buf_idx]"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_utils.c",
+    "lines": [
+     "  493          buf_idx++;",
+     "  494      }",
+     "  495>     buf[buf_idx] = '\\0';",
+     "  496  ",
+     "  497      return buf;"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_utils.c",
+    "lines": [
+     "  465      i = tmp;",
+     "  466  ",
+     "  467>     buf = mk_mem_alloc_z(uri.len + 1);",
+     "  468      if (i > 0) {",
+     "  469          memcpy(buf, uri.data, i);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "line": "mk_server/mk_vhost.c:90",
+   "check": "call-precondition",
+   "subject": "list at inferred `mk_list_init` quant null-deref #list",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 5980 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:67",
+     "step": "decision",
+     "text": "`server->fdt == 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:89",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 5980 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:90",
+     "step": "dereference",
+     "text": "list"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "   88       */",
+     "   89      list = mk_mem_alloc_z(sizeof(struct mk_list));",
+     "   90>     mk_list_init(list);",
+     "   91  ",
+     "   92      mk_list_foreach(head, &server->hosts) {"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "   87       * existent virtual host",
+     "   88       */",
+     "   89>     list = mk_mem_alloc_z(sizeof(struct mk_list));",
+     "   90      mk_list_init(list);",
+     "   91  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "line": "mk_server/mk_vhost.c:96",
+   "check": "member-access",
+   "subject": "fdt",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc` at line 5984 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:67",
+     "step": "decision",
+     "text": "`server->fdt == 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:92",
+     "step": "decision",
+     "text": "`head != &server->hosts` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:95",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc` at line 5984 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:96",
+     "step": "dereference",
+     "text": "fdt->host"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "   94  ",
+     "   95          fdt = mk_mem_alloc(sizeof(struct vhost_fdt_host));",
+     "   96>         fdt->host = h;",
+     "   97  ",
+     "   98          /* Initialize hash table */"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "   93          h = mk_list_entry(head, struct mk_vhost, _head);",
+     "   94  ",
+     "   95>         fdt = mk_mem_alloc(sizeof(struct vhost_fdt_host));",
+     "   96          fdt->host = h;",
+     "   97  "
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "line": "mk_server/mk_vhost.c:378",
+   "check": "member-access",
+   "subject": "host",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6201 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:364",
+     "step": "decision",
+     "text": "`cnf` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:371",
+     "step": "decision",
+     "text": "`section_host` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:377",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6201 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:378",
+     "step": "dereference",
+     "text": "host->config"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  376      /* Alloc configuration node */",
+     "  377      host = mk_mem_alloc_z(sizeof(struct mk_vhost));",
+     "  378>     host->config = cnf;",
+     "  379      host->file = mk_string_dup(path);",
+     "  380  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  375  ",
+     "  376      /* Alloc configuration node */",
+     "  377>     host = mk_mem_alloc_z(sizeof(struct mk_vhost));",
+     "  378      host->config = cnf;",
+     "  379      host->file = mk_string_dup(path);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "line": "mk_server/mk_vhost.c:408",
+   "check": "member-access",
+   "subject": "new_alias",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6218 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:364",
+     "step": "decision",
+     "text": "`cnf` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:371",
+     "step": "decision",
+     "text": "`section_host` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:392",
+     "step": "decision",
+     "text": "`list` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:397",
+     "step": "decision",
+     "text": "`head != list` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:399",
+     "step": "decision",
+     "text": "`entry->len > 64 - 1` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:407",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6218 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:408",
+     "step": "dereference",
+     "text": "new_alias->name"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  406          /* Alloc node */",
+     "  407          new_alias = mk_mem_alloc_z(sizeof(struct mk_vhost_alias));",
+     "  408>         new_alias->name = mk_mem_alloc_z(entry->len + 1);",
+     "  409          strncpy(new_alias->name, host_low, entry->len);",
+     "  410          mk_mem_free(host_low);"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  405  ",
+     "  406          /* Alloc node */",
+     "  407>         new_alias = mk_mem_alloc_z(sizeof(struct mk_vhost_alias));",
+     "  408          new_alias->name = mk_mem_alloc_z(entry->len + 1);",
+     "  409          strncpy(new_alias->name, host_low, entry->len);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "line": "mk_server/mk_vhost.c:482",
+   "check": "member-access",
+   "subject": "err_page",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6273 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:364",
+     "step": "decision",
+     "text": "`cnf` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:371",
+     "step": "decision",
+     "text": "`section_host` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:392",
+     "step": "decision",
+     "text": "`list` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:397",
+     "step": "decision",
+     "text": "`head != list` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:422",
+     "step": "decision",
+     "text": "`host->documentroot.data` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:433",
+     "step": "decision",
+     "text": "`stat(host->documentroot.data, &checkdir) == -1` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:436",
+     "step": "decision",
+     "text": "`checkdir.st_mode & 16384` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:440",
+     "step": "decision",
+     "text": "`mk_list_is_empty(&host->server_names) == 0` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:454",
+     "step": "decision",
+     "text": "`tmp` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:462",
+     "step": "decision",
+     "text": "`section_ep` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:463",
+     "step": "decision",
+     "text": "`head != &section_ep->entries` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:474",
+     "step": "decision",
+     "text": "`ep_status < 400` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:475",
+     "step": "decision",
+     "text": "`ep_status > 505` is false"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:476",
+     "step": "decision",
+     "text": "`ep_file` is true"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:481",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6273 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:482",
+     "step": "dereference",
+     "text": "err_page->status"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  480              /* Alloc error page node */",
+     "  481              err_page = mk_mem_alloc_z(sizeof(struct mk_vhost_error_page));",
+     "  482>             err_page->status = ep_status;",
+     "  483              err_page->file   = mk_string_dup(ep_file);",
+     "  484              err_page->real_path = NULL;"
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  479  ",
+     "  480              /* Alloc error page node */",
+     "  481>             err_page = mk_mem_alloc_z(sizeof(struct mk_vhost_error_page));",
+     "  482              err_page->status = ep_status;",
+     "  483              err_page->file   = mk_string_dup(ep_file);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "line": "mk_server/mk_vhost.c:605",
+   "check": "call-precondition",
+   "subject": "&host->error_pages at inferred `mk_list_init` quant null-deref #list",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6374 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:604",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6374 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:605",
+     "step": "dereference",
+     "text": "&host->error_pages"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  603      /* Set the default host */",
+     "  604      host = mk_mem_alloc_z(sizeof(struct mk_vhost));",
+     "  605>     mk_list_init(&host->error_pages);",
+     "  606      mk_list_init(&host->server_names);",
+     "  607  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  602  ",
+     "  603      /* Set the default host */",
+     "  604>     host = mk_mem_alloc_z(sizeof(struct mk_vhost));",
+     "  605      mk_list_init(&host->error_pages);",
+     "  606      mk_list_init(&host->server_names);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "line": "mk_server/mk_vhost.c:610",
+   "check": "member-access",
+   "subject": "halias",
+   "class": "null-on-allocation-failure",
+   "condition": "the allocation `mk_mem_alloc_z` at line 6377 fails (returns NULL)",
+   "path": [
+    {
+     "origin": "mk_server/mk_vhost.c:609",
+     "step": "null-event",
+     "text": "the allocation `mk_mem_alloc_z` at line 6377 fails (returns NULL)"
+    },
+    {
+     "origin": "mk_server/mk_vhost.c:610",
+     "step": "dereference",
+     "text": "halias->name"
+    }
+   ],
+   "excerpt_dereference": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  608      /* Prepare the unique alias */",
+     "  609      halias = mk_mem_alloc_z(sizeof(struct mk_vhost_alias));",
+     "  610>     halias->name = mk_string_dup(\"127.0.0.1\");",
+     "  611      mk_list_add(&halias->_head, &host->server_names);",
+     "  612  "
+    ]
+   },
+   "excerpt_null_event": {
+    "path": "lib/monkey/mk_server/mk_vhost.c",
+    "lines": [
+     "  607  ",
+     "  608      /* Prepare the unique alias */",
+     "  609>     halias = mk_mem_alloc_z(sizeof(struct mk_vhost_alias));",
+     "  610      halias->name = mk_string_dup(\"127.0.0.1\");",
+     "  611      mk_list_add(&halias->_head, &host->server_names);"
+    ]
+   },
+   "status": "provisional: a validated path in the function under any arguments its preconditions admit; never an upstream defect until reviewed"
+  }
+ ]
+}

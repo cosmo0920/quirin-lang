@@ -1,0 +1,48 @@
+{
+ "rows_before": 271,
+ "rows_after": 271,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Safe (unconditional)": 42,
+  "Unknown": 163,
+  "Safe (conditional)": 66
+ },
+ "verdicts_after": {
+  "Safe (unconditional)": 41,
+  "Unknown": 164,
+  "Safe (conditional)": 66
+ },
+ "moves": {
+  "Safe (unconditional) -> Unknown": 1
+ },
+ "moves_by_cause": {
+  "Safe (unconditional) -> Unknown": {
+   "travelled-clause-candidate": 1
+  }
+ },
+ "candidates_by_kind_before": {
+  "formal": 94,
+  "memory-field": 1003,
+  "uncontracted-result": 3,
+  "null-literal": 1
+ },
+ "candidates_by_kind_after": {
+  "formal": 98,
+  "memory-field": 1008,
+  "uncontracted-result": 3,
+  "null-literal": 1
+ },
+ "safe_to_non_safe": 1,
+ "moving": [
+  {
+   "library": "fluent-bit-tail-pause",
+   "file": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_event",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  }
+ ]
+}

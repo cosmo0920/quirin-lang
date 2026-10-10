@@ -1,0 +1,3434 @@
+{
+ "rows_before": 4921,
+ "rows_after": 4921,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Safe (unconditional)": 1219,
+  "Unknown": 2260,
+  "Safe (conditional)": 1442
+ },
+ "verdicts_after": {
+  "Unknown": 2363,
+  "Safe (unconditional)": 1115,
+  "Safe (conditional)": 1421,
+  "Unsafe": 22
+ },
+ "moves": {
+  "Safe (unconditional) -> Unknown": 110,
+  "Unknown -> Unsafe": 22,
+  "Safe (conditional) -> Unknown": 102,
+  "Unknown -> Safe (conditional)": 80,
+  "Unknown -> Safe (unconditional)": 7,
+  "Safe (unconditional) -> Safe (conditional)": 1
+ },
+ "moves_by_cause": {
+  "Safe (unconditional) -> Unknown": {
+   "travelled-clause-candidate": 110,
+   "travelled-clause-discharged": 17,
+   "new-declared-clause": 11
+  },
+  "Unknown -> Unsafe": {
+   "finding": 22,
+   "travelled-clause-candidate": 2,
+   "travelled-clause-discharged": 5,
+   "declared-member": 1
+  },
+  "Safe (conditional) -> Unknown": {
+   "travelled-clause-candidate": 101,
+   "travelled-clause-discharged": 40,
+   "new-declared-clause": 5,
+   "own-new-declared-clause": 1,
+   "declared-member": 2
+  },
+  "Unknown -> Safe (conditional)": {
+   "cross-unit-result": 18,
+   "declared-member": 66,
+   "travelled-clause-discharged": 35,
+   "new-declared-clause": 6,
+   "own-new-declared-clause": 1
+  },
+  "Unknown -> Safe (unconditional)": {
+   "cross-unit-result": 7,
+   "travelled-clause-discharged": 3
+  },
+  "Safe (unconditional) -> Safe (conditional)": {
+   "new-declared-clause": 1
+  }
+ },
+ "candidates_by_kind_before": {
+  "memory-field": 9607,
+  "formal": 1816,
+  "null-literal": 95,
+  "other": 102,
+  "uncontracted-result": 738,
+  "uninitialized": 5,
+  "allocation": 37,
+  "global": 1,
+  "lookup": 1
+ },
+ "candidates_by_kind_after": {
+  "memory-field": 9611,
+  "formal": 2467,
+  "null-literal": 130,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 5,
+  "global": 1,
+  "allocation": 10
+ },
+ "safe_to_non_safe": 212,
+ "moving": [
+  {
+   "library": "chunkio",
+   "file": "cio_chunk.c",
+   "function": "cio_chunk_delete",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "chunkio",
+   "file": "cio_file.c",
+   "function": "cio_file_real_size",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmetrics.c",
+   "function": "cmt_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_cat.c",
+   "function": "copy_label_values",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_counter.c",
+   "function": "cmt_counter_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_decode_msgpack.c",
+   "function": "unpack_metric_exp_histogram",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_encode_splunk_hec.c",
+   "function": "append_bucket_metric",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_exp_histogram.c",
+   "function": "cmt_exp_histogram_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_gauge.c",
+   "function": "cmt_gauge_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_histogram.c",
+   "function": "cmt_histogram_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "cmetrics",
+   "file": "cmt_untyped.c",
+   "function": "cmt_untyped_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_context",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_event",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_link",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_link_trace_state",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_resource",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_resource_span",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_resource_span_scope_spans",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_resource_spans",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_scope_span",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_scope_span_spans",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span_events",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span_links",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span_schema_url",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span_status",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_msgpack.c",
+   "function": "unpack_span_status_message",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "ctr_decode_opentelemetry_destroy",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "ctr_scope_span_set_scope",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_decode_opentelemetry.c",
+   "function": "resource_set_data",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "ctr_variant_binary_to_otlp_any_value",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_links",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding",
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_status",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "set_event",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_encode_opentelemetry.c",
+   "function": "set_events_from_ctr",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_link.c",
+   "function": "ctr_link_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_resource.c",
+   "function": "ctr_resource_create_default",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_set_attribute_array",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_set_attribute_double",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_set_attribute_int64",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_set_attribute_kvlist",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_event_set_attribute_string",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_attribute_array",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_attribute_double",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_attribute_int64",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_attribute_kvlist",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_attribute_string",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_parent_span_id_with_cid",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_span_id_with_cid",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "ctraces",
+   "file": "ctr_span.c",
+   "function": "ctr_span_set_trace_id_with_cid",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_down",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_projected_write_size",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_real_size",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_size",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_is_up",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_set_up",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_input_chunk_write_at",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "get_input_chunk_record_count",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_compressBlock",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_compressBlockHC",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_compressBlockHC_continue",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_compressBlock_continue",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_createCDict_advanced",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_initStream",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "lz4frame.c",
+   "function": "LZ4F_localSaveDict",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consume_batch",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consume_batch0",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consume_stop0",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_close0",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "new-declared-clause",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_consumer_poll",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "new-declared-clause"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_decommissioned_broker_thread_join",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_memberid",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_oauthbearer_set_token",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_oauthbearer_set_token_failure",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_poll",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_queue_poll",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "own-new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_queue_poll_callback",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_fetch_fanout",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_share_fetch_reply_op",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "declared-member",
+    "finding",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_toppar_dump",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_broker",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_include_authorized_operations",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_isolation_level",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_opaque",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_operation_timeout",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_request_timeout",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_require_stable_offsets",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_AdminOptions_set_validate_only",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_member",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteRecords_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeadersResult_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_result_result",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListConsumerGroupsResult_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsetsResultInfo_destroy",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsetsResultInfo_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_ConsumerGroupDescribeRequest",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeClusterRequest",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeConsumerGroupsRequest",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_DescribeTopicsRequest",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_ListConsumerGroupsRequest",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_MetadataRequest",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_fanout_op_new",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_request_op_new",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_new",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "ut_make_ListConsumerGroups_fanout",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_admin.c",
+   "function": "ut_make_ListConsumerGroups_partial_error",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_dump",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_find",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_rebalance_protocol_check",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignor.c",
+   "function": "rd_kafka_consumer_protocol_member_metadata_new",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_assignor.c",
+   "function": "ut_set_owned",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_destroy",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_partition_result_new",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_update",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_brokers_learned_ids",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_buf.c",
+   "function": "rd_kafka_buf_callback",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_heartbeat_preconditions_met",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_is_new_assignment_different",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_serve",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_heartbeat",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_incremental_assign",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "declared-member",
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_incremental_unassign",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "declared-member",
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_join_state_serve",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "new-declared-clause"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_session_timeout_check",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_update_session_timeout",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_consumer_group_metadata",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_toppar_list_to_toppar_member_info_map",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_toppar_list_to_toppar_member_info_map_by_id",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "unittest_set_intersect",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_cgrp.c",
+   "function": "unittest_set_subtract",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_req_fail",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_event.c",
+   "function": "rd_kafka_event_topic_partition",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafka_share_find_entry_for_offset",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_parse",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_idempotence.c",
+   "function": "rd_kafka_idemp_drain_toppar",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_failed",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "new-declared-clause"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_acknowledgement",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_broker_state_change",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_commit",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_conf_destroy",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_conf_dup",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_consume",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_destroy",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_request_sent",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_response_received",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_send",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_thread_exit",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptors_on_thread_start",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_has_reliable_leader_epochs",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_refresh_all",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_request",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_propagate_changes",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_buf_new_response",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_clear_requests",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_thread_main",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "ut_assert_topic_partitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock.c",
+   "function": "ut_topic_partitions",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_sync_done",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_set",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrps_classic_connection_closed",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_handle_ShareGroupHeartbeat_write_TopicPartitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_pid_find",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_msg_new",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msg.c",
+   "function": "rd_kafka_msg_sticky_partition",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_aborted_txns_sort",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_share_msgset_parse",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_broker_init",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_commit",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_commit",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_open",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_read",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_sync",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_term",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_query_tmr_cb",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_store_init",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_store_stop",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_store_term",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_sync",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_validate_tmr_cb",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_print",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_op.c",
+   "function": "rd_kafka_op_req",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "new-declared-clause"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_broker_consumer_toppar_serve",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_get",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "new-declared-clause",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_new_from_rktp",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_topic",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_desired_add0",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_desired_del",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_desired_get",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_desired_link",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_desired_unlink",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_enq_msg",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_fetch_start",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_fetch_stop",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_fetch_stopped",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_get2",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_get_by_id2",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_insert_msgq",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_leader_unavailable",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_next_offset_handle",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_offset_retry",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_fetch_stop",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_pause_resume",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_op_seek",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_pid_change",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_purge_queues",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_remove",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_reset_base_msgid",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_seek",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_set_fetch_state",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_version_new_barrier0",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_find_member_assigned_partitions_pair_by_member_id",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "rd_kafka_range_assignor_init",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testOneConsumerMultipleTopics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testTwoConsumersOneTopicOnePartition",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_range_assignor.c",
+   "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_ListOffsetRequest_buf_new",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_group_MemberState_consumer_write",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "cross-unit-result",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_handle_Produce",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_roundrobin_assignor.c",
+   "function": "rd_kafka_roundrobin_assignor_init",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_close",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "rd_kafka_oidc_assertion_parse_template_file",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_find_ack_batch",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_partition_offsets_destroy",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_ssl_X509_from_string",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_ssl_cert_callback",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "PartitionMovements_destroy",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "PartitionMovements_init",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "map_cpair_toppar_list_t_free",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "rd_kafka_sticky_assignor_init",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "reassignPartition",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testAddRemoveConsumerOneTopic",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testAddRemoveTopicTwoConsumers",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testEnsurePartitionsAssignedToHighestGeneration",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testNoReassignmentOnCurrentMembers",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testOneConsumerMultipleTopics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testPoorRoundRobinAssignmentScenario",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testStickiness2",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testTwoConsumersOneTopicOnePartition",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_sticky_assignor.c",
+   "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_pause_partitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_rebalance_protocol",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "new-declared-clause",
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_resume_partitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_subscription.c",
+   "function": "rd_kafka_unsubscribe",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_telemetry.c",
+   "function": "rd_kafka_filter_broker_by_GetTelemetrySubscription",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_telemetry_encode.c",
+   "function": "encode_number_data_point",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_telemetry_encode.c",
+   "function": "encode_resource_metrics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_telemetry_encode.c",
+   "function": "encode_scope_metrics",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_assign_uas",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_find_fl",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_leader_query0",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_name",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "new-declared-clause",
+    "own-new-declared-clause"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_new",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_propagate_notexists",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_scan_all",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_error",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_exists",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_notexists",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_state",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_broker_update",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_delegate_to_leader",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_topic.c",
+   "function": "rd_kafka_toppar_undelegate",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_io_event",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_post_connect_setup",
+   "move": "Unknown -> Safe (conditional)",
+   "causes": [
+    "declared-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_recvmsg",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_socket_sendmsg",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_coord_set",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_schedule_register_partitions",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txns_init",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_create_fetch_op_with_offset",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_create_share_fetch_response_rko",
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "cross-unit-result"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "librdkafka",
+   "file": "rdunittest_fetcher.c",
+   "function": "ut_op_destroy_free",
+   "move": "Safe (unconditional) -> Safe (conditional)",
+   "causes": [
+    "new-declared-clause"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_rconf.c",
+   "function": "mk_rconf_section_entry_add",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_string.c",
+   "function": "mk_string_split_line",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_core/mk_utils.c",
+   "function": "mk_print",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_exit",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_cache.c",
+   "function": "mk_cache_worker_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_header.c",
+   "function": "cb_stream_iov_extended_free",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_header.c",
+   "function": "mk_header_cb_finished",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http.c",
+   "function": "cb_stream_page_finished",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http.c",
+   "function": "mk_http_directory_redirect_check",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_http.c",
+   "function": "mk_http_request_free",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_destroy",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_http_flush",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_mq_create",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_mq_send",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_net.c",
+   "function": "net_plain_writev",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_api_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_header_prepare",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_http_error",
+   "move": "Safe (conditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_sched_remove_client",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_thread",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_thread_lists_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_fifo_worker_setup",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_utils.c",
+   "function": "mk_utils_url_decode",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_fdt_worker_init",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_read",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_set_single",
+   "move": "Unknown -> Unsafe",
+   "causes": [
+    "finding"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "monkey-libevent",
+   "file": "mk_server/monkey.c",
+   "function": "mk_server_create",
+   "move": "Safe (unconditional) -> Unknown",
+   "causes": [
+    "travelled-clause-candidate",
+    "travelled-clause-discharged"
+   ],
+   "safe_to_non_safe": true
+  }
+ ]
+}

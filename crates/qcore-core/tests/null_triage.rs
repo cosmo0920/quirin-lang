@@ -74,22 +74,34 @@ fn the_vectors_are_the_leans() {
         .iter()
         .map(|(c, a, o)| format!("(\"{c}\", {a}, \"{o}\")"))
         .collect::<Vec<_>>();
-    assert_eq!(lean_rows("def admitVectors : List (String × Bool × String) := ["), admit_rows);
+    assert_eq!(
+        lean_rows("def admitVectors : List (String × Bool × String) := ["),
+        admit_rows
+    );
     let member_rows = MEMBER_VECTORS
         .iter()
         .map(|(e, f, s)| format!("({e}, {f}, \"{s}\")"))
         .collect::<Vec<_>>();
-    assert_eq!(lean_rows("def memberVectors : List (Nat × Nat × String) := ["), member_rows);
+    assert_eq!(
+        lean_rows("def memberVectors : List (Nat × Nat × String) := ["),
+        member_rows
+    );
     let result_rows = RESULT_VECTORS
         .iter()
         .map(|(us, s)| {
             format!(
                 "([{}], \"{s}\")",
-                us.iter().map(|u| format!("\"{u}\"")).collect::<Vec<_>>().join(", ")
+                us.iter()
+                    .map(|u| format!("\"{u}\""))
+                    .collect::<Vec<_>>()
+                    .join(", ")
             )
         })
         .collect::<Vec<_>>();
-    assert_eq!(lean_rows("def resultVectors : List (List String × String) := ["), result_rows);
+    assert_eq!(
+        lean_rows("def resultVectors : List (List String × String) := ["),
+        result_rows
+    );
 }
 
 #[test]
