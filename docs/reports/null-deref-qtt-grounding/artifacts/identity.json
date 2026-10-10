@@ -1,0 +1,261 @@
+{
+ "before": "before",
+ "after": "after",
+ "routes": {
+  "corpus": {
+   "identical": false,
+   "files": {
+    "arbiter/audit.log": {
+     "before": "04ed7fac1931170a260a438994c95e31e3d4bd7eff45e0bb902c40edf3509186",
+     "after": "04ed7fac1931170a260a438994c95e31e3d4bd7eff45e0bb902c40edf3509186",
+     "normalised": true,
+     "bytes": 134743,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/monkey-source.json": {
+     "before": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "after": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+     "bytes": 1665950,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/resource-diagnostics.chunk-contracts.json": {
+     "before": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "after": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+     "bytes": 4186178,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/resource-diagnostics.contracts.json": {
+     "before": "35d4532d4b59422278dcde7470a00ae7c45ee0ebaae50331e36feb74316d57f8",
+     "after": "35d4532d4b59422278dcde7470a00ae7c45ee0ebaae50331e36feb74316d57f8",
+     "bytes": 1304326,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/resource-diagnostics.json": {
+     "before": "ded14632f726bdd8ca157423ca9f968e1cbcb2e7f771af9f86440bd03695428e",
+     "after": "ded14632f726bdd8ca157423ca9f968e1cbcb2e7f771af9f86440bd03695428e",
+     "bytes": 12262973,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/resource-diagnostics.source-effects.json": {
+     "before": "aa724a1ebe1f06a6af67d6200216884be91df685450405df59e0a42097f6df28",
+     "after": "aa724a1ebe1f06a6af67d6200216884be91df685450405df59e0a42097f6df28",
+     "bytes": 118505,
+     "compared": true,
+     "identical": true
+    },
+    "arbiter/run.json": {
+     "before": "55b25e1c85b4ddb147d554ad005d1d6b24ea6103324bd1f6d88dd814c75375ab",
+     "after": "696e899accd01661669561894c5e76f1d3f238481abc61695a602e95e68467a5",
+     "bytes": 1157,
+     "compared": false
+    },
+    "null.jsonl": {
+     "before": "5df1110c740f474d27903688251493f313146f92d77602ac68ca23d451d11e86",
+     "after": "5df1110c740f474d27903688251493f313146f92d77602ac68ca23d451d11e86",
+     "bytes": 19290223,
+     "compared": true,
+     "identical": true
+    },
+    "null.summary.json": {
+     "before": "3fe270c4b2684d159f35dd9bb2effbccb225268f59f393608a2d16f18f679a85",
+     "after": "3fe270c4b2684d159f35dd9bb2effbccb225268f59f393608a2d16f18f679a85",
+     "bytes": 2568,
+     "compared": true,
+     "identical": true
+    },
+    "parity.jsonl": {
+     "before": "9d31e34e45dbf7bd9b353b845720cf83fd2d6fed8edf9abb7fa3e5b30cdb384d",
+     "after": "83df7240258da52ba5c7dda0bca9479ec582510a79255927a6ca7ef4b4d7423d",
+     "bytes": 480474420,
+     "compared": true,
+     "identical": false
+    },
+    "parity.jsonl.contexts.jsonl": {
+     "before": "2c2fc8182d54bc63e09ad5ede9d5aa68dc1f6afb314ad075ca858744326c5e69",
+     "after": "2c2fc8182d54bc63e09ad5ede9d5aa68dc1f6afb314ad075ca858744326c5e69",
+     "bytes": 39028,
+     "compared": true,
+     "identical": true
+    }
+   }
+  },
+  "system": {
+   "identical": false,
+   "files": {
+    "null.jsonl": {
+     "before": "f30ddc715986d45f11c502237018063eecfbca40367e5b2b70e61b95808e483e",
+     "after": "f30ddc715986d45f11c502237018063eecfbca40367e5b2b70e61b95808e483e",
+     "bytes": 1404047,
+     "compared": true,
+     "identical": true
+    },
+    "null.summary.json": {
+     "before": "7167f421303731ec63727cfea18749fa6637e3d176a5a952c44eda0b53b48ab0",
+     "after": "7167f421303731ec63727cfea18749fa6637e3d176a5a952c44eda0b53b48ab0",
+     "bytes": 2229,
+     "compared": true,
+     "identical": true
+    },
+    "parity.jsonl": {
+     "before": "bef87c0363320ff872ebecc711f9e9ef2059a377dbdf52bcdcb8183e939d0218",
+     "after": "3193acceb8393b7d9f66508699a3b3decb3696cddfd23802cb5baf1bd7a15881",
+     "bytes": 93046126,
+     "compared": true,
+     "identical": false
+    },
+    "parity.jsonl.contexts.jsonl": {
+     "before": "eadfab008785cbedb1d7700321b2a779deba947cf323dae377689597df219c48",
+     "after": "bb51f2939bb956ec1d51782e7d02e66b5c6e4c26fe3d7da8c6ae950ff548a665",
+     "bytes": 159644,
+     "compared": true,
+     "identical": false
+    },
+    "run/console.log": {
+     "before": "cb3687118f401d6b0f7d43aebd8a6199bad698c6d97b2e58f9e132d253c7dfe9",
+     "after": "cb3687118f401d6b0f7d43aebd8a6199bad698c6d97b2e58f9e132d253c7dfe9",
+     "normalised": true,
+     "bytes": 12489,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.chunk-contracts.json": {
+     "before": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+     "after": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+     "bytes": 385,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.contracts.json": {
+     "before": "436fc246f5bdaa6f2c16b24783d563171f2c813babbd51ab1aefc17317429ab3",
+     "after": "436fc246f5bdaa6f2c16b24783d563171f2c813babbd51ab1aefc17317429ab3",
+     "bytes": 1112555,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.invocation.json": {
+     "before": "d3840f0ebadb31ec865ad82eda76948cda9d04889afbf78f46c4e0972761d072",
+     "after": "d3840f0ebadb31ec865ad82eda76948cda9d04889afbf78f46c4e0972761d072",
+     "normalised": true,
+     "bytes": 4526,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.json": {
+     "before": "a254ad451c3ebe149333884710223f150724bdfa55dd6ee5116bd4c4a9805e0c",
+     "after": "a254ad451c3ebe149333884710223f150724bdfa55dd6ee5116bd4c4a9805e0c",
+     "bytes": 1737737,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.source-effects.json": {
+     "before": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+     "after": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+     "bytes": 385,
+     "compared": true,
+     "identical": true
+    },
+    "run/stderr.log": {
+     "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "bytes": 0,
+     "compared": false
+    }
+   }
+  },
+  "slice": {
+   "identical": false,
+   "files": {
+    "null.jsonl": {
+     "before": "f222c8b02e6366cd35ef6dfad89102f2591e1cbb5caf34c836cd3e106dadf952",
+     "after": "f222c8b02e6366cd35ef6dfad89102f2591e1cbb5caf34c836cd3e106dadf952",
+     "bytes": 1391253,
+     "compared": true,
+     "identical": true
+    },
+    "null.summary.json": {
+     "before": "5d3c897f29d635d714d9a2b79bdea2d28962d316f21cb4d050d3773dc66b3e82",
+     "after": "5d3c897f29d635d714d9a2b79bdea2d28962d316f21cb4d050d3773dc66b3e82",
+     "bytes": 2273,
+     "compared": true,
+     "identical": true
+    },
+    "parity.jsonl": {
+     "before": "2ee4275412510b8dcac4d16bca40e427d6a232d6aaa5c99c599a09151daadb89",
+     "after": "0eed1aa2d17b74f678f7cd367ee94d66ec968ea41be0cba845da080ab3b10786",
+     "bytes": 33002449,
+     "compared": true,
+     "identical": false
+    },
+    "parity.jsonl.contexts.jsonl": {
+     "before": "e2482d0b3e15d5bc927ccb8a33e2b4fc386271fc6f8adab1aa2586c1de810383",
+     "after": "502ad39fc27aedb792f2ab9cf8d669c1dda33bbb5c3ccb57a1fa58f4b5fa6495",
+     "bytes": 150263,
+     "compared": true,
+     "identical": false
+    },
+    "run/console.log": {
+     "before": "8bcf06ebc34481b7808bd9cb902370ece99b1b079a67198f5e5a5447f91cd908",
+     "after": "8bcf06ebc34481b7808bd9cb902370ece99b1b079a67198f5e5a5447f91cd908",
+     "normalised": true,
+     "bytes": 13412,
+     "compared": true,
+     "identical": true
+    },
+    "run/exit": {
+     "before": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+     "after": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+     "bytes": 2,
+     "compared": false
+    },
+    "run/resource-diagnostics.chunk-contracts.json": {
+     "before": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+     "after": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+     "bytes": 385,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.contracts.json": {
+     "before": "5c76d3bb1d3d3b81cfe043ddb03bf4029a181db5ab7d392514c72bac93306926",
+     "after": "5c76d3bb1d3d3b81cfe043ddb03bf4029a181db5ab7d392514c72bac93306926",
+     "bytes": 1093816,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.invocation.json": {
+     "before": "eb7a94a64a8be4b85f1b6d803236314ce63588615175559337e4a5cf34523573",
+     "after": "eb7a94a64a8be4b85f1b6d803236314ce63588615175559337e4a5cf34523573",
+     "normalised": true,
+     "bytes": 5069,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.json": {
+     "before": "1ff89c8fd913e6a97a60cfbf8f8112057e2475ed6bb3bb16449e05f5f3df29d1",
+     "after": "1ff89c8fd913e6a97a60cfbf8f8112057e2475ed6bb3bb16449e05f5f3df29d1",
+     "bytes": 1707715,
+     "compared": true,
+     "identical": true
+    },
+    "run/resource-diagnostics.source-effects.json": {
+     "before": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+     "after": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+     "bytes": 385,
+     "compared": true,
+     "identical": true
+    },
+    "run/stderr.log": {
+     "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "bytes": 0,
+     "compared": false
+    }
+   }
+  }
+ },
+ "identical": false
+}
