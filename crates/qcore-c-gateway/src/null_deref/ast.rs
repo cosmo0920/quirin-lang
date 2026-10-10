@@ -13,7 +13,7 @@ pub(super) fn kids(node: &Value) -> std::slice::Iter<'_, Value> {
 }
 
 /// The fields a compacted node keeps.
-const KEPT: [&str; 15] = [
+const KEPT: [&str; 16] = [
     "kind",
     "selected",
     "associationKind",
@@ -29,6 +29,9 @@ const KEPT: [&str; 15] = [
     "declId",
     "init",
     "valueCategory",
+    // Card NULL-CANDIDATE-TRIAGE: an `inline` definition without `extern`
+    // has no external definition in this unit (C11 6.7.4p7).
+    "inline",
 ];
 
 /// Keep only what the walk reads: the fields above, the type's spelling, the
@@ -162,6 +165,12 @@ pub(super) struct Unit {
     pub(super) no_return: BTreeSet<String>,
     /// File-scope variable ids.
     pub(super) globals: BTreeSet<String>,
+    /// Card NULL-CANDIDATE-TRIAGE: each enumeration constant's value, by
+    /// declaration id (the witness search compares against them).
+    pub(super) enum_values: BTreeMap<String, i128>,
+    /// Card NULL-CANDIDATE-TRIAGE: each complete `struct TAG`'s members in
+    /// declaration order (an initializer list's positions).
+    pub(super) records: BTreeMap<String, Vec<String>>,
 }
 
 const NO_RETURN_BUILTINS: [&str; 12] = [
@@ -200,8 +209,56 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
                 unit.globals.insert(id.to_owned());
             }
         }
+        "EnumDecl" => read_enum(unit, decl),
+        "RecordDecl" => read_record(unit, decl),
+        "TypedefDecl" => {
+            for child in kids(decl) {
+                match kind(child) {
+                    "EnumDecl" => read_enum(unit, child),
+                    "RecordDecl" => read_record(unit, child),
+                    _ => {}
+                }
+            }
+        }
         _ => {}
     }
+}
+
+/// Card NULL-CANDIDATE-TRIAGE: an enumeration's constants (C11 6.7.2.2p3:
+/// a constant without an initializer is its predecessor's value plus one,
+/// the first zero).
+fn read_enum(unit: &mut Unit, decl: &Value) {
+    let mut next: Option<i128> = Some(0);
+    for constant in kids(decl).filter(|c| kind(c) == "EnumConstantDecl") {
+        let explicit = kids(constant)
+            .find(|c| kind(c) == "ConstantExpr")
+            .and_then(|c| c["value"].as_str())
+            .and_then(|v| v.parse::<i128>().ok());
+        let value = if kids(constant).next().is_some() {
+            explicit
+        } else {
+            next
+        };
+        if let (Some(id), Some(value)) = (constant["id"].as_str(), value) {
+            unit.enum_values.insert(id.to_owned(), value);
+        }
+        next = value.and_then(|v| v.checked_add(1));
+    }
+}
+
+/// Card NULL-CANDIDATE-TRIAGE: a complete struct's member names in order.
+fn read_record(unit: &mut Unit, decl: &Value) {
+    if decl["tagUsed"] != "struct" || decl["completeDefinition"] != true {
+        return;
+    }
+    let Some(name) = decl["name"].as_str() else {
+        return;
+    };
+    let fields = kids(decl)
+        .filter(|c| kind(c) == "FieldDecl")
+        .map(|c| c["name"].as_str().unwrap_or("").to_owned())
+        .collect::<Vec<_>>();
+    unit.records.entry(name.to_owned()).or_insert(fields);
 }
 
 /// The no-return builtins, for callers that name one without a declaration.

@@ -49,6 +49,7 @@ pub mod native_concurrency;
 pub mod native_library;
 pub mod native_library_header;
 pub mod null_deref;
+pub mod null_triage;
 pub mod obs_reordering;
 pub mod os_endpoint;
 pub mod ownership;

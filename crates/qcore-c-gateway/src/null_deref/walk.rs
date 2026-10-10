@@ -181,6 +181,9 @@ impl State {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct CheckRecord {
     pub(super) id: usize,
+    /// Card NULL-CANDIDATE-TRIAGE: the checked node's AST key (the witness
+    /// search finds the dereference by it).
+    pub(super) key: String,
     pub(super) kind: &'static str,
     pub(super) line: usize,
     pub(super) subject: String,
@@ -204,6 +207,74 @@ pub(super) struct Declared {
 pub(super) struct Summary {
     pub(super) derefs: BTreeSet<usize>,
     pub(super) returns_non_null: bool,
+    /// Card NULL-CANDIDATE-TRIAGE: the declarations the summary rests on
+    /// (a caller that reads it rests on them too).
+    pub(super) dependencies: BTreeSet<String>,
+}
+
+/// Card NULL-CANDIDATE-TRIAGE (rule 14t): a declared non-null member.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct MemberDecl {
+    /// The declaration that carries it.
+    pub(super) host: String,
+    /// The hold, when the declaration is not in force.
+    pub(super) held: Option<String>,
+}
+
+/// Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct ResultDecl {
+    pub(super) held: Option<String>,
+}
+
+/// Card NULL-CANDIDATE-TRIAGE: one store to a declared member.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct MemberStore {
+    /// `TAG.FIELD`.
+    pub member: String,
+    pub function: String,
+    pub line: usize,
+    /// The stored value's check class (`proved`, `moved`, `candidate`,
+    /// `violation`, ...): the store keeps the declaration only when it is
+    /// discharged.
+    pub outcome: &'static str,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub sources: Vec<String>,
+}
+
+/// Card NULL-CANDIDATE-TRIAGE (rule 14v): a pointer actual of a call to a
+/// function this unit neither defines nor declares, judged as a check would
+/// be, for cross-unit travel.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct ExternalCall {
+    pub function: String,
+    pub callee: String,
+    pub position: usize,
+    pub arguments: usize,
+    pub line: usize,
+    pub subject: String,
+    pub outcome: &'static str,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub sources: Vec<String>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub proofs: Vec<String>,
+}
+
+/// The C struct tag a member access reads (`struct TAG *` for `->`,
+/// `struct TAG` for `.`), from the base's (desugared) type spelling.
+pub(super) fn record_tag(base: &str, arrow: bool) -> Option<String> {
+    let words = base
+        .replace('*', " * ")
+        .split_whitespace()
+        .filter(|w| !matches!(*w, "const" | "volatile" | "restrict" | "__restrict"))
+        .map(str::to_owned)
+        .collect::<Vec<_>>();
+    let rest = match (arrow, words.as_slice()) {
+        (true, [s, tag, star]) if s == "struct" && star == "*" => tag,
+        (false, [s, tag]) if s == "struct" => tag,
+        _ => return None,
+    };
+    Some(rest.clone())
 }
 
 /// What the walk reads besides the body.
@@ -213,6 +284,10 @@ pub(super) struct Env<'a> {
     pub(super) declared: &'a BTreeMap<String, Declared>,
     pub(super) summaries: &'a BTreeMap<String, Summary>,
     pub(super) newlines: &'a [usize],
+    /// Card NULL-CANDIDATE-TRIAGE: declared non-null members, by (tag, field).
+    pub(super) members: &'a BTreeMap<(String, String), MemberDecl>,
+    /// Card NULL-CANDIDATE-TRIAGE: declared non-null results, by function.
+    pub(super) results: &'a BTreeMap<String, ResultDecl>,
 }
 
 /// The entry fact of a formal under a clause.
@@ -242,6 +317,12 @@ pub(super) struct Walked {
     pub(super) consulted: BTreeSet<String>,
     /// Calls through a function pointer (not inventoried as checks).
     pub(super) indirect_calls: usize,
+    /// Card NULL-CANDIDATE-TRIAGE: stores to declared members.
+    pub(super) member_stores: Vec<MemberStore>,
+    /// Card NULL-CANDIDATE-TRIAGE: pointer actuals of external calls.
+    pub(super) external_calls: Vec<ExternalCall>,
+    /// The function's returns, joined (for a declared result's check).
+    pub(super) returns_null_on_a_path: bool,
 }
 
 pub(super) struct Walker<'a> {
@@ -264,6 +345,16 @@ pub(super) struct Walker<'a> {
     returns: Option<Nullness>,
     consulted: BTreeSet<String>,
     indirect_calls: BTreeSet<usize>,
+    member_stores: BTreeMap<usize, MemberStore>,
+    external_calls: BTreeMap<(usize, usize), ExternalCall>,
+}
+
+/// The AST key of a node (its id, else its offset).
+pub(super) fn node_key(node: &Value) -> String {
+    node["id"]
+        .as_str()
+        .map(str::to_owned)
+        .unwrap_or_else(|| format!("@{}", node["o"]))
 }
 
 fn strip(node: &Value) -> &Value {
@@ -374,6 +465,8 @@ impl<'a> Walker<'a> {
             returns: None,
             consulted: BTreeSet::new(),
             indirect_calls: BTreeSet::new(),
+            member_stores: BTreeMap::new(),
+            external_calls: BTreeMap::new(),
         };
         let mut state = State {
             live: true,
@@ -439,6 +532,11 @@ impl<'a> Walker<'a> {
             }
             None => walker.reason("null-import-failure: the definition has no body".into()),
         }
+        let returns_null_on_a_path = match &walker.returns {
+            Some(Nullness::Null) => true,
+            Some(Nullness::Maybe(sources)) => sources.contains(&Source::NullLiteral),
+            _ => false,
+        };
         Walked {
             checks: walker.checks.into_values().collect(),
             reasons: walker.reasons,
@@ -447,6 +545,9 @@ impl<'a> Walker<'a> {
             returns: walker.returns,
             consulted: walker.consulted,
             indirect_calls: walker.indirect_calls.len(),
+            member_stores: walker.member_stores.into_values().collect(),
+            external_calls: walker.external_calls.into_values().collect(),
+            returns_null_on_a_path,
         }
     }
 
@@ -626,6 +727,7 @@ impl<'a> Walker<'a> {
             }
             let record = CheckRecord {
                 id,
+                key: node_key(node),
                 kind: check_kind,
                 line: self.line(node),
                 subject: render(subject),
@@ -668,6 +770,16 @@ impl<'a> Walker<'a> {
                     Proof::NonNullResult(name) if name.starts_with("declared:") => {
                         self.assumptions
                             .insert(format!("{name}: a non-null result (resource contract)"));
+                    }
+                    Proof::NonNullResult(name) if name.starts_with("member:") => {
+                        self.assumptions.insert(format!(
+                            "declared-{name}: a non-null member (null_member_nonnull; every analysed store checked, construction premised)"
+                        ));
+                    }
+                    Proof::NonNullResult(name) if name.starts_with("declared-result:") => {
+                        self.assumptions.insert(format!(
+                            "{name}: a non-null result (null_result_nonnull; checked against the analysed bodies)"
+                        ));
                     }
                     _ => {}
                 }
@@ -864,14 +976,85 @@ impl<'a> Walker<'a> {
         if !pointer {
             return Val::scalar();
         }
+        // Card NULL-CANDIDATE-TRIAGE (rule 14t): a declared non-null member
+        // read with no fact of its own on the path.
+        let member = self.declared_member(node);
+        let unfacted = match &place {
+            Some(Place::Path(key)) => !state.paths.contains_key(key),
+            Some(Place::Var(_)) => false,
+            None => true,
+        };
+        if let Some(member) = member
+            && unfacted
+        {
+            self.consulted.insert(format!("member:{member}"));
+            return Val {
+                place,
+                ..Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                    "member:{member}"
+                ))))
+            };
+        }
         match place {
             Some(place) => self.read_place(&place, &render(node), state),
             None => Val::of(Nullness::maybe(Source::MemoryField(render(node)))),
         }
     }
 
+    /// Card NULL-CANDIDATE-TRIAGE: the declared member (`TAG.FIELD`, in
+    /// force) a member access names, if any.
+    fn declared_member(&self, node: &Value) -> Option<String> {
+        let node = strip(node);
+        if kind(node) != "MemberExpr" {
+            return None;
+        }
+        let field = node["name"].as_str()?;
+        let base = kids(node).next()?;
+        let tag = record_tag(ty(base), node["isArrow"] == true)?;
+        let key = (tag, field.to_owned());
+        self.env
+            .members
+            .get(&key)
+            .filter(|m| m.held.is_none())
+            .map(|_| format!("{}.{}", key.0, key.1))
+    }
+
+    /// Card NULL-CANDIDATE-TRIAGE: record a store of `value` to the declared
+    /// member `member` at `node`.
+    fn member_store(&mut self, node: &Value, member: String, value: &Nullness, state: &State) {
+        if !self.recording || !state.live {
+            return;
+        }
+        let id = self.site(node);
+        let outcome = core::check(value, false);
+        let sources = match &outcome {
+            Outcome::Candidate(sources) => sources.iter().map(Source::render).collect(),
+            _ => Vec::new(),
+        };
+        let record = MemberStore {
+            member,
+            function: self.function.clone(),
+            line: self.line(node),
+            outcome: outcome.class(),
+            sources,
+        };
+        match self.member_stores.get_mut(&id) {
+            Some(existing) if outcome.discharged() => {
+                let _ = existing;
+            }
+            Some(existing) => *existing = record,
+            None => {
+                self.member_stores.insert(id, record);
+            }
+        }
+    }
+
     /// Store `value` to the place `lhs` designates.
     fn store(&mut self, lhs: &Value, place: Option<Place>, value: &Val, state: &mut State) {
+        if let Some(member) = self.declared_member(lhs) {
+            let at = strip(lhs);
+            self.member_store(at, member, &value.null, state);
+        }
         match place {
             Some(Place::Var(id)) => {
                 Self::forget_rooted(state, &id);
@@ -1006,6 +1189,10 @@ impl<'a> Walker<'a> {
             },
             // A type is never evaluated (a `typeof` operand, a trait's types).
             kind_name if kind_name.ends_with("Type") => Val::scalar(),
+            "InitListExpr" if self.declared_record(node).is_some() => {
+                self.record_initializer(node, state);
+                Val::scalar()
+            }
             "InitListExpr"
             | "ParenListExpr"
             | "DesignatedInitExpr"
@@ -1077,10 +1264,72 @@ impl<'a> Walker<'a> {
         }
     }
 
+    /// Card NULL-CANDIDATE-TRIAGE: the declared members of the struct an
+    /// initializer list builds, if it builds one with any.
+    fn declared_record(&self, node: &Value) -> Option<String> {
+        let tag = record_tag(ty(node), false)?;
+        self.env
+            .members
+            .iter()
+            .any(|((t, _), m)| *t == tag && m.held.is_none())
+            .then_some(tag)
+    }
+
+    /// Card NULL-CANDIDATE-TRIAGE: an initializer list of a struct with a
+    /// declared member stores each initializer (an omitted one is zero, a
+    /// null store); a list the walk cannot attribute to the members is a
+    /// store not proved.
+    fn record_initializer(&mut self, node: &Value, state: &mut State) {
+        let Some(tag) = record_tag(ty(node), false) else {
+            return;
+        };
+        let values = kids(node)
+            .map(|child| (child, self.eval(child, state)))
+            .collect::<Vec<_>>();
+        let fields = self.env.unit.records.get(&tag).cloned();
+        let declared = self
+            .env
+            .members
+            .iter()
+            .filter(|((t, _), m)| *t == tag && m.held.is_none())
+            .map(|((_, f), _)| f.clone())
+            .collect::<Vec<_>>();
+        for field in declared {
+            let member = format!("{tag}.{field}");
+            let stored = fields
+                .as_ref()
+                .filter(|fields| fields.len() == values.len())
+                .and_then(|fields| fields.iter().position(|f| *f == field))
+                .and_then(|index| values.get(index));
+            let null = match stored {
+                Some((child, _)) if matches!(kind(child), "ImplicitValueInitExpr") => {
+                    Nullness::Null
+                }
+                Some((_, value)) => value.null.clone(),
+                None => Nullness::maybe(Source::Other("an initializer list".into())),
+            };
+            self.member_store(node, member, &null, state);
+        }
+    }
+
     /// Read an lvalue that is about to be written (`++`, `+=`): its place and
     /// current value.
     fn read_for_update(&mut self, lhs: &Value, state: &mut State) -> (Val, Option<Place>) {
         let place = self.lvalue(lhs, state);
+        // Card NULL-CANDIDATE-TRIAGE: a declared member's current value.
+        if let Some(member) = self.declared_member(lhs)
+            && let Some(Place::Path(key)) = &place
+            && !state.paths.contains_key(key)
+        {
+            self.consulted.insert(format!("member:{member}"));
+            let value = Val {
+                place: place.clone(),
+                ..Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                    "member:{member}"
+                ))))
+            };
+            return (value, place);
+        }
         let value = match (&place, is_pointer(ty(lhs))) {
             (Some(place), true) => self.read_place(place, &render(lhs), state),
             _ => Val::scalar(),
@@ -1307,6 +1556,9 @@ impl<'a> Walker<'a> {
             } else if let Some(summary) = self.env.summaries.get(callee_name)
                 && callee_name != &self.function
             {
+                if !summary.derefs.is_empty() {
+                    self.consulted.extend(summary.dependencies.iter().cloned());
+                }
                 for position in &summary.derefs {
                     if *position < values.len() {
                         let formal = self
@@ -1360,6 +1612,52 @@ impl<'a> Walker<'a> {
                 record.subject = format!("{} at {text}", record.subject);
             }
         }
+        // Card NULL-CANDIDATE-TRIAGE (rule 14v): the pointer actuals of a
+        // call to a function this unit neither defines nor declares, judged
+        // as a check would be, for cross-unit travel.
+        if self.recording
+            && state.live
+            && let Some(callee_name) = &name
+            && !self.env.unit.definitions.contains_key(callee_name)
+            && !self.env.declared.contains_key(callee_name)
+        {
+            for (position, (argument, value)) in arguments.iter().zip(&values).enumerate() {
+                if !is_pointer(ty(argument)) {
+                    continue;
+                }
+                let outcome = core::check(&value.null, false);
+                let (sources, proofs) = match &outcome {
+                    Outcome::Candidate(sources) => {
+                        (sources.iter().map(Source::render).collect(), Vec::new())
+                    }
+                    Outcome::Proved(proofs) | Outcome::Moved(proofs) => (
+                        Vec::new(),
+                        proofs.iter().map(super::render_proof).collect(),
+                    ),
+                    _ => (Vec::new(), Vec::new()),
+                };
+                let site = self.site(node);
+                let record = ExternalCall {
+                    function: self.function.clone(),
+                    callee: callee_name.clone(),
+                    position,
+                    arguments: arguments.len(),
+                    line: self.line(argument),
+                    subject: render(argument),
+                    outcome: outcome.class(),
+                    sources,
+                    proofs,
+                };
+                self.external_calls
+                    .entry((site, position))
+                    .and_modify(|existing| {
+                        if existing.outcome != record.outcome && record.outcome != "proved" {
+                            *existing = record.clone();
+                        }
+                    })
+                    .or_insert(record);
+            }
+        }
         // A call may write any memory a path names.
         Self::memory_written(state, false);
         state.definite = false;
@@ -1396,10 +1694,23 @@ impl<'a> Walker<'a> {
                 "c11-7.5p2-errno:{callee_name}"
             ))));
         }
+        // Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result.
+        if self
+            .env
+            .results
+            .get(&callee_name)
+            .is_some_and(|r| r.held.is_none())
+        {
+            self.consulted.insert(format!("result:{callee_name}"));
+            return Val::of(Nullness::proved(Proof::NonNullResult(format!(
+                "declared-result:{callee_name}"
+            ))));
+        }
         if let Some(summary) = self.env.summaries.get(&callee_name)
             && summary.returns_non_null
             && callee_name != self.function
         {
+            self.consulted.extend(summary.dependencies.iter().cloned());
             return Val::of(Nullness::proved(Proof::NonNullResult(format!(
                 "summary:{callee_name}"
             ))));
@@ -1991,6 +2302,10 @@ const STATEMENT_KINDS: [&str; 19] = [
     "GCCAsmStmt",
     "MSAsmStmt",
 ];
+
+pub(super) fn is_expression_kind(node: &Value) -> bool {
+    is_expression(node)
+}
 
 fn is_expression(node: &Value) -> bool {
     !STATEMENT_KINDS.contains(&kind(node))

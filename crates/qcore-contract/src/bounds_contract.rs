@@ -116,7 +116,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 12] = [
+pub const RESERVED_SPELLINGS: [&str; 14] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -129,6 +129,9 @@ pub const RESERVED_SPELLINGS: [&str; 12] = [
     "bounds_frame_writes",
     "bounds_frame_moves",
     "bounds_return_derived",
+    // Card NULL-CANDIDATE-TRIAGE (G05e).
+    "null_member_nonnull",
+    "null_result_nonnull",
 ];
 
 const SCALAR_TYPES: [&str; 11] = [
@@ -230,6 +233,31 @@ pub enum BoundsClause {
     Live {
         parameter: String,
     },
+    /// Card NULL-CANDIDATE-TRIAGE (C09.3, grammar G05e, rule 14t):
+    /// `requires null_member_nonnull(TAG, FIELD);` -- every `struct TAG`'s
+    /// `FIELD` is non-null wherever it is read. A type-level declaration the
+    /// host function carries; checked against every store the analysed units
+    /// make (a store not proved non-null withdraws it), its zero-initialised
+    /// construction a listed premise. Read by the null property only.
+    NullMember {
+        tag: String,
+        field: String,
+    },
+    /// Card NULL-CANDIDATE-TRIAGE (rule 14u): `ensures normal
+    /// null_result_nonnull();` -- the function's result is non-null, checked
+    /// against every analysed body that defines it. Null property only.
+    NullResult,
+}
+
+impl BoundsClause {
+    /// Card NULL-CANDIDATE-TRIAGE: a clause only the null property reads.
+    #[must_use]
+    pub fn is_null_clause(&self) -> bool {
+        matches!(
+            self,
+            Self::NullDeref { .. } | Self::NullMember { .. } | Self::NullResult
+        )
+    }
 }
 
 impl BoundsClause {
@@ -408,12 +436,10 @@ impl BoundsContracts {
         view.functions.retain(|_, contract| {
             let before = contract.clauses.len();
             // Card NULL-DEREF-QTT-GROUNDING: nor the liveness part, which
-            // custody owns.
+            // custody owns; card NULL-CANDIDATE-TRIAGE: nor any clause only
+            // the null property reads.
             contract.clauses.retain(|entry| {
-                !matches!(
-                    entry.clause,
-                    BoundsClause::NullDeref { .. } | BoundsClause::Live { .. }
-                )
+                !(entry.clause.is_null_clause() || matches!(entry.clause, BoundsClause::Live { .. }))
             });
             let keep = !(before > 0 && contract.clauses.is_empty());
             if keep {
@@ -440,6 +466,15 @@ impl BoundsContracts {
                 .iter()
                 .any(|entry| matches!(entry.clause, BoundsClause::NullDeref { .. }))
         })
+    }
+
+    /// Card NULL-CANDIDATE-TRIAGE: every declaration with a clause only the
+    /// null property reads (`quant null-deref`, `null_member_nonnull`,
+    /// `null_result_nonnull`), by name.
+    pub fn null_declarations(&self) -> impl Iterator<Item = (&String, &BoundsFunctionContract)> {
+        self.functions
+            .iter()
+            .filter(|(_, contract)| contract.clauses.iter().any(|e| e.clause.is_null_clause()))
     }
 
     /// The environment's identity: the version and every module digest.
@@ -751,6 +786,30 @@ impl Reader<'_> {
                 })
             }
             (false, "bounds_preserves_extents", []) => Ok(BoundsClause::PreservesExtents),
+            // Card NULL-CANDIDATE-TRIAGE (G05e): the null property's
+            // type-level member declaration and its non-null result.
+            (true, "null_member_nonnull", [tag, field]) => {
+                let tag = single_word(tag)
+                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
+                    .ok_or(
+                        "null-member-shape: `null_member_nonnull(TAG, FIELD)` names a C struct tag",
+                    )?;
+                let field = single_word(field).ok_or(
+                    "null-member-shape: `null_member_nonnull(TAG, FIELD)` names a member",
+                )?;
+                Ok(BoundsClause::NullMember {
+                    tag: tag.to_owned(),
+                    field: field.to_owned(),
+                })
+            }
+            (false, "null_result_nonnull", []) => {
+                if self.result != Some(ParameterKind::Pointer) {
+                    return Err(
+                        "null-result-pointer: a non-null result needs a pointer result".into(),
+                    );
+                }
+                Ok(BoundsClause::NullResult)
+            }
             (false, "bounds_frame_reads" | "bounds_frame_writes" | "bounds_frame_moves", [p]) => {
                 let parameter = single_word(p)
                     .filter(|name| {
@@ -977,6 +1036,8 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::QuantCheck { parameter, .. } => format!("quant {parameter}"),
             BoundsClause::NullDeref { parameter } => format!("null-deref {parameter}"),
             BoundsClause::Live { parameter } => format!("live {parameter}"),
+            BoundsClause::NullMember { tag, field } => format!("null-member {tag}.{field}"),
+            BoundsClause::NullResult => "null-result".into(),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));

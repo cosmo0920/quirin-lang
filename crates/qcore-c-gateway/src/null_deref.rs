@@ -60,15 +60,69 @@ use qcore_schemas::contract::ResourceContracts;
 use serde_json::Value;
 
 pub use qcore_core::null_deref::{NULL_PROPERTY, NullVerdict, Request, compose};
+/// Card NULL-CANDIDATE-TRIAGE: the core decisions the audit's run fold
+/// reads (the null property's model and the triage's).
+pub use qcore_core::null_deref as core_model;
+pub use qcore_core::null_triage;
 
 use crate::legacy_c::C11TranslationUnit;
 use crate::typed_c_ast::kind;
 
 mod ast;
 mod walk;
+mod witness;
 
 use ast::kids;
-use walk::{Declared, Entry, Env, Summary, Walker};
+pub use walk::{ExternalCall, MemberStore};
+use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
+pub use witness::{PathStep, Witness};
+
+/// Card NULL-CANDIDATE-TRIAGE (rule 14r): the source kinds a candidate
+/// carries for its path to be searched (a NULL condition the search can
+/// name: an allocation, a lookup, a null constant, a test's null arm).
+pub const STRONG_SOURCE_KINDS: [&str; 6] = [
+    "allocation",
+    "nullable-result",
+    "lookup",
+    "null-literal",
+    "uninitialized",
+    "global",
+];
+
+/// Card NULL-CANDIDATE-TRIAGE: the triage of one strong-source candidate.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct TriageRecord {
+    /// The check's id.
+    pub check: usize,
+    /// `finding`, `infeasible`, `unresolved` or `indeterminate`.
+    pub status: &'static str,
+    /// A finding's class (`null-on-allocation-failure`,
+    /// `null-on-normal-path`).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class: Option<&'static str>,
+    /// The NULL condition (a finding) or why there is none.
+    pub reason: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub witness: Option<Witness>,
+    /// Paths the search ran.
+    pub paths: usize,
+}
+
+/// Card NULL-CANDIDATE-TRIAGE (rule 14v): what one analysed definition
+/// exports for cross-unit travel.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub struct DefinitionSummary {
+    pub function: String,
+    /// External linkage (not `static`, not an `inline` definition).
+    pub external: bool,
+    pub parameters: usize,
+    /// The inferred clauses: position and formal name.
+    pub inferred: Vec<(usize, String)>,
+    pub returns_non_null: bool,
+    pub returns_null_on_a_path: bool,
+    /// The declarations its summary rests on.
+    pub dependencies: Vec<String>,
+}
 
 /// One judged check.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
@@ -126,6 +180,10 @@ pub struct NullFunctionRow {
     /// (a registered residual).
     #[serde(skip_serializing_if = "is_zero")]
     pub indirect_calls: usize,
+    /// Card NULL-CANDIDATE-TRIAGE (rule 14r): every strong-source
+    /// candidate's path search.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub triage: Vec<TriageRecord>,
 }
 
 fn is_zero(count: &usize) -> bool {
@@ -143,6 +201,15 @@ pub struct NullUnitReport {
     /// The resource environment's digest (result nullability).
     pub resource_contracts_sha256: String,
     pub functions: Vec<NullFunctionRow>,
+    /// Card NULL-CANDIDATE-TRIAGE: every store to a declared member in the
+    /// unit's analysed definitions (rule 14t's evidence).
+    pub member_stores: Vec<MemberStore>,
+    /// Card NULL-CANDIDATE-TRIAGE: every analysed definition's export
+    /// (rule 14v), and each declared result's body (rule 14u).
+    pub definitions: Vec<DefinitionSummary>,
+    /// Card NULL-CANDIDATE-TRIAGE: the pointer actuals of calls to functions
+    /// the unit neither defines nor declares (rule 14v).
+    pub external_calls: Vec<ExternalCall>,
 }
 
 impl NullUnitReport {
@@ -224,6 +291,44 @@ fn declared_clauses(contracts: &BoundsContracts) -> BTreeMap<String, Declared> {
         .collect()
 }
 
+/// Card NULL-CANDIDATE-TRIAGE: the declared non-null members and results.
+fn declared_members_and_results(
+    contracts: &BoundsContracts,
+) -> (
+    BTreeMap<(String, String), MemberDecl>,
+    BTreeMap<String, ResultDecl>,
+) {
+    let mut members = BTreeMap::new();
+    let mut results = BTreeMap::new();
+    for (name, contract) in contracts.null_declarations() {
+        let held = contract.held().then(|| contract.holds().join("; "));
+        for entry in &contract.clauses {
+            match &entry.clause {
+                BoundsClause::NullMember { tag, field } => {
+                    let decl = MemberDecl {
+                        host: name.clone(),
+                        held: held.clone(),
+                    };
+                    // Two hosts of one member: held when either is.
+                    members
+                        .entry((tag.clone(), field.clone()))
+                        .and_modify(|existing: &mut MemberDecl| {
+                            if existing.held.is_none() {
+                                existing.held.clone_from(&decl.held);
+                            }
+                        })
+                        .or_insert(decl);
+                }
+                BoundsClause::NullResult => {
+                    results.insert(name.clone(), ResultDecl { held: held.clone() });
+                }
+                _ => {}
+            }
+        }
+    }
+    (members, results)
+}
+
 /// Callees first: a post-order of the in-unit call graph (a recursive edge
 /// is cut, so its callee's summary is not yet known: no clause, no result).
 fn bottom_up(unit: &ast::Unit) -> Vec<String> {
@@ -257,8 +362,17 @@ fn formal_names(definition: &Value) -> Vec<String> {
         .collect()
 }
 
+/// What one definition's analysis produced besides its row.
+struct Analysed {
+    row: NullFunctionRow,
+    summary: Summary,
+    member_stores: Vec<MemberStore>,
+    external_calls: Vec<ExternalCall>,
+    export: DefinitionSummary,
+}
+
 /// Analyse one definition: its row and its in-unit summary.
-fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunctionRow, Summary) {
+fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
     let names = formal_names(definition);
     let pointers = kids(definition)
         .filter(|c| kind(c) == "ParmVarDecl")
@@ -326,7 +440,41 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunct
         .collect::<Vec<_>>();
     let mut reasons = reasons_before;
     reasons.extend(walked.reasons.iter().cloned());
-    let (verdict, reasons) = core::null_verdict(&outcomes, &reasons);
+    let (verdict, mut reasons) = core::null_verdict(&outcomes, &reasons);
+    // Card NULL-CANDIDATE-TRIAGE (rule 14r): each strong-source candidate's
+    // path search; a validated path is a finding (provisional `Unsafe`).
+    let mut triage = Vec::new();
+    for check in &walked.checks {
+        let Outcome::Candidate(sources) = &check.outcome else {
+            continue;
+        };
+        if !sources
+            .iter()
+            .any(|s| STRONG_SOURCE_KINDS.contains(&s.kind()))
+        {
+            continue;
+        }
+        let found = witness::search(env, name, definition, &entries, &check.key);
+        triage.push(TriageRecord {
+            check: check.id,
+            status: found.triage.as_str(),
+            class: match found.triage {
+                qcore_core::null_triage::Triage::Finding(class) => Some(class.as_str()),
+                _ => None,
+            },
+            reason: found.reason,
+            witness: found.witness,
+            paths: found.runs,
+        });
+    }
+    let findings = triage.iter().filter(|t| t.status == "finding").count();
+    let verdict = qcore_core::null_triage::triaged_verdict(verdict, findings);
+    if findings > 0 {
+        reasons.push(format!(
+            "{}: {findings} validated path(s) to a NULL dereference (provisional; never an upstream defect)",
+            qcore_core::null_triage::FINDING
+        ));
+    }
     let mut scope = String::from("unconditional");
     let mut conditions = scope_clauses
         .iter()
@@ -340,6 +488,7 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunct
         );
     }
     let returns_non_null = walked.returns.as_ref().is_some_and(Nullness::is_non_null);
+    let returns_null_on_a_path = walked.returns_null_on_a_path;
     let mut dependencies = walked.consulted.iter().cloned().collect::<Vec<_>>();
     if declared.is_some() {
         dependencies.push(name.to_owned());
@@ -358,7 +507,27 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunct
             )
             .collect(),
         returns_non_null,
+        dependencies: walked.consulted.clone(),
     };
+    let external = definition["storageClass"].as_str() != Some("static")
+        && definition["inline"] != true;
+    let export = DefinitionSummary {
+        function: name.to_owned(),
+        external,
+        parameters: names.len(),
+        inferred: inferred
+            .iter()
+            .map(|(index, _)| (*index, names[*index].clone()))
+            .collect(),
+        returns_non_null,
+        returns_null_on_a_path,
+        dependencies: walked.consulted.iter().cloned().collect(),
+    };
+    let finding_ids = triage
+        .iter()
+        .filter(|t| t.status == "finding")
+        .map(|t| t.check)
+        .collect::<BTreeSet<_>>();
     let row = NullFunctionRow {
         function: name.to_owned(),
         property: NULL_PROPERTY,
@@ -366,7 +535,18 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunct
         reasons,
         scope,
         assumptions: walked.assumptions.into_iter().collect(),
-        checks: walked.checks.into_iter().map(record).collect(),
+        checks: walked
+            .checks
+            .into_iter()
+            .map(|check| {
+                let finding = finding_ids.contains(&check.id);
+                let mut recorded = record(check);
+                if finding {
+                    recorded.outcome = "finding";
+                }
+                recorded
+            })
+            .collect(),
         inferred_preconditions: inferred
             .iter()
             .map(|(index, _)| format!("#{}", names[*index]))
@@ -375,8 +555,15 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> (NullFunct
         returns_non_null,
         contract_dependencies: dependencies,
         indirect_calls: walked.indirect_calls,
+        triage,
     };
-    (row, summary)
+    Analysed {
+        row,
+        summary,
+        member_stores: walked.member_stores,
+        external_calls: walked.external_calls,
+        export,
+    }
 }
 
 /// Keep each top-level declaration, compacted, as it is read.
@@ -462,8 +649,12 @@ fn analyze_on_stack(
         .map(|(i, _)| i)
         .collect::<Vec<_>>();
     let declared = declared_clauses(bounds);
+    let (members, results) = declared_members_and_results(bounds);
     let mut summaries = BTreeMap::new();
     let mut rows = BTreeMap::new();
+    let mut member_stores = Vec::new();
+    let mut external_calls = Vec::new();
+    let mut definitions = Vec::new();
     let selected = functions.iter().collect::<BTreeSet<_>>();
     for name in bottom_up(&read) {
         let Some(definition) = read.definitions.get(&name) else {
@@ -475,12 +666,17 @@ fn analyze_on_stack(
             declared: &declared,
             summaries: &summaries,
             newlines: &newlines,
+            members: &members,
+            results: &results,
         };
-        let (row, summary) = analyze_function(&env, &name, definition);
+        let analysed = analyze_function(&env, &name, definition);
+        member_stores.extend(analysed.member_stores);
         if selected.contains(&name) {
-            rows.insert(name.clone(), row);
+            external_calls.extend(analysed.external_calls);
+            rows.insert(name.clone(), analysed.row);
         }
-        summaries.insert(name, summary);
+        definitions.push(analysed.export);
+        summaries.insert(name, analysed.summary);
     }
     let rows = functions
         .iter()
@@ -500,6 +696,7 @@ fn analyze_on_stack(
                 returns_non_null: false,
                 contract_dependencies: Vec::new(),
                 indirect_calls: 0,
+                triage: Vec::new(),
             })
         })
         .collect();
@@ -510,6 +707,9 @@ fn analyze_on_stack(
         contracts_sha256: bounds.digest(),
         resource_contracts_sha256: resource_digest(resource),
         functions: rows,
+        member_stores,
+        definitions,
+        external_calls,
     })
 }
 

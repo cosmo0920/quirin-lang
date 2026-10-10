@@ -262,6 +262,25 @@ fn record_null(
             .and_then(|map| map.present(line, file))
             .map_or(serde_json::Value::Null, serde_json::Value::String)
     };
+    // Card NULL-CANDIDATE-TRIAGE (rules 14t-14v): the unit's evidence for the
+    // run's fold (member stores, definition exports, external calls).
+    if let Ok(analysed) = &analysed {
+        let with_origin = |value: serde_json::Value| {
+            let mut value = value;
+            for item in value.as_array_mut().into_iter().flatten() {
+                let line = item["line"].as_u64().unwrap_or_default() as usize;
+                item["origin"] = origin(line);
+            }
+            value
+        };
+        report.record_null_evidence(serde_json::json!({
+            "library": library,
+            "file": file,
+            "member_stores": with_origin(serde_json::to_value(&analysed.member_stores).unwrap_or_default()),
+            "definitions": serde_json::to_value(&analysed.definitions).unwrap_or_default(),
+            "external_calls": with_origin(serde_json::to_value(&analysed.external_calls).unwrap_or_default()),
+        }));
+    }
     let custody = summary_of(result);
     for name in functions {
         let function = custody.and_then(|summary| summary.functions.get(name));
@@ -273,6 +292,14 @@ fn record_null(
                     for check in value["checks"].as_array_mut().into_iter().flatten() {
                         let line = check["line"].as_u64().unwrap_or_default() as usize;
                         check["origin"] = origin(line);
+                    }
+                    // Card NULL-CANDIDATE-TRIAGE: every witness step's
+                    // original line, for the reviewer.
+                    for triage in value["triage"].as_array_mut().into_iter().flatten() {
+                        for step in triage["witness"]["path"].as_array_mut().into_iter().flatten() {
+                            let line = step["line"].as_u64().unwrap_or_default() as usize;
+                            step["origin"] = origin(line);
+                        }
                     }
                     (
                         value,

@@ -139,6 +139,11 @@ pub struct AuditReport {
     /// null-dereference property (`QCORE_NULL_PROPERTY`), in unit order.
     /// Never part of the custody document.
     null: Vec<Value>,
+    /// Card NULL-CANDIDATE-TRIAGE: each unit's null evidence (member stores,
+    /// definition exports, external calls), in unit order, folded over the
+    /// run before the null rows are written. Never part of the custody
+    /// document.
+    null_evidence: Vec<Value>,
 }
 
 impl AuditReport {
@@ -153,12 +158,18 @@ impl AuditReport {
             bounds: Vec::new(),
             bounds_evidence: Vec::new(),
             null: Vec::new(),
+            null_evidence: Vec::new(),
         }
     }
 
     /// Card NULL-SAFETY-PROPERTY: one function's null row.
     pub(crate) fn record_null(&mut self, row: Value) {
         self.null.push(row);
+    }
+
+    /// Card NULL-CANDIDATE-TRIAGE: one unit's null evidence.
+    pub(crate) fn record_null_evidence(&mut self, unit: Value) {
+        self.null_evidence.push(unit);
     }
 
     /// Card NULL-SAFETY-PROPERTY: write the null selection's rows (JSON
@@ -170,13 +181,22 @@ impl AuditReport {
             return Ok(());
         };
         let path = std::path::PathBuf::from(path);
+        // Card NULL-CANDIDATE-TRIAGE (rules 14t-14v): the run's fold of the
+        // declarations' standing, the withdrawals and cross-unit travel.
+        let mut rows = self.null.clone();
+        let fold = crate::null_fold::fold(
+            &mut rows,
+            &self.null_evidence,
+            &crate::bounds_selection::null_environment(),
+        );
         let mut lines = String::new();
-        for row in &self.null {
+        for row in &rows {
             lines.push_str(&serde_json::to_string(row).map_err(|e| e.to_string())?);
             lines.push('\n');
         }
         fs::write(&path, lines).map_err(|e| format!("could not write {}: {e}", path.display()))?;
-        let summary = crate::null_tally::summary(&self.null);
+        let mut summary = crate::null_tally::summary(&rows);
+        summary["fold"] = fold;
         println!("{}", crate::null_tally::line(&summary));
         let mut bytes = serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?;
         bytes.push(b'\n');
@@ -324,6 +344,7 @@ impl AuditReport {
             bounds,
             bounds_evidence,
             null,
+            null_evidence,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -341,6 +362,7 @@ impl AuditReport {
         self.bounds.extend(bounds);
         self.bounds_evidence.extend(bounds_evidence);
         self.null.extend(null);
+        self.null_evidence.extend(null_evidence);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
@@ -714,6 +736,7 @@ impl AuditReport {
             bounds: Vec::new(),
             bounds_evidence: Vec::new(),
             null: Vec::new(),
+            null_evidence: Vec::new(),
         }
     }
 
