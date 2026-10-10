@@ -233,6 +233,27 @@ beside its null result range, a multi-module declaration; registered as a
 submodule, fmt, clippy, both probes, 313 Lean audits); the provider gate g1
 (at `218fb4d0f`) exited 0 at every step. Gate g2 is the gate of record.
 
+**Gate g2, the gate of record** (code steps at `e6832a449`, docs steps at
+`319cb9d99`; logs `private/w45r3/gate-g2/`, `private/w45r3/tests-gate-g2/`):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 481 units, 494 summaries; 7,896 passed, 0 failed, 12 ignored |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 313 audits passed (no Lean change) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py --check` | 0 | |
+| `build_matrix.py . --gate gate.json`, the Python suite again, the index and its check | 0 / 0 / 0 / 0 | |
+
+Provider gate g2 (at `319cb9d99`, logs `private/w45r3/provider-gate-g2/`):
+`cargo check --locked` 0, `cargo test` 0 (129 passed), fmt 0, clippy 0,
+`providers/contracts.py check` 0, package build 0 and `verify` 0 for all five
+packages, `python3 -m unittest discover -s providers/tests` 0 (25 tests OK).
+
 **Deliberate pin updates.** `compiler/tests/contract_loader.rs`: v1
 declarations 379 → 393 (selection 61 and rejected 314 unchanged), the
 retaining table 44 → 45 (`unit_test_telemetry`), and the thirteen
