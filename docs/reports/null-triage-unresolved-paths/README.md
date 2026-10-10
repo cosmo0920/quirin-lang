@@ -223,8 +223,10 @@ non-canonical bound and the old spelling. `crates/qcore-core/tests/null_paths.rs
   `Safe` (the infeasible candidate is removed; rule 15t).
 * `cfl/null_deref.qv`: `qcore_contract_corpus.rs` (one pinned row; corpus
   130 → 131 modules), `contract_loader.rs` (modules 130 → 131, resource-v1
-  rejected declarations 246 → 247), `bounds_contract.rs` (tracked bounds
-  modules 5 → 6), `RESERVED_SPELLINGS` 14 → 15.
+  rejected declarations 313 → 314 after the rebase), `bounds_contract.rs`
+  (tracked bounds modules 5 → 6), `RESERVED_SPELLINGS` 16 → 17,
+  `providers/tests/test_contract_load_path.py` (cfl's bounds view), the cfl
+  crate's module index (`src/lib.rs`).
 
 ## 8. Gate
 

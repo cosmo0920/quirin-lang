@@ -12,9 +12,9 @@ MATRIX = REPO / "docs/reviews/r0_3/acceptance_matrix.json"
 CARD = "NULL-TRIAGE-UNRESOLVED-PATHS"
 SOURCE = "docs/reports/null-triage-unresolved-paths/README.md"
 MEASURED = (
-    "Measured by NULL-TRIAGE-UNRESOLVED-PATHS (gateway rules 15q-15u; corpus 66910c10, run a2, binary "
-    "e8141daa; custody byte-identical 915 / 9 / 3,910 ded14632; null 1,115 / 1,423 Safe, 2,365 Unknown, "
-    "18 provisional Unsafe with 29 findings; 9 candidates proved infeasible and removed; candidates 12,804)"
+    "Measured by NULL-TRIAGE-UNRESOLVED-PATHS (gateway rules 15q-15u; corpus 66910c10, run a3 on the rebased tip, "
+    "binary 3ff018d6; custody byte-identical 915 / 9 / 3,910 ded14632; null 1,113 / 1,435 Safe, 2,355 Unknown, "
+    "18 provisional Unsafe with 29 findings; 9 candidates proved infeasible and removed; candidates 12,643)"
 )
 AMEND = (
     " Amended by NULL-TRIAGE-UNRESOLVED-PATHS (" + MEASURED[len("Measured by NULL-TRIAGE-UNRESOLVED-PATHS ("):]

@@ -71,8 +71,8 @@ use crate::legacy_c::C11TranslationUnit;
 use crate::typed_c_ast::kind;
 
 mod ast;
-mod scope;
 mod range;
+mod scope;
 mod walk;
 mod witness;
 
