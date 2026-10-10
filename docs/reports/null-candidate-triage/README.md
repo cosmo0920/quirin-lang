@@ -195,6 +195,12 @@ residual).
 **Wall time** (inside the lock, null and parity selected): corpus 478.9 s →
 481.7 s (+0.6 %), system 64.29 → 64.19 s, slice 29.45 → 29.41 s.
 
+**After the rebase** onto `2a9a0e9a1` (run `a5`, binary `3d3f451f…`, built at
+the rebased tip; `pin --bounds --check` 0 at both revisions, `pin
+--verify-contracts` 0): custody byte-identical on all three routes again, and
+the null rows byte-identical to `a4`'s on all three (corpus `da2affa0…`,
+system `8bf6c920…`, slice `caf38d7b…`); wall 476.0 s, 63.6 s, 29.3 s.
+
 ## 7. Prediction against outcome
 
 | Predicted | Measured |

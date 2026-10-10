@@ -439,7 +439,8 @@ impl BoundsContracts {
             // custody owns; card NULL-CANDIDATE-TRIAGE: nor any clause only
             // the null property reads.
             contract.clauses.retain(|entry| {
-                !(entry.clause.is_null_clause() || matches!(entry.clause, BoundsClause::Live { .. }))
+                !(entry.clause.is_null_clause()
+                    || matches!(entry.clause, BoundsClause::Live { .. }))
             });
             let keep = !(before > 0 && contract.clauses.is_empty());
             if keep {
