@@ -1,7 +1,9 @@
 # NULL-TRIAGE-UNRESOLVED-PATHS
 
 Card **NULL-TRIAGE-UNRESOLVED-PATHS** (wave 48, round 23, 2026-10-11;
-card-high). Base: local `main` at `c77efedbe`. Prediction:
+card-high). Base: local `main` at `c77efedbe`, rebased onto `d7b0882ac`
+(NULL-MEMBER-INVARIANT-SCOPE landed; its `nonnull_` names adopted, section 4
+re-measured on the rebased tip). Prediction:
 [PREDICTION.md](PREDICTION.md), frozen at `aa4e15a84` before any
 implementation code (its one later edit is the clause's rename, below).
 Gateway rules [15q](../../agents/gateway.md#constraint-15q)–[15u](../../agents/gateway.md#constraint-15u);
@@ -10,9 +12,9 @@ contract specification C09.3 ("Exact and inexact paths"); grammar G05e
 (`proof/AuditNullTriagePaths.lean`).
 
 **Rule ids.** The brief assigned `15c`–`15g`, but the router already uses
-`15c`–`15p` (io, effects, buffers, concurrency topics). This card takes
-`15q`–`15u`, leaving `15q`–`15u` free for the parallel card, whose own
-assignment (`14x`–`15b`) also collides at `15a`–`15b`.
+`15a`–`15p` (source-routes, io, effects, buffers, concurrency topics). On
+the integrator's correction this card uses `15q`–`15u`; every id is unique
+across `docs/agents/*.md` (the duplicate-id check returns nothing).
 
 **Clause name.** USER DECISION 2026-10-11, recorded verbatim in C09.3:
 "null_result_range -> this contract element's name a bit of strange so
@@ -62,7 +64,7 @@ candidate), [triage-diff-corpus.json](artifacts/triage-diff-corpus.json)
 (BEFORE → AFTER per candidate), [findings.json](artifacts/findings.json)
 (every finding with path and excerpts from 66910c10).
 
-| Corpus, 139 strong-source candidates | BEFORE `b0` | AFTER `a2` |
+| Corpus, 139 strong-source candidates | BEFORE `b1` | AFTER `a3` |
 | --- | ---: | ---: |
 | finding, `null-on-allocation-failure` | 30 | **24** |
 | finding, `null-on-normal-path` | 3 | **5** |
@@ -126,16 +128,16 @@ its reason):
 system 142,512, slice 51,342; [parity-corpus.json](artifacts/parity-corpus.json),
 [-system](artifacts/parity-system.json), [-slice](artifacts/parity-slice.json)).
 
-**Null property** (BEFORE `b0`, binary `3f2fdc78…` at `c77efedbe` → AFTER
-`a2`, binary `e8141daa…`; [compare-corpus.json](artifacts/compare-corpus.json)):
+**Null property** (BEFORE `b1`, binary `9da12dbe…` at main `d7b0882ac` → AFTER
+`a3`, binary `3ff018d6…` at `3b2cdb636`; [compare-corpus.json](artifacts/compare-corpus.json)):
 
 | | corpus | system | slice |
 | --- | --- | --- | --- |
-| Safe unconditional | 1,115 → 1,115 | 84 → 84 | 71 → 71 |
-| Safe conditional | 1,421 → **1,423** | 125 → 125 | 103 → 103 |
-| Unknown | 2,363 → **2,365** | 245 → 245 | 232 → 232 |
+| Safe unconditional | 1,113 → 1,113 | 84 → 84 | 71 → 71 |
+| Safe conditional | 1,433 → **1,435** | 125 → 125 | 103 → 103 |
+| Unknown | 2,353 → **2,355** | 245 → 245 | 232 → 232 |
 | Unsafe (provisional) | 22 → **18** | 0 | 0 |
-| candidates | 12,809 → **12,804** | unchanged | unchanged |
+| candidates | 12,648 → **12,643** | unchanged | unchanged |
 | findings | 33 → **29** (18 functions) | 0 | 0 |
 
 Corpus row moves: Unsafe → Unknown **5** (`copy_label_values`, `mk_print`,
@@ -148,12 +150,16 @@ further candidates. `cfl_list_size`'s range: `validated` (45 bodies examined,
 0 refuted). System and slice: no searched candidate changes status (slice: 2
 unresolved, now at `flb_log_check`'s result).
 
-**Wall time** (inside the lock, null and parity selected): corpus 504.4 s →
-562.7 s (+11.6 %); system 74.7 → 92.8 s (rerun 83.1 s); slice 33.8 → 45.7 s
-(rerun 43.6 s). The second phase reruns the body per path up to the budgets
-(1,024 paths, 40,000 steps); the host carried a second card's load (load
-average 7–8) during the AFTER runs, so the system and slice figures are upper
-bounds, not a controlled comparison.
+**Wall time** (inside the lock, null and parity selected; `b1` → `a3`):
+corpus 508.8 s → 563.0 s (+10.6 %); system 75.4 → 91.8 s (+22 %); slice
+34.0 → 62.9 s (+85 %). The second phase reruns the body per path up to the
+budgets (1,024 paths, 40,000 steps): the slice's two candidates, both in
+`do_start`, exhaust the 1,024-path budget. The host carried other load (load
+average 7–14) during the AFTER runs, so these are upper bounds, not a
+controlled comparison. The first measurement before the rebase (`b0` at
+`c77efedbe` → `a2`, binary `e8141daa…`) gave the same triage, row moves and
+custody identity (corpus 504.4 → 562.7 s, system 74.7 → 92.8 s, slice
+33.8 → 45.7 s).
 
 ## 5. Prediction against outcome
 
@@ -170,8 +176,8 @@ bounds, not a controlled comparison.
 | Correlated 5–30 | 30 |
 | Loop bound 12–20 | **5** (below: the exact phase stops earlier) |
 | `copy_label_values` infeasible with the range | **unresolved** (loop budget) |
-| Null Safe 2,536–2,560 | 2,538 |
-| Wall +0–10 % | **+11.6 %** corpus (above) |
+| Null Safe 2,536–2,560 (+0 to +24 on the base) | 2,538 at `c77efedbe` (+2); 2,546 → 2,548 on the rebased base (+2) |
+| Wall +0–10 % | **+11.6 %** corpus (`b0` → `a2`), **+10.6 %** (`b1` → `a3`) (above) |
 
 ## 6. Lean
 

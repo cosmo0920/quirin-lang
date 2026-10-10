@@ -43,7 +43,7 @@
     "of_which_every_premise_proved": 1
   },
   "fold": {
-    "meaning": "the run's fold of the null property (card NULL-CANDIDATE-TRIAGE, rules 14t-14v), after every unit and before the rows were written: each declared non-null member's standing (`withdrawn` when a store some analysed unit made is not proved non-null, `partly-validated` when every examined store is proved and the zero-initialised construction premise stays uncovered, `declared-assumption` when no analysed unit stores it); each declared non-null result's standing (rule 13g's fold over the analysed bodies); each declared integer result range's standing (card NULL-TRIAGE-UNRESOLVED-PATHS, rule 15v, the same fold over the bodies' range evidence); the rows a withdrawn declaration demoted; and cross-unit travel: the caller checks an external definition's inferred clauses added, and the candidates an external definition's non-null result proved. Nothing here is read by custody",
+    "meaning": "the run's fold of the null property (card NULL-CANDIDATE-TRIAGE, rules 14t-14v), after every unit and before the rows were written: each declared non-null member's standing (`withdrawn` when a store some analysed unit made is not proved non-null, `partly-validated` when every examined store is proved and the zero-initialised construction premise stays uncovered, `declared-assumption` when no analysed unit stores it); each declared non-null result's standing (rule 13g's fold over the analysed bodies); each declared integer result range's standing (card NULL-TRIAGE-UNRESOLVED-PATHS, rule 15q, the same fold over the bodies' range evidence); the rows a withdrawn declaration demoted; and cross-unit travel: the caller checks an external definition's inferred clauses added, and the candidates an external definition's non-null result proved. Nothing here is read by custody",
     "member_declarations": {
       "rd_kafka_cgrp_s.rkcg_rk": {
         "clauses": {
@@ -118,6 +118,420 @@
       }
     },
     "rows_changed": 28,
+    "scope_declarations": {
+      "rd_kafka_ShareAcknowledgeRequest": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_active_toppar_add": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_active_toppar_del": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_buf_enq0": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_buf_retry": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_bufq_timeout_scan": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_conn_closed": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_connect": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_connect_auth": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_connect_done": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_connect_up": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_consumer_serve": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_destroy_final": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_feature_disable": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_feature_enable": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_features_set": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_fetch_backoff": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_fetch_toppars": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_handle_purge_queues": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_idle_check": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_internal_serve": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_needs_connection": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_produce_toppars": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_resolve": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_retry_bufs_move": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_serve": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_session_reset": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_session_update_epoch": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_session_update_partitions": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_set_api_versions": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_set_nodename": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_set_state": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_share_fetch_session_clear": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_share_fetch_session_leave": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_share_rpc": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_share_session_toppar_add": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_timeout_scan": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_toppar_msgq_scan": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_broker_wakeup": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_buf_new_request0": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_buf_retry": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_bufq_connection_reset": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_bufq_dump": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_bufq_purge": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_dr_implicit_ack": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_features_check": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_fetch_reply_handle_partition_error": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_group_MemberMetadata_consumer_read": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_handle_Produce_metadata_update": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_idemp_request_pid_failed": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_msgbatch_handle_Produce_result": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_op_throttle_time": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_parse_Metadata_update_topic": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_recv": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_req_response": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_sasl_broker_init": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_sasl_broker_term": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_send": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_ssl_hmac": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_toppar_fetch_backoff": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_transport_connect": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_transport_ssl_connect": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafka_waitresp_find": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      },
+      "rd_kafkap_share_leader_changes_apply": {
+        "entries": [
+          "nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)"
+        ],
+        "standing": "in-force: every caller's actual is a call-precondition check"
+      }
+    },
+    "stable_declarations": {
+      "rd_kafka_broker_s.rkb_rk": {
+        "clauses": {
+          "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+          "stores": "unexamined",
+          "whole-object": "declared-assumption"
+        },
+        "failures": [],
+        "fresh_object_stores": 0,
+        "host": "rd_kafka_broker_add",
+        "standing": "declared-assumption",
+        "stores_examined": 0,
+        "stores_not_proved": 0,
+        "whole_object_stores": 0
+      }
+    },
     "travel": {
       "ambiguous_external_definitions": 94,
       "candidates_proved_by_a_cross_unit_result": 0,

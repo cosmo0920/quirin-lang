@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""artifacts.py -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE): the report's artifacts from the b0
-(BEFORE) and a2 (AFTER) runs (private/ntu/, the slice under the shared
+"""artifacts.py -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE): the report's artifacts from the b1
+(BEFORE, main d7b0882ac) and a3 (AFTER, the rebased tip) runs (private/ntu/, the slice under the shared
 prepared attempt). Run from the repository root after triage.py and
 compare.py. The findings artifact carries, per finding, the file, line,
 function, class, NULL condition, path (each step with its original line)
@@ -54,7 +54,7 @@ def copy(source, name):
     shutil.copyfile(source, OUT / name)
 
 
-triage = json.loads((PRIVATE / "a2-triage.json").read_text())
+triage = json.loads((PRIVATE / "a3-triage.json").read_text())
 findings = []
 for entry in triage["findings"]:
     path = entry.get("path") or []
@@ -84,6 +84,6 @@ for entry in triage["findings"]:
     k: triage[k] for k in ("searched", "by_status", "findings_by_class", "reasons", "not_findings")
 }, indent=1, ensure_ascii=False) + "\n")
 for route, name in (("", "corpus"), ("-system", "system"), ("-slice", "slice")):
-    copy(PRIVATE / f"b0{route}-null.summary.json", f"null-summary-before-{name}.json")
-    copy(PRIVATE / f"a2{route}-null.summary.json", f"null-summary-after-{name}.json")
+    copy(PRIVATE / f"b1{route}-null.summary.json", f"null-summary-before-{name}.json")
+    copy(PRIVATE / f"a3{route}-null.summary.json", f"null-summary-after-{name}.json")
 print(len(findings), "findings")

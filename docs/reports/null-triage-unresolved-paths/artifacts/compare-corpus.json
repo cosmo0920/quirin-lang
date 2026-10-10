@@ -3,15 +3,15 @@
  "rows_after": 4921,
  "custody_column_moves": 0,
  "verdicts_before": {
-  "Unknown": 2363,
-  "Safe (unconditional)": 1115,
-  "Safe (conditional)": 1421,
+  "Unknown": 2353,
+  "Safe (unconditional)": 1113,
+  "Safe (conditional)": 1433,
   "Unsafe": 22
  },
  "verdicts_after": {
-  "Unknown": 2365,
-  "Safe (unconditional)": 1115,
-  "Safe (conditional)": 1423,
+  "Unknown": 2355,
+  "Safe (unconditional)": 1113,
+  "Safe (conditional)": 1435,
   "Unsafe": 18
  },
  "moves": {
@@ -33,7 +33,7 @@
   }
  },
  "candidates_by_kind_before": {
-  "memory-field": 9611,
+  "memory-field": 9450,
   "formal": 2467,
   "null-literal": 130,
   "other": 108,
@@ -43,7 +43,7 @@
   "allocation": 10
  },
  "candidates_by_kind_after": {
-  "memory-field": 9611,
+  "memory-field": 9450,
   "formal": 2467,
   "null-literal": 119,
   "other": 108,
