@@ -204,11 +204,34 @@ AFTER / AFTER2: corpus 478.0 / 486.6 / 478.4 s, system 64.2 / 64.6 /
 | grounding provable without changing the walk (1–5) | yes, all five |
 | divergence: §L07 would reject a lower-bound-0 body; decision 2 reports it | yes, stated normatively; `stronger_than_necessary_is_still_sound` |
 | no grade for a body with no terminating path | yes (`bodyGrade_none_iff`; the walk infers nothing) |
-| one module, 309 audits | two scope additions: three modules, **311** audits |
+| one module, 309 audits | two scope additions: two modules, **310** audits |
 
 ## 7. Gate
 
-GATE_SECTION
+Standing gate `g2` at `fe2f93783` (scripts `gate.sh`, `write_gate_json.py`,
+`finish-gate.sh`; every step under the shared lock; logs
+`private/ndqg/gate-g2/` of this worktree; exits in [gate/](gate/),
+[gate.json](gate.json)):
+
+| Step | Exit | Count |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update (`--init --recursive`) | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `scripts/run_test_binaries.py` | 0 | 475 units, 488 summaries; **7,846 passed**, 0 failed, 12 ignored (`private/ndqg/tests-gate-g2/`) |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `scripts/check_lean_audits.py` | 0 | **310** audits |
+| Python suite, docs index check | see [gate/](gate/) (08 and 09; 09a–10c after the matrix regeneration) | |
+
+The first attempt (`g1`, at `355ee64dd`) stopped at clippy, which flagged a
+no-op `.clone()` in the new null control. The control was fixed, and `g1` was
+stopped before its suite ran and is discarded. `providers/` is unchanged, so
+the provider gate is not due. `cargo check --manifest-path providers/Cargo.toml
+--workspace --all-targets --locked` exits 0 (`private/ndqg/provider-check.log`),
+because `providers/conformance` builds the changed crates. The code measured
+as AFTER2 is `10a0bb00c`; the later commits change only that control and the
+records.
 
 ## 8. Follow-ups
 
