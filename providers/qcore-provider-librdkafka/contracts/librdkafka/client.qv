@@ -1012,3 +1012,117 @@ contract {
     ensures normal resource_callback_registry_invoked(stream, stream, _, _);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: Admin-API destructors
+//
+// FIVE TRUSTED ASSUMPTIONS, pinned (C06.2) after reading each body at both
+// audited revisions (`rdkafka_admin.c` is byte-identical at `66910c10` and
+// `046accf6`). Each is the only uncontracted call of its `_free` wrapper
+// (`static void ..._free(void *ptr) { ..._destroy(ptr); }`) and of its
+// `_destroy_array` loop.
+//
+// Each destructor releases its object and everything the object owns, and
+// nothing else; none drops a reference or releases a child it does not own:
+//
+//   * `rd_kafka_AclBinding_destroy` (`:5393-5403`) frees `name`, `principal`
+//     and `host` (each `rd_strdup`ed by `rd_kafka_AclBinding_new0`, `:5202-5227`,
+//     NULL-tested) and destroys `error` (a fresh `rd_kafka_error_new` there,
+//     NULL-tested), then frees the binding.
+//   * `rd_kafka_ConfigResource_destroy` (`:2976-2981`) destroys the embedded
+//     `config` list (initialised with the free callback
+//     `rd_kafka_ConfigEntry_free`, `:2971`: the list owns its entries), frees
+//     `errstr` when set, then frees the resource (its name is in the same
+//     allocation).
+//   * `rd_kafka_NewPartitions_destroy` (`:2516-2519`) destroys the embedded
+//     `replicas` list (`rd_list_init(..., rd_list_destroy_free)`, `:2483`: it
+//     owns its replica lists) and frees the object.
+//   * `rd_kafka_NewTopic_destroy` (`:1950-1955`) destroys the embedded
+//     `replicas` (`:1905`, owning) and `config` (`:1911`,
+//     `rd_kafka_ConfigEntry_free`) lists, frees `topic` (`rd_strdup`) and the
+//     object.
+//   * `rd_kafka_UserScramCredentialAlteration_destroy` (`:6070-6082`) returns
+//     at once on NULL (`nullable`); otherwise frees `user` and, for an upsert,
+//     the `salt` and `password` byte buffers it copied in its constructor
+//     (`:6040-6049`), then the object.
+//
+// The first four dereference their argument unconditionally: `nonnull`. The
+// release is the declared assumption; where `rdkafka_admin.c` is analysed,
+// each body is examined against it (rule 13g's fold) and the report states
+// the standing. NOT CLAIMED: anything about the list elements' own release
+// callbacks beyond their being the library's own functions fixed at
+// construction.
+
+extern fn rd_kafka_AclBinding_destroy(acl_binding: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(acl_binding, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_ConfigResource_destroy(config: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(config, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_NewPartitions_destroy(newps: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(newps, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_NewTopic_destroy(new_topic: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(new_topic, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_UserScramCredentialAlteration_destroy(alteration: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(alteration, nullable);
+    ensures normal resource_return_none();
+};
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: `unit_test_telemetry`
+//
+// ONE TRUSTED ASSUMPTION, pinned after reading the body at both revisions
+// (`rdkafka_telemetry_decode.c:525-786`, byte-identical). It is the only
+// uncontracted call of `unit_test_telemetry_gauge` and `_sum`.
+//
+// The body builds its own client and broker (`rd_calloc`), calls
+// `set_metric_value(rk, rkb)` once with those two objects it allocated
+// (`:651`, the only mention of `set_metric_value` besides its declaration),
+// encodes and decodes a telemetry payload, compares the decoded fields with
+// `expected_name` and `expected_description` (`strncmp`, `strcmp`) and with
+// the scalars (stored in the file-scope `unit_test_data` by
+// `clear_unit_test_data`, `:76-94`, scalars only), frees what it allocated on
+// the passing path, and returns 0 or 1 (`RD_UT_ASSERT` returns 1 early,
+// leaking only its own objects). It keeps no pointer the caller passed and
+// releases nothing the caller owns: every parameter borrowed, the callback a
+// synchronous invocation over two values the callee supplies
+// (`resource_callback_invoked(set_metric_value, _, _)`, C04.19; rule 13y
+// checks it against the body). `rd_kafka_type_t`, the producer metric name
+// and `rd_kafka_telemetry_metric_type_t` are enumerations with no negative
+// enumerator (`rdkafka.h:209-212`, `rdkafka_telemetry_encode.h:53-70`):
+// `u32` (C04.1); `rd_bool_t` is `uint8_t` (`rdtypes.h:49`).
+
+extern fn unit_test_telemetry(rk_type: u32, metric_name: u32, expected_name: ptr<const, u8>, expected_description: ptr<const, u8>, expected_type: u32, is_double: u8, is_per_broker: u8, set_metric_value: fnptr, expected_value_int: i64, expected_value_double: f64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk_type);
+    ensures normal resource_borrowed(metric_name);
+    ensures normal resource_borrowed(expected_name);
+    ensures normal resource_borrowed(expected_description);
+    ensures normal resource_borrowed(expected_type);
+    ensures normal resource_borrowed(is_double);
+    ensures normal resource_borrowed(is_per_broker);
+    ensures normal resource_borrowed(set_metric_value);
+    ensures normal resource_callback_invoked(set_metric_value, _, _);
+    ensures normal resource_borrowed(expected_value_int);
+    ensures normal resource_borrowed(expected_value_double);
+    ensures normal resource_return_none();
+};

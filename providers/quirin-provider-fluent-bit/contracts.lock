@@ -328,6 +328,38 @@
       ]
     },
     {
+      "function": "flb_hash_table_del",
+      "module": "fluent_bit/hash_table_publication.qv",
+      "contract_sha256": "5c4d1c8c679ba55ec2164fdb43f56bc0859fd28a391d1bb3d24f0b9216731c79",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_hash_table.h",
+              "kind": "declaration",
+              "declaration_sha256": "7b5179456a0b6c2836de05f769f785bb3b816b6ff9ef70548cb74a36117eec67"
+            },
+            {
+              "path": "src/flb_hash_table.c",
+              "kind": "definition",
+              "declaration_sha256": "7b5179456a0b6c2836de05f769f785bb3b816b6ff9ef70548cb74a36117eec67",
+              "body_sha256": "5339ab6f832032bafabde1d1dc1dd1f346e5c4cf8ebe39841eeac76da9fd9d57"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input",
       "module": "fluent_bit/input_instance.qv",
       "contract_sha256": "8e95d1e8e07a23c78eec5410c541f6c0888549a0b56f070b708259c2535833b2",

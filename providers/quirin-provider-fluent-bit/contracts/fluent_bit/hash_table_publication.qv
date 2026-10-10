@@ -93,3 +93,33 @@ contract {
     ensures normal resource_borrowed(val_size);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: `flb_hash_table_del`
+//
+// ONE TRUSTED ASSUMPTION, pinned after reading the body at both revisions
+// (`src/flb_hash_table.c:605-674` and its `static inline`
+// `flb_hash_table_entry_free`, `:85-97`, byte-identical at `66910c10` and
+// `046accf6`). It is the only uncontracted call of the tail-pause slice's
+// `flb_tail_scan_unregister_aged_out_inode` and
+// `flb_tail_scan_unregister_ignored_file_size` (`plugins/in_tail/tail_scan.c`).
+//
+// It returns -1 for a NULL or empty `key` or a hash failure; otherwise it
+// finds the entry whose key equals `key` in `ht`'s chain and frees it through
+// `flb_hash_table_entry_free`, which unlinks it from both lists, decrements
+// the counters, frees the table's own key copy, frees `entry->val` only when
+// `entry->val_size > 0` (a copy the table allocated in `flb_hash_table_add`'s
+// copy arm) and frees the entry. A value the caller added by reference
+// (`val_size == 0`, `entry->val_size == -1`) is never freed (the reading of
+// `flb_hash_table_add` above). So the call releases only storage the table
+// itself allocated and moves no obligation of the caller: `ht` and `key`
+// borrowed, the result a status. NOT CLAIMED: the end of the table's
+// retention of a referenced value (the same unmodelled publication as
+// `flb_hash_table_add`'s, O00 B03/R13).
+
+extern fn flb_hash_table_del(ht: ptr<mut, u8>, key: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ht);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_return_none();
+};

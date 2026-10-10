@@ -111,3 +111,23 @@ contract {
     ensures normal resource_released(cmt, nonnull);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: `cmt_atomic_initialize`
+//
+// ONE TRUSTED ASSUMPTION, pinned after reading every definition at both
+// revisions. It is the only uncontracted call of `cmt_initialize`
+// (`cmetrics.c:38-41`). The audited build compiles `cmt_atomic_clang.c`,
+// whose definition (`:22-25`) is `return 0;`, and its body is Safe there (W4
+// checks the declaration, rule 13g). The other platform definitions touch
+// only file-scope state: `cmt_atomic_gcc.c:22-25` returns 0,
+// `cmt_atomic_generic.c:45-54` runs `pthread_once` over its static bootstrap
+// and reads a static status, and `cmt_atomic_msvc.c` defines it twice under
+// `_WIN64`: one runs `InitOnceExecuteOnce` over its static bootstrap
+// (`:52-63`), the other returns 0 (`:128-131`). No parameter, no custody:
+// neutral.
+
+extern fn cmt_atomic_initialize() -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

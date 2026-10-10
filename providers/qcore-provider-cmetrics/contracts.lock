@@ -62,6 +62,62 @@
       ]
     },
     {
+      "function": "cmt_atomic_initialize",
+      "module": "cmetrics/context_lifetime.qv",
+      "contract_sha256": "768c776c2954d435fcf744bfa0991dfe8d5e17ed948a41b5eb12ffe884d5b9cb",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_atomic.h",
+              "kind": "declaration",
+              "declaration_sha256": "9d811b5a7e8c220f341f6a6161f9dc3278cc7fe285e034d1895924c427910e28"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_clang.c",
+              "kind": "definition",
+              "declaration_sha256": "dc3aa521f30418d31f5605b0f900519160f5d71b582b42ca3ce3c7a829d00a14",
+              "body_sha256": "20e71c00b9e851b51487acb135b4ef4e57ba6a965874b9c0ef4e0634c3efa6be"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_gcc.c",
+              "kind": "definition",
+              "declaration_sha256": "dc3aa521f30418d31f5605b0f900519160f5d71b582b42ca3ce3c7a829d00a14",
+              "body_sha256": "20e71c00b9e851b51487acb135b4ef4e57ba6a965874b9c0ef4e0634c3efa6be"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_generic.c",
+              "kind": "definition",
+              "declaration_sha256": "dc3aa521f30418d31f5605b0f900519160f5d71b582b42ca3ce3c7a829d00a14",
+              "body_sha256": "8c9bb77cba868343230c3677adafbd952f11e267ed1f08d9069a28bda5f1833b"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "9d811b5a7e8c220f341f6a6161f9dc3278cc7fe285e034d1895924c427910e28",
+              "body_sha256": "20e71c00b9e851b51487acb135b4ef4e57ba6a965874b9c0ef4e0634c3efa6be"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "9d811b5a7e8c220f341f6a6161f9dc3278cc7fe285e034d1895924c427910e28",
+              "body_sha256": "623e8cdf9126753091330ada97874f27bf2324c776e68e33bac4941ea102ea05"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cmt_atomic_load",
       "module": "cmetrics/metric_values.qv",
       "contract_sha256": "f4d2a0186eefe1c1b3c62ce518258737a9f10a7f3c4476c6d4e9a0c03e909bb2",

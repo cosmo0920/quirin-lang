@@ -219,6 +219,38 @@
       ]
     },
     {
+      "function": "mk_fifo_queue_destroy",
+      "module": "monkey/memory.qv",
+      "contract_sha256": "80d78ceb3d95ef4bd5e4ea82848e46b622d9ac3e3d7d70a1b8a726994d053155",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_fifo.h",
+              "kind": "declaration",
+              "declaration_sha256": "01925ce6f37e95321bf4cd256f26bb319422aac8de1369ace8804e90dc816c87"
+            },
+            {
+              "path": "lib/monkey/mk_server/mk_fifo.c",
+              "kind": "definition",
+              "declaration_sha256": "01925ce6f37e95321bf4cd256f26bb319422aac8de1369ace8804e90dc816c87",
+              "body_sha256": "526a470329228761a2041db87b3230dca2a900439c8086afd3fe6f6551bf38cc"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_list_add",
       "module": "monkey/intrusive_list.qv",
       "contract_sha256": "748bf3d90bd350fe94aeb48d10bcd5efab02f4cbbec9c2093d113352288bf493",

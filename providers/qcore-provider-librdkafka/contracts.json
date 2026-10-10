@@ -2,9 +2,9 @@
   "schema_version": 1,
   "plugin_id": "qcore.librdkafka",
   "contracts": {
-    "contracts/librdkafka/cjson.qv": "2d546663427fd55d8092551e2ab2b4d33889755303ee650642b89058cfef6685",
-    "contracts/librdkafka/client.qv": "8d99dcf0f31eff12cd1ca728055703bce2b5427b225867030da9e61df2d00485",
-    "contracts/librdkafka/kafka_mem.qv": "364b1fb1d83d7180d46a49ce22b6aef2361fb3906bd92f274710d97a24203f49",
+    "contracts/librdkafka/cjson.qv": "7fbb1d74e7afb8143d4800aa8730d22b982f9f0f44e14737c4883bc6e63c5aed",
+    "contracts/librdkafka/client.qv": "9673eec1b31927d9ceaae4c297e5f5e70cbfb65e095f8da9a059ea459530c2ac",
+    "contracts/librdkafka/kafka_mem.qv": "dc42d022567aa1676a7212383f9d1f7185cf3aabb69a43e0aca5c297b7bbf369",
     "contracts/librdkafka/lz4_stream.qv": "0b3c92fc7476d1f0a0d11d5954a9445882c66897d2409eda55e9efbd6db8ce74",
     "contracts/librdkafka/memory.qv": "62b9af904e60ecffabd38d5695c75bc3de922881c5d6af842044e304321a8441",
     "contracts/librdkafka/null_deref.qv": "ca7c24c33ca7d73225c6bf7d5b717535883df39a23da4471ed78876f8ab26edb",

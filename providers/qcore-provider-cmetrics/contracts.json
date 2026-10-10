@@ -2,7 +2,7 @@
   "schema_version": 1,
   "plugin_id": "qcore.cmetrics",
   "contracts": {
-    "contracts/cmetrics/context_lifetime.qv": "8e500bed10c8fb9ca4be6345f07ed2f0ffd058c1c213890e4138be4ef0f999db",
+    "contracts/cmetrics/context_lifetime.qv": "1ba76df850e122ae7a37a529594f94ad2257c31de5383e0fe106e063c2731014",
     "contracts/cmetrics/counter_reset.qv": "0ac6d629272eea0c892f7b53527e051af73f3452b98f082f24e6ae0719a3d37c",
     "contracts/cmetrics/metric_values.qv": "c3db21d15d98e12fdf11fe6ffe3de98f674c94625256a94b3270f9db73be1a43",
     "contracts/cmetrics/mpack_utils.qv": "c0c2c64b6b569303a24ecffd7c257641668747417851f2d12825aa13d13a93a2",

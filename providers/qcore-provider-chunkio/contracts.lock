@@ -255,6 +255,108 @@
           ]
         }
       ]
+    },
+    {
+      "function": "cio_file_hash",
+      "module": "chunkio/chunk_residency.qv",
+      "contract_sha256": "036466a8031f7c34cecc91d580b2b48c3ce2ea38b7221eb3451272227008ffb0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_file.h",
+              "kind": "declaration",
+              "declaration_sha256": "2eb1dc4fb46a2b36c9fea58e422acefb2252f3ff9e72c0a26ae9316ff4981530"
+            },
+            {
+              "path": "lib/chunkio/src/cio_file.c",
+              "kind": "definition",
+              "declaration_sha256": "2eb1dc4fb46a2b36c9fea58e422acefb2252f3ff9e72c0a26ae9316ff4981530",
+              "body_sha256": "fdea50945fb25f4fe6a93efe7bc7c4479421e8bfc45fd88cbc62ba4c0a5b12f1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cio_file_native_get_size",
+      "module": "chunkio/chunk_sizes.qv",
+      "contract_sha256": "9dbc57dd640362c445cd70a723d5327688920c6cadc51f5f5f860969a3be2212",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_file_native.h",
+              "kind": "declaration",
+              "declaration_sha256": "5897114de5ed6f61694c0fd225faa689c421693f913c10b0d61945d15aa65f62"
+            },
+            {
+              "path": "lib/chunkio/src/cio_file_unix.c",
+              "kind": "definition",
+              "declaration_sha256": "5897114de5ed6f61694c0fd225faa689c421693f913c10b0d61945d15aa65f62",
+              "body_sha256": "2b16ad60b5e651686ca6f16e6ff52d0d430b89d79891e8ff78b1e935649d3fd6"
+            },
+            {
+              "path": "lib/chunkio/src/cio_file_win32.c",
+              "kind": "definition",
+              "declaration_sha256": "5897114de5ed6f61694c0fd225faa689c421693f913c10b0d61945d15aa65f62",
+              "body_sha256": "3ae6bddbbebb63d5bbe80e97c5641357a8500db423c4056342a06450680f2fe9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cio_stream_size_chunks_up",
+      "module": "chunkio/chunk_sizes.qv",
+      "contract_sha256": "e2312d911b12a290e0f22fba6a664c31bb6aad96359a45cc00121e5c9bc03c78",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/include/chunkio/cio_stream.h",
+              "kind": "declaration",
+              "declaration_sha256": "9598fdf88e00303d8325fcb6294ff8190bd9b488c41289aa41092adf786ebd81"
+            },
+            {
+              "path": "lib/chunkio/src/cio_stream.c",
+              "kind": "definition",
+              "declaration_sha256": "9598fdf88e00303d8325fcb6294ff8190bd9b488c41289aa41092adf786ebd81",
+              "body_sha256": "3c6225769486128e3cca80a7fb32f2698bc99e25bd9d838c08bc6566f3457244"
+            }
+          ]
+        }
+      ]
     }
   ],
   "flexible": []

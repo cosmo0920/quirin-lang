@@ -455,3 +455,34 @@ contract {
     ensures normal resource_slot_moved(buf, nullable);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: `cfl_list_size`
+//
+// ONE TRUSTED ASSUMPTION, pinned after reading the body at both revisions
+// (`lib/cfl/include/cfl/cfl_list.h:200-212`, byte-identical). It is the only
+// uncontracted call of cmetrics' `count_metrics`
+// (`cmt_encode_cloudwatch_emf.c:366-…`) and `is_metric_empty`
+// (`cmt_encode_opentelemetry.c:1536-1547`).
+//
+//     static inline int cfl_list_size(struct cfl_list *head)
+//     {
+//         int ret = 0;
+//         struct cfl_list *it;
+//         if (head == NULL) { return 0; }
+//         for (it = head->next; it != head; it = it->next, ret++);
+//         return ret;
+//     }
+//
+// It reads the links and returns a count: neutral. The definition is
+// `static inline` in the header, so every unit that includes it analyses the
+// body and checks this declaration against it (rule 13g). The null
+// property's range for the same function is a separate bounds declaration
+// (`cfl/null_deref.qv`, card NULL-TRIAGE-UNRESOLVED-PATHS); this one states
+// custody only.
+
+extern fn cfl_list_size(head: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(head);
+    ensures normal resource_return_none();
+};

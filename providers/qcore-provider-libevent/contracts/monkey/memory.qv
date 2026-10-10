@@ -25,3 +25,35 @@ extern fn mk_mem_alloc(size: usize) -> ptr<mut, u8> contract inherit libc::mallo
 extern fn mk_mem_alloc_z(size: usize) -> ptr<mut, u8> contract inherit libc::malloc;
 
 extern fn mk_mem_free(ptr: ptr<mut, u8>) -> unit contract inherit libc::free;
+
+// Card W45-CALLEE-CASCADE-RESIDUAL round 3: `mk_fifo_queue_destroy`.
+//
+// ONE TRUSTED ASSUMPTION, pinned (C06.2) after reading the body at both
+// audited revisions (`lib/monkey/mk_server/mk_fifo.c:212-219`, byte-identical
+// at `66910c10` and `046accf6`). It is the only uncontracted call of
+// `mk_fifo_queue_id_destroy` and `mk_fifo_queue_destroy_all` (`:221-248`).
+//
+//     int mk_fifo_queue_destroy(struct mk_fifo *ctx, struct mk_fifo_queue *q)
+//     {
+//         (void) ctx;
+//         mk_list_del(&q->_head);
+//         mk_mem_free(q);
+//         return 0;
+//     }
+//
+// It unlinks the queue from the list it is on (`ctx->queues`,
+// `mk_fifo_queue_create` links it there) and frees it: after the call no list
+// holds the object and the object is released, so `resource_released(q,
+// nonnull)` (it dereferences `q` unconditionally). The queue's `data` is the
+// creator's pointer, kept and never freed by the queue (`mk_fifo.h:61-73`):
+// not released here. `ctx` is not read (`(void) ctx`); the result is always 0.
+// NOT CLAIMED: that `q` is on `ctx`'s list, or anything about a reader still
+// holding the queue's callback.
+
+extern fn mk_fifo_queue_destroy(ctx: ptr<mut, u8>, q: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_released(q, nonnull);
+    ensures normal resource_return_none();
+};

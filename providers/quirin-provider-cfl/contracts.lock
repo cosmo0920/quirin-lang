@@ -262,6 +262,33 @@
       ]
     },
     {
+      "function": "cfl_list_size",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "c65ed775ff578e6d6b8104f582ced8bc2a9769f33ccaaede9f32d4ff3fd5bf0e",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_list.h",
+              "kind": "definition",
+              "declaration_sha256": "cc6ffe9c620e78f9700842dec639f2597d3f36d4d912eefba291d70dc9d8a59e",
+              "body_sha256": "0b3d1f53ea97a07d16bf027616b85e507094370b0df912051a0f2d384c76a53f"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cfl_sds_cat_safe",
       "module": "cfl/sds_lifetime.qv",
       "contract_sha256": "e99dd5240e3a294d2925c9784b0ae8bd05ad06464b6e66c3e2fdc9a7cd190a73",

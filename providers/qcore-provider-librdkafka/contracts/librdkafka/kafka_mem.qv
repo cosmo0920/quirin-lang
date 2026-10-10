@@ -222,3 +222,36 @@ contract {
     ensures normal resource_borrowed(populate_racks);
     ensures normal resource_return_owned(nullable);
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: two callees whose own bodies
+// ## are Safe in their home units
+//
+// TWO TRUSTED ASSUMPTIONS, pinned after reading each body at both revisions
+// (byte-identical). Each is the only uncontracted call of one function in
+// another unit, and each body is analysed in its home unit, where W4 checks
+// the declaration against it (rule 13g):
+//
+//   * `rd_bytes_hash(bytes, len)` (`rdmap.c:246-254`) reads `len` bytes of
+//     `bytes` into a djb2 hash and returns it: neutral. Caller:
+//     `rd_kafka_Uuid_hash` (`rdkafka.c`).
+//   * `rd_kafka_mem_calloc(rk, num, size)` (`rdkafka.c:7127-7129`) is `return
+//     rd_calloc(num, size);`: `rk` unused, the result `rd_calloc`'s (declared
+//     by inheriting `libc::calloc`, an owned nullable result). Caller:
+//     `LZ4_createStreamHC` (`lz4hc.c`, through `ALLOC_AND_ZERO`).
+
+extern fn rd_bytes_hash(bytes: ptr<mut, u8>, len: usize) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(bytes);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_kafka_mem_calloc(rk: ptr<mut, u8>, num: usize, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(num);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};

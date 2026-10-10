@@ -95,3 +95,37 @@ contract {
     ensures normal resource_borrowed(ch);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: two size readers whose bodies
+// ## are Safe in their home units
+//
+// TWO TRUSTED ASSUMPTIONS, pinned after reading every definition at both
+// revisions (byte-identical). Each body is analysed in its home unit, where
+// W4 checks the declaration against it (rule 13g).
+//
+//   * `cio_file_native_get_size(cf, file_size)` (`cio_file_unix.c:317-341`;
+//     the Windows definition, `cio_file_win32.c:366-381`, is not built here
+//     and does the same through its handle or path helpers) calls `fstat` on
+//     an open descriptor, else `stat` on `cf->path`, and stores the size
+//     through `file_size` when it is not NULL; it returns `CIO_OK` or
+//     `CIO_ERROR`. Neutral. Caller: `cio_file_real_size` (`cio_file.c:576-…`).
+//   * `cio_stream_size_chunks_up(st)` (`cio_stream.c:258-276`) walks
+//     `st->chunks_up` and sums `cio_chunk_get_content_size` (declared above)
+//     of each chunk: neutral. Caller: `flb_input_chunk_total_size`
+//     (`src/flb_input_chunk.c:2947-2955`, itself declared neutral in
+//     `quirin-provider-fluent-bit`'s `input_chunk_total_size.qv`).
+
+extern fn cio_file_native_get_size(cf: ptr<mut, u8>, file_size: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cf);
+    ensures normal resource_borrowed(file_size);
+    ensures normal resource_return_none();
+};
+
+extern fn cio_stream_size_chunks_up(st: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(st);
+    ensures normal resource_return_none();
+};
