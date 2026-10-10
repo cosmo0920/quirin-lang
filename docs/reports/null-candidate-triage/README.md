@@ -1,8 +1,8 @@
 # NULL-CANDIDATE-TRIAGE
 
 Card **NULL-CANDIDATE-TRIAGE** (wave 48, round 22, 2026-10-10; card-high).
-Base: local `main` at `cc7a20c3e`. Prediction: [PREDICTION.md](PREDICTION.md),
-frozen at `0ed560fa9` before any implementation code. Gateway rules
+Base: local `main` at `cc7a20c3e`, rebased onto `2a9a0e9a1` (NULL-DEREF-QTT-GROUNDING landed; custody and null outputs byte-identical across it, re-measured on the rebased tip, section 6). Prediction: [PREDICTION.md](PREDICTION.md),
+frozen at `a4a878764` before any implementation code. Gateway rules
 [14r](../../agents/gateway.md#constraint-14r)–[14w](../../agents/gateway.md#constraint-14w);
 contract specification
 [C09.3](../../QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref)
