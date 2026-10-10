@@ -362,5 +362,6 @@ import QCore.CallbackContracts
 import QCore.NullDeref
 import QCore.NullDerefGrade
 import QCore.DerefDecomposition
+import QCore.NullTriage
 
 /-! The executable formal core of QCore-C revision 0.1. -/

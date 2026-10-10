@@ -66,3 +66,59 @@ contract {
     requires bounds_contract_v1;
     quant null-deref #rkmessage;
 };
+
+// Card NULL-CANDIDATE-TRIAGE (contract specification C09.3, grammar G05e,
+// gateway rule 14t): declared non-null members. `requires
+// null_member_nonnull(TAG, FIELD);` says every `struct TAG`'s FIELD is
+// non-null wherever it is read. It is a type-level declaration; each is
+// hosted on its record's constructor, which stores the member. It is checked
+// against every store the analysed units make to the member (a store not
+// proved non-null withdraws it for the whole run, and every null row that
+// relied on it is published Unknown); the zero-initialised object a
+// constructor fills in before its first store is a listed premise
+// (`construction`), so these declarations are never `validated`. Ranked by
+// the memory-field candidates each discharges (NULL-SAFETY-PROPERTY's
+// candidates.json.gz); every store was read at 66910c10 and 046accf6.
+// Not declared on measured grounds: rd_kafka_buf_s.rkbuf_rkb (3,474
+// candidates; rdkafka_broker.c resets it to NULL after a response is
+// handled) and msetr_rkb (stores rkbuf->rkbuf_rkb).
+
+// rdkafka_broker.c: rd_kafka_broker_add stores `rkb->rkb_rk = rk` after
+// reading rk's configuration; rdkafka_feature.c's unit test stores `&rk`.
+extern fn rd_kafka_broker_add(rk: ptr<mut, u8>, source: i32, proto: i32, name: ptr<const, u8>, port: u16, nodeid: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(rd_kafka_broker_s, rkb_rk);
+};
+
+// rdkafka_partition.c: rd_kafka_toppar_new0 stores `rktp->rktp_rkt =
+// rd_kafka_topic_keep(rkt)`, which dereferences rkt first.
+extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(rd_kafka_toppar_s, rktp_rkt);
+};
+
+// rdkafka_topic.c: rd_kafka_topic_new0 stores `rkt->rkt_topic =
+// rd_kafkap_str_new(topic, -1)` and `rkt->rkt_rk = rk`.
+extern fn rd_kafka_topic_new0(rk: ptr<mut, u8>, topic: ptr<const, u8>, conf: ptr<mut, u8>, existing: ptr<mut, u8>, do_lock: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(rd_kafka_topic_s, rkt_rk);
+    requires null_member_nonnull(rd_kafka_topic_s, rkt_topic);
+};
+
+// rdkafka_cgrp.c: rd_kafka_cgrp_new stores `rkcg->rkcg_rk = rk`.
+extern fn rd_kafka_cgrp_new(rk: ptr<mut, u8>, group_protocol: i32, group_id: ptr<const, u8>, client_id: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(rd_kafka_cgrp_s, rkcg_rk);
+};
+
+// rdkafka_transport.c: rd_kafka_transport_new stores `rktrans->rktrans_rkb
+// = rkb`.
+extern fn rd_kafka_transport_new(rkb: ptr<mut, u8>, s: i32, errstr: ptr<mut, u8>, errstr_size: usize) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(rd_kafka_transport_s, rktrans_rkb);
+};

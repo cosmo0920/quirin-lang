@@ -33,7 +33,7 @@ use qcore_core::null_triage::{Condition, FindingClass, Triage};
 use qcore_schemas::contract::ResourceReturnMode;
 use serde_json::Value;
 
-use super::ast::{self, callee_name, is_pointer, kids, render, ty};
+use super::ast::{self, callee_name, kids, render, ty};
 use super::walk::{Entry, Env};
 use crate::typed_c_ast::kind;
 
@@ -41,6 +41,8 @@ use crate::typed_c_ast::kind;
 const MAX_RUNS: usize = 1024;
 /// Nodes one path may visit.
 const MAX_STEPS: usize = 40_000;
+/// Iterations one loop may run on one path.
+const LOOP_BOUND: usize = 64;
 
 /// One step a reviewer reads.
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
@@ -251,6 +253,11 @@ fn strip(node: &Value) -> &Value {
     node
 }
 
+/// A C pointer type, function pointers included (`int (*)(void)`).
+fn is_pointer(spelled: &str) -> bool {
+    ast::is_pointer(spelled) || spelled.replace(' ', "").contains("(*)")
+}
+
 fn present(node: &Value) -> bool {
     node.as_object().is_some_and(|o| o.contains_key("kind"))
 }
@@ -340,6 +347,22 @@ fn compare(op: &str, a: i128, b: i128) -> Option<bool> {
 }
 
 impl<'a, 'e> Run<'a, 'e> {
+    /// A C integer type's range, an enumeration typedef's included.
+    fn int_range(&self, spelled: &str) -> Option<(i128, i128)> {
+        int_range(spelled).or_else(|| {
+            let bare = spelled
+                .split_whitespace()
+                .filter(|w| !matches!(*w, "const" | "volatile"))
+                .collect::<Vec<_>>()
+                .join(" ");
+            self.env
+                .unit
+                .enum_typedefs
+                .contains(&bare)
+                .then_some((i128::from(i32::MIN), i128::from(i32::MAX)))
+        })
+    }
+
     fn tick(&mut self) -> R<()> {
         self.steps += 1;
         if self.steps > MAX_STEPS {
@@ -446,7 +469,7 @@ impl<'a, 'e> Run<'a, 'e> {
                 V::Ptr(P::Opaque(Origin::Memory(text.to_owned()), constrained), id)
             }
         } else {
-            match int_range(spelled) {
+            match self.int_range(spelled) {
                 Some(range) => V::Int(S::Atom(self.new_atom(Some(range), constrained))),
                 None => V::Int(S::Opaque(format!("a value of type `{spelled}`"))),
             }
@@ -896,7 +919,7 @@ impl<'a, 'e> Run<'a, 'e> {
                             // the atom's range keeps it; any other is a new
                             // value of the target's range, its source
                             // constrained.
-                            let target = int_range(ty(node));
+                            let target = self.int_range(ty(node));
                             match (self.atoms[atom].range, target) {
                                 (Some((lo, hi)), Some((tlo, thi))) if tlo <= lo && hi <= thi => {
                                     V::Int(S::Atom(atom))
@@ -1153,7 +1176,7 @@ impl<'a, 'e> Run<'a, 'e> {
         let line = self.line(node);
         let id = self.fresh_id();
         if !is_pointer(ty(node)) {
-            return Ok(match int_range(ty(node)) {
+            return Ok(match self.int_range(ty(node)) {
                 Some(range) => V::Int(S::Atom(self.new_atom(Some(range), false))),
                 None => V::Int(S::Opaque(format!("a result of type `{}`", ty(node)))),
             });
@@ -1431,8 +1454,8 @@ impl<'a, 'e> Run<'a, 'e> {
         lhs: &Value,
         rhs: &Value,
         op: &str,
-        (p, _): (P, usize),
-        (q, _): (P, usize),
+        (p, pid): (P, usize),
+        (q, qid): (P, usize),
     ) -> R<bool> {
         let line = self.line(node);
         let (left, right) = (render(strip(lhs)), render(strip(rhs)));
@@ -1444,20 +1467,42 @@ impl<'a, 'e> Run<'a, 'e> {
         if left == right {
             return Ok(op == "==");
         }
-        let constrained = |p: &P, text: &str, decided: &BTreeSet<String>| {
-            matches!(p, P::Opaque(_, true) | P::Uninit) || decided.contains(text)
-        };
-        if constrained(&p, &left, &self.decided_texts) || constrained(&q, &right, &self.decided_texts)
+        if matches!(p, P::Opaque(_, true) | P::Uninit) || matches!(q, P::Opaque(_, true) | P::Uninit)
         {
             return Err(End::Unresolved(format!(
                 "a correlated pointer comparison at line {line}"
             )));
         }
-        // Two distinct, unconstrained pointer values may be equal or not.
-        let key = render(node);
+        // A side's identity: its value (a read of a variable or of memory)
+        // or, for an address it forms afresh, its spelling.
+        let identity = |side: &Value, id: usize| {
+            let side = strip(side);
+            let formed = (kind(side) == "UnaryOperator" && side["opcode"] == "&")
+                || matches!(kind(side), "StringLiteral" | "PredefinedExpr");
+            if formed {
+                render(side)
+            } else {
+                format!("{}#{id}", render(side))
+            }
+        };
+        let key = format!("{} {op} {}", identity(lhs, pid), identity(rhs, qid));
         if let Some((_, arm)) = self.decided.get(&key) {
             return Ok(*arm);
         }
+        // A value compared before with a different value: correlated.
+        let compared = |side: &str| {
+            self.decided
+                .keys()
+                .any(|k| k.contains(" == ") || k.contains(" != "))
+                && self.decided.keys().any(|k| k.split(' ').any(|w| w == side))
+        };
+        let (lk, rk) = (identity(lhs, pid), identity(rhs, qid));
+        if (lk.contains('#') && compared(&lk)) || (rk.contains('#') && compared(&rk)) {
+            return Err(End::Unresolved(format!(
+                "a correlated pointer comparison at line {line}"
+            )));
+        }
+        // Two distinct, unconstrained pointer values may be equal or not.
         let prefer = self.steer.unwrap_or(false);
         let arm = self.decide(prefer)?;
         self.note(node, arm);
@@ -1742,7 +1787,7 @@ impl<'a, 'e> Run<'a, 'e> {
         body_first: bool,
     ) -> R<Flow> {
         let mut first = true;
-        for _ in 0..256 {
+        for _ in 0..LOOP_BOUND {
             if !(body_first && first) {
                 if let Some(cond) = cond {
                     self.steer = Some(self.holds_target(body));
@@ -1789,7 +1834,9 @@ impl<'a, 'e> Run<'a, 'e> {
                         if present_kids.len() != 2 {
                             return Err(End::Unresolved("a case range".into()));
                         }
-                        let Some(k) = literal(present_kids[0]) else {
+                        let Some(k) = literal(present_kids[0]).or_else(|| {
+                            ast::constant_value(present_kids[0], &self.env.unit.enum_values)
+                        }) else {
                             return Err(End::Unresolved("a case value".into()));
                         };
                         cases.push((index, k));
@@ -2022,7 +2069,7 @@ pub(super) fn search(
     let formals = kids(definition)
         .filter(|c| kind(c) == "ParmVarDecl")
         .collect::<Vec<_>>();
-    let tracked = &tracked_variables(definition, body);
+    let tracked = &tracked_variables(definition, body, &env.unit.enum_typedefs);
     let mut stack: Vec<Vec<bool>> = vec![Vec::new()];
     let mut runs = 0;
     let mut unresolved: Option<String> = None;
@@ -2066,7 +2113,7 @@ pub(super) fn search(
                     _ => V::Ptr(P::Opaque(Origin::Formal(name.clone()), false), fresh),
                 }
             } else {
-                match int_range(spelled) {
+                match run.int_range(spelled) {
                     Some(range) => V::Int(S::Atom(run.new_atom(Some(range), false))),
                     None => V::Int(S::Opaque(format!("a formal of type `{spelled}`"))),
                 }
@@ -2148,7 +2195,11 @@ pub(super) fn search(
 
 /// The formals and automatic locals the search follows as values: pointers
 /// and integers whose address the body never takes, not `volatile`.
-fn tracked_variables(definition: &Value, body: &Value) -> BTreeSet<String> {
+fn tracked_variables(
+    definition: &Value,
+    body: &Value,
+    enums: &BTreeSet<String>,
+) -> BTreeSet<String> {
     fn locals<'v>(node: &'v Value, out: &mut Vec<&'v Value>) {
         if kind(node) == "VarDecl" {
             out.push(node);
@@ -2168,7 +2219,8 @@ fn tracked_variables(definition: &Value, body: &Value) -> BTreeSet<String> {
         .filter(|decl| !matches!(decl["storageClass"].as_str(), Some("static" | "extern")))
         .filter(|decl| {
             let spelled = ty(decl);
-            !spelled.contains("volatile") && (is_pointer(spelled) || int_range(spelled).is_some())
+            !spelled.contains("volatile")
+                && (is_pointer(spelled) || int_range(spelled).is_some() || enums.contains(spelled))
         })
         .filter_map(|decl| decl["id"].as_str())
         .filter(|id| !taken.contains(*id))

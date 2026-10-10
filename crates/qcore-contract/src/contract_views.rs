@@ -881,6 +881,12 @@ fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
         && declaration.clauses.iter().all(|clause| {
             (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
                 || clause.kind == "quant null-deref"
+                // Card NULL-CANDIDATE-TRIAGE: the null property's member and
+                // result declarations (G05e), which custody never reads.
+                || (clause.kind == "requires"
+                    && clause.expression.starts_with("null_member_nonnull("))
+                || (clause.kind == "normal"
+                    && clause.expression.replace(' ', "") == "null_result_nonnull()")
         });
     if only {
         Ok(())
@@ -1279,6 +1285,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         function: "flb_input_chunk_get_name",
         detailed: "fluent_bit/null_deref.qv",
         view: "fluent_bit/input_chunk_name.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
+    // Card NULL-CANDIDATE-TRIAGE (rule 14t): the toppar constructor hosts a
+    // declared non-null member beside its resource-v1 declaration.
+    RegisteredRelation {
+        function: "rd_kafka_toppar_new0",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
         check: RelationCheck::NullDerefBeside,
         assumed_premises: &[],
         finding: None,

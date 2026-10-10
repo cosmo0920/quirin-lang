@@ -171,6 +171,9 @@ pub(super) struct Unit {
     /// Card NULL-CANDIDATE-TRIAGE: each complete `struct TAG`'s members in
     /// declaration order (an initializer list's positions).
     pub(super) records: BTreeMap<String, Vec<String>>,
+    /// Card NULL-CANDIDATE-TRIAGE: typedef names of enumerations (an
+    /// integer type whose spelling the AST may leave as the typedef).
+    pub(super) enum_typedefs: BTreeSet<String>,
 }
 
 const NO_RETURN_BUILTINS: [&str; 12] = [
@@ -212,6 +215,15 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
         "EnumDecl" => read_enum(unit, decl),
         "RecordDecl" => read_record(unit, decl),
         "TypedefDecl" => {
+            let underlying = decl["type"]["desugaredQualType"]
+                .as_str()
+                .or_else(|| decl["type"]["qualType"].as_str())
+                .unwrap_or("");
+            if underlying.starts_with("enum ")
+                && let Some(name) = decl["name"].as_str()
+            {
+                unit.enum_typedefs.insert(name.to_owned());
+            }
             for child in kids(decl) {
                 match kind(child) {
                     "EnumDecl" => read_enum(unit, child),
@@ -231,9 +243,8 @@ fn read_enum(unit: &mut Unit, decl: &Value) {
     let mut next: Option<i128> = Some(0);
     for constant in kids(decl).filter(|c| kind(c) == "EnumConstantDecl") {
         let explicit = kids(constant)
-            .find(|c| kind(c) == "ConstantExpr")
-            .and_then(|c| c["value"].as_str())
-            .and_then(|v| v.parse::<i128>().ok());
+            .next()
+            .and_then(|init| constant_value(init, &unit.enum_values));
         let value = if kids(constant).next().is_some() {
             explicit
         } else {
@@ -243,6 +254,59 @@ fn read_enum(unit: &mut Unit, decl: &Value) {
             unit.enum_values.insert(id.to_owned(), value);
         }
         next = value.and_then(|v| v.checked_add(1));
+    }
+}
+
+/// Card NULL-CANDIDATE-TRIAGE: an integer constant expression's value (an
+/// enumerator's initializer, a case label): Clang's own `value` where it
+/// states one, else literals, earlier enumerators, casts and the integer
+/// operators. `None` for anything else.
+pub(super) fn constant_value(node: &Value, enums: &BTreeMap<String, i128>) -> Option<i128> {
+    if let Some(text) = node["value"].as_str()
+        && let Ok(value) = text.parse::<i128>()
+    {
+        return Some(value);
+    }
+    if let Some(value) = node["value"].as_i64() {
+        return Some(i128::from(value));
+    }
+    let first = || kids(node).next();
+    match kind(node) {
+        "ParenExpr" | "ConstantExpr" | "ImplicitCastExpr" | "CStyleCastExpr" => {
+            constant_value(first()?, enums)
+        }
+        "DeclRefExpr" if node["referencedDecl"]["kind"] == "EnumConstantDecl" => node
+            ["referencedDecl"]["id"]
+            .as_str()
+            .and_then(|id| enums.get(id))
+            .copied(),
+        "UnaryOperator" => {
+            let value = constant_value(first()?, enums)?;
+            match node["opcode"].as_str()? {
+                "-" => value.checked_neg(),
+                "+" => Some(value),
+                "~" => Some(!value),
+                "!" => Some(i128::from(value == 0)),
+                _ => None,
+            }
+        }
+        "BinaryOperator" => {
+            let mut parts = kids(node);
+            let a = constant_value(parts.next()?, enums)?;
+            let b = constant_value(parts.next()?, enums)?;
+            match node["opcode"].as_str()? {
+                "+" => a.checked_add(b),
+                "-" => a.checked_sub(b),
+                "*" => a.checked_mul(b),
+                "|" => Some(a | b),
+                "&" => Some(a & b),
+                "^" => Some(a ^ b),
+                "<<" => u32::try_from(b).ok().and_then(|s| a.checked_shl(s)),
+                ">>" => u32::try_from(b).ok().and_then(|s| a.checked_shr(s)),
+                _ => None,
+            }
+        }
+        _ => None,
     }
 }
 
