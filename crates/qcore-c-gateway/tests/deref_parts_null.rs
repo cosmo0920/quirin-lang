@@ -95,7 +95,7 @@ fn the_shorthand_and_its_decomposition_give_identical_null_rows() {
     let standing = |row: &NullFunctionRow| {
         row.clause_standing
             .iter()
-            .map(|s| s.standing.clone())
+            .map(|s| s.standing)
             .collect::<Vec<_>>()
     };
     assert_eq!(standing(&shorthand[0]), vec!["stronger-than-necessary"]);

@@ -32,7 +32,7 @@ gateway rule [14q](../../agents/gateway.md#constraint-14q); Lean
 
 ## 2. Grounding (spec and Lean; no behaviour change)
 
-`QCore.NullDerefGrade` (36 audited theorems, `proof/AuditNullDerefGrade.lean`)
+`QCore.NullDerefGrade` (38 audited theorems, `proof/AuditNullDerefGrade.lean`)
 reuses `QCore.Usage` and `QCore.UsageDemand` (the model behind `usage.rs`; see
 `docs/QTT_ALIGNMENT.md`) and `QCore.NullDeref`.
 
@@ -167,20 +167,39 @@ The binaries differ although the first AFTER changed no Rust outside a test:
 prediction that the binary would be byte-identical did not hold for that
 reason. The outputs are the evidence.
 
-AFTER2_TABLE
+| Route | Files compared | AFTER | AFTER2 |
+| --- | --- | --- | --- |
+| corpus 66910c10 | arbiter directory (`resource-diagnostics.json` and its four sidecars, `monkey-source.json`, `audit.log` normalised), null rows and summary, parity stream and contexts | identical; parity a multiset match | identical; parity a multiset match |
+| system | `resource-diagnostics.json`, sidecars, invocation and console (normalised), null rows and summary, parity | identical; parity a multiset match | identical; parity a multiset match |
+| tail-pause slice | the same | identical; parity a multiset match | identical; parity a multiset match |
+
+Artifacts: [identity-after.json](artifacts/identity-after.json) and
+[identity-after2.json](artifacts/identity-after2.json) record every file and
+both digests. `run.json`, `exit` and `stderr.log` record the run, not its
+result, and are not compared. The console transcripts and the system
+invocation are compared after replacing the run's own directory name and
+dropping the `preparation:` timing line.
+
+The parity streams (690,246 / 142,512 / 51,342 rows) carry Clang AST node
+addresses, which are process memory. With those addresses erased, they are
+identical as multisets in both runs
+([parity-*-after.json](artifacts/parity-corpus-after.json),
+[parity-*-after2.json](artifacts/parity-corpus-after2.json), contexts
+included), but not in order. NULL-SAFETY-PROPERTY compared them as multisets
+for the same reason. The corpus contexts file is byte-identical.
 
 Totals (BEFORE, reproducing the brief): custody corpus **915 / 9 / 3,910**
 (`ded14632…`), system **91 / 4 / 353**, slice **50 / 1 / 349 / 4 Pending**;
 null corpus **1,219 Safe unconditional / 1,442 Safe conditional / 2,260
 Unknown / 0 Unsafe**, 2,173 functions with a candidate. Wall time, BEFORE /
-AFTER / AFTER2: corpus 478.0 / 486.6 / AFTER2_CORPUS s, system 64.2 / 64.6 /
-AFTER2_SYSTEM s, slice 29.3 / 29.3 / AFTER2_SLICE s.
+AFTER / AFTER2: corpus 478.0 / 486.6 / 478.4 s, system 64.2 / 64.6 /
+64.3 s, slice 29.3 / 29.3 / 29.4 s.
 
 ## 6. Prediction against outcome
 
 | Predicted | Measured |
 | --- | --- |
-| custody, null rows and parity byte-identical on corpus, system and slice | custody reports, null rows, summaries and normalised transcripts byte-identical; the parity streams identical as multisets (addresses erased), their order not reproducible between runs |
+| custody, null rows and parity byte-identical on corpus, system and slice | custody reports, null rows, summaries and normalised transcripts byte-identical, after both the grounding and the loader; the parity streams identical as multisets with addresses erased, in a different order |
 | the release binary byte-identical | **no**: the build embeds `HEAD`'s commit |
 | grounding provable without changing the walk (1–5) | yes, all five |
 | divergence: §L07 would reject a lower-bound-0 body; decision 2 reports it | yes, stated normatively; `stronger_than_necessary_is_still_sound` |
