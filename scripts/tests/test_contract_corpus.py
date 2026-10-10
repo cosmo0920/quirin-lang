@@ -51,9 +51,11 @@ class CanonicalCorpus(unittest.TestCase):
         # 127 -> 130: NULL-SAFETY-PROPERTY's three null_deref.qv modules (bounds
         # contract v1): cmetrics and librdkafka in qcore-provider-* (78 -> 80),
         # fluent_bit in quirin-provider-fluent-bit (49 -> 50).
-        self.assertEqual(len(modules), 130)
+        # 130 -> 131: NULL-TRIAGE-UNRESOLVED-PATHS's cfl/null_deref.qv (a bounds
+        # contract v1 module) in quirin-provider-cfl (50 -> 51).
+        self.assertEqual(len(modules), 131)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 80)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 50)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 51)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
