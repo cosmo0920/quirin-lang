@@ -686,6 +686,7 @@ impl NoBuildAudit {
             input.manifest_path(),
             input.manifest_text(),
             &root,
+            &contracts,
         )?;
         let manifest_text = input.manifest_text().to_owned();
         // The no-build "source profile": the selection and the assumed

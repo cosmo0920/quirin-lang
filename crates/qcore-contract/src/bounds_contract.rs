@@ -219,6 +219,17 @@ pub enum BoundsClause {
     NullDeref {
         parameter: String,
     },
+    /// Card NULL-DEREF-QTT-GROUNDING (C09.3, USER DECISION 2026-10-11, "Two
+    /// levels"): `quant live #B;` -- the custody liveness part of a
+    /// dereference: the identity behind `B` has not been released at the
+    /// use. Custody reads resource v1, never this clause: an audit route
+    /// admits it only where the function's own resource v1 declaration states
+    /// it ([`crate::deref_parts::check_live_backing`]). Neither the bounds
+    /// consumer ([`BoundsContracts::for_bounds`]) nor the null property reads
+    /// it.
+    Live {
+        parameter: String,
+    },
 }
 
 impl BoundsClause {
@@ -271,6 +282,12 @@ pub struct BoundsFunctionContract {
     pub contract_review: Option<ReviewNote>,
     /// SHA-256 of the normalised declaration text (tokens joined by one space).
     pub text_sha256: String,
+    /// Card NULL-DEREF-QTT-GROUNDING: SHA-256 of the declaration's canonical
+    /// form (the signature and the sorted canonical clause set, every
+    /// shorthand elaborated and agreeing overlaps merged), so two texts that
+    /// mean the same carry the same digest. The pin stays over
+    /// [`Self::text_sha256`], the text as written.
+    pub canonical_sha256: String,
     /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: set when an audit route found
     /// the declaration's pin not in force; it is then held.
     pub pin_hold: Option<PinHold>,
@@ -390,9 +407,14 @@ impl BoundsContracts {
         let mut kept_modules = std::collections::BTreeSet::new();
         view.functions.retain(|_, contract| {
             let before = contract.clauses.len();
-            contract
-                .clauses
-                .retain(|entry| !matches!(entry.clause, BoundsClause::NullDeref { .. }));
+            // Card NULL-DEREF-QTT-GROUNDING: nor the liveness part, which
+            // custody owns.
+            contract.clauses.retain(|entry| {
+                !matches!(
+                    entry.clause,
+                    BoundsClause::NullDeref { .. } | BoundsClause::Live { .. }
+                )
+            });
             let keep = !(before > 0 && contract.clauses.is_empty());
             if keep {
                 kept_modules.insert(contract.module.clone());
@@ -806,6 +828,8 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
     let mut selectors = 0;
     let mut contract_review = None;
     let mut clauses: Vec<BoundsClauseEntry> = Vec::new();
+    // Card NULL-DEREF-QTT-GROUNDING: which canonical parts a shorthand gave.
+    let mut elaboration = crate::deref_parts::Elaboration::default();
     let mut normalised = vec![format!(
         "extern fn {}({}) -> {}",
         decl.name,
@@ -819,28 +843,34 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
     for clause in &contract.clauses {
         let clause = &clause.value;
         // Card NULL-SAFETY-PROPERTY: the collocated null-dereference check.
-        if clause.kind == SourceContractClauseKind::QuantNullDeref {
+        // Card NULL-DEREF-QTT-GROUNDING: and the liveness part and the
+        // composite shorthand, every one elaborated into canonical parts
+        // ([`crate::deref_parts`]).
+        if let Some(form) = crate::deref_parts::PartForm::of(&clause.kind) {
             let tokens = tokens_of(&clause.expression_source)?;
             let [TokenKind::Symbol(Symbol::Hash), TokenKind::Word(name)] = tokens.as_slice() else {
-                return Err(
-                    "quant-null-deref-shape: a null-dereference check is `quant null-deref #B;`"
-                        .into(),
-                );
+                return Err(form.shape_error());
             };
             let parameter = reader
                 .parameter(&[TokenKind::Word(name.clone())], ParameterKind::Pointer)
-                .map_err(|_| {
-                    format!(
-                        "quant-null-deref-parameter: `#{name}` names no pointer parameter of the declaration"
-                    )
-                })?;
-            let text = format!("quant null-deref #{parameter}");
-            normalised.push(text.clone());
-            clauses.push(BoundsClauseEntry {
-                clause: BoundsClause::NullDeref { parameter },
-                text,
-                review: None,
-            });
+                .map_err(|_| form.parameter_error(name))?;
+            normalised.push(form.written(&parameter));
+            let parts = match form {
+                crate::deref_parts::PartForm::NullDeref => vec![BoundsClauseEntry {
+                    clause: BoundsClause::NullDeref {
+                        parameter: parameter.clone(),
+                    },
+                    text: format!("quant null-deref #{parameter}"),
+                    review: None,
+                }],
+                crate::deref_parts::PartForm::Live => {
+                    vec![crate::deref_parts::live_part(&parameter)]
+                }
+                crate::deref_parts::PartForm::Deref | crate::deref_parts::PartForm::Explicit => {
+                    crate::deref_parts::shorthand_parts(&parameter, &reader)?
+                }
+            };
+            elaboration.add(&mut clauses, parts, form)?;
             continue;
         }
         // Card QUANT-INDEX-CHECKS: the collocated index check.
@@ -849,7 +879,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             let text = crate::bounds_quant::clause_text(&tokens);
             normalised.push(text.clone());
             let read = crate::bounds_quant::read_quant_check(&tokens, &reader)?;
-            clauses.push(BoundsClauseEntry {
+            let entry = BoundsClauseEntry {
                 clause: BoundsClause::QuantCheck {
                     parameter: read.parameter,
                     variable: read.variable,
@@ -857,7 +887,14 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 },
                 text,
                 review: None,
-            });
+            };
+            // Card NULL-DEREF-QTT-GROUNDING: an explicit part overlapping a
+            // shorthand's is merged when they agree, refused when not.
+            elaboration.add(
+                &mut clauses,
+                vec![entry],
+                crate::deref_parts::PartForm::Explicit,
+            )?;
             continue;
         }
         let requires = match &clause.kind {
@@ -939,6 +976,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::ReturnDerived { parameter, .. } => format!("derived {parameter}"),
             BoundsClause::QuantCheck { parameter, .. } => format!("quant {parameter}"),
             BoundsClause::NullDeref { parameter } => format!("null-deref {parameter}"),
+            BoundsClause::Live { parameter } => format!("live {parameter}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));
@@ -950,12 +988,19 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         if let BoundsClause::QuantCheck { parameter, .. } = &entry.clause
             && seen.contains(&format!("extent {parameter}"))
         {
+            if elaboration.from_shorthand(&format!("quant {parameter}")) {
+                return Err(format!(
+                    "quant-deref-conflict: `{parameter}` states a bounds_extent, incompatible with `quant deref #{parameter}`'s extent part (one fact per pointer: write `quant checks {parameter}, Idx #i: #i == 0;` or the extent, not both)"
+                ));
+            }
             return Err(format!(
                 "quant-check-with-extent: `{parameter}` states both a bounds_extent and a quant check"
             ));
         }
     }
     frame_conditions(&parameters, &clauses)?;
+    let canonical_sha256 =
+        crate::deref_parts::canonical_sha256(&normalised[0], &clauses, contract_review.as_ref());
     Ok(BoundsFunctionContract {
         name: decl.name.clone(),
         module: path.to_owned(),
@@ -964,6 +1009,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         clauses,
         contract_review,
         text_sha256: sha256_hex(normalised.join(";\n").as_bytes()),
+        canonical_sha256,
         pin_hold: None,
     })
 }

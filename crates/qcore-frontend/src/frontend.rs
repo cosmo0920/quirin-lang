@@ -137,6 +137,20 @@ pub enum SourceContractClauseKind {
     /// rejects or skips it as it does a `quant` clause. Before this card the
     /// spelling was a parse error (`null` is no exit selector).
     QuantNullDeref,
+    /// Card `NULL-DEREF-QTT-GROUNDING` (USER DECISION 2026-10-11, "Two
+    /// levels"): `quant deref #B;`, the composite shorthand of a safe
+    /// dereference of the pointer formal `B`. The bounds contract v1 loader
+    /// elaborates it into its canonical parts (`quant null-deref #B;`, `quant
+    /// checks B, Idx #i: #i == 0;`, `quant live #B;`) before any consumer
+    /// sees it; every other consumer rejects it. Before this card the spelling
+    /// was a parse error (`deref` is no exit selector).
+    QuantDeref,
+    /// Card `NULL-DEREF-QTT-GROUNDING`: `quant live #B;`, the custody
+    /// liveness part of a dereference: the identity behind `B` has not been
+    /// released at the use. Admitted by the bounds contract v1 loader as a
+    /// checked restatement of the function's own resource v1 declaration;
+    /// every other consumer rejects it. Before this card a parse error.
+    QuantLive,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1154,6 +1168,24 @@ impl<'a> SourceParser<'a> {
                 && self.word(cursor + 3, "deref")
             {
                 (SourceContractClauseKind::QuantNullDeref, cursor + 4)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "deref") {
+                (SourceContractClauseKind::QuantDeref, cursor + 2)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "live") {
+                (SourceContractClauseKind::QuantLive, cursor + 2)
+            } else if self.word(cursor, "quant")
+                && self.symbol(cursor + 2, Symbol::Hash)
+                && !["normal", "any", "error"]
+                    .iter()
+                    .any(|selector| self.word(cursor + 1, selector))
+            {
+                // Card NULL-DEREF-QTT-GROUNDING: `quant WORD #B;` with a word
+                // that names no clause is an unknown shorthand (before this
+                // card it was the same rejection, as a missing exit selector).
+                return Err(self.error(
+                    cursor + 1,
+                    "quant-shorthand-unknown: the collocated `quant` forms are `quant checks`, \
+                     `quant null-deref`, `quant deref` and `quant live`",
+                ));
             } else if self.word(cursor, "ensures") || self.word(cursor, "quant") {
                 let is_quant = self.word(cursor, "quant");
                 let (selector, next) = self.contract_exit_selector(cursor + 1, close)?;

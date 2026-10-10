@@ -165,6 +165,7 @@ impl CurrentAudit {
             input.manifest_path(),
             input.manifest_text(),
             &checkout,
+            &contracts,
         )?;
         let manifest_text = input.manifest_text().to_owned();
         let source_profile_sha256 = profile.manifest_digest().to_owned();

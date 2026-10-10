@@ -140,6 +140,7 @@ pub fn run(
         contract_manifest,
         &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
         &root,
+        &contracts,
     )?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: kept so the pending-review section can
     // be added once the report it counts is complete.

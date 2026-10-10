@@ -73,6 +73,8 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         // environment without null-deref clauses (`for_bounds`); were one to
         // reach it, no bounds evidence would cover it, like a preservation.
         BoundsClause::NullDeref { .. } => ClauseKind::Preserves,
+        // Card NULL-DEREF-QTT-GROUNDING: likewise the liveness part.
+        BoundsClause::Live { .. } => ClauseKind::Preserves,
     }
 }
 

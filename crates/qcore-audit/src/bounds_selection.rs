@@ -402,6 +402,7 @@ pub fn select_for_route(
     manifest_path: &Path,
     manifest_text: &str,
     source_root: &Path,
+    resource: &qcore_schemas::contract::ResourceContracts,
 ) -> Result<(), String> {
     // Card NULL-SAFETY-PROPERTY (rule 14o): the null property reads its
     // clauses from the same views, pinned the same way.
@@ -447,7 +448,12 @@ pub fn select_for_route(
             notice["message"].as_str().unwrap_or_default()
         );
     }
-    let record = json!({
+    // Card NULL-DEREF-QTT-GROUNDING: a liveness part is admitted only where
+    // the function's own resource v1 declaration states it; otherwise the
+    // route is refused (`quant-live-unbacked`, `quant-live-contradicts-custody`).
+    let live_backing = qcore_contract::deref_parts::check_live_backing(&contracts, resource)
+        .map_err(|error| format!("bounds contracts ({route}): {error}"))?;
+    let mut record = json!({
         "schema_version": 1,
         "property": qcore_c_gateway::index_extent::BOUNDS_PROPERTY,
         "contract_version": qcore_contract::bounds_contract::BOUNDS_CONTRACT_VERSION,
@@ -462,5 +468,14 @@ pub fn select_for_route(
         "trust": "declared bounds assumptions (C09.1: a resolved declaration is a Declared premise, not a proof of its C body), in force only where pinned",
         "rule": RULE,
     });
+    // Card NULL-DEREF-QTT-GROUNDING: with any liveness part (a shorthand
+    // always gives one), every declaration's canonical digest and every
+    // backed liveness part; absent otherwise, so an environment without the
+    // new forms writes the same record as before.
+    if qcore_contract::deref_parts::states_live(&contracts) {
+        record["canonical_sha256"] =
+            json!(qcore_contract::deref_parts::canonical_digests(&contracts));
+        record["live_backing"] = json!(live_backing);
+    }
     install(contracts, record)
 }

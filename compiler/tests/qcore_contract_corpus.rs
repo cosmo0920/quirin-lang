@@ -1830,7 +1830,9 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                     match &clause.value.kind {
                         SourceContractClauseKind::Requires
                         | SourceContractClauseKind::QuantCheck
-                        | SourceContractClauseKind::QuantNullDeref => {}
+                        | SourceContractClauseKind::QuantNullDeref
+                        | SourceContractClauseKind::QuantDeref
+                        | SourceContractClauseKind::QuantLive => {}
                         SourceContractClauseKind::Ensures(selector)
                         | SourceContractClauseKind::Quant(selector) => match selector {
                             SourceContractExitSelector::Normal => has_normal = true,

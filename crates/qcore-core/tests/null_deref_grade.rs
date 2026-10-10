@@ -32,8 +32,18 @@ const GRADE_VECTORS: [(&[&str], u64, bool, &str); 7] = [
     (&["dereferenced", "dereferenced"], 1, true, "necessary"),
     (&["pending"], 0, false, "stronger-than-necessary"),
     (&["other"], 0, false, "stronger-than-necessary"),
-    (&["dereferenced", "other"], 0, false, "stronger-than-necessary"),
-    (&["dereferenced", "pending"], 0, false, "stronger-than-necessary"),
+    (
+        &["dereferenced", "other"],
+        0,
+        false,
+        "stronger-than-necessary",
+    ),
+    (
+        &["dereferenced", "pending"],
+        0,
+        false,
+        "stronger-than-necessary",
+    ),
     (&["other", "pending"], 0, false, "stronger-than-necessary"),
 ];
 
@@ -66,10 +76,7 @@ fn quoted(names: &[&str]) -> String {
 
 /// The least enclosing interval of the exits' grades (§L07's branch join).
 fn joined(exits: &BTreeSet<First>) -> Option<Usage> {
-    exits
-        .iter()
-        .map(|f| first_grade(*f))
-        .reduce(Usage::join)
+    exits.iter().map(|f| first_grade(*f)).reduce(Usage::join)
 }
 
 #[test]

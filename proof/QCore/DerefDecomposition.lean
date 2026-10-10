@@ -52,10 +52,21 @@ The entailments, each a theorem:
    released identity has (a) and (b) and fails (c), so no theorem can let (a)
    or (b) discharge liveness.
 
+**Two levels** (USER DECISION 2026-10-11, "Two levels"): contract authors may
+write the shorthand `quant deref #B;` or its decomposition `quant null-deref
+#B; quant checks B, Idx #i: #i == 0; quant live #B;`, or a mix, and both mean
+the same. The last section models the loader's elaboration and merge
+(`crates/qcore-contract/src/deref_parts.rs`):
+`elaboration_preserves_meaning`, `merging_an_agreeing_overlap_is_idempotent`,
+`merge_merge`, `shorthand_and_decomposition_are_one_canonical_set`,
+`one_canonical_set_one_meaning`. `quant null-deref #B;` keeps its meaning: the
+existence part alone.
+
 What this is not: a change to any analysis. No consumer uses entailment 1 to
 discharge a NULL obligation (a later behaviour card,
-`NULL-DEREF-FROM-INDEX-ZERO-BOUNDS`), and the composite `quant deref #B`
-shorthand is not introduced (the user has not decided on it).
+`NULL-DEREF-FROM-INDEX-ZERO-BOUNDS`). That the loader's canonical parts are
+this model's `elaborate` and `merge` is a review premise (trust boundary 28),
+pinned by `crates/qcore-contract/tests/deref_parts.rs`.
 -/
 
 namespace QCore.DerefDecomposition
@@ -324,5 +335,221 @@ theorem each_part_fails_alone :
       (existence onePast ∧ liveness onePast ∧ ¬ extentCovers onePast) ∧
       (existence dangling ∧ extentCovers dangling ∧ ¬ liveness dangling) := by
   refine ⟨by decide, ⟨rfl, by decide, by decide⟩, ⟨rfl, by decide, by decide⟩⟩
+
+/-! ## Two levels: the shorthand `quant deref #B;` and its canonical parts
+
+USER DECISION 2026-10-11 ("Two levels"): authors may write the shorthand, the
+parts, or a mix, and both mean the same. The loader
+(`crates/qcore-contract/src/deref_parts.rs`) elaborates every shorthand into
+canonical parts and merges agreeing overlaps; these theorems show that the
+elaboration and the merge preserve meaning in the three-part model. -/
+
+/-- A written dereference clause on the formal at position `b`. -/
+inductive Clause where
+  | nullDeref (b : Nat)
+  | checks (b : Nat) (p : Pred)
+  | live (b : Nat)
+  | deref (b : Nat)
+  deriving DecidableEq, Repr
+
+/-- What a clause says of the arguments (`args b` is the value at position
+`b`, `ρ` the scalar formals): existence, every admitted index within the
+extent (C09.2's meaning), liveness; the shorthand, a safe dereference. -/
+def meaning (ρ : Nat → Int) (args : Nat → Ptr) : Clause → Prop
+  | .nullDeref b => existence (args b)
+  | .checks b p => ∀ i : Int, p.holds ρ i = true → 0 ≤ i ∧ i < ((args b).extent : Int)
+  | .live b => liveness (args b)
+  | .deref b => safeDeref (args b)
+
+/-- A contract holds of the arguments when every clause does. -/
+def Holds (ρ : Nat → Int) (args : Nat → Ptr) (cs : List Clause) : Prop :=
+  ∀ c ∈ cs, meaning ρ args c
+
+/-- The elaboration of one clause: the shorthand into its three parts. -/
+def elabClause : Clause → List Clause
+  | .deref b => [.nullDeref b, .checks b zeroCheck, .live b]
+  | c => [c]
+
+def elaborate (cs : List Clause) : List Clause := cs.flatMap elabClause
+
+/-- The extent part's meaning is exactly (b): index 0 is within the extent. -/
+theorem zero_check_means_extent (ρ : Nat → Int) (p : Ptr) :
+    (∀ i : Int, zeroCheck.holds ρ i = true → 0 ≤ i ∧ i < (p.extent : Int)) ↔ extentCovers p := by
+  have hz : ∀ i : Int, zeroCheck.holds ρ i = true ↔ i = 0 := by
+    intro i
+    simp only [zeroCheck, QCore.IndexQuant.Pred.holds, QCore.IndexQuant.Rel.holds,
+      QCore.IndexQuant.Term.eval]
+    exact ⟨of_decide_eq_true, decide_eq_true⟩
+  constructor
+  · intro h
+    have := h 0 ((hz 0).mpr rfl)
+    simp only [extentCovers]
+    omega
+  · intro h i hi
+    have hi0 := (hz i).mp hi
+    subst hi0
+    simp only [extentCovers] at h
+    omega
+
+/-- **The shorthand means its decomposition.** -/
+theorem shorthand_means_its_parts (ρ : Nat → Int) (args : Nat → Ptr) (b : Nat) :
+    meaning ρ args (.deref b) ↔ Holds ρ args (elabClause (.deref b)) := by
+  simp only [meaning, safeDeref, Holds, elabClause, List.mem_cons, List.not_mem_nil, or_false,
+    forall_eq_or_imp, forall_eq]
+  rw [zero_check_means_extent]
+
+theorem elab_preserves (ρ : Nat → Int) (args : Nat → Ptr) (c : Clause) :
+    meaning ρ args c ↔ Holds ρ args (elabClause c) := by
+  cases c with
+  | deref b => exact shorthand_means_its_parts ρ args b
+  | nullDeref b => simp [Holds, elabClause]
+  | checks b p => simp [Holds, elabClause]
+  | live b => simp [Holds, elabClause]
+
+/-- **Elaboration preserves meaning**: a contract and its elaboration hold of
+exactly the same arguments. -/
+theorem elaboration_preserves_meaning (ρ : Nat → Int) (args : Nat → Ptr) (cs : List Clause) :
+    Holds ρ args cs ↔ Holds ρ args (elaborate cs) := by
+  induction cs with
+  | nil => simp [Holds, elaborate]
+  | cons c cs ih =>
+      have hc := elab_preserves ρ args c
+      simp only [Holds, elaborate, List.flatMap_cons, List.mem_append, List.mem_cons] at ih hc ⊢
+      constructor
+      · rintro h d (hd | hd)
+        · exact hc.mp (h c (Or.inl rfl)) d hd
+        · exact ih.mp (fun e he => h e (Or.inr he)) d hd
+      · intro h e he
+        rcases he with rfl | he
+        · exact hc.mpr (fun d hd => h d (Or.inl hd))
+        · exact ih.mpr (fun d hd => h d (Or.inr hd)) e he
+
+/-- Merge one canonical part: an agreeing (equal) part already present is
+merged, anything else appended. -/
+def mergeInto (acc : List Clause) (c : Clause) : List Clause :=
+  if c ∈ acc then acc else acc ++ [c]
+
+def merge (cs : List Clause) : List Clause := cs.foldl mergeInto []
+
+/-- The canonical part set of a contract. -/
+def canonical (cs : List Clause) : List Clause := merge (elaborate cs)
+
+private theorem mem_foldl_mergeInto : ∀ (cs acc : List Clause) (c : Clause),
+    c ∈ cs.foldl mergeInto acc ↔ c ∈ acc ∨ c ∈ cs
+  | [], acc, c => by simp
+  | d :: ds, acc, c => by
+      simp only [List.foldl_cons]
+      rw [mem_foldl_mergeInto ds (mergeInto acc d) c]
+      unfold mergeInto
+      split
+      · rename_i hd
+        simp only [List.mem_cons]
+        constructor
+        · rintro (h | h)
+          · exact Or.inl h
+          · exact Or.inr (Or.inr h)
+        · rintro (h | h | h)
+          · exact Or.inl h
+          · subst h; exact Or.inl hd
+          · exact Or.inr h
+      · simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false]
+        constructor
+        · rintro ((h | h) | h)
+          · exact Or.inl h
+          · exact Or.inr (Or.inl h)
+          · exact Or.inr (Or.inr h)
+        · rintro (h | h | h)
+          · exact Or.inl (Or.inl h)
+          · exact Or.inl (Or.inr h)
+          · exact Or.inr h
+
+theorem mem_merge (cs : List Clause) (c : Clause) : c ∈ merge cs ↔ c ∈ cs := by
+  simp [merge, mem_foldl_mergeInto]
+
+/-- Merging preserves meaning. -/
+theorem merge_preserves_meaning (ρ : Nat → Int) (args : Nat → Ptr) (cs : List Clause) :
+    Holds ρ args (merge cs) ↔ Holds ρ args cs := by
+  simp only [Holds, mem_merge]
+
+private theorem foldl_mergeInto_of_mem : ∀ (ys acc : List Clause),
+    (∀ y ∈ ys, y ∈ acc) → ys.foldl mergeInto acc = acc
+  | [], _, _ => rfl
+  | y :: ys, acc, h => by
+      have hy : y ∈ acc := h y List.mem_cons_self
+      simp only [List.foldl_cons, mergeInto, hy, ↓reduceIte]
+      exact foldl_mergeInto_of_mem ys acc (fun z hz => h z (List.mem_cons_of_mem _ hz))
+
+/-- **Merging an agreeing overlap is idempotent**: parts already present
+(the overlap agrees) change nothing. -/
+theorem merging_an_agreeing_overlap_is_idempotent (xs ys : List Clause)
+    (h : ∀ y ∈ ys, y ∈ xs) : merge (xs ++ ys) = merge xs := by
+  simp only [merge, List.foldl_append]
+  exact foldl_mergeInto_of_mem ys _ (fun y hy => (mem_merge xs y).mpr (h y hy))
+
+private theorem foldl_mergeInto_nodup : ∀ (cs acc : List Clause),
+    acc.Nodup → (cs.foldl mergeInto acc).Nodup
+  | [], _, h => h
+  | d :: ds, acc, h => by
+      simp only [List.foldl_cons]
+      apply foldl_mergeInto_nodup ds
+      unfold mergeInto
+      by_cases hd : d ∈ acc
+      · simp only [hd, ↓reduceIte]; exact h
+      · simp only [hd, ↓reduceIte]
+        rw [List.nodup_append]
+        refine ⟨h, by simp, ?_⟩
+        intro a ha b hb
+        simp only [List.mem_singleton] at hb
+        subst hb
+        intro e; subst e; exact hd ha
+
+private theorem foldl_mergeInto_fresh : ∀ (ys acc : List Clause),
+    (∀ y ∈ ys, y ∉ acc) → ys.Nodup → ys.foldl mergeInto acc = acc ++ ys
+  | [], acc, _, _ => by simp
+  | y :: ys, acc, hfresh, hnd => by
+      have hy : y ∉ acc := hfresh y List.mem_cons_self
+      have hnd' := List.nodup_cons.mp hnd
+      simp only [List.foldl_cons, mergeInto, hy, ↓reduceIte]
+      rw [foldl_mergeInto_fresh ys (acc ++ [y]) ?_ hnd'.2]
+      · simp
+      · intro z hz hzacc
+        simp only [List.mem_append, List.mem_singleton] at hzacc
+        rcases hzacc with h | rfl
+        · exact hfresh z (List.mem_cons_of_mem _ hz) h
+        · exact hnd'.1 hz
+
+/-- Merging the merge changes nothing. -/
+theorem merge_merge (cs : List Clause) : merge (merge cs) = merge cs := by
+  have hnd : (merge cs).Nodup := foldl_mergeInto_nodup cs [] List.nodup_nil
+  have := foldl_mergeInto_fresh (merge cs) [] (by simp) hnd
+  simpa [merge] using this
+
+/-- **A shorthand and its decomposition have one canonical part set.** -/
+theorem shorthand_and_decomposition_are_one_canonical_set (b : Nat) :
+    canonical [.deref b] = canonical [.nullDeref b, .checks b zeroCheck, .live b] := by
+  simp [canonical, elaborate, elabClause, merge, mergeInto]
+
+/-- A mix (the shorthand with a part it already gives) is the same set. -/
+theorem a_mix_is_the_shorthands_canonical_set (b : Nat) :
+    canonical [.deref b, .nullDeref b] = canonical [.deref b] ∧
+      canonical [.live b, .deref b] =
+        [.live b, .nullDeref b, .checks b zeroCheck] ∧
+      (∀ c, c ∈ canonical [.live b, .deref b] ↔ c ∈ canonical [.deref b]) := by
+  refine ⟨by simp [canonical, elaborate, elabClause, merge, mergeInto],
+    by simp [canonical, elaborate, elabClause, merge, mergeInto], ?_⟩
+  intro c
+  simp only [canonical, mem_merge, elaborate, elabClause, List.flatMap_cons, List.flatMap_nil,
+    List.mem_append, List.mem_cons, List.not_mem_nil, or_false, List.append_nil]
+  constructor
+  · rintro (h | h | h | h) <;> simp [h]
+  · rintro (h | h | h) <;> simp [h]
+
+/-- Contracts with one canonical part set hold of the same arguments. -/
+theorem one_canonical_set_one_meaning (ρ : Nat → Int) (args : Nat → Ptr) (cs ds : List Clause)
+    (h : ∀ c, c ∈ canonical cs ↔ c ∈ canonical ds) : Holds ρ args cs ↔ Holds ρ args ds := by
+  rw [elaboration_preserves_meaning ρ args cs, elaboration_preserves_meaning ρ args ds,
+    ← merge_preserves_meaning ρ args (elaborate cs), ← merge_preserves_meaning ρ args (elaborate ds)]
+  simp only [Holds]
+  exact ⟨fun hc c hm => hc c ((h c).mpr hm), fun hd c hm => hd c ((h c).mp hm)⟩
 
 end QCore.DerefDecomposition
