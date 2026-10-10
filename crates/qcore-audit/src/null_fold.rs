@@ -563,6 +563,9 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
                         .or_else(|| {
                             p.strip_prefix("result:stable:")
                                 .map(|m| format!("stable:{m}"))
+                        })
+                        // Card NULL-TRIAGE-UNRESOLVED-PATHS: a check a
+                        // withdrawn result range proved infeasible.
                         .or_else(|| {
                             p.strip_prefix("result:declared-range:")
                                 .map(|r| format!("range:{r}"))

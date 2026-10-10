@@ -1949,6 +1949,14 @@ clause. Each declaration whose text changed was re-pinned with `pin --bounds`
 at both audited revisions after its old pin read `contract-changed`; verdicts
 are unchanged, only text, digests and pins.
 
+> **USER DECISION 2026-10-11** (card NULL-TRIAGE-UNRESOLVED-PATHS), verbatim:
+> "null_result_range -> this contract element's name a bit of strange so
+> nonnull_result_range would be good." The integer result range of G05e is
+> `nonnull_result_range(LO, HI)` (diagnostics `nonnull-result-range-*`); its
+> first spelling `null_result_range` never reached main and is refused like
+> any unknown clause, with no alias. `cfl_list_size`'s declaration was
+> re-pinned at both revisions after the rename.
+
 **Scoped member invariants** (card NULL-MEMBER-INVARIANT-SCOPE, gateway rules
 [14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z);
 grammar [G05f](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05f-scoped-member-invariants)).
@@ -2015,11 +2023,7 @@ removed except by checked knowledge"):
   It is checked against every analysed body of the function under C06.5's
   fold (validated where the body's summary lies inside it, withdrawn where a
   body returns a constant outside it); a refuting body takes it out of force
-  in its own unit. The name is the user's (USER DECISION 2026-10-11:
-  "null_result_range -> this contract element's name a bit of strange so
-  nonnull_result_range would be good."); the earlier spelling
-  `null_result_range` was never on main and is refused like any unknown
-  clause, with no alias.
+  in its own unit. The name follows the `nonnull_` scheme ("Naming", above).
 * *Inexact exploration.* A condition the search cannot read exactly (a call
   result its bound does not decide, a correlated value, a value it does not
   follow, an ordered pointer comparison, a switch over such a value) is
