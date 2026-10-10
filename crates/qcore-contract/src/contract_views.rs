@@ -1351,6 +1351,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: `cfl_list_size`'s resource-v1
+    // declaration beside the null property's result range (rule 15q).
+    RegisteredRelation {
+        function: "cfl_list_size",
+        detailed: "cfl/null_deref.qv",
+        view: "cfl/sds_lifetime.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // ChunkIO error reset: the generic configured frame policy and the
     // retained Chunk-flavour policy.
     RegisteredRelation {

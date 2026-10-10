@@ -220,7 +220,7 @@
     },
     {
       "function": "mk_fifo_queue_destroy",
-      "module": "monkey/memory.qv",
+      "module": "monkey/intrusive_list.qv",
       "contract_sha256": "80d78ceb3d95ef4bd5e4ea82848e46b622d9ac3e3d7d70a1b8a726994d053155",
       "identities": [
         {

@@ -46,6 +46,10 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         &["monkey/composition.qv", "monkey/wait_source_policy.qv"],
     ),
     (
+        "cfl_list_size",
+        &["cfl/null_deref.qv", "cfl/sds_lifetime.qv"],
+    ),
+    (
         "cio_chunk_close",
         &[
             "chunkio/chunk_destructor.qv",
@@ -156,14 +160,16 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
         })
         .collect();
     assert_eq!(actual, expected);
-    // Nineteen functions, twenty-one pairs, every pair registered exactly
+    // Twenty functions, twenty-two pairs, every pair registered exactly
     // once (W45-FB-RETRY-LIFETIME added `mk_list_del`; NULL-SAFETY-PROPERTY
     // the five `quant null-deref` checks beside a resource-v1 declaration;
     // NULL-CANDIDATE-TRIAGE a member and a result declaration;
-    // NULL-MEMBER-INVARIANT-SCOPE a function-scope entry).
-    assert_eq!(census_pairs(&report.census).len(), 21);
-    assert_eq!(REGISTERED_RELATIONS.len(), 21);
-    assert_eq!(report.relations.len(), 21);
+    // NULL-MEMBER-INVARIANT-SCOPE a function-scope entry;
+    // W45-CALLEE-CASCADE-RESIDUAL round 3 `cfl_list_size`'s resource-v1
+    // declaration beside its result range).
+    assert_eq!(census_pairs(&report.census).len(), 22);
+    assert_eq!(REGISTERED_RELATIONS.len(), 22);
+    assert_eq!(report.relations.len(), 22);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

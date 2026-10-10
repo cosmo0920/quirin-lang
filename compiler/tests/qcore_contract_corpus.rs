@@ -1695,6 +1695,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W45-FB-RETRY-LIFETIME: `resource_published` / `resource_unpublished`.
     ("monkey/intrusive_list.qv", "mk_list_add", 5),
     ("monkey/intrusive_list.qv", "mk_list_del", 4),
+    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the FIFO queue destructor: marker,
+    // borrowed `ctx`, released `q`, `none`.
+    ("monkey/intrusive_list.qv", "mk_fifo_queue_destroy", 4),
     // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
     // `fluent_bit/logging.qv` shape one library over — five clauses because
     // of `resource_variadic_data_tail()`. Read from
@@ -1707,9 +1710,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/memory.qv", "mk_mem_alloc", 3),
     ("monkey/memory.qv", "mk_mem_alloc_z", 3),
     ("monkey/memory.qv", "mk_mem_free", 3),
-    // Card W45-CALLEE-CASCADE-RESIDUAL round 3: the FIFO queue destructor: marker,
-    // borrowed `ctx`, released `q`, `none`.
-    ("monkey/memory.qv", "mk_fifo_queue_destroy", 4),
     // Deliberate Cycle 18 executable policy pins.
     (
         "monkey/native_platform_matrix.qv",

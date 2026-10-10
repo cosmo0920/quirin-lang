@@ -75,9 +75,11 @@ fn every_registered_relation_holds_on_the_corpus() {
     let report = check_registry(&modules(), REGISTERED_RELATIONS).unwrap();
     // NULL-SAFETY-PROPERTY: +5 (`null_deref_beside`); NULL-CANDIDATE-TRIAGE
     // +2 (a member and a result declaration beside resource views);
-    // NULL-MEMBER-INVARIANT-SCOPE +1 (a function-scope entry).
-    assert_eq!(report.census.len(), 19);
-    assert_eq!(report.relations.len(), 21);
+    // NULL-MEMBER-INVARIANT-SCOPE +1 (a function-scope entry);
+    // W45-CALLEE-CASCADE-RESIDUAL round 3 +1 (`cfl_list_size`'s resource-v1
+    // declaration beside its result range).
+    assert_eq!(report.census.len(), 20);
+    assert_eq!(report.relations.len(), 22);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
@@ -90,7 +92,7 @@ fn every_registered_relation_holds_on_the_corpus() {
         kinds,
         BTreeMap::from([
             ("lifecycle_profiles", 2),
-            ("null_deref_beside", 8),
+            ("null_deref_beside", 9),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),
