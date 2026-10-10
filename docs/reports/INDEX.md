@@ -518,6 +518,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [null-deref-qtt-grounding](null-deref-qtt-grounding/README.md) | NULL-DEREF-QTT-GROUNDING |
 
+| [null-member-invariant-scope](null-member-invariant-scope/README.md) | NULL-MEMBER-INVARIANT-SCOPE |
+
 | [null-safety-property](null-safety-property/README.md) | NULL-SAFETY-PROPERTY |
 
 ## O

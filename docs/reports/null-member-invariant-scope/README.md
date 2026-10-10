@@ -236,7 +236,22 @@ and relations 20 → 21, `null_deref_beside` 7 → 8:
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (filled by the gate run).
+Standing gate **g2** on `60b280dfc` ([gate.sh](scripts/gate.sh), every step
+under the shared lock, exits in [gate/](gate/), logs `private/nmis/gate-g2/`):
+`cargo check --workspace --all-targets` 0; submodule 0; `cargo fmt --check` 0;
+`clippy --locked --all-targets -D warnings` 0; `run_test_binaries.py` **479
+units, 492 summaries, 7,881 passed, 0 failed, 12 ignored**, exit 0
+(`private/nmis/tests-gate-g2/`); `reevaluation_probe` 0;
+`reevaluation_followup` 0; `check_lean_audits.py` **312** audits passed; then
+`build_matrix.py . --gate gate.json` (09a), the Python suite (09b), the docs
+index (10b, 10c), and the docs part (08, 09) on the records commit. Provider
+gate **g2** at the same tip ([provider-gate.sh](scripts/provider-gate.sh),
+`private/nmis/provider-gate-g2/`): `cargo check --locked` 0, `cargo test` 129
+passed (exit 0), fmt 0, clippy 0, `contracts.py check` 0, package build 0,
+package verify of all five packages 0, providers Python suite 25 tests OK.
+Clang: `gate/clang-version.txt`. An earlier attempt, g1 on `13e0cb858`, was
+stopped after its clippy step for the rename (`private/nmis/gate-g1-stopped-for-rename/`,
+steps 00–03 exit 0); it is not evidence for the tip.
 
 ## 8. Follow-ups
 
