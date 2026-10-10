@@ -3,7 +3,7 @@
   "plugin_id": "qcore.chunkio",
   "contracts": {
     "contracts/chunkio/chunk_destructor.qv": "fe629d890215ff3ce59a4097cbd73ba007bf9c7108c80f7aa4b4c2823af2bc2d",
-    "contracts/chunkio/chunk_residency.qv": "b13d70e0bd5d57c6a35ea2f4ae25f942b7bdc72d751b084696e280cf5cf9f412",
+    "contracts/chunkio/chunk_residency.qv": "1e263d09958646bc09ce70ef1d6db4c2c3fb5b789fe56b2e00904189cb4a8de6",
     "contracts/chunkio/chunk_sizes.qv": "be25bb329b29dd665247237988f1cf56e868b501aec85a5c5f8368275c06e4f2",
     "contracts/chunkio/constructor_failure_observation.qv": "95e9a31aff7f665a3b8c290e34e7be16c426c2b3b845b2dbf3d7d521dd802b3e",
     "contracts/chunkio/context_destructor.qv": "fcd5d00e8f453a26515621b5d4e1ec68f5f9f7c5ad7031701cf4d166848d5f39",

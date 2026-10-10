@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# build.sh NAME [FEATURES] -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE) (from NULL-SAFETY-PROPERTY, from CG22-CALLBACK-REGISTRY-CONTRACT) (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): under the
+# build.sh NAME [FEATURES] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from NULL-TRIAGE-UNRESOLVED-PATHS and its lineage) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): under the
 # shared heavy lock, build the release quirin-audit of the checked-out tree
 # (with cargo FEATURES when given, e.g. qcore-c-gateway/indirect-census) into a
 # private target directory (private/w45r3/target-rel, or target-FEATURES), so

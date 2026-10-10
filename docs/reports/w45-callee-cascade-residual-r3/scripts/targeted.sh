@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# targeted.sh NAME TEST... -- CG22-CALLBACK-REGISTRY-CONTRACT: run the named
+# targeted.sh NAME TEST... -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT): run the named
 # integration tests (`PACKAGE:TEST`, e.g. `qcore-compiler:qcore_contract_corpus`)
 # under the shared heavy lock, each one's output and exit to
 # private/w45r3/targeted-NAME-PACKAGE-TEST.{log,exit}; nothing piped.

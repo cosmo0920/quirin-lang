@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""write_gate_json.py NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1): gate.json from the
+"""write_gate_json.py NAME -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage): gate.json from the
 standing gate's and the provider gate's logs in private/w45r3/ (exits, the
 runner's totals line, the Lean audit count, the provider test count, the
 Python suite's count) and the Clang recording. Fails if any recorded exit is

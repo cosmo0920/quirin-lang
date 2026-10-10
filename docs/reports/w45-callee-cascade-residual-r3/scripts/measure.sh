@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# measure.sh NAME [ROUTES] -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE) (from NULL-SAFETY-PROPERTY) (adapted from
+# measure.sh NAME [ROUTES] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from NULL-TRIAGE-UNRESOLVED-PATHS and its lineage) (adapted from
 # CG22-CALLBACK-REGISTRY-CONTRACT's, itself from CG10-INDIRECT-ACCESS-SOLE-
 # BLOCKERS's scripts/measure.sh): the corpus arbiter, system route and
 # tail-pause slice with this worktree's release quirin-audit, each into a fresh
 # directory (corpus/system under private/w45r3/NAME*, the slice under the shared
-# prepared attempt as nct-NAME), each under the shared heavy lock, with the
+# prepared attempt as w45r3-NAME), each under the shared heavy lock, with the
 # route's wall time measured inside the lock (lock waiting is not counted)
 # into NAME[-system|-slice].seconds. ROUTES is a comma list of
 # corpus,system,slice (default all). NULL=1 also selects the null property

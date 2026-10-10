@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CG10-INDIRECT-ACCESS-SOLE-BLOCKERS): `mk_vhost_set` and `mk_vhost_set_property` rows of the
+"""W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from CG10-INDIRECT-ACCESS-SOLE-BLOCKERS): `mk_vhost_set` and `mk_vhost_set_property` rows of the
 tip probe's reports (usage: tip_rows.py REPORT.json ...)."""
 
 import json

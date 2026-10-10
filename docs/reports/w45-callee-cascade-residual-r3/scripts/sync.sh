@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sync.sh NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CG10-INDIRECT-ACCESS-SOLE-RESIDUALS):
+# sync.sh NAME -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from CG10-INDIRECT-ACCESS-SOLE-RESIDUALS):
 # `providers/contracts.py sync` then `check` under the shared heavy lock (sync
 # runs the resource-view example), output and exits to private/w45r3/sync-NAME.*.
 set -u

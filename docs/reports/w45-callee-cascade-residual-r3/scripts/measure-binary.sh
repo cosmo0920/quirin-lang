@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# measure-binary.sh NAME BINARY [ROUTES] -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE) (from NULL-SAFETY-PROPERTY, from CG22-CALLBACK-REGISTRY-CONTRACT) (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS):
+# measure-binary.sh NAME BINARY [ROUTES] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from NULL-TRIAGE-UNRESOLVED-PATHS and its lineage) (adapted from CHUNKIO-META-LEN-BOUNDS-CONTRACTS):
 # measure.sh with a saved binary (private/w45r3/bin/...). run_pinned_audit.py
 # always runs target/release/quirin-audit, so BINARY's bytes are written there
 # first under the shared heavy lock and its digest recorded beside the run;

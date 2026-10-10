@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""compare.py BEFORE AFTER OUT.json -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from
+"""compare.py BEFORE AFTER OUT.json -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from
 CG10-INDIRECT-ACCESS-SOLE-RESIDUALS' compare.py and attribute_contracts.py):
 every moving function between two route reports (a run directory or its
 resource-diagnostics.json), with the leaves it lost and gained, attributed to
@@ -20,14 +20,14 @@ import re
 import sys
 
 DECLARED = [
-    # CG22-CALLBACK-REGISTRY-CONTRACT: the callback declarations and the two
-    # re-declared in place (a lost or gained leaf naming one of them).
-    "bsearch", "qsort", "pthread_once",
-    "cmt_mpack_unpack_array", "cmt_mpack_unpack_map",
-    "ctr_mpack_unpack_array", "ctr_mpack_unpack_map",
-    "rd_list_init", "rd_list_new", "rd_list_add", "rd_list_destroy", "rd_list_clear",
-    "pb_write", "pb_encode_varint",
-    "rd_kafka_topic_partition_list_sort", "msgpack_packer_init",
+    # W45-CALLEE-CASCADE-RESIDUAL round 3: the sixteen declarations (a lost
+    # or gained leaf naming one of them).
+    "rd_kafka_AclBinding_destroy", "rd_kafka_ConfigResource_destroy",
+    "rd_kafka_NewPartitions_destroy", "rd_kafka_NewTopic_destroy",
+    "rd_kafka_UserScramCredentialAlteration_destroy", "unit_test_telemetry",
+    "print", "rd_bytes_hash", "rd_kafka_mem_calloc", "mk_fifo_queue_destroy",
+    "cfl_list_size", "flb_hash_table_del", "cio_file_hash",
+    "cio_file_native_get_size", "cio_stream_size_chunks_up", "cmt_atomic_initialize",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """rank.py REPORT.json OUT.json [--source-root DIR] [--top N] -- card
-CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1), task 1: the Unknown functions blocked by
+W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage), task 1: the Unknown functions blocked by
 uncontracted calls alone, and the callees ranked by functions decided alone.
 
 Population (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS' `decides.py`, corpus arm):

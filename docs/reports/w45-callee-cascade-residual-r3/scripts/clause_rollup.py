@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""clause_rollup.py BEFORE AFTER OUT.json -- CG22-CALLBACK-REGISTRY-CONTRACT
-(from RDHTTP-HEADER-SUMMARY-GAP's clause_rollup.py): the contract-dependency
+"""clause_rollup.py BEFORE AFTER OUT.json -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT,
+from RDHTTP-HEADER-SUMMARY-GAP's clause_rollup.py): the contract-dependency
 section of two runs (rules 13f-13k): each run's declaration counts and corpus
 Safe roll-up, and every declaration whose body standing moved, with its
-evidence before and after and its clauses left uncovered. The card adds `13y`
-evidence (rule 13y) and withholds sixteen declarations; nothing here decides a
+evidence before and after and its clauses left uncovered.
+Nothing here decides a
 verdict."""
 import json
 import pathlib

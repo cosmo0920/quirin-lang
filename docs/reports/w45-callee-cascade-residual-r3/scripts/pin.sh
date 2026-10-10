@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from W45-CALLEE-CASCADE-RESIDUAL.s and
+# W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from W45-CALLEE-CASCADE-RESIDUAL.s and
 # pin.sh): record the reviewed declarations with `quirin-audit pin` at both
 # audited revisions (66910c10, the read-only corpus tree; 046accf6, the
 # prepared system tree, read only), then check every changed crate's lock at

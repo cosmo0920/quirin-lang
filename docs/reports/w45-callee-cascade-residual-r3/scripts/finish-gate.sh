@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# finish-gate.sh NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): after gate.sh into
+# finish-gate.sh NAME -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): after gate.sh into
 # private/w45r3/gate-NAME and gate.json written: copy the exits, heads and
 # Clang version into gate/, regenerate the matrix with gate.json (09a), rerun
 # the Python suite (09b), the docs index (10b) and its check (10c).

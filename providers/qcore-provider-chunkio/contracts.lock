@@ -257,38 +257,6 @@
       ]
     },
     {
-      "function": "cio_file_hash",
-      "module": "chunkio/chunk_residency.qv",
-      "contract_sha256": "036466a8031f7c34cecc91d580b2b48c3ce2ea38b7221eb3451272227008ffb0",
-      "identities": [
-        {
-          "reviewed_at": [
-            {
-              "kind": "git",
-              "revision": "046accf6aded7906f66a1baf0202da349e521736"
-            },
-            {
-              "kind": "git",
-              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
-            }
-          ],
-          "sites": [
-            {
-              "path": "lib/chunkio/include/chunkio/cio_file.h",
-              "kind": "declaration",
-              "declaration_sha256": "2eb1dc4fb46a2b36c9fea58e422acefb2252f3ff9e72c0a26ae9316ff4981530"
-            },
-            {
-              "path": "lib/chunkio/src/cio_file.c",
-              "kind": "definition",
-              "declaration_sha256": "2eb1dc4fb46a2b36c9fea58e422acefb2252f3ff9e72c0a26ae9316ff4981530",
-              "body_sha256": "fdea50945fb25f4fe6a93efe7bc7c4479421e8bfc45fd88cbc62ba4c0a5b12f1"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "function": "cio_file_native_get_size",
       "module": "chunkio/chunk_sizes.qv",
       "contract_sha256": "9dbc57dd640362c445cd70a723d5327688920c6cadc51f5f5f860969a3be2212",

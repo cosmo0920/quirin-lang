@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tally.py RANK.json CLASSIFICATION.json -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1): per
+"""tally.py RANK.json CLASSIFICATION.json -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage): per
 class of classification-before.json, the callees and the corpus functions
 they decide alone (and with exactly one other callee) on RANK (rank.py's
 output). Callees deciding fewer than 2 functions alone are not classified and

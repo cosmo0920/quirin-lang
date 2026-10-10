@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""totals.py REPORT... -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE) (from NULL-SAFETY-PROPERTY, from CG22-CALLBACK-REGISTRY-CONTRACT): per route report (a
+"""totals.py REPORT... -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from NULL-TRIAGE-UNRESOLVED-PATHS and its lineage): per route report (a
 run directory or its resource-diagnostics.json): Safe / Unsafe / Unknown
 (and Pending) row counts and the report's sha256."""
 import collections

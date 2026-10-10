@@ -188,26 +188,3 @@ contract {
     ensures normal resource_borrowed(line);
     ensures normal resource_return_none();
 };
-
-// ## Card W45-CALLEE-CASCADE-RESIDUAL round 3: `cio_file_hash`
-//
-// ONE TRUSTED ASSUMPTION, pinned after reading the body at both revisions
-// (`lib/chunkio/src/cio_file.c:1304-1307`, byte-identical). It is the only
-// uncontracted call of `cio_chunk_hash` (`cio_chunk.c:375-382`).
-//
-//     char *cio_file_hash(struct cio_file *cf) { return (cf->map + 2); }
-//
-// The result points into the file mapping `cf` owns (`cf->map`, unmapped by
-// the chunk's release): borrowed from `cf`, owning nothing, ended by the
-// parent's release or mutation (`resource_return_borrowed_from`, C04.3.4).
-// Rule 13a checks it against the body in `cio_file.c` (a `return` reached
-// from the base by a member read and an offset). `nullable`, the weaker
-// marker: the body does not test `cf->map`, and the declaration claims no
-// non-null result.
-
-extern fn cio_file_hash(cf: ptr<mut, u8>) -> ptr<mut, u8>
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(cf);
-    ensures normal resource_return_borrowed_from(cf, nullable);
-};

@@ -1,5 +1,5 @@
 #!/bin/bash
-# tip-probe.sh NAME -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): the round-12 shared
+# tip-probe.sh NAME -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS): the round-12 shared
 # acceptance probe (scratchpad tip-contracts.sh) with this card's saved binary
 # private/w45r3/bin/NAME, reports into
 # private/w45r3/tip-NAME/. The scratch copy's

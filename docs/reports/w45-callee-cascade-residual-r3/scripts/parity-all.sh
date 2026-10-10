@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# parity-all.sh BEFORE AFTER -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1): scripts/parity.py over
+# parity-all.sh BEFORE AFTER -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage): scripts/parity.py over
 # the corpus, system and tail-pause slice parity streams of two runs, each
 # against the moving rows compare.py found (private/w45r3/compare-AFTER-*.json,
 # written first by this script), into private/w45r3/parity-AFTER-*.{json,log}.

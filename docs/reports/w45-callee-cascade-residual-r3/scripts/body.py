@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""body.py NAME [NAME...] -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1): print each named C
+"""body.py NAME [NAME...] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage): print each named C
 function's definition (signature through the matching closing brace) from
 the two audited Fluent Bit trees, and say whether the two texts are
 byte-identical. A reading aid: every contract is written from the printed

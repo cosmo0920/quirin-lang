@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate.sh NAME [PART] -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS, from
+# gate.sh NAME [PART] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage) (from CHUNKIO-META-LEN-BOUNDS-CONTRACTS, from
 # CG10-INDIRECT-ACCESS-SOLE-BLOCKERS's scripts/gate.sh): cargo check and the
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/w45r3/gate-NAME/, nothing piped. PART is `code` (steps 00-07)

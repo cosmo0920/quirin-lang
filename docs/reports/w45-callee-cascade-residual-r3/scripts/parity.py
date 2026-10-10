@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""parity.py BEFORE.jsonl AFTER.jsonl OUT.json [MOVING.json] -- CG22-CALLBACK-REGISTRY-CONTRACT (adapted from REFCOUNT-FAMILY-BLOCKING-CALLEES, adapted from REFCOUNT-REFERENCE-RETURNING-DECLARATIONS, adapted from REFCOUNT-RESOURCE-KIND, adapted from SLOT-MOVE-AND-INTERIOR-BORROW, from W43-ABI-ENUM-AND-CONST-PP, from CALLEE-RETENTION-CLASS1):
+"""parity.py BEFORE.jsonl AFTER.jsonl OUT.json [MOVING.json] -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from CG22-CALLBACK-REGISTRY-CONTRACT and its lineage):
 the full comparison of two QCORE_TYPED_PATH_PARITY streams (Clang AST node
 addresses erased for the multiset comparison).
 

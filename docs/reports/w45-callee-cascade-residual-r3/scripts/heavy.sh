@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# heavy.sh LOG COMMAND... -- NULL-TRIAGE-UNRESOLVED-PATHS (from NULL-CANDIDATE-TRIAGE) (from NULL-SAFETY-PROPERTY): run one heavy step (a build
+# heavy.sh LOG COMMAND... -- W45-CALLEE-CASCADE-RESIDUAL round 3 (from NULL-TRIAGE-UNRESOLVED-PATHS and its lineage): run one heavy step (a build
 # or a test binary) from the repository root under the shared heavy lock, with
 # CARGO_BUILD_JOBS=4 and CARGO_INCREMENTAL=0; output to LOG, exit to LOG.exit.
 set -u
