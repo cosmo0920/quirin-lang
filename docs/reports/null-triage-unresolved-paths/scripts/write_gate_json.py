@@ -36,7 +36,7 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"NULL-TRIAGE-UNRESOLVED-PATHS card gate on main c77efedbe, every standing code step at "
+        f"NULL-TRIAGE-UNRESOLVED-PATHS card gate on main d7b0882ac (rebased from c77efedbe), every standing code step at "
         f"{head[:9]}, scripts docs/reports/null-triage-unresolved-paths/scripts/gate.sh "
         "(each step under the shared flock), provider-gate.sh and finish-gate.sh, logs "
         f"private/ntu/gate-{name} and private/ntu/provider-gate-{provider_name} of this worktree. "
@@ -47,12 +47,11 @@ def main() -> int:
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (QCore.NullTriagePaths "
         "and AuditNullTriagePaths added); then the docs part (08, 09) on the records commit, build_matrix.py . --gate this file (09a), "
         "the python suite (09b) and the docs index (10b, 10c). "
-        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}, the later commit "
-        "touching only provider files: the cfl crate's module index and the providers load-path test): cargo check --locked 0, "
+        f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}): cargo check --locked 0, "
         f"cargo test {provider_tests} passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
-        f"package 0, providers Python suite {provider_python.group(1)} tests OK. The first provider gate (provider-gate-g1, at {head[:9]}) "
-        "failed cargo test (the cfl crate's index lacked the new module) and the providers Python suite (the load-path test's "
-        "bounds-view table); both fixed in that commit, retained, not evidence."
+        f"package 0, providers Python suite {provider_python.group(1)} tests OK. Before the rebase: gate-g1 (every code step 0, "
+        "7,882 passed, 312 Lean audits) and provider-gate-g2 (0) at the pre-rebase tips; provider-gate-g1 failed cargo test and the "
+        "providers Python suite (the cfl crate's index and the load-path test's bounds-view table, fixed); retained, not evidence."
     )
     gate = {
         "note": note,
