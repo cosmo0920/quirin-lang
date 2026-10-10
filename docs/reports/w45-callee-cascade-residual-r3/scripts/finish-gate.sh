@@ -8,7 +8,7 @@ name="$1"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 logs="$repo/private/w45r3/gate-$name"
-report="$repo/docs/reports/cg22-callback-registry-contract"
+report="$repo/docs/reports/w45-callee-cascade-residual-r3"
 cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"

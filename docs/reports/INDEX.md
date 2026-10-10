@@ -1052,6 +1052,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w45-callee-cascade-residual](w45-callee-cascade-residual/README.md) | W45-CALLEE-CASCADE-RESIDUAL: the callees that decide Unknown functions alone |
 
+| [w45-callee-cascade-residual-r3](w45-callee-cascade-residual-r3/README.md) | W45-CALLEE-CASCADE-RESIDUAL round 3: contracts for the callees that each free two or more |
+
 | [w45-callee-summary-cascade](w45-callee-summary-cascade/README.md) | W45-CALLEE-SUMMARY-CASCADE: which callee bodies unblock whom, and the destructor body modeled |
 
 | [w45-container-root-reach](w45-container-root-reach/README.md) | W45-CONTAINER-ROOT-REACH: where a container outlives the function, and the foreign unlink |
