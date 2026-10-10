@@ -39,7 +39,7 @@ NEW = [
         "id": "NULL-MEMBER-SCOPE-ENTRY-INFERENCE",
         "title": "Function-scope entries are declared for 66 broker functions; the rest of rkb->rkb_rk's first reads stay candidates",
         "why": MEASURED + ": with rd_kafka_broker_s.rkb_rk stable (rule 14x) the own rkb_rk-sourced "
-        "candidates fell 682 -> 488 (run a1); the 66 declared `null_member_scope(rd_kafka_broker_s, rkb_rk, rkb)` "
+        "candidates fell 682 -> 488 (run a1); the 66 declared `nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)` "
         "entries (rule 14z) made 26 rows Safe conditional and moved the question to 312 caller checks "
         "(38 proved, 95 moved, 179 candidates: 16 Safe rows became Unknown, each named in the report) -> 552 own "
         "rkb_rk-sourced candidates. 117 functions with such a first read were not declared: 45 without a "

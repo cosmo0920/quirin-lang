@@ -19,6 +19,29 @@ a free value may be", "no candidate is removed except by checked knowledge".
 (`source-routes.md`, constraint 15a and 15b), so the card uses `14x`–`14z`
 only. (The sibling card's `15c`–`15g` are taken too, by `io.md`.)
 
+**Naming (USER DECISION 2026-10-11).** Asked of this card's first spelling,
+verbatim: "null_member_scope -> This is also nonnull or nullable prefix
+should be used there?" The decision: every non-NULL clause is spelled with
+the prefix that states the claim, `nonnull_`; `nullable_` is reserved for
+clauses stating a value may be NULL. This card renamed all four, with no
+aliases: `null_member_nonnull` → `nonnull_member`, `null_result_nonnull` →
+`nonnull_result` (both landed by NULL-CANDIDATE-TRIAGE), and its own
+`null_member_scope` → `nonnull_member_scope`, `null_member_stable` →
+`nonnull_member_stable`; diagnostics (`nonnull-member-shape`,
+`nonnull-result-pointer`, `nonnull-member-stable-shape`,
+`nonnull-member-scope-shape`, `nonnull-member-scope-parameter`) and the
+`BoundsClause` variants (`NonnullMember`, `NonnullResult`,
+`NonnullMemberStable`, `NonnullMemberScope`) follow; the proof and dependency
+names (`result:member:`, `member:`, `result:`, `stable:`) are unchanged. The
+control ([rename-control/](artifacts/rename-control/)): with the renamed text
+and the lock as it stood, `pin --bounds --check` of the librdkafka crate
+reported all **72** changed declarations `contract-changed` at both revisions
+(exit 1; the 66 scope entries, `rd_kafka_broker_add`, the four member hosts and
+`rd_kafka_topic_keep`); each was then re-pinned at 66910c10 and 046accf6
+(`pin --check` 0 at both, `pin --verify-contracts` 0). Measurements before the
+rename (a1, a2) carry the old spellings in their row text; run a3, after it,
+is compared with a2 in section 3.
+
 ## 1. The reading, and why two of the three members have none
 
 A global member declaration (rule 14t) is withdrawn by one NULL store
@@ -76,9 +99,14 @@ four fresh-object stores and two assignments.
 BEFORE `b0` (binary `b985808e…`, base) reproduces the brief: custody corpus
 **915 / 9 / 3,910** (`ded14632…`), system 91 / 4 / 353, slice 50 / 1 / 349 / 4
 Pending; null corpus 1,115 / 1,421 Safe, 2,363 Unknown, 22 Unsafe, 33 findings,
-12,809 candidates = 10,907 own + 1,902 travelled. AFTER `a2` (binary
-`70d36c4c…`, `run.json`'s `binary_sha256` checked); `a1` is the stable member
-alone (no scope entries, same code).
+12,809 candidates = 10,907 own + 1,902 travelled. AFTER `a3` (binary
+`0fc0b879…`, the tip's code after the `nonnull_` rename; `run.json`'s
+`binary_sha256` checked). `a2` (binary `70d36c4c…`) is the same reading before
+the rename: every null row of a2, with the old spellings replaced, equals a3's
+apart from the bounds environment's digest (`f9a068b3…` → `d095788e…`) on all
+three routes ([rename-identity-corpus.json](artifacts/rename-identity-corpus.json),
+-system, -slice: 0 rows differ, 0 verdicts). `a1` is the stable member alone
+(no scope entries, same code as a2).
 
 **Custody**: byte-identical on all three routes (corpus `ded14632…`, system
 `4f87449c…`, slice `e97e2c81…`); the parity streams are multiset-identical
@@ -89,7 +117,7 @@ alone (no scope entries, same code).
 **Null property, corpus** ([compare-corpus.json](artifacts/compare-corpus.json),
 [counts-corpus-after.json](artifacts/counts-corpus-after.json)):
 
-| | BEFORE | stable only (a1) | AFTER (a2) |
+| | BEFORE | stable only (a1) | AFTER (a3) |
 | --- | ---: | ---: | ---: |
 | Safe unconditional | 1,115 | 1,115 | **1,113** |
 | Safe conditional | 1,421 | 1,421 | **1,433** |
@@ -136,10 +164,14 @@ whole-object stores; nothing withdrawn.
 premise proved 1 → **1** (system 2 / 0, slice 5 / 1 unchanged): the premises
 read `s->iov`, `i->storage` and list elements, not `rkb_rk`.
 
-**Wall time** (inside the lock, null and parity selected): corpus 515.7 s →
-509.8 s (a1) → 564.4 s (a2), system 75.1 → 75.3 s, slice 33.8 → 33.9 s. The
-corpus a2 figure ran while the sibling card's work shared the host; the
-stable reading alone measured −1 %; the scope entries add 312 checks.
+**Wall time** (inside the lock, null and parity selected): corpus 515.7 s
+(b0) → 509.8 s (a1) → 564.4 s (a2) → 527.8 s (a3); system 75.1 → 75.3 (a2) →
+87.5 s (a3); slice 33.8 → 33.9 (a2) → 45.6 s (a3). a2 and a3 run the same
+reading (only spellings differ), so their spread (system +16 %, slice +35 %
+between two runs of one reading) is the shared host's load (the sibling card
+built and measured at the same time), not the change; the lock serialises
+heavy steps but not the rest of the host. Within that noise: corpus +2 % (a3),
+−1 % (a1).
 
 ## 4. Prediction against outcome
 
@@ -155,7 +187,7 @@ stable reading alone measured −1 %; the scope entries add 312 checks.
 | Findings unchanged | 33 |
 | System, slice small or none | none |
 | Parity identical | yes |
-| Wall +0 to +5 % | a1 −1 %, a2 +9 % (host shared; see above) |
+| Wall +0 to +5 % | corpus a1 −1 %, a3 +2 %, a2 +9 %; runs of one reading spread up to 35 % on the shared host (see above) |
 
 ## 5. Lean
 
@@ -226,5 +258,6 @@ See [gate.json](gate.json) and [gate/](gate/) (filled by the gate run).
 `scripts/`: `build.sh`, `measure.sh`, `measure-binary.sh`, `heavy.sh`,
 `pin.sh` (`PINS_FILE`), `lean.sh`, `totals.py`, `member_counts.py`,
 `compare.py`, `parity.py`, `routes.sh`, `summary.py`, `scope_candidates.py`,
-`bodies.py`, `candidates.py`, `artifacts.py`, `update_ledger.py`, `gate.sh`,
+`bodies.py`, `candidates.py`, `artifacts.py`, `update_ledger.py`, `rename-control.sh`,
+`rename_identity.py`, `gate.sh`,
 `provider-gate.sh`, `write_gate_json.py`, `finish-gate.sh`.
