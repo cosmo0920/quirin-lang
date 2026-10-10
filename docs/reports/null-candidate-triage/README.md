@@ -274,8 +274,30 @@ row; an ambiguous definition exports nothing. `qcore-core/tests/null_triage.rs`
 
 ## 10. Gate
 
-See [gate/](gate/) and [gate.json](gate.json); filled in section 10a after the
-run.
+Standing gate **g3** on `707b0e76e` (the rebased tip; [gate.sh](scripts/gate.sh),
+every step under the shared lock, exits in [gate/](gate/), logs
+`private/nct/gate-g3/`): `cargo check --workspace --all-targets` 0; submodule
+0; `cargo fmt --check` 0; `clippy --locked --all-targets -D warnings` 0;
+`run_test_binaries.py` **477 units, 490 summaries, 7,867 passed, 0 failed, 12
+ignored**, exit 0 (`private/nct/tests-gate-g3/`); `reevaluation_probe` 0;
+`reevaluation_followup` 0; `check_lean_audits.py` **311** audits passed; then
+`build_matrix.py . --gate gate.json` (09a) 0, the Python suite (09b, 365 tests)
+0, the docs index (10b, 10c) 0, and the docs part (08, 09) on the records
+commit. The first docs part failed the Python suite once on the matrix's
+derived Lean audit count (310 → 311) before 09a regenerated it (retained in
+`private/nct/gate-g3/docs-attempt-1/`). Provider gate **g3** at the same tip
+([provider-gate.sh](scripts/provider-gate.sh), `private/nct/provider-gate-g3/`):
+`cargo check --locked` 0, `cargo test` 129 passed (exit 0), fmt 0, clippy 0,
+`contracts.py check` 0, package build 0, package verify of all five packages
+0, providers Python suite 0. Clang: `gate/clang-version.txt`.
+
+Earlier attempts, retained and not evidence for the tip: g1 on `fbd237698`
+(before the rebase): every step 0 except the suite, 7,852 passed and **1
+failed** (`contract_inherit_qcore_provider`: the librdkafka inventory's digest
+of `null_deref.qv`, synced with `providers/contracts.py sync` before g2); g2 on
+`2149495cd…` (after the rebase): suite 7,867 passed, 0 failed, every step 0
+except `cargo fmt --check` (and the provider gate's fmt), on the conflict
+resolution in `bounds_contract.rs`, formatted in `707b0e76e`.
 
 ## 11. Follow-ups
 

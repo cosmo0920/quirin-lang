@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "NULL-DEREF-QTT-GROUNDING card gate on main cc7a20c3e (base), every code step at fe2f93783, scripts docs/reports/null-deref-qtt-grounding/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/ndqg/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 475 units, 488 summaries, 7,846 passed, 0 failed, 12 ignored, exit 0 (private/ndqg/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 310 audits passed (QCore.NullDerefGrade with AuditNullDerefGrade and QCore.DerefDecomposition with AuditDerefDecomposition added); python suite and docs index check per gate/ (08, 09: the first 08 run failed only on the stale derived Lean count, 308 against 310, and passed after the derived facts were regenerated and committed), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). providers/ unchanged: no provider gate is due; a providers workspace cargo check --locked exits 0.",
-  "workspace_tests": 7846,
-  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "note": "NULL-CANDIDATE-TRIAGE card gate on main 2a9a0e9a1 (rebased from cc7a20c3e), every code step at 707b0e76e, scripts docs/reports/null-candidate-triage/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/nct/gate-g3 and private/nct/provider-gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 477 units, 490 summaries, 7,867 passed, 0 failed, 12 ignored, exit 0 (private/nct/tests-gate-g3); both reevaluation probes exit 0; check_lean_audits.py 311 audits passed (QCore.NullTriage and AuditNullTriage added); first docs part (08, 09) failed the python suite once on the matrix's derived Lean audit count (retained in docs-attempt-1/), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g3, at 707b0e76e; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7867,
+  "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 310,
+  "lean_audits": 311,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6936,6 +6936,7 @@
    "AuditNoBuildScope.lean",
    "AuditNullDeref.lean",
    "AuditNullDerefGrade.lean",
+   "AuditNullTriage.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
@@ -7076,7 +7077,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a0e3ec88d738a49ce/docs/reports/null-deref-qtt-grounding/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a98dd2c7e74b46895/docs/reports/null-candidate-triage/gate.json)"
  },
  "named_followups": [
   {

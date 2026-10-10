@@ -1,0 +1,13 @@
+{
+  "note": "NULL-CANDIDATE-TRIAGE card gate on main 2a9a0e9a1 (rebased from cc7a20c3e), every code step at 707b0e76e, scripts docs/reports/null-candidate-triage/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/nct/gate-g3 and private/nct/provider-gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 477 units, 490 summaries, 7,867 passed, 0 failed, 12 ignored, exit 0 (private/nct/tests-gate-g3); both reevaluation probes exit 0; check_lean_audits.py 311 audits passed (QCore.NullTriage and AuditNullTriage added); first docs part (08, 09) failed the python suite once on the matrix's derived Lean audit count (retained in docs-attempt-1/), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g3, at 707b0e76e; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7867,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 311,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
