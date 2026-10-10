@@ -74,9 +74,10 @@ fn refused(modules: &BTreeMap<String, String>, expected: &str) {
 fn every_registered_relation_holds_on_the_corpus() {
     let report = check_registry(&modules(), REGISTERED_RELATIONS).unwrap();
     // NULL-SAFETY-PROPERTY: +5 (`null_deref_beside`); NULL-CANDIDATE-TRIAGE
-    // +2 (a member and a result declaration beside resource views).
-    assert_eq!(report.census.len(), 18);
-    assert_eq!(report.relations.len(), 20);
+    // +2 (a member and a result declaration beside resource views);
+    // NULL-MEMBER-INVARIANT-SCOPE +1 (a function-scope entry).
+    assert_eq!(report.census.len(), 19);
+    assert_eq!(report.relations.len(), 21);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
