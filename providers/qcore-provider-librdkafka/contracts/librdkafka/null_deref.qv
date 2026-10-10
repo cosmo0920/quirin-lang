@@ -189,3 +189,34 @@ contract {
     requires bounds_contract_v1;
     quant null-deref #app_rkt;
 };
+
+// Card NULL-MEMBER-INVARIANT-SCOPE (contract specification C09.3, grammar
+// G05f, gateway rules 14x-15a): scoped member invariants. `requires
+// null_member_stable(TAG, FIELD);` says FIELD is never made NULL on an
+// existing struct TAG object: every assignment the analysed units make to it
+// is checked non-null (one not proved withdraws the declaration for the
+// run), while an initializer list writes a fresh object and may leave it
+// NULL. A non-null value seen on an object then stays non-null for that
+// object's lifetime, so the null walk keeps a tested or dereferenced
+// `V->FIELD` (V a tracked local or formal) across calls and stores. Whole-
+// object writes through an untyped pointer stay a listed premise, so the
+// declaration is never `validated`.
+//
+// rd_kafka_broker_s.rkb_rk (not declarable globally, rule 14t: the lookup key
+// `skel = {.rkb_nodeid = nodeid}` in rd_kafka_broker_find_by_nodeid0_fl and
+// three `RD_ZERO_INIT` unit-test brokers leave it NULL) is stable: those four
+// are initializer lists of fresh locals; rd_kafka_broker_add stores
+// `rkb->rkb_rk = rk` after reading rk's configuration, and rdkafka_feature.c's
+// unit test stores `&rk`. Every store read at 66910c10 and 046accf6.
+//
+// Not declarable: rd_kafka_buf_s.rkbuf_rkb (rd_kafka_recv stores NULL into
+// the broker's receive buffer, an existing object, after reading the
+// response header, rdkafka_broker.c:2134), mk_list.next and cfl_list.next
+// (mk_list_del and cfl_list_del store NULL into the unlinked node): each has
+// an exit store on an existing object, and whether it reaches an object a
+// use is reading is a question of object identity no check here decides.
+extern fn rd_kafka_broker_add(rk: ptr<mut, u8>, source: i32, proto: i32, name: ptr<const, u8>, port: u16, nodeid: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_stable(rd_kafka_broker_s, rkb_rk);
+};

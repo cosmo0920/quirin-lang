@@ -64,16 +64,20 @@ use serde_json::Value;
 pub use qcore_core::null_deref as core_model;
 pub use qcore_core::null_deref::{NULL_PROPERTY, NullVerdict, Request, compose};
 pub use qcore_core::null_triage;
+/// Card NULL-MEMBER-INVARIANT-SCOPE: the scoped member decisions.
+pub use qcore_core::null_member_scope;
 
 use crate::legacy_c::C11TranslationUnit;
 use crate::typed_c_ast::kind;
 
 mod ast;
+mod scope;
 mod walk;
 mod witness;
 
 use ast::kids;
 use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
+pub use scope::StableStore;
 pub use walk::{ExternalCall, MemberStore};
 pub use witness::{PathStep, Witness};
 
@@ -204,6 +208,9 @@ pub struct NullUnitReport {
     /// Card NULL-CANDIDATE-TRIAGE: every store to a declared member in the
     /// unit's analysed definitions (rule 14t's evidence).
     pub member_stores: Vec<MemberStore>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: every store to a stable member in
+    /// the unit's analysed definitions (rule 14x's evidence).
+    pub stable_stores: Vec<StableStore>,
     /// Card NULL-CANDIDATE-TRIAGE: every analysed definition's export
     /// (rule 14v), and each declared result's body (rule 14u).
     pub definitions: Vec<DefinitionSummary>,
@@ -367,6 +374,7 @@ struct Analysed {
     row: NullFunctionRow,
     summary: Summary,
     member_stores: Vec<MemberStore>,
+    stable_stores: Vec<StableStore>,
     external_calls: Vec<ExternalCall>,
     export: DefinitionSummary,
 }
@@ -382,6 +390,18 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
     let mut entries = BTreeMap::new();
     let mut scope_clauses = Vec::new();
     let mut reasons_before = Vec::new();
+    // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): the function's declared
+    // scope entries are preconditions of its row.
+    let member_scope = env.scopes.get(name);
+    if let Some(member_scope) = member_scope {
+        if member_scope.parameters == names.len() {
+            scope_clauses.extend(member_scope.entries.iter().map(|e| e.text.clone()));
+        } else {
+            reasons_before.push(format!(
+                "null-declaration-withdrawn: `{name}`'s scope declaration does not match its C definition"
+            ));
+        }
+    }
     if let Some(declared) = declared {
         if declared.parameters == names.len() {
             for (position, text) in &declared.positions {
@@ -490,7 +510,7 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
     let returns_non_null = walked.returns.as_ref().is_some_and(Nullness::is_non_null);
     let returns_null_on_a_path = walked.returns_null_on_a_path;
     let mut dependencies = walked.consulted.iter().cloned().collect::<Vec<_>>();
-    if declared.is_some() {
+    if declared.is_some() || member_scope.is_some() {
         dependencies.push(name.to_owned());
     }
     dependencies.sort();
@@ -561,6 +581,7 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
         row,
         summary,
         member_stores: walked.member_stores,
+        stable_stores: walked.stable_stores,
         external_calls: walked.external_calls,
         export,
     }
@@ -650,9 +671,11 @@ fn analyze_on_stack(
         .collect::<Vec<_>>();
     let declared = declared_clauses(bounds);
     let (members, results) = declared_members_and_results(bounds);
+    let (stable, scopes) = scope::declared_stable_and_scopes(bounds);
     let mut summaries = BTreeMap::new();
     let mut rows = BTreeMap::new();
     let mut member_stores = Vec::new();
+    let mut stable_stores = Vec::new();
     let mut external_calls = Vec::new();
     let mut definitions = Vec::new();
     let selected = functions.iter().collect::<BTreeSet<_>>();
@@ -668,9 +691,12 @@ fn analyze_on_stack(
             newlines: &newlines,
             members: &members,
             results: &results,
+            stable: &stable,
+            scopes: &scopes,
         };
         let analysed = analyze_function(&env, &name, definition);
         member_stores.extend(analysed.member_stores);
+        stable_stores.extend(analysed.stable_stores);
         if selected.contains(&name) {
             external_calls.extend(analysed.external_calls);
             rows.insert(name.clone(), analysed.row);
@@ -708,6 +734,7 @@ fn analyze_on_stack(
         resource_contracts_sha256: resource_digest(resource),
         functions: rows,
         member_stores,
+        stable_stores,
         definitions,
         external_calls,
     })

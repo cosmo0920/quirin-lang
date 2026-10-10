@@ -78,6 +78,11 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         // Card NULL-CANDIDATE-TRIAGE: likewise for the member and result
         // declarations only the null property reads.
         BoundsClause::NullMember { .. } | BoundsClause::NullResult => ClauseKind::Preserves,
+        // Card NULL-MEMBER-INVARIANT-SCOPE: likewise the stable member and
+        // the scope entry.
+        BoundsClause::NullStable { .. } | BoundsClause::NullScope { .. } => {
+            ClauseKind::Preserves
+        }
     }
 }
 

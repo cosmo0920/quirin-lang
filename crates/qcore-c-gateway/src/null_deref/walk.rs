@@ -9,6 +9,7 @@ use qcore_schemas::contract::{ResourceContracts, ResourceReturnMode};
 use serde_json::Value;
 
 use super::ast::{self, callee_name, is_pointer, kids, render, ty};
+use super::scope::{self, ScopeDecl, StableDecl, StableStore};
 use crate::typed_c_ast::kind;
 
 /// A loop's fixed point is sought this many times before the function is
@@ -240,6 +241,10 @@ pub struct MemberStore {
     pub outcome: &'static str,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub sources: Vec<String>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: the stable members the stored
+    /// value's proof rests on (absent when none).
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub relies: Vec<String>,
 }
 
 /// Card NULL-CANDIDATE-TRIAGE (rule 14v): a pointer actual of a call to a
@@ -302,6 +307,10 @@ pub(super) struct Env<'a> {
     pub(super) members: &'a BTreeMap<(String, String), MemberDecl>,
     /// Card NULL-CANDIDATE-TRIAGE: declared non-null results, by function.
     pub(super) results: &'a BTreeMap<String, ResultDecl>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: stable members, by (tag, field).
+    pub(super) stable: &'a BTreeMap<(String, String), StableDecl>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: function-scope entries, by function.
+    pub(super) scopes: &'a BTreeMap<String, ScopeDecl>,
 }
 
 /// The entry fact of a formal under a clause.
@@ -335,6 +344,8 @@ pub(super) struct Walked {
     pub(super) member_stores: Vec<MemberStore>,
     /// Card NULL-CANDIDATE-TRIAGE: pointer actuals of external calls.
     pub(super) external_calls: Vec<ExternalCall>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: stores to stable members.
+    pub(super) stable_stores: Vec<StableStore>,
     /// The function's returns, joined (for a declared result's check).
     pub(super) returns_null_on_a_path: bool,
 }
@@ -361,6 +372,10 @@ pub(super) struct Walker<'a> {
     indirect_calls: BTreeSet<usize>,
     member_stores: BTreeMap<usize, MemberStore>,
     external_calls: BTreeMap<(usize, usize), ExternalCall>,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: each tracked pointer variable's
+    /// pointee struct tag, and the stores to stable members.
+    pointee: BTreeMap<String, String>,
+    stable_stores: BTreeMap<(usize, String), StableStore>,
 }
 
 /// The AST key of a node (its id, else its offset).
@@ -447,6 +462,25 @@ impl<'a> Walker<'a> {
                 tracked.insert(id.to_owned());
             }
         }
+        // Card NULL-MEMBER-INVARIANT-SCOPE: the struct a tracked pointer
+        // variable points to, when it is one with a stable member.
+        let mut pointee = BTreeMap::new();
+        if !env.stable.is_empty() {
+            let typed = kids(function)
+                .filter(|c| kind(c) == "ParmVarDecl")
+                .chain(declared.iter());
+            for decl in typed {
+                let Some(id) = decl["id"].as_str() else {
+                    continue;
+                };
+                if tracked.contains(id)
+                    && let Some(tag) = record_tag(env.unit, ty(decl), true)
+                    && env.stable.keys().any(|(t, _)| *t == tag)
+                {
+                    pointee.insert(id.to_owned(), tag);
+                }
+            }
+        }
         let mut backward = BTreeSet::new();
         if let Some(body) = body {
             let mut order = 0;
@@ -481,6 +515,8 @@ impl<'a> Walker<'a> {
             indirect_calls: BTreeSet::new(),
             member_stores: BTreeMap::new(),
             external_calls: BTreeMap::new(),
+            pointee,
+            stable_stores: BTreeMap::new(),
         };
         let mut state = State {
             live: true,
@@ -537,6 +573,33 @@ impl<'a> Walker<'a> {
                 );
             }
         }
+        // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): a declared scope
+        // entry's member is non-null at entry (held when the declaration is).
+        if let Some(scope) = env.scopes.get(name)
+            && scope.parameters == walker.formals.len()
+        {
+            for entry in &scope.entries {
+                let Some((id, _, true)) = walker.formals.get(entry.position).cloned() else {
+                    continue;
+                };
+                let proof = match &scope.held {
+                    Some(hold) => Proof::Precondition(format!("held: {hold}")),
+                    None => {
+                        walker
+                            .assumptions
+                            .insert(format!("declared: `{name}` {}", entry.text));
+                        Proof::Precondition(format!("declared: {}", entry.text))
+                    }
+                };
+                state.paths.insert(
+                    format!("{}^.{}", walker.var_root(&id), entry.field),
+                    PathFact {
+                        null: Nullness::proved(proof),
+                        effective_type: false,
+                    },
+                );
+            }
+        }
         match body {
             Some(body) => {
                 let end = walker.stmt(body, state);
@@ -561,6 +624,7 @@ impl<'a> Walker<'a> {
             indirect_calls: walker.indirect_calls.len(),
             member_stores: walker.member_stores.into_values().collect(),
             external_calls: walker.external_calls.into_values().collect(),
+            stable_stores: walker.stable_stores.into_values().collect(),
             returns_null_on_a_path,
         }
     }
@@ -647,14 +711,45 @@ impl<'a> Walker<'a> {
     /// A store to memory (or a call, or an asm): every path fact is
     /// forgotten, except across a non-character scalar store, which cannot
     /// modify a pointer object (C11 6.5p7): those facts are kept, marked.
-    fn memory_written(state: &mut State, wide_scalar: bool) {
+    ///
+    /// Card NULL-MEMBER-INVARIANT-SCOPE (rule 14y): a non-null fact on
+    /// `V->FIELD`, `V` a tracked variable pointing to a `struct TAG` whose
+    /// `FIELD` is a stable member in force, is kept (every store that could
+    /// make it NULL is checked), with the member's proof added.
+    fn memory_written(&self, state: &mut State, wide_scalar: bool) {
         if wide_scalar {
             for fact in state.paths.values_mut() {
                 fact.effective_type = true;
             }
-        } else {
-            state.paths.clear();
+            return;
         }
+        let kept = std::mem::take(&mut state.paths)
+            .into_iter()
+            .filter_map(|(key, fact)| {
+                let member = self.stable_member_of_key(&key)?;
+                let null = qcore_core::null_member_scope::persist(&fact.null, &member, true)?;
+                Some((
+                    key,
+                    PathFact {
+                        null,
+                        effective_type: fact.effective_type,
+                    },
+                ))
+            })
+            .collect();
+        state.paths = kept;
+    }
+
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: the stable member in force
+    /// (`TAG.FIELD`) a persistable path key names, if any.
+    fn stable_member_of_key(&self, key: &str) -> Option<String> {
+        let (id, field) = scope::persistable_key(key)?;
+        let tag = self.pointee.get(id)?;
+        self.env
+            .stable
+            .get(&(tag.clone(), field.to_owned()))
+            .filter(|decl| decl.held.is_none())
+            .map(|_| format!("{tag}.{field}"))
     }
 
     fn var_root(&self, id: &str) -> String {
@@ -794,6 +889,14 @@ impl<'a> Walker<'a> {
                         self.assumptions.insert(format!(
                             "{name}: a non-null result (null_result_nonnull; checked against the analysed bodies)"
                         ));
+                    }
+                    // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14y): a fact
+                    // kept across a call or a store by a stable member.
+                    Proof::NonNullResult(name) if name.starts_with("stable:") => {
+                        self.assumptions.insert(format!(
+                            "{name}: a non-null member kept (null_member_stable; every store to an existing object checked, whole-object writes premised)"
+                        ));
+                        self.consulted.insert(name.clone());
                     }
                     _ => {}
                 }
@@ -1045,12 +1148,14 @@ impl<'a> Walker<'a> {
             Outcome::Candidate(sources) => sources.iter().map(Source::render).collect(),
             _ => Vec::new(),
         };
+        let relies = self.stable_relies(value);
         let record = MemberStore {
             member,
             function: self.function.clone(),
             line: self.line(node),
             outcome: outcome.class(),
             sources,
+            relies,
         };
         // A store reached twice keeps its worse record: a discharged one
         // never replaces a recorded failure.
@@ -1063,11 +1168,136 @@ impl<'a> Walker<'a> {
         }
     }
 
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: the withdrawable declarations a
+    /// value's proof rests on (a stable member is also a dependency of the
+    /// row; the others are recorded where they were read).
+    fn stable_relies(&mut self, null: &Nullness) -> Vec<String> {
+        let Nullness::NonNull(proofs) = null else {
+            return Vec::new();
+        };
+        // A store's proof resting on a declaration the fold may withdraw
+        // (a stable member, a declared member, a declared result).
+        let relies = proofs
+            .iter()
+            .filter_map(|proof| match proof {
+                Proof::NonNullResult(name)
+                    if name.starts_with("stable:") || name.starts_with("member:") =>
+                {
+                    Some(name.clone())
+                }
+                Proof::NonNullResult(name) => name
+                    .strip_prefix("declared-result:")
+                    .map(|f| format!("result:{f}")),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        if self.recording {
+            self.consulted.extend(
+                relies
+                    .iter()
+                    .filter(|name| name.starts_with("stable:"))
+                    .cloned(),
+            );
+        }
+        relies
+    }
+
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: the stable member (`TAG.FIELD`,
+    /// in force) a member access names, if any.
+    fn stable_member(&self, node: &Value) -> Option<String> {
+        let node = strip(node);
+        if kind(node) != "MemberExpr" || self.env.stable.is_empty() {
+            return None;
+        }
+        let field = node["name"].as_str()?;
+        let base = kids(node).next()?;
+        let tag = record_tag(self.env.unit, ty(base), node["isArrow"] == true)?;
+        let key = (tag, field.to_owned());
+        self.env
+            .stable
+            .get(&key)
+            .filter(|m| m.held.is_none())
+            .map(|_| format!("{}.{}", key.0, key.1))
+    }
+
+    /// Card NULL-MEMBER-INVARIANT-SCOPE: the stable members (in force) of a
+    /// `struct TAG` type spelling (not a pointer).
+    fn stable_fields_of(&self, spelled: &str) -> Vec<String> {
+        if self.env.stable.is_empty() {
+            return Vec::new();
+        }
+        let Some(tag) = record_tag(self.env.unit, spelled, false) else {
+            return Vec::new();
+        };
+        self.env
+            .stable
+            .iter()
+            .filter(|((t, _), m)| *t == tag && m.held.is_none())
+            .map(|((t, f), _)| format!("{t}.{f}"))
+            .collect()
+    }
+
+    /// Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): record a store of
+    /// `value` to the stable member `member` at `node`, of kind `kind`.
+    fn stable_store(
+        &mut self,
+        node: &Value,
+        member: String,
+        store_kind: &'static str,
+        value: &Nullness,
+        state: &State,
+    ) {
+        if !self.recording || !state.live {
+            return;
+        }
+        let id = self.site(node);
+        let outcome = if store_kind == "whole-object" {
+            Outcome::Candidate(BTreeSet::from([Source::Other(
+                "a whole-object write".into(),
+            )]))
+        } else {
+            core::check(value, false)
+        };
+        let sources = match &outcome {
+            Outcome::Candidate(sources) => sources.iter().map(Source::render).collect(),
+            _ => Vec::new(),
+        };
+        let relies = self.stable_relies(value);
+        let record = StableStore {
+            member: member.clone(),
+            function: self.function.clone(),
+            line: self.line(node),
+            kind: store_kind,
+            outcome: outcome.class(),
+            sources,
+            relies,
+        };
+        match self.stable_stores.get_mut(&(id, member.clone())) {
+            Some(_) if outcome.discharged() => {}
+            Some(existing) => *existing = record,
+            None => {
+                self.stable_stores.insert((id, member), record);
+            }
+        }
+    }
+
     /// Store `value` to the place `lhs` designates.
     fn store(&mut self, lhs: &Value, place: Option<Place>, value: &Val, state: &mut State) {
         if let Some(member) = self.declared_member(lhs) {
             let at = strip(lhs);
             self.member_store(at, member, &value.null, state);
+        }
+        // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a store to a stable
+        // member of an existing object; a struct assignment of a record
+        // with one is a whole-object store.
+        if let Some(member) = self.stable_member(lhs) {
+            let at = strip(lhs);
+            self.stable_store(at, member, "assignment", &value.null, state);
+        } else if !is_pointer(ty(lhs)) {
+            for member in self.stable_fields_of(ty(lhs)) {
+                let at = strip(lhs);
+                self.stable_store(at, member, "whole-object", &value.null, state);
+            }
         }
         match place {
             Some(Place::Var(id)) => {
@@ -1083,7 +1313,7 @@ impl<'a> Walker<'a> {
                 }
             }
             Some(Place::Path(key)) => {
-                Self::memory_written(state, ast::is_wide_scalar(ty(lhs)));
+                self.memory_written(state, ast::is_wide_scalar(ty(lhs)));
                 if is_pointer(ty(lhs)) {
                     state.paths.insert(
                         key,
@@ -1094,7 +1324,7 @@ impl<'a> Walker<'a> {
                     );
                 }
             }
-            None => Self::memory_written(state, ast::is_wide_scalar(ty(lhs))),
+            None => self.memory_written(state, ast::is_wide_scalar(ty(lhs))),
         }
     }
 
@@ -1261,7 +1491,7 @@ impl<'a> Walker<'a> {
                 for part in parts.iter().skip(1) {
                     self.eval(part, state);
                 }
-                Self::memory_written(state, false);
+                self.memory_written(state, false);
                 if is_pointer(ty(node)) {
                     Val::of(Nullness::maybe(Source::MemoryField(render(node))))
                 } else {
@@ -1282,11 +1512,17 @@ impl<'a> Walker<'a> {
     /// initializer list builds, if it builds one with any.
     fn declared_record(&self, node: &Value) -> Option<String> {
         let tag = record_tag(self.env.unit, ty(node), false)?;
-        self.env
+        (self
+            .env
             .members
             .iter()
             .any(|((t, _), m)| *t == tag && m.held.is_none())
-            .then_some(tag)
+            || self
+                .env
+                .stable
+                .iter()
+                .any(|((t, _), m)| *t == tag && m.held.is_none()))
+        .then_some(tag)
     }
 
     /// Card NULL-CANDIDATE-TRIAGE: an initializer list of a struct with a
@@ -1323,6 +1559,32 @@ impl<'a> Walker<'a> {
                 None => Nullness::maybe(Source::Other("an initializer list".into())),
             };
             self.member_store(node, member, &null, state);
+        }
+        // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): an initializer list
+        // writes a fresh object: each stable member's store is recorded and
+        // exempt (it cannot make an existing object's member NULL).
+        let stable = self
+            .env
+            .stable
+            .iter()
+            .filter(|((t, _), m)| *t == tag && m.held.is_none())
+            .map(|((_, f), _)| f.clone())
+            .collect::<Vec<_>>();
+        for field in stable {
+            let member = format!("{tag}.{field}");
+            let stored = fields
+                .as_ref()
+                .filter(|fields| fields.len() == values.len())
+                .and_then(|fields| fields.iter().position(|f| *f == field))
+                .and_then(|index| values.get(index));
+            let null = match stored {
+                Some((child, _)) if matches!(kind(child), "ImplicitValueInitExpr") => {
+                    Nullness::Null
+                }
+                Some((_, value)) => value.null.clone(),
+                None => Nullness::maybe(Source::Other("an initializer list".into())),
+            };
+            self.stable_store(node, member, "initializer", &null, state);
         }
     }
 
@@ -1515,6 +1777,61 @@ impl<'a> Walker<'a> {
         }
     }
 
+    /// Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): the caller's check of
+    /// one scope entry: the actual's `FIELD`, read from the caller's facts
+    /// (a tracked actual's path, a memory path's own), must be non-null.
+    fn scope_obligation(
+        &mut self,
+        callee: &str,
+        held: &Option<String>,
+        entry: &super::scope::ScopeEntry,
+        arguments: &[&Value],
+        values: &[Val],
+        state: &mut State,
+    ) {
+        let (Some(argument), Some(value)) =
+            (arguments.get(entry.position), values.get(entry.position))
+        else {
+            return;
+        };
+        let text = format!("{}->{}", render(argument), entry.field);
+        let place = match &value.place {
+            Some(Place::Var(id)) => Some(Place::Path(format!(
+                "{}^.{}",
+                self.var_root(id),
+                entry.field
+            ))),
+            Some(Place::Path(key)) => Some(Place::Path(format!("{key}^.{}", entry.field))),
+            None => None,
+        };
+        let member = match &place {
+            Some(place) => self.read_place(place, &text, state),
+            None => Val::of(Nullness::maybe(Source::MemoryField(text.clone()))),
+        };
+        let at = serde_json::json!({
+            "id": format!("{}#scope:{}", node_key(argument), entry.field),
+            "o": argument["o"],
+        });
+        let mut probe = state.clone();
+        let check_id = self.check(&at, "call-precondition", argument, &member, &mut probe);
+        if let Some(hold) = held {
+            if self.recording
+                && let Some(record) = self.checks.get_mut(&check_id)
+                && !record.outcome.discharged()
+                && record.outcome != Outcome::Excluded
+            {
+                record.outcome = Outcome::Held(hold.clone());
+            }
+        } else {
+            *state = probe;
+        }
+        if self.recording
+            && let Some(record) = self.checks.get_mut(&check_id)
+        {
+            record.subject = format!("{text} at `{callee}` {}", entry.text);
+        }
+    }
+
     fn call(&mut self, node: &Value, state: &mut State) -> Val {
         let parts = kids(node).collect::<Vec<_>>();
         let Some((callee, arguments)) = parts.split_first() else {
@@ -1626,6 +1943,47 @@ impl<'a> Walker<'a> {
                 record.subject = format!("{} at {text}", record.subject);
             }
         }
+        // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): a declared scope
+        // entry is a caller obligation on the actual's member.
+        if let Some(callee_name) = &name
+            && let Some(scope) = self.env.scopes.get(callee_name)
+        {
+            self.consulted.insert(callee_name.clone());
+            if scope.parameters == values.len() {
+                for entry in scope.entries.clone() {
+                    self.scope_obligation(callee_name, &scope.held.clone(), &entry, arguments, &values, state);
+                }
+            } else {
+                self.reason(format!(
+                    "null-declaration-withdrawn: `{callee_name}`'s scope declaration does not match the call's arguments"
+                ));
+            }
+        }
+        // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a fill or copy of a
+        // `struct TAG` object with a stable member is a whole-object store.
+        if let Some(callee_name) = &name
+            && scope::is_object_fill(callee_name)
+            && let Some(destination) = arguments.first()
+        {
+            let mut target = strip(destination);
+            while matches!(kind(target), "ImplicitCastExpr" | "CStyleCastExpr")
+                && let Some(inner) = kids(target).next()
+            {
+                target = strip(inner);
+            }
+            let spelled = ty(target).trim().to_owned();
+            if let Some(pointee) = spelled.strip_suffix('*') {
+                for member in self.stable_fields_of(pointee.trim()) {
+                    self.stable_store(
+                        node,
+                        member,
+                        "whole-object",
+                        &Nullness::maybe(Source::Other("a whole-object write".into())),
+                        state,
+                    );
+                }
+            }
+        }
         // Card NULL-CANDIDATE-TRIAGE (rule 14v): the pointer actuals of a
         // call to a function this unit neither defines nor declares, judged
         // as a check would be, for cross-unit travel.
@@ -1672,7 +2030,7 @@ impl<'a> Walker<'a> {
             }
         }
         // A call may write any memory a path names.
-        Self::memory_written(state, false);
+        self.memory_written(state, false);
         state.definite = false;
         let returns_pointer = is_pointer(ty(node));
         if let Some(callee_name) = &name
@@ -2022,6 +2380,7 @@ impl<'a> Walker<'a> {
                 if let Some(value) = kids(node).next() {
                     let returned = self.eval(value, &mut state);
                     if state.live && is_pointer(ty(value)) {
+                        self.stable_relies(&returned.null);
                         self.returns = Some(match &self.returns {
                             Some(previous) => previous.join(&returned.null),
                             None => returned.null,

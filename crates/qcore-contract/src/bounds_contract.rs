@@ -116,7 +116,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 14] = [
+pub const RESERVED_SPELLINGS: [&str; 16] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -132,6 +132,9 @@ pub const RESERVED_SPELLINGS: [&str; 14] = [
     // Card NULL-CANDIDATE-TRIAGE (G05e).
     "null_member_nonnull",
     "null_result_nonnull",
+    // Card NULL-MEMBER-INVARIANT-SCOPE (G05f).
+    "null_member_stable",
+    "null_member_scope",
 ];
 
 const SCALAR_TYPES: [&str; 11] = [
@@ -247,6 +250,28 @@ pub enum BoundsClause {
     /// null_result_nonnull();` -- the function's result is non-null, checked
     /// against every analysed body that defines it. Null property only.
     NullResult,
+    /// Card NULL-MEMBER-INVARIANT-SCOPE (C09.3, grammar G05f, rule 14x):
+    /// `requires null_member_stable(TAG, FIELD);` -- `struct TAG`'s `FIELD`
+    /// is never made NULL on an existing object: every store the analysed
+    /// units make to it is proved non-null, except an initializer list,
+    /// which writes a fresh object. A non-null value is then kept for the
+    /// object's lifetime (the state "set" is never left). A type-level
+    /// declaration its host, the record's constructor, carries. Null
+    /// property only.
+    NullStable {
+        tag: String,
+        field: String,
+    },
+    /// Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): `requires
+    /// null_member_scope(TAG, FIELD, P);` -- on entry to the declared
+    /// function, the `struct TAG` object its pointer parameter `P` names
+    /// has a non-null `FIELD`. Every caller's actual is checked; the body
+    /// reads it non-null at entry. Null property only.
+    NullScope {
+        tag: String,
+        field: String,
+        parameter: String,
+    },
 }
 
 impl BoundsClause {
@@ -255,7 +280,11 @@ impl BoundsClause {
     pub fn is_null_clause(&self) -> bool {
         matches!(
             self,
-            Self::NullDeref { .. } | Self::NullMember { .. } | Self::NullResult
+            Self::NullDeref { .. }
+                | Self::NullMember { .. }
+                | Self::NullResult
+                | Self::NullStable { .. }
+                | Self::NullScope { .. }
         )
     }
 }
@@ -802,6 +831,39 @@ impl Reader<'_> {
                     field: field.to_owned(),
                 })
             }
+            // Card NULL-MEMBER-INVARIANT-SCOPE (G05f): the stable member
+            // and the function-scope entry.
+            (true, "null_member_stable", [tag, field]) => {
+                let tag = single_word(tag)
+                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
+                    .ok_or(
+                        "null-member-shape: `null_member_stable(TAG, FIELD)` names a C struct tag",
+                    )?;
+                let field = single_word(field)
+                    .ok_or("null-member-shape: `null_member_stable(TAG, FIELD)` names a member")?;
+                Ok(BoundsClause::NullStable {
+                    tag: tag.to_owned(),
+                    field: field.to_owned(),
+                })
+            }
+            (true, "null_member_scope", [tag, field, p]) => {
+                let tag = single_word(tag)
+                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
+                    .ok_or(
+                        "null-member-scope-shape: `null_member_scope(TAG, FIELD, P)` names a C struct tag",
+                    )?;
+                let field = single_word(field).ok_or(
+                    "null-member-scope-shape: `null_member_scope(TAG, FIELD, P)` names a member",
+                )?;
+                let parameter = self.parameter(p, ParameterKind::Pointer).map_err(|_| {
+                    "null-member-scope-parameter: `null_member_scope(TAG, FIELD, P)`'s P is a pointer parameter of the declaration".to_owned()
+                })?;
+                Ok(BoundsClause::NullScope {
+                    tag: tag.to_owned(),
+                    field: field.to_owned(),
+                    parameter,
+                })
+            }
             (false, "null_result_nonnull", []) => {
                 if self.result != Some(ParameterKind::Pointer) {
                     return Err(
@@ -1038,6 +1100,12 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::Live { parameter } => format!("live {parameter}"),
             BoundsClause::NullMember { tag, field } => format!("null-member {tag}.{field}"),
             BoundsClause::NullResult => "null-result".into(),
+            BoundsClause::NullStable { tag, field } => format!("null-stable {tag}.{field}"),
+            BoundsClause::NullScope {
+                tag,
+                field,
+                parameter,
+            } => format!("null-scope {parameter} {tag}.{field}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));

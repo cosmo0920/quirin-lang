@@ -6,6 +6,38 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "rd_kafka_broker_add",
+      "module": "librdkafka/null_deref.qv",
+      "contract_sha256": "cebf65f1607eab4722e8a9814a24a61e03457cd3dbacd4ffc5c0c3167f328b2c",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+              "kind": "definition",
+              "declaration_sha256": "75cd8f3e9cf6d563df98f12602806ecd3c22cacdec1bb17ee5ff8a88cbdcd115",
+              "body_sha256": "712c80f1d0d074ec99c46d2c27feb905216dfa3925a0268a1ca1ee97cb60ad59"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_broker.h",
+              "kind": "declaration",
+              "declaration_sha256": "75cd8f3e9cf6d563df98f12602806ecd3c22cacdec1bb17ee5ff8a88cbdcd115"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_cgrp_new",
       "module": "librdkafka/null_deref.qv",
       "contract_sha256": "3d0ce6af0d841ce3e3e21800dbf12df85d28a92c6922f7a376db2f3afb427384",

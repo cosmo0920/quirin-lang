@@ -1296,6 +1296,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/null_deref.qv", "rd_kafka_outq_len", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_op_destroy", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_topic_name", 2),
+    // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a stable member, hosted
+    // on the broker's constructor (the selector and one stable clause).
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 2),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",

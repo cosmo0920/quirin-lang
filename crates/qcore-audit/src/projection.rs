@@ -277,6 +277,7 @@ fn record_null(
             "library": library,
             "file": file,
             "member_stores": with_origin(serde_json::to_value(&analysed.member_stores).unwrap_or_default()),
+            "stable_stores": with_origin(serde_json::to_value(&analysed.stable_stores).unwrap_or_default()),
             "definitions": serde_json::to_value(&analysed.definitions).unwrap_or_default(),
             "external_calls": with_origin(serde_json::to_value(&analysed.external_calls).unwrap_or_default()),
         }));

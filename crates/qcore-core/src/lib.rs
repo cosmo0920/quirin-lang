@@ -49,6 +49,8 @@ pub mod native_concurrency;
 pub mod native_library;
 pub mod native_library_header;
 pub mod null_deref;
+// Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-15a).
+pub mod null_member_scope;
 pub mod null_triage;
 pub mod obs_reordering;
 pub mod os_endpoint;

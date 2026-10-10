@@ -1821,9 +1821,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 234 -> 246 rejected by card NULL-CANDIDATE-TRIAGE: twelve more
     // declarations in `librdkafka/null_deref.qv` (four member hosts, one
     // non-null result, seven `quant null-deref` checks), likewise rejected.
+    // 246 -> 247 rejected by card NULL-MEMBER-INVARIANT-SCOPE: the stable
+    // member's host `rd_kafka_broker_add` in `librdkafka/null_deref.qv`,
+    // likewise rejected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 379, 246)
+        (61, 379, 247)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

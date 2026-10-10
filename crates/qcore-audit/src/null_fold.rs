@@ -224,70 +224,14 @@ fn restand_premises(row: &mut Value) {
 #[allow(clippy::too_many_lines)]
 pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContracts) -> Value {
     // ---- declarations
-    let mut members: BTreeMap<String, (String, bool)> = BTreeMap::new();
+    let declarations = crate::null_member_scope_fold::declarations(environment);
     let mut results: BTreeMap<String, bool> = BTreeMap::new();
     for (name, contract) in environment.null_declarations() {
         for entry in &contract.clauses {
-            match &entry.clause {
-                BoundsClause::NullMember { tag, field } => {
-                    members.insert(format!("{tag}.{field}"), (name.clone(), contract.held()));
-                }
-                BoundsClause::NullResult => {
-                    results.insert(name.clone(), contract.held());
-                }
-                _ => {}
+            if let BoundsClause::NullResult = &entry.clause {
+                results.insert(name.clone(), contract.held());
             }
         }
-    }
-    let mut stores: BTreeMap<String, (usize, usize, Vec<Value>)> = BTreeMap::new();
-    for unit in evidence {
-        for store in unit["member_stores"].as_array().into_iter().flatten() {
-            let member = store["member"].as_str().unwrap_or("").to_owned();
-            let entry = stores.entry(member).or_default();
-            entry.0 += 1;
-            let outcome = store["outcome"].as_str().unwrap_or("");
-            if !matches!(outcome, "proved" | "moved" | "excluded") {
-                entry.1 += 1;
-                if entry.2.len() < 25 {
-                    entry.2.push(json!({
-                        "library": unit["library"],
-                        "file": unit["file"],
-                        "function": store["function"],
-                        "line": store["line"],
-                        "origin": store["origin"],
-                        "outcome": outcome,
-                        "sources": store["sources"],
-                    }));
-                }
-            }
-        }
-    }
-    let mut withdrawn = BTreeSet::new();
-    let mut member_section = serde_json::Map::new();
-    for (member, (host, held)) in &members {
-        let (examined, failed, failures) = stores.get(member).cloned().unwrap_or_default();
-        let standing = if *held {
-            "held"
-        } else {
-            member_standing(examined, failed)
-        };
-        if standing == "withdrawn" {
-            withdrawn.insert(format!("member:{member}"));
-        }
-        member_section.insert(
-            member.clone(),
-            json!({
-                "host": host,
-                "standing": standing,
-                "clauses": {
-                    "stores": if *held { "held" } else if failed > 0 { "withdrawn" } else if examined == 0 { "unexamined" } else { "validated" },
-                    "construction": "declared-assumption",
-                },
-                "stores_examined": examined,
-                "stores_not_proved": failed,
-                "failures": failures,
-            }),
-        );
     }
     let mut definitions: BTreeMap<String, Vec<(usize, &Value)>> = BTreeMap::new();
     let mut unit_defines: Vec<BTreeSet<String>> = Vec::new();
@@ -303,6 +247,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
         }
         unit_defines.push(names);
     }
+    let mut refuted = BTreeSet::new();
     let mut result_section = serde_json::Map::new();
     for (name, held) in &results {
         let units = definitions
@@ -325,7 +270,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             result_standing(&units)
         };
         if standing == "withdrawn" {
-            withdrawn.insert(format!("result:{name}"));
+            refuted.insert(format!("result:{name}"));
         }
         result_section.insert(
             name.clone(),
@@ -337,6 +282,37 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             }),
         );
     }
+    // Card NULL-MEMBER-INVARIANT-SCOPE: withdrawal cascades through stores
+    // proved only by a withdrawn declaration (members and stable members).
+    let withdrawn =
+        crate::null_member_scope_fold::withdrawals(evidence, &declarations, &refuted);
+    let stores = crate::null_member_scope_fold::tally(evidence, "member_stores", &withdrawn);
+    let mut member_section = serde_json::Map::new();
+    for (member, (host, held)) in &declarations.members {
+        let tally = stores.get(member).cloned().unwrap_or_default();
+        let (examined, failed, failures) = (tally.examined, tally.failed, tally.failures);
+        let standing = if *held {
+            "held"
+        } else {
+            member_standing(examined, failed)
+        };
+        member_section.insert(
+            member.clone(),
+            json!({
+                "host": host,
+                "standing": standing,
+                "clauses": {
+                    "stores": if *held { "held" } else if failed > 0 { "withdrawn" } else if examined == 0 { "unexamined" } else { "validated" },
+                    "construction": "declared-assumption",
+                },
+                "stores_examined": examined,
+                "stores_not_proved": failed,
+                "failures": failures,
+            }),
+        );
+    }
+    let (stable_section, scope_section) =
+        crate::null_member_scope_fold::sections(evidence, &declarations, &withdrawn);
     // ---- exports: external definitions analysed in exactly one unit
     let mut exports: BTreeMap<String, (usize, &Value)> = BTreeMap::new();
     let mut ambiguous = 0usize;
@@ -542,6 +518,12 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
                             p.strip_prefix("result:declared-result:")
                                 .map(|r| format!("result:{r}"))
                         })
+                        // Card NULL-MEMBER-INVARIANT-SCOPE: a fact a
+                        // withdrawn stable member kept.
+                        .or_else(|| {
+                            p.strip_prefix("result:stable:")
+                                .map(|m| format!("stable:{m}"))
+                        })
                 })
                 .filter(|d| withdrawn.contains(d))
                 .collect::<Vec<_>>();
@@ -591,7 +573,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             }
         }
     }
-    json!({
+    let mut section = json!({
         "meaning": MEANING,
         "member_declarations": member_section,
         "result_declarations": result_section,
@@ -610,7 +592,16 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
         },
         "rows_changed": changed.len(),
         "verdict_moves": moved,
-    })
+    });
+    // Card NULL-MEMBER-INVARIANT-SCOPE: present only when declared, so an
+    // environment without them writes the section it wrote before.
+    if stable_section.as_object().is_some_and(|o| !o.is_empty()) {
+        section["stable_declarations"] = stable_section;
+    }
+    if scope_section.as_object().is_some_and(|o| !o.is_empty()) {
+        section["scope_declarations"] = scope_section;
+    }
+    section
 }
 
 fn add_dependencies(row: &mut Value, added: &BTreeSet<String>) {
