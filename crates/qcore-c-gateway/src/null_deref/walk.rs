@@ -261,20 +261,34 @@ pub struct ExternalCall {
 }
 
 /// The C struct tag a member access reads (`struct TAG *` for `->`,
-/// `struct TAG` for `.`), from the base's (desugared) type spelling.
-pub(super) fn record_tag(base: &str, arrow: bool) -> Option<String> {
-    let words = base
-        .replace('*', " * ")
-        .split_whitespace()
-        .filter(|w| !matches!(*w, "const" | "volatile" | "restrict" | "__restrict"))
-        .map(str::to_owned)
-        .collect::<Vec<_>>();
-    let rest = match (arrow, words.as_slice()) {
-        (true, [s, tag, star]) if s == "struct" && star == "*" => tag,
-        (false, [s, tag]) if s == "struct" => tag,
-        _ => return None,
+/// `struct TAG` for `.`), from the base's type spelling, through the unit's
+/// typedefs (`T_t *` with `typedef struct T_s T_t`).
+pub(super) fn record_tag(unit: &ast::Unit, base: &str, arrow: bool) -> Option<String> {
+    let words = |text: &str| {
+        text.replace('*', " * ")
+            .split_whitespace()
+            .filter(|w| !matches!(*w, "const" | "volatile" | "restrict" | "__restrict"))
+            .map(str::to_owned)
+            .collect::<Vec<_>>()
     };
-    Some(rest.clone())
+    let mut record = words(base);
+    if arrow {
+        if record.last().map(String::as_str) != Some("*") {
+            return None;
+        }
+        record.pop();
+        if record.contains(&"*".to_owned()) {
+            return None;
+        }
+    }
+    for _ in 0..8 {
+        match record.as_slice() {
+            [s, tag] if s == "struct" => return Some(tag.clone()),
+            [name] => record = words(unit.typedefs.get(name)?),
+            _ => return None,
+        }
+    }
+    None
 }
 
 /// What the walk reads besides the body.
@@ -1010,7 +1024,7 @@ impl<'a> Walker<'a> {
         }
         let field = node["name"].as_str()?;
         let base = kids(node).next()?;
-        let tag = record_tag(ty(base), node["isArrow"] == true)?;
+        let tag = record_tag(self.env.unit, ty(base), node["isArrow"] == true)?;
         let key = (tag, field.to_owned());
         self.env
             .members
@@ -1267,7 +1281,7 @@ impl<'a> Walker<'a> {
     /// Card NULL-CANDIDATE-TRIAGE: the declared members of the struct an
     /// initializer list builds, if it builds one with any.
     fn declared_record(&self, node: &Value) -> Option<String> {
-        let tag = record_tag(ty(node), false)?;
+        let tag = record_tag(self.env.unit, ty(node), false)?;
         self.env
             .members
             .iter()
@@ -1280,7 +1294,7 @@ impl<'a> Walker<'a> {
     /// null store); a list the walk cannot attribute to the members is a
     /// store not proved.
     fn record_initializer(&mut self, node: &Value, state: &mut State) {
-        let Some(tag) = record_tag(ty(node), false) else {
+        let Some(tag) = record_tag(self.env.unit, ty(node), false) else {
             return;
         };
         let values = kids(node)

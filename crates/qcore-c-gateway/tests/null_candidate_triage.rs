@@ -381,3 +381,25 @@ fn the_new_clauses_are_checked_by_the_loader() {
     assert!(loaded.for_bounds().functions.is_empty());
     assert_eq!(loaded.null_declarations().count(), 1);
 }
+
+#[test]
+fn a_member_read_through_a_typedef_names_its_struct() {
+    if !clang_available() {
+        return;
+    }
+    let clauses = "module contract;
+extern fn nd_get(k: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires null_member_nonnull(T_s, self);
+};
+";
+    let unit = report(
+        "typedef struct T_s T_t; struct T_s { int a; T_t *self; };\n\
+         int subject(T_t *t) { if (!t) return 0; return t->self->a; }",
+        &["subject"],
+        Some(clauses),
+    );
+    let row = &unit.functions[0];
+    assert_eq!(row.verdict, "Safe", "{row:#?}");
+}

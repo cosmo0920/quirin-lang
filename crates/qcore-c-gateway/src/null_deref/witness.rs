@@ -446,7 +446,7 @@ impl<'a, 'e> Run<'a, 'e> {
         }
         let field = node["name"].as_str()?;
         let base = kids(node).next()?;
-        let tag = super::walk::record_tag(ty(base), node["isArrow"] == true)?;
+        let tag = super::walk::record_tag(self.env.unit, ty(base), node["isArrow"] == true)?;
         let key = (tag, field.to_owned());
         self.env
             .members

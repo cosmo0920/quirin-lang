@@ -174,6 +174,10 @@ pub(super) struct Unit {
     /// Card NULL-CANDIDATE-TRIAGE: typedef names of enumerations (an
     /// integer type whose spelling the AST may leave as the typedef).
     pub(super) enum_typedefs: BTreeSet<String>,
+    /// Card NULL-CANDIDATE-TRIAGE: every typedef's underlying type spelling
+    /// (`T_t` -> `struct T_s`), for a member access whose base type the AST
+    /// spells through a typedef.
+    pub(super) typedefs: BTreeMap<String, String>,
 }
 
 const NO_RETURN_BUILTINS: [&str; 12] = [
@@ -223,6 +227,11 @@ pub(super) fn read_declaration(unit: &mut Unit, decl: &Value) {
                 && let Some(name) = decl["name"].as_str()
             {
                 unit.enum_typedefs.insert(name.to_owned());
+            }
+            if let Some(name) = decl["name"].as_str() {
+                unit.typedefs
+                    .entry(name.to_owned())
+                    .or_insert_with(|| underlying.to_owned());
             }
             for child in kids(decl) {
                 match kind(child) {
