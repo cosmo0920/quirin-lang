@@ -40,9 +40,12 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/ndqg/tests-gate-{name}); "
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed "
-        "(QCore.NullDerefGrade and AuditNullDerefGrade added); python suite and docs index check per "
-        "gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the "
-        "docs index (10b, 10c). providers/ unchanged: no provider gate is due."
+        "(QCore.NullDerefGrade with AuditNullDerefGrade and QCore.DerefDecomposition with "
+        "AuditDerefDecomposition added); python suite and docs index check per gate/ (08, 09: the "
+        "first 08 run failed only on the stale derived Lean count, 308 against 310, and passed after "
+        "the derived facts were regenerated and committed), then build_matrix.py . --gate this file "
+        "(09a), the python suite (09b) and the docs index (10b, 10c). providers/ unchanged: no "
+        "provider gate is due; a providers workspace cargo check --locked exits 0."
     )
     gate = {
         "note": note,

@@ -222,7 +222,12 @@ Standing gate `g2` at `fe2f93783` (scripts `gate.sh`, `write_gate_json.py`,
 | `scripts/run_test_binaries.py` | 0 | 475 units, 488 summaries; **7,846 passed**, 0 failed, 12 ignored (`private/ndqg/tests-gate-g2/`) |
 | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
 | `scripts/check_lean_audits.py` | 0 | **310** audits |
-| Python suite, docs index check | see [gate/](gate/) (08 and 09; 09a–10c after the matrix regeneration) | |
+| Python suite (08), docs index check (09) | 0, 0 | 365 tests OK |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+The first 08 run exited 1, failing only `test_the_derived_facts_are_recomputed_rather_than_carried`:
+the committed Lean count was stale (308 against 310). It passed once the
+derived facts were regenerated and committed (`9b4c381e2`).
 
 The first attempt (`g1`, at `355ee64dd`) stopped at clippy, which flagged a
 no-op `.clone()` in the new null control. The control was fixed, and `g1` was

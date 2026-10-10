@@ -1,0 +1,13 @@
+{
+  "note": "NULL-DEREF-QTT-GROUNDING card gate on main cc7a20c3e (base), every code step at fe2f93783, scripts docs/reports/null-deref-qtt-grounding/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/ndqg/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 475 units, 488 summaries, 7,846 passed, 0 failed, 12 ignored, exit 0 (private/ndqg/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 310 audits passed (QCore.NullDerefGrade with AuditNullDerefGrade and QCore.DerefDecomposition with AuditDerefDecomposition added); python suite and docs index check per gate/ (08, 09: the first 08 run failed only on the stale derived Lean count, 308 against 310, and passed after the derived facts were regenerated and committed), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). providers/ unchanged: no provider gate is due; a providers workspace cargo check --locked exits 0.",
+  "workspace_tests": 7846,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 310,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
