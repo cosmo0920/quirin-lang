@@ -295,7 +295,7 @@ Earlier attempts, retained and not evidence for the tip: g1 on `fbd237698`
 (before the rebase): every step 0 except the suite, 7,852 passed and **1
 failed** (`contract_inherit_qcore_provider`: the librdkafka inventory's digest
 of `null_deref.qv`, synced with `providers/contracts.py sync` before g2); g2 on
-`2149495cd…` (after the rebase): suite 7,867 passed, 0 failed, every step 0
+`3fa7a6be1` (after the rebase): suite 7,867 passed, 0 failed, every step 0
 except `cargo fmt --check` (and the provider gate's fmt), on the conflict
 resolution in `bounds_contract.rs`, formatted in `707b0e76e`.
 
