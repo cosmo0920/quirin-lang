@@ -45,7 +45,7 @@ pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;
 pub mod null_fold;
-// Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-15a).
+// Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z).
 pub mod null_member_scope_fold;
 pub mod null_tally;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the row fields and the

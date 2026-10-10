@@ -1,5 +1,5 @@
 //! Card **NULL-MEMBER-INVARIANT-SCOPE** (contract specification C09.3,
-//! grammar G05f, gateway rules 14x–15a): the declarations of stable members
+//! grammar G05f, gateway rules 14x–14z): the declarations of stable members
 //! and function-scope entries as the walk reads them, the stores it records
 //! against them, and the key shapes a stable member's fact may persist on.
 //! The walk's hooks are in `walk.rs` (`memory_written`, `store`,
@@ -126,8 +126,7 @@ pub struct StableStore {
 pub(super) fn persistable_key(key: &str) -> Option<(&str, &str)> {
     let rest = key.strip_prefix("t:")?;
     let (id, field) = rest.split_once("^.")?;
-    if id.is_empty() || field.is_empty() || field.contains(['^', '.']) || id.contains(['^', '.'])
-    {
+    if id.is_empty() || field.is_empty() || field.contains(['^', '.']) || id.contains(['^', '.']) {
         return None;
     }
     Some((id, field))

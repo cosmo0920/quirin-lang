@@ -1,4 +1,4 @@
-//! Card **NULL-MEMBER-INVARIANT-SCOPE** (gateway rules 14x–15a): the run
+//! Card **NULL-MEMBER-INVARIANT-SCOPE** (gateway rules 14x–14z): the run
 //! fold's part for stable members and function-scope entries, called from
 //! [`crate::null_fold::fold`].
 //!
@@ -91,7 +91,11 @@ fn rests_on(store: &Value, withdrawn: &BTreeSet<String>) -> bool {
 /// Count the stores of `key` (`member_stores` or `stable_stores`) under the
 /// withdrawn set.
 #[must_use]
-pub fn tally(evidence: &[Value], key: &str, withdrawn: &BTreeSet<String>) -> BTreeMap<String, Tally> {
+pub fn tally(
+    evidence: &[Value],
+    key: &str,
+    withdrawn: &BTreeSet<String>,
+) -> BTreeMap<String, Tally> {
     let mut out: BTreeMap<String, Tally> = BTreeMap::new();
     for unit in evidence {
         for store in unit[key].as_array().into_iter().flatten() {
@@ -242,7 +246,11 @@ mod tests {
             "stable_stores": [{"member": "S.next", "function": "g", "line": 1, "kind": "initializer", "outcome": "violation"},
                               {"member": "S.next", "function": "g", "line": 2, "kind": "assignment", "outcome": "proved"}]});
         let declarations = declarations(&environment());
-        let withdrawn = withdrawals(std::slice::from_ref(&fresh), &declarations, &BTreeSet::new());
+        let withdrawn = withdrawals(
+            std::slice::from_ref(&fresh),
+            &declarations,
+            &BTreeSet::new(),
+        );
         assert!(withdrawn.is_empty(), "{withdrawn:?}");
         let (stable, _) = sections(&[fresh], &declarations, &withdrawn);
         assert_eq!(stable["S.next"]["standing"], "partly-validated");

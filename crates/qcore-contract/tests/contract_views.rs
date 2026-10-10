@@ -89,7 +89,7 @@ fn every_registered_relation_holds_on_the_corpus() {
         kinds,
         BTreeMap::from([
             ("lifecycle_profiles", 2),
-            ("null_deref_beside", 7),
+            ("null_deref_beside", 8),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),

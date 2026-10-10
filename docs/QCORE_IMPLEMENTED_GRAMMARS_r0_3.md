@@ -3950,6 +3950,37 @@ resource-v1 declaration of the same function is a registered
 `null_deref_beside` relation (it states only the selector and null-property
 clauses).
 
+## G05f. Scoped member invariants
+
+Card NULL-MEMBER-INVARIANT-SCOPE, contract specification
+[C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref)
+("Scoped member invariants"), gateway rules
+[14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z).
+Two more preconditions of G05b, read by
+`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NullStable`,
+`BoundsClause::NullScope`):
+
+```ebnf
+bounds_pre = … | "null_member_stable", "(", IDENT, ",", IDENT, ")"
+               | "null_member_scope", "(", IDENT, ",", IDENT, ",", IDENT, ")" ;
+```
+
+Static conditions, each rejecting the whole module: the first `IDENT` of
+either is a C struct tag, never a parameter of the declaration, and the
+second a member name (`null-member-shape`, `null-member-scope-shape`); the
+third `IDENT` of `null_member_scope` is a pointer parameter of the declaration
+(`null-member-scope-parameter`); at most one `null_member_stable` per (tag,
+member) and one `null_member_scope` per (parameter, tag, member) per
+declaration; neither is a postcondition. Both words were absent from every
+tracked contract module when introduced (`RESERVED_SPELLINGS`, 16). The
+clauses are part of the declaration digest and pinned with it. Only the null
+property reads them: `BoundsContracts::for_bounds()` removes them, and
+`resource_*` consumers reject the module. A declaration beside a resource-v1
+declaration of the same function is a registered `null_deref_beside` relation.
+`null_member_stable` is a type-level declaration hosted, like G05e's member
+declaration, on the record's constructor; `null_member_scope` belongs to the
+function it is written on.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

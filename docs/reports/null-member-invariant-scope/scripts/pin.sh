@@ -22,6 +22,7 @@ step() {
   echo $? > "$logs/$name.exit"
   echo "$name $(cat "$logs/$name.exit")"
 }
+[ -n "${PINS_FILE:-}" ] && PINS="$(cat "$PINS_FILE")"
 pins="${PINS:-qcore-provider-librdkafka:rd_kafka_broker_add qcore-provider-librdkafka:rd_kafka_toppar_new0 qcore-provider-librdkafka:rd_kafka_topic_new0 qcore-provider-librdkafka:rd_kafka_cgrp_new qcore-provider-librdkafka:rd_kafka_transport_new}"
 crates=$(for pin in $pins; do echo "${pin%%:*}"; done | sort -u | tr '\n' ' ')
 if [ "$mode" = pin ]; then

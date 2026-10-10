@@ -1,6 +1,6 @@
 //! Scoped member invariants of the null property (card
 //! **NULL-MEMBER-INVARIANT-SCOPE**, contract specification C09.3, grammar
-//! G05f, gateway rules 14x–15a).
+//! G05f, gateway rules 14x–14z).
 //!
 //! A global member declaration (rule 14t) is withdrawn by one store of NULL
 //! anywhere. Two scoped readings are checkable instead:

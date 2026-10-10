@@ -94,6 +94,11 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "rd_kafka_topic_partition_list_destroy",
         &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
     ),
+    // Card NULL-MEMBER-INVARIANT-SCOPE: a function-scope entry.
+    (
+        "rd_kafka_toppar_fetch_backoff",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
     (
         "rd_kafka_toppar_new0",
         &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
@@ -151,13 +156,14 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
         })
         .collect();
     assert_eq!(actual, expected);
-    // Eighteen functions, twenty pairs, every pair registered exactly once
-    // (W45-FB-RETRY-LIFETIME added `mk_list_del`; NULL-SAFETY-PROPERTY the
-    // five `quant null-deref` checks beside a resource-v1 declaration;
-    // NULL-CANDIDATE-TRIAGE a member and a result declaration).
-    assert_eq!(census_pairs(&report.census).len(), 20);
-    assert_eq!(REGISTERED_RELATIONS.len(), 20);
-    assert_eq!(report.relations.len(), 20);
+    // Nineteen functions, twenty-one pairs, every pair registered exactly
+    // once (W45-FB-RETRY-LIFETIME added `mk_list_del`; NULL-SAFETY-PROPERTY
+    // the five `quant null-deref` checks beside a resource-v1 declaration;
+    // NULL-CANDIDATE-TRIAGE a member and a result declaration;
+    // NULL-MEMBER-INVARIANT-SCOPE a function-scope entry).
+    assert_eq!(census_pairs(&report.census).len(), 21);
+    assert_eq!(REGISTERED_RELATIONS.len(), 21);
+    assert_eq!(report.relations.len(), 21);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

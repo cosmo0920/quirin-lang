@@ -2,17 +2,18 @@
 """compare.py BEFORE.jsonl AFTER.jsonl [OUT.json] -- NULL-MEMBER-INVARIANT-SCOPE (from NULL-CANDIDATE-TRIAGE):
 the null property's BEFORE and AFTER rows of one route, joined by (library,
 file, function): verdict moves (Safe split into unconditional and
-conditional), each moving row attributed to what changed it (a validated
-finding, a declared member, a declared result, a cross-unit result, a
-travelled clause check, a new declared clause, an import), candidates by
-kind before and after, and the custody column's identity."""
+conditional), each moving row attributed to what changed it (this card: a
+fact a stable member kept (`stable-member`), a scope entry read in the body
+(`scope-entry`), a scope entry's caller check (`scope-caller-check-`
+candidate/discharged), a check a withdrawn declaration demoted
+(`withdrawn`); and the earlier causes), candidates by kind before and after,
+and the custody column's identity, and every check whose outcome changed in
+a row that did not move (`check_changes`)."""
 import collections
 import json
 import sys
 
-NEW_CLAUSES = {"rd_kafka_flush", "rd_kafka_message_errstr", "rd_kafka_queue_poll",
-               "rd_kafka_event_error", "rd_kafka_outq_len", "rd_kafka_op_destroy",
-               "rd_kafka_topic_name"}
+NEW_CLAUSES = set()
 ORDER = ["allocation", "lookup", "nullable-result", "null-literal", "uninitialized",
          "uncontracted-result", "formal", "global", "memory-field", "other", "withdrawn"]
 
@@ -55,6 +56,14 @@ def causes(before, after):
         subject = check.get("subject", "")
         if check["outcome"] == "finding":
             out.add("finding")
+        if any(p.startswith("result:stable:") for p in proofs):
+            out.add("stable-member")
+        if any("null_member_scope(" in p for p in proofs):
+            out.add("scope-entry")
+        if "null_member_scope(" in subject:
+            out.add("scope-caller-check-" + ("candidate" if check["outcome"] == "candidate" else "discharged"))
+        if any(s.startswith("withdrawn:") for s in check.get("sources") or []):
+            out.add("withdrawn")
         if any(p.startswith("result:member:") for p in proofs):
             out.add("declared-member")
         if any(p.startswith("result:declared-result:") for p in proofs):
@@ -98,7 +107,18 @@ for key in sorted(set(before) | set(after)):
         by_cause[move][r] += 1
     moving.append({"library": key[0], "file": key[1], "function": key[2], "move": move, "causes": reason,
                    "safe_to_non_safe": vb.startswith("Safe") and not va.startswith("Safe")})
+check_changes = collections.Counter()
+for key in sorted(set(before) & set(after)):
+    old = collections.Counter((c["kind"], c["line"], c["subject"], c["outcome"])
+                              for c in (before[key].get("null") or {}).get("checks") or [])
+    new = collections.Counter((c["kind"], c["line"], c["subject"], c["outcome"])
+                              for c in (after[key].get("null") or {}).get("checks") or [])
+    for (kind, line, subject, outcome), n in (old - new).items():
+        check_changes[f"removed {outcome}"] += n
+    for (kind, line, subject, outcome), n in (new - old).items():
+        check_changes[f"added {outcome}"] += n
 summary = {
+    "check_changes": dict(check_changes),
     "rows_before": len(before),
     "rows_after": len(after),
     "custody_column_moves": custody_moves,

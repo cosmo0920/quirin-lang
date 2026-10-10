@@ -1,4 +1,4 @@
-//! Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-15a): the controls of
+//! Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z): the controls of
 //! stable members (a non-null fact kept across calls and stores, every store
 //! to an existing object recorded, an initializer list a fresh object) and
 //! of function-scope entries (the body's entry fact, the callers' checks),
@@ -240,11 +240,9 @@ fn a_scope_entry_is_read_at_entry_and_checked_at_every_call() {
     let good = row(&unit, "good");
     assert_eq!(good.verdict, "Safe", "{good:#?}");
     assert!(
-        good.checks
-            .iter()
-            .any(|c| c.kind == "call-precondition"
-                && c.subject.starts_with("s->next at `scoped`")
-                && matches!(c.outcome, "proved" | "moved")),
+        good.checks.iter().any(|c| c.kind == "call-precondition"
+            && c.subject.starts_with("s->next at `scoped`")
+            && matches!(c.outcome, "proved" | "moved")),
         "{good:#?}"
     );
     let bad = row(&unit, "bad");
@@ -268,10 +266,9 @@ fn without_a_stable_member_the_entry_fact_lasts_until_the_first_call() {
     assert_eq!(scoped.verdict, "Unknown", "{scoped:#?}");
     let checks = subject_checks(scoped, "s->next");
     assert!(
-        checks
-            .iter()
-            .any(|(o, p)| *o == "proved"
-                && p.iter().any(|p| p.contains("null_member_scope(S, next, s)"))),
+        checks.iter().any(|(o, p)| *o == "proved"
+            && p.iter()
+                .any(|p| p.contains("null_member_scope(S, next, s)"))),
         "{checks:?}"
     );
     assert!(checks.iter().any(|(o, _)| *o == "candidate"), "{checks:?}");

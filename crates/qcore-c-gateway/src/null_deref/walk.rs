@@ -1951,7 +1951,14 @@ impl<'a> Walker<'a> {
             self.consulted.insert(callee_name.clone());
             if scope.parameters == values.len() {
                 for entry in scope.entries.clone() {
-                    self.scope_obligation(callee_name, &scope.held.clone(), &entry, arguments, &values, state);
+                    self.scope_obligation(
+                        callee_name,
+                        &scope.held.clone(),
+                        &entry,
+                        arguments,
+                        &values,
+                        state,
+                    );
                 }
             } else {
                 self.reason(format!(

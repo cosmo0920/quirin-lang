@@ -284,8 +284,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
     }
     // Card NULL-MEMBER-INVARIANT-SCOPE: withdrawal cascades through stores
     // proved only by a withdrawn declaration (members and stable members).
-    let withdrawn =
-        crate::null_member_scope_fold::withdrawals(evidence, &declarations, &refuted);
+    let withdrawn = crate::null_member_scope_fold::withdrawals(evidence, &declarations, &refuted);
     let stores = crate::null_member_scope_fold::tally(evidence, "member_stores", &withdrawn);
     let mut member_section = serde_json::Map::new();
     for (member, (host, held)) in &declarations.members {

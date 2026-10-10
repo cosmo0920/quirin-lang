@@ -1933,6 +1933,56 @@ Lean: `QCore.NullTriage` (`a_validated_path_is_satisfiable`,
 `a_withdrawn_dependency_is_never_safe`, `travel_never_improves_a_row`),
 audited in `proof/AuditNullTriage.lean`, vectors bound to the Rust.
 
+**Scoped member invariants** (card NULL-MEMBER-INVARIANT-SCOPE, gateway rules
+[14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z);
+grammar [G05f](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05f-scoped-member-invariants)).
+A global member declaration is withdrawn by one NULL store anywhere, which
+makes it false for members that hold only on some objects. Two scoped forms
+are admitted, each checked, neither a "trust me" scope:
+
+* *Stable members, an object-state scope.* `requires null_member_stable(TAG,
+  FIELD);` says `FIELD` is never made NULL on an **existing** `struct TAG`
+  object. The state "set" (non-null) is entered at any non-null store or
+  observation and is never left; a fresh object starts outside it. Checked
+  at every store the analysed units make: an assignment or compound update,
+  a struct assignment, or a typed fill or copy (`memset`, `memcpy`, …) of an
+  existing object is examined, and one not proved non-null withdraws the
+  declaration for the run, as does a proof resting on a withdrawn
+  declaration (the fold iterates to the least closed set). An initializer
+  list writes an object no use held before it and is exempt
+  (`a_fresh_store_does_not_reach`). A whole-object write through an
+  untyped pointer is the premise `whole-object`, so the declaration is at
+  best `partly-validated`. **Effect:** a non-null fact on `V->FIELD`, `V` a
+  tracked local or formal, survives calls and stores, on any thread, until
+  `V` is assigned (`stable_fact_persists`), carried as the proof and
+  dependency `stable:TAG.FIELD`. A null or possibly-null fact, or one on a
+  base the walk does not track, is forgotten as before.
+* *Function scopes.* `requires null_member_scope(TAG, FIELD, P);` on a
+  function says that on entry `P->FIELD` is non-null. The body reads it so
+  and its row is `Safe` only conditional on it; each caller's actual is a
+  `call-precondition` check of `ACTUAL->FIELD` (by fact, or by the caller's
+  own entry); with `FIELD` stable the entry fact lasts the whole body
+  (`a_scoped_use_sees_non_null`), otherwise until the first call. A call
+  through a function pointer is not checked, so an address-taken scope
+  function stays conditional.
+* *Exit stores have no reading here.* A member that some code sets back to
+  NULL on an existing object (a reset after a response, an unlink) holds
+  only for objects in a state that is left in place. Whether such a store
+  reaches an object a scoped use is reading is a question of object
+  identity across memory, calls and threads, which these checks do not
+  decide (`an_exit_store_breaks_persistence`): `rd_kafka_buf_s.rkbuf_rkb`
+  (reset in `rd_kafka_recv`), `mk_list.next` and `cfl_list.next` (set to NULL
+  by `mk_list_del`, `cfl_list_del`) are not declared.
+
+Lean: `QCore.NullMemberScope` (`stable_fact_persists`,
+`a_scoped_use_sees_non_null`, `a_fresh_store_does_not_reach`,
+`an_exit_store_breaks_persistence`, `a_kept_fact_is_non_null`,
+`a_stable_declaration_is_never_validated`, `failure_is_monotone`), audited in
+`proof/AuditNullMemberScope.lean`, `stableVectors` and `persistVectors` bound
+to `qcore_core::null_member_scope`. That the walk keeps exactly the facts
+named above and records every store kind is a review premise (trust
+boundary 28), pinned by `crates/qcore-c-gateway/tests/null_member_invariant_scope.rs`.
+
 Lean: `QCore.NullDeref` (`walk_sound`, `guard_sound`,
 `moved_question_is_the_origins`, `no_safe_on_an_undecided_pointer`,
 `caller_obligation_establishes_the_entry`, `an_inferred_clause_is_necessary`,

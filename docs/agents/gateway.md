@@ -6791,3 +6791,91 @@ own anchor here.
     **Do not** let a withdrawn declaration leave a row `Safe`, or let the
     fold change a custody byte. `QCore.NullTriage`
     (`a_withdrawn_dependency_is_never_safe`).
+
+<a id="constraint-14x"></a>
+
+14x. **A stable member is checked at every store the analysed units make
+    to an existing object; an initializer list writes a fresh object and
+    is exempt; one store not proved withdraws it, and so does a proof
+    resting on a withdrawn declaration.** Card NULL-MEMBER-INVARIANT-SCOPE
+    (contract specification C09.3, grammar G05f; `null_deref/scope.rs`,
+    `walk.rs` (`stable_store`), `qcore_audit::null_member_scope_fold`).
+    `requires null_member_stable(TAG, FIELD);` in bounds contract v1 (a
+    type-level declaration its host, the record's constructor, carries;
+    pinned in the crate's `bounds-contracts.lock`) says `FIELD` is never
+    made NULL on an existing `struct TAG` object. Every assignment and
+    compound update of `E->FIELD` or `E.FIELD` (through typedefs) is an
+    examined store (`stable_stores`, kind `assignment`); a struct
+    assignment of a `struct TAG` lvalue, and a `memset`, `memcpy`,
+    `memmove`, `bzero` or `explicit_bzero` (or builtin) whose destination,
+    casts stripped, is typed `struct TAG *`, is examined and never proved
+    (`whole-object`); an initializer list of a declared object or a
+    compound literal is counted (`initializer`) and exempt, since it writes
+    an object no use held before it. Each store records the declarations
+    its value's proof rests on (`relies`: stable members, rule 14t's
+    members, rule 14u's results). The run fold withdraws the declaration
+    when an examined store is not proved or rests on a withdrawn
+    declaration, iterating from the refuted results to the least closed
+    set (`withdrawals`; rule 14t's members cascade the same way), and
+    publishes `stable_declarations` (and `scope_declarations`) in the
+    summary's `fold` section only when some are declared. The standing is
+    `partly-validated` at best: a whole-object write through an untyped
+    pointer is the premise `whole-object`. A member with an exit store
+    (NULL stored into an existing object: `rd_kafka_buf_s.rkbuf_rkb`'s
+    reset in `rd_kafka_recv`, `mk_list_del`, `cfl_list_del`) has no stable
+    reading and is not declared. **Do not** exempt a store to an existing
+    object, count a store proved only by a withdrawn declaration as
+    proved, or label a stable declaration `validated`.
+    `QCore.NullMemberScope` (`stable_fact_persists`,
+    `a_fresh_store_does_not_reach`, `an_exit_store_breaks_persistence`,
+    `a_stable_declaration_is_never_validated`, `a_failed_store_withdraws_it`,
+    `failure_is_monotone`; `stableVectors`).
+
+<a id="constraint-14y"></a>
+
+14y. **A stable member's non-null fact on `V->FIELD`, `V` a tracked local
+    or formal, survives calls and stores until `V` is assigned; nothing
+    else does.** Card NULL-MEMBER-INVARIANT-SCOPE (`walk.rs`:
+    `memory_written`, `stable_member_of_key`; `qcore_core::null_member_scope::persist`).
+    At a call, an atomic operation or a store that could write a pointer,
+    the walk keeps exactly the path facts of the shape `V->FIELD` (one
+    dereference of a tracked variable, whose value only an assignment the
+    walk sees can change) whose `V` points to a `struct TAG` with `FIELD`
+    stable in force and whose value is non-null, adding the proof
+    `stable:TAG.FIELD` (`result:stable:TAG.FIELD` on a check). A check,
+    a returned value or a stored value relying on it lists the assumption
+    and the row dependency `stable:TAG.FIELD`; a withdrawn declaration
+    makes each such check a candidate again (`withdrawn:stable:…`) and the
+    row never `Safe` (rule 14w). The reading holds on every thread and
+    through every callee because every store to an existing object is
+    checked (rule 14x). A null or possibly-null fact, a fact on a memory
+    base (`(*pp)->f`, `a->b->f`) or an untracked base, and every fact on
+    `V` once it is assigned are forgotten as before. **Do not** keep a fact
+    that is not non-null, or one whose base pointer the walk does not
+    track. `QCore.NullMemberScope` (`stable_fact_persists`,
+    `a_kept_fact_is_non_null`, `nothing_is_kept_without_stability`;
+    `persistVectors`).
+
+<a id="constraint-14z"></a>
+
+14z. **A function-scope entry is the callee's entry fact and a checked
+    obligation at every call.** Card NULL-MEMBER-INVARIANT-SCOPE (`walk.rs`:
+    the entry facts, `scope_obligation`; `null_deref.rs`, the row's scope).
+    `requires null_member_scope(TAG, FIELD, P);` on a function's bounds
+    declaration (`P` a pointer parameter) says that on entry `P->FIELD` is
+    non-null. The body reads it so (proof `precondition:declared:
+    null_member_scope(…)`, held while the declaration is), its row is `Safe`
+    only conditional on it (the scope names it) and depends on the
+    function's declaration; with `FIELD` stable the fact lasts the whole
+    body (rule 14y), otherwise until the first call or pointer store. At
+    each call, the actual's `FIELD` is a `call-precondition` check read
+    from the caller's facts (a tracked actual's path, a memory path's own;
+    any other actual is a memory-field candidate), subject `ACTUAL->FIELD
+    at `F` null_member_scope(…)`; a held declaration's check is `held`; a
+    declaration whose parameters do not match the call or the definition
+    is withdrawn (`Unknown`). A call through a function pointer is not
+    checked (the registered indirect-call residual), so an address-taken
+    scope function's row stays conditional, as for `quant null-deref`.
+    **Do not** read an entry fact the declaration does not state, or drop
+    a caller's check because the callee's member is stable.
+    `QCore.NullMemberScope` (`a_scoped_use_sees_non_null`).

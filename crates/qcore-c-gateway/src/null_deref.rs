@@ -63,9 +63,9 @@ use serde_json::Value;
 /// reads (the null property's model and the triage's).
 pub use qcore_core::null_deref as core_model;
 pub use qcore_core::null_deref::{NULL_PROPERTY, NullVerdict, Request, compose};
-pub use qcore_core::null_triage;
 /// Card NULL-MEMBER-INVARIANT-SCOPE: the scoped member decisions.
 pub use qcore_core::null_member_scope;
+pub use qcore_core::null_triage;
 
 use crate::legacy_c::C11TranslationUnit;
 use crate::typed_c_ast::kind;
@@ -76,8 +76,8 @@ mod walk;
 mod witness;
 
 use ast::kids;
-use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
 pub use scope::StableStore;
+use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
 pub use walk::{ExternalCall, MemberStore};
 pub use witness::{PathStep, Witness};
 

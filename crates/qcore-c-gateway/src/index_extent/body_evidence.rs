@@ -80,9 +80,7 @@ pub fn clause_kind(clause: &BoundsClause) -> ClauseKind {
         BoundsClause::NullMember { .. } | BoundsClause::NullResult => ClauseKind::Preserves,
         // Card NULL-MEMBER-INVARIANT-SCOPE: likewise the stable member and
         // the scope entry.
-        BoundsClause::NullStable { .. } | BoundsClause::NullScope { .. } => {
-            ClauseKind::Preserves
-        }
+        BoundsClause::NullStable { .. } | BoundsClause::NullScope { .. } => ClauseKind::Preserves,
     }
 }
 

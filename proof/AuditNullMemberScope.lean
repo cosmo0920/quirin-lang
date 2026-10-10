@@ -1,6 +1,6 @@
 import QCore.NullMemberScope
 
-/-! Audited companion to NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-15a). -/
+/-! Audited companion to NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z). -/
 
 #print axioms QCore.NullMemberScope.step_keeps
 #print axioms QCore.NullMemberScope.stable_fact_persists

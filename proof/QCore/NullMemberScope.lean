@@ -1,7 +1,7 @@
 import QCore.NullTriage
 
 /-!
-# Scoped member invariants (card NULL-MEMBER-INVARIANT-SCOPE, gateway rules 14x–15a)
+# Scoped member invariants (card NULL-MEMBER-INVARIANT-SCOPE, gateway rules 14x–14z)
 
 The abstract rules of `crates/qcore-core/src/null_member_scope.rs`, of the
 gateway walk's stable-member reading (`crates/qcore-c-gateway/src/null_deref/`
