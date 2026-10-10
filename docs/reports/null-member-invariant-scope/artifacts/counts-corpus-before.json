@@ -1,0 +1,41 @@
+{
+ "candidates": 12809,
+ "checks_with_a_stable_proof_by_outcome": {},
+ "member_sourced": {
+  "next": {
+   "own": 602,
+   "travelled": 2
+  },
+  "rkb_rk": {
+   "own": 682,
+   "travelled": 59
+  },
+  "rkbuf_rkb": {
+   "own": 3474,
+   "travelled": 41
+  }
+ },
+ "memory_field_own": 8605,
+ "own": 10907,
+ "own_by_strongest_kind": {
+  "allocation": 8,
+  "formal": 1817,
+  "global": 1,
+  "memory-field": 8605,
+  "null-literal": 92,
+  "other": 102,
+  "uncontracted-result": 277,
+  "uninitialized": 5
+ },
+ "rows": 4921,
+ "scope_entry_checks_by_outcome": {},
+ "travelled": 1902,
+ "travelled_by_strongest_kind": {
+  "allocation": 2,
+  "formal": 650,
+  "memory-field": 1006,
+  "null-literal": 38,
+  "other": 6,
+  "uncontracted-result": 200
+ }
+}

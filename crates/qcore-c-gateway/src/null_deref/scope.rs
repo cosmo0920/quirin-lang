@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 
 use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
 
-/// A declared stable member (`null_member_stable(TAG, FIELD)`).
+/// A declared stable member (`nonnull_member_stable(TAG, FIELD)`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct StableDecl {
     /// The declaration that carries it.
@@ -19,7 +19,7 @@ pub(super) struct StableDecl {
     pub(super) held: Option<String>,
 }
 
-/// One function-scope entry (`null_member_scope(TAG, FIELD, P)`).
+/// One function-scope entry (`nonnull_member_scope(TAG, FIELD, P)`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct ScopeEntry {
     pub(super) position: usize,
@@ -52,7 +52,7 @@ pub(super) fn declared_stable_and_scopes(
         let mut entries = Vec::new();
         for entry in &contract.clauses {
             match &entry.clause {
-                BoundsClause::NullStable { tag, field } => {
+                BoundsClause::NonnullMemberStable { tag, field } => {
                     let decl = StableDecl {
                         host: name.clone(),
                         held: held.clone(),
@@ -67,7 +67,7 @@ pub(super) fn declared_stable_and_scopes(
                         })
                         .or_insert(decl);
                 }
-                BoundsClause::NullScope {
+                BoundsClause::NonnullMemberScope {
                     tag,
                     field,
                     parameter,
@@ -77,7 +77,7 @@ pub(super) fn declared_stable_and_scopes(
                             position,
                             tag: tag.clone(),
                             field: field.clone(),
-                            text: format!("null_member_scope({tag}, {field}, {parameter})"),
+                            text: format!("nonnull_member_scope({tag}, {field}, {parameter})"),
                         });
                     }
                 }

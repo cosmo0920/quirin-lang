@@ -884,14 +884,14 @@ fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
                 // Card NULL-CANDIDATE-TRIAGE: the null property's member and
                 // result declarations (G05e), which custody never reads.
                 || (clause.kind == "requires"
-                    && clause.expression.starts_with("null_member_nonnull("))
+                    && clause.expression.starts_with("nonnull_member("))
                 // Card NULL-MEMBER-INVARIANT-SCOPE: the stable member and the
                 // function-scope entry (G05f), which custody never reads.
                 || (clause.kind == "requires"
-                    && (clause.expression.starts_with("null_member_stable(")
-                        || clause.expression.starts_with("null_member_scope(")))
+                    && (clause.expression.starts_with("nonnull_member_stable(")
+                        || clause.expression.starts_with("nonnull_member_scope(")))
                 || (clause.kind == "normal"
-                    && clause.expression.replace(' ', "") == "null_result_nonnull()")
+                    && clause.expression.replace(' ', "") == "nonnull_result()")
         });
     if only {
         Ok(())

@@ -882,19 +882,19 @@ impl<'a> Walker<'a> {
                     }
                     Proof::NonNullResult(name) if name.starts_with("member:") => {
                         self.assumptions.insert(format!(
-                            "declared-{name}: a non-null member (null_member_nonnull; every analysed store checked, construction premised)"
+                            "declared-{name}: a non-null member (nonnull_member; every analysed store checked, construction premised)"
                         ));
                     }
                     Proof::NonNullResult(name) if name.starts_with("declared-result:") => {
                         self.assumptions.insert(format!(
-                            "{name}: a non-null result (null_result_nonnull; checked against the analysed bodies)"
+                            "{name}: a non-null result (nonnull_result; checked against the analysed bodies)"
                         ));
                     }
                     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14y): a fact
                     // kept across a call or a store by a stable member.
                     Proof::NonNullResult(name) if name.starts_with("stable:") => {
                         self.assumptions.insert(format!(
-                            "{name}: a non-null member kept (null_member_stable; every store to an existing object checked, whole-object writes premised)"
+                            "{name}: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
                         ));
                         self.consulted.insert(name.clone());
                     }

@@ -8,7 +8,7 @@ candidate counts this card reports for one null selection's rows.
 * memory-field candidates on the own checks;
 * candidates with a source naming each member this card considers
   (`->rkb_rk`, `->rkbuf_rkb`, `->next`), own and travelled;
-* call-precondition checks of scope entries (`null_member_scope`) by outcome;
+* call-precondition checks of scope entries (`nonnull_member_scope`) by outcome;
 * checks whose proofs carry a stable member's proof (`result:stable:`)."""
 import collections
 import json
@@ -41,7 +41,7 @@ for line in open(sys.argv[1]):
         proofs = check.get("proofs") or []
         if any(p.startswith("result:stable:") for p in proofs):
             stable_proved[check["outcome"]] += 1
-        if "null_member_scope(" in check.get("subject", ""):
+        if "nonnull_member_scope(" in check.get("subject", ""):
             scope_checks[check["outcome"]] += 1
         if check["outcome"] != "candidate":
             continue

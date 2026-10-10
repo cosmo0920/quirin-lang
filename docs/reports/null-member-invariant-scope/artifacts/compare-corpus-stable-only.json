@@ -1,0 +1,47 @@
+{
+ "check_changes": {
+  "removed candidate": 225,
+  "added moved": 212,
+  "removed moved": 1,
+  "added proved": 14
+ },
+ "rows_before": 4921,
+ "rows_after": 4921,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Unknown": 2363,
+  "Safe (unconditional)": 1115,
+  "Safe (conditional)": 1421,
+  "Unsafe": 22
+ },
+ "verdicts_after": {
+  "Unknown": 2363,
+  "Safe (unconditional)": 1115,
+  "Safe (conditional)": 1421,
+  "Unsafe": 22
+ },
+ "moves": {},
+ "moves_by_cause": {},
+ "candidates_by_kind_before": {
+  "memory-field": 9611,
+  "formal": 2467,
+  "null-literal": 130,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 5,
+  "global": 1,
+  "allocation": 10
+ },
+ "candidates_by_kind_after": {
+  "memory-field": 9386,
+  "formal": 2467,
+  "null-literal": 130,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 5,
+  "global": 1,
+  "allocation": 10
+ },
+ "safe_to_non_safe": 0,
+ "moving": []
+}

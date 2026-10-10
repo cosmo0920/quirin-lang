@@ -2,7 +2,7 @@
 //! fold's part for stable members and function-scope entries, called from
 //! [`crate::null_fold::fold`].
 //!
-//! * Each **stable member** (`null_member_stable(TAG, FIELD)`) is checked
+//! * Each **stable member** (`nonnull_member_stable(TAG, FIELD)`) is checked
 //!   against every store the analysed units made to it: an assignment or a
 //!   whole-object write of an existing object is examined (one not proved
 //!   withdraws it); an initializer list writes a fresh object and is counted
@@ -40,15 +40,15 @@ pub fn declarations(environment: &BoundsContracts) -> Declarations {
     for (name, contract) in environment.null_declarations() {
         for entry in &contract.clauses {
             match &entry.clause {
-                BoundsClause::NullMember { tag, field } => {
+                BoundsClause::NonnullMember { tag, field } => {
                     out.members
                         .insert(format!("{tag}.{field}"), (name.clone(), contract.held()));
                 }
-                BoundsClause::NullStable { tag, field } => {
+                BoundsClause::NonnullMemberStable { tag, field } => {
                     out.stable
                         .insert(format!("{tag}.{field}"), (name.clone(), contract.held()));
                 }
-                BoundsClause::NullScope { .. } => {
+                BoundsClause::NonnullMemberScope { .. } => {
                     let scope = out
                         .scopes
                         .entry(name.clone())
@@ -227,7 +227,7 @@ mod tests {
     fn environment() -> BoundsContracts {
         load_bounds_contract_sources(&BTreeMap::from([(
             "m.qv".to_owned(),
-            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires null_member_stable(S, next);\n    requires null_member_nonnull(T, owner);\n};\n".to_owned(),
+            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member_stable(S, next);\n    requires nonnull_member(T, owner);\n};\n".to_owned(),
         )]))
         .expect("loads")
     }

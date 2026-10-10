@@ -228,7 +228,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
     let mut results: BTreeMap<String, bool> = BTreeMap::new();
     for (name, contract) in environment.null_declarations() {
         for entry in &contract.clauses {
-            if let BoundsClause::NullResult = &entry.clause {
+            if let BoundsClause::NonnullResult = &entry.clause {
                 results.insert(name.clone(), contract.held());
             }
         }

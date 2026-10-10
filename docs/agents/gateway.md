@@ -6720,8 +6720,10 @@ own anchor here.
 
 14t. **A declared non-null member is read non-null and checked at every
     store the analysed units make; a store not proved non-null withdraws it
-    for the run.** Card NULL-CANDIDATE-TRIAGE (grammar G05e).
-    `requires null_member_nonnull(TAG, FIELD);` in bounds contract v1 (a
+    for the run.** Card NULL-CANDIDATE-TRIAGE (grammar G05e; spelled
+    `null_member_nonnull` until NULL-MEMBER-INVARIANT-SCOPE's rename, C09.3
+    "Naming", no alias).
+    `requires nonnull_member(TAG, FIELD);` in bounds contract v1 (a
     type-level declaration its host function, the record's constructor,
     carries; pinned in the crate's `bounds-contracts.lock`): a read of
     `E->FIELD` or `E.FIELD` of a `struct TAG` (through typedefs) with no fact
@@ -6743,8 +6745,9 @@ own anchor here.
 <a id="constraint-14u"></a>
 
 14u. **A declared non-null result is checked against every analysed body
-    that defines the function.** Card NULL-CANDIDATE-TRIAGE (grammar G05e).
-    `ensures normal null_result_nonnull();` (bounds contract v1, a pointer
+    that defines the function.** Card NULL-CANDIDATE-TRIAGE (grammar G05e;
+    spelled `null_result_nonnull` until the same rename).
+    `ensures normal nonnull_result();` (bounds contract v1, a pointer
     result): every caller reads the result non-null (proof
     `result:declared-result:NAME`, dependency `result:NAME`). Each unit that
     analyses a body is evidence (`validated` when every return is non-null,
@@ -6800,7 +6803,7 @@ own anchor here.
     resting on a withdrawn declaration.** Card NULL-MEMBER-INVARIANT-SCOPE
     (contract specification C09.3, grammar G05f; `null_deref/scope.rs`,
     `walk.rs` (`stable_store`), `qcore_audit::null_member_scope_fold`).
-    `requires null_member_stable(TAG, FIELD);` in bounds contract v1 (a
+    `requires nonnull_member_stable(TAG, FIELD);` in bounds contract v1 (a
     type-level declaration its host, the record's constructor, carries;
     pinned in the crate's `bounds-contracts.lock`) says `FIELD` is never
     made NULL on an existing `struct TAG` object. Every assignment and
@@ -6861,17 +6864,17 @@ own anchor here.
 14z. **A function-scope entry is the callee's entry fact and a checked
     obligation at every call.** Card NULL-MEMBER-INVARIANT-SCOPE (`walk.rs`:
     the entry facts, `scope_obligation`; `null_deref.rs`, the row's scope).
-    `requires null_member_scope(TAG, FIELD, P);` on a function's bounds
+    `requires nonnull_member_scope(TAG, FIELD, P);` on a function's bounds
     declaration (`P` a pointer parameter) says that on entry `P->FIELD` is
     non-null. The body reads it so (proof `precondition:declared:
-    null_member_scope(…)`, held while the declaration is), its row is `Safe`
+    nonnull_member_scope(…)`, held while the declaration is), its row is `Safe`
     only conditional on it (the scope names it) and depends on the
     function's declaration; with `FIELD` stable the fact lasts the whole
     body (rule 14y), otherwise until the first call or pointer store. At
     each call, the actual's `FIELD` is a `call-precondition` check read
     from the caller's facts (a tracked actual's path, a memory path's own;
     any other actual is a memory-field candidate), subject `ACTUAL->FIELD
-    at `F` null_member_scope(…)`; a held declaration's check is `held`; a
+    at `F` nonnull_member_scope(…)`; a held declaration's check is `held`; a
     declaration whose parameters do not match the call or the definition
     is withdrawn (`Unknown`). A call through a function pointer is not
     checked (the registered indirect-call residual), so an address-taken

@@ -58,9 +58,9 @@ def causes(before, after):
             out.add("finding")
         if any(p.startswith("result:stable:") for p in proofs):
             out.add("stable-member")
-        if any("null_member_scope(" in p for p in proofs):
+        if any("nonnull_member_scope(" in p for p in proofs):
             out.add("scope-entry")
-        if "null_member_scope(" in subject:
+        if "nonnull_member_scope(" in subject:
             out.add("scope-caller-check-" + ("candidate" if check["outcome"] == "candidate" else "discharged"))
         if any(s.startswith("withdrawn:") for s in check.get("sources") or []):
             out.add("withdrawn")

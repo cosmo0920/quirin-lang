@@ -5,7 +5,7 @@
 //! A global member declaration (rule 14t) is withdrawn by one store of NULL
 //! anywhere. Two scoped readings are checkable instead:
 //!
-//! * **A stable member** (`null_member_stable(TAG, FIELD)`, an object-state
+//! * **A stable member** (`nonnull_member_stable(TAG, FIELD)`, an object-state
 //!   scope): every store the analysed units make to `FIELD` of an *existing*
 //!   object is proved non-null; an initializer list writes a fresh object
 //!   and may leave it NULL. The state "set" (non-null) is entered at a
@@ -15,7 +15,7 @@
 //!   ([`stable_standing`]) is `withdrawn` when one examined store is not
 //!   proved and never `validated`: a whole-object write the walk cannot
 //!   attribute (a copy or fill through an untyped pointer) is a premise.
-//! * **A function scope** (`null_member_scope(TAG, FIELD, P)`): on entry to
+//! * **A function scope** (`nonnull_member_scope(TAG, FIELD, P)`): on entry to
 //!   the declared function, `P->FIELD` is non-null; each caller's actual is a
 //!   checked obligation. With the member stable the entry fact lasts the
 //!   whole body.

@@ -25,12 +25,12 @@ const STABLE: &str = "module contract;
 extern fn nd_make(k: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires null_member_stable(S, next);
+    requires nonnull_member_stable(S, next);
 };
 extern fn scoped(s: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires null_member_scope(S, next, s);
+    requires nonnull_member_scope(S, next, s);
 };
 ";
 
@@ -39,7 +39,7 @@ const SCOPE_ONLY: &str = "module contract;
 extern fn scoped(s: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires null_member_scope(S, next, s);
+    requires nonnull_member_scope(S, next, s);
 };
 ";
 
@@ -232,7 +232,7 @@ fn a_scope_entry_is_read_at_entry_and_checked_at_every_call() {
     let scoped = row(&unit, "scoped");
     assert_eq!(scoped.verdict, "Safe", "{scoped:#?}");
     assert!(
-        scoped.scope.contains("null_member_scope(S, next, s)"),
+        scoped.scope.contains("nonnull_member_scope(S, next, s)"),
         "{}",
         scoped.scope
     );
@@ -268,7 +268,7 @@ fn without_a_stable_member_the_entry_fact_lasts_until_the_first_call() {
     assert!(
         checks.iter().any(|(o, p)| *o == "proved"
             && p.iter()
-                .any(|p| p.contains("null_member_scope(S, next, s)"))),
+                .any(|p| p.contains("nonnull_member_scope(S, next, s)"))),
         "{checks:?}"
     );
     assert!(checks.iter().any(|(o, _)| *o == "candidate"), "{checks:?}");
@@ -284,22 +284,24 @@ fn the_new_clauses_are_checked_by_the_loader() {
     let load = |body: &str| {
         load_bounds_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text(body))]))
     };
-    assert!(load("requires null_member_stable(S, next);").is_ok());
-    assert!(load("requires null_member_scope(S, next, s);").is_ok());
+    assert!(load("requires nonnull_member_stable(S, next);").is_ok());
+    assert!(load("requires nonnull_member_scope(S, next, s);").is_ok());
     // A parameter is no struct tag; the scope's pointer is a pointer
     // parameter; a stable member is no postcondition.
-    assert!(load("requires null_member_stable(s, next);").is_err());
-    assert!(load("requires null_member_scope(S, next, k);").is_err());
-    assert!(load("requires null_member_scope(S, next, q);").is_err());
-    assert!(load("ensures normal null_member_stable(S, next);").is_err());
+    assert!(load("requires nonnull_member_stable(s, next);").is_err());
+    assert!(load("requires nonnull_member_scope(S, next, k);").is_err());
+    assert!(load("requires nonnull_member_scope(S, next, q);").is_err());
+    assert!(load("ensures normal nonnull_member_stable(S, next);").is_err());
     assert!(
-        load("requires null_member_stable(S, next);\n    requires null_member_stable(S, next);")
-            .is_err()
+        load(
+            "requires nonnull_member_stable(S, next);\n    requires nonnull_member_stable(S, next);"
+        )
+        .is_err()
     );
     // The bounds consumer reads the environment without them.
     let loaded = load_bounds_contract_sources(&BTreeMap::from([(
         "m.qv".to_owned(),
-        text("requires null_member_stable(S, next);\n    requires null_member_scope(S, next, s);"),
+        text("requires nonnull_member_stable(S, next);\n    requires nonnull_member_scope(S, next, s);"),
     )]))
     .expect("loads");
     assert!(loaded.for_bounds().functions.is_empty());

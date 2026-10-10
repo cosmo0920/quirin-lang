@@ -311,7 +311,7 @@ fn declared_members_and_results(
         let held = contract.held().then(|| contract.holds().join("; "));
         for entry in &contract.clauses {
             match &entry.clause {
-                BoundsClause::NullMember { tag, field } => {
+                BoundsClause::NonnullMember { tag, field } => {
                     let decl = MemberDecl {
                         host: name.clone(),
                         held: held.clone(),
@@ -326,7 +326,7 @@ fn declared_members_and_results(
                         })
                         .or_insert(decl);
                 }
-                BoundsClause::NullResult => {
+                BoundsClause::NonnullResult => {
                     results.insert(name.clone(), ResultDecl { held: held.clone() });
                 }
                 _ => {}

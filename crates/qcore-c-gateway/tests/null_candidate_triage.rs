@@ -49,8 +49,8 @@ const MEMBER: &str = "module contract;
 extern fn nd_get(k: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires null_member_nonnull(S, next);
-    ensures normal null_result_nonnull();
+    requires nonnull_member(S, next);
+    ensures normal nonnull_result();
 };
 ";
 
@@ -374,17 +374,16 @@ fn the_new_clauses_are_checked_by_the_loader() {
     let load = |body: &str| {
         load_bounds_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text(body))]))
     };
-    assert!(load("requires null_member_nonnull(S, next);").is_ok());
-    assert!(load("ensures normal null_result_nonnull();").is_ok());
+    assert!(load("requires nonnull_member(S, next);").is_ok());
+    assert!(load("ensures normal nonnull_result();").is_ok());
     // A parameter is no struct tag; a result clause is no precondition.
-    assert!(load("requires null_member_nonnull(k, next);").is_err());
-    assert!(load("requires null_result_nonnull();").is_err());
+    assert!(load("requires nonnull_member(k, next);").is_err());
+    assert!(load("requires nonnull_result();").is_err());
     assert!(
-        load("requires null_member_nonnull(S, next);\n    requires null_member_nonnull(S, next);")
-            .is_err()
+        load("requires nonnull_member(S, next);\n    requires nonnull_member(S, next);").is_err()
     );
     // A unit result has no non-null result.
-    let unit = "module contract;\nextern fn f(k: i32) -> unit\ncontract {\n    requires bounds_contract_v1;\n    ensures normal null_result_nonnull();\n};\n";
+    let unit = "module contract;\nextern fn f(k: i32) -> unit\ncontract {\n    requires bounds_contract_v1;\n    ensures normal nonnull_result();\n};\n";
     assert!(
         load_bounds_contract_sources(&BTreeMap::from([("m.qv".to_owned(), unit.to_owned())]))
             .is_err()
@@ -392,7 +391,7 @@ fn the_new_clauses_are_checked_by_the_loader() {
     // The bounds consumer reads the environment without them.
     let loaded = load_bounds_contract_sources(&BTreeMap::from([(
         "m.qv".to_owned(),
-        text("requires null_member_nonnull(S, next);"),
+        text("requires nonnull_member(S, next);"),
     )]))
     .expect("loads");
     assert!(loaded.for_bounds().functions.is_empty());
@@ -408,7 +407,7 @@ fn a_member_read_through_a_typedef_names_its_struct() {
 extern fn nd_get(k: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires null_member_nonnull(T_s, self);
+    requires nonnull_member(T_s, self);
 };
 ";
     let unit = report(

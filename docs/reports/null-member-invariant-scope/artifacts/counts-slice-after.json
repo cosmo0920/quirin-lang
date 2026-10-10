@@ -1,0 +1,26 @@
+{
+ "candidates": 1279,
+ "checks_with_a_stable_proof_by_outcome": {},
+ "member_sourced": {
+  "next": {
+   "own": 176
+  },
+  "rkb_rk": {},
+  "rkbuf_rkb": {}
+ },
+ "memory_field_own": 1148,
+ "own": 1270,
+ "own_by_strongest_kind": {
+  "formal": 116,
+  "memory-field": 1148,
+  "null-literal": 2,
+  "uncontracted-result": 4
+ },
+ "rows": 406,
+ "scope_entry_checks_by_outcome": {},
+ "travelled": 9,
+ "travelled_by_strongest_kind": {
+  "formal": 4,
+  "memory-field": 5
+ }
+}

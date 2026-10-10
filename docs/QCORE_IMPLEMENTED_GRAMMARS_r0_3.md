@@ -3927,22 +3927,27 @@ Card NULL-CANDIDATE-TRIAGE, contract specification
 [C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref),
 gateway rules [14t](agents/gateway.md#constraint-14t) and
 [14u](agents/gateway.md#constraint-14u). Two more clauses of G05b, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NullMember`,
-`BoundsClause::NullResult`):
+`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NonnullMember`,
+`BoundsClause::NonnullResult`):
 
 ```ebnf
-bounds_pre  = … | "null_member_nonnull", "(", IDENT, ",", IDENT, ")" ;
-bounds_post = … | "null_result_nonnull", "(", ")" ;
+bounds_pre  = … | "nonnull_member", "(", IDENT, ",", IDENT, ")" ;
+bounds_post = … | "nonnull_result", "(", ")" ;
 ```
 
 Static conditions, each rejecting the whole module: the first `IDENT` of
-`null_member_nonnull` is a C struct tag, never a parameter of the
-declaration, and the second a member name (`null-member-shape`); at most one
-per (tag, member) per declaration; `null_result_nonnull()` is an `ensures
+`nonnull_member` is a C struct tag, never a parameter of the
+declaration, and the second a member name (`nonnull-member-shape`); at most one
+per (tag, member) per declaration; `nonnull_result()` is an `ensures
 normal` postcondition of a declaration with a pointer result
-(`null-result-pointer`), at most one. Both words were absent from every
+(`nonnull-result-pointer`), at most one. Both words were absent from every
 tracked contract module when introduced (the reserved-spelling census
-exempts modules the bounds loader accepts). The clauses are part of the
+exempts modules the bounds loader accepts). The card introduced them as
+`null_member_nonnull` and `null_result_nonnull`; card NULL-MEMBER-INVARIANT-SCOPE
+renamed them on the user's decision of 2026-10-11 (one `nonnull_` scheme,
+`nullable_` reserved for clauses stating a value may be NULL; contract
+specification C09.3, "Naming"). There is no alias: the old spellings are
+refused as any unknown bounds clause is. The clauses are part of the
 declaration digest and pinned with it. Only the null property reads them:
 `BoundsContracts::for_bounds()` removes them like `quant null-deref`, and
 `resource_*` consumers reject the module. A declaration beside a
@@ -3957,28 +3962,28 @@ Card NULL-MEMBER-INVARIANT-SCOPE, contract specification
 ("Scoped member invariants"), gateway rules
 [14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z).
 Two more preconditions of G05b, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NullStable`,
-`BoundsClause::NullScope`):
+`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NonnullMemberStable`,
+`BoundsClause::NonnullMemberScope`):
 
 ```ebnf
-bounds_pre = … | "null_member_stable", "(", IDENT, ",", IDENT, ")"
-               | "null_member_scope", "(", IDENT, ",", IDENT, ",", IDENT, ")" ;
+bounds_pre = … | "nonnull_member_stable", "(", IDENT, ",", IDENT, ")"
+               | "nonnull_member_scope", "(", IDENT, ",", IDENT, ",", IDENT, ")" ;
 ```
 
 Static conditions, each rejecting the whole module: the first `IDENT` of
 either is a C struct tag, never a parameter of the declaration, and the
-second a member name (`null-member-shape`, `null-member-scope-shape`); the
-third `IDENT` of `null_member_scope` is a pointer parameter of the declaration
-(`null-member-scope-parameter`); at most one `null_member_stable` per (tag,
-member) and one `null_member_scope` per (parameter, tag, member) per
+second a member name (`nonnull-member-shape`, `nonnull-member-scope-shape`); the
+third `IDENT` of `nonnull_member_scope` is a pointer parameter of the declaration
+(`nonnull-member-scope-parameter`); at most one `nonnull_member_stable` per (tag,
+member) and one `nonnull_member_scope` per (parameter, tag, member) per
 declaration; neither is a postcondition. Both words were absent from every
 tracked contract module when introduced (`RESERVED_SPELLINGS`, 16). The
 clauses are part of the declaration digest and pinned with it. Only the null
 property reads them: `BoundsContracts::for_bounds()` removes them, and
 `resource_*` consumers reject the module. A declaration beside a resource-v1
 declaration of the same function is a registered `null_deref_beside` relation.
-`null_member_stable` is a type-level declaration hosted, like G05e's member
-declaration, on the record's constructor; `null_member_scope` belongs to the
+`nonnull_member_stable` is a type-level declaration hosted, like G05e's member
+declaration, on the record's constructor; `nonnull_member_scope` belongs to the
 function it is written on.
 
 ## G06. Observation predicate grammar

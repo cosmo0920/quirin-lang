@@ -1,0 +1,585 @@
+{
+ "chosen": [
+  {
+   "function": "rd_kafka_ShareAcknowledgeRequest",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, group_id: ptr<const, u8>, member_id: ptr<const, u8>, share_session_epoch: i32, rko_orig: ptr<mut, u8>, now: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_active_toppar_add",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, reason: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_active_toppar_del",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, reason: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_buf_enq0",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_buf_retry",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_bufq_timeout_scan",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, is_waitresp_q: i32, rkbq: ptr<mut, u8>, partial_cntp: ptr<mut, u8>, ApiKey: i16, err: i32, now: i64, description: ptr<const, u8>, log_first_n: i32",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_conn_closed",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, err: i32, errstr: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_connect",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_connect_auth",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_connect_done",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, errstr: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_connect_up",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_consumer_serve",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, abs_timeout: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_destroy_final",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_feature_disable",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, features: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_feature_enable",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, features: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_features_set",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, features: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_fetch_backoff",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, err: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_fetch_toppars",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, now: i64",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_handle_purge_queues",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rko: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_idle_check",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_internal_serve",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, abs_timeout: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_needs_connection",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_produce_toppars",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, now: i64, next_wakeup: ptr<mut, u8>, do_timeout_scan: i32",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_resolve",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, nodename: ptr<const, u8>, reset_cached_addr: i32",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_retry_bufs_move",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, next_wakeup: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_serve",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, timeout_ms: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_session_reset",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_session_update_epoch",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_session_update_partitions",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_set_api_versions",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, apis: ptr<mut, u8>, api_cnt: usize",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_set_nodename",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, from_rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_set_state",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, state: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_share_fetch_session_clear",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_share_fetch_session_leave",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rko_orig: ptr<mut, u8>, now: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_share_rpc",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rko_orig: ptr<mut, u8>, now: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_share_session_toppar_add",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_timeout_scan",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, now: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_broker_toppar_msgq_scan",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, now: i64, abs_next_timeout: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_broker_wakeup",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, reason: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_buf_new_request0",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, ApiKey: i16, segcnt: i32, size: usize, is_flexver: i32",
+   "result": "ptr<mut, u8>"
+  },
+  {
+   "function": "rd_kafka_buf_retry",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_bufq_connection_reset",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkbufq: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_bufq_dump",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, fac: ptr<const, u8>, rkbq: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_bufq_purge",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_buf.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkbufq: ptr<mut, u8>, err: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_dr_implicit_ack",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, last_msgid: u64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_features_check",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_feature.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, broker_apis: ptr<mut, u8>, broker_api_cnt: usize",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_fetch_reply_handle_partition_error",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, tver: ptr<const, u8>, err: i32, HighwaterMarkOffset: i64",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkgm: ptr<mut, u8>, MemberMetadata: ptr<const, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_handle_Produce_metadata_update",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, ProduceTags: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_idemp_request_pid_failed",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_idempotence.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, err: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_msgbatch_handle_Produce_result",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "candidates": 3,
+   "signature": "rkb: ptr<mut, u8>, batch: ptr<mut, u8>, err: i32, presult: ptr<const, u8>, request: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_op_throttle_time",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_op.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rkq: ptr<mut, u8>, throttle_time: i32",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_parse_Metadata_update_topic",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_metadata.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, mdt: ptr<const, u8>, mdit: ptr<const, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_recv",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_req_response",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_sasl_broker_init",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_sasl_broker_term",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_sasl.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "unit"
+  },
+  {
+   "function": "rd_kafka_send",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 4,
+   "signature": "rkb: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_ssl_hmac",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, evp: ptr<const, u8>, in: ptr<const, u8>, salt: ptr<const, u8>, itcnt: i32, out: ptr<mut, u8>",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_toppar_fetch_backoff",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_fetcher.c",
+   "candidates": 2,
+   "signature": "rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, err: i32",
+   "result": "i64"
+  },
+  {
+   "function": "rd_kafka_transport_connect",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_transport.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, sinx: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: usize",
+   "result": "ptr<mut, u8>"
+  },
+  {
+   "function": "rd_kafka_transport_ssl_connect",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_ssl.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, rktrans: ptr<mut, u8>, errstr: ptr<mut, u8>, errstr_size: usize",
+   "result": "i32"
+  },
+  {
+   "function": "rd_kafka_waitresp_find",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_broker.c",
+   "candidates": 4,
+   "signature": "rkb: ptr<mut, u8>, corrid: i32",
+   "result": "ptr<mut, u8>"
+  },
+  {
+   "function": "rd_kafkap_share_leader_changes_apply",
+   "file": "lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "candidates": 1,
+   "signature": "rkb: ptr<mut, u8>, leader_changes: ptr<mut, u8>, NodeEndpoints: ptr<mut, u8>",
+   "result": "unit"
+  }
+ ],
+ "skipped": {
+  "rd_kafka_AlterConfigsRequest": "no definition found",
+  "rd_kafka_AlterConfigsResponse_parse": "no definition found",
+  "rd_kafka_ApiVersionRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                int16_t ApiVersion,\n                                rd_kafka_replyq_t replyq,\n                                rd_kafka_resp_cb_t *resp_cb,\n                                void *opaque",
+  "rd_kafka_ConsumerGroupHeartbeatRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_kafkap_str_t *group_id,\n    const rd_kafkap_str_t *member_id,\n    int32_t member_epoch,\n    const rd_kafkap_str_t *group_instance_id,\n    const rd_kafkap_str_t *rack_id,\n    int32_t rebalance_timeout_ms,\n    const rd_kafka_topic_partition_list_t *subscribed_topics,\n    rd_kafkap_str_t *subscribed_topic_regex,\n    const rd_kafkap_str_t *remote_assignor,\n    const rd_kafka_topic_partition_list_t *current_assignments,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_CreateAclsRequest": "no definition found",
+  "rd_kafka_CreatePartitionsRequest": "no definition found",
+  "rd_kafka_CreatePartitionsResponse_parse": "no definition found",
+  "rd_kafka_CreateTopicsRequest": "no definition found",
+  "rd_kafka_CreateTopicsResponse_parse": "no definition found",
+  "rd_kafka_DeleteAclsRequest": "no definition found",
+  "rd_kafka_DeleteRecordsRequest": "no definition found",
+  "rd_kafka_DeleteTopicsRequest": "no definition found",
+  "rd_kafka_DeleteTopicsResponse_parse": "no definition found",
+  "rd_kafka_DescribeAclsRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_list_t *acls /*(rd_kafka_AclBindingFilter_t*)*/,\n    rd_kafka_AdminOptions_t *options,\n    char *errstr,\n    size_t errstr_size,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_DescribeConfigsRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_list_t *configs /*(ConfigResource_t*)*/,\n    rd_kafka_AdminOptions_t *options,\n    char *errstr,\n    size_t errstr_size,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_DescribeConfigsResponse_parse": "no definition found",
+  "rd_kafka_ElectLeadersRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_list_t *elect_leaders /*(rd_kafka_EleactLeaders_t*)*/,\n    rd_kafka_AdminOptions_t *options,\n    char *errstr,\n    size_t errstr_size,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_GetTelemetrySubscriptionsRequest": "no definition found",
+  "rd_kafka_HeartbeatRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                               const rd_kafkap_str_t *group_id,\n                               int32_t generation_id,\n                               const rd_kafkap_str_t *member_id,\n                               const rd_kafkap_str_t *group_instance_id,\n                               rd_kafka_replyq_t replyq,\n                               rd_kafka_resp_cb_t *resp_cb,\n                               void *opaque",
+  "rd_kafka_IncrementalAlterConfigsRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_list_t *configs /*(ConfigResource_t*)*/,\n    rd_kafka_AdminOptions_t *options,\n    char *errstr,\n    size_t errstr_size,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_IncrementalAlterConfigsResponse_parse": "no definition found",
+  "rd_kafka_JoinGroupRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                               const rd_kafkap_str_t *group_id,\n                               const rd_kafkap_str_t *member_id,\n                               const rd_kafkap_str_t *group_instance_id,\n                               const rd_kafkap_str_t *protocol_type,\n                               const rd_list_t *topics,\n                               rd_kafka_replyq_t replyq,\n                               rd_kafka_resp_cb_t *resp_cb,\n                               void *opaque",
+  "rd_kafka_ListOffsetsRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                 rd_kafka_topic_partition_list_t *partitions,\n                                 rd_kafka_replyq_t replyq,\n                                 rd_kafka_resp_cb_t *resp_cb,\n                                 int timeout_ms,\n                                 void *opaque",
+  "rd_kafka_MetadataRequest0": "no definition found",
+  "rd_kafka_OffsetCommitRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                 rd_kafka_consumer_group_metadata_t *cgmetadata,\n                                 rd_kafka_topic_partition_list_t *offsets,\n                                 rd_kafka_replyq_t replyq,\n                                 rd_kafka_resp_cb_t *resp_cb,\n                                 void *opaque,\n                                 const char *reason",
+  "rd_kafka_OffsetFetchRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                 const char *group_id,\n                                 rd_kafka_topic_partition_list_t *parts,\n                                 rd_bool_t use_topic_id,\n                                 int32_t generation_id_or_member_epoch,\n                                 rd_kafkap_str_t *member_id,\n                                 rd_bool_t require_stable_offsets,\n                                 int timeout,\n                                 rd_kafka_replyq_t replyq,\n                                 void (*resp_cb)(rd_kafka_t *,\n                                                 rd_kafka_broker_t *,\n                                                 rd_kafka_resp_err_t,\n                                                 rd_kafka_buf_t *,\n                                                 rd_kafka_buf_t *,\n                                                 void *),\n                                 void *opaque",
+  "rd_kafka_SaslHandshakeRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                   const char *mechanism,\n                                   rd_kafka_replyq_t replyq,\n                                   rd_kafka_resp_cb_t *resp_cb,\n                                   void *opaque",
+  "rd_kafka_ShareFetchRequest": "address taken (an indirect caller is never checked)",
+  "rd_kafka_ShareGroupHeartbeatRequest": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_kafkap_str_t *group_id,\n    const rd_kafkap_str_t *member_id,\n    int32_t member_epoch,\n    const rd_kafkap_str_t *rack_id,\n    const rd_kafka_topic_partition_list_t *subscribed_topics,\n    rd_kafka_replyq_t replyq,\n    rd_kafka_resp_cb_t *resp_cb,\n    void *opaque",
+  "rd_kafka_SyncGroupRequest": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                               const rd_kafkap_str_t *group_id,\n                               int32_t generation_id,\n                               const rd_kafkap_str_t *member_id,\n                               const rd_kafkap_str_t *group_instance_id,\n                               const rd_kafka_group_member_t *assignments,\n                               int assignment_cnt,\n                               rd_kafka_replyq_t replyq,\n                               rd_kafka_resp_cb_t *resp_cb,\n                               void *opaque",
+  "rd_kafka_broker_fail": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                          int level,\n                          rd_kafka_resp_err_t err,\n                          const char *fmt,\n                          ...",
+  "rd_kafka_broker_fetch_reply": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_find": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_handle_ApiVersion": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_handle_SaslHandshake": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_op_serve": "no definition found",
+  "rd_kafka_broker_ops_io_serve": "no definition found",
+  "rd_kafka_broker_outbufs_space": "no definition found",
+  "rd_kafka_broker_random0": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_session_update_toppars_list": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    rd_list_t **request_toppars_ptr,\n    rd_list_t **toppars_to_remove_from_ptr,\n    rd_bool_t add",
+  "rd_kafka_broker_set_error": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                      int level,\n                                      rd_kafka_resp_err_t err,\n                                      const char *fmt,\n                                      va_list ap",
+  "rd_kafka_broker_share_fetch_reply": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_share_session_toppar_remove": "no definition found",
+  "rd_kafka_broker_thread_main": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_broker_weighted": "no definition found",
+  "rd_kafka_brokers_get_nodeids_async": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_coord_query": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave": "no definition found",
+  "rd_kafka_cgrp_handle_FindCoordinator": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_handle_JoinGroup": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave": "no definition found",
+  "rd_kafka_cgrp_handle_SyncGroup": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_op_handle_OffsetCommit": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_cgrp_terminate0": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_connect_any": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_coord_req_fsm": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_coord_rkb_monitor_cb": "address taken (an indirect caller is never checked)",
+  "rd_kafka_err_action": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                        rd_kafka_resp_err_t err,\n                        const rd_kafka_buf_t *request,\n                        ...",
+  "rd_kafka_fetch_reply_handle": "no definition found",
+  "rd_kafka_fetch_reply_handle_partition": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_kafkap_str_t *topic,\n    rd_kafka_topic_t *rkt /*possibly NULL*/,\n    rd_kafka_buf_t *rkbuf,\n    rd_kafka_buf_t *request,\n    int16_t ErrorCode,\n    rd_kafkap_Fetch_reply_tags_Topic_t *TopicTags,\n    rd_kafkap_Fetch_reply_tags_Partition_t *PartitionTags",
+  "rd_kafka_handle_ApiVersion": "no definition found",
+  "rd_kafka_handle_Fetch_metadata_update": "no definition found",
+  "rd_kafka_handle_LeaveGroup": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_handle_ListOffsets": "no definition found",
+  "rd_kafka_handle_Metadata": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_handle_OffsetFetch": "no definition found",
+  "rd_kafka_handle_Produce_error": "address taken (an indirect caller is never checked)",
+  "rd_kafka_handle_Produce_parse": "no definition found",
+  "rd_kafka_handle_idempotent_Produce_error": "no definition found",
+  "rd_kafka_handle_idempotent_Produce_success": "no definition found",
+  "rd_kafka_idemp_pid_fsm": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_idemp_pid_update": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                               const rd_kafka_pid_t pid",
+  "rd_kafka_list_groups": "no definition found",
+  "rd_kafka_lz4_compress": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                          int proper_hc,\n                                          int comp_level,\n                                          rd_slice_t *slice,\n                                          void **outbuf,\n                                          size_t *outlenp",
+  "rd_kafka_lz4_compress_break_framing": "no definition found",
+  "rd_kafka_lz4_decompress": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                            int proper_hc,\n                                            int64_t Offset,\n                                            char *inbuf,\n                                            size_t inlen,\n                                            void **outbuf,\n                                            size_t *outlenp",
+  "rd_kafka_lz4_decompress_fixup_bad_framing": "no definition found",
+  "rd_kafka_make_ListOffsetsRequest": "no definition found",
+  "rd_kafka_metadata_refresh_known_topics": "no definition found",
+  "rd_kafka_metadata_refresh_topic_ids": "no definition found",
+  "rd_kafka_metadata_refresh_topics": "no definition found",
+  "rd_kafka_msgset_reader_msg_v0_1": "no definition found",
+  "rd_kafka_msgset_writer_init": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_msgset_writer_select_MsgVersion": "no definition found",
+  "rd_kafka_msgset_writer_write_msgq": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_parse_Metadata0": "no definition found",
+  "rd_kafka_sasl_client_new": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_sasl_cyrus_client_new": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_sasl_plain_client_new": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_sasl_send": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_share_acknowledge_reply_handle": "no definition found",
+  "rd_kafka_share_acks_clear_during_broker_decommission": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_share_build_response_rko": "no definition found",
+  "rd_kafka_share_dispatch_pending_sync_acks": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_share_fetch_reply_handle": "no definition found",
+  "rd_kafka_share_fetch_reply_handle_partition": "a parameter without a bounds v1 type: \n    rd_kafka_broker_t *rkb,\n    const rd_kafkap_str_t *topic,\n    rd_kafka_Uuid_t topic_id,\n    rd_kafka_topic_t *rkt /*possibly NULL*/,\n    rd_kafka_buf_t *rkbuf,\n    rd_kafka_buf_t *request,\n    rd_list_t *filtered_msgs,\n    rd_kafka_share_ack_batches_t *batches_out,\n    rd_list_t *request_ack_details",
+  "rd_kafka_share_fetch_reply_handle_partition_error": "address taken (an indirect caller is never checked)",
+  "rd_kafka_share_segregate_and_dispatch_acks": "no definition found",
+  "rd_kafka_snappy_decompress": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                      const char *compressed,\n                                      size_t compressed_size,\n                                      void **outbuf,\n                                      size_t *outbuf_len",
+  "rd_kafka_ssl_error0": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_stats_emit_broker_reqs": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_topic_metadata_update2": "address taken (an indirect caller is never checked)",
+  "rd_kafka_toppar_fetch_decide": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_toppar_handle_Offset": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_toppar_handle_OffsetForLeaderEpoch": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_toppar_offset_request": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_toppar_producer_serve": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                          rd_kafka_toppar_t *rktp,\n                                          const rd_kafka_pid_t pid,\n                                          rd_ts_t now,\n                                          rd_ts_t *next_wakeup,\n                                          rd_bool_t do_timeout_scan,\n                                          rd_bool_t may_send,\n                                          rd_bool_t flushing",
+  "rd_kafka_transport_connected": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_transport_new": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                             rd_socket_t s,\n                                             char *errstr,\n                                             size_t errstr_size",
+  "rd_kafka_transport_ssl_cert_verify_cb": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_txn_coord_monitor_cb": "address taken (an indirect caller is never checked)",
+  "rd_kafka_txn_handle_AddOffsetsToTxn": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_txn_handle_AddPartitionsToTxn": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_txn_handle_FindCoordinator": "the first parameter is not rd_kafka_broker_t *rkb",
+  "rd_kafka_txn_send_TxnOffsetCommitRequest": "no definition found",
+  "rd_kafka_zstd_compress": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                           int comp_level,\n                                           rd_slice_t *slice,\n                                           void **outbuf,\n                                           size_t *outlenp",
+  "rd_kafka_zstd_decompress": "a parameter without a bounds v1 type: rd_kafka_broker_t *rkb,\n                                             char *inbuf,\n                                             size_t inlen,\n                                             void **outbuf,\n                                             size_t *outlenp"
+ }
+}

@@ -1903,7 +1903,7 @@ suppression:
   and source excerpts and is never an upstream defect. Every other searched
   candidate stays a candidate with its reason (`infeasible`, `unresolved`,
   `indeterminate`: an uninitialized value is not a NULL dereference).
-* *Declared non-null members* (G05e): `requires null_member_nonnull(TAG,
+* *Declared non-null members* (G05e): `requires nonnull_member(TAG,
   FIELD);` in bounds contract v1, hosted on the record's constructor and
   pinned with it, says every `struct TAG`'s `FIELD` is non-null where it is
   read. It is checked against every store the analysed units make to the
@@ -1912,7 +1912,7 @@ suppression:
   `construction` clause (a zero-initialised or indeterminate object's member
   is never read before its first store) is a premise, so it is at best
   `partly-validated`, never `validated`.
-* *Declared non-null results* (G05e): `ensures normal null_result_nonnull();`
+* *Declared non-null results* (G05e): `ensures normal nonnull_result();`
   is checked against every analysed body that defines the function under
   C06.5's fold (validated where every body returns non-null on every path,
   withdrawn where one returns null on a path).
@@ -1933,6 +1933,22 @@ Lean: `QCore.NullTriage` (`a_validated_path_is_satisfiable`,
 `a_withdrawn_dependency_is_never_safe`, `travel_never_improves_a_row`),
 audited in `proof/AuditNullTriage.lean`, vectors bound to the Rust.
 
+**Naming: the `nonnull_` scheme** (card NULL-MEMBER-INVARIANT-SCOPE).
+
+> **USER DECISION 2026-10-11.** Asked of the scope clause's first spelling,
+> verbatim: "null_member_scope -> This is also nonnull or nullable prefix
+> should be used there?" The decision: every clause that states a non-NULL
+> claim is spelled with the prefix that states the claim, `nonnull_`:
+> `nonnull_member` (was `null_member_nonnull`), `nonnull_result` (was
+> `null_result_nonnull`), `nonnull_member_scope` and `nonnull_member_stable`
+> (this card's, first written `null_member_scope` and `null_member_stable`).
+> `nullable_` is reserved for future clauses that state a value *may* be NULL.
+
+There are no aliases: an old spelling is refused like any unknown bounds
+clause. Each declaration whose text changed was re-pinned with `pin --bounds`
+at both audited revisions after its old pin read `contract-changed`; verdicts
+are unchanged, only text, digests and pins.
+
 **Scoped member invariants** (card NULL-MEMBER-INVARIANT-SCOPE, gateway rules
 [14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z);
 grammar [G05f](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05f-scoped-member-invariants)).
@@ -1940,7 +1956,7 @@ A global member declaration is withdrawn by one NULL store anywhere, which
 makes it false for members that hold only on some objects. Two scoped forms
 are admitted, each checked, neither a "trust me" scope:
 
-* *Stable members, an object-state scope.* `requires null_member_stable(TAG,
+* *Stable members, an object-state scope.* `requires nonnull_member_stable(TAG,
   FIELD);` says `FIELD` is never made NULL on an **existing** `struct TAG`
   object. The state "set" (non-null) is entered at any non-null store or
   observation and is never left; a fresh object starts outside it. Checked
@@ -1957,7 +1973,7 @@ are admitted, each checked, neither a "trust me" scope:
   `V` is assigned (`stable_fact_persists`), carried as the proof and
   dependency `stable:TAG.FIELD`. A null or possibly-null fact, or one on a
   base the walk does not track, is forgotten as before.
-* *Function scopes.* `requires null_member_scope(TAG, FIELD, P);` on a
+* *Function scopes.* `requires nonnull_member_scope(TAG, FIELD, P);` on a
   function says that on entry `P->FIELD` is non-null. The body reads it so
   and its row is `Safe` only conditional on it; each caller's actual is a
   `call-precondition` check of `ACTUAL->FIELD` (by fact, or by the caller's

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """scope_candidates.py ROWS.jsonl OUT.qv OUT.json -- NULL-MEMBER-INVARIANT-SCOPE:
-choose the functions a `null_member_scope(rd_kafka_broker_s, rkb_rk, rkb)`
+choose the functions a `nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb)`
 entry is declared on, from the stable reading's run (a1), and write their
 bounds v1 declarations.
 
@@ -157,7 +157,7 @@ for row in rows:
 with open(sys.argv[2], "w") as out:
     for c in sorted(chosen, key=lambda c: c["function"]):
         out.write(f"// {c['file']}: {c['candidates']} first read(s) of rkb->rkb_rk on the stable reading.\n")
-        out.write(f"extern fn {c['function']}({c['signature']}) -> {c['result']}\ncontract {{\n    requires bounds_contract_v1;\n    requires null_member_scope(rd_kafka_broker_s, rkb_rk, rkb);\n}};\n\n")
+        out.write(f"extern fn {c['function']}({c['signature']}) -> {c['result']}\ncontract {{\n    requires bounds_contract_v1;\n    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);\n}};\n\n")
 json.dump({"chosen": sorted(chosen, key=lambda c: c["function"]), "skipped": dict(sorted(skipped.items()))},
           open(sys.argv[3], "w"), indent=1)
 print(len(chosen), "chosen,", sum(c["candidates"] for c in chosen), "candidates;", len(skipped), "skipped")
