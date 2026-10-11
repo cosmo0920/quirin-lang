@@ -17,10 +17,7 @@ fn compile(source: &str) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     } else {
         "selection.qr"
     };
-    compile_files(
-        &[SourceFile::new(path, source)],
-        &CompileOptions::default(),
-    )
+    compile_files(&[SourceFile::new(path, source)], &CompileOptions::default())
 }
 
 fn refusal(source: &str) -> String {
@@ -65,7 +62,10 @@ fn a_contract_declaring_print_compiles_as_a_contract() {
         )
     });
     assert_eq!(module.mode, SourceModuleMode::Contract);
-    assert_ne!(module.execution_profile, SourceExecutionProfile::ScalarCallsV1);
+    assert_ne!(
+        module.execution_profile,
+        SourceExecutionProfile::ScalarCallsV1
+    );
     assert!(module.entry.is_none());
     assert!(module.c_source.is_none());
 }
@@ -76,7 +76,10 @@ fn a_statement_head_call_still_selects_the_route() {
         "#import std.io;\n\nfn sum(a: i32, b: i32) -> i32 {\n    return a + b;\n}\n\nfn main() -> i32 {\n    let f = sum(20, 22);\n    print(f);\n    return f;\n}\n",
     )
     .expect("the printing example is admitted");
-    assert_eq!(module.execution_profile, SourceExecutionProfile::ScalarCallsV1);
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ScalarCallsV1
+    );
 }
 
 #[test]
@@ -88,7 +91,10 @@ fn a_call_in_a_nested_block_still_selects_the_route() {
     // route that decides it: the call after `{` is a statement head.
     match module {
         Ok(module) => {
-            assert_eq!(module.execution_profile, SourceExecutionProfile::ScalarCallsV1)
+            assert_eq!(
+                module.execution_profile,
+                SourceExecutionProfile::ScalarCallsV1
+            )
         }
         Err(diagnostics) => assert!(
             diagnostics
@@ -106,9 +112,8 @@ fn a_call_in_a_nested_block_still_selects_the_route() {
 
 #[test]
 fn print_as_a_value_is_refused_at_selection() {
-    let text = refusal(
-        "#import std.io;\n\nfn main() -> i32 {\n    let x = print(1);\n    return x;\n}\n",
-    );
+    let text =
+        refusal("#import std.io;\n\nfn main() -> i32 {\n    let x = print(1);\n    return x;\n}\n");
     assert!(text.contains("Q020"), "{text}");
     assert!(text.contains("only at a statement head"), "{text}");
 }
@@ -132,7 +137,10 @@ fn a_comment_or_a_declaration_name_does_not_select() {
     );
     match outcome {
         Ok(module) => {
-            assert_ne!(module.execution_profile, SourceExecutionProfile::ScalarCallsV1)
+            assert_ne!(
+                module.execution_profile,
+                SourceExecutionProfile::ScalarCallsV1
+            )
         }
         Err(diagnostics) => {
             let text = diagnostics
