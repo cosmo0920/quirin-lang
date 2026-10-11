@@ -239,3 +239,10 @@ Pins: `pin` and `pin --check --crate` 0 at both revisions, `pin
 
 Ledger: [`scripts/update_ledger.py`](scripts/update_ledger.py); follow-ups 763
 -> 763 (one retired, one registered).
+
+**Integrator re-run (2026-10-11).** Gate g2's test step exited 101 on the
+load-sensitive `execution_quota` row (`LOAD-SENSITIVE-ROW-UNNAMED`). The
+integrator re-ran `python3 scripts/run_test_binaries.py` on tip `c1eda60c9`
+under the shared heavy lock, with no other suite running: exit 0, 483 units,
+496 summaries, 7,904 passed, 0 failed, 13 ignored
+(`private/test-binaries/20261011T040845Z-518670/`).
