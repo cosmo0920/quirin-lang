@@ -551,6 +551,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [qr-print-route-matches-declaration](qr-print-route-matches-declaration/README.md) | QR-PRINT-ROUTE-MATCHES-DECLARATION: the print-call route reads a call, not a name |
+
 | [quant-index-checks](quant-index-checks/README.md) | QUANT-INDEX-CHECKS |
 
 | [quant-region-source](quant-region-source/README.md) | QUANT-REGION-SOURCE — the first source path to `RegionOp::QuantOpen` |

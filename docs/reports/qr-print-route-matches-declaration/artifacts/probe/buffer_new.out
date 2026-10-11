@@ -1,0 +1,3 @@
+private/qrpr/probe/buffer_new.qv:3:11: Q015: concurrency requires an explicit `#import std.concurrency;` in this source file
+extern fn qcore_buffer_new(size: usize) -> ptr<mut, u8>
+          ^
