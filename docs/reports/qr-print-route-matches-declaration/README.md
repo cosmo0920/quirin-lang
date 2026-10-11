@@ -183,7 +183,37 @@ proved.
 
 ## 7. Gate
 
-GATE-SECTION
+[`gate.json`](gate.json), exits in [`gate/`](gate/); scripts
+[`gate.sh`](scripts/gate.sh), [`provider-gate.sh`](scripts/provider-gate.sh),
+[`write_gate_json.py`](scripts/write_gate_json.py),
+[`finish-gate.sh`](scripts/finish-gate.sh); every step under the shared lock,
+nothing piped, logs under `private/qrpr/`.
+
+Standing gate g2, every code step at `734edb8a9` (the records commit; the
+code is that of `b2e840be9`): `cargo check --workspace --all-targets` 0,
+submodule 0, fmt 0, clippy `--locked` 0; `run_test_binaries.py` 483 units,
+496 summaries, **7,903 passed, 1 failed**, 13 ignored, exit 101
+(`private/qrpr/tests-gate-g2/`). The one failure is
+`qcore-verifier-host::test::execution_quota`
+`the_quota_binds_without_depending_on_the_accounts_process_count`, a row of
+the runner's `EXCLUSIVE` table (its RLIMIT_NPROC rows count every process of
+the real UID, so other sessions on the host move it); constraint 16 applied:
+re-run in isolation, **13 passed, 0 failed**, exit 0
+(`private/qrpr/isolation-execution-quota.log`, `gate/04-isolation-execution-quota.exit`);
+the card does not touch that crate. The earlier full run g1 (code at
+`86a40b40c`, before the fmt-only commit) was 7,904 passed, 0 failed, exit 0,
+its one red step `cargo fmt --check` on the new test file, fixed in
+`b2e840be9`. Both reevaluation probes 0; `check_lean_audits.py` **314** passed
+(313 + `AuditPrintRouteSelection`); the Python suite 365 tests, 1 failure
+before the matrix regeneration (the committed matrix's derived Lean count
+313), then `build_matrix.py --gate gate.json` 0 and **365 OK** (09b);
+`build_docs_index.py` and `--check` 0.
+
+Provider gate g1 (at `86a40b40c`; `providers/` unchanged since): `cargo check
+--locked` 0, `cargo test` 129 passed, fmt 0, clippy 0, `contracts.py check` 0,
+package build 0 and verify 0 for all five packages, `providers/tests` 25 OK.
+Pins: `pin` and `pin --check --crate` 0 at both revisions, `pin
+--verify-contracts` 0 (section 4).
 
 ## 8. Follow-ups
 
