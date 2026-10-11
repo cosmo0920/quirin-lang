@@ -13,6 +13,7 @@ pair `print (`) to OUT.json and prints its headline.
 import collections
 import hashlib
 import json
+import re
 import sys
 
 
@@ -33,7 +34,8 @@ def route(row):
         return f"admitted {row['mode']} {row['checked']} {row['profile']}"
     if row["outcome"] == "refused":
         first = row["diagnostics"][0] if row["diagnostics"] else ""
-        code = first.split(":", 1)[0] if first else "?"
+        found = re.search(r"\bQ\d{3}\b", first)
+        code = found.group(0) if found else "?"
         marker = next(
             (word.rstrip(":") for word in first.split() if word.startswith("source.") and word.rstrip(":").endswith(".v1")),
             "-",

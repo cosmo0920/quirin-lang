@@ -2053,8 +2053,18 @@ fn compile_elaborated_source(
             )
         });
     }
-    if qcore_frontend::source_scalar_calls::has_print_calls(parsed) {
-        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
+    // Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`: selected by a `print (` call
+    // at a statement head inside a source function body, never by the token
+    // pair alone (a declaration name, an `extern fn print(...)` or a contract
+    // clause); an ambiguous pair refuses here rather than being routed.
+    match qcore_frontend::source_scalar_calls::print_call_selection(parsed) {
+        qcore_frontend::source_scalar_calls::PrintCallSelection::Selected => {
+            return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
+        }
+        qcore_frontend::source_scalar_calls::PrintCallSelection::Ambiguous(refusal) => {
+            return Err(vec![map_diagnostic(refusal, ranges)]);
+        }
+        qcore_frontend::source_scalar_calls::PrintCallSelection::Absent => {}
     }
     // Card `W48-QR-SCALAR-TYPES`, and the whole of the route-selection change
     // it makes. A module with `std.io` lines and scalar-call syntax reaches the
@@ -8659,6 +8669,27 @@ fn compile_scalar_calls(
     target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_core::scalar_calls::{self, Type};
+    // Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`, the secondary guard: a
+    // `module contract;` module states contracts for functions this program
+    // calls and declares nothing this route runs, so it is never lowered here,
+    // whichever of the three selection sites above reached this function. The
+    // primary fix is the print-call selector, which no longer reads a
+    // declaration name; this guard is defence in depth for a contract module
+    // that some other selector would misread.
+    if mode == SourceModuleMode::Contract {
+        let span = parsed
+            .declarations
+            .iter()
+            .find(|declaration| declaration.value.kind == DeclarationKind::Function)
+            .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+        return Err(vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            span,
+            "source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module".into(),
+            ranges,
+        )]);
+    }
     let lowered = qcore_frontend::source_scalar_calls::lower(parsed)
         .map_err(|e| vec![map_diagnostic(e, ranges)])?;
     let report = |e: scalar_calls::Refusal| {

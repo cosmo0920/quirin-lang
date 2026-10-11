@@ -90,11 +90,85 @@ pub fn has_scalar_calls(p: &SourceProgram) -> bool {
             }))
     })
 }
-/// Function-style printing selects this profile only after specialized routes.
-pub fn has_print_calls(p: &SourceProgram) -> bool {
-    p.lexical_tokens()
-        .windows(2)
-        .any(|ts| word(&ts[0]) == Some("print") && symbol(&ts[1], Symbol::LeftParen))
+/// How a module's `print (` token pairs bear on selecting this route (card
+/// `QR-PRINT-ROUTE-MATCHES-DECLARATION`).
+#[derive(Debug)]
+pub enum PrintCallSelection {
+    /// No call of the builtin: the routes after this one decide.
+    Absent,
+    /// A call of the builtin `print(EXPRESSION);` at a statement head inside a
+    /// source function body, and nothing ambiguous: this route.
+    Selected,
+    /// A `print (` the selector cannot read as either: refused at the
+    /// selection point, never routed.
+    Ambiguous(SourceDiagnostic),
+}
+
+/// Function-style printing selects this profile only after specialized
+/// routes, and only by a **call**: a `print (` token pair inside a source
+/// function body whose previous token is `{`, `;` or `}` (a statement head).
+///
+/// Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`. The selector used to be the bare
+/// token pair anywhere in the module, so a contract module declaring cJSON's
+/// static `extern fn print(...)` was lowered here and refused at its first
+/// `extern fn` (`Q020`). Now a pair outside every function body (a
+/// declaration name, an `extern fn`, a contract clause, a record field) is not
+/// a call and selects nothing. Comments are not tokens and a string literal is
+/// not a word, so neither could select before and neither can now. Fail
+/// closed: a pair inside a body but not at a statement head, or a call in a
+/// module that also declares something named `print`, is refused here rather
+/// than routed.
+pub fn print_call_selection(p: &SourceProgram) -> PrintCallSelection {
+    let bodies = p
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind == DeclarationKind::Function)
+        .filter_map(|d| d.value.body.as_ref().map(|b| b.span))
+        .collect::<Vec<_>>();
+    let tokens = p.lexical_tokens();
+    let refusal = |span: Span, message: &str| {
+        PrintCallSelection::Ambiguous(SourceDiagnostic {
+            code: "Q020",
+            pass: SemanticPass::OrdinaryTypes,
+            span,
+            message: format!("source.scalar-calls.v1: {message}"),
+        })
+    };
+    let mut call = None;
+    for (at, pair) in tokens.windows(2).enumerate() {
+        if word(&pair[0]) != Some("print") || !symbol(&pair[1], Symbol::LeftParen) {
+            continue;
+        }
+        let span = pair[0].span;
+        if !bodies
+            .iter()
+            .any(|body| body.start <= span.start && span.end <= body.end)
+        {
+            continue;
+        }
+        let head = at.checked_sub(1).is_some_and(|previous| {
+            [Symbol::LeftBrace, Symbol::RightBrace, Symbol::Semicolon]
+                .into_iter()
+                .any(|s| symbol(&tokens[previous], s))
+        });
+        if !head {
+            return refusal(
+                span,
+                "`print (` inside a function body is the builtin `print(EXPRESSION);` only at a statement head; this one is not, so it is neither that statement nor a call this route reads, and the module is refused rather than routed",
+            );
+        }
+        call.get_or_insert(span);
+    }
+    let Some(span) = call else {
+        return PrintCallSelection::Absent;
+    };
+    if p.declarations.iter().any(|d| d.value.name == "print") {
+        return refusal(
+            span,
+            "the builtin `print(EXPRESSION);` is called here and the module also declares `print`, so the call names both; the module is refused rather than routed",
+        );
+    }
+    PrintCallSelection::Selected
 }
 struct Reader<'a> {
     tokens: Vec<&'a Token>,
