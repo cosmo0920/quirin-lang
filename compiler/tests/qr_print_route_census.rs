@@ -14,8 +14,9 @@
 //! changes route or output: it is run on the base tree and on the card's tree
 //! and the two streams are compared byte for byte
 //! (`docs/reports/qr-print-route-matches-declaration/scripts/census_compare.py`).
-//! It writes a file only when `QR_ROUTE_CENSUS_OUT` names one, so it is
-//! `#[ignore]`d and run on purpose:
+//! The second test (always run) pins the selector's classification of every
+//! tracked source holding the pair. The census writes a file only when
+//! `QR_ROUTE_CENSUS_OUT` names one, so it is `#[ignore]`d and run on purpose:
 //!
 //! ```sh
 //! QR_ROUTE_CENSUS_OUT=private/qrpr/census-NAME.jsonl \
@@ -149,4 +150,48 @@ fn route_census_of_every_tracked_source() {
     for line in lines {
         writeln!(file, "{line}").expect("the census row is written");
     }
+}
+
+/// The selector over every tracked source (always run). Every file whose
+/// tokens hold the pair `print (` is classified; the files where the pair is a
+/// statement-head call in a function body, and the files where it is not a
+/// call at all (a declaration name), are pinned by name, and no tracked file
+/// is ambiguous. A new file holding the pair must be added here deliberately.
+#[test]
+fn every_tracked_print_pair_is_classified_as_pinned() {
+    use qcore_frontend::source_scalar_calls::{PrintCallSelection, print_call_selection};
+    let root = repository_root();
+    let mut selected = Vec::new();
+    let mut declaration_only = Vec::new();
+    let mut ambiguous = Vec::new();
+    for path in tracked_sources(&root) {
+        let source = std::fs::read_to_string(&path).expect("a tracked source is readable");
+        let Ok(parsed) = parse_source_program(&source) else {
+            continue;
+        };
+        let pair = parsed.lexical_tokens().windows(2).any(|pair| {
+            matches!(&pair[0].kind, qcore_compiler::lexer::TokenKind::Word(word) if word == "print")
+                && pair[1].kind
+                    == qcore_compiler::lexer::TokenKind::Symbol(
+                        qcore_compiler::lexer::Symbol::LeftParen,
+                    )
+        });
+        let relative = path
+            .strip_prefix(&root)
+            .expect("a tracked path lies under the root")
+            .display()
+            .to_string();
+        match print_call_selection(&parsed) {
+            PrintCallSelection::Selected => selected.push(relative),
+            PrintCallSelection::Ambiguous(_) => ambiguous.push(relative),
+            PrintCallSelection::Absent if pair => declaration_only.push(relative),
+            PrintCallSelection::Absent => {}
+        }
+    }
+    assert_eq!(selected, ["examples/scalar/printing.qr"]);
+    assert_eq!(
+        declaration_only,
+        ["providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"]
+    );
+    assert!(ambiguous.is_empty(), "{ambiguous:?}");
 }

@@ -1,0 +1,28 @@
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a68430c06b669b0ab/private/qrpr/before Safe 933 Unsafe 9 Unknown 3892 Pending 0 sha256 cdb0267b7a390dc194d2bcdf705aee76f3b42d0c956dc3bf6d80e3a984fbbf07
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a68430c06b669b0ab/private/qrpr/a1 Safe 935 Unsafe 9 Unknown 3890 Pending 0 sha256 bdf5f1c8931d0557474835f6bfde53f626ffe8563bc76e430925bd0062b83006
+{"statuses_before": {"Unknown": 3892, "Safe": 933, "Unsafe": 9}, "statuses_after": {"Unknown": 3890, "Safe": 935, "Unsafe": 9}, "transitions": {"Unknown -> Safe": 2}, "moving_rows": 2}
+{"callee:print": 2}
+removed {"call to uncontracted function `_`": 2}
+added {}
+cJSON.c::cJSON_Print Unknown -> Safe callee:print
+cJSON.c::cJSON_PrintUnformatted Unknown -> Safe callee:print
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a68430c06b669b0ab/private/qrpr/before-system Safe 93 Unsafe 4 Unknown 351 Pending 0 sha256 3d72210a60aa2e0fd36b05bdbd6fc009e8fd927dc70cfc02030409dda5c4d6d4
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a68430c06b669b0ab/private/qrpr/a1-system Safe 93 Unsafe 4 Unknown 351 Pending 0 sha256 0fba0859e7f274ffef9ac78bab61d58fe94f3c571a81309913dbc1cb585d9163
+{"statuses_before": {"Unknown": 351, "Safe": 93, "Unsafe": 4}, "statuses_after": {"Unknown": 351, "Safe": 93, "Unsafe": 4}, "transitions": {}, "moving_rows": 0}
+{}
+removed {}
+added {}
+/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qrpr-before Safe 52 Unsafe 1 Unknown 347 Pending 4 sha256 ec693cbb8260f5998e509b570af394ff7416ea16cb6611ee4c6285843e97677c
+/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qrpr-a1 Safe 52 Unsafe 1 Unknown 347 Pending 4 sha256 ab6d3eaa40c2969dd6dcc65326862dd8b256f30795eaed8a2c6e4bef5022cd05
+{"statuses_before": {"Unknown": 347, "Safe": 52, "Pending": 4, "Unsafe": 1}, "statuses_after": {"Unknown": 347, "Safe": 52, "Pending": 4, "Unsafe": 1}, "transitions": {}, "moving_rows": 0}
+{}
+removed {}
+added {}
+corpus: null stream differs
+corpus: null row cJSON.c::cJSON_Print moved ['custody', 'combined']: custody Unknown -> Safe, combined Unknown -> Safe, null Safe -> Safe
+corpus: null row cJSON.c::cJSON_PrintUnformatted moved ['custody', 'combined']: custody Unknown -> Safe, combined Unknown -> Safe, null Safe -> Safe
+corpus: 4919 null rows differ only in their identity
+system: null stream differs
+system: 237 null rows differ only in their identity
+slice: null stream differs
+slice: 271 null rows differ only in their identity

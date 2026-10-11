@@ -20,14 +20,8 @@ import re
 import sys
 
 DECLARED = [
-    # W45-CALLEE-CASCADE-RESIDUAL round 3: the sixteen declarations (a lost
-    # or gained leaf naming one of them).
-    "rd_kafka_AclBinding_destroy", "rd_kafka_ConfigResource_destroy",
-    "rd_kafka_NewPartitions_destroy", "rd_kafka_NewTopic_destroy",
-    "rd_kafka_UserScramCredentialAlteration_destroy", "unit_test_telemetry",
-    "print", "rd_bytes_hash", "rd_kafka_mem_calloc", "mk_fifo_queue_destroy",
-    "cfl_list_size", "flb_hash_table_del", "cio_file_hash",
-    "cio_file_native_get_size", "cio_stream_size_chunks_up", "cmt_atomic_initialize",
+    # QR-PRINT-ROUTE-MATCHES-DECLARATION: the one re-declared callee.
+    "print",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

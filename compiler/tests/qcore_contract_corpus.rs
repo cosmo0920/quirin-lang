@@ -1082,6 +1082,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // 12y) and a derived out slot beside a `global` retention (rules 12z, 12t).
     ("librdkafka/cjson.qv", "get_object_item", 5),
     ("librdkafka/cjson.qv", "cJSON_ParseWithLengthOpts", 8),
+    // Card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static `print`
+    // (`:1234-1299`), re-declared as W45-CALLEE-CASCADE-RESIDUAL round 3
+    // recorded it once the module compiles off the print-call route: marker,
+    // the allocator-hooks premise, three borrowed formals, an owned nullable
+    // result.
+    ("librdkafka/cjson.qv", "print", 6),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic

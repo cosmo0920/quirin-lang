@@ -1007,6 +1007,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "rd_kafka_mem_calloc",
         ResourceFunctionContract::new([], R::Owned { nullable: true }),
     );
+    // Card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static `print` returns
+    // a fresh `hooks->allocate` buffer or NULL.
+    old.insert_contract(
+        "print",
+        ResourceFunctionContract::new([], R::Owned { nullable: true }),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1871,9 +1877,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // fluent-bit `hash_table_publication.qv` `flb_hash_table_del`; chunkio
     // `chunk_sizes.qv` two; cmetrics `context_lifetime.qv`
     // `cmt_atomic_initialize`). Selection and rejected unchanged.
+    // 393 -> 394 by card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static
+    // `print` in `librdkafka/cjson.qv`, the declaration round 3 withdrew while
+    // the module could not compile off the print-call route.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 393, 314)
+        (61, 394, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

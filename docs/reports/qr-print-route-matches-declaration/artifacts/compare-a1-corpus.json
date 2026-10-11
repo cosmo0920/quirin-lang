@@ -1,0 +1,95 @@
+{
+ "statuses_before": {
+  "Unknown": 3892,
+  "Safe": 933,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3890,
+  "Safe": 935,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves_by_label": {
+  "callee:print": 2
+ },
+ "removed": {
+  "call to uncontracted function `_`": 2
+ },
+ "added": {},
+ "moving_rows": 2,
+ "status_moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_Print",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:print"
+   ],
+   "lost": [
+    "2286: call to uncontracted function `print`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_PrintUnformatted",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:print"
+   ],
+   "lost": [
+    "2290: call to uncontracted function `print`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_Print",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:print"
+   ],
+   "lost": [
+    "2286: call to uncontracted function `print`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_PrintUnformatted",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:print"
+   ],
+   "lost": [
+    "2290: call to uncontracted function `print`"
+   ],
+   "gained": []
+  }
+ ]
+}

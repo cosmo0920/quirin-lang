@@ -304,7 +304,14 @@ See the [CT10 census](../reports/ct10-source-layout/README.md) and
 
 Adds zero reserved words/tokens. The selector follows existing specialized
 profiles; function-style `print(` selects it before the legacy standard-IO
-route. The selector must preserve sequential resource intrinsics, literal-only
+route, and only as a **call**: a `print (` pair at a statement head (after `{`,
+`;` or `}`) inside a source function body. A pair outside every body (a
+declaration name, an `extern fn print(…)`, a contract clause) selects nothing;
+a pair inside a body elsewhere, or a call beside a declaration named `print`,
+refuses at selection (`Q020`), never routed; and a `module contract;` module
+is never compiled on this route
+([QR-PRINT-ROUTE-MATCHES-DECLARATION](../reports/qr-print-route-matches-declaration/README.md)).
+The selector must preserve sequential resource intrinsics, literal-only
 legacy programs and unsupported control-flow diagnostic pins. Read retained
 tokens, check every definition, and never treat a closed entry observation as
 proof for all possible function arguments. `print(EXPR);` is this route's one
