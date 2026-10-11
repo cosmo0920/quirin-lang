@@ -1,0 +1,152 @@
+//! Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`: the route-selection census.
+//!
+//! Every tracked Quirin source in the repository (`.qr`, `.qv`, and the
+//! legacy `.qcore`/`.qcorelib`, listed with `git ls-files` per constraint 29)
+//! is compiled as a root with filesystem import loading, once without a
+//! recorded target and once with a 64-bit one, and its outcome is written as
+//! one JSON line: the module mode, execution profile and checked-module
+//! variant (which name the route), the entry, the counts, the emitted C in
+//! full, and on refusal every formatted diagnostic. It also records whether
+//! the file's lexical tokens hold the pair `print (` (the token test the card
+//! replaces).
+//!
+//! The census is the card's BEFORE/AFTER evidence that no existing source
+//! changes route or output: it is run on the base tree and on the card's tree
+//! and the two streams are compared byte for byte
+//! (`docs/reports/qr-print-route-matches-declaration/scripts/census_compare.py`).
+//! It writes a file only when `QR_ROUTE_CENSUS_OUT` names one, so it is
+//! `#[ignore]`d and run on purpose:
+//!
+//! ```sh
+//! QR_ROUTE_CENSUS_OUT=private/qrpr/census-NAME.jsonl \
+//!   cargo test -p qcore-compiler --test qr_print_route_census -- --ignored
+//! ```
+use qcore_compiler::scalar_types::{PointerWidth, RecordedTarget};
+use qcore_compiler::{
+    CheckedSourceModule, CompileOptions, CompiledModule, FileDiagnostic, SourceFile,
+    compile_files_with_filesystem_for_target, format_diagnostic, parse_source_program,
+};
+use std::io::Write;
+use std::path::{Path, PathBuf};
+
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
+fn repository_root() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("the compiler crate sits directly under the repository root")
+        .to_path_buf()
+}
+
+/// The tracked Quirin sources, sorted (constraint 29: `git ls-files`, never a
+/// walk). Submodule content is not listed by the helper.
+fn tracked_sources(root: &Path) -> Vec<PathBuf> {
+    tracked_files::tracked_files(root)
+        .into_iter()
+        .filter(|path| {
+            path.extension().is_some_and(|extension| {
+                ["qr", "qv", "qcore", "qcorelib"]
+                    .iter()
+                    .any(|wanted| extension == *wanted)
+            })
+        })
+        .collect()
+}
+
+fn variant(checked: &CheckedSourceModule) -> &'static str {
+    match checked {
+        CheckedSourceModule::ScalarCalls(_) => "ScalarCalls",
+        CheckedSourceModule::Sequential(_) => "Sequential",
+        CheckedSourceModule::ScopedTasks(_) => "ScopedTasks",
+        CheckedSourceModule::BitfieldTasks(_) => "BitfieldTasks",
+        CheckedSourceModule::CheckedMutexGuards(_) => "CheckedMutexGuards",
+        CheckedSourceModule::CheckedEpochBound(_) => "CheckedEpochBound",
+        CheckedSourceModule::ComposedEpochTasks(_) => "ComposedEpochTasks",
+        CheckedSourceModule::ExternCalls(_) => "ExternCalls",
+        CheckedSourceModule::StandardIo(_) => "StandardIo",
+        CheckedSourceModule::Composed(_) => "Composed",
+        CheckedSourceModule::ComposedTasks(_) => "ComposedTasks",
+        CheckedSourceModule::StandardBuffer(_) => "StandardBuffer",
+        CheckedSourceModule::Event(_) => "Event",
+        CheckedSourceModule::StandardString(_) => "StandardString",
+        CheckedSourceModule::StandardSocket(_) => "StandardSocket",
+        CheckedSourceModule::StandardHttp(_) => "StandardHttp",
+        CheckedSourceModule::Ffi(_) => "Ffi",
+    }
+}
+
+fn outcome(result: Result<CompiledModule, Vec<FileDiagnostic>>) -> serde_json::Value {
+    match result {
+        Ok(module) => serde_json::json!({
+            "outcome": "admitted",
+            "mode": format!("{:?}", module.mode),
+            "profile": format!("{:?}", module.execution_profile),
+            "checked": variant(&module.checked),
+            "functions": module.checked.function_count(),
+            "declarations": module.declaration_count,
+            "result_profile": format!("{:?}", module.result_profile),
+            "entry": module.entry,
+            "target_assumption": module.target_assumption().map(|target| format!("{target:?}")),
+            "c_source": module.c_source,
+        }),
+        Err(diagnostics) => serde_json::json!({
+            "outcome": "refused",
+            "diagnostics": diagnostics.iter().map(format_diagnostic).collect::<Vec<_>>(),
+        }),
+    }
+}
+
+#[test]
+#[ignore = "writes the route census only when QR_ROUTE_CENSUS_OUT is set; run on purpose"]
+fn route_census_of_every_tracked_source() {
+    let Some(out) = std::env::var_os("QR_ROUTE_CENSUS_OUT") else {
+        return;
+    };
+    let root = repository_root();
+    let target = RecordedTarget {
+        pointer_width: PointerWidth::W64,
+        triple: "x86_64-unknown-linux-gnu".into(),
+        compiler: "clang 21".into(),
+    };
+    let mut lines = Vec::new();
+    for path in tracked_sources(&root) {
+        let relative = path
+            .strip_prefix(&root)
+            .expect("a tracked path lies under the root")
+            .display()
+            .to_string();
+        let source = std::fs::read_to_string(&path).unwrap_or_default();
+        let lexical_print_pair = parse_source_program(&source).ok().map(|parsed| {
+            parsed.lexical_tokens().windows(2).any(|pair| {
+                matches!(&pair[0].kind, qcore_compiler::lexer::TokenKind::Word(word) if word == "print")
+                    && pair[1].kind
+                        == qcore_compiler::lexer::TokenKind::Symbol(
+                            qcore_compiler::lexer::Symbol::LeftParen,
+                        )
+            })
+        });
+        for (label, recorded) in [("no-target", None), ("target-64", Some(&target))] {
+            let file = SourceFile::new(path.display().to_string(), source.clone());
+            let result = std::panic::catch_unwind(|| {
+                compile_files_with_filesystem_for_target(
+                    std::slice::from_ref(&file),
+                    &CompileOptions::default(),
+                    recorded,
+                )
+            });
+            let mut row = match result {
+                Ok(result) => outcome(result),
+                Err(_) => serde_json::json!({ "outcome": "panicked" }),
+            };
+            row["path"] = relative.clone().into();
+            row["config"] = label.into();
+            row["lexical_print_pair"] = serde_json::json!(lexical_print_pair);
+            lines.push(serde_json::to_string(&row).expect("a census row serializes"));
+        }
+    }
+    let mut file = std::fs::File::create(&out).expect("the census output is writable");
+    for line in lines {
+        writeln!(file, "{line}").expect("the census row is written");
+    }
+}
