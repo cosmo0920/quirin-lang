@@ -8,6 +8,69 @@
 use super::*;
 
 impl Parser<'_> {
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15z), parity runs only: one row
+    /// (`position: "return-route-gap"`) per lowered `return` whose evaluation
+    /// is a refusal or an admission a statement-only rule reads: rule 11w's
+    /// tail refusal (`11w-tail`) or `va_*` refusal (`11w-va`), rule 10u's K03
+    /// refusal (`10u-k03`) or an admitted call with an unbound custody-taking
+    /// position (`10u-unbound`, which the flow refuses as `arguments do not
+    /// match resource contract`). A refused return with no evaluation names
+    /// no reason, so the count is a lower bound. It changes nothing.
+    pub(super) fn record_return_route_gaps(
+        &self,
+        expression: &[Token],
+        line: usize,
+        statement: &Statement,
+    ) {
+        if !crate::typed_access_path::parity_enabled() {
+            return;
+        }
+        let Statement::Return {
+            returned_evaluation: Some(evaluation),
+            ..
+        } = statement
+        else {
+            return;
+        };
+        let gap = match evaluation.as_ref() {
+            LegacyInstruction::Unknown { description, .. }
+                if description.starts_with(variadics_route::TAIL_PREFIX) =>
+            {
+                "11w-tail"
+            }
+            LegacyInstruction::Unknown { description, .. }
+                if variadics_route::refused_va_builtin(description).is_some() =>
+            {
+                "11w-va"
+            }
+            LegacyInstruction::Unknown { description, .. }
+                if description == call_instantiation_route::K03_REFUSAL =>
+            {
+                "10u-k03"
+            }
+            LegacyInstruction::ContractCall {
+                contract,
+                arguments,
+                ..
+            } if contract.parameters.iter().enumerate().any(|(index, mode)| {
+                crate::call_instantiation::custody_taking(*mode)
+                    && arguments.get(index).is_none_or(Option::is_none)
+            }) =>
+            {
+                "10u-unbound"
+            }
+            _ => return,
+        };
+        crate::typed_access_path::record_row(serde_json::json!({
+            "function": self.typed_path_function,
+            "line": line,
+            "texts": expression.iter().map(|token| token.text.as_str()).collect::<Vec<_>>(),
+            "position": "return-route-gap",
+            "gap": gap,
+            "new_admitted": false,
+        }));
+    }
+
     /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call a `return`
     /// expression is, desugared to the assignment the analyzer already decides.
     ///
@@ -46,6 +109,16 @@ impl Parser<'_> {
         synthetic.extend_from_slice(expression);
         let restore = self.probe_state();
         let instruction = self.classify_simple(&synthetic);
+        // Card GAPO-RETURN-CORRECTNESS (rule 15z): rule 12h's H-U0, asked as
+        // at a statement: a cast actual of a place is that place.
+        let instruction = self
+            .uncast_returned_call(
+                &return_call::assignment_prefix(line),
+                expression,
+                &instruction,
+                &restore,
+            )
+            .unwrap_or(instruction);
         let admitted = matches!(
             &instruction,
             LegacyInstruction::ContractCall {
@@ -134,6 +207,15 @@ impl Parser<'_> {
             {
                 let restore = self.probe_state();
                 let instruction = self.classify_simple(&expression[call_index..call_end]);
+                // Card GAPO-RETURN-CORRECTNESS (rule 15z): rule 12h's H-U0.
+                let instruction = self
+                    .uncast_returned_call(
+                        &[],
+                        &expression[call_index..call_end],
+                        &instruction,
+                        &restore,
+                    )
+                    .unwrap_or(instruction);
                 let admitted = matches!(
                     &instruction,
                     LegacyInstruction::ContractCall {

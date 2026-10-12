@@ -146,7 +146,7 @@ impl Parser<'_> {
     /// Card DEEP-AST-TRANSPORTS-AND-WALL-TIME (rule 13s): read from the
     /// function's table (one walk per function), which answers every name as
     /// `call_exits::resolve` does.
-    fn call_exit_resolution(&self, callee: &str) -> Resolution {
+    pub(super) fn call_exit_resolution(&self, callee: &str) -> Resolution {
         self.typed_positions_index()
             .map_or(Resolution::Unresolved, |index| {
                 index.call_resolution(callee)

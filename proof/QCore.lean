@@ -367,5 +367,6 @@ import QCore.NullMemberScope
 import QCore.NullTriagePaths
 import QCore.PrintRouteSelection
 import QCore.RouteSelection
+import QCore.ReturnCorrectness
 
 /-! The executable formal core of QCore-C revision 0.1. -/

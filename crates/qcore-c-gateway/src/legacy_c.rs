@@ -379,6 +379,11 @@ mod route_table;
 #[path = "legacy_probe_state.rs"]
 mod probe_state;
 
+// Card GAPO-RETURN-CORRECTNESS (rule 15y): a declared no-return call ends its
+// path at every lowered position, settled on the built CFG.
+#[path = "legacy_no_return_paths.rs"]
+mod no_return_paths;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 pub(crate) mod leak_witness;
@@ -3665,6 +3670,10 @@ fn build_function_cfg_unscoped(
     // Card CG25-RESOURCE-KINDS (rule 11v): no in-place effect is dropped by a
     // route that lowered its call without the object's place.
     in_place_custody::verify_cfg(&mut cfg);
+    // Card GAPO-RETURN-CORRECTNESS (rule 15y): a no-return call a later route
+    // lowered (or any position but rule 11o's statement hook) ends its path
+    // where rule 11o's premises hold and is refused otherwise.
+    parser.settle_no_return_nodes(&mut cfg);
     // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): `volatile` objects
     // carry no value-derived fact; a custody decision on a volatile read
     // refuses. Asked only where the unit spells `volatile` before the body's
@@ -5036,15 +5045,18 @@ impl Parser<'_> {
                 // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the return
                 // fallbacks (10s, 10u, 10y, 10z, 11g, 11i, 11u, 12f), in their
                 // table's order, each with its own entry condition.
-                if let Some(fallback) = self.ask_return_fallbacks(&route_table::ReturnQuery {
-                    expression: &expression,
-                    line,
-                    origin: expression_origin,
-                    statement: &statement,
-                }) {
-                    return Ok(fallback);
-                }
-                Ok(statement)
+                let lowered = self
+                    .ask_return_fallbacks(&route_table::ReturnQuery {
+                        expression: &expression,
+                        line,
+                        origin: expression_origin,
+                        statement: &statement,
+                    })
+                    .unwrap_or(statement);
+                // Card GAPO-RETURN-CORRECTNESS (rule 15z), parity runs only:
+                // the statement-only rules this return's lowering would need.
+                self.record_return_route_gaps(&expression, line, &lowered);
+                Ok(lowered)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
             Some(name)

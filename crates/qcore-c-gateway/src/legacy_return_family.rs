@@ -660,6 +660,15 @@ impl Parser<'_> {
         // Card GAPO-RETURN-CORRECTNESS (rule 15x): the whole probe state.
         let restore = self.probe_state();
         let instruction = self.classify_simple(&synthetic);
+        // Card GAPO-RETURN-CORRECTNESS (rule 15z): rule 12h's H-U0.
+        let instruction = self
+            .uncast_returned_call(
+                &return_call::assignment_prefix(line),
+                call,
+                &instruction,
+                &restore,
+            )
+            .unwrap_or(instruction);
         let admitted = match &instruction {
             LegacyInstruction::Unknown { .. } => {
                 // Re-attribution: the classifier's own refusal, deciding

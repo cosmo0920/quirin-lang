@@ -300,6 +300,78 @@ impl Parser<'_> {
         Some(repaired)
     }
 
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15z): hook H-U0 at the return
+    /// position. `call` is the returned call as spelled (the whole
+    /// expression, the call of a scalar operand, or the operand of a
+    /// conversion) and `prefix` the synthetic destination its position
+    /// classifies it under (W4's and W45-K's reserved place, or nothing for
+    /// B01's scalar call). An admitted call with an identity-preserving cast
+    /// of a place at an actual is classified again as its uncast spelling,
+    /// from `before` (the probe state the original classification started
+    /// from, rule 15x), and that answer replaces the original's, exactly as
+    /// at a statement. `None` keeps the original (no such cast, or no unique
+    /// Clang call node).
+    pub(super) fn uncast_returned_call(
+        &mut self,
+        prefix: &[Token],
+        call: &[Token],
+        instruction: &LegacyInstruction,
+        before: &super::probe_state::ParserProbeState,
+    ) -> Option<LegacyInstruction> {
+        if !matches!(instruction, LegacyInstruction::ContractCall { .. })
+            || !call
+                .windows(2)
+                .any(|pair| pair[1].text == ")" && pair[0].text == "*")
+        {
+            return None;
+        }
+        let index = self.typed_positions_index().cloned()?;
+        let wanted = texts(call);
+        let node = Self::elaboration_node(&index, call.first()?.line, &wanted, &|node| {
+            kind(node) == "CallExpr"
+        })?;
+        let (uncast, removed) = uncast_tokens(&index, node, call, &|site| hides_an_identity(site))?;
+        let mut synthetic = prefix.to_vec();
+        synthetic.extend(uncast);
+        self.restore_probe_state(before);
+        let repaired = self.classify_simple(&synthetic);
+        let answer = if matches!(repaired, LegacyInstruction::ContractCall { .. }) {
+            "uncast-return-actuals-admitted"
+        } else {
+            "uncast-return-actuals-refused"
+        };
+        self.record_uncast(call.first()?.line, call, answer, &removed);
+        Some(repaired)
+    }
+
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15z): whether the returned call
+    /// `call` holds an identity-preserving cast of a place at an actual (the
+    /// casts hook H-U0 removes), read from its Clang call node. Rule 12i's
+    /// lowering, whose W44 re-classification hook H-U0 is not asked inside,
+    /// declines such a call. Without a unique Clang node the answer is
+    /// `true` when the spelling holds `* )`, so an unread cast declines too.
+    pub(super) fn returned_call_hides_a_place(&self, call: &[Token]) -> bool {
+        if !call
+            .windows(2)
+            .any(|pair| pair[1].text == ")" && pair[0].text == "*")
+        {
+            return false;
+        }
+        let Some(index) = self.typed_positions_index() else {
+            return true;
+        };
+        let wanted = texts(call);
+        let Some(line) = call.first().map(|token| token.line) else {
+            return true;
+        };
+        let Some(node) =
+            Self::elaboration_node(index, line, &wanted, &|node| kind(node) == "CallExpr")
+        else {
+            return true;
+        };
+        explicit_casts(node).iter().any(hides_an_identity)
+    }
+
     /// Hook H-U (rule 12h): a statement every older route refused, lowered
     /// as its uncast statement where the table removes a cast at a value
     /// position. `None` keeps the refusal byte for byte.

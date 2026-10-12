@@ -87,6 +87,12 @@ impl Parser<'_> {
         {
             return None;
         }
+        // Card GAPO-RETURN-CORRECTNESS (rule 15z): W44's re-classification
+        // is not asked rule 12h's H-U0, so a returned call whose actual is an
+        // identity-preserving cast of a place keeps its refusal here.
+        if self.returned_call_hides_a_place(expression) {
+            return None;
+        }
         let texts = expression
             .iter()
             .map(|token| token.text.as_str())

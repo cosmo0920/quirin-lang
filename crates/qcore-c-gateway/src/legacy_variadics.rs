@@ -44,7 +44,7 @@ use crate::va_list_protocol::{self, ARG, COPY, END, START};
 const UNCONTRACTED: &str = "call to uncontracted function `";
 
 /// The `va_*` builtin an uncontracted-call refusal names, if any.
-fn refused_va_builtin(description: &str) -> Option<&str> {
+pub(super) fn refused_va_builtin(description: &str) -> Option<&str> {
     let name = description.strip_prefix(UNCONTRACTED)?.strip_suffix('`')?;
     va_list_protocol::names_va_builtin(name).then_some(name)
 }
@@ -243,7 +243,7 @@ fn shape(node: &Value, function: &Value) -> Option<Shape> {
     }
 }
 
-const TAIL_PREFIX: &str = "arguments beyond the declared parameters of `";
+pub(super) const TAIL_PREFIX: &str = "arguments beyond the declared parameters of `";
 const TAIL_SUFFIX: &str = "` are outside the resource projection";
 
 /// The call to `callee` a statement node is: the statement itself, a

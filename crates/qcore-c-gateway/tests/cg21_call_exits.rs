@@ -347,9 +347,12 @@ fn assembly_and_extension_nodes_are_named() {
     );
 }
 
-/// Outside a statement position the declared call is applied as an ordinary
-/// borrowing call: its continuation is kept (an over-approximation of C's
-/// paths), so nothing is lost and nothing unsound is claimed.
+/// Outside a statement position the declared call is not refused by rule
+/// 11o's statement hook. Card GAPO-RETURN-CORRECTNESS (rule 15y) amended the
+/// rest of this control's original reading ("its continuation is kept"):
+/// wherever a route lowers the call, its node ends its path where the
+/// declaration is established and is refused otherwise; here `exit` is
+/// `noreturn`, so no refusal names it.
 #[test]
 fn an_operand_position_keeps_its_continuation() {
     if !clang_available() {

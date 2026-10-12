@@ -1,0 +1,28 @@
+module contract;
+
+// Card GAPO-RETURN-CORRECTNESS (gateway rule 15y): no-return declarations for
+// the route-G controls of `tests/gapo_return_correctness.rs`. Synthetic
+// trusted test assumptions, not facts about any library: each states a
+// terminating exit. The C prelude of the test declares each `noreturn`
+// unless a control says otherwise.
+
+// A declared data-only variadic tail (rule 11w): its trailing actuals are
+// read by the statement fallback's widening, a position rule 11o's
+// statement hook never saw.
+extern fn gr_fatalf(format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_return_none();
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_no_return();
+};
+
+// A plain no-return callee with one scalar actual.
+extern fn gr_die(value: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};
