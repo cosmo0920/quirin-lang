@@ -19,7 +19,8 @@ REGISTER = [
         "by no fixture",
         "why": (
             "Recorded by " + CARD + " (base 4b5c77041; synthetic census 2,658 rows, 321 -> 0 "
-            "selections moved by a declaration; tracked route census 1,436 rows byte-identical; "
+            "selections moved by a declaration name, the base's 105 kept in record-name and type "
+            "positions; tracked route census 1,436 rows byte-identical; "
             "corpus, system and slice arbiters byte-identical). A `module contract;` module is "
             "refused before routing when route_selection::source_only_route names a source-only "
             "route: a 21-entry list of the driver's selectors in the driver's order, written a "
@@ -47,7 +48,9 @@ def main():
     followups[:] = [f for f in followups if f.get("id") != RETIRE]
     by_id = {f["id"]: f for f in followups}
     for entry in REGISTER:
-        if entry["id"] not in by_id:
+        if entry["id"] in by_id:
+            by_id[entry["id"]].update(entry)
+        else:
             followups.append(entry)
     matrix["dimensions"]["named_followups"] = len(followups)
     MATRIX.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")

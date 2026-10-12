@@ -1,0 +1,21 @@
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c22a728381af915/private/qrls/before Safe 935 Unsafe 9 Unknown 3890 Pending 0 sha256 bdf5f1c8931d0557474835f6bfde53f626ffe8563bc76e430925bd0062b83006
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c22a728381af915/private/qrls/final Safe 935 Unsafe 9 Unknown 3890 Pending 0 sha256 bdf5f1c8931d0557474835f6bfde53f626ffe8563bc76e430925bd0062b83006
+{"statuses_before": {"Unknown": 3890, "Safe": 935, "Unsafe": 9}, "statuses_after": {"Unknown": 3890, "Safe": 935, "Unsafe": 9}, "transitions": {}, "moving_rows": 0}
+{}
+removed {}
+added {}
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c22a728381af915/private/qrls/before-system Safe 93 Unsafe 4 Unknown 351 Pending 0 sha256 f596d64b4e745b291bf063097bd2f8db0cc78782b6f2983e68de1905867a1c1a
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c22a728381af915/private/qrls/final-system Safe 93 Unsafe 4 Unknown 351 Pending 0 sha256 f596d64b4e745b291bf063097bd2f8db0cc78782b6f2983e68de1905867a1c1a
+{"statuses_before": {"Unknown": 351, "Safe": 93, "Unsafe": 4}, "statuses_after": {"Unknown": 351, "Safe": 93, "Unsafe": 4}, "transitions": {}, "moving_rows": 0}
+{}
+removed {}
+added {}
+/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qrls-before Safe 52 Unsafe 1 Unknown 347 Pending 4 sha256 ee98ad3dd2f19bf04ad5d62dca6b7c93661415bf782d6ca5408ae11c69bc20fc
+/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qrls-final Safe 52 Unsafe 1 Unknown 347 Pending 4 sha256 ee98ad3dd2f19bf04ad5d62dca6b7c93661415bf782d6ca5408ae11c69bc20fc
+{"statuses_before": {"Unknown": 347, "Safe": 52, "Pending": 4, "Unsafe": 1}, "statuses_after": {"Unknown": 347, "Safe": 52, "Pending": 4, "Unsafe": 1}, "transitions": {}, "moving_rows": 0}
+{}
+removed {}
+added {}
+corpus: null stream identical
+system: null stream identical
+slice: null stream identical

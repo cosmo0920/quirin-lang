@@ -13,7 +13,7 @@ pointer to it.
 ## 1. The census (task item 1)
 
 **Which selectors read the token stream**, by reading `compile_elaborated_source`
-(`crates/qcore-verification/src/driver.rs`) and every predicate it calls, and
+(`crates/qcore-verification/src/driver.rs`), every predicate it calls, and
 `check_source_imports_in_scope`:
 
 | selector | what it read on the base |
@@ -43,65 +43,84 @@ compared by [`selector_compare.py`](scripts/selector_compare.py)): 62 words
 (every word above plus every body-statement selector's vocabulary) × three
 modes (`module contract;` `.qv`, `module library;` and executable `.qr`) × two
 bases (no source call; a call `has_scalar_calls` selects) × seven declaration
-positions (`extern fn` name with and without an inline contract, source
-function name, record name, error name, a parameter name a contract clause
-names, a type constructor in an extern parameter type), plus the extern
+positions — five **name** positions (an `extern fn`'s name with and without an
+inline contract, a source function's, an error's, a parameter's named in a
+contract clause) and two that are not names (a record's name, a type
+constructor in an extern parameter type) — plus the extern
 `throws<ArithmeticError>` row; each row against a **control** that names
 `flb_noop`. It records whether the module parses, every selector's value and
 the import gate in driver order, and the compile outcome. 2,658 rows.
 
-| | rows moving a selection | by selector |
-| --- | ---: | --- |
-| base ([artifact](artifacts/selector-census-before.json)) | **321** | gate 264, tasks 126, scalar 45, epoch 12 |
-| fix and final tip ([artifact](artifacts/selector-census-fix.json); the final tip's rows are byte-identical to the fix's) | **0** | — |
+| tree | selections moved | name positions | record name, type positions |
+| --- | ---: | ---: | ---: |
+| base ([artifact](artifacts/selector-census-before.json)) | **321** | 216 | 105 |
+| final tip ([artifact](artifacts/selector-census-final.json)) | **105** | **0** | 105, each as on the base |
 
 On the base: the three `qcore_buffer_*` words in every position and mode moved
-the gate and the task route (126 rows); `qcore_error_payload`, `spawn`, `join`
-the gate (126); `task`/`mutex` as an extern parameter's type constructor the
-gate (12); a record or error named `epoch` (`type epoch {`) the epoch route
-(12); `qcore_acquire`/`qcore_check` in any declaration deselected the scalar
-route on the scalar base (42); the extern `throws<ArithmeticError>` row
-selected it (3). Nothing is refused at parse, and no body-statement selector,
-`print`, `mutex guards`/`rank` or `bits<`/`field<` moved. The print card's
-probe reproduces as row `contract/plain/extern-contract/qcore_buffer_new`.
+the gate and the task route; `qcore_error_payload`, `spawn`, `join` the gate;
+`task`/`mutex` as a type constructor the gate; a record or error named `epoch`
+(`epoch {`) the epoch route; `qcore_acquire`/`qcore_check` in any position
+deselected the scalar route on the scalar base; the extern
+`throws<ArithmeticError>` row selected it. Nothing is refused at parse, and no
+body-statement selector, `print`, `mutex guards`/`rank` or `bits<`/`field<`
+moved. The print card's probe reproduces as row
+`contract/plain/extern-contract/qcore_buffer_new`.
 
-After the fix two rows differ from their controls in outcome alone: the
-`throws<ArithmeticError>` row on the plain base in library and executable mode
-is refused `Q020` by the extern-declaration reader (`i32 throws<ArithmeticError>`
-is not a type an extern declaration can state), where its control (no row) is
-admitted. That control is not the same text with a word replaced; no selector
-reads the row. `no_declaration_moves_a_selection` (always run) pins all of
-this: every row reads as its control, that row's refusal excepted by name.
+`no_declaration_name_moves_a_selection` (always run) pins the final tip: every
+name-position row reads as its control, selection and outcome class alike, and
+every record-name and type-position row moves exactly the selectors it moved
+on the base (`expected_moves`; the per-row selections of those 105 rows are
+identical to the base's).
 
 Tracked positions (`every_tracked_selector_word_stands_where_pinned`, always
-run, green on the base and the fix): every tracked selector occurrence is
+run, green on the base and the tip): every tracked selector occurrence is
 inside a source function — its body or, for `spawn`/`join` (154 files each,
 `effects { …, spawn, join }`), `task<`/`mutex<` (two archived probes' result
 types) and `throws<ArithmeticError>` (4 examples), its signature — except
 `join` in a libc contract clause, `spawn` in a monkey contract clause and
-cJSON's `extern fn print`. No tracked source names a function or parameter
-after a selector word. This is why the scope is not the body alone.
+cJSON's `extern fn print`. No tracked source names a declaration or parameter
+after a selector word.
 
 ## 2. The fix (task item 2)
 
 **One reading for every token-stream selector**, the new
-`qcore_frontend::route_selection::SelectorScope`: a token is read only inside a
-**source function declaration** (body, parameter and result types, effect and
-`throws` rows), never that function's own name, a parameter's name, a contract
-clause, a library binding, or any other declaration. Hooks (thin, each one
-`scope.reads(…)` test): `concurrency_span`'s token loop (both previous
-exclusions kept), `has_source_tasks`, `has_source_epoch`, `has_source_mutex`
-(uniform; no declaration moved it), both lexical tests of `has_scalar_calls`;
+`qcore_frontend::route_selection::SelectorScope`: a selector never reads a
+declaration's own **name** (an `extern fn`, a source function, an error, an
+alias, …), a parameter's name, a contract clause or a library binding, and
+reads every other token as it did. Hooks (thin, each one `scope.reads(…)`
+test): `concurrency_span`'s token loop (both previous exclusions kept),
+`has_source_tasks`, `has_source_epoch`, `has_source_mutex` (uniform; no
+declaration moved it), both lexical tests of `has_scalar_calls`;
 `print_call_selection` reuses the scope's body spans instead of computing its
 own. Comments are not tokens and string literals are not words, before and
 after.
+
+**Two recorded decisions the scope keeps, and the correction that found
+them.** The prediction planned a scope of source functions only (body and
+signature). Gate g1 failed two pinned tests with it:
+`compiler/tests/source_record.rs::a_field_named_for_a_route_selector_refuses_fail_closed`
+(constraint 14's `AGGREGATE-SELECTOR-WORDS`: a record whose name or field
+spells a selector word refuses `Q015` at its declaration, because its
+construction cannot be written — the parser claims `spawn:` at `Q000` — and
+excluding it would buy a type that declares and cannot be constructed) and
+`crates/qcore-frontend/tests/module_imports.rs::concurrency_requires_a_real_import_even_in_uncalled_bodies`
+(`type Handle = task<i32>;` needs `std.concurrency`: a concurrency type in an
+alias is a use). Both are decisions, not defects, and the defect is names, so
+the scope was narrowed to names only (`d3484cdec`): a record's name and fields
+and every type position stay read. (The withdrawn scope's census, 0 moved in
+every position: [selector-census-fix](artifacts/selector-census-fix.json),
+[its outcome changes](artifacts/selector-census-before-fix.json); the tracked
+census and the arbiters were byte-identical under it too.) Measured consequence: the base's 105
+record-name and type-position moves are kept exactly; the 216 name-position
+moves go to 0.
 
 **Fail-closed arms** at `compile_elaborated_source`, after the closure refusal:
 
 1. `ambiguous_selector_use`: a selecting use of a selector word in a module
    that also declares that word (`fn qcore_acquire()` beside `let a =
    qcore_acquire(…)`) is refused `Q020` at the use — the print card's "call
-   beside a declared `print`" rule for every token-stream selector.
+   beside a declared `print`" rule for every token-stream selector. A
+   declaration's own name (a record's included) is not a use.
 2. `source_only_route`: a `module contract;` module that any route but the
    sequential one would select is refused `Q020`, naming that route
    (generalising the print card's guard at `compile_scalar_calls`; the same
@@ -112,17 +131,18 @@ after.
 
 Reachability (stability item 1): arms 1 and 2 are driven by
 [`qr_lexical_selector_selection.rs`](../../../compiler/tests/qr_lexical_selector_selection.rs)
-and the census (56 synthetic contract modules with a record move from the
-buffer route's `Q058` to arm 2's `Q020`). Arm 3 and the print card's guard are
-reached by no fixture, since arm 2 catches every contract module first;
-registered as `ROUTE-SELECTION-ORDER-RESTATED`.
+(eleven tests) and the census (56 synthetic contract modules with a record move
+from the buffer route's `Q058` to arm 2's `Q020`, two from the epoch route's
+`Q500`). Arm 3 and the print card's guard are reached by no fixture, since arm
+2 catches every contract module first; registered as
+`ROUTE-SELECTION-ORDER-RESTATED`.
 
-Outcome changes of the fix on the synthetic modules
-([artifact](artifacts/selector-census-before-fix.json), controls included):
-337 rows, every one now its control's outcome: 132 refusals become admissions
-(a `Q015`, `Q500`, `Q600` or `Q020` that a name caused), the rest a refusal
-for a different reason than the name (the route the control reaches refuses
-the same module, or arm 2).
+Outcome changes on the synthetic modules, base → final tip
+([artifact](artifacts/selector-census-before-final.json), controls included):
+248 rows; 109 refusals that a name caused (`Q015`, `Q500`, `Q600`, `Q020`)
+become admissions, each now its control's outcome; 81 more name rows move from
+a name-caused refusal to the refusal their control receives; and the 58 contract-mode record
+rows above move to arm 2.
 
 ## 3. Nothing tracked moves (task item 3)
 
@@ -133,53 +153,64 @@ The print card's tracked route census
 
 | comparison | rows | moved |
 | --- | ---: | --- |
-| base → fix (`74297fb5e`) | 1,436 | **0**, the two streams byte-identical (`b8171eda…`; [artifact](artifacts/census-before-fix.json)) |
-| base → final tip (`7d2216f28`) | 1,436 | **0**, byte-identical ([artifact](artifacts/census-before-after.json)) |
+| base → first fix (`74297fb5e`) | 1,436 | **0** ([artifact](artifacts/census-before-fix.json)) |
+| base → `7d2216f28` (arm 3 added) | 1,436 | **0** ([artifact](artifacts/census-before-after.json)) |
+| base → final tip (`d3484cdec`) | 1,436 | **0** |
 
-No fixture changes route, so there is no correction to name; no tracked module
-reaches either refusal arm (214 contract modules stay `Contract`/`Sequential`).
+All three streams are byte-identical to the base's (`b8171eda…`). No fixture
+changes route, so there is no correction to name; no tracked module reaches
+either refusal arm (214 contract modules stay `Contract`/`Sequential`).
 
 ## 4. Lean (task item 4)
 
 New `QCore.RouteSelection`, audited in `AuditRouteSelection.lean`,
 generalising `QCore.PrintRouteSelection` (kept as the print selector's finer
-model). A module is its token stream with each token's position; the six
-token-stream tests (gate, tasks, epoch, mutex, scalar deselect, scalar throws)
-are modelled as the Rust tests are. Theorems: `test_holds_only_at_a_head`,
+model). A module is its token stream with each token's position (body,
+signature, record name, record field — read; declaration name, parameter
+name, contract clause, library binding — not read); the six token-stream
+tests (gate, tasks, epoch, mutex, scalar deselect, scalar throws) are modelled
+as the Rust tests are. Theorems: `test_holds_only_at_a_head`,
 `fires_only_at_a_read_site`, **`declaration_name_never_selects`** (for every
 selector), **`declaration_names_reach_sequential`** (no gate, no refusal, no
 source-only route, in every mode), `ambiguous_use_refuses`,
-**`contract_module_never_compiled`**, and nine vectors (the buffer-new
-contract, a record named `epoch`, a function named `spawn` → sequential; an
-effect row without the import → `Q015`; a body `qcore_buffer_new` → tasks, and
-refused when declared or in a contract module; a source `throws` row → scalar,
-the extern row → sequential). Axioms: `propext`, `Quot.sound` only. Premise
-(trust boundary 28): the Rust code computes the positions from the frontend's
-spans and applies these tests; agreement is checked by the census, not proved.
+**`contract_module_never_compiled`**, and eleven vectors (the buffer-new
+contract, an error named `epoch`, a function named `spawn` → sequential; a
+record named `spawn` → `Q015` without the import, sequential with it; a record
+named `epoch` → the epoch route; an effect row without the import → `Q015`; a
+body `qcore_buffer_new` → tasks, refused when declared or in a contract
+module; a `throws` row → scalar). Axioms: `propext`, `Quot.sound` only.
+Premise (trust boundary 28): the Rust code computes the positions from the
+frontend's spans and applies these tests; agreement is checked by the census,
+not proved.
 
 ## 5. Measurement (task item 5)
 
-Binaries: BEFORE `private/qrls/bin/before` (`6c6fbcb5…`, the base), fix
-`private/qrls/bin/fix` (`bab7cffd…`, `74297fb5e`), AFTER
-`private/qrls/bin/after` (`4bba439b…`, `7d2216f28`, adding arm 3); each corpus
-`run.json`'s `binary_sha256` equals its binary. Every route under the shared
-lock, `--jobs 4`, the null property selected
-([`measure.sh`](scripts/measure.sh), [`runs.py`](scripts/runs.py)).
+Binaries (each corpus `run.json`'s `binary_sha256` equals its binary): BEFORE
+`private/qrls/bin/before` (`6c6fbcb5…`, the base); `fix` (`bab7cffd…`,
+`74297fb5e`); `after` (`4bba439b…`, `7d2216f28`); FINAL `private/qrls/bin/final`
+(`2344ae85…`, `d3484cdec`, the tip's code). Every route under the shared lock,
+`--jobs 4`, the null property selected ([`measure.sh`](scripts/measure.sh),
+[`runs.py`](scripts/runs.py)).
 
 | run | corpus | system | tail-pause slice |
 | --- | --- | --- | --- |
 | BEFORE | 935 / 9 / 3,890, `bdf5f1c8…` (the brief's) | 93 / 4 / 351, `f596d64b…` | 52 / 1 / 347, 4 Pending, `ee98ad3d…` |
-| fix | byte-identical | byte-identical | byte-identical |
-| AFTER | 935 / 9 / 3,890, `bdf5f1c8…`, byte-identical | byte-identical | byte-identical |
+| fix, after | byte-identical | byte-identical | byte-identical |
+| FINAL | 935 / 9 / 3,890, `bdf5f1c8…`, byte-identical | byte-identical | byte-identical |
 
-Null property: corpus 1,113 Safe unconditional / 1,435 conditional / 2,355 Unknown / 18 Unsafe; system 84 / 125 / 245; slice 71 / 103 / 232 — every null stream byte-identical to BEFORE's on both runs ([runs-fix](artifacts/runs-fix.txt),
-[runs-after](artifacts/runs-after.txt)). Corpus wall time 518.6 s BEFORE,
-527.2 s fix, 532.0 s AFTER.
+Null property: corpus 1,113 Safe unconditional / 1,435 conditional / 2,355
+Unknown / 18 Unsafe; system 84 / 125 / 245; slice 71 / 103 / 232 — every null
+stream byte-identical to BEFORE's on every run
+([runs-fix](artifacts/runs-fix.txt), [runs-after](artifacts/runs-after.txt),
+[runs-final](artifacts/runs-final.txt)). Corpus wall time 518.6 s BEFORE,
+527.2 s fix, 532.0 s after, 529.9 s FINAL.
 
-Prediction against outcome: every prediction held (321 → 0 moved selections;
-0 outcome-only rows except the two `throws`-row refusals by the declaration
-reader, which the prediction did not foresee; tracked census 0 moved; arbiters
-and null streams byte-identical).
+Prediction against outcome: the tracked census (0 moved), the arbiters and
+the null property held as predicted. The synthetic census did not: the
+prediction expected 0 moved selections in every position, with a
+function-only scope; that scope broke two pinned decisions (section 2), and
+the outcome is 0 in the five name positions and the base's 105 kept in the
+record-name and type positions.
 
 ## 6. Gate
 
@@ -189,9 +220,9 @@ GATE_SECTION
 
 * Retired: `QR-LEXICAL-SELECTORS-DECLARATION-NAMES` (its DISCHARGE holds: the
   census of each whole-token selector against declarations named after its
-  words, one synthetic module per word, mode, base and position; a scoped
-  reading for every selector a declaration moved, plus the contract guard;
-  the route census unchanged).
+  words, one synthetic module per word, mode, base and position; a name-scoped
+  reading for every selector a declaration name moved, plus the contract
+  guard; the route census unchanged).
 * Registered: `ROUTE-SELECTION-ORDER-RESTATED` — arm 2's 21-entry selector list
   restates the driver's route order, and arm 3 and the print card's guard are
   driven by no fixture.

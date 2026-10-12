@@ -293,31 +293,34 @@ Add `w48-qr-floating-point` to the rule's closing evidence list.
 
 ### 14 — route selectors read no declaration name, card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES` (wave 48)
 
-Reserves **+0 words and +0 tokens**, and narrows where five **token-stream**
+Reserves **+0 words and +0 tokens**, and narrows what five **token-stream**
 selectors read: the `Q015` gate's token loop (`module_imports::concurrency_span`),
 `source_tasks::has_source_tasks`, `source_epoch::has_source_epoch`,
 `source_mutex::has_source_mutex` and both lexical tests of
-`source_scalar_calls::has_scalar_calls`. Each reads a word only where a
-**source function is written** — its body, its parameter and result types, its
-effect and `throws` rows — through the one reading
-`qcore_frontend::route_selection::SelectorScope`; a source function's own name,
-a parameter's name, a contract clause, a library binding and every other
-declaration (`extern fn`, record, error, alias) never select. Not the body
-alone: 154 tracked files spell `effects { …, spawn, join }` and four the
-`throws<ArithmeticError>` row, which the gate and the scalar selector must
-keep reading. Every other selector already read function-body statements, so
-the binding-span exclusion of `NATIVE-LIBRARY-SOURCE-BINDING` above is now
-subsumed and **still kept**. Two fail-closed arms beside it, at
-`compile_elaborated_source`: a selecting use of a word the module also
-declares names both and refuses at selection (`Q020`), the print card's rule
-for every token-stream selector; and a `module contract;` module that any
-source-only route would select is refused (`Q020`, naming the route), with a
-completeness check after routing that refuses a contract module admitted on
-any route but the sequential one. The census
+`source_scalar_calls::has_scalar_calls`. Through the one reading
+`qcore_frontend::route_selection::SelectorScope`, none of them reads a
+declaration's own **name** (an `extern fn`, a source function, an error, an
+alias, …), a parameter's name, a contract clause or a library binding; every
+other token is read as before — bodies, parameter and result types, effect and
+`throws` rows (154 tracked files spell `effects { …, spawn, join }`), an
+alias's type (`type Handle = task<i32>;` still needs `std.concurrency`). **A
+record's name and field names stay read**: the `AGGREGATE-SELECTOR-WORDS`
+decision above stands (a record spelling a selector word refuses `Q015` at its
+declaration), and a first, function-only scope that dropped it was caught by
+the gate on the two pins and withdrawn. The binding-span exclusion of
+`NATIVE-LIBRARY-SOURCE-BINDING` is subsumed and **still kept**. Two
+fail-closed arms beside it, at `compile_elaborated_source`: a selecting use of
+a word the module also declares names both and refuses at selection (`Q020`;
+a declaration's own name, a record's included, is not a use), the print
+card's rule for every token-stream selector; and a `module contract;` module
+that any source-only route would select is refused (`Q020`, naming the route),
+with a completeness check after routing that refuses a contract module
+admitted on any route but the sequential one. The census
 (`compiler/tests/qr_lexical_selector_census.rs`: 62 selector words × three
 modes × two bases × seven declaration positions, each against a control named
-`flb_noop`) moved **321** selections on the base and moves **0** after; the
-tracked route census (1,436 rows) is byte-identical
+`flb_noop`) moved **321** selections on the base; after, **0** in the five
+name positions, and in the record-name and type positions exactly the base's
+105; the tracked route census (1,436 rows) is byte-identical
 ([report](../reports/qr-lexical-selectors-declaration-names/README.md); Lean
 `QCore.RouteSelection`).
 
