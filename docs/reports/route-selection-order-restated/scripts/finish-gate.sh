@@ -8,7 +8,7 @@ name="$1"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 logs="$repo/private/rsor/gate-$name"
-report="$repo/docs/reports/qr-lexical-selectors-declaration-names"
+report="$repo/docs/reports/route-selection-order-restated"
 cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"

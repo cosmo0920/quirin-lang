@@ -11,7 +11,8 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/qr-lexical-selectors-declaration-names"
+REPORT = REPO / "docs/reports/route-selection-order-restated"
+BASE = (REPO / "private/rsor/base").read_text().strip() if (REPO / "private/rsor/base").exists() else "1a399e6a1"
 
 
 def main() -> int:
@@ -52,8 +53,8 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"QR-LEXICAL-SELECTORS-DECLARATION-NAMES card gate on base 4b5c77041, every code step at "
-        f"{head[:9]}, scripts docs/reports/qr-lexical-selectors-declaration-names/scripts/gate.sh "
+        f"ROUTE-SELECTION-ORDER-RESTATED card gate on base {BASE}, every code step at "
+        f"{head[:9]}, scripts docs/reports/route-selection-order-restated/scripts/gate.sh "
         "(each step under the shared flock) and finish-gate.sh, logs "
         f"private/rsor/gate-{name} of this worktree. "
         f"gate-{name}: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
@@ -66,7 +67,7 @@ def main() -> int:
             else ""
         )
         + "); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (AuditRouteSelection added); python suite and docs index check per gate/ (08, 09), then "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (AuditRouteSelection extended, no audit file added); python suite and docs index check per gate/ (08, 09), then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
         "No provider gate: providers/ is unchanged."
     )

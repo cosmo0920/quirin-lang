@@ -178,6 +178,34 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `wave22-pipe-intrinsic-stage`.
 <!-- preserved:constraint-15b:end -->
 
+<a id="constraint-15v"></a>
+
+15v. **The driver's route order is written once, and every check that
+    depends on it reads the one selected entry.** Card
+    ROUTE-SELECTION-ORDER-RESTATED
+    (`crates/qcore-verification/src/driver/source_routes.rs`).
+    `SOURCE_ROUTES` lists every route of `compile_elaborated_source` in
+    selection order — its name, its selector, its lowering entry, whether it
+    is source-only and what a closure meets on it — and `select` takes the
+    first entry whose selector holds (the last, the sequential route, always
+    does). The closure refusal (`Q600`), the contract guard (`Q020`: a
+    `module contract;` module whose entry is source-only is refused, naming
+    it) and the lowering all read that one entry; the ambiguous-use refusal
+    stands between the closure refusal and the guard, as before. A new route
+    is a new row. **Do not** add a route as an if-arm, a second list or any
+    check that restates the order, and do not give a row other than the
+    sequential route `source_only: false` without the argument that its
+    route reads contract modules (pinned:
+    `only_the_last_entry_reads_contract_modules`). A fail-closed arm the table
+    makes unreachable by construction is deleted with its argument, never
+    kept undriven: the completeness check after routing and the guard in
+    `compile_scalar_calls` were (Lean `QCore.RouteSelection`:
+    `guard_refuses_iff_source_only`, `contract_lowered_only_on_last`,
+    `driver_contract_lowered_only_on_sequential`). Premise (trust boundary
+    28): the Rust rows are the Lean `driverTable`'s, in order (pinned by
+    `the_table_is_the_pinned_order` and `closure_rules_follow_the_table`),
+    and the selectors are pure.
+
 <a id="amendments-after-the-migration-checkpoint"></a>
 
 ## Amendments after the 2026-09-19 migration checkpoint
@@ -313,9 +341,10 @@ fail-closed arms beside it, at `compile_elaborated_source`: a selecting use of
 a word the module also declares names both and refuses at selection (`Q020`;
 a declaration's own name, a record's included, is not a use), the print
 card's rule for every token-stream selector; and a `module contract;` module
-that any source-only route would select is refused (`Q020`, naming the route),
-with a completeness check after routing that refuses a contract module
-admitted on any route but the sequential one. The census
+that any source-only route would select is refused (`Q020`, naming the route);
+since ROUTE-SELECTION-ORDER-RESTATED that guard reads the driver's one route
+table (rule 15v), and the completeness check after routing it was paired with
+is deleted, unreachable by construction. The census
 (`compiler/tests/qr_lexical_selector_census.rs`: 62 selector words × three
 modes × two bases × seven declaration positions, each against a control named
 `flb_noop`) moved **321** selections on the base; after, **0** in the five

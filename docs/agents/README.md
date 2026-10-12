@@ -197,6 +197,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 15 | [source-routes](source-routes.md#constraint-15) | Lock ranks and protection growth are opt-in disciplines: unranked… |
 | 15a | [source-routes](source-routes.md#constraint-15a) | A source line in a composed task module stands in the parent's body… |
 | 15b | [source-routes](source-routes.md#constraint-15b) | A route reads its statement tokens from the parsed program's… |
+| 15v | [source-routes](source-routes.md#constraint-15v) | The driver's route order is written once (`source_routes::SOURCE_ROUTES`: name, selector, lowering, source-only, closure rule); the closure refusal, the contract guard and the lowering read the one selected entry; a new route is a new row, never an if-arm or a second list. |
 | 15c | [io](io.md#constraint-15c) | An event program's streams are compared byte for byte, and that is a… |
 | 15d | [io](io.md#constraint-15d) | Windows std.event selects AF_UNIX by capability, not by compilation.… |
 | 15e | [io](io.md#constraint-15e) | A rendered string's observation is the view's exact bytes, and the… |
