@@ -1727,9 +1727,10 @@ fn compile_elaborated_source(
         }
     }
     // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`. Every token-stream
-    // selector below reads a word only where a source function is written
-    // (`route_selection::SelectorScope`), so a declaration name never selects
-    // a route. Two fail-closed arms, in this order: a selecting use of a word
+    // selector below skips a declaration's own name, a parameter's name and
+    // a contract clause (`route_selection::SelectorScope`; a record's name
+    // stays read by constraint 14's `AGGREGATE-SELECTOR-WORDS`), so such a
+    // name never selects a route. Two fail-closed arms, in this order: a selecting use of a word
     // the module also declares names both and is refused, never routed; and a
     // `module contract;` module that any source-only route would select is
     // refused (the print card's guard at `compile_scalar_calls`, generalised

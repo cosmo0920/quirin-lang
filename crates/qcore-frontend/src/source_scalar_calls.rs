@@ -27,10 +27,10 @@ fn symbol(t: &Token, s: Symbol) -> bool {
 /// A feature-shaped selector, after existing specialized profiles. Resource
 /// intrinsics keep the established sequential custody route even in mixed code.
 pub fn has_scalar_calls(p: &SourceProgram) -> bool {
-    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: both lexical tests read a
-    // token only where a source function is written. An `extern fn
-    // qcore_acquire(…)` deselected this route, and an extern declaration's
-    // `throws<ArithmeticError>` row selected it, before.
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: both lexical tests skip a
+    // declaration's own name, a parameter's name and a contract clause
+    // (`route_selection::SelectorScope`); an `extern fn qcore_acquire(…)`
+    // deselected this route before. A `throws` row is a use and stays read.
     let scope = crate::route_selection::SelectorScope::of(p);
     if p.lexical_tokens().iter().any(|t| {
         word(t).is_some_and(|w| matches!(w, "qcore_acquire" | "qcore_check"))

@@ -339,17 +339,48 @@ fn outcome_class(compile: &serde_json::Value) -> serde_json::Value {
     class
 }
 
-/// **No declaration moves a selection** (always run). Every census row reads
-/// as its control: the same value for every selector and for the import
-/// gate, and a compile outcome of the same class (route, or refusal codes).
-/// The one exception is the extern `throws<ArithmeticError>` row, whose
-/// control is not the same text with a word replaced: no selector reads it,
-/// and outside a contract module the extern declaration reader refuses the
-/// row as a result type (`Q020`), as it refuses every non-ABI result.
+/// The selectors a census row is **expected** to move against its control.
+/// The name shapes (an `extern fn`'s, a source function's, an error's, a
+/// parameter's named in a contract clause) move none. Three shapes are not a
+/// declaration's name and keep the base's reading: a **record**'s name
+/// (constraint 14's `AGGREGATE-SELECTOR-WORDS`: a record spelling a selector
+/// word stays refused at its declaration), a type constructor in a parameter
+/// type and an extern `throws` row (type positions are uses). For those the
+/// expected moves are exactly the base's (`artifacts/selector-census-before.json`).
+pub fn expected_moves(base: &str, shape: &str, word: &str) -> Vec<&'static str> {
+    let read = match shape {
+        "record" | "type-argument" => true,
+        "throws-row" => {
+            return if base == "plain" {
+                vec!["scalar_calls"]
+            } else {
+                vec![]
+            };
+        }
+        _ => false,
+    };
+    if !read {
+        return vec![];
+    }
+    match word {
+        "qcore_buffer_new" | "qcore_buffer_read" | "qcore_buffer_write" => vec!["imports", "tasks"],
+        "qcore_error_payload" | "spawn" | "join" => vec!["imports"],
+        "task" | "mutex" if shape == "type-argument" => vec!["imports"],
+        "epoch" if shape == "record" => vec!["epoch"],
+        "qcore_acquire" | "qcore_check" if base == "scalar" => vec!["scalar_calls"],
+        _ => vec![],
+    }
+}
+
+/// **No declaration name moves a selection** (always run). Every census row
+/// reads as its control — the same value for every selector and for the
+/// import gate, and a compile outcome of the same class (route, or refusal
+/// codes) — except the moves [`expected_moves`] names, which are exactly the
+/// base's for the shapes that are not a declaration's name.
 #[test]
-fn no_declaration_moves_a_selection() {
+fn no_declaration_name_moves_a_selection() {
     let mut controls = std::collections::BTreeMap::new();
-    let mut moved = Vec::new();
+    let mut wrong = Vec::new();
     for (mode, base, shape, word) in census_keys() {
         let line = row(mode, base, shape, word);
         if word == CONTROL {
@@ -358,27 +389,31 @@ fn no_declaration_moves_a_selection() {
             continue;
         }
         let control = &controls[&(mode, base, shape)];
-        if line["selection"] != control["selection"] {
-            moved.push(format!("{mode}/{base}/{shape}/{word}: selection"));
+        let mine = line["selection"]["selectors"]
+            .as_object()
+            .expect("the row parses");
+        let theirs = control["selection"]["selectors"]
+            .as_object()
+            .expect("the control parses");
+        let moved = mine
+            .iter()
+            .filter(|(key, value)| theirs.get(*key) != Some(value))
+            .map(|(key, _)| key.as_str())
+            .collect::<Vec<_>>();
+        let expected = expected_moves(base, shape, word);
+        if moved != expected {
+            wrong.push(format!(
+                "{mode}/{base}/{shape}/{word}: moved {moved:?}, expected {expected:?}"
+            ));
             continue;
         }
-        if outcome_class(&line["compile"]) == outcome_class(&control["compile"]) {
-            continue;
+        if expected.is_empty()
+            && outcome_class(&line["compile"]) != outcome_class(&control["compile"])
+        {
+            wrong.push(format!("{mode}/{base}/{shape}/{word}: outcome"));
         }
-        if shape == "throws-row" && mode != "contract" {
-            let text = line["compile"]["diagnostics"][0]
-                .as_str()
-                .unwrap_or_default();
-            assert!(
-                line["compile"]["codes"] == serde_json::json!(["Q020"])
-                    && text.contains("is not a type an extern declaration can state"),
-                "{line}"
-            );
-            continue;
-        }
-        moved.push(format!("{mode}/{base}/{shape}/{word}: outcome"));
     }
-    assert!(moved.is_empty(), "{moved:#?}");
+    assert!(wrong.is_empty(), "{wrong:#?}");
 }
 
 #[test]

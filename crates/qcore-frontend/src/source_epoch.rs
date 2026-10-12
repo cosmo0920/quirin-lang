@@ -213,9 +213,10 @@ impl LoweredEpochModule {
 /// grants no support, and a detected module that leaves the admitted grammar is
 /// refused rather than handed to another route.
 ///
-/// Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: `epoch {` is read only
-/// where a source function is written; a record or error named `epoch`
-/// (`type epoch { … }`) selected this route before.
+/// Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: `epoch {` is not read at a
+/// declaration's own name; an error named `epoch` (`error epoch { … }`)
+/// selected this route before. A record so named still does (constraint 14's
+/// `AGGREGATE-SELECTOR-WORDS`).
 pub fn has_source_epoch(source: &SourceProgram) -> bool {
     let scope = crate::route_selection::SelectorScope::of(source);
     source.lexical_tokens().windows(2).any(|pair| {

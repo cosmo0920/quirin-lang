@@ -16,15 +16,15 @@
 //! `compiler/tests/qr_lexical_selector_census.rs`: 321 of 2,610 synthetic
 //! declarations moved a selection).
 //!
-//! [`SelectorScope`] is the reading they now share. A token selects only where
-//! a source function is written: its body, and its signature's parameter and
-//! result types and effect and `throws` rows (the tracked effect rows
-//! `effects { spawn, join }` and the scalar route's `throws<ArithmeticError>`
-//! are read there, so the scope is not the body alone). A source function's
-//! own name, a parameter's name, a contract clause, a library binding and
-//! every other declaration (`extern fn`, records, errors, aliases, resource
-//! types) are never read. Comments are not tokens and a string literal is not
-//! a word, so neither could select before and neither can now.
+//! [`SelectorScope`] is the reading they now share: a declaration's own
+//! **name** (an `extern fn`, a source function, an error, an alias, …), a
+//! parameter's name, a contract clause and a library binding are never read.
+//! Everything else stays read as before — bodies, signatures' types and
+//! effect and `throws` rows (154 tracked files spell `effects { …, spawn,
+//! join }`), an alias's type — and so does a **record**'s name and fields, by
+//! constraint 14's recorded `AGGREGATE-SELECTOR-WORDS` decision. Comments are
+//! not tokens and a string literal is not a word, so neither could select
+//! before and neither can now.
 //!
 //! Two fail-closed arms sit beside the reading, both called from the driver's
 //! route selection: [`ambiguous_selector_use`] (a selecting use of a word the
@@ -38,13 +38,29 @@ fn within(outer: Span, inner: Span) -> bool {
     outer.start <= inner.start && inner.end <= outer.end
 }
 
-/// Where a token-stream selector may read: the module's source functions,
-/// minus their own names, their parameters' names and their contracts.
+/// Where a token-stream selector may read: every retained token except a
+/// declaration's own **name**, a parameter's name, a contract clause and a
+/// library binding.
+///
+/// A **record** is the one declaration whose name (and field names) stay
+/// read: constraint 14's `AGGREGATE-SELECTOR-WORDS` decision (card
+/// `AGGREGATES-V1`, pinned by `compiler/tests/source_record.rs`) keeps a record
+/// that spells a selector word refused at its declaration (`Q015`), because
+/// its construction cannot be written (the parser claims `spawn:` in a body at
+/// `Q000`); excluding it would buy a type that declares and cannot be
+/// constructed. Type positions (an alias's type, a parameter or result type,
+/// an effect or `throws` row) are uses, not names, and stay read
+/// (`type Handle = task<i32>;` still needs `std.concurrency`, pinned by
+/// `crates/qcore-frontend/tests/module_imports.rs`).
 #[derive(Clone, Debug, Default)]
 pub struct SelectorScope {
-    functions: Vec<Span>,
     bodies: Vec<Span>,
+    /// Spans never read: non-record declaration names, parameter names,
+    /// contract clauses.
     excluded: Vec<Span>,
+    /// Every declaration's own name token, records included: a declaration
+    /// is never a use of its own name ([`ambiguous_selector_use`]).
+    names: Vec<Span>,
 }
 
 impl SelectorScope {
@@ -53,22 +69,26 @@ impl SelectorScope {
         let tokens = program.lexical_tokens();
         let mut scope = Self::default();
         for declaration in &program.declarations {
-            if declaration.value.kind != DeclarationKind::Function {
-                continue;
-            }
-            scope.functions.push(declaration.span);
-            if let Some(body) = &declaration.value.body {
+            if declaration.value.kind == DeclarationKind::Function
+                && let Some(body) = &declaration.value.body
+            {
                 scope.bodies.push(body.span);
             }
-            // `fn NAME`: the name is the first word after `fn` that spells
-            // the declared name, read from the retained tokens (a declaration
-            // carries its name as text, not as a span).
+            // The name is the first retained word inside the declaration
+            // that spells the declared name (`fn NAME`, `extern fn NAME`,
+            // `error NAME`, `type NAME`, …): a declaration carries its name
+            // as text, not as a span, and every head word before it is a
+            // keyword. A synthesized name (the concurrency profile's) matches
+            // no token and excludes nothing.
             if let Some(name) = tokens.iter().find(|token| {
                 within(declaration.span, token.span)
                     && token.span.start < token.span.end
                     && matches!(&token.kind, TokenKind::Word(word) if *word == declaration.value.name)
             }) {
-                scope.excluded.push(name.span);
+                scope.names.push(name.span);
+                if declaration.value.kind != DeclarationKind::Record {
+                    scope.excluded.push(name.span);
+                }
             }
             for parameter in &declaration.value.parameters {
                 scope.excluded.push(parameter.name.span);
@@ -84,11 +104,13 @@ impl SelectorScope {
     #[must_use]
     pub fn reads(&self, program: &SourceProgram, span: Span) -> bool {
         !program.in_library_binding(span)
-            && self
-                .functions
-                .iter()
-                .any(|function| within(*function, span))
             && !self.excluded.iter().any(|excluded| within(*excluded, span))
+    }
+
+    /// Whether `span` is a declaration's own name token (records included).
+    #[must_use]
+    pub fn is_declaration_name(&self, span: Span) -> bool {
+        self.names.iter().any(|name| within(*name, span))
     }
 
     /// The source function bodies' spans, braces included (the print-call
@@ -156,6 +178,7 @@ pub fn ambiguous_selector_use(program: &SourceProgram) -> Option<SourceDiagnosti
     (0..tokens.len()).find_map(|at| {
         let name = selector_word_at(tokens, at)?;
         if !scope.reads(program, tokens[at].span)
+            || scope.is_declaration_name(tokens[at].span)
             || !program
                 .declarations
                 .iter()

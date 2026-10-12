@@ -1,6 +1,7 @@
 //! Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: every token-stream route
-//! selector reads a word only where a source function is written
-//! (`qcore_frontend::route_selection::SelectorScope`), so a declaration name
+//! selector skips a declaration's own name, a parameter's name and a contract
+//! clause (`qcore_frontend::route_selection::SelectorScope`; a record's name
+//! stays read by constraint 14's `AGGREGATE-SELECTOR-WORDS`), so such a name
 //! never selects; a selecting use of a word the module also declares refuses
 //! at selection; and a `module contract;` module is never compiled on a
 //! source-only route. The census is `qr_lexical_selector_census.rs`; the Lean
@@ -91,14 +92,25 @@ fn concurrency_words_as_declaration_names_need_no_import() {
 }
 
 #[test]
-fn a_record_named_epoch_does_not_select_the_epoch_route() {
-    let module = admitted(
-        "type epoch { lo: i32, hi: i32 }\n\nfn one(x: i32) -> i32 {\n    return x + 1;\n}\n\nfn main() -> i32 {\n    return one(1);\n}\n",
-    );
+fn an_error_named_epoch_does_not_select_the_epoch_route() {
+    let module = admitted("error epoch { Failed; }\n\nfn main() -> i32 {\n    return 0;\n}\n");
     assert_eq!(
         module.execution_profile,
-        SourceExecutionProfile::ScalarCallsV1
+        SourceExecutionProfile::SequentialCleanupV1
     );
+}
+
+/// Constraint 14's `AGGREGATE-SELECTOR-WORDS` stands: a record is the one
+/// declaration whose name stays read, so a record named after a selector word
+/// is still refused at its declaration (`compiler/tests/source_record.rs`
+/// pins the `Q015` half), and a record named `epoch` still reaches the epoch
+/// route, which refuses it.
+#[test]
+fn a_record_named_epoch_still_reaches_the_epoch_route() {
+    let text = refusal(
+        "type epoch { lo: i32, hi: i32 }\n\nfn one(x: i32) -> i32 {\n    return x + 1;\n}\n\nfn main() -> i32 {\n    return one(1);\n}\n",
+    );
+    assert!(text.contains("Q600"), "{text}");
 }
 
 #[test]

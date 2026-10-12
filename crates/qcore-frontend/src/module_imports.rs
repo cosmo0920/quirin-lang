@@ -323,11 +323,11 @@ fn concurrency_span(program: &SourceProgram) -> Option<Span> {
         return Some(task.span);
     }
     let tokens = program.lexical_tokens();
-    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: the token loop reads a
-    // word only where a source function is written (body, parameter and
-    // result types, effect row), never a declaration's name — an
-    // `extern fn qcore_buffer_new(…)` in a contract module, a record named
-    // `spawn`, a parameter type `task<…>` of an extern declaration. The two
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: the token loop skips a
+    // declaration's own name and a parameter's name (an
+    // `extern fn qcore_buffer_new(…)` in a contract module was refused here at
+    // its name). A record's name and fields stay read (constraint 14's
+    // `AGGREGATE-SELECTOR-WORDS`), and so do types and effect rows. The two
     // exclusions below are kept as they were; the scope subsumes them.
     let scope = crate::route_selection::SelectorScope::of(program);
     for (index, token) in tokens.iter().enumerate() {

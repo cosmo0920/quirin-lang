@@ -21,16 +21,20 @@ The other selectors read function-body **statements** (`std_io_uses`,
 modelled here.
 
 The module is its retained token stream, each token tagged with its
-**position** (`route_selection::SelectorScope`): inside a source function's
-body or signature (read), or a source function's own name, a parameter's
-name, a contract clause, a library binding or another declaration (never
-read). Each selector tests the token at a read position against the tokens
-that follow it, as the Rust tests do (`scope.reads(head)` and the window).
+**position** (`route_selection::SelectorScope`). Never read: a declaration's
+own name (other than a record's), a parameter's name, a contract clause, a
+library binding. Read: bodies, signatures (types, effect and `throws` rows),
+other declaration text such as an alias's type, and a **record's name and
+fields** — constraint 14's recorded `AGGREGATE-SELECTOR-WORDS` decision keeps
+a record spelling a selector word refused at its declaration. Each selector
+tests the token at a read position against the tokens that follow it, as the
+Rust tests do (`scope.reads(head)` and the window).
 
 Proved: a selector fires only at a read position, so a module whose selector
-words all stand at declaration positions fires no selector, trips no gate and
-reaches the sequential route; a use that names a declared word refuses; and a
-`module contract;` module is never compiled on a source-only route.
+words all stand at name positions fires no selector, trips no gate and
+reaches the sequential route; a use that names a declared word refuses (a
+record's own name is not a use of it); and a `module contract;` module is
+never compiled on a source-only route.
 
 Premise (trust boundary 28): the Rust functions compute the positions from
 the frontend's declaration, body, parameter and contract spans and apply
@@ -45,21 +49,33 @@ namespace QCore.RouteSelection
 inductive Position where
   /-- Inside a source function's body. -/
   | body
-  /-- A source function's parameter or result type, or its effect or throws row. -/
+  /-- A parameter or result type, an effect or throws row, an alias's type:
+  declaration text that is not a name. -/
   | signature
-  | functionName
+  /-- A record's own name (read: `AGGREGATE-SELECTOR-WORDS`). -/
+  | recordName
+  /-- A record's field name (read: `AGGREGATE-SELECTOR-WORDS`). -/
+  | recordField
+  /-- The own name of any other declaration (`extern fn`, `fn`, `error`, …). -/
+  | declarationName
   | parameterName
   | contractClause
   | libraryBinding
-  /-- An extern declaration, record, error, alias or other declaration. -/
-  | otherDeclaration
   deriving DecidableEq, Repr
 
 /-- `SelectorScope::reads`. -/
 def Position.read : Position → Bool
   | .body => true
   | .signature => true
+  | .recordName => true
+  | .recordField => true
   | _ => false
+
+/-- A read position that is a **use** of a word, not a declaration's own name
+(`SelectorScope::is_declaration_name`). -/
+def Position.use : Position → Bool
+  | .recordName => false
+  | p => p.read
 
 /-- The tokens the token-stream selectors distinguish; every other is `other`. -/
 inductive Tok where
@@ -212,7 +228,7 @@ def named : Tok → Tok
 /-- A read head word that some selector's test holds at, naming a declared word. -/
 def ambiguous (m : Module) : Bool :=
   (windows m.sites).any fun w =>
-    w.1.pos.read && selectors.any (fun test => test w.1.tok w.2) &&
+    w.1.pos.use && selectors.any (fun test => test w.1.tok w.2) &&
       m.declared.contains (named w.1.tok)
 
 /-- The selection order of `compile_elaborated_source`, restricted to the
@@ -232,6 +248,9 @@ def route (m : Module) : Outcome :=
     | some r => if m.contract then .refused else .compiled r
     | none => .sequential
 
+theorem Position.read_of_use (p : Position) (h : p.use = true) : p.read = true := by
+  cases p <;> simp_all [Position.use, Position.read]
+
 theorem ambiguous_false_of_no_read_head (m : Module)
     (h : ∀ s ∈ m.sites, head s.tok = true → s.pos.read = false) :
     ambiguous m = false := by
@@ -243,7 +262,7 @@ theorem ambiguous_false_of_no_read_head (m : Module)
     simp only [Bool.and_eq_true] at hall
     rcases List.any_eq_true.mp hall.1.2 with ⟨test, htest, htrue⟩
     have := h w.1 (mem_windows _ w hw) (test_holds_only_at_a_head test htest _ _ htrue)
-    rw [hall.1.1] at this
+    rw [Position.read_of_use _ hall.1.1] at this
     cases this
 
 /-- **Declaration names leave a module on the sequential route**: no gate,
@@ -285,22 +304,37 @@ theorem contract_module_never_compiled (m : Module) (h : m.contract = true) :
 
 private def at_ (t : Tok) (p : Position) : Site := ⟨t, p⟩
 
-/-- `module contract; extern fn qcore_buffer_new(size: usize) -> … contract { … };`
+/-- `module contract; extern fn qcore_buffer_new(…) -> … contract { … };`
 (the print card's probe, refused `Q015` at the name before this card). -/
 def bufferNewContract : Module :=
-  ⟨[at_ .other .otherDeclaration, at_ .other .otherDeclaration,
-    at_ .bufferNew .otherDeclaration, at_ .other .otherDeclaration,
+  ⟨[at_ .other .declarationName, at_ .other .declarationName,
+    at_ .bufferNew .declarationName, at_ .other .signature,
     at_ .other .contractClause], [.bufferNew], true, false⟩
 
-/-- `type epoch { lo: i32, hi: i32 }` beside `fn main() -> i32 { return 0; }`. -/
-def epochRecord : Module :=
-  ⟨[at_ .other .otherDeclaration, at_ .epoch .otherDeclaration, at_ .lbrace .otherDeclaration,
+/-- `error epoch { Failed; }` beside `fn main() -> i32 { return 0; }`. -/
+def epochError : Module :=
+  ⟨[at_ .other .signature, at_ .epoch .declarationName, at_ .lbrace .signature,
     at_ .other .signature, at_ .lbrace .body, at_ .other .body], [.epoch], false, false⟩
 
 /-- `fn spawn() -> i32 { return 0; }`: a source function named after a word. -/
 def spawnFunction : Module :=
-  ⟨[at_ .other .signature, at_ .spawn .functionName, at_ .other .signature,
+  ⟨[at_ .other .signature, at_ .spawn .declarationName, at_ .other .signature,
     at_ .lbrace .body, at_ .other .body], [.spawn], false, false⟩
+
+/-- `type spawn { x: i32 }` without the import: a record's name stays read
+(`AGGREGATE-SELECTOR-WORDS`), so the gate still refuses it. -/
+def spawnRecord : Module :=
+  ⟨[at_ .other .signature, at_ .spawn .recordName, at_ .lbrace .signature,
+    at_ .other .recordField], [.spawn], false, false⟩
+
+/-- The same record with the import: its own name is not a use, so no
+ambiguity, and no route is selected by it. -/
+def spawnRecordImported : Module := { spawnRecord with concurrencyImport := true }
+
+/-- `type epoch { lo: i32 }`: still the epoch route (which refuses it). -/
+def epochRecord : Module :=
+  ⟨[at_ .other .signature, at_ .epoch .recordName, at_ .lbrace .signature,
+    at_ .other .recordField], [.epoch], false, false⟩
 
 /-- `fn main() -> i32 effects { spawn, join } { … }` without the import: the
 effect row is read, so the gate still requires the import. -/
@@ -323,20 +357,17 @@ def throwsRow : Module :=
   ⟨[at_ .throws .signature, at_ .less .signature, at_ .arithmeticError .signature,
     at_ .lbrace .body], [.other], false, false⟩
 
-/-- The same row in an extern declaration: not read. -/
-def externThrowsRow : Module :=
-  ⟨[at_ .throws .otherDeclaration, at_ .less .otherDeclaration,
-    at_ .arithmeticError .otherDeclaration], [.other], false, false⟩
-
 theorem buffer_new_contract_sequential : route bufferNewContract = .sequential := by decide
-theorem epoch_record_sequential : route epochRecord = .sequential := by decide
+theorem epoch_error_sequential : route epochError = .sequential := by decide
 theorem spawn_function_sequential : route spawnFunction = .sequential := by decide
+theorem spawn_record_requires_import : route spawnRecord = .importRequired := by decide
+theorem spawn_record_imported_sequential : route spawnRecordImported = .sequential := by decide
+theorem epoch_record_epoch_route : route epochRecord = .compiled .epochBound := by decide
 theorem effect_row_requires_import :
     route effectRowWithoutImport = .importRequired := by decide
 theorem body_buffer_new_tasks : route bodyBufferNew = .compiled .scopedTasks := by decide
 theorem body_buffer_new_declared_refused : route bodyBufferNewDeclared = .refused := by decide
 theorem body_buffer_new_contract_refused : route bodyBufferNewContract = .refused := by decide
 theorem throws_row_scalar : route throwsRow = .compiled .scalarCalls := by decide
-theorem extern_throws_row_sequential : route externThrowsRow = .sequential := by decide
 
 end QCore.RouteSelection

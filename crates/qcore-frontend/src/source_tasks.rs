@@ -28,8 +28,8 @@ pub fn has_source_tasks(source: &SourceProgram) -> bool {
     // `qcore_buffer_new` would otherwise select the task route from its own
     // spelling in an `extern library NAME;` declaration.
     //
-    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: and a word is read only
-    // where a source function is written, never as a declaration's name (an
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: and never as a
+    // declaration's own name or a parameter's name (an
     // `extern fn qcore_buffer_new(…)` selected this route before).
     let scope = crate::route_selection::SelectorScope::of(source);
     source.lexical_tokens().iter().any(|token| !source.in_library_binding(token.span) && scope.reads(source, token.span) && matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read" || word == "qcore_buffer_write"))
