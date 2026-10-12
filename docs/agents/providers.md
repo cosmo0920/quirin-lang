@@ -121,6 +121,45 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `EXCLUSIVE` table and these rows are not on this list: two held rows force
     the load on every run. No assertion was weakened. Retires
     `TSAN-JOIN-EDGE-ROW-LOAD-SENSITIVE`. `w45-tsan-rows-load-sensitive`.
+    **The seventh row, identified and repaired, and the verifier-host
+    fixtures' shared mechanisms (card `EXECUTION-QUOTA-LOAD-INDEPENDENCE`,
+    wave 48).** `LOAD-SENSITIVE-ROW-UNNAMED` is
+    `qcore-verifier-host::test::execution_quota`. Its four gate signatures are
+    three races, none a load threshold. On the base binary, CPU load up to
+    load1 ≈ 212, up to 12 concurrent copies and up to 7,228 same-UID tasks
+    moved no row. Each race was measured on its own dimension:
+    - **ETXTBSY.** A test thread's `fs::write` of `provider.sh` was
+      duplicated into a sibling thread's forked, not-yet-`exec`ed child.
+      Base: **6–10 of 20** runs under a close-delay shim. Fixed: **0 of 50**.
+    - **`Io(Broken pipe)`.** The fixtures never read their request, and the
+      host's first write could come after the fixture exited, either because
+      the host was descheduled or because `spawn` waits until every
+      concurrently forked sibling has `exec`ed. Base: **2 of 20 at a 10 ms
+      host stall, 3 of 10 at 20 ms**. Fixed: **0 of 50** at 20 and at 50 ms.
+    - **`quota_observed` None.** This was `EEXIST` on the per-execution cgroup
+      name `qcore-exec-{pid}-{nanos}`: two executions of one process could
+      read the same nanosecond. That is a **product defect** (a spurious
+      fail-closed refusal) and is repaired in
+      `process_quota::linux::session_name` with a per-process sequence number
+      (Lean `session_keys_are_injective_in_the_sequence`). Base: **18 of 20**
+      with `CLOCK_REALTIME` rounded to 1 ms. Fixed: **0 of 50**.
+    - **Not an RLIMIT_NPROC row.** The binary has no `max_processes` row and
+      its quota does not count the account.
+
+    The same two fixture mechanisms were this list's confined-fixture write
+    row and `memory_growth_beyond_the_declared_limit_is_bounded` (both
+    `Io(Broken pipe)`), and they gave ETXTBSY in every spawning row of
+    `enforced_process_limits`, the RLIMIT_NPROC row included. Base: **15 of
+    20** under the shim, **1–2 of 20** at a 20 ms stall. Fixed: **0 of 150**
+    each. The RLIMIT_NPROC row did not move at 3,000 extra same-UID processes
+    (0 of 15). Every verifier-host fixture now reads its whole request first
+    and is written by a separate process (`tests/support/process_fixture.rs`).
+    These rows are therefore **repaired rather than listed**, as the TSan rows
+    were. The wall-clock rows (`vp04_vp07_vp08`, `standalone_host`'s first
+    arm) and `real_packages_preserve_unknown_and_reject_mutations` are
+    untouched and stay. No assertion was weakened: the storm row no longer
+    accepts `Io`, and the per-tree row now asserts `Completed`.
+    `execution-quota-load-independence`.
 <!-- preserved:constraint-16:end -->
 
 <a id="constraint-17"></a>

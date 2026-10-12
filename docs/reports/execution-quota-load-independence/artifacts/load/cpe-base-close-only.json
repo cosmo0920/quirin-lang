@@ -1,0 +1,245 @@
+{
+ "binary": "bin-base/confined_process_execution",
+ "binary_sha256": "e76d1e230b3ea09b4ff88909fe157f94662336ca10e6b8824e531b87eeb50d58",
+ "nproc": 16,
+ "runs_per_level": 15,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_CLOSE_US=20000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 0.36,
+     "load1": 36.24,
+     "running_total": "1/5801",
+     "uid_tasks": 5261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.37,
+     "load1": 36.24,
+     "running_total": "1/5800",
+     "uid_tasks": 5260,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.06,
+     "load1": 36.24,
+     "running_total": "1/5798",
+     "uid_tasks": 5260,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_confined_profile_composes_with_the_limit_profile",
+       "panic": "thread 'the_confined_profile_composes_with_the_limit_profile' (3360699) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:440:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_confined_fixture_cannot_reach_a_listening_localhost_server",
+       "panic": "thread 'a_confined_fixture_cannot_reach_a_listening_localhost_server' (3360691) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:263:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 36.24,
+     "running_total": "2/2796",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (3360734) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.36,
+     "load1": 36.24,
+     "running_total": "2/2796",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.37,
+     "load1": 36.24,
+     "running_total": "1/2796",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.36,
+     "load1": 36.24,
+     "running_total": "2/2798",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.36,
+     "load1": 36.24,
+     "running_total": "1/2799",
+     "uid_tasks": 2258,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.63,
+     "load1": 36.24,
+     "running_total": "77/2878",
+     "uid_tasks": 2330,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.7,
+     "load1": 39.74,
+     "running_total": "77/2883",
+     "uid_tasks": 2334,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_confined_profile_composes_with_the_limit_profile",
+       "panic": "thread 'the_confined_profile_composes_with_the_limit_profile' (3361790) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:440:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (3361793) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.2,
+     "load1": 39.74,
+     "running_total": "81/2869",
+     "uid_tasks": 2324,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_confined_fixture_cannot_read_outside_the_admitted_paths",
+       "panic": "thread 'a_confined_fixture_cannot_read_outside_the_admitted_paths' (3367919) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:312:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 39.74,
+     "running_total": "77/2880",
+     "uid_tasks": 2333,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "x-cpe-close-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.54,
+     "load1": 39.74,
+     "running_total": "79/2841",
+     "uid_tasks": 2294,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (3380714) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      },
+      {
+       "test": "an_admitted_path_still_works_under_confinement",
+       "panic": "thread 'an_admitted_path_still_works_under_confinement' (3380709) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:376:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.65,
+     "load1": 43.77,
+     "running_total": "79/2838",
+     "uid_tasks": 2293,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (3387354) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.35,
+     "load1": 43.77,
+     "running_total": "81/2839",
+     "uid_tasks": 2293,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_confined_fixture_cannot_read_outside_the_admitted_paths",
+       "panic": "thread 'a_confined_fixture_cannot_read_outside_the_admitted_paths' (3393875) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:312:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_confined_fixture_cannot_write_outside_the_admitted_paths",
+       "panic": "thread 'a_confined_fixture_cannot_write_outside_the_admitted_paths' (3393876) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:349:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "the_confined_profile_composes_with_the_limit_profile",
+       "panic": "thread 'the_confined_profile_composes_with_the_limit_profile' (3393962) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:440:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      }
+     ],
+     "log": "x-cpe-close-logs/0-0-0-014.log"
+    }
+   ],
+   "failed_runs": 7,
+   "load_pid_count": 0
+  }
+ ]
+}

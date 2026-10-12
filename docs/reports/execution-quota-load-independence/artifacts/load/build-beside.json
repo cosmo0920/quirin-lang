@@ -1,0 +1,295 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 30,
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 16.75,
+     "running_total": "5/2785",
+     "uid_tasks": 2240,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 15.89,
+     "running_total": "5/2795",
+     "uid_tasks": 2249,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 15.1,
+     "running_total": "5/2810",
+     "uid_tasks": 2263,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 14.37,
+     "running_total": "5/2811",
+     "uid_tasks": 2266,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 13.0,
+     "running_total": "5/2814",
+     "uid_tasks": 2265,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 12.52,
+     "running_total": "7/2804",
+     "uid_tasks": 2257,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 12.16,
+     "running_total": "6/2803",
+     "uid_tasks": 2255,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 11.66,
+     "running_total": "6/2800",
+     "uid_tasks": 2256,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 11.01,
+     "running_total": "5/2807",
+     "uid_tasks": 2263,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 10.77,
+     "running_total": "5/2808",
+     "uid_tasks": 2262,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 10.47,
+     "running_total": "5/2793",
+     "uid_tasks": 2247,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 10.11,
+     "running_total": "5/2795",
+     "uid_tasks": 2249,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 9.86,
+     "running_total": "6/2792",
+     "uid_tasks": 2249,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 9.35,
+     "running_total": "5/2793",
+     "uid_tasks": 2252,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 9.16,
+     "running_total": "5/2793",
+     "uid_tasks": 2250,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 8.91,
+     "running_total": "6/2780",
+     "uid_tasks": 2239,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 8.67,
+     "running_total": "5/2775",
+     "uid_tasks": 2234,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 8.62,
+     "running_total": "5/2770",
+     "uid_tasks": 2228,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 7.97,
+     "running_total": "1/2759",
+     "uid_tasks": 2219,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 7.5,
+     "running_total": "1/2755",
+     "uid_tasks": 2215,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 7.14,
+     "running_total": "1/2761",
+     "uid_tasks": 2219,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 6.72,
+     "running_total": "1/2770",
+     "uid_tasks": 2228,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-021.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 6.0,
+     "running_total": "1/2769",
+     "uid_tasks": 2227,
+     "failures": [
+      {
+       "test": "a_forced_override_never_weakens_an_execution",
+       "panic": "thread 'a_forced_override_never_weakens_an_execution' (2696594) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:777:29: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "pilot4-logs/0-0-0-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.76,
+     "running_total": "2/2772",
+     "uid_tasks": 2230,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.54,
+     "running_total": "1/2762",
+     "uid_tasks": 2222,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-024.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.25,
+     "running_total": "1/2759",
+     "uid_tasks": 2217,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-025.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.99,
+     "running_total": "1/2759",
+     "uid_tasks": 2216,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-026.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.53,
+     "running_total": "1/2759",
+     "uid_tasks": 2216,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-027.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.33,
+     "running_total": "1/2763",
+     "uid_tasks": 2222,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-028.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.14,
+     "running_total": "1/2764",
+     "uid_tasks": 2223,
+     "failures": [],
+     "log": "pilot4-logs/0-0-0-029.log"
+    }
+   ],
+   "failed_runs": 1,
+   "load_pid_count": 0
+  }
+ ],
+ "env": []
+}

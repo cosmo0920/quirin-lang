@@ -1,0 +1,245 @@
+{
+ "binary": "bin-base/package_identity",
+ "binary_sha256": "7188d1d078f996187118ba44815fb03a67f51844383f3afdee54e73f5e145628",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_CLOSE_US=20000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 50,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.16,
+     "load1": 2.78,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.78,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.21,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.16,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "2/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.11,
+     "load1": 2.71,
+     "running_total": "1/2752",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-package_identity-fork-logs/0-0-0-0-0-0-50-019.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  }
+ ]
+}

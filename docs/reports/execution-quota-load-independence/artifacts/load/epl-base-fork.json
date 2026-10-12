@@ -1,0 +1,436 @@
+{
+ "binary": "bin-base/enforced_process_limits",
+ "binary_sha256": "94e2256a8e3b75080c55e1fffee2350cf9546d5d13fb4c3c90536627895932f6",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_CLOSE_US=20000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 50,
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 1.57,
+     "load1": 2.67,
+     "running_total": "1/2766",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2996721) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2996722) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2996719) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: ---- a_wall_clock_hang_is_killed_within_tolerance stdout ----"
+      },
+      {
+       "test": "a_wall_clock_hang_is_killed_within_tolerance",
+       "panic": "thread 'a_wall_clock_hang_is_killed_within_tolerance' (2996718) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:306:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2996716) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 3.1,
+     "running_total": "1/2763",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2996744) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2996747) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2996748) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "a_declared_process_limit_stops_the_fixture_from_forking",
+       "panic": "thread 'a_declared_process_limit_stops_the_fixture_from_forking' (2996742) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:389:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2996741) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 3.1,
+     "running_total": "1/2763",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 3.1,
+     "running_total": "1/2760",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2996808) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.62,
+     "load1": 3.17,
+     "running_total": "4/2762",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2996844) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2996842) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2996840) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: ---- memory_growth_beyond_the_declared_limit_is_bounded stdout ----"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2996843) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 3.17,
+     "running_total": "3/2762",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2996866) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 3.17,
+     "running_total": "1/2759",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 3.08,
+     "running_total": "2/2760",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2996938) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.57,
+     "load1": 3.08,
+     "running_total": "2/2766",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2996971) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2996969) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2996970) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2996964) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.57,
+     "load1": 2.99,
+     "running_total": "1/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2997001) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.12,
+     "load1": 2.99,
+     "running_total": "1/2765",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "a_declared_process_limit_stops_the_fixture_from_forking",
+       "panic": "thread 'a_declared_process_limit_stops_the_fixture_from_forking' (2997028) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:389:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2997033) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2997032) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2997027) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.62,
+     "load1": 2.99,
+     "running_total": "1/2765",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2997064) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2997065) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2997062) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: ---- a_wall_clock_hang_is_killed_within_tolerance stdout ----"
+      },
+      {
+       "test": "a_wall_clock_hang_is_killed_within_tolerance",
+       "panic": "thread 'a_wall_clock_hang_is_killed_within_tolerance' (2997061) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:306:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2997066) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2997059) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 2.99,
+     "running_total": "1/2762",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2997088) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 2.99,
+     "running_total": "1/2765",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2997117) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.99,
+     "running_total": "1/2763",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 2.91,
+     "running_total": "2/2760",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2997187) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2997186) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2997180) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.91,
+     "running_total": "3/2762",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.91,
+     "running_total": "1/2761",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.87,
+     "load1": 3.0,
+     "running_total": "1/2755",
+     "uid_tasks": 2214,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2997285) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.62,
+     "load1": 3.0,
+     "running_total": "1/2752",
+     "uid_tasks": 2213,
+     "stalls": 0,
+     "child_stalls": 1,
+     "failures": [
+      {
+       "test": "a_wall_clock_hang_is_killed_within_tolerance",
+       "panic": "thread 'a_wall_clock_hang_is_killed_within_tolerance' (2997313) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:306:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "output_flooding_beyond_the_cap_is_bounded",
+       "panic": "thread 'output_flooding_beyond_the_cap_is_bounded' (2997318) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:258:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(OutputLimit)"
+      },
+      {
+       "test": "descendants_do_not_outlive_the_execution",
+       "panic": "thread 'descendants_do_not_outlive_the_execution' (2997316) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:360:5: :: assertion `left == right` failed :: left: Err(Spawn(\"Text file busy (os error 26)\")) :: right: Err(Timeout)"
+      },
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2997314) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: ---- memory_growth_beyond_the_declared_limit_is_bounded stdout ----"
+      },
+      {
+       "test": "memory_growth_beyond_the_declared_limit_is_bounded",
+       "panic": "thread 'memory_growth_beyond_the_declared_limit_is_bounded' (2997317) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:209:5: :: assertion `left == right` failed: Text file busy (os error 26) :: left: SpawnFailed :: right: Terminated"
+      },
+      {
+       "test": "a_declared_but_unenforceable_limit_kind_is_refused",
+       "panic": "thread 'a_declared_but_unenforceable_limit_kind_is_refused' (2997311) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:447:34: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-fork-logs/0-0-0-0-0-0-50-019.log"
+    }
+   ],
+   "failed_runs": 15,
+   "load_pid_count": 0
+  }
+ ]
+}

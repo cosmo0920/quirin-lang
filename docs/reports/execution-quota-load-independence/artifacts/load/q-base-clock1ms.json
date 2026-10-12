@@ -1,0 +1,335 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_REALTIME_NS=1000000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.49,
+     "running_total": "1/2771",
+     "uid_tasks": 2230,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2974452) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974439-1791802480801000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.45,
+     "running_total": "1/2767",
+     "uid_tasks": 2226,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2974540) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974527-1791802486890000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.46,
+     "running_total": "1/2761",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2974615) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974603-1791802492976000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.46,
+     "running_total": "2/2761",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974684) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974683-1791802499063000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974683-1791802499063000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.67,
+     "running_total": "1/2763",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974714) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974713-1791802501595000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974713-1791802501595000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.61,
+     "running_total": "2/2763",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2974755) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974743-1791802504127000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.56,
+     "running_total": "1/2773",
+     "uid_tasks": 2231,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1ms-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.52,
+     "running_total": "1/2775",
+     "uid_tasks": 2233,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974920) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974919-1791802516300000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974919-1791802516300000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.52,
+     "running_total": "4/2775",
+     "uid_tasks": 2233,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974952) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974951-1791802518830000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974951-1791802518830000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.48,
+     "running_total": "1/2775",
+     "uid_tasks": 2233,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974984) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974983-1791802521359000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974983-1791802521359000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.57,
+     "load1": 2.48,
+     "running_total": "1/2769",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975012) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975011-1791802523892000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975011-1791802523892000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.44,
+     "running_total": "1/2767",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2975059) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975046-1791802526476000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.52,
+     "load1": 2.48,
+     "running_total": "2/2764",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975122) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975121-1791802532563000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975121-1791802532563000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.57,
+     "load1": 2.48,
+     "running_total": "3/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975153) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975152-1791802535095000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975152-1791802535095000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.41,
+     "running_total": "2/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2975197) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975184-1791802537677000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.38,
+     "running_total": "1/2771",
+     "uid_tasks": 2229,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1ms-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.57,
+     "load1": 2.38,
+     "running_total": "2/2769",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975353) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975352-1791802549851000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975352-1791802549851000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.43,
+     "running_total": "1/2762",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2975396) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975383-1791802552430000000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.57,
+     "load1": 2.47,
+     "running_total": "2/2768",
+     "uid_tasks": 2228,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975465) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975464-1791802558518000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975464-1791802558518000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.57,
+     "load1": 2.51,
+     "running_total": "2/2772",
+     "uid_tasks": 2229,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2975501) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975500-1791802561097000000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2975500-1791802561097000000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1ms-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 18,
+   "load_pid_count": 0
+  }
+ ]
+}

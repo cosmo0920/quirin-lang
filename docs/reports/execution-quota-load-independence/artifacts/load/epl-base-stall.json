@@ -1,0 +1,480 @@
+{
+ "binary": "bin-base/enforced_process_limits",
+ "binary_sha256": "94e2256a8e3b75080c55e1fffee2350cf9546d5d13fb4c3c90536627895932f6",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 20,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 1.86,
+     "load1": 3.06,
+     "running_total": "2/2765",
+     "uid_tasks": 2217,
+     "stalls": 86,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.06,
+     "running_total": "2/2765",
+     "uid_tasks": 2219,
+     "stalls": 93,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 3.06,
+     "running_total": "2/2763",
+     "uid_tasks": 2219,
+     "stalls": 92,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.81,
+     "load1": 3.06,
+     "running_total": "1/2766",
+     "uid_tasks": 2220,
+     "stalls": 87,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 3.05,
+     "running_total": "1/2773",
+     "uid_tasks": 2227,
+     "stalls": 92,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 3.05,
+     "running_total": "1/2772",
+     "uid_tasks": 2228,
+     "stalls": 86,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 3.05,
+     "running_total": "1/2774",
+     "uid_tasks": 2228,
+     "stalls": 88,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 3.05,
+     "running_total": "2/2772",
+     "uid_tasks": 2228,
+     "stalls": 98,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 3.05,
+     "running_total": "1/2774",
+     "uid_tasks": 2228,
+     "stalls": 92,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 3.04,
+     "running_total": "1/2776",
+     "uid_tasks": 2230,
+     "stalls": 96,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.04,
+     "running_total": "2/2775",
+     "uid_tasks": 2231,
+     "stalls": 90,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.04,
+     "running_total": "2/2776",
+     "uid_tasks": 2230,
+     "stalls": 90,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.04,
+     "running_total": "1/2770",
+     "uid_tasks": 2224,
+     "stalls": 91,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.81,
+     "load1": 3.04,
+     "running_total": "2/2768",
+     "uid_tasks": 2224,
+     "stalls": 95,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.81,
+     "load1": 3.04,
+     "running_total": "1/2770",
+     "uid_tasks": 2224,
+     "stalls": 93,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.85,
+     "load1": 3.04,
+     "running_total": "2/2769",
+     "uid_tasks": 2223,
+     "stalls": 88,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_well_behaved_provider_completes_under_the_enforced_profile",
+       "panic": "thread 'a_well_behaved_provider_completes_under_the_enforced_profile' (2995844) panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:484:46: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 3.04,
+     "running_total": "1/2767",
+     "uid_tasks": 2223,
+     "stalls": 95,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.03,
+     "running_total": "1/2769",
+     "uid_tasks": 2223,
+     "stalls": 86,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 3.03,
+     "running_total": "3/2769",
+     "uid_tasks": 2223,
+     "stalls": 87,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 3.03,
+     "running_total": "2/2761",
+     "uid_tasks": 2221,
+     "stalls": 97,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-20-019.log"
+    }
+   ],
+   "failed_runs": 1,
+   "load_pid_count": 0
+  },
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 50,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 1.9,
+     "load1": 2.95,
+     "running_total": "1/2765",
+     "uid_tasks": 2225,
+     "stalls": 33,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.86,
+     "load1": 2.87,
+     "running_total": "1/2766",
+     "uid_tasks": 2224,
+     "stalls": 38,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.85,
+     "load1": 2.87,
+     "running_total": "2/2765",
+     "uid_tasks": 2223,
+     "stalls": 33,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 2.87,
+     "running_total": "1/2765",
+     "uid_tasks": 2222,
+     "stalls": 32,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.89,
+     "load1": 2.88,
+     "running_total": "3/2764",
+     "uid_tasks": 2221,
+     "stalls": 39,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.89,
+     "load1": 2.88,
+     "running_total": "1/2757",
+     "uid_tasks": 2216,
+     "stalls": 37,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.88,
+     "load1": 2.81,
+     "running_total": "1/2759",
+     "uid_tasks": 2216,
+     "stalls": 37,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.81,
+     "running_total": "2/2752",
+     "uid_tasks": 2209,
+     "stalls": 39,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 2.81,
+     "running_total": "2/2756",
+     "uid_tasks": 2215,
+     "stalls": 38,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.85,
+     "load1": 2.75,
+     "running_total": "1/2758",
+     "uid_tasks": 2215,
+     "stalls": 41,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.89,
+     "load1": 2.75,
+     "running_total": "1/2758",
+     "uid_tasks": 2215,
+     "stalls": 39,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.84,
+     "load1": 2.75,
+     "running_total": "1/2756",
+     "uid_tasks": 2215,
+     "stalls": 38,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.86,
+     "load1": 2.77,
+     "running_total": "1/2760",
+     "uid_tasks": 2216,
+     "stalls": 41,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.77,
+     "running_total": "2/2758",
+     "uid_tasks": 2216,
+     "stalls": 37,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.83,
+     "load1": 2.77,
+     "running_total": "1/2761",
+     "uid_tasks": 2216,
+     "stalls": 39,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.9,
+     "load1": 2.71,
+     "running_total": "2/2766",
+     "uid_tasks": 2223,
+     "stalls": 36,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.86,
+     "load1": 2.71,
+     "running_total": "1/2767",
+     "uid_tasks": 2224,
+     "stalls": 39,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.87,
+     "load1": 2.73,
+     "running_total": "1/2767",
+     "uid_tasks": 2224,
+     "stalls": 34,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 2.73,
+     "running_total": "2/2767",
+     "uid_tasks": 2224,
+     "stalls": 36,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.86,
+     "load1": 2.73,
+     "running_total": "2/2766",
+     "uid_tasks": 2225,
+     "stalls": 42,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-base-enforced_process_limits-stall-logs/0-0-0-0-0-50-019.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  }
+ ]
+}

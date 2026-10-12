@@ -1,0 +1,1057 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 25,
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.71,
+     "running_total": "1/2770",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.49,
+     "running_total": "1/2769",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.29,
+     "running_total": "1/2764",
+     "uid_tasks": 2211,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 4.11,
+     "running_total": "1/2766",
+     "uid_tasks": 2213,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.94,
+     "running_total": "1/2766",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.64,
+     "running_total": "1/2767",
+     "uid_tasks": 2214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.51,
+     "running_total": "3/2779",
+     "uid_tasks": 2226,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.39,
+     "running_total": "1/2810",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.44,
+     "running_total": "1/2808",
+     "uid_tasks": 2255,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.4,
+     "running_total": "1/2806",
+     "uid_tasks": 2254,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.26,
+     "running_total": "1/2808",
+     "uid_tasks": 2256,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.16,
+     "running_total": "1/2805",
+     "uid_tasks": 2251,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.06,
+     "running_total": "2/2775",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.98,
+     "running_total": "1/2772",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.83,
+     "running_total": "1/2771",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.76,
+     "running_total": "1/2759",
+     "uid_tasks": 2212,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.7,
+     "running_total": "2/2770",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.64,
+     "running_total": "1/2766",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "1/2754",
+     "uid_tasks": 2211,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.66,
+     "running_total": "1/2760",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.61,
+     "running_total": "3/2761",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.64,
+     "running_total": "3/2773",
+     "uid_tasks": 2229,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-021.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.91,
+     "running_total": "2/2759",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.4,
+     "running_total": "1/2761",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.29,
+     "running_total": "1/2763",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/0-0-0-024.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  },
+  {
+   "sleepers": 1000,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.09,
+     "running_total": "1/3764",
+     "uid_tasks": 3224,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.0,
+     "running_total": "1/3759",
+     "uid_tasks": 3217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.92,
+     "running_total": "1/3765",
+     "uid_tasks": 3222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.94,
+     "running_total": "4/3762",
+     "uid_tasks": 3221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.94,
+     "running_total": "1/3763",
+     "uid_tasks": 3222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.03,
+     "running_total": "2/3760",
+     "uid_tasks": 3219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.11,
+     "running_total": "1/3755",
+     "uid_tasks": 3214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.94,
+     "running_total": "1/3760",
+     "uid_tasks": 3216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.86,
+     "running_total": "1/3761",
+     "uid_tasks": 3217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.79,
+     "running_total": "2/3768",
+     "uid_tasks": 3224,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.81,
+     "running_total": "1/3770",
+     "uid_tasks": 3225,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.74,
+     "running_total": "1/3757",
+     "uid_tasks": 3215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.63,
+     "running_total": "1/3761",
+     "uid_tasks": 3216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.58,
+     "running_total": "2/3755",
+     "uid_tasks": 3210,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.61,
+     "running_total": "1/3761",
+     "uid_tasks": 3216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.56,
+     "running_total": "2/3759",
+     "uid_tasks": 3214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.56,
+     "running_total": "1/3752",
+     "uid_tasks": 3209,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "2/3760",
+     "uid_tasks": 3215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.54,
+     "running_total": "1/3761",
+     "uid_tasks": 3216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.58,
+     "running_total": "1/3770",
+     "uid_tasks": 3224,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.53,
+     "running_total": "2/3768",
+     "uid_tasks": 3224,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.61,
+     "running_total": "1/3761",
+     "uid_tasks": 3217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-021.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.56,
+     "running_total": "1/3761",
+     "uid_tasks": 3215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.6,
+     "running_total": "2/3758",
+     "uid_tasks": 3213,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.55,
+     "running_total": "1/3762",
+     "uid_tasks": 3218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/1000-0-0-024.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 1000
+  },
+  {
+   "sleepers": 3000,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.58,
+     "running_total": "1/5757",
+     "uid_tasks": 5214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.53,
+     "running_total": "1/5762",
+     "uid_tasks": 5219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.57,
+     "running_total": "1/5766",
+     "uid_tasks": 5221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.52,
+     "running_total": "2/5768",
+     "uid_tasks": 5223,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "1/5800",
+     "uid_tasks": 5255,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.54,
+     "running_total": "1/5792",
+     "uid_tasks": 5247,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "1/5788",
+     "uid_tasks": 5245,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.46,
+     "running_total": "1/5789",
+     "uid_tasks": 5244,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.42,
+     "running_total": "1/5793",
+     "uid_tasks": 5248,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.36,
+     "running_total": "1/5763",
+     "uid_tasks": 5219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.41,
+     "running_total": "2/5760",
+     "uid_tasks": 5216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.45,
+     "running_total": "1/5759",
+     "uid_tasks": 5217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "1/5793",
+     "uid_tasks": 5250,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "2/5803",
+     "uid_tasks": 5260,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.54,
+     "running_total": "1/5798",
+     "uid_tasks": 5258,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "1/5787",
+     "uid_tasks": 5248,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.46,
+     "running_total": "1/5785",
+     "uid_tasks": 5246,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.42,
+     "running_total": "1/5757",
+     "uid_tasks": 5216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.36,
+     "running_total": "1/5761",
+     "uid_tasks": 5220,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.33,
+     "running_total": "2/5757",
+     "uid_tasks": 5215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.38,
+     "running_total": "3/5756",
+     "uid_tasks": 5216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.35,
+     "running_total": "2/5756",
+     "uid_tasks": 5218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-021.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.3,
+     "running_total": "1/5759",
+     "uid_tasks": 5218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.27,
+     "running_total": "1/5768",
+     "uid_tasks": 5227,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.33,
+     "running_total": "1/5764",
+     "uid_tasks": 5222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/3000-0-0-024.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 3000
+  },
+  {
+   "sleepers": 5000,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.69,
+     "running_total": "1/7762",
+     "uid_tasks": 7225,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.43,
+     "running_total": "2/7765",
+     "uid_tasks": 7225,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.31,
+     "running_total": "3/7759",
+     "uid_tasks": 7219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.29,
+     "running_total": "1/7753",
+     "uid_tasks": 7213,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.26,
+     "running_total": "3/7749",
+     "uid_tasks": 7214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 3.07,
+     "running_total": "1/7750",
+     "uid_tasks": 7215,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.98,
+     "running_total": "8/7758",
+     "uid_tasks": 7221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.98,
+     "running_total": "1/7767",
+     "uid_tasks": 7228,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.91,
+     "running_total": "2/7759",
+     "uid_tasks": 7220,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.85,
+     "running_total": "1/7758",
+     "uid_tasks": 7219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.94,
+     "running_total": "1/7752",
+     "uid_tasks": 7216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.94,
+     "running_total": "1/7760",
+     "uid_tasks": 7221,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.87,
+     "running_total": "1/7759",
+     "uid_tasks": 7219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.88,
+     "running_total": "1/7754",
+     "uid_tasks": 7214,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.89,
+     "running_total": "1/7756",
+     "uid_tasks": 7216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.82,
+     "running_total": "1/7756",
+     "uid_tasks": 7218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.75,
+     "running_total": "1/7766",
+     "uid_tasks": 7226,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.69,
+     "running_total": "1/7766",
+     "uid_tasks": 7226,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "2/7763",
+     "uid_tasks": 7223,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.54,
+     "running_total": "2/7762",
+     "uid_tasks": 7222,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "1/7755",
+     "uid_tasks": 7217,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.54,
+     "running_total": "1/7760",
+     "uid_tasks": 7220,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-021.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.61,
+     "running_total": "1/7760",
+     "uid_tasks": 7219,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.56,
+     "running_total": "1/7757",
+     "uid_tasks": 7216,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "1/7757",
+     "uid_tasks": 7218,
+     "stalls": 0,
+     "failures": [],
+     "log": "sleepers-logs/5000-0-0-024.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 5000
+  }
+ ],
+ "env": []
+}

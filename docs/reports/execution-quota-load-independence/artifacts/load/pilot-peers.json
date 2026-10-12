@@ -1,0 +1,269 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 6,
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 4,
+   "netns": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 7.06,
+     "running_total": "2/2933",
+     "uid_tasks": 2389,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 6.65,
+     "running_total": "1/2934",
+     "uid_tasks": 2392,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.94,
+     "running_total": "1/2935",
+     "uid_tasks": 2393,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.62,
+     "running_total": "2/2936",
+     "uid_tasks": 2393,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 5.49,
+     "running_total": "1/2933",
+     "uid_tasks": 2390,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.29,
+     "running_total": "1/2972",
+     "uid_tasks": 2423,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-4-0-005.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 4
+  },
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 8,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 6.4,
+     "running_total": "9/2785",
+     "uid_tasks": 2226,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 6.77,
+     "running_total": "12/2784",
+     "uid_tasks": 2224,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 7.27,
+     "running_total": "11/2788",
+     "uid_tasks": 2230,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 7.92,
+     "running_total": "13/2788",
+     "uid_tasks": 2229,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 8.4,
+     "running_total": "12/2784",
+     "uid_tasks": 2225,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.22,
+     "load1": 8.77,
+     "running_total": "12/2787",
+     "uid_tasks": 2226,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-0-8-005.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 8
+  },
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 12,
+   "netns": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.09,
+     "load1": 7.27,
+     "running_total": "1/3328",
+     "uid_tasks": 2776,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 6.85,
+     "running_total": "2/3323",
+     "uid_tasks": 2769,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 6.46,
+     "running_total": "1/3317",
+     "uid_tasks": 2765,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 6.1,
+     "running_total": "1/3315",
+     "uid_tasks": 2761,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 5.85,
+     "running_total": "1/3316",
+     "uid_tasks": 2761,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 5.34,
+     "running_total": "3/3292",
+     "uid_tasks": 2738,
+     "failures": [],
+     "log": "pilot2-logs/0-0-0-12-0-005.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 12
+  },
+  {
+   "sleepers": 0,
+   "spinners": 32,
+   "forkers": 4,
+   "peers": 8,
+   "netns": 4,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.15,
+     "load1": 12.29,
+     "running_total": "45/3165",
+     "uid_tasks": 2599,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 18.41,
+     "running_total": "45/3170",
+     "uid_tasks": 2607,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.11,
+     "load1": 20.94,
+     "running_total": "54/3207",
+     "uid_tasks": 2642,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.1,
+     "load1": 23.27,
+     "running_total": "52/3204",
+     "uid_tasks": 2644,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 25.73,
+     "running_total": "50/3199",
+     "uid_tasks": 2635,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.14,
+     "load1": 30.34,
+     "running_total": "45/3196",
+     "uid_tasks": 2631,
+     "failures": [],
+     "log": "pilot2-logs/0-32-4-8-4-005.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 48
+  }
+ ],
+ "env": []
+}

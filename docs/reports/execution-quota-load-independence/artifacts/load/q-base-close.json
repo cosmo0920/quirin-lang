@@ -1,0 +1,287 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_CLOSE_US=20000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.14,
+     "running_total": "1/2779",
+     "uid_tasks": 2230,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.26,
+     "running_total": "1/2783",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.32,
+     "running_total": "2/2784",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.3,
+     "running_total": "1/2773",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_forced_override_never_weakens_an_execution",
+       "panic": "thread 'a_forced_override_never_weakens_an_execution' (2959840) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:777:29: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      },
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2959850) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.27,
+     "running_total": "1/2780",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.25,
+     "running_total": "1/2778",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.29,
+     "running_total": "1/2777",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.26,
+     "running_total": "1/2774",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_forced_override_never_weakens_an_execution",
+       "panic": "thread 'a_forced_override_never_weakens_an_execution' (2960170) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:777:29: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      },
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2960180) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") ::  :: ---- the_quota_binds_without_depending_on_the_accounts_process_count stdout ----"
+      },
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2960179) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:590:9: :: the descendant must genuinely start for the next assertion to mean anything: quota=cgroup-v2-pids/6 peak=Some(1) rejections=Some(0) released=true ::  :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.24,
+     "running_total": "3/2775",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.22,
+     "running_total": "2/2777",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.19,
+     "running_total": "1/2785",
+     "uid_tasks": 2233,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.17,
+     "running_total": "1/2779",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2960525) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.16,
+     "running_total": "4/2780",
+     "uid_tasks": 2226,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2960607) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.14,
+     "running_total": "1/2780",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.13,
+     "running_total": "1/2775",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2960777) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.19,
+     "running_total": "1/2780",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.18,
+     "running_total": "4/2773",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_forced_override_never_weakens_an_execution",
+       "panic": "thread 'a_forced_override_never_weakens_an_execution' (2960936) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:777:29: :: called `Result::unwrap()` on an `Err` value: Spawn(\"Text file busy (os error 26)\") :: "
+      }
+     ],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.16,
+     "running_total": "1/2775",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.23,
+     "running_total": "2/2778",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.5,
+     "running_total": "1/2777",
+     "uid_tasks": 2221,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-close20-logs/0-0-0-0-0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 6,
+   "load_pid_count": 0
+  }
+ ]
+}

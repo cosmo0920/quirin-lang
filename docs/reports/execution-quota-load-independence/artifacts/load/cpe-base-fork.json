@@ -1,0 +1,348 @@
+{
+ "binary": "bin-base/confined_process_execution",
+ "binary_sha256": "e76d1e230b3ea09b4ff88909fe157f94662336ca10e6b8824e531b87eeb50d58",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_CLOSE_US=20000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 50,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 0.47,
+     "load1": 2.45,
+     "running_total": "1/2766",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.47,
+     "load1": 2.45,
+     "running_total": "3/2766",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.41,
+     "load1": 2.45,
+     "running_total": "1/2766",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2983774) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.47,
+     "load1": 2.45,
+     "running_total": "1/2765",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 2.45,
+     "running_total": "1/2765",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2983854) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: ---- the_evidence_records_the_achieved_confinement_and_its_boundary stdout ----"
+      },
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2983852) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 2.45,
+     "running_total": "1/2765",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2983892) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: ---- an_admitted_path_still_works_under_confinement stdout ----"
+      },
+      {
+       "test": "an_admitted_path_still_works_under_confinement",
+       "panic": "thread 'an_admitted_path_still_works_under_confinement' (2983887) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:376:46: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 2.45,
+     "running_total": "1/2765",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2983932) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.52,
+     "load1": 2.49,
+     "running_total": "1/2764",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2983970) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      },
+      {
+       "test": "an_admitted_path_still_works_under_confinement",
+       "panic": "thread 'an_admitted_path_still_works_under_confinement' (2983965) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:376:46: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: ---- the_evidence_records_the_achieved_confinement_and_its_boundary stdout ----"
+      },
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2983969) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.52,
+     "load1": 2.49,
+     "running_total": "1/2766",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2984009) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      },
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984010) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.47,
+     "load1": 2.49,
+     "running_total": "1/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 2.49,
+     "running_total": "3/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984102) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 2.49,
+     "running_total": "1/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984141) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 2.49,
+     "running_total": "1/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984180) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      },
+      {
+       "test": "an_admitted_path_still_works_under_confinement",
+       "panic": "thread 'an_admitted_path_still_works_under_confinement' (2984175) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:376:46: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 2.49,
+     "running_total": "1/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "an_admitted_path_still_works_under_confinement",
+       "panic": "thread 'an_admitted_path_still_works_under_confinement' (2984214) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:376:46: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 2.49,
+     "running_total": "2/2768",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2984257) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 2.49,
+     "running_total": "1/2767",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984297) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      },
+      {
+       "test": "the_evidence_records_the_achieved_confinement_and_its_boundary",
+       "panic": "thread 'the_evidence_records_the_achieved_confinement_and_its_boundary' (2984296) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:646:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") ::  :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 2.49,
+     "running_total": "1/2767",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984336) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 2.53,
+     "running_total": "1/2771",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 4,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984375) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 0.46,
+     "load1": 2.53,
+     "running_total": "1/2772",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 2.53,
+     "running_total": "1/2772",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [
+      {
+       "test": "the_package_root_is_admitted_read_and_execute_only",
+       "panic": "thread 'the_package_root_is_admitted_read_and_execute_only' (2984460) panicked at crates/qcore-verifier-host/tests/confined_process_execution.rs:407:35: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "c2-base-confined_process_execution-fork-logs/0-0-0-0-0-0-50-019.log"
+    }
+   ],
+   "failed_runs": 15,
+   "load_pid_count": 0
+  }
+ ]
+}

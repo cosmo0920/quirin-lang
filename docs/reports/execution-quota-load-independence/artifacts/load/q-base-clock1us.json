@@ -1,0 +1,255 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=shim/amplify.so",
+  "QCORE_AMPLIFY_REALTIME_NS=1000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.75,
+     "running_total": "1/2802",
+     "uid_tasks": 2260,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.85,
+     "running_total": "1/2803",
+     "uid_tasks": 2259,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.72,
+     "running_total": "2/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.9,
+     "running_total": "1/2765",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.83,
+     "running_total": "1/2767",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.76,
+     "running_total": "1/2773",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.7,
+     "running_total": "2/2774",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "1/2769",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.55,
+     "running_total": "1/2766",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.58,
+     "running_total": "1/2769",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.7,
+     "running_total": "1/2767",
+     "uid_tasks": 2228,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.64,
+     "running_total": "1/2767",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.62,
+     "running_total": "1/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "the_quota_binds_without_depending_on_the_accounts_process_count",
+       "panic": "thread 'the_quota_binds_without_depending_on_the_accounts_process_count' (2973813) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:584:68: :: DIAG per-tree None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2973801-1791802433570130000`: File exists (os error 17) :: "
+      }
+     ],
+     "log": "c3-base-clock1us-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.65,
+     "running_total": "2/2765",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.59,
+     "running_total": "1/2766",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.55,
+     "running_total": "1/2774",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.46,
+     "running_total": "1/2774",
+     "uid_tasks": 2234,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 2.53,
+     "load1": 2.46,
+     "running_total": "3/2769",
+     "uid_tasks": 2226,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2974228) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:458:28: :: DIAG storm None: outcome RefusedByProfile detail execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974227-1791802464009169000`: File exists (os error 17) result Err(Protocol(\"execution profile `linux-confined-v1` cannot install the declared `max_execution_processes` quota: could not create `/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2974227-1791802464009169000`: File exists (os error 17)\")) :: "
+      }
+     ],
+     "log": "c3-base-clock1us-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.42,
+     "running_total": "1/2776",
+     "uid_tasks": 2232,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.36,
+     "running_total": "1/2770",
+     "uid_tasks": 2230,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c3-base-clock1us-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 2,
+   "load_pid_count": 0
+  }
+ ]
+}

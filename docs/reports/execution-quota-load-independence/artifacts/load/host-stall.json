@@ -1,0 +1,360 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 10,
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 2,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.38,
+     "running_total": "1/2757",
+     "uid_tasks": 2214,
+     "stalls": 2831,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.35,
+     "running_total": "1/2755",
+     "uid_tasks": 2214,
+     "stalls": 2850,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.04,
+     "load1": 2.32,
+     "running_total": "1/2763",
+     "uid_tasks": 2221,
+     "stalls": 2843,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.04,
+     "load1": 2.29,
+     "running_total": "1/2759",
+     "uid_tasks": 2216,
+     "stalls": 2861,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.25,
+     "running_total": "2/2760",
+     "uid_tasks": 2217,
+     "stalls": 2839,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.04,
+     "load1": 2.23,
+     "running_total": "1/2757",
+     "uid_tasks": 2213,
+     "stalls": 2836,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.37,
+     "running_total": "1/2756",
+     "uid_tasks": 2214,
+     "stalls": 2846,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.34,
+     "running_total": "1/2753",
+     "uid_tasks": 2214,
+     "stalls": 2884,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.04,
+     "load1": 2.31,
+     "running_total": "1/2768",
+     "uid_tasks": 2225,
+     "stalls": 2865,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.26,
+     "running_total": "3/2768",
+     "uid_tasks": 2225,
+     "stalls": 2889,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-2-009.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  },
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 5,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.32,
+     "running_total": "1/2754",
+     "uid_tasks": 2213,
+     "stalls": 1158,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.3,
+     "running_total": "1/2761",
+     "uid_tasks": 2217,
+     "stalls": 1169,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.25,
+     "running_total": "1/2750",
+     "uid_tasks": 2210,
+     "stalls": 1157,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 2.31,
+     "running_total": "2/2759",
+     "uid_tasks": 2216,
+     "stalls": 1179,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.29,
+     "running_total": "2/2754",
+     "uid_tasks": 2210,
+     "stalls": 1154,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.34,
+     "running_total": "1/2751",
+     "uid_tasks": 2209,
+     "stalls": 1185,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.21,
+     "running_total": "1/2755",
+     "uid_tasks": 2210,
+     "stalls": 1178,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.19,
+     "running_total": "1/2755",
+     "uid_tasks": 2210,
+     "stalls": 1194,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.18,
+     "running_total": "1/2762",
+     "uid_tasks": 2219,
+     "stalls": 1186,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.05,
+     "load1": 2.16,
+     "running_total": "1/2753",
+     "uid_tasks": 2210,
+     "stalls": 1174,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-5-009.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  },
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 20,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.14,
+     "running_total": "2/2750",
+     "uid_tasks": 2206,
+     "stalls": 297,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.13,
+     "running_total": "1/2750",
+     "uid_tasks": 2206,
+     "stalls": 297,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.2,
+     "running_total": "1/2755",
+     "uid_tasks": 2211,
+     "stalls": 297,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 2.42,
+     "running_total": "1/2754",
+     "uid_tasks": 2214,
+     "stalls": 295,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.51,
+     "running_total": "2/2750",
+     "uid_tasks": 2209,
+     "stalls": 291,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.07,
+     "load1": 2.47,
+     "running_total": "1/2754",
+     "uid_tasks": 2210,
+     "stalls": 308,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2705362) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:499:49: :: DIAG control Io(\"Broken pipe (os error 32)\"): Some(ProcessExecutionRecord { profile: LinuxConfinedV1, enforced: Some(EnforcedLimits { profile: LinuxConfinedV1, wall_clock_ms: 30000, stdout_bytes: 4194304, stderr_bytes: 65536, process_group_kill: true, rlimits: [EnforcedRlimit { kind: \"core_bytes\", resource: \"RLIMIT_CORE\", soft: 0, hard: 0, source: ProfileDefault }, EnforcedRlimit { kind: \"cpu_seconds\", resource: \"RLIMIT_CPU\", soft: 31, hard: 31, source: DerivedFromWallClock }, EnforcedRlimit { kind: \"memory_bytes\", resource: \"RLIMIT_AS\", soft: 4294967296, hard: 4294967296, source: Declared }], unenforced_kinds: [], confinement: Some(Confinement { filesystem_mechanism: \"landlock\", network_mechanism: \"unshare(CLONE_NEWUSER|CLONE_NEWNET)\", kernel_release: \"7.0.0-38-generic\", landlock_abi: 8, landlock_min_abi: 1, handled_access_fs: \"0xffff\", handled_access_net: \"0x3\", network_access_declared: false, paths: [AdmittedPath { path: \"/tmp/qcore-p03f-storm-2705361-1791799258713656604/package\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/bin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/sbin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/lib\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/lib64\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/bin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/sbin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/lib\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/lib64\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/libexec\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/share\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.cache\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.conf\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.conf.d\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/localtime\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/urandom\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/zero\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/proc/self/maps\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/null\", access: ReadWrite, state: Admitted }, AdmittedPath { path: \"/tmp/qcore-p03f-storm-2705361-1791799258713656604/writable\", access: ReadWrite, state: Admitted }], unconfined: [\"filesystem access through a path admitted by the policy, including any Unix-domain socket bound beneath one\", \"the child's own address space, CPU and descendants beyond what the composed `linux-rlimit-v1` limits and the process-group kill bound\", \"System V IPC, POSIX message queues, and every namespace other than the user and network namespaces this profile unshares\", \"the system-call surface itself: no seccomp filter is installed, so any syscall the kernel permits under these credentials is reachable\", \"loopback traffic *within* the child's own network namespace, once the child brings `lo` up inside it\", \"filesystem access rights introduced after Landlock ABI 5, which this adapter does not handle on this ABI 8 kernel\"] }), process_quota: Some(ProcessQuota { kind: \"max_execution_processes\", mechanism: \"cgroup-v2-pids\", max_processes: 64, cgroup_parent: \"/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice\", parent_subtree_control: \"memory pids\" }) }), outcome: Io, wall_time_ms: 3033, stdout_bytes: 130, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"Broken pipe (os error 32)\", quota_observed: Some(QuotaObservation { mechanism: \"cgroup-v2-pids\", cgroup_path: \"/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2705361-1791799261731361161\", max_processes: 64, peak_processes: Some(42), quota_rejections: Some(0), released: true }), identity_window_us: None }) :: "
+      }
+     ],
+     "log": "stall1-logs/0-0-0-0-0-20-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.51,
+     "running_total": "1/2760",
+     "uid_tasks": 2216,
+     "stalls": 302,
+     "failures": [
+      {
+       "test": "a_declared_quota_bounds_a_fork_storm_in_this_execution_only",
+       "panic": "thread 'a_declared_quota_bounds_a_fork_storm_in_this_execution_only' (2705445) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:499:49: :: DIAG control Io(\"Broken pipe (os error 32)\"): Some(ProcessExecutionRecord { profile: LinuxConfinedV1, enforced: Some(EnforcedLimits { profile: LinuxConfinedV1, wall_clock_ms: 30000, stdout_bytes: 4194304, stderr_bytes: 65536, process_group_kill: true, rlimits: [EnforcedRlimit { kind: \"core_bytes\", resource: \"RLIMIT_CORE\", soft: 0, hard: 0, source: ProfileDefault }, EnforcedRlimit { kind: \"cpu_seconds\", resource: \"RLIMIT_CPU\", soft: 31, hard: 31, source: DerivedFromWallClock }, EnforcedRlimit { kind: \"memory_bytes\", resource: \"RLIMIT_AS\", soft: 4294967296, hard: 4294967296, source: Declared }], unenforced_kinds: [], confinement: Some(Confinement { filesystem_mechanism: \"landlock\", network_mechanism: \"unshare(CLONE_NEWUSER|CLONE_NEWNET)\", kernel_release: \"7.0.0-38-generic\", landlock_abi: 8, landlock_min_abi: 1, handled_access_fs: \"0xffff\", handled_access_net: \"0x3\", network_access_declared: false, paths: [AdmittedPath { path: \"/tmp/qcore-p03f-storm-2705444-1791799264800700959/package\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/bin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/sbin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/lib\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/lib64\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/bin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/sbin\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/lib\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/lib64\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/libexec\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/usr/share\", access: ReadExecute, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.cache\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.conf\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/ld.so.conf.d\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/etc/localtime\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/urandom\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/zero\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/proc/self/maps\", access: ReadOnly, state: Admitted }, AdmittedPath { path: \"/dev/null\", access: ReadWrite, state: Admitted }, AdmittedPath { path: \"/tmp/qcore-p03f-storm-2705444-1791799264800700959/writable\", access: ReadWrite, state: Admitted }], unconfined: [\"filesystem access through a path admitted by the policy, including any Unix-domain socket bound beneath one\", \"the child's own address space, CPU and descendants beyond what the composed `linux-rlimit-v1` limits and the process-group kill bound\", \"System V IPC, POSIX message queues, and every namespace other than the user and network namespaces this profile unshares\", \"the system-call surface itself: no seccomp filter is installed, so any syscall the kernel permits under these credentials is reachable\", \"loopback traffic *within* the child's own network namespace, once the child brings `lo` up inside it\", \"filesystem access rights introduced after Landlock ABI 5, which this adapter does not handle on this ABI 8 kernel\"] }), process_quota: Some(ProcessQuota { kind: \"max_execution_processes\", mechanism: \"cgroup-v2-pids\", max_processes: 64, cgroup_parent: \"/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice\", parent_subtree_control: \"memory pids\" }) }), outcome: Io, wall_time_ms: 3023, stdout_bytes: 130, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"Broken pipe (os error 32)\", quota_observed: Some(QuotaObservation { mechanism: \"cgroup-v2-pids\", cgroup_path: \"/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/qcore-exec-2705444-1791799267823292163\", max_processes: 64, peak_processes: Some(42), quota_rejections: Some(0), released: true }), identity_window_us: None }) :: "
+      }
+     ],
+     "log": "stall1-logs/0-0-0-0-0-20-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 6.08,
+     "load1": 2.47,
+     "running_total": "1/2765",
+     "uid_tasks": 2220,
+     "stalls": 311,
+     "failures": [
+      {
+       "test": "the_same_fixture_without_a_declared_quota_installs_none",
+       "panic": "thread 'the_same_fixture_without_a_declared_quota_installs_none' (2705546) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:531:31: :: called `Result::unwrap()` on an `Err` value: Io(\"Broken pipe (os error 32)\") :: "
+      }
+     ],
+     "log": "stall1-logs/0-0-0-0-0-20-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.06,
+     "load1": 2.4,
+     "running_total": "1/2763",
+     "uid_tasks": 2218,
+     "stalls": 288,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.09,
+     "load1": 2.45,
+     "running_total": "1/2752",
+     "uid_tasks": 2208,
+     "stalls": 306,
+     "failures": [],
+     "log": "stall1-logs/0-0-0-0-0-20-009.log"
+    }
+   ],
+   "failed_runs": 3,
+   "load_pid_count": 0
+  }
+ ],
+ "env": []
+}

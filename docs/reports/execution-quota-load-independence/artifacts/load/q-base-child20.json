@@ -1,0 +1,352 @@
+{
+ "binary": "bin-diag/execution_quota",
+ "binary_sha256": "96520c068ec65244b28c0684e5e2db7a84d0cb16d6bc001700bf6a418248c986",
+ "nproc": 16,
+ "runs_per_level": 30,
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 20,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.34,
+     "running_total": "2/2756",
+     "uid_tasks": 2214,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.31,
+     "running_total": "1/2764",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.29,
+     "running_total": "1/2763",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.26,
+     "running_total": "1/2767",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.38,
+     "running_total": "2/2767",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.35,
+     "running_total": "1/2765",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.32,
+     "running_total": "1/2769",
+     "uid_tasks": 2224,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.46,
+     "running_total": "1/2770",
+     "uid_tasks": 2225,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.39,
+     "running_total": "1/2767",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.36,
+     "running_total": "1/2764",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.33,
+     "running_total": "1/2761",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.3,
+     "running_total": "1/2763",
+     "uid_tasks": 2218,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.36,
+     "running_total": "1/2762",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.89,
+     "running_total": "1/2764",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.82,
+     "running_total": "3/2764",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.91,
+     "running_total": "2/2762",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 3.08,
+     "running_total": "2/2764",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.99,
+     "running_total": "1/2774",
+     "uid_tasks": 2228,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.99,
+     "running_total": "1/2763",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 3.07,
+     "running_total": "1/2761",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-019.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.98,
+     "running_total": "1/2760",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-020.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.91,
+     "running_total": "1/2768",
+     "uid_tasks": 2222,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-021.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.77,
+     "running_total": "1/2769",
+     "uid_tasks": 2223,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-022.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.7,
+     "running_total": "1/2765",
+     "uid_tasks": 2219,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-023.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.65,
+     "running_total": "2/2771",
+     "uid_tasks": 2226,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-024.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.6,
+     "running_total": "1/2763",
+     "uid_tasks": 2220,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-025.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.07,
+     "load1": 2.58,
+     "running_total": "1/2772",
+     "uid_tasks": 2227,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-026.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.12,
+     "load1": 2.69,
+     "running_total": "1/2762",
+     "uid_tasks": 2217,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-027.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.08,
+     "load1": 2.72,
+     "running_total": "1/2760",
+     "uid_tasks": 2215,
+     "stalls": 0,
+     "child_stalls": 2,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-028.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.13,
+     "load1": 2.74,
+     "running_total": "2/2761",
+     "uid_tasks": 2216,
+     "stalls": 0,
+     "child_stalls": 3,
+     "failures": [],
+     "log": "c1-base-child20-logs/0-0-0-0-0-0-20-029.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 0
+  }
+ ],
+ "env": []
+}

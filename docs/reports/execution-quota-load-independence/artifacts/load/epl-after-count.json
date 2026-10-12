@@ -1,0 +1,365 @@
+{
+ "binary": "bin-after/enforced_process_limits",
+ "binary_sha256": "4e56013d1d238647f687771f7235c4e82e9e0b3d8253cc4361a147dd4cce7f47",
+ "nproc": 16,
+ "runs_per_level": 15,
+ "env": [],
+ "levels": [
+  {
+   "sleepers": 3000,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 57.5,
+     "running_total": "1/5769",
+     "uid_tasks": 5229,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 53.13,
+     "running_total": "1/5768",
+     "uid_tasks": 5230,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 53.13,
+     "running_total": "1/5770",
+     "uid_tasks": 5230,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 49.12,
+     "running_total": "2/5801",
+     "uid_tasks": 5261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 49.12,
+     "running_total": "3/5801",
+     "uid_tasks": 5261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 49.12,
+     "running_total": "4/5801",
+     "uid_tasks": 5261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 45.51,
+     "running_total": "1/5798",
+     "uid_tasks": 5260,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 45.51,
+     "running_total": "1/5800",
+     "uid_tasks": 5260,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 45.51,
+     "running_total": "1/5801",
+     "uid_tasks": 5261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 42.18,
+     "running_total": "2/5799",
+     "uid_tasks": 5271,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 42.18,
+     "running_total": "2/5804",
+     "uid_tasks": 5259,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 39.04,
+     "running_total": "3/5804",
+     "uid_tasks": 5259,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 39.04,
+     "running_total": "3/5801",
+     "uid_tasks": 5263,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 39.04,
+     "running_total": "1/5798",
+     "uid_tasks": 5258,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.82,
+     "load1": 36.24,
+     "running_total": "2/5801",
+     "uid_tasks": 5262,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/3000-0-0-014.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 3000
+  },
+  {
+   "sleepers": 0,
+   "spinners": 64,
+   "forkers": 8,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 3.94,
+     "load1": 39.74,
+     "running_total": "77/2872",
+     "uid_tasks": 2324,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.72,
+     "load1": 43.77,
+     "running_total": "76/2836",
+     "uid_tasks": 2290,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.92,
+     "load1": 46.91,
+     "running_total": "83/2834",
+     "uid_tasks": 2289,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 4.27,
+     "load1": 49.72,
+     "running_total": "79/2869",
+     "uid_tasks": 2323,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 5.16,
+     "load1": 52.3,
+     "running_total": "84/2876",
+     "uid_tasks": 2329,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.49,
+     "load1": 54.76,
+     "running_total": "78/2877",
+     "uid_tasks": 2331,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.1,
+     "load1": 57.02,
+     "running_total": "77/2872",
+     "uid_tasks": 2324,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 3.78,
+     "load1": 59.26,
+     "running_total": "75/2873",
+     "uid_tasks": 2323,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.22,
+     "load1": 61.25,
+     "running_total": "76/2868",
+     "uid_tasks": 2320,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 5.5,
+     "load1": 62.83,
+     "running_total": "76/2835",
+     "uid_tasks": 2287,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 6.23,
+     "load1": 66.97,
+     "running_total": "76/2846",
+     "uid_tasks": 2296,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 4.61,
+     "load1": 68.41,
+     "running_total": "83/2840",
+     "uid_tasks": 2290,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 5.17,
+     "load1": 69.34,
+     "running_total": "78/2842",
+     "uid_tasks": 2292,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 5.43,
+     "load1": 70.43,
+     "running_total": "80/2843",
+     "uid_tasks": 2293,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 5.1,
+     "load1": 71.28,
+     "running_total": "79/2843",
+     "uid_tasks": 2293,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "c2-after-enforced-count-logs/0-64-8-014.log"
+    }
+   ],
+   "failed_runs": 0,
+   "load_pid_count": 72
+  }
+ ]
+}
