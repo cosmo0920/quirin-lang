@@ -83,15 +83,19 @@ EXCLUSIVE: dict[str, str] = {
         "accept_a_partial_request asserts a one-second wall-clock bound"
     ),
     "qcore-verifier-host::test::enforced_process_limits": (
-        "constraint 16: memory_growth_beyond_the_declared_limit_is_bounded "
-        "(Io(Broken pipe) under load) and the RLIMIT_NPROC row"
+        "process providers under declared timeouts with wall-clock tolerance "
+        "rows (constraint 16's Io(Broken pipe) and ETXTBSY shapes here were "
+        "repaired by card EXECUTION-QUOTA-LOAD-INDEPENDENCE)"
     ),
     "qcore-verifier-host::test::confined_process_execution": (
-        "constraint 16: the confined-fixture write test (Io(Broken pipe) under load)"
+        "process providers under a declared timeout (constraint 16's "
+        "confined-fixture Io(Broken pipe) row was repaired by card "
+        "EXECUTION-QUOTA-LOAD-INDEPENDENCE)"
     ),
     "qcore-verifier-host::test::execution_quota": (
-        "RLIMIT_NPROC rows count every process of the real UID; process "
-        "providers under declared timeouts"
+        "process providers under a declared 30 s timeout, and a fork-storm "
+        "control that compares task peaks of 3 s sleepers (no RLIMIT_NPROC "
+        "row: card EXECUTION-QUOTA-LOAD-INDEPENDENCE)"
     ),
     "qcore-verifier-host::test::package_identity": (
         "process providers under a declared 5 s timeout"
