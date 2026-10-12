@@ -142,6 +142,14 @@ No Safe -> non-Safe move, so no correction is named; no non-Safe -> Safe move.
 | A | `f70039e8…` | identical | identical | identical |
 | A + B | `78bbf9bd…` | identical | identical | identical |
 
+After the rebase onto `f4ea42ac7` (ROUTE-SELECTION-ORDER-RESTATED, which
+touched no gateway code), the rebased tip's binary (`01273f2a…`) reproduced
+the A + B run exactly: every report and null stream identical to BEFORE, and
+the parity stream identical to the pre-rebase A + B stream row for row
+([runs-rebased.txt](artifacts/runs-rebased.txt),
+[parity-rebased-vs-task-ab.txt](artifacts/parity-rebased-vs-task-ab.txt));
+wall time 515 / 76 / 38 s.
+
 The system and slice report digests differ from the brief's (`f596d64b…`,
 `ee98ad3d…`) with equal totals: those reports embed the measuring worktree's
 paths. Each run's `run.json` `binary_sha256` matches its binary.
@@ -172,10 +180,26 @@ out of scope in rule 15z, with the corpus measurement above). Registered:
 only `classify_simple`'s instruction; 7 indicative statements) and
 `GAPO-DECLINED-PROBE-CONSULTATIONS` (unmeasured).
 
+## Gate
+
+Standing gate on the rebased tip (base `f4ea42ac7`, code steps at
+`f3f512256`; [gate.json](gate.json), exits in [gate/](gate/), logs
+`private/gapr/gate-g2/`): `cargo check --workspace --all-targets` 0,
+submodule 0, `cargo fmt --check` 0, `clippy --locked` 0,
+`run_test_binaries.py` **487 units, 500 summaries, 7,938 passed, 0 failed, 14
+ignored**, exit 0; both reevaluation probes 0; `check_lean_audits.py` **316**
+audits passed (`AuditReturnCorrectness` added); the Python suite exited 1
+before the matrix regeneration (its one failure: the committed matrix's Lean
+count 315, derived 316), then `build_matrix.py --gate gate.json` 0, the
+Python suite **365 OK** (09b), the docs index 0 and its check 0. No provider
+gate: `providers/` is unchanged. An earlier gate on the pre-rebase tip
+(`gate-g1`) had the same shape (7,927 passed, 0 failed).
+
 ## Scripts
 
 `scripts/`: `build.sh`, `measure.sh`, `measure-binary.sh`, `heavy.sh`,
 `totals.py`, `compare.py`, `runs.py` (adapted from
 QR-LEXICAL-SELECTORS-DECLARATION-NAMES), `parity.py` (full parity comparison,
 Clang addresses normalised), `attribute.py`, `residual_casts.py`,
-`archive.sh`, `update_ledger.py`.
+`archive.sh`, `update_ledger.py`, `gate.sh`, `write_gate_json.py`,
+`finish-gate.sh`.

@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "ROUTE-SELECTION-ORDER-RESTATED card gate on base 1a399e6a1, every code step at 3acebdd4d, scripts docs/reports/route-selection-order-restated/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/rsor/gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 486 units, 499 summaries, 7,928 passed, 0 failed, 14 ignored, exit 0 (private/rsor/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 315 audits passed (AuditRouteSelection extended, no audit file added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
-  "workspace_tests": 7928,
+  "note": "GAPO-RETURN-CORRECTNESS card gate on base f4ea42ac7, every code step at f3f512256, scripts docs/reports/gapo-return-correctness/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapr/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 487 units, 500 summaries, 7,938 passed, 0 failed, 14 ignored, exit 0 (private/gapr/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 316 audits passed (AuditReturnCorrectness added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
+  "workspace_tests": 7938,
   "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
   "python_evidence_validator_tests": 365,
-  "lean_audits": 315,
+  "lean_audits": 316,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6986,6 +6986,7 @@
    "AuditRetentionGuard.lean",
    "AuditReturnCallActuals.lean",
    "AuditReturnCallCustody.lean",
+   "AuditReturnCorrectness.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnExpressionFamilies.lean",
    "AuditReturnPositionEscape.lean",
@@ -7081,7 +7082,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae0a4d904308f8621/docs/reports/route-selection-order-restated/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa070af7623564ca6/docs/reports/gapo-return-correctness/gate.json)"
  },
  "named_followups": [
   {

@@ -1,0 +1,13 @@
+{
+  "note": "GAPO-RETURN-CORRECTNESS card gate on base f4ea42ac7, every code step at f3f512256, scripts docs/reports/gapo-return-correctness/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapr/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 487 units, 500 summaries, 7,938 passed, 0 failed, 14 ignored, exit 0 (private/gapr/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 316 audits passed (AuditReturnCorrectness added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
+  "workspace_tests": 7938,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 316,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
