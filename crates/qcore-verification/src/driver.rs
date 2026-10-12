@@ -47,6 +47,8 @@ use qcore_frontend::whole_program::{
 };
 use qcore_verifier_host::VerifierRegistry;
 
+mod source_routes;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceFile {
     pub path: String,
@@ -1566,31 +1568,15 @@ fn compile_files_with_registry_inner(
     // `Buffer`, quantity types) and read by the contract loader whenever a
     // program selects them; it declares nothing callable here.
     let module = compile_elaborated_source(&parsed, &typed, mode, options, &ranges, target)?;
-    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: the completeness half of
-    // the contract-route guard. `route_selection::source_only_route` refuses a
-    // contract module before any source-only route lowers it, naming the
-    // route; it restates the route order, so a route added to
-    // `compile_elaborated_source` and not to it would slip past. Whatever
-    // route admitted it, a contract module that is not on the sequential
-    // route (the one that reads contract modules) is refused here.
-    if mode == SourceModuleMode::Contract
-        && !matches!(module.checked, CheckedSourceModule::Sequential(_))
-    {
-        let span = parsed
-            .declarations
-            .first()
-            .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
-        return Err(vec![map_raw_diagnostic(
-            "Q020",
-            SemanticPass::OrdinaryTypes,
-            span,
-            format!(
-                "a `module contract;` module declares contracts and is compiled on the sequential route only; it was admitted on the `{:?}` route, so it is refused",
-                module.execution_profile
-            ),
-            &ranges,
-        )]);
-    }
+    // Card `ROUTE-SELECTION-ORDER-RESTATED`: the completeness check that
+    // stood here (a contract module admitted on any checked variant but
+    // `Sequential` is refused) is deleted, being unreachable by construction:
+    // the contract guard in `compile_elaborated_source` reads the entry that
+    // is lowered, so a contract module is lowered only by the one entry that
+    // is not source-only, the sequential route, whose lowering builds
+    // `CheckedSourceModule::Sequential` on every admission
+    // (`source_routes::tests::only_the_last_entry_reads_contract_modules`;
+    // Lean `QCore.RouteSelection.contract_lowered_only_on_last`).
     // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` reads every extern
     // declaration of its module itself, against the imported struct names and
     // its selected contracts (a `ptr<const, Header>` is its vocabulary), so the
@@ -1676,71 +1662,41 @@ fn compile_elaborated_source(
     ranges: &[FileRange],
     target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    // Card `ROUTE-SELECTION-ORDER-RESTATED`: the route order is written once,
+    // in `source_routes::SOURCE_ROUTES`, and the module's route is selected
+    // once (first match, in table order). Every check below reads that one
+    // entry, in the order they had when each restated the order itself.
+    let (route, selection) = source_routes::select(parsed);
     // Card `W48-QR-CLOSURES`: a closure is lifted into a hidden worker that the
-    // two scoped-task routes lower — the task route and the composed task
-    // route. Every other route would meet a worker it does not model, so a
-    // module spelling a closure and selecting any other route is refused
-    // here, naming the route's residual, before that route reads it.
-    if let Some(closure) = parsed.closures().first() {
-        let refusal = if qcore_frontend::source_ffi::has_source_ffi(parsed) {
-            Some(
-                "a closure on the FFI route: `source.ffi.v1` hosts no task, so a closure — and \
-                 an imported struct it would capture — stays refused (W48-QR-TASK-FFI-STRUCT-WORKER)",
-            )
-        } else if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(parsed) {
-            Some(
-                "a closure on the field-footprint route: `source.bitfield-concurrency.v1` decides \
-                 named workers' field captures only (W48-QR-CLOSURE-ROUTES)",
-            )
-        } else if qcore_frontend::source_epoch_tasks::has_composed_epoch(parsed)
-            || qcore_frontend::source_epoch::has_source_epoch(parsed)
-        {
-            Some(
-                "a closure on an epoch route: an epoch task's worker is a named function the \
-                 epoch ledger reads by name, and a closure's hidden worker is not lowered there \
-                 yet (W48-QR-CLOSURE-EPOCH)",
-            )
-        } else if qcore_frontend::source_mutex::has_source_mutex(parsed) {
-            Some(
-                "a closure on the mutex route: `source.mutex.guard.v1` lowers named workers only, \
-                 and `share … under M` is a scope clause rather than a capture \
-                 (W48-QR-CLOSURE-MUTEX)",
-            )
-        } else if qcore_frontend::source_composed_tasks::has_source_composed_tasks(parsed)
-            || qcore_frontend::source_tasks::has_source_tasks(parsed)
-        {
-            None
-        } else {
-            Some(
-                "a closure is a spawn target of the scoped-task routes, inside a `thread scope` \
-                 of a module marked `concurrency checked;`",
-            )
-        };
-        if let Some(message) = refusal {
-            return Err(vec![map_raw_diagnostic(
-                "Q600",
-                SemanticPass::Concurrency,
-                closure.span,
-                message.to_owned(),
-                ranges,
-            )]);
-        }
+    // two scoped-task routes lower; on any other route it is refused here,
+    // naming the route's residual (`SourceRoute::closure`).
+    if let Some(closure) = parsed.closures().first()
+        && let source_routes::ClosureRule::Refuses(message) = route.closure
+    {
+        return Err(vec![map_raw_diagnostic(
+            "Q600",
+            SemanticPass::Concurrency,
+            closure.span,
+            message.to_owned(),
+            ranges,
+        )]);
     }
     // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`. Every token-stream
-    // selector below skips a declaration's own name, a parameter's name and
-    // a contract clause (`route_selection::SelectorScope`; a record's name
-    // stays read by constraint 14's `AGGREGATE-SELECTOR-WORDS`), so such a
-    // name never selects a route. Two fail-closed arms, in this order: a selecting use of a word
-    // the module also declares names both and is refused, never routed; and a
-    // `module contract;` module that any source-only route would select is
-    // refused (the print card's guard at `compile_scalar_calls`, generalised
-    // to every route but the sequential one).
+    // selector skips a declaration's own name, a parameter's name and a
+    // contract clause (`route_selection::SelectorScope`; a record's name stays
+    // read by constraint 14's `AGGREGATE-SELECTOR-WORDS`), so such a name
+    // never selects a route. A selecting use of a word the module also
+    // declares names both and is refused, never routed.
     if let Some(refusal) = qcore_frontend::route_selection::ambiguous_selector_use(parsed) {
         return Err(vec![map_diagnostic(refusal, ranges)]);
     }
-    if mode == SourceModuleMode::Contract
-        && let Some(route) = qcore_frontend::route_selection::source_only_route(parsed)
-    {
+    // The contract guard: a `module contract;` module declares contracts, and
+    // every source-only route lowers bodies it would run, so it is refused
+    // here, naming the route, before that route reads it. The guard reads the
+    // entry that is lowered below, so a route added to the table is guarded
+    // by construction; the one entry that is not source-only is the
+    // sequential route, which reads contract modules.
+    if mode == SourceModuleMode::Contract && route.source_only {
         let span = parsed
             .declarations
             .iter()
@@ -1751,412 +1707,23 @@ fn compile_elaborated_source(
             SemanticPass::OrdinaryTypes,
             span,
             format!(
-                "{route}: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+                "{}: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module",
+                route.name
             ),
             ranges,
         )]);
     }
-    // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` is selected before every
-    // other route, by `#import std.ffi.unsafe;` or a `struct!` declaration. A
-    // file that imports C is unsafe as a whole (user decision 2), so it must
-    // reach no route that would publish its results without the unsafe-FFI
-    // assumption, and a statement this route does not model is refused here
-    // rather than handed to a route that ignores the import. No file written
-    // before the card carries either marker (the census), so no existing
-    // module moves.
-    if qcore_frontend::source_ffi::has_source_ffi(parsed) {
-        return compile_ffi_source(parsed, typed, mode, options, ranges, target);
+    if let source_routes::Selection::Refused(refusal) = selection {
+        return Err(vec![map_diagnostic(refusal, ranges)]);
     }
-    // `source.bitfield-concurrency.v1`: selected before the generic task route
-    // because it composes the task parser's real `write OBJECT.FIELD` captures
-    // with an explicit source-derived layout. Falling through would discard
-    // the record storage-unit identity and refuse for the generic route's
-    // shallower reason rather than deciding the concurrent writes.
-    if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(parsed) {
-        return compile_bitfield_task_source(parsed, typed, mode, options, ranges);
-    }
-    if qcore_frontend::source_epoch_tasks::has_composed_epoch(parsed) {
-        // Selected before the pure epoch route: a module carrying both an epoch
-        // scope and the scoped-task profile's own marker is accounting for a
-        // real task region, and must not be handed to a route whose workers are
-        // declarations with no bodies.
-        return compile_composed_epoch_source(parsed, mode, options, ranges, target);
-    }
-    if qcore_frontend::source_epoch::has_source_epoch(parsed) {
-        // Selected before every other concurrent route: an epoch scope is also
-        // a `thread scope`, and a module that declares a quantitative epoch
-        // must not be handed to a route that models no accounting at all.
-        return compile_epoch_source(parsed, typed, mode, options, ranges);
-    }
-    if qcore_frontend::source_mutex::has_source_mutex(parsed) {
-        // Selected before the task route: a `thread scope` alone also selects
-        // scoped tasks, and a module declaring a mutex generation must not be
-        // handed to a route that models no mutex at all.
-        return compile_mutex_source(parsed, typed, mode, options, ranges, target);
-    }
-    // Selected after every *more specific* concurrent route and before the task
-    // route it composes (card `COMPOSE-CONCURRENCY`). The order is what keeps
-    // every other exclusion intact: a module carrying an epoch scope or a mutex
-    // generation never reaches this line, and a module that also extern-calls
-    // fails this conjunction and falls through to the task route with its
-    // existing `Q600`.
-    if qcore_frontend::source_composed_tasks::has_source_composed_tasks(parsed) {
-        return compile_composed_task_source(parsed, typed, mode, options, ranges, target);
-    }
-    if qcore_frontend::source_tasks::has_source_tasks(parsed) {
-        return task_route(parsed, typed, mode, options, ranges, false, target);
-    }
-    // Selected after every concurrent route and before both routes it composes
-    // (card `STD-IO-COMPOSE`). The order is what makes the composition safe to
-    // add: a module that spawns *and* prints, or spawns *and* extern-calls,
-    // never reaches here, so both concurrency exclusions keep their existing
-    // refusals; and a module using one of the two composed feature sets fails
-    // this conjunction and falls through to that route byte for byte.
-    if qcore_frontend::source_composed::has_source_composed(parsed) {
-        return compile_composed_source(parsed, typed, mode, options, ranges, target);
-    }
-    // Selected after the concurrent routes on purpose: a module that both
-    // spawns and calls an extern function stays with the task route, which
-    // keeps its existing refusal. Lifting that is a separate card, because a
-    // task worker is a separate checked model (design §3.4).
-    if qcore_frontend::source_extern::has_source_extern(parsed) {
-        return compile_extern_source(parsed, typed, mode, options, ranges, target);
-    }
-    // Card `STD-EVENT`. Selected after every concurrent route and after the
-    // extern route, and **before** the standard-IO and buffer routes, on the
-    // same principle those state: a module that both dispatches and prints
-    // stays with the more specific model.
-    //
-    // Since card `COMPOSE-EVENT-LINES` that model admits the lines rather than
-    // refusing them: `print`, `log` and `flush` are checked here through
-    // `source.std-io.v1`'s own reader and rendered through its own emitter, and
-    // one value form (`let NAME = dispatch ready E;`) names the byte a turn
-    // drained. Selection itself is unmoved, and the refusal a module that
-    // *buffers* and dispatches receives is unmoved with it — that composition
-    // would put two custody models in one entry and is a card of its own
-    // (`EVENT-BUFFER-PAYLOAD`). A `print` inside a dispatch turn is still not
-    // spellable, because v1 has no source-level callback body.
-    // Card `SOCKET-EVENT-COMPOSE`, selected immediately **above** the event
-    // route and reaching `compile_socket_source`, which now models both
-    // vocabularies. This retires the socket card's named follow-on: a module
-    // that dispatches and sockets is no longer refused by the event route.
-    //
-    // The conjunction is deliberately narrow — *exactly* these two special
-    // vocabularies and no third. A module that also buffers, strings or does
-    // HTTP declines this guard and reaches the route it reached before, keeping
-    // that route's existing refusal byte for byte (`EVENT-BUFFER-PAYLOAD`,
-    // `HTTP-V1-EVENT-COMPOSE`). Every concurrent route and the extern route are
-    // selected above all of it, so a module that dispatches, sockets and spawns
-    // still keeps its `Q600`.
-    if qcore_frontend::source_event::has_source_event(parsed)
-        && qcore_frontend::source_socket::has_source_socket(parsed)
-        && !qcore_frontend::source_std_buffer::has_source_buffer(parsed)
-        && !qcore_frontend::source_std_string::has_source_string(parsed)
-        && !qcore_frontend::source_http::has_source_http(parsed)
-    {
-        return compile_socket_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.socket.v1",
-                    code: "Q080",
-                    pass: SemanticPass::StandardSocket,
-                },
-                parsed,
-                ranges,
-            )
-        });
-    }
-    if qcore_frontend::source_event::has_source_event(parsed) {
-        return compile_event_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.event.v1",
-                    code: "Q058",
-                    pass: SemanticPass::Event,
-                },
-                parsed,
-                ranges,
-            )
-        });
-    }
-    // Selected last among the special routes, on the same principle as the
-    // extern route above: a module that both prints and spawns stays with the
-    // more specific model, which keeps its existing refusal for the statements
-    // it does not model. Lifting *that* composition is still a separate card —
-    // a worker is a separate checked model. The print-and-extern-call
-    // composition is no longer a refusal: card `STD-IO-COMPOSE` routes it above,
-    // and reaching this line means the module uses this route's statements and
-    // no extern call.
-    // Card `STD-BUFFER`, selected after the extern route above and before the
-    // standard-IO route below. Both neighbours are deliberate:
-    //
-    // * **After the extern route**, so a module that both allocates a buffer and
-    //   calls a declared extern function stays with the extern route and keeps
-    //   that route's existing refusal for the statements it does not model. That
-    //   is the answer to "does a buffer cross the extern boundary" — no, and the
-    //   refusal is an *existing* route's rather than a new one this card wrote.
-    //   A C04 pointer is an extentless `u8` projection, so admitting the
-    //   crossing would discard the extent this route carries and replace it with
-    //   a premise (`STD-BUFFER-EXTERN`).
-    // * **Before the standard-IO route**, so a module that both buffers and
-    //   prints reaches this route, which models both — its line-producing events
-    //   are `source.std-io.v1`'s own, read by that route's own reader and
-    //   rendered by that route's own emitter. A module that only prints fails
-    //   this conjunction and falls through byte for byte.
-    //
-    // Every concurrent route is selected above both, so a module that buffers
-    // and spawns never reaches here and keeps its `Q600`.
-    // Card `STRING-CONCAT`, and **the whole of the route-selection change it
-    // makes**: a module that spells `borrow_utf8(…)` reaches the string route,
-    // which since that card models both vocabularies, rather than the buffer
-    // route below. The condition is the bridge construct and nothing else, so
-    // a module that holds a buffer without spelling the bridge keeps the buffer
-    // route and that route's existing refusal — which is to say every program
-    // written before this card travels an identical code path, and the one new
-    // door is opened only by the one new spelling.
-    if qcore_frontend::source_std_string::has_source_string_bridge(parsed) {
-        return compile_string_source(parsed, typed, mode, options, ranges, target).and_then(
-            |module| {
-                refuse_unmodeled_functions(
-                    module,
-                    EntryOnlyRoute {
-                        name: "source.string.v1",
-                        code: "Q068",
-                        pass: SemanticPass::StandardString,
-                    },
-                    parsed,
-                    ranges,
-                )
-            },
-        );
-    }
-    // Card `AGGREGATES-V1`, and **the whole of the route-selection change it
-    // makes**: a module that declares a record type reaches the buffer route,
-    // which since that card models the aggregate as well. The condition is the
-    // **declaration and nothing else**, on the `STRING-CONCAT` precedent, so a
-    // module that holds a buffer without declaring one keeps the route it had
-    // and a module that declares none travels an identical code path. No
-    // program written before this card can satisfy the guard, because
-    // `type NAME { … }` did not parse at all: the one new door is opened only by
-    // the one new spelling.
-    //
-    // It is placed **here**, beside the buffer guard, for that route's own
-    // reasons: every concurrent route, the extern route and the event route are
-    // selected above it, so a module that declares a record and spawns, calls
-    // out or dispatches keeps that route's existing refusal — measured, not
-    // assumed.
-    if qcore_frontend::source_resource_calls::has_resource_calls(parsed) {
-        return compile_resource_call_source(parsed, typed, mode, options, ranges);
-    }
-    // Card `W48-QR-USABLE-RECORDS`, and **the whole of the route-selection
-    // change it makes**: a module that declares a record, holds no buffer and
-    // declares a function besides its entry reaches `source.scalar-calls.v1`,
-    // which since that card carries records of scalars across calls by
-    // value. Every such module was refused before — the buffer route models
-    // its entry only (`Q051`) — so the door opens only for modules that were
-    // refused, and a module with one function keeps the buffer route byte for
-    // byte.
-    if qcore_frontend::source_record::has_source_record(parsed)
-        && !qcore_frontend::source_std_buffer::has_source_buffer(parsed)
-        && parsed
-            .declarations
-            .iter()
-            .filter(|declaration| declaration.value.kind == DeclarationKind::Function)
-            .count()
-            > 1
-    {
-        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
-    }
-    if qcore_frontend::source_std_buffer::has_source_buffer(parsed)
-        || qcore_frontend::source_record::has_source_record(parsed)
-    {
-        return compile_buffer_source(parsed, typed, mode, options, ranges, target).and_then(
-            |module| {
-                refuse_unmodeled_functions(
-                    module,
-                    EntryOnlyRoute {
-                        name: "source.buffer.v1",
-                        code: "Q051",
-                        pass: SemanticPass::StandardBuffer,
-                    },
-                    parsed,
-                    ranges,
-                )
-            },
-        );
-    }
-    // Card `STRING-SLICE`, selected after the buffer route above and before the
-    // standard-IO route below. Both neighbours are deliberate, on exactly the
-    // principle its two siblings state about each other:
-    //
-    // * **After the buffer route**, so a module that both holds an owned buffer
-    //   and constructs a string view stays with the buffer route and keeps that
-    //   route's existing refusal for the statements it does not model. That is
-    //   the v1 answer to amendment §5 — `std.buffer` is not implicitly
-    //   convertible to `string` — and the refusal is an *existing* route's
-    //   rather than a new one this card wrote. Admitting the composition needs a
-    //   checked UTF-8 borrow or freeze with mutation exclusion, which is the
-    //   named follow-on `STRING-SLICE-BUFFER-BORROW`.
-    // * **Before the standard-IO route**, so a module that both slices and
-    //   prints reaches this route, which models both — its line-producing events
-    //   are `source.std-io.v1`'s own, read by that route's own reader and
-    //   rendered by that route's own emitter, over **scalars only**. A module
-    //   that only prints fails this conjunction and falls through byte for byte.
-    //
-    // The extern route is selected above both, so a module that constructs a
-    // string and calls a declared extern function never reaches here and keeps
-    // that route's existing refusal. That is amendment §6's crossing boundary,
-    // measured rather than asserted: no C04 pointer contract transports this
-    // aggregate or its extent, and supplying one is `STRING-SLICE-ABI`. Every
-    // concurrent route is selected above all three, so a module that strings and
-    // spawns keeps its `Q600`.
-    // Card `HTTP-QUIRIN-V1`, selected after the buffer route above and **before**
-    // both routes it composes. All three neighbours are deliberate, on exactly
-    // the principle every sibling states about the others:
-    //
-    // * **After the buffer route**, so a module that holds an owned buffer and
-    //   declares an HTTP message stays with the buffer route and keeps that
-    //   route's existing refusal. A message body that is a buffer's extent
-    //   rather than a literal is the named follow-on `HTTP-V1-BUFFER-CONTENT`.
-    // * **Before the string route**, so a module that declares a message and
-    //   binds a payload with `let s = "…";` reaches this route, which models
-    //   both — its bound views are `source.string.v1`'s own literal
-    //   constructions, decoded by that route's own decoder. A module that only
-    //   slices falls through byte for byte, and a module that *slices* while
-    //   doing HTTP is refused here by name (`HTTP-V1-STRING-COMPOSE`): this
-    //   route models no `len`, no slice and no rendered text.
-    // * **Before the socket route**, so a module that declares a message and
-    //   sends it reaches this route, which models both — its transport
-    //   statements are `source.socket.v1`'s own, read by **that route's own
-    //   reader** (`source_socket::socket_statement`) and checked by that route's
-    //   own unedited checker. A module that only sockets fails this conjunction
-    //   and falls through byte for byte.
-    //
-    // The event route is selected above this one, so a module that dispatches and
-    // does HTTP stays with `source.event.v1` (`HTTP-V1-EVENT-COMPOSE`); the
-    // extern route is above all of them, and every concurrent route above that,
-    // so a module that does HTTP and spawns keeps its `Q600`.
-    if qcore_frontend::source_http::has_source_http(parsed) {
-        return compile_http_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.http.v1",
-                    code: "Q090",
-                    pass: SemanticPass::StandardHttp,
-                },
-                parsed,
-                ranges,
-            )
-        });
-    }
-    if qcore_frontend::source_std_string::has_source_string(parsed) {
-        return compile_string_source(parsed, typed, mode, options, ranges, target).and_then(
-            |module| {
-                refuse_unmodeled_functions(
-                    module,
-                    EntryOnlyRoute {
-                        name: "source.string.v1",
-                        code: "Q068",
-                        pass: SemanticPass::StandardString,
-                    },
-                    parsed,
-                    ranges,
-                )
-            },
-        );
-    }
-    // Card `QUIRIN-SOCKET-V1`, selected after the buffer and string routes above
-    // and before the standard-IO route below. All three neighbours are
-    // deliberate, on exactly the principle the two siblings state about each
-    // other:
-    //
-    // * **After the buffer route**, so a module that both holds an owned buffer
-    //   and opens a socket stays with the buffer route and keeps that route's
-    //   existing refusal for the statements it does not model. That is the v1
-    //   answer to "can a send carry a buffer" — no, and the refusal is an
-    //   *existing* route's rather than a new one this card wrote. Admitting it
-    //   needs a payload that is a borrowed extent rather than a list of
-    //   check-time constants, which is the named follow-on
-    //   `SOCKET-BUFFER-PAYLOAD`.
-    // * **After the string route**, for the same reason and with the same
-    //   follow-on name for text (`SOCKET-STRING-PAYLOAD`).
-    // * **Before the standard-IO route**, so a module that both receives a byte
-    //   and prints it reaches this route, which models both — its line-producing
-    //   statements are `source.std-io.v1`'s own, read by that route's own reader
-    //   and rendered by that route's own emitter, over **scalars only**. A module
-    //   that only prints fails this conjunction and falls through byte for byte.
-    //
-    // The event route is selected above this one, so a module that dispatches and
-    // sockets stays with `source.event.v1` and keeps its refusal; composing the
-    // two is the named follow-on `SOCKET-EVENT-COMPOSE`. The extern route is
-    // selected above all four, and every concurrent route above that, so a module
-    // that sockets and spawns keeps its `Q600`.
-    if qcore_frontend::source_socket::has_source_socket(parsed) {
-        return compile_socket_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.socket.v1",
-                    code: "Q080",
-                    pass: SemanticPass::StandardSocket,
-                },
-                parsed,
-                ranges,
-            )
-        });
-    }
-    // Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`: selected by a `print (` call
-    // at a statement head inside a source function body, never by the token
-    // pair alone (a declaration name, an `extern fn print(...)` or a contract
-    // clause); an ambiguous pair refuses here rather than being routed.
-    match qcore_frontend::source_scalar_calls::print_call_selection(parsed) {
-        qcore_frontend::source_scalar_calls::PrintCallSelection::Selected => {
-            return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
-        }
-        qcore_frontend::source_scalar_calls::PrintCallSelection::Ambiguous(refusal) => {
-            return Err(vec![map_diagnostic(refusal, ranges)]);
-        }
-        qcore_frontend::source_scalar_calls::PrintCallSelection::Absent => {}
-    }
-    // Card `W48-QR-SCALAR-TYPES`, and the whole of the route-selection change
-    // it makes. A module with `std.io` lines and scalar-call syntax reaches the
-    // scalar route, which since that card renders those lines through
-    // `source.std-io.v1`'s own reader, **only when the std.io lowering refuses
-    // it**. Every module the std.io lowering admits keeps that route byte for
-    // byte — including an std.io entry beside an ignored helper function,
-    // which that route admits today — so the door opens only for modules that
-    // were refused.
-    if qcore_frontend::source_std_io::has_source_std_io(parsed) {
-        if qcore_frontend::source_scalar_calls::has_scalar_calls(parsed)
-            && (std_io_lowering_refuses(parsed, typed, mode, options)
-                || has_unmodeled_function(parsed, typed, mode, options))
-        {
-            return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
-        }
-        return compile_std_io_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.std-io.v1",
-                    code: "Q030",
-                    pass: SemanticPass::StandardIo,
-                },
-                parsed,
-                ranges,
-            )
-        });
-    }
-    if qcore_frontend::source_scalar_calls::has_scalar_calls(parsed) {
-        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
-    }
-    // Card `W48-QR-SCALAR-TYPES-R2`, item 0: the sequential route checks
-    // every parameter annotation it admits, after its own passes so that
-    // every refusal it gave before keeps its bytes.
-    compile_sequential_source(parsed, typed, mode, options, ranges)
-        .and_then(|module| check_sequential_parameters(parsed, target, ranges).map(|()| module))
+    (route.lower)(&source_routes::RouteInput {
+        parsed,
+        typed,
+        mode,
+        options,
+        ranges,
+        target,
+    })
 }
 
 /// Card `W48-QR-SCALAR-TYPES-R2`, item 0 (`W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES`).
@@ -8724,27 +8291,13 @@ fn compile_scalar_calls(
     target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_core::scalar_calls::{self, Type};
-    // Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`, the secondary guard: a
-    // `module contract;` module states contracts for functions this program
-    // calls and declares nothing this route runs, so it is never lowered here,
-    // whichever of the three selection sites above reached this function. The
-    // primary fix is the print-call selector, which no longer reads a
-    // declaration name; this guard is defence in depth for a contract module
-    // that some other selector would misread.
-    if mode == SourceModuleMode::Contract {
-        let span = parsed
-            .declarations
-            .iter()
-            .find(|declaration| declaration.value.kind == DeclarationKind::Function)
-            .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
-        return Err(vec![map_raw_diagnostic(
-            "Q020",
-            SemanticPass::OrdinaryTypes,
-            span,
-            "source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module".into(),
-            ranges,
-        )]);
-    }
+    // Card `QR-PRINT-ROUTE-MATCHES-DECLARATION`'s secondary guard (a
+    // `module contract;` module is never lowered here) is deleted by card
+    // `ROUTE-SELECTION-ORDER-RESTATED`: this function is called only by the
+    // lowering entries of four source-only rows of `source_routes::SOURCE_ROUTES`,
+    // and the contract guard refuses a contract module on every such row
+    // before its lowering runs (Lean
+    // `QCore.RouteSelection.contract_never_lowered_on_source_only`).
     let lowered = qcore_frontend::source_scalar_calls::lower(parsed)
         .map_err(|e| vec![map_diagnostic(e, ranges)])?;
     let report = |e: scalar_calls::Refusal| {

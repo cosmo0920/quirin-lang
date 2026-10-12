@@ -34,7 +34,9 @@ Proved: a selector fires only at a read position, so a module whose selector
 words all stand at name positions fires no selector, trips no gate and
 reaches the sequential route; a use that names a declared word refuses (a
 record's own name is not a use of it); and a `module contract;` module is
-never compiled on a source-only route.
+never compiled on a source-only route. Card ROUTE-SELECTION-ORDER-RESTATED
+adds the driver's one route table (the last section): the guard covers
+exactly the source-only entries of the table selection reads.
 
 Premise (trust boundary 28): the Rust functions compute the positions from
 the frontend's declaration, body, parameter and contract spans and apply
@@ -369,5 +371,300 @@ theorem body_buffer_new_tasks : route bodyBufferNew = .compiled .scopedTasks := 
 theorem body_buffer_new_declared_refused : route bodyBufferNewDeclared = .refused := by decide
 theorem body_buffer_new_contract_refused : route bodyBufferNewContract = .refused := by decide
 theorem throws_row_scalar : route throwsRow = .compiled .scalarCalls := by decide
+
+/-! ## The selector table (card ROUTE-SELECTION-ORDER-RESTATED)
+
+`driver::source_routes::SOURCE_ROUTES` (`crates/qcore-verification/src/driver/source_routes.rs`)
+is the driver's route order, written once. `compile_elaborated_source` selects
+one entry (`source_routes::select`: the first whose selector holds) and reads
+it for the closure refusal, the contract guard and the lowering. Each entry is
+modelled by its name, its selector over an abstract module, whether it is
+source-only and whether it hosts closures; the ambiguous-use refusal and an
+entry's selection refusal precede the lowering and are abstracted.
+
+Proved, for every table: first match is the if-chain in table order
+(`choose_eq_chain`); the guard refuses a contract module exactly when the
+selected entry is source-only (`guard_refuses_iff_source_only`), so an entry
+added anywhere is guarded (`added_entry_is_guarded`); what is lowered is the
+selected entry (`lowered_is_chosen`); a contract module is never lowered on a
+source-only entry (`contract_never_lowered_on_source_only`) and, when every
+entry but the last is source-only, only on the last
+(`contract_lowered_only_on_last`) — the argument that deletes the completeness
+check after routing and the guard in `compile_scalar_calls`; and a closure is
+lowered only on an entry that hosts closures. For the driver's table
+(`driverTable`, pinned identically by `source_routes::tests`): a contract
+module is lowered only on the sequential route, a closure only on the two
+scoped-task routes, and a module that dispatches and sockets is refused naming
+the socket route, where the base's restated list named the event route.
+
+Premise (trust boundary 28): the Rust table's rows are `driverTable`'s, in
+order (`the_table_is_the_pinned_order`, `closure_rules_follow_the_table`), and
+the selectors are pure; agreement is checked by the unit tests and the route
+censuses, not proved here.
+-/
+
+/-- One row of the driver's route table, over an abstract module type. -/
+structure Entry (α : Type) where
+  name : String
+  selects : α → Bool
+  sourceOnly : Bool
+  hostsClosures : Bool
+
+/-- `source_routes::select`: the first entry whose selector holds. -/
+def choose {α : Type} (table : List (Entry α)) (m : α) : Option (Entry α) :=
+  table.find? fun e => e.selects m
+
+/-- The if-chain the table replaced: one `if` per entry, in table order. -/
+def chain {α : Type} : List (Entry α) → α → Option (Entry α)
+  | [], _ => none
+  | e :: rest, m => if e.selects m then some e else chain rest m
+
+/-- **Same order, same first match**: reading the table first-match is the
+if-chain written in the table's order. -/
+theorem choose_eq_chain {α : Type} (table : List (Entry α)) (m : α) :
+    choose table m = chain table m := by
+  induction table with
+  | nil => rfl
+  | cons e rest ih =>
+    unfold choose at ih ⊢
+    cases h : e.selects m <;> simp [chain, h, ih]
+
+/-- What `compile_elaborated_source` does with the selected entry. -/
+inductive Dispatch (α : Type) where
+  /-- `Q600`: a closure on an entry that does not host closures. -/
+  | closureRefused (name : String)
+  /-- `Q020`: a contract module on a source-only entry, naming it. -/
+  | guardRefused (name : String)
+  /-- The entry's lowering runs. -/
+  | lowered (e : Entry α)
+  /-- No entry selected (excluded when the last entry always selects). -/
+  | unselected
+
+/-- The driver's reading of the one selected entry, in its order: the closure
+refusal, then the contract guard, then the lowering. -/
+def dispatch {α : Type} (table : List (Entry α)) (contract closure : Bool) (m : α) :
+    Dispatch α :=
+  match choose table m with
+  | none => .unselected
+  | some e =>
+    if closure && !e.hostsClosures then .closureRefused e.name
+    else if contract && e.sourceOnly then .guardRefused e.name
+    else .lowered e
+
+theorem choose_mem {α : Type} {table : List (Entry α)} {m : α} {e : Entry α}
+    (h : choose table m = some e) : e ∈ table :=
+  List.mem_of_find?_eq_some h
+
+/-- **The guard covers exactly the source-only entries of the table that
+selection reads**: a contract module (spelling no closure) is refused by the
+guard exactly when its selected entry is source-only, naming that entry. -/
+theorem guard_refuses_iff_source_only {α : Type} (table : List (Entry α)) (m : α)
+    (name : String) :
+    dispatch table true false m = .guardRefused name ↔
+      ∃ e, choose table m = some e ∧ e.sourceOnly = true ∧ e.name = name := by
+  unfold dispatch
+  cases hc : choose table m with
+  | none => simp
+  | some e =>
+    simp only [Option.some.injEq, exists_eq_left']
+    cases e.sourceOnly <;> simp
+
+/-- **An entry added anywhere is guarded**: no second list to update. -/
+theorem added_entry_is_guarded {α : Type} (pre post : List (Entry α)) (e : Entry α)
+    (m : α) (hchosen : choose (pre ++ e :: post) m = some e) (hsource : e.sourceOnly = true) :
+    dispatch (pre ++ e :: post) true false m = .guardRefused e.name :=
+  (guard_refuses_iff_source_only _ m e.name).mpr ⟨e, hchosen, hsource, rfl⟩
+
+/-- What is lowered is the selected entry: the guard and the lowering read one
+row. -/
+theorem lowered_is_chosen {α : Type} (table : List (Entry α)) (contract closure : Bool)
+    (m : α) (e : Entry α) (h : dispatch table contract closure m = .lowered e) :
+    choose table m = some e := by
+  unfold dispatch at h
+  cases hc : choose table m with
+  | none => rw [hc] at h; cases h
+  | some e' =>
+    rw [hc] at h
+    simp only at h
+    split at h
+    · cases h
+    · split at h
+      · cases h
+      · cases h; rfl
+
+/-- **A contract module is never lowered on a source-only entry.** -/
+theorem contract_never_lowered_on_source_only {α : Type} (table : List (Entry α))
+    (closure : Bool) (m : α) (e : Entry α)
+    (h : dispatch table true closure m = .lowered e) : e.sourceOnly = false := by
+  unfold dispatch at h
+  cases hc : choose table m with
+  | none => rw [hc] at h; cases h
+  | some e' =>
+    rw [hc] at h
+    simp only at h
+    split at h
+    · cases h
+    · split at h
+      · cases h
+      · rename_i hguard
+        cases h
+        cases hs : e.sourceOnly
+        · rfl
+        · simp [hs] at hguard
+
+/-- **A closure is lowered only on an entry that hosts closures.** -/
+theorem closure_lowered_only_on_hosting {α : Type} (table : List (Entry α))
+    (contract : Bool) (m : α) (e : Entry α)
+    (h : dispatch table contract true m = .lowered e) : e.hostsClosures = true := by
+  unfold dispatch at h
+  cases hc : choose table m with
+  | none => rw [hc] at h; cases h
+  | some e' =>
+    rw [hc] at h
+    simp only at h
+    split at h
+    · cases h
+    · rename_i hclosure
+      split at h
+      · cases h
+      · cases h
+        cases hh : e.hostsClosures
+        · simp [hh] at hclosure
+        · rfl
+
+/-- **Contract modules reach only the last entry** when every other entry is
+source-only: the completeness check after routing, and the guard in
+`compile_scalar_calls`, have nothing left to catch. -/
+theorem contract_lowered_only_on_last {α : Type} (pre : List (Entry α)) (last : Entry α)
+    (hpre : ∀ e ∈ pre, e.sourceOnly = true) (closure : Bool) (m : α) (e : Entry α)
+    (h : dispatch (pre ++ [last]) true closure m = .lowered e) : e = last := by
+  have hfalse := contract_never_lowered_on_source_only _ closure m e h
+  have hmem := choose_mem (lowered_is_chosen _ true closure m e h)
+  rcases List.mem_append.mp hmem with hin | hin
+  · rw [hpre e hin] at hfalse
+    cases hfalse
+  · simpa using hin
+
+/-- With a last entry that always selects, selection is total. -/
+theorem choose_total_of_last {α : Type} (pre : List (Entry α)) (last : Entry α)
+    (hlast : ∀ m, last.selects m = true) (m : α) :
+    choose (pre ++ [last]) m ≠ none := by
+  unfold choose
+  intro hnone
+  have := List.find?_eq_none.mp hnone last (by simp)
+  rw [hlast m] at this
+  exact this rfl
+
+/-! ### The driver's table -/
+
+/-- `SOURCE_ROUTES`, row by row: (name, source-only, hosts closures). The
+same rows are pinned by `source_routes::tests`. -/
+def driverTable : List (String × Bool × Bool) :=
+  [("source.ffi.v1", true, false),
+   ("source.bitfield-concurrency.v1", true, false),
+   ("source.epoch.tasks.v1", true, false),
+   ("source.epoch.bound.v1", true, false),
+   ("source.mutex.guard.v1", true, false),
+   ("source.std-io-tasks.v1", true, true),
+   ("the scoped-task route", true, true),
+   ("source.std-io-extern.v1", true, false),
+   ("source.extern-call.v1", true, false),
+   ("source.socket.v1", true, false),
+   ("source.event.v1", true, false),
+   ("source.string.v1", true, false),
+   ("source.resource-calls.v1", true, false),
+   ("source.scalar-calls.v1", true, false),
+   ("source.buffer.v1", true, false),
+   ("source.http.v1", true, false),
+   ("source.string.v1", true, false),
+   ("source.socket.v1", true, false),
+   ("source.scalar-calls.v1", true, false),
+   ("source.std-io.v1", true, false),
+   ("source.scalar-calls.v1", true, false),
+   ("the sequential cleanup route", false, false)]
+
+/-- The rows as entries; the `i`th row's selector is `sel i`. -/
+def entriesFrom {α : Type} (sel : Nat → α → Bool) :
+    Nat → List (String × Bool × Bool) → List (Entry α)
+  | _, [] => []
+  | i, (name, sourceOnly, hosts) :: rest =>
+    ⟨name, sel i, sourceOnly, hosts⟩ :: entriesFrom sel (i + 1) rest
+
+def driverEntries {α : Type} (sel : Nat → α → Bool) : List (Entry α) :=
+  entriesFrom sel 0 driverTable
+
+theorem mem_entriesFrom {α : Type} (sel : Nat → α → Bool) :
+    ∀ (i : Nat) (rows : List (String × Bool × Bool)) (e : Entry α),
+      e ∈ entriesFrom sel i rows →
+        ∃ row ∈ rows, e.name = row.1 ∧ e.sourceOnly = row.2.1 ∧ e.hostsClosures = row.2.2
+  | _, [], e, h => by simp [entriesFrom] at h
+  | i, (name, sourceOnly, hosts) :: rest, e, h => by
+    simp only [entriesFrom, List.mem_cons] at h
+    rcases h with rfl | h
+    · exact ⟨(name, sourceOnly, hosts), by simp, rfl, rfl, rfl⟩
+    · rcases mem_entriesFrom sel (i + 1) rest e h with ⟨row, hrow, h1, h2, h3⟩
+      exact ⟨row, List.mem_cons_of_mem _ hrow, h1, h2, h3⟩
+
+theorem driver_table_length : driverTable.length = 22 := by decide
+
+/-- Every row but the sequential route's is source-only. -/
+theorem driver_table_reads_contracts_only_on_sequential :
+    ∀ row ∈ driverTable, row.2.1 = false → row.1 = "the sequential cleanup route" := by
+  decide
+
+/-- Only the two scoped-task routes host closures. -/
+theorem driver_table_hosts_closures_only_on_task_routes :
+    ∀ row ∈ driverTable, row.2.2 = true →
+      row.1 = "source.std-io-tasks.v1" ∨ row.1 = "the scoped-task route" := by
+  decide
+
+/-- **The driver lowers a contract module only on the sequential route**,
+whatever its selectors read. -/
+theorem driver_contract_lowered_only_on_sequential {α : Type} (sel : Nat → α → Bool)
+    (closure : Bool) (m : α) (e : Entry α)
+    (h : dispatch (driverEntries sel) true closure m = .lowered e) :
+    e.name = "the sequential cleanup route" := by
+  have hfalse := contract_never_lowered_on_source_only _ closure m e h
+  have hmem := choose_mem (lowered_is_chosen _ true closure m e h)
+  rcases mem_entriesFrom sel 0 driverTable e hmem with ⟨row, hrow, hname, hsource, _⟩
+  rw [hname]
+  exact driver_table_reads_contracts_only_on_sequential row hrow (hsource ▸ hfalse)
+
+/-- **The driver lowers a closure only on the two scoped-task routes.** -/
+theorem driver_closure_lowered_only_on_task_routes {α : Type} (sel : Nat → α → Bool)
+    (contract : Bool) (m : α) (e : Entry α)
+    (h : dispatch (driverEntries sel) contract true m = .lowered e) :
+    e.name = "source.std-io-tasks.v1" ∨ e.name = "the scoped-task route" := by
+  have hhosts := closure_lowered_only_on_hosting _ contract m e h
+  have hmem := choose_mem (lowered_is_chosen _ contract true m e h)
+  rcases mem_entriesFrom sel 0 driverTable e hmem with ⟨row, hrow, hname, _, hclosure⟩
+  rw [hname]
+  exact driver_table_hosts_closures_only_on_task_routes row hrow (hclosure ▸ hhosts)
+
+/-! ### Vector: a module that dispatches and sockets -/
+
+/-- Its selectors: the socket-and-event composition (row 9), the event route
+(row 10) and the sequential route (row 21) hold. -/
+def dispatchAndSocket (i : Nat) (_ : Unit) : Bool := i == 9 || i == 10 || i == 21
+
+/-- The table names the route that would lower it. -/
+theorem dispatch_and_socket_contract_names_socket :
+    dispatch (driverEntries dispatchAndSocket) true false () =
+      .guardRefused "source.socket.v1" := rfl
+
+/-- The base's restated list (`route_selection::source_only_route`): the
+driver's rows without the composition (row 9) and without the sequential
+route, so its first match for the same module was the event route. -/
+def restatedList : List (Entry Unit) :=
+  (driverEntries dispatchAndSocket).eraseIdx 9 |>.dropLast
+
+theorem restated_list_named_event :
+    (choose restatedList ()).map Entry.name = some "source.event.v1" := rfl
+
+/-- Executable, the same module is lowered on the composition's row. -/
+theorem dispatch_and_socket_executable_lowered :
+    (match dispatch (driverEntries dispatchAndSocket) false false () with
+      | .lowered e => some e.name
+      | _ => none) = some "source.socket.v1" := rfl
 
 end QCore.RouteSelection

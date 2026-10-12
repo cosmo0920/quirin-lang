@@ -26,11 +26,13 @@
 //! not tokens and a string literal is not a word, so neither could select
 //! before and neither can now.
 //!
-//! Two fail-closed arms sit beside the reading, both called from the driver's
-//! route selection: [`ambiguous_selector_use`] (a selecting use of a word the
-//! module also declares) and [`source_only_route`] (the selector that would
-//! take a `module contract;` module off the sequential route). The Lean model
-//! is `QCore.RouteSelection` (`AuditRouteSelection`).
+//! A fail-closed arm sits beside the reading, called from the driver's route
+//! selection: [`ambiguous_selector_use`] (a selecting use of a word the module
+//! also declares). The contract guard (a `module contract;` module that a
+//! source-only route would select is refused) reads the driver's one route
+//! table since card `ROUTE-SELECTION-ORDER-RESTATED`
+//! (`qcore-verification`'s `driver::source_routes`), not a restated list
+//! here. The Lean model is `QCore.RouteSelection` (`AuditRouteSelection`).
 use crate::frontend::{DeclarationKind, SemanticPass, SourceDiagnostic, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 
@@ -195,95 +197,4 @@ pub fn ambiguous_selector_use(program: &SourceProgram) -> Option<SourceDiagnosti
             ),
         })
     })
-}
-
-/// The route a module would be compiled on, other than the sequential route,
-/// named by the first selector in the driver's route order that selects it
-/// (`compile_elaborated_source`); `None` when only the sequential route
-/// remains. The driver refuses a `module contract;` module for which this is
-/// `Some`: a contract module declares contracts, and every source-only route
-/// lowers bodies it would run (generalising the print card's guard at
-/// `compile_scalar_calls`).
-#[must_use]
-pub fn source_only_route(program: &SourceProgram) -> Option<&'static str> {
-    use crate::source_scalar_calls::{PrintCallSelection, has_scalar_calls, print_call_selection};
-    use crate::{
-        source_bitfield_concurrency, source_composed, source_composed_tasks, source_epoch,
-        source_epoch_tasks, source_event, source_extern, source_ffi, source_http, source_mutex,
-        source_record, source_resource_calls, source_socket, source_std_buffer, source_std_io,
-        source_std_string, source_tasks,
-    };
-    let functions = program
-        .declarations
-        .iter()
-        .filter(|declaration| declaration.value.kind == DeclarationKind::Function)
-        .count();
-    let routes: [(&'static str, &dyn Fn() -> bool); 21] = [
-        ("source.ffi.v1", &|| source_ffi::has_source_ffi(program)),
-        ("source.bitfield-concurrency.v1", &|| {
-            source_bitfield_concurrency::has_source_bitfield_tasks(program)
-        }),
-        ("source.epoch.tasks.v1", &|| {
-            source_epoch_tasks::has_composed_epoch(program)
-        }),
-        ("source.epoch.bound.v1", &|| {
-            source_epoch::has_source_epoch(program)
-        }),
-        ("source.mutex.guard.v1", &|| {
-            source_mutex::has_source_mutex(program)
-        }),
-        ("source.std-io-tasks.v1", &|| {
-            source_composed_tasks::has_source_composed_tasks(program)
-        }),
-        ("the scoped-task route", &|| {
-            source_tasks::has_source_tasks(program)
-        }),
-        ("source.std-io-extern.v1", &|| {
-            source_composed::has_source_composed(program)
-        }),
-        ("source.extern-call.v1", &|| {
-            source_extern::has_source_extern(program)
-        }),
-        ("source.event.v1", &|| {
-            source_event::has_source_event(program)
-        }),
-        ("source.string.v1", &|| {
-            source_std_string::has_source_string_bridge(program)
-        }),
-        ("source.resource-calls.v1", &|| {
-            source_resource_calls::has_resource_calls(program)
-        }),
-        ("source.scalar-calls.v1", &|| {
-            source_record::has_source_record(program)
-                && !source_std_buffer::has_source_buffer(program)
-                && functions > 1
-        }),
-        ("source.buffer.v1", &|| {
-            source_std_buffer::has_source_buffer(program)
-                || source_record::has_source_record(program)
-        }),
-        ("source.http.v1", &|| source_http::has_source_http(program)),
-        ("source.string.v1", &|| {
-            source_std_string::has_source_string(program)
-        }),
-        ("source.socket.v1", &|| {
-            source_socket::has_source_socket(program)
-        }),
-        ("source.scalar-calls.v1", &|| {
-            !matches!(print_call_selection(program), PrintCallSelection::Absent)
-        }),
-        ("source.std-io.v1", &|| {
-            source_std_io::has_source_std_io(program)
-        }),
-        ("source.scalar-calls.v1", &|| has_scalar_calls(program)),
-        // The closure refusal precedes route selection; a closure in a
-        // contract module is refused there, so it is listed for completeness.
-        ("a closure's scoped-task route", &|| {
-            !program.closures().is_empty()
-        }),
-    ];
-    routes
-        .iter()
-        .find(|(_, selected)| selected())
-        .map(|(route, _)| *route)
 }

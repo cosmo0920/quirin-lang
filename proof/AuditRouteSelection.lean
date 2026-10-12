@@ -11,7 +11,16 @@ name (a record's excepted, by constraint 14's `AGGREGATE-SELECTOR-WORDS`), a
 parameter's name and a contract clause, so such a name never selects; a use that
 names a declared word refuses; a contract module is never compiled on a
 source-only route. Generalises `QCore.PrintRouteSelection`. Not a proof about
-the Rust lexer or spans (trust boundary 28). -/
+the Rust lexer or spans (trust boundary 28).
+
+Card **ROUTE-SELECTION-ORDER-RESTATED**
+(`crates/qcore-verification/src/driver/source_routes.rs`, `SOURCE_ROUTES`,
+read once by `compile_elaborated_source`): first match over the one route
+table is the if-chain in table order; the contract guard refuses exactly the
+source-only entries of the table selection reads, so an added entry is
+guarded; a contract module is lowered only on the sequential route and a
+closure only on the two scoped-task routes. The Rust rows are pinned to
+`driverTable` by `source_routes::tests` (trust boundary 28). -/
 
 #print axioms QCore.RouteSelection.test_holds_only_at_a_head
 #print axioms QCore.RouteSelection.mem_windows
@@ -33,3 +42,21 @@ the Rust lexer or spans (trust boundary 28). -/
 #print axioms QCore.RouteSelection.body_buffer_new_declared_refused
 #print axioms QCore.RouteSelection.body_buffer_new_contract_refused
 #print axioms QCore.RouteSelection.throws_row_scalar
+#print axioms QCore.RouteSelection.choose_eq_chain
+#print axioms QCore.RouteSelection.choose_mem
+#print axioms QCore.RouteSelection.guard_refuses_iff_source_only
+#print axioms QCore.RouteSelection.added_entry_is_guarded
+#print axioms QCore.RouteSelection.lowered_is_chosen
+#print axioms QCore.RouteSelection.contract_never_lowered_on_source_only
+#print axioms QCore.RouteSelection.closure_lowered_only_on_hosting
+#print axioms QCore.RouteSelection.contract_lowered_only_on_last
+#print axioms QCore.RouteSelection.choose_total_of_last
+#print axioms QCore.RouteSelection.mem_entriesFrom
+#print axioms QCore.RouteSelection.driver_table_length
+#print axioms QCore.RouteSelection.driver_table_reads_contracts_only_on_sequential
+#print axioms QCore.RouteSelection.driver_table_hosts_closures_only_on_task_routes
+#print axioms QCore.RouteSelection.driver_contract_lowered_only_on_sequential
+#print axioms QCore.RouteSelection.driver_closure_lowered_only_on_task_routes
+#print axioms QCore.RouteSelection.dispatch_and_socket_contract_names_socket
+#print axioms QCore.RouteSelection.restated_list_named_event
+#print axioms QCore.RouteSelection.dispatch_and_socket_executable_lowered
