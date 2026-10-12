@@ -1,0 +1,33 @@
+15y no-return-node: 119
+    119 callees=["rd_kafka_crash"]  decision="PathEnd"  whole_discarded_call=true  resolution="NoReturn"
+15z uncast-return-actuals: 91
+     50 answer="uncast-return-actuals-admitted"  removed=["punned-view"]
+     17 answer="uncast-return-actuals-admitted"  removed=["typed-view"]
+     10 answer="uncast-return-actuals-admitted"  removed=["typed-view", "typed-view"]
+      8 answer="uncast-return-actuals-admitted"  removed=["byte-view", "byte-view"]
+      4 answer="uncast-return-actuals-admitted"  removed=["qualifier"]
+      2 answer="uncast-return-actuals-admitted"  removed=["typed-view", "typed-view", "typed-view"]
+15z return-route-gap: 3
+      3 gap="10u-k03"  function="rd_kafka_ConfigResource_add_incremental_config"  line=21891
+12i rows no longer recorded: 105
+    105 form="whole-call"  admitted=null
+other rows only before: 29
+      6 position="call-argument"  function="sort_by_map_elem_val_toppar_list_cnt"  line=21493
+      6 position="residual-shape"  function="sort_by_map_elem_val_toppar_list_cnt"  line=21493
+      6 position="storage-duration-address-argument"  function="sort_by_map_elem_val_toppar_list_cnt"  line=21493
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20496
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20495
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20494
+      2 position="bound-untracked-root"  function="rd_kafka_offset_broker_commit"  line=20453
+      2 position="bound-untracked-root"  function="rd_kafka_offset_broker_commit"  line=20452
+      1 position="bound-untracked-root"  function="rd_kafka_broker_fetch_reply"  line=21610
+other rows only after: 11
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20496
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20495
+      2 position="bound-untracked-root"  function="rd_kafka_cgrp_destroy_final"  line=20494
+      2 position="bound-untracked-root"  function="rd_kafka_offset_broker_commit"  line=20453
+      2 position="bound-untracked-root"  function="rd_kafka_offset_broker_commit"  line=20452
+      1 position="bound-untracked-root"  function="rd_kafka_broker_fetch_reply"  line=21610
+functions named: 81
+verdicts of the named functions (before, after): {('Unknown', 'Unknown'): 53, ('Safe', 'Safe'): 27, (None, None): 1}
+functions by class and verdict: {('15y', 'Unknown'): 29, ('15z-uncast', 'Safe'): 27, ('15z-uncast', 'Unknown'): 2, ('12i', 'Unknown'): 21, ('12i', 'Safe'): 10, ('12i', None): 1}

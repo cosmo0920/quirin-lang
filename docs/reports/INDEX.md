@@ -441,6 +441,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [gapo-parity-decisions-nondeterministic](gapo-parity-decisions-nondeterministic/README.md) | GAPO-PARITY-DECISIONS-NONDETERMINISTIC: a consultation's parity decisions are its own |
 
+| [gapo-return-correctness](gapo-return-correctness/README.md) | GAPO-RETURN-CORRECTNESS |
+
 | [gateway-analysis-path-optimization](gateway-analysis-path-optimization/README.md) | GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical |
 
 | [gateway-c-location](gateway-c-location/README.md) | GATEWAY-C-LOCATION — a gateway diagnostic names the C a person wrote — 2026-09-12 |

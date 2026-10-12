@@ -1,0 +1,10 @@
+rows before 689570 after 689660; only before 134, only after 224
+  only before:     105 return-call-access
+  only before:      11 bound-untracked-root
+  only before:       6 call-argument
+  only before:       6 residual-shape
+  only before:       6 storage-duration-address-argument / declined
+  only after:     119 no-return-node / PathEnd
+  only after:      91 cast-semantics-value / uncast-return-actuals-admitted
+  only after:      11 bound-untracked-root
+  only after:       3 return-route-gap / 10u-k03

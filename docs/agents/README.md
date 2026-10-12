@@ -192,6 +192,9 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 15s | [gateway](gateway.md#constraint-15s) | Relational facts only when exact: `x ± k` without wrap, `a + b` inside its type, two independent hole-free entry values compared through the difference (sum) interval; anything else inexact. |
 | 15t | [gateway](gateway.md#constraint-15t) | A candidate whose every path was explored without reaching the dereference NULL is removed: proved by `path-search:infeasible` plus a proof per consulted declaration (withdrawal re-candidates it); a cut search (budget, loop bound, unread form) removes nothing. |
 | 15u | [gateway](gateway.md#constraint-15u) | A cached memory value dies at an assignment or declaration of a followed variable it spells. |
+| 15x | [gateway](gateway.md#constraint-15x) | A declined classification probe restores the whole probe state (one `ParserProbeState`, every parser field classified by construction); monotone source facts are kept. |
+| 15y | [gateway](gateway.md#constraint-15y) | A declared no-return call ends its path at every lowered CFG node where rule 11o's premises hold, and is refused at every other node. |
+| 15z | [gateway](gateway.md#constraint-15z) | A returned call asks rule 12h's H-U0 as a statement does; 11w and 10u at the return position are out of scope (the return keeps a refusal), with a census row. |
 | 13 | [source-routes](source-routes.md#constraint-13) | Concurrency is opt-in: a file declares #import std.concurrency;, the… |
 | 14 | [source-routes](source-routes.md#constraint-14) | New keywords are a recorded compatibility hazard: every candidate is… |
 | 15 | [source-routes](source-routes.md#constraint-15) | Lock ranks and protection growth are opt-in disciplines: unranked… |

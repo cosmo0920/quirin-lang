@@ -93,8 +93,9 @@ fn sites(summary: &LegacyFunctionSummary) -> Vec<usize> {
 
 /// Rule 12h classifies `u = r_wrap((void *) t)` again as `u = r_wrap(t)`.
 /// BEFORE (main `1a399e6a1`) the first classification's site stayed minted,
-/// so the sites were 0, 2, 3; with rule 15x the second classification starts
-/// from the first's state and the sites are consecutive.
+/// so the two sites were 1 and 2 (0 minted and dropped); with rule 15x the
+/// second classification starts from the first's state and they are 0 and
+/// 1.
 #[test]
 fn a_replacing_classification_leaves_no_site_gap() {
     if !clang_available() {
@@ -102,8 +103,8 @@ fn a_replacing_classification_leaves_no_site_gap() {
     }
     let summary = run(
         "",
-        "void subject(void) { struct T *t = q_alloc(); void *u = r_wrap((void *) t); \
-         void *v = q_alloc(); q_free(v); q_free(u); q_free(t); }",
+        "void subject(struct T *t) { void *u; u = r_wrap((void *) t); \
+         void *v = q_alloc(); q_free(v); q_free(u); }",
     );
     assert_eq!(summary.status, AnalysisStatus::Safe, "{summary:?}");
     let mut minted = sites(&summary);
@@ -219,8 +220,10 @@ fn the_statement_hook_path_end_is_unchanged() {
 // Rule 15z: rule 12h's uncast actuals at the return position.
 // ---------------------------------------------------------------------------
 
-/// W4's whole returned call read the cast actual `(void *) t` as no place,
-/// so the use after release was `Safe` BEFORE; the uncast call reads `t`.
+/// W4's whole returned call, B01's scalar call and W45-K's converted call
+/// read the cast actual `(void *) t` as no place, so each use after release
+/// was `Safe` BEFORE (main `1a399e6a1`, checked with the hook disabled); the
+/// uncast call reads `t`.
 #[test]
 fn a_cast_actual_of_a_returned_call_is_its_place() {
     if !clang_available() {
@@ -232,6 +235,9 @@ fn a_cast_actual_of_a_returned_call_is_its_place() {
         // B01's scalar call.
         "int subject(void) { struct T *t = q_alloc(); q_free((void *) t); \
          return 1 + r_borrow_code((void *) t); }",
+        // W45-K's converted call.
+        "long subject(void) { struct T *t = q_alloc(); q_free((void *) t); \
+         return (long) r_borrow_code((void *) t); }",
     ] {
         let summary = run("", body);
         assert_ne!(summary.status, AnalysisStatus::Safe, "{body}: {summary:?}");

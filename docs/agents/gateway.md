@@ -3542,7 +3542,9 @@ own anchor here.
     refused (`no-return contract of `f` not established at this call: …`).
     In every other position the declared call is applied as an ordinary
     borrowing call with its continuation (an over-approximation of C's
-    paths, never a path end). A summary is read from the normal exits only;
+    paths, never a path end); **amended by rule 15y**: wherever a route
+    lowers it, its CFG node ends its path where this rule's premises hold
+    and is refused otherwise. A summary is read from the normal exits only;
     a body with none publishes none (`observations_match_contract`'s existing
     refusal of a function with no reachable exit). (2) **Exit
     kind.** The C attribute does not establish termination: `longjmp`,
@@ -6979,3 +6981,123 @@ own anchor here.
     direction). **Do not** reuse a cached memory value after a variable it
     names was assigned. Premise (trust boundary 28): the search's memory
     facts, so forgotten, hold for the C program.
+
+<a id="constraint-15x"></a>
+
+15x. **A declined classification probe hands back every field it moved.**
+    Card GAPO-RETURN-CORRECTNESS (`legacy_probe_state.rs`: `ParserProbeState`,
+    `Parser::{probe_state, restore_probe_state, probe}`, `PARSER_FIELDS`;
+    shared items added: `ForeignOrigins::{lowering, restore_lowering}` and
+    `OriginsLowering` in `legacy_container_publication.rs`). Every field of
+    the parser is classified by construction (`probe_state` destructures the
+    parser without `..`, and a unit test pins the class list against the
+    declaration): **probe state** (the cursor, `next_site`, the element
+    lowerings, the element origins' admitted and pending bindings, the
+    argument probe, the typed-position and condition-widening counters, the
+    variadic-tail widening and readings, the typed place origin), **monotone
+    facts** (a list iteration's protected element names and links, rule 4;
+    the names rule 5l(2) bound over a formal), function facts, lazy caches
+    and census labels. Every probe that declines restores the whole probe
+    state: the W4, B01 and W45-K probes of a refused return, every guard of
+    `classify_simple` that replaces an admission (the W43 descriptor guard
+    included, which restored nothing), rule 11w's tail widening when it is
+    not admitted (which kept its counters), and every fallback that restored
+    `(next_site, element_lowerings)` only; rule 12h's H-U0 classifies the
+    uncast statement from the state the first classification started from
+    (before, the first one's sites stayed minted: a gap). Monotone facts are
+    kept by a declined probe: restoring them could only remove a refusal.
+    Output streams outside the parser (parity rows, rule 13f's consultation
+    log) are not parser state and stay recorded (residual
+    `GAPO-DECLINED-PROBE-CONSULTATIONS`). **Do not** restore part of the
+    probe state, or restore a monotone fact. Measured (corpus `66910c10`,
+    system, tail-pause slice, base `1a399e6a1`): every report, the null
+    property streams and the parity streams (Clang node addresses aside)
+    byte-identical; the leak was not a verdict defect on these inputs. The
+    site gap is shown by `tests/gapo_return_correctness.rs`.
+    `QCore.ReturnCorrectness` (`declined_restores_probe_state`,
+    `declined_keeps_facts`, `declined_without_new_facts_is_identity`,
+    `declined_probe_moves_no_site`, `replacement_from_before_has_no_gap`,
+    `replacement_after_first_gaps`);
+    [report](../reports/gapo-return-correctness/README.md).
+
+<a id="constraint-15y"></a>
+
+15y. **A declared no-return call ends its path at every lowered position,
+    or is refused.** Card GAPO-RETURN-CORRECTNESS (`legacy_no_return_paths.rs`,
+    `Parser::settle_no_return_nodes`, called once on the built CFG after
+    rule 11v's in-place check; `call_exit_resolution` widened to the
+    parent). It amends rule 11o, whose statement hook reads only the
+    instruction `classify_simple` and rule 12h produced: a call lowered later
+    (W44's call actuals, 10u, 10y, 11w's widening, rule 12h's H-U, an
+    elaborated or connective piece, a condition's call or plan, a `for`
+    clause, a return evaluation) kept its continuation. Every CFG node that
+    still has a successor and whose instruction calls a callee the
+    environment declares `resource_no_return()` (its own call, a nested call,
+    or a call carried by an element, sub-object or pointer store) is
+    settled: exactly one discarded whole call with no nested call, no loop
+    exit edge and not an exit takes rule 11o's decision over this body's
+    Clang resolution (a path end: its successors removed, its own
+    instruction still transferred; the refusal `no-return contract of `f`
+    not established at this call: …` otherwise), and every other such node is
+    refused (`no-return call `f` is not the whole discarded call of its
+    node, so its path cannot end there (rule 15y)`), with unbounded writes.
+    A node with no successor (rule 11o's path end, an exit) and a node with
+    no declared callee are unchanged. A stored call cannot occur: the loader
+    rejects a no-return declaration that does not return `unit`. Every
+    settled node is a parity row (`position: "no-return-node"`). **Do not**
+    let any lowering keep a declared no-return call's continuation, or end
+    a path on a premise rule 11o does not establish. Measured (base
+    `1a399e6a1`): **119 nodes** settled in the corpus, all `rd_kafka_crash`
+    (the `rd_kafka_assert` expansion) lowered in a W44 condition plan at 38
+    source lines of 29 functions, every one resolved `noreturn` and made a
+    path end; all 29 functions stay `Unknown` on their other refusals, so no
+    verdict moved (system and slice: no node); the only other effect is
+    rule 11d's census rows (`bound-untracked-root`) turning `path_refused`
+    false at six lines of three of those functions, whose refused path now
+    ends. `QCore.ReturnCorrectness`
+    (`no_return_never_continues`, `settle_identity`, `settle_keeps_refusal`,
+    `settled_ends_or_refuses`, `settled_path_end_only_when_established`,
+    `settle_call_cases`, `settle_cases`), over `QCore.CallExits.decide`.
+
+<a id="constraint-15z"></a>
+
+15z. **A returned call asks rule 12h's H-U0 as a statement does; the other
+    statement-only rules are outside the return route's scope.** Card
+    GAPO-RETURN-CORRECTNESS (`legacy_cast_semantics.rs`:
+    `uncast_returned_call`, `returned_call_hides_a_place`; hooks in
+    `legacy_return_routes.rs`, `legacy_return_family.rs`,
+    `legacy_return_call_access.rs`). (1) **12h at the return position.**
+    The call W4 classifies as `PLACE = f(…)`, the call B01 classifies alone
+    inside a scalar expression and the operand W45-K classifies under a
+    conversion are each re-read, when admitted with an identity-preserving
+    cast of a place at an actual (rule 12h's table, Clang's call node), as
+    its uncast spelling from the probe state the first classification
+    started from (rule 15x), and that answer replaces the original before
+    the position's own admission test (before, `return r((void *) t)` after
+    `q_free(t)` was `Safe`: the cast actual was read as no place). Rule 12i,
+    whose W44 re-classification H-U0 is not asked inside, declines a
+    returned call that holds such a cast (or `* )` with no unique Clang call
+    node). Each re-read is a parity row (`cast-semantics-value`,
+    `uncast-return-actuals-admitted`/`-refused`). (2) **Out of the route's
+    scope, with their reason.** Rule 11o's hook is replaced at every
+    position by rule 15y. Rule 11w's tail widening and `va_*` lowering and
+    rule 10u's substituted call are not asked at the return position: a
+    return they would read keeps its refusal (11w's tail refusal, a
+    `va_*` refusal, the K03 refusal), or, for a W4 admission with an unbound
+    custody-taking position, the flow's own `arguments do not match resource
+    contract` refusal, so none can be `Safe` there; each such return is a
+    parity row (`position: "return-route-gap"`, `gap`: `11w-tail`, `11w-va`,
+    `10u-k03`, `10u-unbound`; a lower bound, since a refused return with no
+    evaluation names no reason). **Do not** admit a returned call whose
+    cast actual hides a place without reading the place. Measured (base
+    `1a399e6a1`): **91 returned calls** re-read uncast in the corpus (in 29
+    functions; 50 punned, 29 typed, 8 byte, 4 qualifier views), every one
+    still admitted, so no verdict moved (27 of those functions stay `Safe`,
+    2 `Unknown`); rule 12i's 105 whole-call consultations of such returns
+    (none had admitted) are no longer made, nor the 18 W44 rows they wrote
+    in one function; the gap census found 3 returns
+    (`10u-k03`, one function, `Unknown`) and no `11w` or `10u-unbound`
+    return; system and slice: none. The H-U0 gap after the statement
+    position's later lowerings is registered
+    (`GAPO-UNCAST-ACTUALS-AFTER-LATER-LOWERINGS`). `QCore.ReturnCorrectness`
+    (`uncast_at_least_as_strict`, `cast_actual_hid_a_released_place`).
