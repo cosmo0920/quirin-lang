@@ -1,0 +1,13 @@
+{
+  "note": "EXECUTION-QUOTA-LOAD-INDEPENDENCE card gate on base 440c41b8b, every code step at 81f5925fe, scripts docs/reports/execution-quota-load-independence/scripts/gate.sh and finish-gate.sh, logs private/eqli/gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 487 units, 500 summaries, 7,939 passed, 0 failed, 14 ignored, exit 0 (private/eqli/tests-g1), with no rerun, run CONCURRENTLY with the AFTER corpus arbiter (--jobs 4, exit 0): arbiter running at +1.0 s, suite +1.0 to +332.4 s, arbiter end +618.5 s; both reevaluation probes exit 0; check_lean_audits.py 316 audits passed (AuditProcessQuotaPlan gains three theorems); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
+  "workspace_tests": 7939,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 316,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

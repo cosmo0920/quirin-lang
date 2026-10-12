@@ -292,8 +292,9 @@ summary in [gate.json](gate.json).
 | corpus arbiter beside it | 0 | byte-identical (§7) |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | **316** audits |
-| `python3 -m unittest discover -s scripts/tests` | PYEXIT | PYCOUNT |
-| `python3 scripts/build_docs_index.py --check` | INDEXEXIT | |
+| `python3 -m unittest discover -s scripts/tests` (at `061ef8d31`, after the records) | 0 | **365** OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| `build_matrix.py . --gate gate.json`, then the Python suite and the index again (`finish-gate.sh`) | 0 / 0 / 0 / 0 | |
 
 The test step passed on its first run. No row was rerun in isolation.
 The suite count is main's 7,938 plus the cgroup-name unit test.
