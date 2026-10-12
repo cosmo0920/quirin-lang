@@ -150,14 +150,16 @@ impl Parser<'_> {
             return None;
         }
 
-        let restore = self.next_site;
-        let instruction = self.classify_simple(&condition[start..end]);
-        if matches!(instruction, LegacyInstruction::ContractCall { .. }) {
-            Some(instruction)
-        } else {
-            self.next_site = restore;
-            None
-        }
+        // Card GAPO-RETURN-CORRECTNESS (rule 15x): a declined probe hands
+        // back the whole probe state.
+        self.probe(|parser| {
+            let instruction = parser.classify_simple(&condition[start..end]);
+            if matches!(instruction, LegacyInstruction::ContractCall { .. }) {
+                probe_state::Probe::Keep(Some(instruction))
+            } else {
+                probe_state::Probe::Decline(None)
+            }
+        })
     }
 
     /// Card **W43-INDEX-TRAVERSAL**: the typed read a refused controlling

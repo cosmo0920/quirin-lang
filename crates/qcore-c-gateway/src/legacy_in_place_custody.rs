@@ -275,7 +275,7 @@ impl Parser<'_> {
         &mut self,
         tokens: &[Token],
         instruction: LegacyInstruction,
-        saved: (usize, usize),
+        saved: &super::probe_state::ParserProbeState,
     ) -> LegacyInstruction {
         if self.in_place_names.is_empty()
             || matches!(instruction, LegacyInstruction::Unknown { .. })
@@ -293,7 +293,7 @@ impl Parser<'_> {
         if declares_only(&texts, &mentioned) || self.admits(&texts, &instruction, &mentioned) {
             return instruction;
         }
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(saved);
         LegacyInstruction::Unknown {
             description: format!(
                 "tracked in-place object `{name}` used outside a declared in-place position is outside the resource projection (rule 11v)"

@@ -171,7 +171,7 @@ impl Parser<'_> {
             return None;
         }
         let index = self.typed_positions_index()?.clone();
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let mut forms = Vec::new();
         let outcome = self.connective_lowering(&index, site, tokens, line, &mut forms);
         record_row(json!({
@@ -190,7 +190,7 @@ impl Parser<'_> {
         match outcome {
             Ok(statement) => Some(statement),
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -451,12 +451,12 @@ impl Parser<'_> {
         let run = run.to_vec();
         match lowering.site {
             Site::Statement => {
-                let saved = (self.next_site, self.element_lowerings);
+                let saved = self.probe_state();
                 let statement = self.expression_statement(&run, line, None);
                 if !refuses(&statement) {
                     Some(statement)
                 } else {
-                    (self.next_site, self.element_lowerings) = saved;
+                    self.restore_probe_state(&saved);
                     self.leaf_events(lowering.index, node)
                         .ok()
                         .map(|instructions| {

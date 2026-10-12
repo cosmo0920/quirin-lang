@@ -134,7 +134,7 @@ impl Parser<'_> {
                 return Err(Refusal::EffectfulActual(callee.clone()));
             }
         }
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let mut instructions = Vec::new();
         for (id, event) in events.iter().enumerate() {
             let step = match event {
@@ -146,7 +146,7 @@ impl Parser<'_> {
             match step {
                 Ok(lowered) => instructions.extend(lowered),
                 Err(refusal) => {
-                    (self.next_site, self.element_lowerings) = saved;
+                    self.restore_probe_state(&saved);
                     return Err(refusal);
                 }
             }

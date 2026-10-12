@@ -146,7 +146,7 @@ impl Parser<'_> {
         tokens: &[Token],
         accept: impl Fn(&LegacyInstruction) -> bool,
     ) -> Option<(Vec<LegacyInstruction>, LegacyInstruction)> {
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let instruction = self.classify_simple(tokens);
         let lowered = is_gate_refusal(&instruction)
             .then(|| self.call_argument_access(tokens, &instruction))
@@ -156,7 +156,7 @@ impl Parser<'_> {
                 accept(&call).then_some((sequence, call))
             });
         if lowered.is_none() {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
         }
         lowered
     }

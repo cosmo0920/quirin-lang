@@ -360,7 +360,25 @@ impl Parser<'_> {
     /// `Borrowed` (T7, T8), after Clang's promoted type of every trailing actual
     /// is checked; a T7 scalar's fact is forgotten after the call. `None`
     /// keeps the refusal byte for byte.
+    ///
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15x): a declined widening hands
+    /// back the whole probe state its re-classification moved (before the
+    /// card it kept the counters when the widened result was not admitted).
     pub(super) fn variadic_tail_statement(
+        &mut self,
+        tokens: &[Token],
+        line: usize,
+        instruction: &LegacyInstruction,
+    ) -> Option<Statement> {
+        self.probe(
+            |parser| match parser.variadic_tail_lowering(tokens, line, instruction) {
+                Some(statement) => super::probe_state::Probe::Keep(Some(statement)),
+                None => super::probe_state::Probe::Decline(None),
+            },
+        )
+    }
+
+    fn variadic_tail_lowering(
         &mut self,
         tokens: &[Token],
         line: usize,

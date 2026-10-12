@@ -301,7 +301,7 @@ impl Parser<'_> {
         {
             return None;
         }
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let outcome = self.single_leaf_plan(expression, Position::Branch);
         let outcome = match outcome {
             Ok((calls, LegacyInstruction::NoOp)) if !calls.is_empty() => Ok(calls),
@@ -333,7 +333,7 @@ impl Parser<'_> {
                 Some(Statement::Block(statements))
             }
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -496,7 +496,7 @@ impl Parser<'_> {
         } else {
             ResultUse::Discarded
         };
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         match self.instantiate_call(&callee, &tokens, destination.as_deref(), use_) {
             Ok(sequence) => {
                 instructions.extend(sequence);
@@ -507,7 +507,7 @@ impl Parser<'_> {
                         Ok(Some(write)) => instructions.push(write),
                         Ok(None) => {}
                         Err(refusal) => {
-                            (self.next_site, self.element_lowerings) = saved;
+                            self.restore_probe_state(&saved);
                             return Err(refusal.reason());
                         }
                     }
@@ -515,7 +515,7 @@ impl Parser<'_> {
                 Ok(Some(instructions))
             }
             Err(refusal) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 Err(format!("call `{callee}`: {}", refusal.code()))
             }
         }
@@ -634,7 +634,7 @@ impl Parser<'_> {
             return Err("the typed substitution names what the lexical one did".to_owned());
         }
         let destination = (call_index == 2).then(|| texts[0]);
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let use_ = if destination.is_some() {
             ResultUse::Stored
         } else {
@@ -643,7 +643,7 @@ impl Parser<'_> {
         let sequence = match self.instantiate_call(callee, &rewritten, destination, use_) {
             Ok(sequence) => sequence,
             Err(refusal) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 return Err(format!("reclassified: {}", refusal.code()));
             }
         };
@@ -666,7 +666,7 @@ impl Parser<'_> {
                 (Actual::Identity { name, .. }, _) => name.clone(),
                 (Actual::Address { name }, _) => name.clone(),
                 _ => {
-                    (self.next_site, self.element_lowerings) = saved;
+                    self.restore_probe_state(&saved);
                     return Err("a custody formal without an identity".to_owned());
                 }
             };
@@ -675,7 +675,7 @@ impl Parser<'_> {
                 .and_then(Option::as_deref)
                 != Some(expected.as_str())
             {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 return Err(format!(
                     "formal {}: the classifier did not bind `{expected}`",
                     substitution.formal

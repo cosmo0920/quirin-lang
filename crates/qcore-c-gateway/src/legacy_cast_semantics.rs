@@ -264,10 +264,16 @@ impl Parser<'_> {
     /// classifier admitted with such an actual is classified as its uncast
     /// statement instead, whose answer (an admission or a refusal) replaces
     /// the original's. `None` keeps the original classification.
+    ///
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15x): the uncast statement is
+    /// classified from `before`, the probe state the original classification
+    /// started from, since its answer replaces the original's (before the
+    /// card the original's sites stayed minted, leaving a gap).
     pub(super) fn uncast_call_actuals(
         &mut self,
         tokens: &[Token],
         instruction: &LegacyInstruction,
+        before: &super::probe_state::ParserProbeState,
     ) -> Option<LegacyInstruction> {
         if !matches!(instruction, LegacyInstruction::ContractCall { .. })
             || !tokens
@@ -283,6 +289,7 @@ impl Parser<'_> {
         })?;
         let (synthetic, removed) =
             uncast_tokens(&index, statement, tokens, &|site| hides_an_identity(site))?;
+        self.restore_probe_state(before);
         let repaired = self.classify_simple(&synthetic);
         let answer = if matches!(repaired, LegacyInstruction::ContractCall { .. }) {
             "uncast-actuals-admitted"
@@ -324,18 +331,18 @@ impl Parser<'_> {
         let (synthetic, removed) = uncast_tokens(&index, statement, tokens, &|site| {
             removable(site, &|name| descriptors.contains(name))
         })?;
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let lowered = self.expression_statement(&synthetic, line, None);
         if !refuses(&lowered) {
             self.record_uncast(line, tokens, "uncast-admitted", &removed);
             return Some(lowered);
         }
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(&saved);
         if let Some(widened) = self.uncast_tail(statement, &synthetic, line) {
             self.record_uncast(line, tokens, "uncast-tail-admitted", &removed);
             return Some(widened);
         }
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(&saved);
         self.record_uncast(line, tokens, "uncast-refused", &removed);
         None
     }

@@ -478,13 +478,13 @@ impl Parser<'_> {
             return None;
         }
         let index = self.elaboration_index()?;
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let outcome = self.elaborate_statement(&index, tokens, line);
         self.record_elaboration(Site::Statement, line, tokens, old, outcome.as_ref().err());
         match outcome {
             Ok(statements) => Some(Statement::Block(statements)),
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -685,12 +685,12 @@ impl Parser<'_> {
         let tokens = Self::step_tokens(statement, &wanted, line);
         let whole = refused && texts(&tokens) == texts(statement);
         if !whole {
-            let saved = (self.next_site, self.element_lowerings);
+            let saved = self.probe_state();
             let lowered = self.expression_statement(&tokens, line, None);
             if !refuses(&lowered) {
                 return Ok(vec![lowered]);
             }
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
         }
         // A piece that holds none of this card's forms keeps the older
         // routes' refusal (a plain store's refusal is theirs).
@@ -873,7 +873,7 @@ impl Parser<'_> {
             return None;
         }
         let index = self.elaboration_index()?;
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let outcome = self.elaborate_return(&index, expression, line);
         self.record_elaboration(
             Site::Return,
@@ -885,7 +885,7 @@ impl Parser<'_> {
         match outcome {
             Ok(statements) => Some(Statement::Block(statements)),
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -944,13 +944,13 @@ impl Parser<'_> {
         if !leading.is_empty() {
             let wanted = Self::node_texts(index, last)?;
             let tokens = Self::step_tokens(expression, &wanted, line);
-            let saved = (self.next_site, self.element_lowerings);
+            let saved = self.probe_state();
             let returned = self.return_statement(tokens, line);
             if !super::return_refused(&returned) {
                 statements.push(returned);
                 return Ok(statements);
             }
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
         }
         // A scalar value's events, then an exit that escapes nothing.
         if !matches!(result, Operand::Value { pointer: false, .. })

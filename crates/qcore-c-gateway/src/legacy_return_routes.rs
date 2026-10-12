@@ -18,10 +18,16 @@ impl Parser<'_> {
     /// escapes only custody the call produced. Anything else answers `None` and
     /// the `return` keeps the refusal it had.
     ///
-    /// `classify_simple`'s only mutation of the parser is `next_site`, so a
-    /// declined probe restores it and is observationally identical to never
-    /// having run — which is what keeps site numbering, and therefore
+    /// `classify_simple` moves more than `next_site` (the element lowerings,
+    /// the element origins, the argument probe and the other
+    /// [`probe_state::FieldClass::ProbeState`] fields; card
+    /// GAPO-RETURN-CORRECTNESS, rule 15x, corrected the claim that `next_site`
+    /// was its only mutation), so a declined probe hands back the whole
+    /// [`probe_state::ParserProbeState`] and is observationally identical to
+    /// never having run — which is what keeps site numbering, and therefore
     /// certificate identity, unmoved for every `return` this card refuses.
+    /// The monotone facts of [`probe_state::FieldClass::MonotoneFact`] may
+    /// only grow; the synthetic destination is a name no statement spells.
     pub(super) fn return_call_instruction(
         &mut self,
         expression: &[Token],
@@ -38,7 +44,7 @@ impl Parser<'_> {
         let mut synthetic = Vec::with_capacity(expression.len() + 2);
         synthetic.extend(return_call::assignment_prefix(line));
         synthetic.extend_from_slice(expression);
-        let restore = self.next_site;
+        let restore = self.probe_state();
         let instruction = self.classify_simple(&synthetic);
         let admitted = matches!(
             &instruction,
@@ -54,7 +60,7 @@ impl Parser<'_> {
         if admitted {
             Some(instruction)
         } else {
-            self.next_site = restore;
+            self.restore_probe_state(&restore);
             None
         }
     }
@@ -77,8 +83,8 @@ impl Parser<'_> {
     /// Every refusal, including the classifier's own `Unknown`, keeps the old
     /// return-position wrapper and wording.
     ///
-    /// A declined probe restores `next_site`, so a classification attempt
-    /// cannot perturb later certificate identities.
+    /// A declined probe hands back the whole probe state (rule 15x), so a
+    /// classification attempt cannot perturb later certificate identities.
     pub(super) fn return_expression_instruction(
         &mut self,
         expression: &[Token],
@@ -126,7 +132,7 @@ impl Parser<'_> {
                     &self.typed_types,
                 )
             {
-                let restore = self.next_site;
+                let restore = self.probe_state();
                 let instruction = self.classify_simple(&expression[call_index..call_end]);
                 let admitted = matches!(
                     &instruction,
@@ -146,13 +152,13 @@ impl Parser<'_> {
                     );
                     return Some((instruction, false));
                 }
-                self.next_site = restore;
+                self.restore_probe_state(&restore);
             }
         }
         let mut synthetic = Vec::with_capacity(expression.len() + 2);
         synthetic.extend(return_call::assignment_prefix(line));
         synthetic.extend_from_slice(expression);
-        let restore = self.next_site;
+        let restore = self.probe_state();
         let instruction = self.classify_simple(&synthetic);
         let direct_member_read = texts.iter().filter(|text| **text == ".").count()
             + texts.windows(2).filter(|pair| *pair == ["-", ">"]).count()
@@ -162,7 +168,7 @@ impl Parser<'_> {
             LegacyInstruction::OpaqueValue { destination, .. }
                 if destination == return_call::RETURN_RESULT_PLACE
         ) && direct_member_read;
-        self.next_site = restore;
+        self.restore_probe_state(&restore);
         if admitted {
             return Some((instruction, false));
         }

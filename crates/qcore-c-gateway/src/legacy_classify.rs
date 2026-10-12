@@ -20,13 +20,19 @@ impl Parser<'_> {
     ///
     /// Card **W45-PARENTHESISED-CALLEE** wraps it: an admitted statement that
     /// applies a call to a callee expression that is not a name refuses.
+    ///
+    /// Card **GAPO-RETURN-CORRECTNESS** (rule 15x): every guard that replaces
+    /// an admission by a refusal hands back the whole probe state the
+    /// admission moved ([`probe_state::ParserProbeState`]), not only the site
+    /// and element counters, and the descriptor guard, which restored
+    /// nothing, does too.
     pub(super) fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
-        let saved = (self.next_site, self.element_lowerings);
-        let instruction = self.classify_simple_descriptors(tokens);
-        let instruction = self.refuse_opaque_call(tokens, instruction, saved);
+        let saved = self.probe_state();
+        let instruction = self.classify_simple_descriptors(tokens, &saved);
+        let instruction = self.refuse_opaque_call(tokens, instruction, &saved);
         // Card CG25-RESOURCE-KINDS (rule 11v): a tracked in-place object is
         // custody, never data.
-        let instruction = self.in_place_guard(tokens, instruction, saved);
+        let instruction = self.in_place_guard(tokens, instruction, &saved);
         // Card W45-FB-BACKLOG-CUSTODY, rule 4: an admission that hands an
         // iteration's protected node or element to a position that may unlink
         // or release it is replaced by the refusal; a refusal stays itself.
@@ -40,14 +46,20 @@ impl Parser<'_> {
         let Some(description) = self.list_iteration_refusal(&texts) else {
             return instruction;
         };
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(&saved);
         LegacyInstruction::Unknown {
             description: description.to_owned(),
             writes: self.refused_writes(&texts),
         }
     }
 
-    pub(super) fn classify_simple_descriptors(&mut self, tokens: &[Token]) -> LegacyInstruction {
+    /// The W43 descriptor guard; a refusal of an admission hands back
+    /// `saved` (rule 15x).
+    pub(super) fn classify_simple_descriptors(
+        &mut self,
+        tokens: &[Token],
+        saved: &probe_state::ParserProbeState,
+    ) -> LegacyInstruction {
         let instruction = self.classify_simple_unguarded(tokens);
         if self.descriptor_names.is_empty() {
             return instruction;
@@ -62,6 +74,9 @@ impl Parser<'_> {
             return instruction;
         };
         if !descriptor_custody::admits_descriptor_read(&instruction, &self.descriptor_names) {
+            if !matches!(instruction, LegacyInstruction::Unknown { .. }) {
+                self.restore_probe_state(saved);
+            }
             return LegacyInstruction::Unknown {
                 description: format!(
                     "tracked descriptor `{read}` read by a custody-neutral scalar route is \
@@ -77,6 +92,7 @@ impl Parser<'_> {
                 .chain(nested.iter().map(|nested| nested.function.as_str()))
                 .find(|callee| !self.declared_callees.contains(*callee))
         {
+            self.restore_probe_state(saved);
             return LegacyInstruction::Unknown {
                 description: format!(
                     "tracked descriptor `{read}` passed to `{callee}`, whose effect on it no \
@@ -350,7 +366,7 @@ impl Parser<'_> {
                     },
                 ];
                 rewritten.extend(tokens[tokens.len() - length..].iter().cloned());
-                let saved = self.next_site;
+                let saved = self.probe_state();
                 let call = self.classify_simple_base(&rewritten);
                 // A call whose every parameter is borrowed and whose result
                 // carries no custody. Every other call keeps the refusal.
@@ -379,7 +395,7 @@ impl Parser<'_> {
                         && matches!(contract.result, ResourceReturnMode::None)
                 );
                 if !admitted {
-                    self.next_site = saved;
+                    self.restore_probe_state(&saved);
                     return None;
                 }
                 (
@@ -584,7 +600,7 @@ impl Parser<'_> {
             } else {
                 let mut rewritten = vec![synthetic(ELEMENT_TEMPORARY), synthetic("=")];
                 rewritten.extend(tokens[texts.len() - value.len()..].iter().cloned());
-                let saved = self.next_site;
+                let saved = self.probe_state();
                 let mut instruction = self.classify_simple_base(&rewritten);
                 let admitted = matches!(
                     &instruction,
@@ -604,7 +620,7 @@ impl Parser<'_> {
                             .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
                 );
                 if !admitted {
-                    self.next_site = saved;
+                    self.restore_probe_state(&saved);
                     return None;
                 }
                 if let LegacyInstruction::ContractCall { destination, .. } = &mut instruction {
@@ -629,9 +645,9 @@ impl Parser<'_> {
             synthetic(ELEMENT_TEMPORARY),
             synthetic(")"),
         ];
-        let saved = self.next_site;
+        let saved = self.probe_state();
         let instruction = self.classify_simple_base(&rewritten);
-        self.next_site = saved;
+        self.restore_probe_state(&saved);
         let LegacyInstruction::ContractCall {
             function,
             destination: None,

@@ -152,7 +152,7 @@ impl Parser<'_> {
                     .all(|(token, text)| token.text == *text)
         })?;
         let call_tokens = &tokens[start..start + call_texts.len()];
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let instruction = self.classify_simple(call_tokens);
         let accepted = |call: &LegacyInstruction| {
             matches!(call, LegacyInstruction::ContractCall { function, destination: None, contract, .. }
@@ -167,7 +167,7 @@ impl Parser<'_> {
             None
         };
         if lowered.is_none() {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
         }
         lowered
     }

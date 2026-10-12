@@ -527,7 +527,7 @@ impl Parser<'_> {
             // access-path reader; otherwise its refusal stays.
             return self.typed_call_free_plan(condition, position);
         }
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         self.condition_widening.set(0);
         let outcome = self.condition_plan(condition, position);
         // A derived-result validation parse re-reads a body the ordinary
@@ -545,7 +545,7 @@ impl Parser<'_> {
         match outcome {
             Ok(plan) if ADMIT => Some(Box::new(plan)),
             _ => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -560,10 +560,10 @@ impl Parser<'_> {
         condition: &[Token],
         position: Position,
     ) -> Result<ConditionPlan, Refusal> {
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let result = self.condition_plan_unguarded(condition, position);
         if result.is_err() {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
         }
         result
     }
@@ -965,7 +965,7 @@ impl Parser<'_> {
         condition: &[Token],
         position: Position,
     ) -> Option<Box<ConditionPlan>> {
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let uses = self.typed_position_uses.get();
         self.condition_widening.set(0);
         let outcome = self.condition_plan(condition, position);
@@ -985,7 +985,7 @@ impl Parser<'_> {
         match outcome {
             Ok(plan) if ADMIT && (typed || elaborated) => Some(Box::new(plan)),
             _ => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }

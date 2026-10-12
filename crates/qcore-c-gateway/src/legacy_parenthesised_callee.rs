@@ -504,12 +504,12 @@ impl super::Parser<'_> {
         &mut self,
         tokens: &[Token],
         instruction: LegacyInstruction,
-        saved: (usize, usize),
+        saved: &super::probe_state::ParserProbeState,
     ) -> LegacyInstruction {
         if matches!(instruction, LegacyInstruction::Unknown { .. }) || !self.opaque_callee(tokens) {
             return instruction;
         }
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(saved);
         let texts = tokens
             .iter()
             .map(|token| token.text.as_str())
@@ -528,7 +528,7 @@ impl super::Parser<'_> {
         stripped: &[Token],
         original: Option<&[Token]>,
     ) -> LegacyInstruction {
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let instruction = self.classify_simple(stripped);
         let grouped = original.is_none_or(|original| {
             let texts = original
@@ -540,7 +540,7 @@ impl super::Parser<'_> {
         if !grouped || matches!(instruction, LegacyInstruction::Unknown { .. }) {
             return instruction;
         }
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(&saved);
         let texts = original
             .unwrap_or(stripped)
             .iter()

@@ -414,7 +414,7 @@ impl Parser<'_> {
             return None;
         }
         let index = self.typed_positions_index()?.clone();
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let outcome = self.lower_nested_statement(&index, tokens, line);
         self.record_nested(
             "statement",
@@ -428,7 +428,7 @@ impl Parser<'_> {
         match outcome {
             Ok((instructions, ..)) => Some(instructions),
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }
@@ -725,7 +725,7 @@ impl Parser<'_> {
             return None;
         }
         let index = self.typed_positions_index()?.clone();
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let outcome = self.lower_nested_return(&index, expression, line);
         self.record_nested(
             "return",
@@ -762,7 +762,7 @@ impl Parser<'_> {
                 Some(Statement::Block(statements))
             }
             Err(_) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 None
             }
         }

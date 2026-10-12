@@ -202,10 +202,10 @@ impl Parser<'_> {
             text: base,
             line: tokens[equal].line,
         });
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let lowered = self.expression_statement(&synthetic, line, None);
         if refuses(&lowered) {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
             self.record_layout(
                 "container-of-statement",
                 line,
@@ -246,10 +246,10 @@ impl Parser<'_> {
             text: base,
             line: first.line,
         }];
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let lowered = self.return_statement(respelled, line);
         if super::return_refused(&lowered) || refuses(&lowered) {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
             self.record_layout(
                 "container-of-return",
                 line,

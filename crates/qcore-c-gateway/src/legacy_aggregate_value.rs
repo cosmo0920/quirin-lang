@@ -406,7 +406,7 @@ impl Parser<'_> {
         if super::contains_braces(&rewritten) {
             return (Err(Refusal::LiteralPosition), detail);
         }
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let use_ = if destination.is_some() {
             ResultUse::Stored
         } else {
@@ -423,7 +423,7 @@ impl Parser<'_> {
                 detail,
             ),
             Err(refusal) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 (Err(Refusal::Instantiation(format!("{refusal:?}"))), detail)
             }
         }

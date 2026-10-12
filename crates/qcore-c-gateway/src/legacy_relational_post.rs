@@ -198,11 +198,11 @@ impl Parser<'_> {
         let test = read_test(&texts)?;
         let callee = texts[test.callee].to_owned();
         let contract = self.contracts.relational_contract(&callee)?.clone();
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         match self.relational_edges(condition, &test, &callee, &contract) {
             Ok(plan) => Some(Box::new(plan)),
             Err(description) => {
-                (self.next_site, self.element_lowerings) = saved;
+                self.restore_probe_state(&saved);
                 Some(Box::new(ConditionPlan {
                     nodes: vec![PlanNode {
                         instruction: LegacyInstruction::Unknown {

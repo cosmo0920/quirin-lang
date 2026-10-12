@@ -374,6 +374,11 @@ mod scalar_return_value;
 #[path = "legacy_route_table.rs"]
 mod route_table;
 
+// Card GAPO-RETURN-CORRECTNESS (rule 15x): the parser state a classification
+// probe may move, saved as one value and handed back by a declined probe.
+#[path = "legacy_probe_state.rs"]
+mod probe_state;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 pub(crate) mod leak_witness;
@@ -5203,12 +5208,16 @@ impl Parser<'_> {
         // Card CG10 (I04): this run's own place in the stream.
         self.typed_place_origin
             .set(origin.map(|origin| (origin, tokens.len())));
+        // Card GAPO-RETURN-CORRECTNESS (rule 15x): rule 12h's second
+        // classification replaces the first, so it starts from the state the
+        // first started from (no gap in site numbering).
+        let before = self.probe_state();
         let instruction = self.classify_simple(tokens);
         // Card CAST-FORMALIZATION (rule 12h), a soundness repair asked
         // first: an identity-preserving cast of a place at a call actual is
         // that place, so the call is classified as its uncast statement.
         let instruction = self
-            .uncast_call_actuals(tokens, &instruction)
+            .uncast_call_actuals(tokens, &instruction, &before)
             .unwrap_or(instruction);
         self.typed_place_origin.set(None);
         self.element_origins.settle(tokens, &instruction);

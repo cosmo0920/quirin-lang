@@ -657,13 +657,14 @@ impl Parser<'_> {
         let mut synthetic = Vec::with_capacity(call.len() + 2);
         synthetic.extend(return_call::assignment_prefix(line));
         synthetic.extend_from_slice(call);
-        let restore = self.next_site;
+        // Card GAPO-RETURN-CORRECTNESS (rule 15x): the whole probe state.
+        let restore = self.probe_state();
         let instruction = self.classify_simple(&synthetic);
         let admitted = match &instruction {
             LegacyInstruction::Unknown { .. } => {
                 // Re-attribution: the classifier's own refusal, deciding
-                // nothing, with the site counter restored.
-                self.next_site = restore;
+                // nothing, with the probe state restored.
+                self.restore_probe_state(&restore);
                 return Some((instruction, false));
             }
             LegacyInstruction::ContractCall {
@@ -700,7 +701,7 @@ impl Parser<'_> {
         if admitted {
             Some((instruction, true))
         } else {
-            self.next_site = restore;
+            self.restore_probe_state(&restore);
             None
         }
     }

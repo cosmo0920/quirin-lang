@@ -914,7 +914,7 @@ fn take_foreign_custody(name: &str, site: usize, state: &mut AbstractState) {
 /// name's token, with the container its pointer reaches as spelled (`None`
 /// when the pointer is no container's element this rule admits: a saved
 /// successor, or a never-bound formal).
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct ForeignOrigins {
     admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
     pending: Option<(String, Option<Vec<String>>)>,
@@ -934,6 +934,29 @@ impl ForeignOrigins {
     /// The binding rule 5l is about to return for `element`.
     pub(crate) fn propose(&mut self, element: &str, container: Option<Vec<String>>) {
         self.pending = Some((element.to_owned(), container));
+    }
+
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15x, shared item): the part a
+    /// classification probe may move and a declined one hands back, the
+    /// admitted bindings and the pending proposal. `over_formal` is a
+    /// monotone fact about the source statement and is not part of it.
+    pub(crate) fn lowering(&self) -> OriginsLowering {
+        let Self {
+            admitted,
+            pending,
+            over_formal: _,
+        } = self;
+        OriginsLowering {
+            admitted: admitted.clone(),
+            pending: pending.clone(),
+        }
+    }
+
+    /// Card GAPO-RETURN-CORRECTNESS (rule 15x, shared item): hand back
+    /// [`Self::lowering`]'s answer; `over_formal` keeps what it grew to.
+    pub(crate) fn restore_lowering(&mut self, lowering: &OriginsLowering) {
+        self.admitted.clone_from(&lowering.admitted);
+        self.pending.clone_from(&lowering.pending);
     }
 
     /// Forget any proposal: a statement's classification starts.
@@ -969,6 +992,14 @@ impl ForeignOrigins {
             .or_default()
             .insert(container);
     }
+}
+
+/// Card GAPO-RETURN-CORRECTNESS (rule 15x, shared item): the probe state of
+/// [`ForeignOrigins`] ([`ForeignOrigins::lowering`]).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct OriginsLowering {
+    admitted: BTreeMap<(String, usize), BTreeSet<Option<Vec<String>>>>,
+    pending: Option<(String, Option<Vec<String>>)>,
 }
 
 /// Every lexical `container_of` binding `E = ( {` of `element` in `body`,

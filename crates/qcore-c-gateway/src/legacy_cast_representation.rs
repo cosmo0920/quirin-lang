@@ -276,10 +276,10 @@ impl Parser<'_> {
         let value_tokens = run_of(tokens, equal + 1, &wanted)?;
         let mut synthetic = tokens[..=equal].to_vec();
         synthetic.extend(value_tokens);
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let lowered = self.expression_statement(&synthetic, line, None);
         if refuses(&lowered) {
-            (self.next_site, self.element_lowerings) = saved;
+            self.restore_probe_state(&saved);
             self.record_cast("pointer-statement", line, tokens, "uncast-refused");
             return None;
         }

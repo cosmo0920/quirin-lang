@@ -556,7 +556,7 @@ impl AdmittedArgument {
 
 /// The probe state one statement's re-classification reads. Empty outside
 /// [`Parser::call_argument_access`], which makes every hook the identity.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct ArgumentProbe {
     admitted: Vec<AdmittedArgument>,
     /// True while the statement is being classified again; the census of the
@@ -891,8 +891,9 @@ impl Parser<'_> {
             let _ = (&callee, &facts);
             return None;
         }
-        let saved_site = self.next_site;
-        let saved_elements = self.element_lowerings;
+        // Card GAPO-RETURN-CORRECTNESS (rule 15x): the whole probe state,
+        // taken before the probe is installed.
+        let saved = self.probe_state();
         self.argument_probe = ArgumentProbe {
             admitted,
             rerun: true,
@@ -925,8 +926,7 @@ impl Parser<'_> {
             if admitted_call { &used } else { &[] },
         );
         if !admitted_call {
-            self.next_site = saved_site;
-            self.element_lowerings = saved_elements;
+            self.restore_probe_state(&saved);
             return None;
         }
         Some(Probe { result, used })
@@ -1000,7 +1000,7 @@ impl Parser<'_> {
         if admitted.is_empty() {
             return None;
         }
-        let saved = (self.next_site, self.element_lowerings);
+        let saved = self.probe_state();
         let previous = std::mem::replace(
             &mut self.argument_probe,
             ArgumentProbe {
@@ -1010,7 +1010,7 @@ impl Parser<'_> {
         );
         let result = self.classify_simple(tokens);
         self.argument_probe = previous;
-        (self.next_site, self.element_lowerings) = saved;
+        self.restore_probe_state(&saved);
         Some(result)
     }
 }
