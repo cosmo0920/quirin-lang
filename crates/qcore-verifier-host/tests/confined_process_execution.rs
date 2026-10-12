@@ -19,6 +19,10 @@ use std::io::ErrorKind;
 use std::net::TcpListener;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
+
+#[path = "support/process_fixture.rs"]
+mod process_fixture;
+use process_fixture::{READ_REQUEST, write_executable};
 use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -59,10 +63,15 @@ impl Fixture {
         self.root.join("outside")
     }
 
+    /// The fixture reads its whole request before `body` runs, and its
+    /// executable is written without a write descriptor in this process
+    /// (`support/process_fixture.rs` says which load-dependent failure each
+    /// closes).
     fn script(&self, body: &str) {
-        let path = self.package().join("provider.sh");
-        fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
-        fs::set_permissions(&path, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(
+            &self.package().join("provider.sh"),
+            format!("#!/bin/sh\n{READ_REQUEST}\n{body}\n").as_bytes(),
+        );
     }
 
     /// Writes the valid response frame `provider.sh` can emit with
@@ -103,8 +112,7 @@ impl Fixture {
         bytes.extend(b"exit $?\n");
         bytes.extend(envelope(&serde_json::to_string(&manifest).unwrap()).into_bytes());
         bytes.push(b'\n');
-        fs::write(&script, &bytes).unwrap();
-        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(&script, &bytes);
         let mut installed = manifest;
         installed.package_digest = sha256_hex(&fs::read(&script).unwrap());
         fs::write(

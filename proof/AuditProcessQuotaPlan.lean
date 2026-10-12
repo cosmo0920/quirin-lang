@@ -60,3 +60,10 @@ import QCore.ProcessQuotaPlan
 #print axioms QCore.ProcessQuotaPlan.a_forced_probe_only_refuses
 #print axioms QCore.ProcessQuotaPlan.a_forced_probe_refuses_every_confined_execution
 #print axioms QCore.ProcessQuotaPlan.a_forced_probe_grants_no_profile_a_mechanism
+
+-- Card `EXECUTION-QUOTA-LOAD-INDEPENDENCE`: per-execution cgroup names of one
+-- process are distinct for every clock; a repeated clock reading collided only
+-- the legacy (process id, clock) name.
+#print axioms QCore.ProcessQuotaPlan.session_keys_are_injective_in_the_sequence
+#print axioms QCore.ProcessQuotaPlan.the_sessions_of_one_process_have_pairwise_distinct_keys
+#print axioms QCore.ProcessQuotaPlan.a_repeated_clock_reading_collides_only_the_legacy_key

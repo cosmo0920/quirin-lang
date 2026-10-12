@@ -19,6 +19,10 @@ The second property is the *direction* of the mechanism-availability override
 the reverse, so no use of it can produce an execution that ran with weaker
 enforcement than the kernel offered.
 
+The third, in the last section, is that the per-execution cgroups of one host
+process are named apart for every clock reading (card
+`EXECUTION-QUOTA-LOAD-INDEPENDENCE`).
+
 What is **not** modelled here, and stays a Rust and OS boundary: that the
 cgroup v2 `pids` controller actually bounds a process tree (measured in
 `docs/reports/remaining-p03-f/README.md`), that Landlock and the namespace
@@ -567,5 +571,65 @@ theorem a_forced_probe_grants_no_profile_a_mechanism
     (t : Target) (p : Profile) (d : Declared) (hp : p.installsQuota = false) :
     decideWithProbe t p .forcedUnavailable d = decide t p d := by
   simp [decideWithProbe, hp]
+
+/-! ### Per-execution cgroup names
+
+Card `EXECUTION-QUOTA-LOAD-INDEPENDENCE`. `process_quota::linux::session_name`
+names one execution's cgroup by the host process id, a sequence number drawn
+from a per-process counter, and the wall clock. Before the card the name was
+the process id and the clock only: concurrent executions of one host process
+that read the same nanosecond got the same name, and the second `mkdir` was
+refused with `EEXIST` before spawning, which a loaded test gate measured.
+
+The name is modelled as the triple it formats. That the Rust spelling
+(`qcore-exec-{pid}-{sequence}-{nanos}`, decimal fields between hyphens) decodes
+back to that triple is pinned on the Rust side by
+`per_execution_cgroup_names_never_collide_within_one_process`. The clock is an
+arbitrary function of the draw: nothing below assumes it is monotone, or that
+two readings differ. -/
+
+/-- The fields one per-execution cgroup name is built from. -/
+structure SessionKey where
+  pid : Nat
+  sequence : Nat
+  nanos : Nat
+  deriving DecidableEq, Repr
+
+/-- The key of the session that drew sequence number `n` in process `pid`,
+with `clock n` the wall-clock reading it took. -/
+def sessionKey (pid : Nat) (clock : Nat → Nat) (n : Nat) : SessionKey :=
+  ⟨pid, n, clock n⟩
+
+/-- The key before the card: the process id and the clock reading only. -/
+def legacySessionKey (pid : Nat) (clock : Nat → Nat) (n : Nat) : Nat × Nat :=
+  (pid, clock n)
+
+/-- Sessions of one process are keyed apart by their sequence numbers alone,
+whatever the clock read. -/
+theorem session_keys_are_injective_in_the_sequence
+    (pid : Nat) (clock : Nat → Nat) :
+    Function.Injective (sessionKey pid clock) := by
+  intro m n h
+  exact congrArg SessionKey.sequence h
+
+/-- The first `count` sessions a process draws have pairwise distinct keys, for
+every clock. -/
+theorem the_sessions_of_one_process_have_pairwise_distinct_keys
+    (pid : Nat) (clock : Nat → Nat) (count : Nat) :
+    ((List.range count).map (sessionKey pid clock)).Nodup :=
+  List.Pairwise.map (sessionKey pid clock)
+    (fun _ _ hne heq => hne (session_keys_are_injective_in_the_sequence pid clock heq))
+    List.nodup_range
+
+/-- **What the card repaired.** Two sessions of one process whose clock
+readings coincide had the same legacy key, and have distinct keys now. -/
+theorem a_repeated_clock_reading_collides_only_the_legacy_key
+    (pid : Nat) (clock : Nat → Nat) {m n : Nat}
+    (hmn : m ≠ n) (hclock : clock m = clock n) :
+    legacySessionKey pid clock m = legacySessionKey pid clock n
+      ∧ sessionKey pid clock m ≠ sessionKey pid clock n := by
+  refine ⟨by simp [legacySessionKey, hclock], ?_⟩
+  intro h
+  exact hmn (session_keys_are_injective_in_the_sequence pid clock h)
 
 end QCore.ProcessQuotaPlan

@@ -256,6 +256,7 @@ pub(crate) mod linux {
     use std::os::fd::OwnedFd;
     use std::path::{Path, PathBuf};
     use std::sync::OnceLock;
+    use std::sync::atomic::{AtomicU64, Ordering};
 
     use super::{
         CGROUP_V2_PIDS, MAX_EXECUTION_PROCESSES, MechanismProbe, ProcessQuota, QuotaObservation,
@@ -411,6 +412,24 @@ pub(crate) mod linux {
         quota: ProcessQuota,
     }
 
+    /// The next per-execution sequence number of this process.
+    static NEXT_SESSION: AtomicU64 = AtomicU64::new(0);
+
+    /// The name of one execution's cgroup: this process's id, a sequence
+    /// number no other session of this process has drawn, and the wall clock.
+    ///
+    /// The sequence number is what makes two sessions of one process distinct.
+    /// The process id and the clock alone were not: concurrent executions in
+    /// one host process are released together from the same cached kernel
+    /// probes, run the same instructions, and can read the same nanosecond, so
+    /// the second `mkdir` met `EEXIST` and its execution was refused before
+    /// spawning (card `EXECUTION-QUOTA-LOAD-INDEPENDENCE`). The process id
+    /// separates live processes, and the clock separates this process from a
+    /// dead one that reused its id and left a cgroup it could not release.
+    pub(crate) fn session_name(pid: u32, sequence: u64, nanos: u128) -> String {
+        format!("qcore-exec-{pid}-{sequence}-{nanos}")
+    }
+
     impl QuotaSession {
         /// Creates the per-execution cgroup and installs `pids.max`.
         ///
@@ -418,13 +437,13 @@ pub(crate) mod linux {
         /// refusal rather than an unbounded execution.
         pub(crate) fn create(quota: &ProcessQuota) -> Result<Self, String> {
             let parent = Path::new(&quota.cgroup_parent);
-            let path = parent.join(format!(
-                "qcore-exec-{}-{}",
+            let path = parent.join(session_name(
                 std::process::id(),
+                NEXT_SESSION.fetch_add(1, Ordering::Relaxed),
                 std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
                     .map(|since| since.as_nanos())
-                    .unwrap_or_default()
+                    .unwrap_or_default(),
             ));
             std::fs::create_dir(&path)
                 .map_err(|error| format!("could not create `{}`: {error}", path.display()))?;
@@ -651,6 +670,33 @@ mod tests {
             }
             .any_forced()
         );
+    }
+
+    /// Two sessions of one process that read the same nanosecond still get
+    /// distinct cgroups, and the name decodes back to exactly the triple it was
+    /// built from, so no two distinct triples share a name.
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn per_execution_cgroup_names_never_collide_within_one_process() {
+        use linux::session_name;
+        let (pid, nanos) = (4_242, 1_791_799_458_013_850_267_u128);
+        let names: std::collections::BTreeSet<String> = (0..64)
+            .map(|sequence| session_name(pid, sequence, nanos))
+            .collect();
+        assert_eq!(names.len(), 64);
+        for (pid, sequence, nanos) in [(1, 23, 4), (12, 3, 4), (1, 2, 34), (0, 0, 0)] {
+            let name = session_name(pid, sequence, nanos);
+            let fields: Vec<&str> = name
+                .strip_prefix("qcore-exec-")
+                .expect("the prefix is fixed")
+                .split('-')
+                .collect();
+            assert_eq!(
+                fields,
+                [pid.to_string(), sequence.to_string(), nanos.to_string()],
+                "{name}"
+            );
+        }
     }
 
     #[test]

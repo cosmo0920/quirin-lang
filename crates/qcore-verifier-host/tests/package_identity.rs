@@ -19,6 +19,12 @@ use std::fs;
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 use std::sync::Arc;
+
+// Only `write_executable` is used here: these fixtures already read their
+// request with `/bin/cat > /dev/null` before answering.
+#[allow(dead_code)]
+#[path = "support/process_fixture.rs"]
+mod process_fixture;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 struct Fixture {
@@ -88,9 +94,12 @@ impl Fixture {
         installed
     }
 
+    /// Written without a write descriptor in this process, so a sibling
+    /// test's concurrent spawn cannot make this file's `execve` fail with
+    /// `ETXTBSY` (`support/process_fixture.rs`). An existing file keeps its
+    /// inode, which `rewrite_in_place` asserts.
     fn write_executable(&self, bytes: &[u8]) {
-        fs::write(self.executable(), bytes).unwrap();
-        fs::set_permissions(self.executable(), fs::Permissions::from_mode(0o700)).unwrap();
+        process_fixture::write_executable(&self.executable(), bytes);
     }
 
     /// Rewrites the executable **in place**: `write` truncates the same inode,

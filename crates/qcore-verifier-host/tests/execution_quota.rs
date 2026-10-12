@@ -27,7 +27,10 @@ use std::sync::Arc;
 use std::time::Duration;
 
 #[cfg(target_os = "linux")]
-use std::os::unix::fs::PermissionsExt;
+#[path = "support/process_fixture.rs"]
+mod process_fixture;
+#[cfg(target_os = "linux")]
+use process_fixture::{READ_REQUEST, write_executable};
 
 struct Fixture {
     root: PathBuf,
@@ -57,11 +60,16 @@ impl Fixture {
         self.root.join("writable")
     }
 
+    /// The fixture reads its whole request before `body` runs, and its
+    /// executable is written without a write descriptor in this process
+    /// (`support/process_fixture.rs` says which load-dependent failure each
+    /// closes).
     #[cfg(target_os = "linux")]
     fn script(&self, body: &str) {
-        let path = self.package().join("provider.sh");
-        fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();
-        fs::set_permissions(&path, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(
+            &self.package().join("provider.sh"),
+            format!("#!/bin/sh\n{READ_REQUEST}\n{body}\n").as_bytes(),
+        );
     }
 
     /// Only the Linux cases reach a spawn, so only they need a response
@@ -110,8 +118,7 @@ impl Fixture {
         bytes.extend(b"exit $?\n");
         bytes.extend(envelope(&serde_json::to_string(&manifest).unwrap()).into_bytes());
         bytes.push(b'\n');
-        fs::write(&script, &bytes).unwrap();
-        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(&script, &bytes);
         let mut installed = manifest;
         installed.package_digest = sha256_hex(&fs::read(&script).unwrap());
         fs::write(
@@ -398,6 +405,23 @@ fn quota_available(fixture: &Fixture) -> Option<ProcessQuota> {
         .and_then(|enforced| enforced.process_quota)
 }
 
+/// What the kernel counted for an execution that installed a quota.
+///
+/// `finish_quota` observes every installed session, so a record without an
+/// observation is an execution refused before its quota existed. That is never
+/// a race to re-run: the panic names the outcome and the host's own reason, so
+/// a recurrence says which pre-spawn step refused.
+#[cfg(target_os = "linux")]
+fn observed_quota(record: &ProcessExecutionRecord) -> QuotaObservation {
+    record.quota_observed.clone().unwrap_or_else(|| {
+        panic!(
+            "a quota execution records what the kernel counted, but this one has no \
+             observation: outcome {:?}, detail `{}`",
+            record.outcome, record.detail
+        )
+    })
+}
+
 /// The quota bounds a fork storm at the declared number of tasks, and the
 /// kernel's own counters say so. Where the mechanism is unavailable, the same
 /// declaration is refused before the spawn instead — never run unbounded.
@@ -452,10 +476,7 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
 
     let outcome = provider.verify(&request);
     let record = provider.last_execution().unwrap();
-    let observed = record
-        .quota_observed
-        .clone()
-        .expect("a quota execution records what the kernel counted");
+    let observed = observed_quota(&record);
     assert_eq!(observed.max_processes, 4);
     assert_eq!(observed.mechanism, "cgroup-v2-pids");
     // The kernel never let the tree exceed the declared bound...
@@ -474,14 +495,17 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
     assert!(!std::path::Path::new(&observed.cgroup_path).exists());
     assert!(record.summary().contains("process_quota="));
     // The run itself completed or was terminated by its own failed forks;
-    // either way it is never a program `Unsafe`, and the bound held.
+    // either way it is never a program `Unsafe`, and the bound held. `Io` is
+    // not among them: the fixture has read its whole request before the storm
+    // starts, so no refused fork can close the request pipe under the host.
     assert!(
         matches!(
             record.outcome,
-            ProcessOutcome::Completed | ProcessOutcome::Terminated | ProcessOutcome::Io
+            ProcessOutcome::Completed | ProcessOutcome::Terminated
         ),
-        "{:?}: {outcome:?}",
-        record.outcome
+        "{:?} (`{}`): {outcome:?}",
+        record.outcome,
+        record.detail
     );
 
     // The control: the identical fixture under a quota above what it asks for
@@ -497,11 +521,7 @@ fn a_declared_quota_bounds_a_fork_storm_in_this_execution_only() {
         .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
         .with_confinement_policy(fixture.policy());
     control.verify(&request).unwrap();
-    let control = control
-        .last_execution()
-        .unwrap()
-        .quota_observed
-        .expect("the control installs its own quota");
+    let control = observed_quota(&control.last_execution().unwrap());
     assert_eq!(control.quota_rejections, Some(0));
     if let (Some(bounded), Some(free)) = (observed.peak_processes, control.peak_processes) {
         assert!(
@@ -579,9 +599,17 @@ fn the_quota_binds_without_depending_on_the_accounts_process_count() {
         );
         return;
     }
-    let _ = provider.verify(&request);
+    let outcome = provider.verify(&request);
     let record = provider.last_execution().unwrap();
-    let observed = record.quota_observed.unwrap();
+    let observed = observed_quota(&record);
+    // The fixture reads its request, answers and exits 0, and its quota is
+    // above what it asks for, so nothing here may end the run early.
+    assert_eq!(
+        record.outcome,
+        ProcessOutcome::Completed,
+        "`{}`: {outcome:?}",
+        record.detail
+    );
     assert_eq!(observed.max_processes, 6);
     if let Some(peak) = observed.peak_processes {
         assert!(peak <= 6, "peak {peak} exceeded the declared quota of 6");
