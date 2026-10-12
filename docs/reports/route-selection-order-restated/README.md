@@ -123,7 +123,20 @@ the selectors are pure.
 
 ## 6. Gate
 
-GATE-PLACEHOLDER
+[`gate.json`](gate.json), exits in [`gate/`](gate/); scripts
+[`gate.sh`](scripts/gate.sh), [`write_gate_json.py`](scripts/write_gate_json.py),
+[`finish-gate.sh`](scripts/finish-gate.sh); every step under the shared lock,
+nothing piped, logs under `private/rsor/`.
+
+Standing gate **g1**, every code step at `3acebdd4d` (the code is that of
+`7f61b2481`): `cargo check --workspace --all-targets` 0, submodule 0, fmt 0,
+clippy `--locked` 0; `run_test_binaries.py` 486 units, 499 summaries,
+**7,928 passed, 0 failed**, 14 ignored, exit 0 (`private/rsor/tests-gate-g1/`;
+the base's 7,917 plus the seven fixtures and four table pins); both
+reevaluation probes 0; `check_lean_audits.py` **315** passed; the Python
+suite **365 OK** (08, and 09b after `build_matrix.py --gate gate.json`, 09a,
+0); `build_docs_index.py` and `--check` 0. Clang present (Ubuntu clang
+21.1.8). No provider gate: `providers/` is unchanged.
 
 ## 7. Follow-ups
 
