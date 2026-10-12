@@ -551,6 +551,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [qr-lexical-selectors-declaration-names](qr-lexical-selectors-declaration-names/README.md) | QR-LEXICAL-SELECTORS-DECLARATION-NAMES: route selectors read no declaration name |
+
 | [qr-print-route-matches-declaration](qr-print-route-matches-declaration/README.md) | QR-PRINT-ROUTE-MATCHES-DECLARATION: the print-call route reads a call, not a name |
 
 | [quant-index-checks](quant-index-checks/README.md) | QUANT-INDEX-CHECKS |
