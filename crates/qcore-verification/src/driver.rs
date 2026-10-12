@@ -1566,6 +1566,31 @@ fn compile_files_with_registry_inner(
     // `Buffer`, quantity types) and read by the contract loader whenever a
     // program selects them; it declares nothing callable here.
     let module = compile_elaborated_source(&parsed, &typed, mode, options, &ranges, target)?;
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: the completeness half of
+    // the contract-route guard. `route_selection::source_only_route` refuses a
+    // contract module before any source-only route lowers it, naming the
+    // route; it restates the route order, so a route added to
+    // `compile_elaborated_source` and not to it would slip past. Whatever
+    // route admitted it, a contract module that is not on the sequential
+    // route (the one that reads contract modules) is refused here.
+    if mode == SourceModuleMode::Contract
+        && !matches!(module.checked, CheckedSourceModule::Sequential(_))
+    {
+        let span = parsed
+            .declarations
+            .first()
+            .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+        return Err(vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            span,
+            format!(
+                "a `module contract;` module declares contracts and is compiled on the sequential route only; it was admitted on the `{:?}` route, so it is refused",
+                module.execution_profile
+            ),
+            &ranges,
+        )]);
+    }
     // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` reads every extern
     // declaration of its module itself, against the imported struct names and
     // its selected contracts (a `ptr<const, Header>` is its vocabulary), so the
