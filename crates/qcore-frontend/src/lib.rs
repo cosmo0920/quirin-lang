@@ -13,6 +13,8 @@ pub mod module_imports;
 pub mod parser;
 pub mod pipe;
 pub mod quant_index;
+// Card QR-LEXICAL-SELECTORS-DECLARATION-NAMES: the token-stream selectors' shared reading.
+pub mod route_selection;
 pub mod source_annotation;
 pub mod source_bitfield_concurrency;
 pub mod source_composed;

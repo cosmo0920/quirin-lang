@@ -295,8 +295,15 @@ pub fn has_source_mutex(source: &SourceProgram) -> bool {
     // `mutex rank` selects this route as surely as `mutex guards` does: without
     // it, card CT33-RANKS's ranked declaration would fall through to another
     // route and be refused for the wrong reason.
+    //
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: read only where a source
+    // function is written, as every token-stream selector now is (the census
+    // found no declaration that spells the pair; the scope is uniform).
+    let scope = crate::route_selection::SelectorScope::of(source);
     source.lexical_tokens().windows(2).any(|pair| {
-        word(pair.first(), "mutex") && (word(pair.get(1), "guards") || word(pair.get(1), "rank"))
+        word(pair.first(), "mutex")
+            && (word(pair.get(1), "guards") || word(pair.get(1), "rank"))
+            && scope.reads(source, pair[0].span)
     })
 }
 

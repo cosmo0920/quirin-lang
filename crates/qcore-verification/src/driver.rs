@@ -1701,6 +1701,35 @@ fn compile_elaborated_source(
             )]);
         }
     }
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`. Every token-stream
+    // selector below reads a word only where a source function is written
+    // (`route_selection::SelectorScope`), so a declaration name never selects
+    // a route. Two fail-closed arms, in this order: a selecting use of a word
+    // the module also declares names both and is refused, never routed; and a
+    // `module contract;` module that any source-only route would select is
+    // refused (the print card's guard at `compile_scalar_calls`, generalised
+    // to every route but the sequential one).
+    if let Some(refusal) = qcore_frontend::route_selection::ambiguous_selector_use(parsed) {
+        return Err(vec![map_diagnostic(refusal, ranges)]);
+    }
+    if mode == SourceModuleMode::Contract
+        && let Some(route) = qcore_frontend::route_selection::source_only_route(parsed)
+    {
+        let span = parsed
+            .declarations
+            .iter()
+            .find(|declaration| declaration.value.kind == DeclarationKind::Function)
+            .map_or(Span { start: 0, end: 0 }, |declaration| declaration.span);
+        return Err(vec![map_raw_diagnostic(
+            "Q020",
+            SemanticPass::OrdinaryTypes,
+            span,
+            format!(
+                "{route}: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+            ),
+            ranges,
+        )]);
+    }
     // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` is selected before every
     // other route, by `#import std.ffi.unsafe;` or a `struct!` declaration. A
     // file that imports C is unsafe as a whole (user decision 2), so it must

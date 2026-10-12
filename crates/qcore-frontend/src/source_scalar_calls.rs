@@ -27,17 +27,23 @@ fn symbol(t: &Token, s: Symbol) -> bool {
 /// A feature-shaped selector, after existing specialized profiles. Resource
 /// intrinsics keep the established sequential custody route even in mixed code.
 pub fn has_scalar_calls(p: &SourceProgram) -> bool {
-    if p.lexical_tokens()
-        .iter()
-        .any(|t| word(t).is_some_and(|w| matches!(w, "qcore_acquire" | "qcore_check")))
-    {
+    // Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: both lexical tests read a
+    // token only where a source function is written. An `extern fn
+    // qcore_acquire(…)` deselected this route, and an extern declaration's
+    // `throws<ArithmeticError>` row selected it, before.
+    let scope = crate::route_selection::SelectorScope::of(p);
+    if p.lexical_tokens().iter().any(|t| {
+        word(t).is_some_and(|w| matches!(w, "qcore_acquire" | "qcore_check"))
+            && scope.reads(p, t.span)
+    }) {
         return false;
     }
     // Card `W48-QR-SCALAR-TYPES-R2`: a function that declares
     // `throws<ArithmeticError>` is scalar-call syntax — no other route spells
     // that row — so a module whose statements are all `match`es still arrives.
     if p.lexical_tokens().windows(3).any(|ts| {
-        word(&ts[0]) == Some("throws")
+        scope.reads(p, ts[0].span)
+            && word(&ts[0]) == Some("throws")
             && symbol(&ts[1], Symbol::Less)
             && word(&ts[2]) == Some(ArithmeticError::NAME)
     }) {
@@ -119,12 +125,11 @@ pub enum PrintCallSelection {
 /// module that also declares something named `print`, is refused here rather
 /// than routed.
 pub fn print_call_selection(p: &SourceProgram) -> PrintCallSelection {
-    let bodies = p
-        .declarations
-        .iter()
-        .filter(|d| d.value.kind == DeclarationKind::Function)
-        .filter_map(|d| d.value.body.as_ref().map(|b| b.span))
-        .collect::<Vec<_>>();
+    // The body spans are the shared selector scope's (card
+    // `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`); this selector keeps its
+    // stricter body-and-statement-head reading.
+    let scope = crate::route_selection::SelectorScope::of(p);
+    let bodies = scope.bodies();
     let tokens = p.lexical_tokens();
     let refusal = |span: Span, message: &str| {
         PrintCallSelection::Ambiguous(SourceDiagnostic {

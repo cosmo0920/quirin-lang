@@ -1,0 +1,119 @@
+{
+ "rows": 2658,
+ "controls": 48,
+ "classes": {
+  "outcome-only": 2,
+  "same": 2608
+ },
+ "moved_selectors": {},
+ "families": {
+  "bitfield-record-pair": {
+   "same": 84
+  },
+  "buffer": {
+   "same": 168
+  },
+  "concurrency-gate": {
+   "same": 126
+  },
+  "concurrency-gate+tasks": {
+   "same": 126
+  },
+  "concurrency-gate-pair": {
+   "same": 42
+  },
+  "concurrency-gate-pair+mutex": {
+   "same": 126
+  },
+  "epoch-pair": {
+   "same": 42
+  },
+  "event": {
+   "same": 252
+  },
+  "ffi-declaration": {
+   "same": 84
+  },
+  "http": {
+   "same": 168
+  },
+  "print-call+std-io": {
+   "same": 42
+  },
+  "scalar-calls-deselect": {
+   "same": 84
+  },
+  "scalar-calls-throws-row": {
+   "outcome-only": 2,
+   "same": 4
+  },
+  "scalar-calls-throws-triple": {
+   "same": 84
+  },
+  "socket": {
+   "same": 504
+  },
+  "std-io": {
+   "same": 126
+  },
+  "std-io-level": {
+   "same": 126
+  },
+  "std-io-rendering": {
+   "same": 84
+  },
+  "string": {
+   "same": 126
+  },
+  "string-bridge": {
+   "same": 42
+  },
+  "tasks-statement": {
+   "same": 168
+  }
+ },
+ "listed": [
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "throws-row",
+   "word": "throws<ArithmeticError>",
+   "family": "scalar-calls-throws-row",
+   "class": "outcome-only",
+   "control_outcome": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "outcome": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "first_diagnostic": "census.qr:3:31: Q020: the result of `extern fn flb_noop` is `i32 throws<ArithmeticError>`, which is not a type an extern declaration can state; a result is `unit`, a fixed-width scalar or one of the custody pointers (§C04.1), and every declaration is read whether or not a body calls it"
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "throws-row",
+   "word": "throws<ArithmeticError>",
+   "family": "scalar-calls-throws-row",
+   "class": "outcome-only",
+   "control_outcome": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "outcome": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "first_diagnostic": "census.qr:1:31: Q020: the result of `extern fn flb_noop` is `i32 throws<ArithmeticError>`, which is not a type an extern declaration can state; a result is `unit`, a fixed-width scalar or one of the custody pointers (§C04.1), and every declaration is read whether or not a body calls it"
+  }
+ ]
+}

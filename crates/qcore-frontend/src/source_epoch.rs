@@ -212,11 +212,17 @@ impl LoweredEpochModule {
 /// Select this route. Detection is syntactic and route-selecting only: it
 /// grants no support, and a detected module that leaves the admitted grammar is
 /// refused rather than handed to another route.
+///
+/// Card `QR-LEXICAL-SELECTORS-DECLARATION-NAMES`: `epoch {` is read only
+/// where a source function is written; a record or error named `epoch`
+/// (`type epoch { … }`) selected this route before.
 pub fn has_source_epoch(source: &SourceProgram) -> bool {
-    source
-        .lexical_tokens()
-        .windows(2)
-        .any(|pair| word(pair.first(), "epoch") && symbol(pair.get(1), Symbol::LeftBrace))
+    let scope = crate::route_selection::SelectorScope::of(source);
+    source.lexical_tokens().windows(2).any(|pair| {
+        word(pair.first(), "epoch")
+            && symbol(pair.get(1), Symbol::LeftBrace)
+            && scope.reads(source, pair[0].span)
+    })
 }
 
 pub(crate) fn failure(span: Span, message: impl Into<String>) -> SourceDiagnostic {

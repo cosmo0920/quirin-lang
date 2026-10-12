@@ -317,6 +317,70 @@ pub fn census_keys() -> Vec<(&'static str, &'static str, &'static str, &'static 
     keys
 }
 
+/// The selector family a census word belongs to.
+pub fn family(shape: &str, word: &str) -> &'static str {
+    if word == CONTROL {
+        return "control";
+    }
+    if shape == "throws-row" {
+        return "scalar-calls-throws-row";
+    }
+    WORDS
+        .iter()
+        .find(|(candidate, _)| *candidate == word)
+        .map_or("unknown", |(_, family)| family)
+}
+
+fn outcome_class(compile: &serde_json::Value) -> serde_json::Value {
+    let mut class = compile.clone();
+    if let Some(object) = class.as_object_mut() {
+        object.remove("diagnostics");
+    }
+    class
+}
+
+/// **No declaration moves a selection** (always run). Every census row reads
+/// as its control: the same value for every selector and for the import
+/// gate, and a compile outcome of the same class (route, or refusal codes).
+/// The one exception is the extern `throws<ArithmeticError>` row, whose
+/// control is not the same text with a word replaced: no selector reads it,
+/// and outside a contract module the extern declaration reader refuses the
+/// row as a result type (`Q020`), as it refuses every non-ABI result.
+#[test]
+fn no_declaration_moves_a_selection() {
+    let mut controls = std::collections::BTreeMap::new();
+    let mut moved = Vec::new();
+    for (mode, base, shape, word) in census_keys() {
+        let line = row(mode, base, shape, word);
+        if word == CONTROL {
+            assert_eq!(line["selection"]["parsed"], true, "{line}");
+            controls.insert((mode, base, shape), line);
+            continue;
+        }
+        let control = &controls[&(mode, base, shape)];
+        if line["selection"] != control["selection"] {
+            moved.push(format!("{mode}/{base}/{shape}/{word}: selection"));
+            continue;
+        }
+        if outcome_class(&line["compile"]) == outcome_class(&control["compile"]) {
+            continue;
+        }
+        if shape == "throws-row" && mode != "contract" {
+            let text = line["compile"]["diagnostics"][0]
+                .as_str()
+                .unwrap_or_default();
+            assert!(
+                line["compile"]["codes"] == serde_json::json!(["Q020"])
+                    && text.contains("is not a type an extern declaration can state"),
+                "{line}"
+            );
+            continue;
+        }
+        moved.push(format!("{mode}/{base}/{shape}/{word}: outcome"));
+    }
+    assert!(moved.is_empty(), "{moved:#?}");
+}
+
 #[test]
 #[ignore = "writes the selector census only when QR_SELECTOR_CENSUS_OUT is set; run on purpose"]
 fn declaration_name_census() {
@@ -326,11 +390,7 @@ fn declaration_name_census() {
     let mut file = std::fs::File::create(&out).expect("the census output is writable");
     for (mode, base, shape, word) in census_keys() {
         let mut line = row(mode, base, shape, word);
-        line["family"] = WORDS
-            .iter()
-            .find(|(w, _)| *w == word)
-            .map_or("control", |(_, family)| family)
-            .into();
+        line["family"] = family(shape, word).into();
         writeln!(
             file,
             "{}",
@@ -415,8 +475,13 @@ pub fn selector_occurrences(parsed: &SourceProgram) -> Vec<(&'static str, usize)
     for at in 0..tokens.len() {
         let shape = match word(at) {
             Some(
-                w @ ("qcore_buffer_new" | "qcore_buffer_read" | "qcore_buffer_write"
-                | "qcore_error_payload" | "spawn" | "join" | "qcore_acquire"
+                w @ ("qcore_buffer_new"
+                | "qcore_buffer_read"
+                | "qcore_buffer_write"
+                | "qcore_error_payload"
+                | "spawn"
+                | "join"
+                | "qcore_acquire"
                 | "qcore_check"),
             ) => WORDS
                 .iter()

@@ -1,0 +1,1503 @@
+{
+ "rows": 2658,
+ "moved_rows": 337,
+ "groups": [
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q058"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "ArithmeticError",
+    "accept",
+    "bind",
+    "bits",
+    "borrow_utf8",
+    "bytes",
+    "c_ffi",
+    "close",
+    "concat",
+    "connect",
+    "content",
+    "dec",
+    "disjoint",
+    "dispatch",
+    "drop",
+    "endpoints",
+    "error",
+    "event",
+    "extent",
+    "field",
+    "flb_noop",
+    "flush",
+    "footprint",
+    "guards",
+    "header",
+    "hex",
+    "info",
+    "len",
+    "lend",
+    "listen",
+    "lock",
+    "log",
+    "log_level",
+    "mutex",
+    "print",
+    "qcore_acquire",
+    "qcore_check",
+    "rank",
+    "recv",
+    "recvfrom",
+    "request",
+    "response",
+    "scope",
+    "send",
+    "sendto",
+    "string",
+    "struct",
+    "task",
+    "tcp",
+    "thread",
+    "throws",
+    "trace",
+    "udp",
+    "unwatch",
+    "wake",
+    "watch"
+   ],
+   "after_diagnostic": "Q020: source.buffer.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q020: source.buffer.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.buffer.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "throws-row",
+   "before": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "throws<ArithmeticError>"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "plain",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Contract",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "contract",
+   "base": "scalar",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: a `module contract;` module declares contracts and is never compiled on this route; move the function bodies to a library or executable module"
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q600"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q600"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q051"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q051: `source.buffer.v1` models `return;` from a `unit` entry"
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q051"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q051: `source.buffer.v1` models `return;` from a `unit` entry"
+  },
+  {
+   "mode": "executable",
+   "base": "plain",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": "Q020: parameter `x` of `extern fn flb_noop` is `join<i32>`, which is not a type an extern declaration can state; a parameter is a scalar (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64) or one of the custody pointers ptr<mut, u8>, ptr<const, u8>, ptr<mut, ptr<mut, u8>> (§C04.1), and every declaration is read whether or not a body calls it"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q600"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "qcore_acquire",
+    "qcore_check"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q600"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Executable",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "executable",
+   "base": "scalar",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "SequentialCleanupV1",
+    "Sequential"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q058"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q058: entry-free `source.buffer.v1` modules require additional source lowering"
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q058"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q058: entry-free `source.buffer.v1` modules require additional source lowering"
+  },
+  {
+   "mode": "library",
+   "base": "plain",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": "Q020: parameter `x` of `extern fn flb_noop` is `join<i32>`, which is not a type an extern declaration can state; a parameter is a scalar (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64) or one of the custody pointers ptr<mut, u8>, ptr<const, u8>, ptr<mut, ptr<mut, u8>> (§C04.1), and every declaration is read whether or not a body calls it"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "clause-parameter",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "error",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "extern",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "extern-contract",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "function",
+   "before": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "qcore_acquire",
+    "qcore_check"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q500"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "epoch"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "record",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "admitted",
+    "Library",
+    "ScalarCallsV1",
+    "ScalarCalls"
+   ],
+   "words": [
+    "join",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn"
+   ],
+   "after_diagnostic": ""
+  },
+  {
+   "mode": "library",
+   "base": "scalar",
+   "shape": "type-argument",
+   "before": [
+    "refused",
+    [
+     "Q015"
+    ]
+   ],
+   "after": [
+    "refused",
+    [
+     "Q020"
+    ]
+   ],
+   "words": [
+    "join",
+    "mutex",
+    "qcore_buffer_new",
+    "qcore_buffer_read",
+    "qcore_buffer_write",
+    "qcore_error_payload",
+    "spawn",
+    "task"
+   ],
+   "after_diagnostic": "Q020: source.scalar-calls.v1: only source function declarations are supported"
+  }
+ ]
+}
