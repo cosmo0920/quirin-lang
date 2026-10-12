@@ -145,7 +145,9 @@ its own `exec`.
     sibling has `exec`ed. The attribution probe shows this. The forked-child
     stall alone, which never stops the measured test's own child, failed the
     base confined binary **10 of 15** runs with EPIPE only. The close delay
-    alone failed it 7 of 15 with ETXTBSY only.
+    alone failed it 7 of 15 with ETXTBSY only. The probe overlapped campaign
+    2's last levels (load1 36 to 44), so it attributes signatures; it is not
+    a rate.
   - **Fix:** every fixture's first command is `READ_REQUEST`, a builtin
     `while read -r line; do :; done` that consumes the request to EOF. It
     starts no process, so no quota or `RLIMIT_NPROC` count a row asserts
