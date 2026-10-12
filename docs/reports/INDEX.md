@@ -834,6 +834,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [review-prepared-tu](review-prepared-tu/README.md) | Prepared translation unit sharing (review priority O1) |
 
+| [route-selection-order-restated](route-selection-order-restated/README.md) | ROUTE-SELECTION-ORDER-RESTATED: the route order is written once |
+
 | [runtime-source-imports](runtime-source-imports/README.md) | Runtime source imports |
 
 ## S
