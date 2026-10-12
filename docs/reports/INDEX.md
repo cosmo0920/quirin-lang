@@ -409,6 +409,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [examples-suite-wire](examples-suite-wire/README.md) | EXAMPLES-SUITE-WIRE — every published example family under one standard (wave 26) |
 
+| [execution-quota-load-independence](execution-quota-load-independence/README.md) | EXECUTION-QUOTA-LOAD-INDEPENDENCE: why `execution_quota` failed under load, and the fixes |
+
 | [extension-compatibility](extension-compatibility/README.md) | EXT-01 — Source extension compatibility |
 
 | [extension-contract-physical](extension-contract-physical/README.md) | EXT-02 contract source migration |

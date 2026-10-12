@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate.sh NAME [PART] -- EXECUTION-QUOTA-LOAD-INDEPENDENCE (from
+# gate.sh NAME [PART [BINARY]] -- EXECUTION-QUOTA-LOAD-INDEPENDENCE (from
 # GAPO-RETURN-CORRECTNESS's scripts/gate.sh): cargo check and the standing
 # per-change gate (docs/agents/validation.md), every step's output and exit to
 # private/eqli/gate-NAME/, nothing piped. PART is `code` (steps 00-07) or
@@ -15,6 +15,7 @@
 set -u
 name="$1"
 part="${2:-all}"
+BINARY="${3:-${BINARY:-}}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock

@@ -216,11 +216,49 @@ other cards, so the fixes do not depend on it.
 
 ## 6. Proof under concurrency
 
-<TBD: full suite concurrent with the corpus arbiter.>
+The gate's test step was run concurrently with the AFTER corpus arbiter. This
+is the condition the integrator kept seeing: other work on the host during
+the suite.
+
+* [`scripts/gate.sh`](scripts/gate.sh) built the suite, then launched the
+  arbiter (`--jobs 4`, under the heavy lock).
+* Once the arbiter was analysing, it ran `scripts/run_test_binaries.py`,
+  deliberately outside the lock.
+* The epoch stamps are in `private/eqli/gate-g1/overlap.txt`:
+  - arbiter running at +1.0 s;
+  - suite from +1.0 s to +332.4 s;
+  - arbiter end at +618.5 s.
+* So the whole suite, its `EXCLUSIVE` phase included, ran inside the
+  arbiter's run. The arbiter took 618 s against 452 s alone.
+
+The result: **487 units, 500 summaries, 7,939 passed, 0 failed, 14 ignored,
+exit 0, with no rerun of anything**. Every verifier-host unit was green:
+`execution_quota` 13, `confined_process_execution` 12,
+`enforced_process_limits` 12, `package_identity` 10, the lib 31.
 
 ## 7. Arbiter identity
 
-<TBD>
+`process_quota.rs` is production code, so all three routes were re-run.
+BEFORE was the base release binary (`72f150ee…`, built at `440c41b8b`). AFTER
+was this tip's binary (`4c1ba16a…`). Each run's `run.json` `binary_sha256`
+matches its binary.
+
+| Route | BEFORE | AFTER |
+|---|---|---|
+| corpus | 935 / 9 / 3,890, `bdf5f1c8…` (the brief's) | **byte-identical** (run under the concurrent suite) |
+| system | 93 / 4 / 351, `be478b33…` | **byte-identical** |
+| slice | 52 / 1 / 347, 4 Pending, `9bc3b74e…` | **byte-identical** |
+
+Every report and sidecar is byte-identical. The corpus `audit.log` and
+`run.json`, and the invocation records, are identical once the run directory
+name, the binary digest and the times are removed. The typed-path parity
+streams hold the same rows: 689,660 / 142,456 / 51,389, compared as a multiset
+with Clang node addresses normalised, since their order follows the
+`--jobs` workers. See [artifacts/identity.txt](artifacts/identity.txt) and
+[`scripts/identity.py`](scripts/identity.py). The system and slice digests
+differ from the brief's (`f596d64b…`, `ee98ad3d…`) with equal totals,
+because those reports embed the measuring worktree's paths, as
+GAPO-RETURN-CORRECTNESS recorded. No verdict moved, so no correction is named.
 
 ## 8. Lean
 
@@ -240,7 +278,28 @@ The decimal spelling is pinned on the Rust side.
 
 ## 9. Gate
 
-<TBD>
+Every code step ran at `81f5925fe` with [`scripts/gate.sh`](scripts/gate.sh)
+`g1`. Exits are in [gate/](gate/), logs in `private/eqli/gate-g1/`, and the
+summary in [gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` (concurrent with the corpus arbiter, §6) | 0 | 487 units, 500 summaries; **7,939 passed, 0 failed**, 14 ignored; `private/eqli/tests-g1/` |
+| corpus arbiter beside it | 0 | byte-identical (§7) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **316** audits |
+| `python3 -m unittest discover -s scripts/tests` | PYEXIT | PYCOUNT |
+| `python3 scripts/build_docs_index.py --check` | INDEXEXIT | |
+
+The test step passed on its first run. No row was rerun in isolation.
+The suite count is main's 7,938 plus the cgroup-name unit test.
+
+There is no provider gate, because `providers/` is unchanged. Clang:
+`clang --version` was recorded in this worktree (`gate/clang-version.txt`).
 
 ## 10. Prediction against outcome
 

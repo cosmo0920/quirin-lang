@@ -11,7 +11,13 @@ REPO = pathlib.Path(__file__).resolve().parents[4]
 MATRIX = REPO / "docs/reviews/r0_3/acceptance_matrix.json"
 REPORT = "docs/reports/execution-quota-load-independence/README.md"
 CARD = "EXECUTION-QUOTA-LOAD-INDEPENDENCE"
-RETIRE = {"LOAD-SENSITIVE-ROW-UNNAMED"}
+# VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE: its DISCHARGE ("verify the
+# row on an account with no sibling wave running and record the process count
+# observed") holds: the card ran alone, and the row passed on the base binary
+# 15 of 15 at 3,000 extra same-UID processes (5,217-5,230 UID tasks recorded
+# per run) and in every unamplified run; its only failures were ETXTBSY under
+# the fork-window amplifier, repaired here (artifacts/load/epl-*.json).
+RETIRE = {"LOAD-SENSITIVE-ROW-UNNAMED", "VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE"}
 AMEND = {
     "P02-FLAKE": (
         " AMENDED (" + CARD + ", 2026-10-12): the Io(Broken pipe) shape of the confined-fixture "
