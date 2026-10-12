@@ -1,0 +1,13 @@
+{
+  "note": "QR-LEXICAL-SELECTORS-DECLARATION-NAMES card gate on base 4b5c77041, every code step at de4cf6cc3, scripts docs/reports/qr-lexical-selectors-declaration-names/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/qrls/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 485 units, 498 summaries, 7,917 passed, 0 failed, 14 ignored, exit 0 (private/qrls/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 315 audits passed (AuditRouteSelection added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
+  "workspace_tests": 7917,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 315,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

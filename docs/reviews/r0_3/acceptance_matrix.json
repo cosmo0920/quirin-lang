@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "QR-PRINT-ROUTE-MATCHES-DECLARATION card gate on base da6c1f448, every code step at 734edb8a9, scripts docs/reports/qr-print-route-matches-declaration/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/qrpr/gate-g2 and private/qrpr/provider-gate-g1 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 483 units, 496 summaries, 7,903 passed, 1 failed, 13 ignored, exit 101 (private/qrpr/tests-gate-g2; the failure is the constraint-16 row execution-quota (EXCLUSIVE in run_test_binaries.py: RLIMIT_NPROC counts every process of the real UID), 13 passed in isolation, private/qrpr/isolation-execution-quota.log); both reevaluation probes exit 0; check_lean_audits.py 314 audits passed (QCore.PrintRouteSelection added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1, at 86a40b40c; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 7903,
-  "provider_tests": 129,
+  "note": "QR-LEXICAL-SELECTORS-DECLARATION-NAMES card gate on base 4b5c77041, every code step at de4cf6cc3, scripts docs/reports/qr-lexical-selectors-declaration-names/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/qrls/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 485 units, 498 summaries, 7,917 passed, 0 failed, 14 ignored, exit 0 (private/qrls/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 315 audits passed (AuditRouteSelection added); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged.",
+  "workspace_tests": 7917,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
   "python_evidence_validator_tests": 365,
-  "lean_audits": 314,
+  "lean_audits": 315,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6991,6 +6991,7 @@
    "AuditReturnPositionEscape.lean",
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
+   "AuditRouteSelection.lean",
    "AuditRuntimeImports.lean",
    "AuditScalarBufferValues.lean",
    "AuditScalarCalls.lean",
@@ -7080,7 +7081,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a68430c06b669b0ab/docs/reports/qr-print-route-matches-declaration/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7c22a728381af915/docs/reports/qr-lexical-selectors-declaration-names/gate.json)"
  },
  "named_followups": [
   {

@@ -214,7 +214,28 @@ record-name and type positions.
 
 ## 6. Gate
 
-GATE_SECTION
+[`gate.json`](gate.json), exits in [`gate/`](gate/); scripts
+[`gate.sh`](scripts/gate.sh), [`write_gate_json.py`](scripts/write_gate_json.py),
+[`finish-gate.sh`](scripts/finish-gate.sh); every step under the shared lock,
+nothing piped, logs under `private/qrls/`.
+
+Standing gate **g2**, every code step at `de4cf6cc3` (the code is that of
+`d3484cdec`): `cargo check --workspace --all-targets` 0, submodule 0, fmt 0,
+clippy `--locked` 0; `run_test_binaries.py` 485 units, 498 summaries,
+**7,917 passed, 0 failed**, 14 ignored, exit 0 (`private/qrls/tests-gate-g2/`,
+369 s); both reevaluation probes 0; `check_lean_audits.py` **315** passed
+(314 + `AuditRouteSelection`); the Python suite 365 tests, 1 failure before the
+matrix regeneration (the committed matrix's derived Lean count 314), then
+`build_matrix.py --gate gate.json` 0 and **365 OK** (09b);
+`build_docs_index.py` and `--check` 0. Clang present (Ubuntu clang 21.1.8).
+No provider gate: `providers/` is unchanged.
+
+Gate **g1** (code at `95c58a408`, the function-only scope) failed its test step,
+exit 101, 7,914 passed and **2 failed** (`private/qrls/tests-gate-g1/`):
+`source_record::a_field_named_for_a_route_selector_refuses_fail_closed` and
+`module_imports::concurrency_requires_a_real_import_even_in_uncalled_bodies`
+(section 2). Both pins were kept and the scope corrected; neither test was
+changed.
 
 ## 7. Follow-ups
 
