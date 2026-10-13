@@ -1,0 +1,37 @@
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a934a299866aa14f3/crates/qcore-verifier-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.46s
+     Running tests/execution_quota.rs (target/debug/deps/execution_quota-07ce6c00574c6d68)
+
+running 16 tests
+test a_written_selection_reaches_the_provider ... ok
+test only_the_confining_profile_accepts_the_quota_kind ... ok
+test the_availability_override_is_one_directional ... ok
+test a_zero_quota_is_refused ... ok
+test a_declared_quota_is_refused_off_linux ... ok
+test both_enforcing_profiles_are_target_qualified ... ok
+test a_forced_unavailable_quota_mechanism_refuses_before_spawning ... ok
+test a_forced_override_never_weakens_an_execution ... ok
+test an_identity_refusal_after_the_cgroup_exists_records_no_observation ... ok
+test a_kernel_that_denies_user_namespaces_refuses_the_confined_profile ... ok
+test a_failed_spawn_records_no_observation ... ok
+test a_failed_join_descriptor_refuses_before_spawning ... FAILED
+test a_missing_confinement_mechanism_refuses_before_spawning ... ok
+test the_same_fixture_without_a_declared_quota_installs_none ... ok
+test the_quota_binds_without_depending_on_the_accounts_process_count ... ok
+test a_declared_quota_bounds_a_fork_storm_in_this_execution_only ... ok
+
+failures:
+
+---- a_failed_join_descriptor_refuses_before_spawning stdout ----
+
+thread 'a_failed_join_descriptor_refuses_before_spawning' (4053689) panicked at crates/qcore-verifier-host/tests/execution_quota.rs:757:44:
+called `Result::unwrap_err()` on an `Ok` value: VerificationResponse { protocol_version: 1, request_id: "request", plugin_id: PluginId("example.quota"), verdict: Unknown, diagnostics: [], evidence: None }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_failed_join_descriptor_refuses_before_spawning
+
+test result: FAILED. 15 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.04s
+
+error: test failed, to rerun pass `-p qcore-verifier-host --test execution_quota`

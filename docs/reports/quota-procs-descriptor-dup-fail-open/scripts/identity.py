@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN: BEFORE (base release binary) against
-AFTER (this tip's) on the three routes, file for file.
+"""QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN (from EXECUTION-QUOTA-LOAD-INDEPENDENCE's):
+BEFORE (base release binary, private/qpdf/bin/quirin-audit-before) against
+AFTER (this tip's, quirin-audit-after) on the three routes, file for file, with
+the null property selected on every run.
 
-Corpus: private/qpdf/before vs private/qpdf/g1-corpus (the AFTER corpus ran
-concurrently with the gate's whole Rust suite). System: before-system vs
-after-system. Slice: the shared prepared attempt's qpdf-before vs qpdf-after.
-Every report and sidecar is compared byte for byte; run.json and audit.log are
-compared after removing the run directory name, the binary digest and the
-timestamps, which are the only fields that differ by construction, and so is
-the invocation record (its argv names the run directory). The parity streams
-are compared byte for byte, else as a multiset of rows with Clang node
-addresses normalised. Prints one line per file and a verdict."""
+Corpus: private/qpdf/before vs after. System: before-system vs after-system.
+Slice: the shared prepared attempt's qpdf-before vs qpdf-after. Every report
+and sidecar is compared byte for byte; run.json and audit.log are compared
+after removing the run directory name, the binary digest and the timestamps,
+which are the only fields that differ by construction, and so is the
+invocation record (its argv names the run directory). The parity and null
+streams are compared byte for byte, else as a multiset of rows with Clang node
+addresses normalised; the null summaries byte for byte. Prints one line per
+file and a verdict."""
 import collections
 import hashlib
 import json
@@ -22,14 +24,14 @@ REPO = pathlib.Path(__file__).resolve().parents[4]
 PRIVATE = REPO / "private/qpdf"
 SLICES = pathlib.Path("/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1")
 PAIRS = [
-    ("corpus", PRIVATE / "before", PRIVATE / "g1-corpus"),
+    ("corpus", PRIVATE / "before", PRIVATE / "after"),
     ("system", PRIVATE / "before-system", PRIVATE / "after-system"),
     ("slice", SLICES / "qpdf-before", SLICES / "qpdf-after"),
 ]
 STREAMS = [
-    ("corpus parity", PRIVATE / "before-parity.jsonl", PRIVATE / "g1-corpus-parity.jsonl"),
-    ("system parity", PRIVATE / "before-system-parity.jsonl", PRIVATE / "after-system-parity.jsonl"),
-    ("slice parity", PRIVATE / "before-slice-parity.jsonl", PRIVATE / "after-slice-parity.jsonl"),
+    (f"{route} {kind}.{ext}", PRIVATE / f"before{suffix}-{kind}.{ext}", PRIVATE / f"after{suffix}-{kind}.{ext}")
+    for route, suffix in (("corpus", ""), ("system", "-system"), ("slice", "-slice"))
+    for kind, ext in (("parity", "jsonl"), ("null", "jsonl"), ("null", "summary.json"))
 ]
 VOLATILE = {"console.log", "stderr.log", "exit"}
 ADDRESS = re.compile(rb'"0x[0-9a-f]+"')

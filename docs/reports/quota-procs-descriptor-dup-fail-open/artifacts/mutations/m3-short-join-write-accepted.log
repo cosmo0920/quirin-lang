@@ -1,0 +1,53 @@
+   Compiling qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a934a299866aa14f3/crates/qcore-verifier-host)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.86s
+     Running unittests src/lib.rs (target/debug/deps/qcore_verifier_host-2f88f0a2dc28fe60)
+
+running 32 tests
+test confinement::tests::a_lower_abi_records_the_rights_it_cannot_gate ... ok
+test confinement::tests::no_class_grants_write_and_execute_together_and_none_grants_refer ... ok
+test confinement::tests::handled_rights_track_the_probed_abi ... ok
+test confinement::tests::the_package_root_is_the_first_admitted_entry_and_the_policy_adds_nothing_implicitly ... ok
+test execution_policy::tests::a_confining_selection_without_a_policy_is_refused ... ok
+test embedded_template::tests::an_unmodified_package_binds ... ok
+test execution_policy::tests::a_named_base_expands_to_the_same_policy_a_rust_caller_would_build ... ok
+test execution_policy::tests::the_recorded_default_is_the_historical_unenforcing_profile ... ok
+test executable_identity::tests::a_stripped_envelope_is_refused_before_the_template_check ... ok
+test process_quota::tests::a_profile_that_installs_no_quota_has_no_role_for_the_quota_kind ... ok
+test execution_policy::tests::the_written_form_round_trips ... ok
+test execution_policy::tests::an_unsupported_version_is_refused_rather_than_guessed ... ok
+test executable_identity::tests::opening_a_directory_as_an_executable_fails ... ok
+test embedded_template::tests::a_digest_edit_is_refused_as_the_substituted_field ... ok
+test process_quota::tests::an_override_can_only_force_a_mechanism_unavailable ... ok
+test process_quota::tests::an_unknown_kind_has_no_role_under_any_profile ... ok
+test process_quota::tests::only_the_confining_profile_installs_a_per_execution_quota ... ok
+test execution_policy::tests::a_relative_admitted_path_is_refused ... ok
+test process_quota::tests::only_a_whole_join_write_is_a_join ... FAILED
+test embedded_template::tests::absent_ambiguous_truncated_and_corrupt_envelopes_refuse ... ok
+test execution_policy::tests::a_policy_under_a_non_confining_profile_is_refused_in_the_other_direction ... ok
+test executable_identity::tests::a_removed_executable_is_refused ... ok
+test executable_identity::tests::an_unlink_and_recreate_is_refused_as_a_replaced_path ... ok
+test executable_identity::tests::a_directory_in_place_of_the_executable_is_refused ... ok
+test process_quota::tests::the_quota_kind_is_never_confused_with_the_per_uid_rlimit_kind ... ok
+test process_quota::tests::the_refusals_name_the_kind_and_the_profile_that_would_enforce_it ... ok
+test process_quota::tests::per_execution_cgroup_names_never_collide_within_one_process ... ok
+test tests::conflicting_assumptions_make_composition_unknown ... ok
+test executable_identity::tests::an_unchanged_executable_revalidates ... ok
+test executable_identity::tests::an_in_place_rewrite_is_refused_as_changed_content ... ok
+test embedded_template::tests::every_declared_field_class_is_bound ... ok
+test embedded_template::tests::an_oversized_payload_refuses_without_parsing ... ok
+
+failures:
+
+---- process_quota::tests::only_a_whole_join_write_is_a_join stdout ----
+
+thread 'process_quota::tests::only_a_whole_join_write_is_a_join' (4055036) panicked at crates/qcore-verifier-host/src/process_quota.rs:776:58:
+called `Result::unwrap_err()` on an `Ok` value: ()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    process_quota::tests::only_a_whole_join_write_is_a_join
+
+test result: FAILED. 31 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p qcore-verifier-host --lib`

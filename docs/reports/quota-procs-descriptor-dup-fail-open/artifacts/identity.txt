@@ -1,0 +1,27 @@
+corpus audit.log: identical after removing run name, binary digest and times
+corpus monkey-source.json: byte-identical 57acfc58c4f7dddf
+corpus resource-diagnostics.chunk-contracts.json: byte-identical cbbcfd9c17600514
+corpus resource-diagnostics.contracts.json: byte-identical a3e264ca40bec729
+corpus resource-diagnostics.json: byte-identical bdf5f1c8931d0557
+corpus resource-diagnostics.source-effects.json: byte-identical fa4c31b1c61df333
+corpus run.json: identical after removing run name, binary digest and times
+system resource-diagnostics.chunk-contracts.json: byte-identical e7e0d254d9e7ee19
+system resource-diagnostics.contracts.json: byte-identical 20ab2a7de42b49c0
+system resource-diagnostics.invocation.json: identical after removing run name, binary digest and times
+system resource-diagnostics.json: byte-identical be06d139d2db7abc
+system resource-diagnostics.source-effects.json: byte-identical e7e0d254d9e7ee19
+slice resource-diagnostics.chunk-contracts.json: byte-identical a97259087e4ad89a
+slice resource-diagnostics.contracts.json: byte-identical 03099f9252d7a27e
+slice resource-diagnostics.invocation.json: identical after removing run name, binary digest and times
+slice resource-diagnostics.json: byte-identical ca40870bc7e26853
+slice resource-diagnostics.source-effects.json: byte-identical a97259087e4ad89a
+corpus parity.jsonl: 689660 rows; the same rows (as a multiset, Clang node addresses normalised)
+corpus null.jsonl: byte-identical a0a1e6d7639d52f1
+corpus null.summary.json: byte-identical fb1244f24daa26d0
+system parity.jsonl: 142456 rows; the same rows (as a multiset, Clang node addresses normalised)
+system null.jsonl: byte-identical f42ef95e45ccba78
+system null.summary.json: byte-identical cb57b7ccc4eab71b
+slice parity.jsonl: 51389 rows; the same rows (as a multiset, Clang node addresses normalised)
+slice null.jsonl: byte-identical c6a6f6830f98ab66
+slice null.summary.json: byte-identical 075ef209eb45b3a6
+IDENTICAL

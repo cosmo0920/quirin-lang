@@ -1,0 +1,40 @@
+[
+ {
+  "id": "m1-dup-failure-drops-the-join",
+  "what": "the base behaviour: a failed duplicate is mapped to no join",
+  "exit": 101,
+  "expected_failures": [
+   "a_failed_join_descriptor_refuses_before_spawning"
+  ],
+  "failed": [
+   "a_failed_join_descriptor_refuses_before_spawning"
+  ],
+  "caught": true
+ },
+ {
+  "id": "m2-observation-unconditional",
+  "what": "the base behaviour: every created cgroup is observed, spawned or not",
+  "exit": 101,
+  "expected_failures": [
+   "an_identity_refusal_after_the_cgroup_exists_records_no_observation",
+   "a_failed_spawn_records_no_observation"
+  ],
+  "failed": [
+   "an_identity_refusal_after_the_cgroup_exists_records_no_observation",
+   "a_failed_spawn_records_no_observation"
+  ],
+  "caught": true
+ },
+ {
+  "id": "m3-short-join-write-accepted",
+  "what": "only a negative count fails the join, as at the base",
+  "exit": 101,
+  "expected_failures": [
+   "process_quota::tests::only_a_whole_join_write_is_a_join"
+  ],
+  "failed": [
+   "process_quota::tests::only_a_whole_join_write_is_a_join"
+  ],
+  "caught": true
+ }
+]

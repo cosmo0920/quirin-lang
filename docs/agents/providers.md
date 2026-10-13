@@ -216,6 +216,27 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     is limit and two-resource-class confinement, **not an OS sandbox** (no
     seccomp, no other namespace). The recorded default remains
     `unenforced-legacy`. `remaining-p02`, `remaining-p03`, `remaining-p03-f`.
+    **The quota join is fail-closed (card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`,
+    wave 48).** A declared `max_execution_processes` quota is either joined by
+    the child or the execution is refused before spawning. No step between
+    creating the per-execution cgroup and the child's `pre_exec` join may fall
+    back to a spawn without the join:
+    - A failed duplicate of the cgroup's `cgroup.procs` descriptor (`EMFILE`,
+      `ENFILE`, `ENOMEM`) is `RefusedByProfile`, with no enforced limits, no
+      observation and the cgroup and errno named. It was mapped to "no join",
+      so the child ran outside its cgroup while the record named the quota.
+    - The join's `write` succeeds only for the whole buffer; a short count is
+      a failed join (`EIO`).
+    - A record carries `quota_observed` only when `spawn` returned a child.
+      The join is the first `pre_exec` step and a failed step fails the spawn,
+      so an observation implies the join. A refusal after the cgroup exists,
+      or a failed spawn, records none.
+
+    `MechanismAvailability::quota_join_descriptor` makes the duplicate fail
+    with `EMFILE` at its real call site. Like the other three overrides, it
+    can only add a refusal. Lean: `QCore.ProcessQuotaPlan`
+    (`an_observation_implies_the_join` and five more).
+    `quota-procs-descriptor-dup-fail-open`.
 <!-- preserved:constraint-26:end -->
 
 ## Amendment: included contract parents in packages (CONTRACT-INHERIT)
