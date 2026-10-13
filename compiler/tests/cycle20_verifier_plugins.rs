@@ -790,7 +790,16 @@ fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
     closed_input.limits.timeout_ms = 100;
     closed_input.limits.output_bytes = 16 * 1024 * 1024;
     let (result, elapsed) = run(closed_input, large);
-    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
+    // `Io` before card HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING; still not
+    // a timeout on Linux. Other Unix hosts keep a read end as their
+    // consumption probe, so the pipe cannot break and this is a timeout.
+    #[cfg(target_os = "linux")]
+    assert!(
+        matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
+        "{result:?}"
+    );
+    #[cfg(not(target_os = "linux"))]
+    assert_eq!(result, Err(ProviderFailure::Timeout));
     assert!(elapsed < Duration::from_millis(500));
     std::thread::sleep(Duration::from_millis(350));
     assert!(!package.join("io.marker").exists());

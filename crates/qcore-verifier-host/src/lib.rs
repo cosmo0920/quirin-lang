@@ -59,6 +59,9 @@ pub use process_quota::{
     QuotaObservation, QuotaPlanRefusal,
 };
 
+#[cfg(unix)]
+mod request_consumption;
+
 /// The evidence-v2 firewall's capability-specific replay hook.
 ///
 /// The *trait* belongs to the verifier host, which orchestrates but never
@@ -232,6 +235,12 @@ pub enum ProviderFailure {
     Crashed(Option<i32>),
     OutputLimit,
     Protocol(String),
+    /// The provider did not consume its whole request: part of the frame was
+    /// never delivered, the pipe had no reader left, or bytes were still
+    /// unread when it exited. Decided from consumption, never from whether
+    /// the host's write or the provider's exit came first (card
+    /// `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`). The text says which.
+    RequestUnconsumed(String),
 }
 
 impl fmt::Display for ProviderFailure {
@@ -240,6 +249,7 @@ impl fmt::Display for ProviderFailure {
             Self::Spawn(message) | Self::Io(message) | Self::Protocol(message) => {
                 formatter.write_str(message)
             }
+            Self::RequestUnconsumed(detail) => write!(formatter, "request-unconsumed: {detail}"),
             Self::Timeout => formatter.write_str("provider timed out"),
             Self::Crashed(code) => write!(formatter, "provider exited unsuccessfully ({code:?})"),
             Self::OutputLimit => formatter.write_str("provider exceeded its output limit"),
@@ -487,6 +497,12 @@ pub enum ProcessOutcome {
     Terminated,
     /// A pipe or wait error on the host side.
     Io,
+    /// The provider did not consume its whole request frame (card
+    /// `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`). A successful exit is
+    /// refused with it, and so is a broken request pipe, so the outcome does
+    /// not depend on whether the host's write or the provider's exit came
+    /// first. An unsuccessful exit still classifies as `Terminated`.
+    RequestUnconsumed,
     /// The response was not a well-formed protocol frame.
     Protocol,
 }
@@ -1541,6 +1557,7 @@ impl ProcessProvider {
             Err(ProviderFailure::OutputLimit) => ProcessOutcome::OutputLimit,
             Err(ProviderFailure::Crashed(_)) => ProcessOutcome::Terminated,
             Err(ProviderFailure::Io(_)) => ProcessOutcome::Io,
+            Err(ProviderFailure::RequestUnconsumed(_)) => ProcessOutcome::RequestUnconsumed,
             // `Crashed` gains stderr detail through `with_detail`, which
             // rewrites it as `Protocol`; a terminating status still classifies
             // the execution as terminated.
@@ -1692,12 +1709,24 @@ impl ProcessProvider {
             Some(executable) => executable.path().to_path_buf(),
             None => Path::new(&self.package_root).join(path),
         };
+        // The host creates the request pipe itself so that it can observe what
+        // the provider left unread (`request_consumption`).
+        let request_consumption::RequestPipe {
+            child_stdin,
+            writer: request_writer,
+            held_probe,
+        } = request_consumption::request_pipe()
+            .map_err(|error| ProviderFailure::Io(error.to_string()))?;
+        // Off Linux the probe is the read end kept from here; on Linux it is
+        // opened once the whole frame is written.
+        #[cfg_attr(not(target_os = "linux"), allow(unused_mut))]
+        let mut probe = held_probe;
         let mut command = Command::new(&executable);
         command
             .current_dir(&self.package_root)
             .env_clear()
             .process_group(0)
-            .stdin(Stdio::piped())
+            .stdin(Stdio::from(child_stdin))
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
         // The quota is joined *first*, before the confinement and before every
@@ -1790,12 +1819,17 @@ impl ProcessProvider {
                 .map_err(|error| ProviderFailure::Spawn(error.to_string()))?,
         );
         observed.spawned = true;
+        // The command still owns the parent's copy of the child's stdin (and
+        // the spawn-time closures). Close it now: while the host writes, it
+        // must hold no read end, so that a broken pipe keeps meaning that the
+        // provider has no reader left.
+        drop(command);
         // `spawn` returns after the child has reported a successful `execve`, so
         // this is a genuine upper bound on the residual window rather than an
         // estimate of it.
         observed.identity_window_us = checked_at
             .map(|checked_at| checked_at.elapsed().as_micros().min(u128::from(u64::MAX)) as u64);
-        let mut stdin = child.0.stdin.take();
+        let mut stdin = Some(request_writer);
         let mut stdout = child
             .0
             .stdout
@@ -1815,7 +1849,8 @@ impl ProcessProvider {
         nonblocking(&stderr)?;
         let mut sent = 0;
         let (mut output_done, mut error_done) = (false, false);
-        let mut input_failure = None;
+        // A request write met a broken pipe: no reader was left.
+        let mut reader_lost = false;
         loop {
             // Observe direct-child exit before deciding which bound failed.
             // An exited provider can leave descendant-held output pipes even
@@ -1827,18 +1862,20 @@ impl ProcessProvider {
                     .map_err(|error| ProviderFailure::Io(error.to_string()))?;
             }
             if Instant::now() >= deadline {
-                if observed.status.is_none()
-                    && let Some(error) = input_failure
-                {
-                    return Err(error);
+                if observed.status.is_none() && reader_lost {
+                    return Err(request_consumption::reader_lost_at_deadline(
+                        frame.len(),
+                        sent,
+                    ));
                 }
                 return Err(ProviderFailure::Timeout);
             }
             let progress_before = (sent, output.len(), error_output.len());
             if let Some(input) = stdin.as_mut() {
                 match input.write(&frame[sent..]) {
+                    // Writing nothing into a pipe means no reader took it.
                     Ok(0) => {
-                        input_failure = Some(ProviderFailure::Io("provider stdin closed".into()));
+                        reader_lost = true;
                         stdin = None;
                     }
                     Ok(count) => sent += count,
@@ -1850,16 +1887,24 @@ impl ProcessProvider {
                     Err(error) if error.kind() == std::io::ErrorKind::BrokenPipe => {
                         // Do not let write-vs-exit scheduling decide whether
                         // inherited output pipes count as a timeout. Remember
-                        // incomplete input while draining under the same bound;
-                        // it must still prevent successful response decoding.
-                        input_failure = Some(ProviderFailure::Io(error.to_string()));
+                        // the lost reader while draining under the same bound;
+                        // it refuses a successful exit as an unconsumed request.
+                        reader_lost = true;
                         stdin = None;
                     }
                     Err(error) => return Err(ProviderFailure::Io(error.to_string())),
                 }
-                if sent == frame.len() {
-                    stdin = None;
+            }
+            if sent == frame.len()
+                && let Some(input) = stdin.take()
+            {
+                // The probe is taken before the write end closes: on Linux it
+                // is opened through that write end.
+                #[cfg(target_os = "linux")]
+                {
+                    probe = Some(request_consumption::probe_after_full_write(&input));
                 }
+                drop(input);
             }
             if !output_done {
                 output_done = read_available(&mut stdout, output, wire_limit)?;
@@ -1867,10 +1912,12 @@ impl ProcessProvider {
             if !error_done {
                 error_done = read_available(&mut stderr, error_output, enforced.stderr_bytes)?;
             }
+            // The decision no longer waits for the request write to finish or
+            // break: once the direct child has exited and both outputs are at
+            // end of file, an undelivered remainder is itself unconsumed.
             if let Some(exit) = observed.status
                 && output_done
                 && error_done
-                && stdin.is_none()
             {
                 // A failed exit explains an early input close. Report it
                 // consistently whether the write or the exit was observed
@@ -1879,9 +1926,16 @@ impl ProcessProvider {
                     return Err(ProviderFailure::Crashed(exit.code())
                         .with_detail(&String::from_utf8_lossy(error_output)));
                 }
-                if let Some(error) = input_failure {
-                    return Err(error);
-                }
+                // Decided from what the provider consumed, never from whether
+                // the host's write or the provider's exit came first.
+                request_consumption::classify(
+                    frame.len(),
+                    sent,
+                    reader_lost,
+                    probe
+                        .take()
+                        .map(|probe| probe.and_then(|probe| request_consumption::unread_bytes(&probe))),
+                )?;
                 return decode_protocol_frame(output, limit);
             }
             // Back off only when all pipes would block, and then wait for one of

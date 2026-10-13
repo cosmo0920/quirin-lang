@@ -100,6 +100,12 @@ EXCLUSIVE: dict[str, str] = {
     "qcore-verifier-host::test::package_identity": (
         "process providers under a declared 5 s timeout"
     ),
+    "qcore-verifier-host::test::request_consumption": (
+        "process providers under a declared 20 s timeout (card "
+        "HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING; its outcomes are "
+        "measured stall- and order-independent, the membership rule still "
+        "applies)"
+    ),
     "qcore-audit::test::user_contract_plugins": (
         "checker-plugin process packages under declared 5 s and 300 ms timeouts "
         "(card W45-USER-CONTRACT-PLUGINS)"

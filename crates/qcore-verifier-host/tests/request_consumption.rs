@@ -162,9 +162,13 @@ impl Drop for Case {
 fn refused(tag: &str, id_bytes: usize, body: &str) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run(body);
-    assert!(result.is_err(), "{tag}: an unconsumed request was accepted");
-    assert_ne!(record.outcome, ProcessOutcome::Completed, "{tag}");
+    assert!(
+        matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
+        "{tag}: {result:?}"
+    );
+    assert_eq!(record.outcome, ProcessOutcome::RequestUnconsumed, "{tag}");
     assert_eq!(record.exit_code, Some(0), "{tag}: {record:?}");
+    assert!(record.detail.starts_with("request-unconsumed: "), "{record:?}");
 }
 
 /// A provider that consumes its whole request and answers is accepted.

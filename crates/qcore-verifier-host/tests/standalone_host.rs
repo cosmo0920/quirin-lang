@@ -182,7 +182,19 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     manifest.limits.timeout_ms = 100;
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let result = provider.verify(&request);
-    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
+    // On Linux the host holds no read end while it writes, so the closed input
+    // breaks the pipe and the refusal names the unconsumed request (card
+    // `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`; `Io` before it). Other
+    // Unix hosts keep a read end from the spawn as their consumption probe, so
+    // the pipe cannot break there and a provider alive at its deadline is a
+    // timeout. Both refuse.
+    #[cfg(target_os = "linux")]
+    assert!(
+        matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
+        "{result:?}"
+    );
+    #[cfg(not(target_os = "linux"))]
+    assert_eq!(result, Err(ProviderFailure::Timeout));
     std::thread::sleep(Duration::from_millis(350));
     assert!(!package.join("live.marker").exists());
 
@@ -225,7 +237,14 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     manifest.limits.timeout_ms = 1000;
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let result = provider.verify(&request);
-    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
+    assert!(
+        matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
+        "{result:?}"
+    );
+    assert_eq!(
+        provider.last_execution().unwrap().outcome,
+        ProcessOutcome::RequestUnconsumed
+    );
     // The same large response succeeds when the provider consumes the whole
     // request. This also pins active-pipe progress within the unchanged budget.
     write_script("/bin/cat > /dev/null\n/bin/cat response.bin");
