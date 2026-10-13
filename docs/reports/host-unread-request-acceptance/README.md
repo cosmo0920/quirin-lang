@@ -221,4 +221,68 @@ bytes no reader took (§3, unit test), and that the Rust `classify` transcribes
 `decide` (pinned by `only_a_wholly_delivered_and_wholly_read_frame_is_consumed`
 and `an_unobservable_consumption_refuses_and_never_accepts`).
 
-SECTION7
+## 7. Arbiter identity
+
+The host change is production code, so all three routes were re-run, each
+with the null property selected (`QCORE_NULL_PROPERTY`).
+
+* **BEFORE:** the base release binary `c0a174a4…`, built with the base's
+  `lib.rs`.
+* **AFTER:** this tip's binary `48e1d29c…`.
+
+Each corpus `run.json` records the binary it ran. Scripts:
+[`scripts/arbiters.sh`](scripts/arbiters.sh),
+[`scripts/measure-binary.sh`](scripts/measure-binary.sh),
+[`scripts/identity.py`](scripts/identity.py) and
+[`scripts/totals.py`](scripts/totals.py).
+
+| Route | BEFORE = AFTER (custody) | Null property |
+|---|---|---|
+| corpus | 935 / 9 / 3,890, `bdf5f1c8…` (the brief's) | 1,113 / 1,435 / 2,355 / 18 Unsafe |
+| system | 93 / 4 / 351, `e1e06489…` | 84 / 125 / 245 |
+| slice | 52 / 1 / 347, 4 Pending, `348ecfba…` | 71 / 103 / 232 |
+
+Every report, sidecar and null-property stream is **byte-identical**. The
+corpus `audit.log` and `run.json`, and the invocation records, are identical
+once the run directory name, the binary digest and the times are removed
+([artifacts/identity.txt](artifacts/identity.txt),
+[artifacts/totals.txt](artifacts/totals.txt)). The system and slice digests
+differ from the brief's with equal totals, because those reports embed the
+measuring worktree's paths, as earlier cards recorded. No verdict moved, so
+no correction is named. No real provider is newly refused: the pinned audit
+routes launch no process provider, and the census found none that would be
+refused (§2).
+
+GATESECTION
+
+## 9. Prediction against outcome
+
+| Predicted | Outcome |
+|---|---|
+| census: no intended provider ignores its request | held (§2) |
+| probe: five `RequestUnconsumed`, four `Completed`, 0 deviations in 50 runs per condition | held: 300 runs, 0 deviations; base 317 deviating case-runs in 120 runs (§4) |
+| three existing assertions move from `Io` to `RequestUnconsumed`, nothing else | held (§5) |
+| corpus, system, slice and null property byte-identical | held (§7) |
+| test count +9 plus unit tests | +13: 9 probe tests and 4 unit tests (7,939 → 7,952) |
+| Lean 316 → 317 audits | see §8 |
+| not foreseen | the close shim also delays std's `spawn` (three pipe write ends closed in the parent), so it moves the write order too (§4) |
+
+## 10. Follow-ups
+
+* **Retired:** `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`. Its
+  DISCHARGE asks for the host to decide from consumption, not write order,
+  with Lean parity because the classification changed. That holds: §3, §4
+  and §6.
+* **Registered:**
+  - `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`. A descendant that keeps the
+    request pipe with both output pipes closed can still read after the
+    decision (§3). It was found by reading; no provider has the shape.
+  - `HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`. The off-Linux probe and its
+    `Timeout` assertions have never run.
+  - `PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE`. The census found six
+    test files outside the host crate whose shell fixtures are still written
+    with `fs::write`, the ETXTBSY shape EXECUTION-QUOTA-LOAD-INDEPENDENCE
+    repaired inside it.
+* **Not taken:** `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN` runs as its own card.
+  This change does not touch `quota_descriptor` or the quota path; it touches
+  only the request pipe and the decision in `run_process`.
