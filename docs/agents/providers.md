@@ -160,6 +160,44 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     untouched and stay. No assertion was weakened: the storm row no longer
     accepts `Io`, and the per-tree row now asserts `Completed`.
     `execution-quota-load-independence`.
+    **The host decides from consumption, not from write order (card
+    `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`, wave 48).** A provider
+    that exits successfully without consuming its whole request is refused
+    with `ProcessOutcome::RequestUnconsumed` (`request-unconsumed`), whatever
+    came first. Before the card it was refused (`Io(Broken pipe)`) when it
+    exited before the host's write, and **accepted** when the frame fit the
+    pipe and the write landed first. Mechanism
+    (`crates/qcore-verifier-host/src/request_consumption.rs`):
+    - The host creates the request pipe and holds no read end while it
+      writes, so a broken pipe still means that no reader is left. A broken
+      pipe is now the same `RequestUnconsumed` refusal, also at the deadline
+      for a live provider (where it was `Io`).
+    - Once the whole frame is written, and before closing its end, the host
+      takes a probe. On Linux this is a second read end opened through
+      `/proc/self/fd/<write end>`. Off Linux it is a read end kept from the
+      spawn, so the pipe cannot break there, and a live provider at its
+      deadline is a `Timeout`.
+    - Once the direct child has exited and both output pipes are at end of
+      file, the host refuses if the frame was not wholly delivered or
+      `FIONREAD` on the probe is non-zero. A probe that cannot be taken or
+      read refuses as `Io`. An unsuccessful exit keeps its precedence
+      (`Terminated`).
+    - A provider that reads exactly its frame and exits before the host
+      closes its end is accepted.
+
+    The census found no real provider that ignores its request: every Rust
+    runtime reads the frame and its end of file, and every non-reading
+    fixture was already expected to fail. Measured on the probe binary
+    `tests/request_consumption.rs` (five non-consuming and four consuming
+    providers, frames under and over the pipe capacity), with no deviation
+    under host stalls, `LD_PRELOAD` delays of the first request write and of
+    its close, and both. The base binary deviated (the figures are in the
+    report). Lean: `QCore.RequestConsumption`
+    (`decide_is_a_function_of_consumption`,
+    `a_non_consuming_provider_is_never_decoded`). A descendant that keeps
+    the request pipe with both output pipes closed is outside the claim
+    (`HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`).
+    `host-unread-request-acceptance`.
 <!-- preserved:constraint-16:end -->
 
 <a id="constraint-17"></a>

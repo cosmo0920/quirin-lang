@@ -146,7 +146,9 @@ impl Case {
         );
         let provider = UnverifiedProvider::new(manifest(), &self.root).unwrap();
         let result = provider.verify(&self.request);
-        let record = provider.last_execution().expect("the execution is recorded");
+        let record = provider
+            .last_execution()
+            .expect("the execution is recorded");
         (result, record)
     }
 }
@@ -168,7 +170,10 @@ fn refused(tag: &str, id_bytes: usize, body: &str) {
     );
     assert_eq!(record.outcome, ProcessOutcome::RequestUnconsumed, "{tag}");
     assert_eq!(record.exit_code, Some(0), "{tag}: {record:?}");
-    assert!(record.detail.starts_with("request-unconsumed: "), "{record:?}");
+    assert!(
+        record.detail.starts_with("request-unconsumed: "),
+        "{record:?}"
+    );
 }
 
 /// A provider that consumes its whole request and answers is accepted.
@@ -218,7 +223,9 @@ fn a_provider_that_reads_part_of_its_request_is_refused() {
 
 #[test]
 fn a_provider_that_reads_its_request_to_end_of_file_is_accepted() {
-    accepted("eof-small", 64, |_| format!("/bin/cat > /dev/null\n{ANSWER}"));
+    accepted("eof-small", 64, |_| {
+        format!("/bin/cat > /dev/null\n{ANSWER}")
+    });
 }
 
 #[test]

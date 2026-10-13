@@ -1932,9 +1932,9 @@ impl ProcessProvider {
                     frame.len(),
                     sent,
                     reader_lost,
-                    probe
-                        .take()
-                        .map(|probe| probe.and_then(|probe| request_consumption::unread_bytes(&probe))),
+                    probe.take().map(|probe| {
+                        probe.and_then(|probe| request_consumption::unread_bytes(&probe))
+                    }),
                 )?;
                 return decode_protocol_frame(output, limit);
             }

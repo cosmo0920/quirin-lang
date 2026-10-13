@@ -6,6 +6,7 @@ import QCore.FixedScalarQuery
 import QCore.BucketTally
 import QCore.CtReasons
 import QCore.ProcessQuotaPlan
+import QCore.RequestConsumption
 import QCore.TaskTraceRelation
 import QCore.TaskTraceWrites
 import QCore.TaskTraceLeaseBoundary
