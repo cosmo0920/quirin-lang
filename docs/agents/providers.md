@@ -249,8 +249,10 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     consumption. The census found no provider or fixture with the shape (a
     non-interactive `sh` gives a background job `/dev/null` as stdin), so no
     existing Linux assertion moves and no wait is added where no other
-    process holds the pipe. Measured on the probe binary's nine new cases:
-    HDD_CAMPAIGN_SENTENCE Lean: `QCore.RequestConsumption`
+    process holds the pipe. Measured on the probe binary's nine new cases
+    under the earlier card's stalls and `LD_PRELOAD` delays: the base binary
+    gave the same descendant both outcomes (194 deviating case-runs in 120
+    runs), the fixed one none in 300 runs. Lean: `QCore.RequestConsumption`
     (`decide_is_a_function_of_consumption_and_holders`,
     `a_held_request_is_never_decoded`,
     `the_wait_decides_from_the_final_consumption`).

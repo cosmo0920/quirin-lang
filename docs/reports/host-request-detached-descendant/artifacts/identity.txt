@@ -1,0 +1,21 @@
+corpus audit.log: identical after removing run name, binary digest and times
+corpus monkey-source.json: byte-identical 57acfc58c4f7dddf
+corpus resource-diagnostics.chunk-contracts.json: byte-identical cbbcfd9c17600514
+corpus resource-diagnostics.contracts.json: byte-identical 5013b314940a74ba
+corpus resource-diagnostics.json: byte-identical bdf5f1c8931d0557
+corpus resource-diagnostics.source-effects.json: byte-identical c828c1c892865808
+corpus run.json: identical after removing run name, binary digest and times
+system resource-diagnostics.chunk-contracts.json: byte-identical e7e0d254d9e7ee19
+system resource-diagnostics.contracts.json: byte-identical f1fa893083de2deb
+system resource-diagnostics.invocation.json: identical after removing run name, binary digest and times
+system resource-diagnostics.json: byte-identical fba67e1e13ed4c93
+system resource-diagnostics.source-effects.json: byte-identical e7e0d254d9e7ee19
+slice resource-diagnostics.chunk-contracts.json: byte-identical a97259087e4ad89a
+slice resource-diagnostics.contracts.json: byte-identical 96ee2fe16e60ae24
+slice resource-diagnostics.invocation.json: identical after removing run name, binary digest and times
+slice resource-diagnostics.json: byte-identical a2e54b773ec915fb
+slice resource-diagnostics.source-effects.json: byte-identical a97259087e4ad89a
+corpus null: byte-identical a0a1e6d7639d52f1
+system null: byte-identical f42ef95e45ccba78
+slice null: byte-identical c6a6f6830f98ab66
+IDENTICAL

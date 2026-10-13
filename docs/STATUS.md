@@ -272,7 +272,8 @@ Under a close-delay shim with a forked-child stall, the base binaries deviated i
 ([PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE](reports/process-fixtures-fs-write/README.md)).
 The host now takes that decision only as the request pipe's last holder: a descendant that keeps
 the pipe with both outputs closed is waited for, up to the deadline, and a pipe still held then is
-refused (`RequestHeldByDescendant`). HDD_STATUS_FIGURES Off Linux the other holders cannot be
+refused (`RequestHeldByDescendant`). The base binary gave such a descendant both outcomes (194
+deviating case-runs in 120 runs); the fixed one gave 0 in 300 runs. Off Linux the other holders cannot be
 observed, so every successful process-provider exit is refused there as `Io` (never executed)
 ([HOST-REQUEST-READ-BY-DETACHED-DESCENDANT](reports/host-request-detached-descendant/README.md)).
 The summary-count and Clang recording mechanisms still have their disclosed
