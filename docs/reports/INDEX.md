@@ -456,6 +456,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [host-unread-request-acceptance](host-unread-request-acceptance/README.md) | HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING: the host decides from consumption |
+
 | [http-quirin-v1](http-quirin-v1/README.md) | HTTP-QUIRIN-V1 — an executed HTTP/1.1 subset in pure Quirin, with the boundary named |
 
 | [http-v1-computed-length](http-v1-computed-length/README.md) | HTTP-V1-COMPUTED-LENGTH — a `Content-Length` the program works out, decided exactly as hard (wave 26) |

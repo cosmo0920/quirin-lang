@@ -263,7 +263,40 @@ no correction is named. No real provider is newly refused: the pinned audit
 routes launch no process provider, and the census found none that would be
 refused (§2).
 
-GATESECTION
+## 8. Gate
+
+Every code step ran on the rebased tip `42c821f86` with
+[`scripts/gate.sh`](scripts/gate.sh) `g2`, one step at a time under the
+shared heavy lock and with nothing running beside it. Exits are in
+[gate/](gate/), logs in `private/hur/gate-g2/`, and the summary in
+[gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,956 passed, 0 failed**, 14 ignored; `private/hur/tests-g2/` |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
+| `providers/package.py build`, then `verify qcore.libevent` | 0 / 0 | |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed, 0 failed |
+| `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
+| `python3 -m unittest discover -s scripts/tests`, `build_docs_index.py --check` | see [gate/](gate/) | 08, 09 |
+| `build_matrix.py . --gate gate.json`, then the Python suite and the index again (`finish-gate.sh`) | see [gate/](gate/) | 09a, 09b, 10b, 10c |
+
+The test step passed on its first run, and no row was rerun in isolation.
+The suite count is main's 7,943 plus 13: the nine probe tests and four unit
+tests in `request_consumption`.
+
+`providers/` is unchanged. The provider gate was still run because every
+real provider package passes through the changed decision. Clang was recorded
+in this worktree (`gate/clang-version.txt`).
+
+Before the rebase, the same gate (`g1`, at `b5b245177` on base `e0b92ece6`)
+was also green on every step: 7,952 passed / 0 failed, 317 audits, provider
+gate 129 / 0. Its logs are in `private/hur/gate-g1/`.
 
 ## 9. Prediction against outcome
 
@@ -273,8 +306,8 @@ GATESECTION
 | probe: five `RequestUnconsumed`, four `Completed`, 0 deviations in 50 runs per condition | held: 300 runs, 0 deviations, and again 300 / 0 on the rebased tip; base 317 deviating case-runs in 120 runs (§4) |
 | three existing assertions move from `Io` to `RequestUnconsumed`, nothing else | held (§5) |
 | corpus, system, slice and null property byte-identical | held (§7) |
-| test count +9 plus unit tests | +13: 9 probe tests and 4 unit tests (7,939 → 7,952) |
-| Lean 316 → 317 audits | see §8 |
+| test count +9 plus unit tests | +13: 9 probe tests and 4 unit tests (main 7,943 → 7,956 after the rebase) |
+| Lean 316 → 317 audits | held (§8) |
 | not foreseen | the close shim also delays std's `spawn` (three pipe write ends closed in the parent), so it moves the write order too (§4) |
 
 ## 10. Follow-ups
