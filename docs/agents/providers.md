@@ -160,6 +160,27 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     untouched and stay. No assertion was weakened: the storm row no longer
     accepts `Io`, and the per-tree row now asserts `Completed`.
     `execution-quota-load-independence`.
+    **One fixture writer for every crate (card
+    `PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE`, wave 48).** A test or
+    example that writes or copies an executable which it, or a process it
+    starts, then runs writes it with `tests/support/process_fixture.rs`
+    (`write_executable`, `write_executable_mode`, `copy_executable`, included
+    with `#[path]`; the verifier-host copy re-exports it), never with
+    `fs::write` or `fs::copy`. Data files (manifests, frames, source) stay
+    `fs::write`. The census found 16 files with executable writes, the
+    ledger's six and ten more, and routed all of them, including the binaries
+    with one test or one spawning test, where no sibling forks today. On the
+    base, under a close-delay shim plus a forked-child stall,
+    `subcommand_plugins` deviated in **15 of 50** runs and
+    `cycle20_verifier_plugins` in **1 of 50** (3 of 70 with a 20-run pilot),
+    each with `ETXTBSY`. `standalone_host`, whose only spawning test writes
+    and spawns on one thread, deviated in **0 of 50**. The tip gave **0 of
+    50** for each. `real_packages_preserve_unknown_and_reject_mutations`'s
+    own rewrites now use the writer too, but the row stays listed: its
+    recorded `ExecutableFileBusy` was not reproduced. The production
+    `package::build` write is tracked as
+    `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS`.
+    `process-fixtures-fs-write`.
     **The host decides from consumption, not from write order (card
     `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`, wave 48).** A provider
     that exits successfully without consuming its whole request is refused
