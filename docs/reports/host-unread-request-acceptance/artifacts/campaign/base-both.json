@@ -1,0 +1,346 @@
+{
+ "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/bin-base/request_consumption",
+ "binary_sha256": "d18d4cf8d3ecd45bc5b82f2ae0defb34a10f4ae472774119acd6f8252356fb1e",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/shim/fifo_delay.so",
+  "QCORE_DELAY_FIFO_WRITE_US=30000",
+  "QCORE_DELAY_FIFO_CLOSE_US=30000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 20,
+   "child_stall_ms": 0,
+   "load_pids": [],
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 1.34,
+     "load1": 5.36,
+     "running_total": "6/2830",
+     "uid_tasks": 2285,
+     "stalls": 58,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4058837) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.34,
+     "load1": 5.36,
+     "running_total": "5/2830",
+     "uid_tasks": 2285,
+     "stalls": 68,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4058900) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.34,
+     "load1": 5.66,
+     "running_total": "5/2828",
+     "uid_tasks": 2285,
+     "stalls": 64,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4058963) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.34,
+     "load1": 5.66,
+     "running_total": "5/2832",
+     "uid_tasks": 2287,
+     "stalls": 62,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059026) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.41,
+     "load1": 5.66,
+     "running_total": "6/2831",
+     "uid_tasks": 2286,
+     "stalls": 74,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059093) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.18,
+     "load1": 5.66,
+     "running_total": "5/2831",
+     "uid_tasks": 2286,
+     "stalls": 58,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059158) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.3,
+     "load1": 5.68,
+     "running_total": "5/2835",
+     "uid_tasks": 2292,
+     "stalls": 62,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059248) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.19,
+     "load1": 5.68,
+     "running_total": "5/2836",
+     "uid_tasks": 2291,
+     "stalls": 62,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059318) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.12,
+     "load1": 5.68,
+     "running_total": "5/2828",
+     "uid_tasks": 2283,
+     "stalls": 59,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059419) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.32,
+     "load1": 5.68,
+     "running_total": "8/2827",
+     "uid_tasks": 2282,
+     "stalls": 71,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059482) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.34,
+     "load1": 5.79,
+     "running_total": "5/2824",
+     "uid_tasks": 2281,
+     "stalls": 67,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059674) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.22,
+     "load1": 5.79,
+     "running_total": "5/2826",
+     "uid_tasks": 2281,
+     "stalls": 62,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059737) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.23,
+     "load1": 5.79,
+     "running_total": "6/2827",
+     "uid_tasks": 2282,
+     "stalls": 64,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059802) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.16,
+     "load1": 5.79,
+     "running_total": "9/2827",
+     "uid_tasks": 2282,
+     "stalls": 60,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059928) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.4,
+     "load1": 5.81,
+     "running_total": "7/2823",
+     "uid_tasks": 2279,
+     "stalls": 74,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4059991) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.67,
+     "load1": 5.81,
+     "running_total": "5/2824",
+     "uid_tasks": 2279,
+     "stalls": 80,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4060098) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.38,
+     "load1": 5.81,
+     "running_total": "5/2824",
+     "uid_tasks": 2279,
+     "stalls": 76,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4060200) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.22,
+     "load1": 6.06,
+     "running_total": "5/2823",
+     "uid_tasks": 2280,
+     "stalls": 58,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4060263) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.32,
+     "load1": 6.06,
+     "running_total": "8/2825",
+     "uid_tasks": 2280,
+     "stalls": 63,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4060363) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 1.22,
+     "load1": 6.06,
+     "running_total": "6/2825",
+     "uid_tasks": 2280,
+     "stalls": 65,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4060428) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-both-logs/0-0-0-0-0-20-019.log"
+    }
+   ],
+   "failed_runs": 20
+  }
+ ]
+}

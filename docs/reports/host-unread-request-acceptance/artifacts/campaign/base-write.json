@@ -1,0 +1,425 @@
+{
+ "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/bin-base/request_consumption",
+ "binary_sha256": "d18d4cf8d3ecd45bc5b82f2ae0defb34a10f4ae472774119acd6f8252356fb1e",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/shim/fifo_delay.so",
+  "QCORE_DELAY_FIFO_WRITE_US=30000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "load_pids": [],
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.51,
+     "running_total": "2/2850",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4055837) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4055830) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.41,
+     "load1": 4.51,
+     "running_total": "2/2850",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4055900) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4055894) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.41,
+     "load1": 4.51,
+     "running_total": "2/2850",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4055963) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4055957) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.51,
+     "running_total": "1/2850",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056026) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056020) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.51,
+     "running_total": "1/2848",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056089) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056083) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.51,
+     "running_total": "1/2848",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056152) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056146) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "2/2848",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056215) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056209) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "1/2850",
+     "uid_tasks": 2308,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056278) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056272) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "1/2849",
+     "uid_tasks": 2307,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056343) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056337) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.31,
+     "running_total": "1/2849",
+     "uid_tasks": 2307,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056446) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056439) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "1/2849",
+     "uid_tasks": 2306,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056508) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056502) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "3/2849",
+     "uid_tasks": 2306,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056572) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056566) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.31,
+     "running_total": "1/2850",
+     "uid_tasks": 2307,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056635) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056629) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "2/2850",
+     "uid_tasks": 2307,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056699) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056693) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "4/2860",
+     "uid_tasks": 2317,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056764) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056756) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 4.31,
+     "running_total": "2/2860",
+     "uid_tasks": 2319,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056912) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056906) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 4.31,
+     "running_total": "3/2859",
+     "uid_tasks": 2318,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4056979) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4056973) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.47,
+     "load1": 4.45,
+     "running_total": "2/2860",
+     "uid_tasks": 2319,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4057042) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4057036) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.56,
+     "load1": 4.45,
+     "running_total": "5/2877",
+     "uid_tasks": 2333,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4057117) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4057110) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.67,
+     "load1": 4.45,
+     "running_total": "5/2878",
+     "uid_tasks": 2333,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_provider_that_reads_part_of_its_request_is_refused",
+       "panic": "thread 'a_provider_that_reads_part_of_its_request_is_refused' (4057202) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: partial-small: an unconsumed request was accepted"
+      },
+      {
+       "test": "a_provider_that_never_reads_a_small_request_and_exits_late_is_refused",
+       "panic": "thread 'a_provider_that_never_reads_a_small_request_and_exits_late_is_refused' (4057196) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:165:5: :: silent-small-late: an unconsumed request was accepted"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/private/hur/campaign/base-write-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 20
+  }
+ ]
+}
