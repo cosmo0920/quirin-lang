@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN card gate on base e0b92ece6, every code step at 1e47c8d50, scripts docs/reports/quota-procs-descriptor-dup-fail-open/scripts/gate.sh and finish-gate.sh, logs private/qpdf/gate-g1 of this worktree, every step under the shared heavy lock. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 487 units, 500 summaries, 7,943 passed, 0 failed, 14 ignored, exit 0 (private/qpdf/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 316 audits passed (AuditProcessQuotaPlan gains six theorems); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). No provider gate: providers/ is unchanged. The arbiters were measured separately (BEFORE/AFTER byte-identical, report section 6).",
-  "workspace_tests": 7943,
-  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "note": "HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING card gate on base e0b92ece6, rebased onto 1f53f9fa0, every code step at 42c821f86, scripts docs/reports/host-unread-request-acceptance/scripts/gate.sh and finish-gate.sh, logs private/hur/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 488 units, 501 summaries, 7,956 passed, 0 failed, 14 ignored, exit 0 (private/hur/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (AuditRequestConsumption added); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 7956,
+  "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 316,
+  "lean_audits": 317,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6978,6 +6978,7 @@
    "AuditRegionTaskCredit.lean",
    "AuditRelationalForwarding.lean",
    "AuditRelationalPost.lean",
+   "AuditRequestConsumption.lean",
    "AuditReservedSpelling.lean",
    "AuditResidualAccessReadings.lean",
    "AuditResourceCalls.lean",
@@ -7082,7 +7083,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a934a299866aa14f3/docs/reports/quota-procs-descriptor-dup-fail-open/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae313b715009668e5/docs/reports/host-unread-request-acceptance/gate.json)"
  },
  "named_followups": [
   {

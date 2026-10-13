@@ -1,0 +1,13 @@
+{
+  "note": "HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING card gate on base e0b92ece6, rebased onto 1f53f9fa0, every code step at 42c821f86, scripts docs/reports/host-unread-request-acceptance/scripts/gate.sh and finish-gate.sh, logs private/hur/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 488 units, 501 summaries, 7,956 passed, 0 failed, 14 ignored, exit 0 (private/hur/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (AuditRequestConsumption added); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 7956,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 317,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
