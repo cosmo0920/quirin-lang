@@ -12,7 +12,15 @@
 | after `e1f20731` | first write +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | after `e1f20731` | close +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | after `e1f20731` | both delays + 20 ms stall | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | idle | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | 20 ms host stall | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | 50 ms host stall | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | first write +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | close +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| rebased `1a8dd1e3` | both delays + 20 ms stall | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 base: 120 runs, 317 deviating case-runs
 
 after: 300 runs, 0 deviating case-runs
+
+rebased: 300 runs, 0 deviating case-runs

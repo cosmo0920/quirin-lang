@@ -15,22 +15,24 @@ addresses normalised. Prints one line per file and a verdict."""
 import collections
 import hashlib
 import json
+import os
 import pathlib
 import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 PRIVATE = REPO / "private/hur"
+AFTER = os.environ.get("AFTER", "after")
 SLICES = pathlib.Path("/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1")
 PAIRS = [
-    ("corpus", PRIVATE / "before", PRIVATE / "after"),
-    ("system", PRIVATE / "before-system", PRIVATE / "after-system"),
-    ("slice", SLICES / "hur-before", SLICES / "hur-after"),
+    ("corpus", PRIVATE / "before", PRIVATE / AFTER),
+    ("system", PRIVATE / "before-system", PRIVATE / f"{AFTER}-system"),
+    ("slice", SLICES / "hur-before", SLICES / f"hur-{AFTER}"),
 ]
 STREAMS = [
-    ("corpus null", PRIVATE / "before-null.jsonl", PRIVATE / "after-null.jsonl"),
-    ("system null", PRIVATE / "before-system-null.jsonl", PRIVATE / "after-system-null.jsonl"),
-    ("slice null", PRIVATE / "before-slice-null.jsonl", PRIVATE / "after-slice-null.jsonl"),
+    ("corpus null", PRIVATE / "before-null.jsonl", PRIVATE / f"{AFTER}-null.jsonl"),
+    ("system null", PRIVATE / "before-system-null.jsonl", PRIVATE / f"{AFTER}-system-null.jsonl"),
+    ("slice null", PRIVATE / "before-slice-null.jsonl", PRIVATE / f"{AFTER}-slice-null.jsonl"),
 ]
 VOLATILE = {"console.log", "stderr.log", "exit"}
 ADDRESS = re.compile(rb'"0x[0-9a-f]+"')

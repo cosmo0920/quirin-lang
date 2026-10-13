@@ -6,3 +6,7 @@ after: corpus run binary 48e1d29c7fb16170
   corpus: custody {'Safe': 935, 'Unknown': 3890, 'Unsafe': 9, 'absent': 87} report bdf5f1c8; null {'Safe (conditional on its preconditions)': 1435, 'Safe (unconditional)': 1113, 'Unknown': 2355, 'Unsafe': 18}
   system: custody {'Safe': 93, 'Unknown': 351, 'Unsafe': 4, 'absent': 6} report e1e06489; null {'Safe (conditional on its preconditions)': 125, 'Safe (unconditional)': 84, 'Unknown': 245}
   slice: custody {'Pending': 4, 'Safe': 52, 'Unknown': 347, 'Unsafe': 1, 'absent': 2} report 348ecfba; null {'Safe (conditional on its preconditions)': 103, 'Safe (unconditional)': 71, 'Unknown': 232}
+rebased: corpus run binary a96bebb6dda50dd0
+  corpus: custody {'Safe': 935, 'Unknown': 3890, 'Unsafe': 9, 'absent': 87} report bdf5f1c8; null {'Safe (conditional on its preconditions)': 1435, 'Safe (unconditional)': 1113, 'Unknown': 2355, 'Unsafe': 18}
+  system: custody {'Safe': 93, 'Unknown': 351, 'Unsafe': 4, 'absent': 6} report e1e06489; null {'Safe (conditional on its preconditions)': 125, 'Safe (unconditional)': 84, 'Unknown': 245}
+  slice: custody {'Pending': 4, 'Safe': 52, 'Unknown': 347, 'Unsafe': 1, 'absent': 2} report 348ecfba; null {'Safe (conditional on its preconditions)': 103, 'Safe (unconditional)': 71, 'Unknown': 232}

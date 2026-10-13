@@ -4,12 +4,13 @@ totals of each BEFORE/AFTER route from the null-property summaries, with each
 report's digest and the binary digest its run recorded."""
 import hashlib
 import json
+import sys
 import pathlib
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 PRIVATE = REPO / "private/hur"
 SLICES = pathlib.Path("/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1")
-for side in ("before", "after"):
+for side in ["before", *(sys.argv[1:] or ["after"])]:
     reports = {
         "corpus": PRIVATE / side / "resource-diagnostics.json",
         "system": PRIVATE / f"{side}-system/resource-diagnostics.json",

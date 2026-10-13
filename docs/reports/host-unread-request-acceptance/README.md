@@ -1,6 +1,6 @@
 # HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING: the host decides from consumption
 
-Card of wave 48, base `e0b92ece6`, prediction frozen at `50edeb481`
+Card of wave 48, base `e0b92ece6`, rebased onto `1f53f9fa0` (QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN); prediction frozen at `574c1093a` (`50edeb481` before the rebase)
 ([PREDICTION.md](PREDICTION.md)). It changes the verifier host's request
 transport (`crates/qcore-verifier-host/src/lib.rs` `run_process`, the new
 `src/request_consumption.rs`), adds `ProcessOutcome::RequestUnconsumed` and
@@ -154,6 +154,13 @@ per-run JSON is in [artifacts/campaign/](artifacts/campaign/).
 **Base: 120 runs, 317 deviating case-runs. Tip: 300 runs, 0 deviations.**
 Every tip run exited 0.
 
+**Rebased tip.** After the rebase onto `1f53f9fa0`, the probe binary was
+rebuilt (`1a8dd1e3`) and the tip half of the campaign was rerun under the
+same six conditions, because `run_process` had met the other card's change
+next to this one: **300 runs, 0 deviations**
+([artifacts/campaign/SUMMARY.md](artifacts/campaign/SUMMARY.md), the
+`rebased-*.json` files).
+
 On the base, the same non-reading provider went both ways, and the
 condition alone decided which:
 
@@ -228,7 +235,10 @@ with the null property selected (`QCORE_NULL_PROPERTY`).
 
 * **BEFORE:** the base release binary `c0a174a4…`, built with the base's
   `lib.rs`.
-* **AFTER:** this tip's binary `48e1d29c…`.
+* **AFTER:** the pre-rebase tip's binary `48e1d29c…`, then the rebased
+  tip's binary `a96bebb6…`. The integrator recorded main's arbiters at
+  `1f53f9fa0` as byte-identical to `e0b92ece6`'s, so BEFORE stands for both
+  comparisons ([artifacts/identity-rebased.txt](artifacts/identity-rebased.txt)).
 
 Each corpus `run.json` records the binary it ran. Scripts:
 [`scripts/arbiters.sh`](scripts/arbiters.sh),
@@ -260,7 +270,7 @@ GATESECTION
 | Predicted | Outcome |
 |---|---|
 | census: no intended provider ignores its request | held (§2) |
-| probe: five `RequestUnconsumed`, four `Completed`, 0 deviations in 50 runs per condition | held: 300 runs, 0 deviations; base 317 deviating case-runs in 120 runs (§4) |
+| probe: five `RequestUnconsumed`, four `Completed`, 0 deviations in 50 runs per condition | held: 300 runs, 0 deviations, and again 300 / 0 on the rebased tip; base 317 deviating case-runs in 120 runs (§4) |
 | three existing assertions move from `Io` to `RequestUnconsumed`, nothing else | held (§5) |
 | corpus, system, slice and null property byte-identical | held (§7) |
 | test count +9 plus unit tests | +13: 9 probe tests and 4 unit tests (7,939 → 7,952) |
@@ -283,6 +293,9 @@ GATESECTION
     test files outside the host crate whose shell fixtures are still written
     with `fs::write`, the ETXTBSY shape EXECUTION-QUOTA-LOAD-INDEPENDENCE
     repaired inside it.
-* **Not taken:** `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN` runs as its own card.
-  This change does not touch `quota_descriptor` or the quota path; it touches
-  only the request pipe and the decision in `run_process`.
+* **Not taken:** `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN` ran as its own card
+  and landed first (`1f53f9fa0`). This change does not touch
+  `quota_descriptor` or the quota path; it touches only the request pipe and
+  the decision in `run_process`. The rebase met one adjacent line: that
+  card's `observed.spawned = true` right after `spawn`, beside this card's
+  `drop(command)`. Both are kept, in that order.
