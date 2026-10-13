@@ -171,11 +171,91 @@ slice routes with the null property selected:
   binary;
 - `scripts/identity.py`, which compares the results file for file.
 
-ARBITERS-PENDING
+Every report, sidecar and null-property stream is byte-identical
+([artifacts/identity.txt](artifacts/identity.txt),
+[artifacts/totals.txt](artifacts/totals.txt)). `run.json`, `audit.log` and
+the invocation records are identical once the run name, the binary digest and
+the times are removed.
+
+| Route | BEFORE = AFTER | Null property (unconditional / conditional / Unknown / Unsafe) |
+|---|---|---|
+| corpus | 935 / 9 / 3,890, `bdf5f1c8…` (the brief's) | 1,113 / 1,435 / 2,355 / 18 |
+| system | 93 / 4 / 351, `32741ce2…` | 84 / 125 / 245 |
+| slice | 52 / 1 / 347, 4 Pending, `773ab8b3…` | 71 / 103 / 232 |
+
+The system and slice digests differ from the brief's with equal totals,
+because those reports embed the measuring worktree's paths, as earlier cards
+recorded. Wall time: corpus 462 s / 463 s, system 70 s / 69 s, slice 36 s /
+36 s (`--jobs 4`). No verdict moved.
 
 ## 6. Gate
 
-GATE-PENDING
+Every code step ran at `04e308303` (implementation `b30c9d4e7` plus the
+records), using [`scripts/gate.sh`](scripts/gate.sh) `g1 code`. Exits are in
+[gate/](gate/), logs in `private/pfw/gate-g1/`, and the summary in
+[gate.json](gate.json).
+
+**The standing gate did not pass on its first run.** Two steps failed. Neither
+failure is in a file this card touched, and neither step was rerun to obtain a
+pass.
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | **101** | `needless_borrows_for_generic_args` at `crates/qcore-verification/src/source_imports.rs:186`, which is unchanged since the base; see below |
+| `python3 scripts/run_test_binaries.py` | **101** | 488 units, 501 summaries; **7,955 passed, 1 failed**, 14 ignored (`private/pfw/tests-g1/`); the failure is `std_socket_inet` (below) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
+| `python3 -m unittest discover -s scripts/tests` | PYTHON-EXIT | PYTHON-COUNT |
+| `python3 scripts/build_docs_index.py --check` | INDEX-EXIT | |
+| provider gate: `providers/package.py build` / `verify qcore.libevent` | 0 / 0 | |
+| provider gate: `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | **129 passed**, 0 failed, 1 ignored |
+| provider gate: `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
+| provider gate: `cargo fmt` / `cargo clippy` in `providers/` (`-D warnings`) | 0 / 0 | |
+
+**Clippy: the host's toolchain changed mid-card.** The host's rustup
+`stable` was reinstalled as **1.99.0** (2026-09-28) at 2026-10-14 02:48 +0900.
+That was during this card's repeat runs (§4.2). The failed `w3_evidence_v2`
+run printed rustup's channel sync from its nested `cargo build`, so a rustup
+proxy took part, but what triggered the update is not established.
+- **Every measured binary was built by 1.98.0.** That covers the base and
+  tip stress binaries, both release binaries, and the arbiters
+  (`rustc version 1.98.0 (88d9e12ae 2026-08-18)` in each binary's `.comment`
+  section). 1.98.0 is the toolchain main was gated with.
+- **The gate ran under 1.99.0.** Its new `needless_borrows_for_generic_args`
+  fires at three production sites, all unchanged since the base:
+  - `crates/qcore-verification/src/source_imports.rs:186`;
+  - `crates/qcore-audit/src/unit_selection.rs:126`;
+  - `crates/quirin-source-analysis/src/condvar_join_census.rs:743`.
+- **This card's files are lint-clean.** A full `cargo clippy --locked
+  --all-targets` without `-D` (`private/pfw/clippy-warnings.log`) lints every
+  crate and reports exactly those three warnings and nothing in a file this
+  card touched.
+- **1.98.0 is not installed** and nothing was installed, so the gate could
+  not be rerun on main's toolchain. The card changes no production code, so
+  the three sites are registered as
+  `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS` rather than fixed here.
+
+**`std_socket_inet`.** The failing test was
+`the_declared_ipv4_example_runs_sanitized_twice_and_writes_the_reference_observation`:
+the emitted program exited 82 with empty stderr on its first run. That
+example binds the fixed port 49301. The socket card recorded this collision
+with a concurrent run of the suite on the same host as
+`SOCKET-INET-FIXED-PORT-COLLISION` ("it fails loudly"). The parallel card's
+gate shares this host. Rerun alone afterwards, the binary gave 36 passed,
+0 failed (`private/pfw/iso-std_socket_inet.log`, recorded here, not
+substituted for the gate's exit). The test compiles and runs C through Clang
+and writes no fixture through the changed code.
+
+The workspace count is main's: 7,955 + 1 = 7,956, the HOST-UNREAD gate's
+7,956 passed. No test was added or removed.
+
+Rule-id check: `rg -o --no-filename '^[0-9]{1,2}[a-z]?\. ' docs/agents/*.md
+| sort | uniq -d` prints `1.` to `7.` at the tip. It printed exactly these at
+the base too: they are numbered list items in the topic pages, not rule ids.
+This card adds no numbered line.
 
 ## 7. Prediction against outcome
 
@@ -186,8 +266,9 @@ GATE-PENDING
 | `cycle20_verifier_plugins` base > 0 (at least 3 of 20), tip 0 | base > 0 held (2 of 20 pilot, 1 of 50), but under the forecast rate. `subcommand_plugins`, a census-added binary, is the strong case (15 of 50). Tip 0 held |
 | `standalone_host` base 0 (argued), tip 0 | held (0 of 70, 0 of 50) |
 | release binary byte-identical | held only with the base's commit string pinned: the build script embeds HEAD |
-| arbiters unchanged | ARBITERS-OUTCOME |
-| ledger 764 → 764; rule 16 amended in place | held |
+| arbiters unchanged | held: byte-identical on all three routes and the null property |
+| ledger 764 → 764; rule 16 amended in place | 764 → 765: the toolchain follow-up was not foreseen; rule 16 amended in place |
+| standing gate passes on the first run | **did not**: clippy under the host's new stable (1.99.0) and the fixed-port `std_socket_inet` row (§6) |
 
 ## 8. Follow-ups
 
@@ -199,8 +280,9 @@ GATE-PENDING
   `real_packages_preserve_unknown_and_reject_mutations` stays listed: its
   rewrites now use the writer, but its recorded `ExecutableFileBusy` was not
   reproduced here.
-- **Registered:** `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS` (§2,
-  production).
+- **Registered:**
+  - `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS` (§2, production);
+  - `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS` (§6).
 
 Rule 16 ([providers](../../agents/providers.md#constraint-16)) is amended in
 place. No new rule id is needed.

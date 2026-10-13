@@ -49,6 +49,31 @@ REGISTER = [
         "source": REPORT,
         "recorded_by": CARD,
     },
+    {
+        "id": "STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS",
+        "title": "The host's stable Rust moved from 1.98.0 to 1.99.0 mid-wave, and the standing "
+        "gate's clippy step fails on main under it",
+        "why": (
+            "Recorded by " + CARD + " (base " + BASE + "), observed. The host's rustup stable "
+            "toolchain was reinstalled as 1.99.0 (2026-09-28) at 2026-10-14 02:48 +0900, during "
+            "this card's repeat runs; one w3_evidence_v2 run's nested cargo build printed rustup's "
+            "channel sync and failed on a rust-src download rename, so a rustup proxy took part, "
+            "but the trigger is not established. Every binary the card measured was built by "
+            "1.98.0 (88d9e12ae 2026-08-18), the toolchain main was gated with. Under 1.99.0, "
+            "cargo clippy --all-targets -- -D warnings fails with clippy::"
+            "needless_borrows_for_generic_args at three production sites unchanged since the "
+            "base: crates/qcore-verification/src/source_imports.rs:186, "
+            "crates/qcore-audit/src/unit_selection.rs:126 and "
+            "crates/quirin-source-analysis/src/condvar_join_census.rs:743. The repository pins no "
+            "toolchain, so every card gated after the update meets the same failure. Size: three "
+            "one-token borrows, and the toolchain policy. DISCHARGE: the three sites are fixed "
+            "(behaviour-neutral) and the standing gate's clippy passes under the host's stable, "
+            "or the repository pins the toolchain its gate runs (rust-toolchain.toml) and records "
+            "the choice."
+        ),
+        "source": REPORT,
+        "recorded_by": CARD,
+    },
 ]
 
 

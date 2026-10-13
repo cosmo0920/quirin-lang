@@ -1,0 +1,41 @@
+
+running 36 tests
+test a_port_that_names_nothing_refuses ... ok
+test a_spaced_address_is_not_an_address ... ok
+test a_hostname_refuses_by_name_because_there_is_no_resolution ... ok
+test a_leading_zero_component_refuses_rather_than_being_read ... ok
+test a_port_literal_out_of_range_refuses ... ok
+test a_socket_at_a_port_position_refuses_as_a_boundary_crossing ... ok
+test a_port_binding_out_of_range_refuses_at_the_same_code ... ok
+test a_hexadecimal_ipv6_group_is_an_address_and_not_an_unknown_name ... ok
+test a_declared_address_still_admits_a_kernel_chosen_port ... ok
+test a_datagram_reaches_a_declared_address ... ok
+test a_declared_ipv4_endpoint_is_bound_and_reached ... ok
+test a_port_binding_is_read_at_both_ends ... ok
+test a_declared_address_is_emitted_as_bytes_and_never_as_text ... ok
+test a_host_without_ipv6_is_a_recorded_refusal_and_never_a_fallback ... ok
+test a_declared_ipv6_endpoint_is_bound_and_reached ... ok
+test a_socket_that_declares_no_family_is_created_in_ipv4 ... ok
+test an_ephemeral_port_is_not_an_endpoint_name ... ok
+test an_ipv6_address_without_brackets_asks_for_them ... ok
+test an_ipv6_program_creates_its_sockets_in_the_declared_family ... ok
+test an_address_no_bind_of_this_program_declares_refuses_as_an_external_peer ... ok
+test the_certificate_publishes_every_declared_address_with_its_resolved_port ... ok
+test every_ipv6_socket_sets_v6only_explicitly_and_a_failure_to_set_it_fails_creation ... ok
+test the_loan_sees_the_same_listener_through_an_address ... ok
+test the_two_address_families_do_not_stand_in_for_each_other ... ok
+test the_certificate_publishes_the_family_of_every_socket ... ok
+test two_binds_of_one_declared_address_refuse_at_check_time ... ok
+test the_published_certificate_is_independently_rederivable ... ok
+test the_embedded_ipv4_form_and_a_zone_identifier_refuse_by_their_own_names ... ok
+test two_binds_of_one_ephemeral_address_stay_admitted ... ok
+test the_implicit_forms_emit_exactly_the_statements_they_always_did ... ok
+test the_published_examples_take_this_route ... ok
+test the_readme_transcript_is_the_real_one ... ok
+test native::the_declared_ipv6_example_runs_sanitized_or_records_that_this_host_has_no_ipv6 ... ok
+test native::a_declared_datagram_address_runs_sanitized ... ok
+test this_card_reserves_no_word_and_its_address_rule_collides_with_nothing ... ok
+test native::the_declared_ipv4_example_runs_sanitized_twice_and_writes_the_reference_observation ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
