@@ -571,6 +571,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [quirin-socket-v1](quirin-socket-v1/README.md) | QUIRIN-SOCKET-V1 — a checked TCP and UDP socket surface in pure QCore source |
 
+| [quota-procs-descriptor-dup-fail-open](quota-procs-descriptor-dup-fail-open/README.md) | QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN: the quota join is fail-closed |
+
 ## R
 
 | Card directory | Original report title |
