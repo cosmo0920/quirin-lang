@@ -1,6 +1,6 @@
 # HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING: the host decides from consumption
 
-Card of wave 48, base `e0b92ece6`, rebased onto `1f53f9fa0` (QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN); prediction frozen at `574c1093a` (`50edeb481` before the rebase)
+Card of wave 48, base `e0b92ece6`, rebased onto `1f53f9fa0` (QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN) and then onto `4807a71e8` (SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN, records only); prediction frozen at `f6e5be232` (`50edeb481` before the rebases)
 ([PREDICTION.md](PREDICTION.md)). It changes the verifier host's request
 transport (`crates/qcore-verifier-host/src/lib.rs` `run_process`, the new
 `src/request_consumption.rs`), adds `ProcessOutcome::RequestUnconsumed` and
@@ -293,6 +293,13 @@ tests in `request_consumption`.
 `providers/` is unchanged. The provider gate was still run because every
 real provider package passes through the changed decision. Clang was recorded
 in this worktree (`gate/clang-version.txt`).
+
+Main then moved to `4807a71e8` (SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN,
+records only), and the card was rebased again. `git diff 42c821f86 HEAD` over
+`crates/`, `compiler/`, `scripts/`, `proof/`, `providers/` and the Cargo
+files is empty, so the code steps above stand for the final tip. The matrix
+regeneration, the Python suite and the docs index were rerun on the final
+tree (`finish-gate.sh g2` again; exits in [gate/](gate/)).
 
 Before the rebase, the same gate (`g1`, at `b5b245177` on base `e0b92ece6`)
 was also green on every step: 7,952 passed / 0 failed, 317 audits, provider
