@@ -456,6 +456,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [host-request-detached-descendant](host-request-detached-descendant/README.md) | HOST-REQUEST-READ-BY-DETACHED-DESCENDANT: only the request pipe's last holder decides |
+
 | [host-unread-request-acceptance](host-unread-request-acceptance/README.md) | HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING: the host decides from consumption |
 
 | [http-quirin-v1](http-quirin-v1/README.md) | HTTP-QUIRIN-V1 — an executed HTTP/1.1 subset in pure Quirin, with the boundary named |

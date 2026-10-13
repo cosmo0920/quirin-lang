@@ -251,7 +251,45 @@ provider, and the census found none with the shape (§2).
 
 ## 8. Gate
 
-HDD_GATE
+Every code step ran at `277ad447d` (the code is the final tip's) with
+[`scripts/gate.sh`](scripts/gate.sh) `g1 code`, one step at a time under the
+shared heavy lock. Exits are in [gate/](gate/), logs in `private/hdd/gate-g1/`,
+and the summary in [gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | **101** | see below |
+| `python3 scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,968 passed, 0 failed**, 14 ignored; `private/hdd/tests-g1/` |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
+| `providers/package.py build`, then `verify qcore.libevent` | 0 / 0 | |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed, 0 failed |
+| `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
+| `python3 -m unittest discover -s scripts/tests`, `build_docs_index.py --check` | see [gate/](gate/) | 08, 09 |
+
+The test step passed on its first run, and no row was rerun. The card adds
+twelve tests: the nine probe cases and three unit tests in
+`request_consumption`.
+
+**The gate is incomplete: the clippy step is red, on a line this card does not
+touch.** The host's stable toolchain was updated to rustc and clippy 1.99.0 at
+02:48 (+0900) on 2026-10-14, while the card ran, and every gate step ran under
+1.99.0. Its `needless_borrows_for_generic_args` lint fires once:
+`crates/qcore-verification/src/source_imports.rs:186`, `map_err(&fail)`,
+unchanged since `29a965faf` (2026-09-27). Clippy stops at that crate, so the
+same command was rerun as a diagnostic with only that lint allowed
+(`private/hdd/clippy-diagnostic.log`). It exits 0 over the whole workspace,
+this card's crate included. The one-character fix lies outside this card's
+scope and is left to the integrator. Every other step is green.
+
+`providers/` is unchanged. The provider gate was still run, because every real
+provider package passes through the changed decision. Clang was recorded in
+this worktree (`gate/clang-version.txt`). The matrix was not regenerated with
+this card's `gate.json`, because the gate is incomplete. The ledger edit keeps
+`dimensions.named_followups` equal to the list length (764).
 
 ## 9. Prediction against outcome
 
