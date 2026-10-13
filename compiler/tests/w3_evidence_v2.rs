@@ -1,6 +1,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
+// The built provider is copied into its package by a separate process
+// (`tests/support/process_fixture.rs`): only one test here spawns, so no
+// sibling forks while it is written; the shared writer keeps it that way if
+// another spawning test is added.
+#[cfg(unix)]
+#[path = "../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
 use qcore_compiler::obligation_derivation::{DerivationInputs, DerivedTask, derive_task};
 use qcore_compiler::verifier_plugin::*;
 use qcore_compiler::witness_replay::ContractObservationReplay;
@@ -341,11 +349,11 @@ fn out_of_process_v2_conformance_replays_and_rejects_a_forged_observation() {
         "standalone provider must build against schemas alone: {}",
         String::from_utf8_lossy(&build.stderr)
     );
-    fs::copy(
-        package.join("target/debug/qcore-v2-conformance"),
-        package.join("provider"),
-    )
-    .unwrap();
+    process_fixture::copy_executable(
+        &package.join("target/debug/qcore-v2-conformance"),
+        &package.join("provider"),
+        0o755,
+    );
     let derived = task();
     let request = request(&derived.task);
     fs::write(

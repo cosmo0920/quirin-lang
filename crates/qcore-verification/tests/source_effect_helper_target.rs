@@ -8,9 +8,15 @@ use qcore_c_gateway::legacy_c::C11TranslationUnit;
 use qcore_contract::profile_loader::load_profile_directory;
 use qcore_schemas::TargetProfile;
 use qcore_verification::source_effect::{BOOLEAN_FIELD_SEMANTIC_PROFILE, BooleanFieldSourceTask};
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+
+// The wrapper is written by a separate process
+// (`tests/support/process_fixture.rs`). This binary has one test, so no
+// sibling spawns while it is written; the shared writer keeps it that way
+// if a test is added.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
 
 const CHILD_ROOT: &str = "QCORE_SOURCE_EFFECT_HELPER_TARGET_CHILD";
 const RULES: &str = include_str!(
@@ -54,15 +60,14 @@ fn helper_target_mismatch_is_rejected_in_isolated_process() {
     let marker = root.0.join("native");
     let wrapper = root.0.join("clang-target-wrapper");
     let program = shell_quote(clang.get_program().to_str().unwrap());
-    std::fs::write(
+    process_fixture::write_executable(
         &wrapper,
         format!(
             "#!/bin/sh\nif [ -f {} ]; then\nexec {program} \"$@\"\nfi\nexec {program} --target=wasm32-unknown-unknown \"$@\"\n",
             shell_quote(marker.to_str().unwrap())
-        ),
-    )
-    .unwrap();
-    std::fs::set_permissions(&wrapper, std::fs::Permissions::from_mode(0o700)).unwrap();
+        )
+        .as_bytes(),
+    );
     let output = Command::new(std::env::current_exe().unwrap())
         .args([
             "--exact",

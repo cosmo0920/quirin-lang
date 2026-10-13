@@ -16,9 +16,15 @@ use qcore_c_gateway::legacy_c::{C11TranslationUnit, LegacyFunctionScope};
 use qcore_contract::profile_loader::{LoadedProfile, load_profile_directory};
 use qcore_schemas::{PluginManifest, SemanticWitness, sha256_hex};
 use serde_json::{Value, json};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
+
+// The provider executable is copied by a separate process, so a sibling
+// test's concurrent spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
 
 const SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample.c");
 const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qv");
@@ -56,11 +62,11 @@ impl Fixture {
         }
         let package = path.join("sample-provider");
         std::fs::create_dir(&package).unwrap();
-        std::fs::copy(
-            env!("CARGO_BIN_EXE_sample_boolean_provider"),
-            package.join("provider"),
-        )
-        .unwrap();
+        process_fixture::copy_executable(
+            Path::new(env!("CARGO_BIN_EXE_sample_boolean_provider")),
+            &package.join("provider"),
+            0o755,
+        );
         let mut manifest: PluginManifest = serde_json::from_str(MANIFEST).unwrap();
         manifest.package_digest = sha256_hex(&std::fs::read(package.join("provider")).unwrap());
         manifest.validate().unwrap();

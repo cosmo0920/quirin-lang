@@ -1,6 +1,11 @@
 #![cfg(unix)]
 
-use std::os::unix::fs::PermissionsExt;
+// The wrapper is written by a separate process
+// (`tests/support/process_fixture.rs`). This binary has one test, so no
+// sibling spawns while it is written; the shared writer keeps it that way
+// if a test is added.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
 
 use qcore_c_gateway::legacy_c::{
     C11TranslationUnit, LegacyFunctionScope, ResourceContracts, analyze_prepared_translation_unit,
@@ -26,14 +31,11 @@ fn a_rejected_preparation_is_not_retried_into_a_verdict() {
     let wrapper = root.join("clang-wrapper");
     let log = root.join("invocations.log");
     let failed = root.join("failed-once");
-    std::fs::write(
+    process_fixture::write_executable_mode(
         &wrapper,
-        "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$QCORE_TEST_LOG\"\nsaw_e=\nsaw_p=\nfor arg in \"$@\"; do\n  [ \"$arg\" = -E ] && saw_e=1\n  [ \"$arg\" = -P ] && saw_p=1\ndone\nif [ -n \"$saw_e\" ] && [ -n \"$saw_p\" ] && [ ! -e \"$QCORE_TEST_FAILED\" ]; then\n  : > \"$QCORE_TEST_FAILED\"\n  echo intentional-first-preprocessing-failure >&2\n  exit 1\nfi\nexec \"$QCORE_TEST_REAL_CLANG\" \"$@\"\n",
-    )
-    .unwrap();
-    let mut permissions = std::fs::metadata(&wrapper).unwrap().permissions();
-    permissions.set_mode(0o755);
-    std::fs::set_permissions(&wrapper, permissions).unwrap();
+        b"#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$QCORE_TEST_LOG\"\nsaw_e=\nsaw_p=\nfor arg in \"$@\"; do\n  [ \"$arg\" = -E ] && saw_e=1\n  [ \"$arg\" = -P ] && saw_p=1\ndone\nif [ -n \"$saw_e\" ] && [ -n \"$saw_p\" ] && [ ! -e \"$QCORE_TEST_FAILED\" ]; then\n  : > \"$QCORE_TEST_FAILED\"\n  echo intentional-first-preprocessing-failure >&2\n  exit 1\nfi\nexec \"$QCORE_TEST_REAL_CLANG\" \"$@\"\n",
+        0o755,
+    );
 
     let prior = std::env::var_os("QCORE_CLANG");
     unsafe {

@@ -5,10 +5,15 @@
 #![cfg(unix)]
 
 use std::fs;
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
+
+// The stand-in programs are written by a separate process, so a sibling test's concurrent
+// spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 
@@ -57,8 +62,7 @@ fn git(directory: &Path, args: &[&str]) {
 }
 
 fn executable(path: &Path, text: &str) {
-    fs::write(path, text).unwrap();
-    fs::set_permissions(path, fs::Permissions::from_mode(0o755)).unwrap();
+    process_fixture::write_executable_mode(path, text.as_bytes(), 0o755);
 }
 
 struct Fixture {

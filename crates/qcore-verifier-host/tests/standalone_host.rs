@@ -4,6 +4,12 @@ use qcore_verifier_host::*;
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 
+// Only `write_executable` is used here (`support/process_fixture.rs`).
+#[cfg(unix)]
+#[allow(dead_code)]
+#[path = "support/process_fixture.rs"]
+mod process_fixture;
+
 fn request() -> VerificationRequest {
     VerificationRequest {
         protocol_version: 1,
@@ -139,7 +145,6 @@ fn standalone_host_refuses_v1_assertions_with_empty_and_nonempty_coverage() {
 fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     use std::{
         fs,
-        os::unix::fs::PermissionsExt,
         time::{Duration, Instant, SystemTime, UNIX_EPOCH},
     };
     let package = std::env::temp_dir().join(format!(
@@ -165,8 +170,7 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     request.request_id = "x".repeat(8 * 1024 * 1024);
     manifest.limits.output_bytes = 16 * 1024 * 1024;
     let write_script = |body: &str| {
-        fs::write(&script, format!("#!/bin/sh\n{body}\n")).unwrap();
-        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        process_fixture::write_executable(&script, format!("#!/bin/sh\n{body}\n").as_bytes());
     };
     write_script("exec 0<&-\n(/bin/sleep 0.3; : > descendant.marker) &\nexit 0");
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();

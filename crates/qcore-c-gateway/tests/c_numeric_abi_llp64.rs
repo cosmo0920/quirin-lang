@@ -14,6 +14,13 @@ use qcore_c_gateway::legacy_c::{AbiOutcome, AbiRefusal, declared_abi_census};
 use qcore_contract::contract_loader::load_resource_contract_sources;
 use qcore_schemas::contract::ResourceContracts;
 
+// The wrapper is written by a separate process
+// (`tests/support/process_fixture.rs`). This binary has one test, so no
+// sibling spawns while it is written; the shared writer keeps it that way
+// if a test is added.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
 const CONTRACT: &str = "module contract;
 
 extern fn k_len(size: usize) -> unit
@@ -59,18 +66,15 @@ fn plain_long_is_refused_under_an_llp64_clang() {
     let directory = std::env::temp_dir().join(format!("cg20-llp64-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let wrapper = directory.join("clang-msvc");
-    std::fs::write(
+    process_fixture::write_executable_mode(
         &wrapper,
         format!(
             "#!/bin/sh\nexec '{}' --target=x86_64-pc-windows-msvc \"$@\"\n",
             real.to_string_lossy()
-        ),
-    )
-    .unwrap();
-    {
-        use std::os::unix::fs::PermissionsExt;
-        std::fs::set_permissions(&wrapper, std::fs::Permissions::from_mode(0o755)).unwrap();
-    }
+        )
+        .as_bytes(),
+        0o755,
+    );
     // SAFETY: this test binary has one test, and nothing else reads the
     // environment concurrently.
     unsafe { std::env::set_var("QCORE_CLANG", &wrapper) };

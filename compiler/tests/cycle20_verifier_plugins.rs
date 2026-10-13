@@ -12,6 +12,13 @@ use qcore_compiler::{
     encode_protocol_frame, first_party_manifests, first_party_registry, parse_source_program,
 };
 
+// Every executable fixture is written by a separate process, so a sibling
+// test's concurrent spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../tests/support/process_fixture.rs"]
+mod process_fixture;
+use process_fixture::write_executable;
+
 fn digest(ch: char) -> String {
     std::iter::repeat_n(ch, 64).collect()
 }
@@ -319,7 +326,6 @@ fn install_verifiable(
     manifest: &qcore_compiler::PluginManifest,
 ) -> qcore_compiler::ProcessProvider {
     use qcore_compiler::verifier_plugin::{envelope, sha256_hex, verify_executable_package};
-    use std::os::unix::fs::PermissionsExt;
     let PluginEntrypoint::Executable { path } = &manifest.entrypoint else {
         panic!("an executable package");
     };
@@ -328,8 +334,7 @@ fn install_verifiable(
     bytes.extend(b"exit $?\n");
     bytes.extend(envelope(&serde_json::to_string(manifest).unwrap()).into_bytes());
     bytes.push(b'\n');
-    std::fs::write(&script, &bytes).unwrap();
-    std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o700)).unwrap();
+    write_executable(&script, &bytes);
     let mut installed = manifest.clone();
     installed.package_digest = sha256_hex(&std::fs::read(&script).unwrap());
     std::fs::write(
@@ -344,7 +349,6 @@ fn install_verifiable(
 #[test]
 fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
     use std::fs;
-    use std::os::unix::fs::PermissionsExt;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     let unique = SystemTime::now()
@@ -354,8 +358,7 @@ fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
     let package = std::env::temp_dir().join(format!("qcore-plugin-timeout-{unique}"));
     fs::create_dir(&package).unwrap();
     let executable = package.join("hang.sh");
-    fs::write(&executable, "#!/bin/sh\nwhile :; do :; done\n").unwrap();
-    fs::set_permissions(&executable, fs::Permissions::from_mode(0o700)).unwrap();
+    write_executable(&executable, b"#!/bin/sh\nwhile :; do :; done\n");
 
     let mut manifest = first_party_manifests()
         .into_iter()
@@ -390,7 +393,6 @@ fn process_provider_timeout_is_unknown_and_cannot_issue_a_certificate() {
 #[test]
 fn package_discovery_verifies_before_it_registers() {
     use std::fs;
-    use std::os::unix::fs::PermissionsExt;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     let unique = SystemTime::now()
@@ -430,8 +432,7 @@ fn package_discovery_verifies_before_it_registers() {
 
     // The same directory, installed as a real package: the executable exists,
     // carries the manifest template, and the manifest carries its digest.
-    fs::write(package.join("provider"), "#!/bin/sh\nexit 0\n").unwrap();
-    fs::set_permissions(package.join("provider"), fs::Permissions::from_mode(0o700)).unwrap();
+    write_executable(&package.join("provider"), b"#!/bin/sh\nexit 0\n");
     let provider = install_verifiable(&package, &manifest);
     assert_eq!(provider.manifest().plugin_id.as_str(), "example.discovered");
     let mut registry = VerifierRegistry::default();
@@ -598,7 +599,6 @@ fn vp02_empty_in_process_evidence_is_rejected_by_the_core() {
 fn vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety() {
     use std::{
         fs,
-        os::unix::fs::PermissionsExt,
         time::{SystemTime, UNIX_EPOCH},
     };
     let unique = SystemTime::now()
@@ -608,12 +608,10 @@ fn vp01_vp02_process_proposals_reach_the_firewall_and_cannot_mint_safety() {
     let package = std::env::temp_dir().join(format!("qcore-plugin-evidence-{unique}"));
     fs::create_dir(&package).unwrap();
     let executable = package.join("provider.sh");
-    fs::write(
+    write_executable(
         &executable,
-        "#!/bin/sh\n/bin/cat > /dev/null\nexec /bin/cat response.bin\n",
-    )
-    .unwrap();
-    fs::set_permissions(&executable, fs::Permissions::from_mode(0o700)).unwrap();
+        b"#!/bin/sh\n/bin/cat > /dev/null\nexec /bin/cat response.bin\n",
+    );
     let mut manifest = first_party_manifests()
         .into_iter()
         .find(|manifest| manifest.plugin_id.as_str() == "qcore.libevent")
@@ -718,7 +716,6 @@ fn vp05_nonempty_source_obligations_cannot_silently_skip_providers() {
 fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
     use std::{
         fs,
-        os::unix::fs::PermissionsExt,
         sync::mpsc,
         time::{Duration, Instant, SystemTime, UNIX_EPOCH},
     };
@@ -755,8 +752,7 @@ fn vp04_vp07_vp08_process_lifecycle_and_payload_budgets() {
         (result, start.elapsed())
     };
     let write_script = |body: &str| {
-        fs::write(&script, format!("#!/bin/sh\n{body}\n")).unwrap();
-        fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(&script, format!("#!/bin/sh\n{body}\n").as_bytes());
     };
     // Both waiting and already-exited direct children can leave inherited pipes.
     for tail in ["wait", "exit 0"] {

@@ -18,7 +18,6 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -30,6 +29,13 @@ use qcore_contract::load_path_manifest::load_contract_load_path_manifest;
 use qcore_schemas::verdict::Verdict;
 use qcore_verifier_host::*;
 use serde_json::{Value, json};
+
+// The checker executable is written by a separate process, so a sibling
+// test's concurrent spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+use process_fixture::write_executable;
 
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 const PLUGIN: &str = "acme.pool_check";
@@ -170,8 +176,7 @@ impl Tree {
         bytes.extend(envelope(&serde_json::to_string(&template).unwrap()).into_bytes());
         bytes.push(b'\n');
         let executable = package.join("check.sh");
-        fs::write(&executable, &bytes).unwrap();
-        fs::set_permissions(&executable, fs::Permissions::from_mode(0o700)).unwrap();
+        write_executable(&executable, &bytes);
         let mut installed = template;
         installed.package_digest = sha256_hex(&bytes);
         fs::write(
@@ -465,7 +470,7 @@ fn a_timeout_or_a_crash_is_unknown() {
     // A package that does not verify is a failure too, and never runs.
     let tree = Tree::new(true);
     tree.install(&Checker::Crash);
-    fs::write(tree.package().join("check.sh"), "#!/bin/sh\nexit 0\n").unwrap();
+    write_executable(&tree.package().join("check.sh"), b"#!/bin/sh\nexit 0\n");
     succeeded(&tree.audit("r.json"));
     let binding = &tree.read("r.contracts.json")["plugin_checks"]["bindings"][0];
     assert_eq!(binding["code"], "package");

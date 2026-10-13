@@ -15,6 +15,19 @@ use std::sync::Arc;
 #[path = "../../../tests/support/tracked_files.rs"]
 mod tracked_files;
 
+// A package executable this binary rewrites and then runs is written by a
+// separate process, so a sibling test's concurrent spawn cannot make its
+// `execve` fail with `ETXTBSY` (`tests/support/process_fixture.rs`). Its mode
+// is kept. Copies that are only read, and data files, stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
+/// The permission bits of `path`, so a rewrite keeps them.
+fn mode_of(path: &Path) -> u32 {
+    use std::os::unix::fs::PermissionsExt;
+    std::fs::metadata(path).unwrap().permissions().mode() & 0o7777
+}
+
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -558,14 +571,15 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
         let original_executable = std::fs::read(&executable_path).unwrap();
         let mut changed_executable = original_executable.clone();
         changed_executable.push(0); // ELF still runs, so exercise its self-digest check.
-        std::fs::write(&executable_path, changed_executable).unwrap();
+        let mode = mode_of(&executable_path);
+        process_fixture::write_executable_mode(&executable_path, &changed_executable, mode);
         let output = raw(&package, &valid);
         assert!(!output.status.success());
         assert!(output.stdout.is_empty());
         if cfg!(target_os = "linux") {
             assert!(String::from_utf8_lossy(&output.stderr).contains("installed manifest differs"));
         }
-        std::fs::write(&executable_path, original_executable).unwrap();
+        process_fixture::write_executable_mode(&executable_path, &original_executable, mode);
         assert_eq!(
             sha256_hex(&std::fs::read(package.join("provider")).unwrap()),
             manifest.package_digest
@@ -1115,13 +1129,7 @@ fn the_spawn_time_identity_recheck_is_measured_on_the_shipped_packages() {
         let executable = package.join("provider");
         let original = std::fs::read(&executable).unwrap();
         std::fs::remove_file(&executable).unwrap();
-        std::fs::write(&executable, &original).unwrap();
-        let mut permissions = std::fs::metadata(&executable).unwrap().permissions();
-        {
-            use std::os::unix::fs::PermissionsExt;
-            permissions.set_mode(0o755);
-        }
-        std::fs::set_permissions(&executable, permissions).unwrap();
+        process_fixture::write_executable_mode(&executable, &original, 0o755);
         let failure = provider.verify(&request).unwrap_err();
         assert!(
             failure

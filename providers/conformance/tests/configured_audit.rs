@@ -2,7 +2,6 @@
 //! No caller constructs imported summaries or expected witness paths.
 #![cfg(unix)]
 use std::fs;
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -10,6 +9,13 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use qcore_audit::run_config;
 use qcore_schemas::{PluginManifest, sha256_hex};
 use serde_json::{Value, json};
+
+// The provider executable is written by a separate process, so a sibling
+// test's concurrent spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+use process_fixture::{copy_executable, write_executable_mode};
 
 const SOURCE: &str = include_str!("fixtures/configured_boolean_source/sample.c");
 const POLICY: &str = include_str!("fixtures/configured_boolean_source/sample.qv");
@@ -109,11 +115,11 @@ impl Fixture {
             &json!({"schema_version":1,"packages":["package"],"bindings":[binding]}),
         );
         fs::create_dir(root.join("package")).unwrap();
-        fs::copy(
-            env!("CARGO_BIN_EXE_configured_audit_provider"),
-            root.join("package/provider"),
-        )
-        .unwrap();
+        copy_executable(
+            Path::new(env!("CARGO_BIN_EXE_configured_audit_provider")),
+            &root.join("package/provider"),
+            0o755,
+        );
         let mut manifest: PluginManifest = serde_json::from_str(include_str!(
             "fixtures/configured_boolean_source/audit-provider-template.json"
         ))
@@ -330,8 +336,7 @@ fn a_failed_selected_process_stays_unknown_without_an_in_process_fallback() {
         qcore_verifier_host::envelope(&serde_json::to_string_pretty(&template).unwrap())
             .into_bytes(),
     );
-    fs::write(&executable, &bytes).unwrap();
-    fs::set_permissions(&executable, PermissionsExt::from_mode(0o755)).unwrap();
+    write_executable_mode(&executable, &bytes, 0o755);
     manifest.package_digest = sha256_hex(&bytes);
     write_json(&manifest_path, &serde_json::to_value(&manifest).unwrap());
     fixture.run().unwrap();

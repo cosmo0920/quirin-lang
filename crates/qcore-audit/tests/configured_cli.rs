@@ -8,6 +8,12 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
 };
 
+// The Clang wrapper is written by a separate process, so a sibling test's concurrent
+// spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
 static NEXT: AtomicUsize = AtomicUsize::new(0);
 static CLANG_AVAILABILITY: OnceLock<Result<(), String>> = OnceLock::new();
 static CLANG_WARNING: Once = Once::new();
@@ -126,8 +132,6 @@ impl Fixture {
 #[cfg(unix)]
 #[test]
 fn one_configured_unit_runs_each_preparation_stage_once() {
-    use std::os::unix::fs::PermissionsExt;
-
     if !clang_available() {
         return;
     }
@@ -138,14 +142,11 @@ fn one_configured_unit_runs_each_preparation_stage_once() {
         .to_owned();
     let wrapper = fixture.0.join("counting-clang");
     let log = fixture.0.join("clang-invocations.log");
-    fs::write(
+    process_fixture::write_executable_mode(
         &wrapper,
-        "#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$QCORE_TEST_LOG\"\nexec \"$QCORE_TEST_REAL_CLANG\" \"$@\"\n",
-    )
-    .unwrap();
-    let mut permissions = fs::metadata(&wrapper).unwrap().permissions();
-    permissions.set_mode(0o755);
-    fs::set_permissions(&wrapper, permissions).unwrap();
+        b"#!/bin/sh\nprintf '%s\\n' \"$*\" >> \"$QCORE_TEST_LOG\"\nexec \"$QCORE_TEST_REAL_CLANG\" \"$@\"\n",
+        0o755,
+    );
     let output = Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
         .current_dir(&fixture.0)
         .arg(fixture.0.join("audit.json"))

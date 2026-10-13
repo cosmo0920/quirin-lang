@@ -11,6 +11,13 @@ use qcore_compiler::weak_memory::{
 };
 use qcore_compiler::*;
 
+// The provider scripts are written by a separate process
+// (`tests/support/process_fixture.rs`): this probe forks only from its main
+// thread today, but no write descriptor on an executable is held in-process.
+#[cfg(unix)]
+#[path = "../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
 fn request() -> VerificationRequest {
     VerificationRequest {
         protocol_version: PLUGIN_PROTOCOL_VERSION,
@@ -67,9 +74,9 @@ fn event(id: u32, thread: u32, kind: K) -> MemoryEvent {
 
 #[cfg(unix)]
 fn process_probes(results: &mut Vec<serde_json::Value>) {
+    use process_fixture::write_executable;
     use std::{
         fs,
-        os::unix::fs::PermissionsExt,
         time::{Instant, SystemTime, UNIX_EPOCH},
     };
     let unique = SystemTime::now()
@@ -89,8 +96,7 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     };
     manifest.package_digest = "0".repeat(64);
     manifest.limits.timeout_ms = 20;
-    fs::write(&script, "#!/bin/sh\n/bin/sleep 0.4 &\nwait\n").unwrap();
-    fs::set_permissions(&script, fs::Permissions::from_mode(0o700)).unwrap();
+    write_executable(&script, b"#!/bin/sh\n/bin/sleep 0.4 &\nwait\n");
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
     let start = Instant::now();
     let outcome = provider.verify(&request());
@@ -113,11 +119,10 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     let frame = encode_protocol_frame(&reply, payload_bytes).unwrap();
     let codec_ok = decode_protocol_frame::<VerificationResponse>(&frame, payload_bytes).is_ok();
     fs::write(package.join("response.bin"), &frame).unwrap();
-    fs::write(
+    write_executable(
         &script,
-        "#!/bin/sh\n/bin/cat > /dev/null\n/bin/cat response.bin\n",
-    )
-    .unwrap();
+        b"#!/bin/sh\n/bin/cat > /dev/null\n/bin/cat response.bin\n",
+    );
     manifest.limits.timeout_ms = 1000;
     manifest.limits.output_bytes = payload_bytes;
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
@@ -135,11 +140,10 @@ fn process_probes(results: &mut Vec<serde_json::Value>) {
     );
 
     // Encoding failure returns before a spawned child's lifecycle is guarded.
-    fs::write(
+    write_executable(
         &script,
-        "#!/bin/sh\n/bin/sleep 0.05\n: > after-return.marker\n",
-    )
-    .unwrap();
+        b"#!/bin/sh\n/bin/sleep 0.05\n: > after-return.marker\n",
+    );
     manifest.limits.output_bytes = 1;
     manifest.limits.timeout_ms = 20;
     let outcome = UnverifiedProvider::new(manifest, &package)

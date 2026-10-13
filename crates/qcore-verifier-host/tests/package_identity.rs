@@ -16,7 +16,6 @@
 use qcore_verifier_host::*;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 use std::sync::Arc;
 
@@ -466,16 +465,10 @@ fn a_symbolic_entrypoint_is_checked_where_it_is_executed() {
 
     // Re-pointing the link cannot substitute the executable: the verified,
     // canonical file is what the spawn names.
-    fs::write(
-        fixture.package().join("decoy.sh"),
-        format!("#!/bin/sh\n{HOSTILE}\n"),
-    )
-    .unwrap();
-    fs::set_permissions(
-        fixture.package().join("decoy.sh"),
-        fs::Permissions::from_mode(0o700),
-    )
-    .unwrap();
+    process_fixture::write_executable(
+        &fixture.package().join("decoy.sh"),
+        format!("#!/bin/sh\n{HOSTILE}\n").as_bytes(),
+    );
     fs::remove_file(fixture.executable()).unwrap();
     std::os::unix::fs::symlink("decoy.sh", fixture.executable()).unwrap();
     provider
@@ -487,7 +480,7 @@ fn a_symbolic_entrypoint_is_checked_where_it_is_executed() {
     );
 
     // Rewriting the resolved file is still refused.
-    fs::write(&real, format!("#!/bin/sh\n{HOSTILE}\n")).unwrap();
+    process_fixture::write_executable(&real, format!("#!/bin/sh\n{HOSTILE}\n").as_bytes());
     let failure = provider.verify(&request).unwrap_err();
     assert!(
         failure.to_string().contains("changed since verification"),

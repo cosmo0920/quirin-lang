@@ -13,11 +13,16 @@
 
 #![cfg(unix)]
 
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
 use serde_json::{Value, json};
+
+// The plugin scripts are written by a separate process, so a sibling test's concurrent
+// spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
 
 const HOST: &str = env!("CARGO_BIN_EXE_quirin-audit");
 
@@ -37,8 +42,11 @@ fn plugin(directory: &Path, name: &str, body: &str) -> PathBuf {
     let path = directory
         .join("plugins")
         .join(format!("quirin-audit-{name}"));
-    std::fs::write(&path, format!("#!/bin/sh\ncat > request.json\n{body}\n")).unwrap();
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
+    process_fixture::write_executable_mode(
+        &path,
+        format!("#!/bin/sh\ncat > request.json\n{body}\n").as_bytes(),
+        0o755,
+    );
     path
 }
 

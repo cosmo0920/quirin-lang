@@ -3,18 +3,37 @@ use qcore_compiler::{PluginEntrypoint, PluginId, PluginManifest};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
+// An executable package file is written by a separate process, so a sibling
+// test's concurrent spawn cannot make its `execve` fail with `ETXTBSY`
+// (`tests/support/process_fixture.rs`). Data files stay `fs::write`.
+#[path = "../../../tests/support/process_fixture.rs"]
+mod process_fixture;
+
 /// Write a package executable carrying `manifest` as its embedded template, and
 /// the installed manifest that binds to it. The file is never executed by
 /// verification, so plain bytes carrying the envelope are a faithful stand-in
 /// for a compiled provider: what the gate reads is exactly these bytes.
-fn install(package: &Path, manifest: &mut PluginManifest, executable_body: &str) {
+/// `mode` is `None` for those stand-ins (written as plain, non-executable
+/// data) and `Some` for a package a test then launches, which is written
+/// with that mode by the shared out-of-process writer.
+fn install(
+    package: &Path,
+    manifest: &mut PluginManifest,
+    executable_body: &str,
+    mode: Option<u32>,
+) {
     let mut template = manifest.clone();
     // An executable cannot embed its own hash; real templates carry the same
     // all-zero build placeholder, which the installed digest never equals.
     template.package_digest = "0".repeat(64);
     let mut bytes = executable_body.as_bytes().to_vec();
     bytes.extend(envelope(&serde_json::to_string_pretty(&template).unwrap()).into_bytes());
-    std::fs::write(package.join("provider"), &bytes).unwrap();
+    match mode {
+        None => std::fs::write(package.join("provider"), &bytes).unwrap(),
+        Some(mode) => {
+            process_fixture::write_executable_mode(&package.join("provider"), &bytes, mode)
+        }
+    }
     manifest.package_digest = qcore_compiler::verifier_plugin::sha256_hex(&bytes);
     std::fs::write(
         package.join("verifier-plugin.json"),
@@ -41,7 +60,7 @@ impl Fixture {
         };
         // Deliberately not executable: verification must read it without
         // launching, so the "executable" is just bytes carrying the template.
-        install(&package, &mut manifest, "");
+        install(&package, &mut manifest, "", None);
         Self {
             config: root.join("plugins.json"),
             root,
@@ -113,7 +132,7 @@ fn package_selection_is_explicit_pinned_and_reversible() {
     // A coherently rebuilt package at the same path binds, and is then caught by
     // the separate pinned-manifest comparison instead.
     let mut rebuilt = edited.clone();
-    install(&f.package, &mut rebuilt, "rebuilt");
+    install(&f.package, &mut rebuilt, "rebuilt", None);
     fails(f.list(), "changed since enable");
     assert_eq!(std::fs::read(&f.config).unwrap(), original);
     // Explicit re-enable is the package upgrade/review decision.
@@ -169,7 +188,7 @@ fn discovery_order_is_independent_of_selection_order() {
         for target in &mut manifest.targets {
             target.library = format!("library{index}");
         }
-        install(&package, &mut manifest, "");
+        install(&package, &mut manifest, "", None);
         packages.push(package);
     }
     let listing = |config: &Path, order: &[usize]| {
@@ -278,9 +297,7 @@ fn package_symlinks_cannot_escape_the_package_root() {
 fn configured_source_scope_dispatches_only_the_enabled_process() {
     use qcore_compiler::{PluginManifest, SupportedTarget, VerifierCapability};
     use std::collections::BTreeSet;
-    use std::os::unix::fs::PermissionsExt;
     let f = Fixture::new("dispatch");
-    let executable = f.package.join("provider");
     let manifest_path = f.package.join("verifier-plugin.json");
     let mut manifest: PluginManifest =
         serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
@@ -302,8 +319,8 @@ fn configured_source_scope_dispatches_only_the_enabled_process() {
         &f.package,
         &mut manifest,
         "#!/bin/sh\nprintf invoked > invoked\nexit 23\n",
+        Some(0o755),
     );
-    std::fs::set_permissions(&executable, std::fs::Permissions::from_mode(0o755)).unwrap();
     succeeds(f.enable());
     let input = f.root.join("source.qcore");
     std::fs::write(&input, "extern fn resize() -> unit contract { requires size > 0; ensures normal live == 1; };\nverify scope s { plugin example.cli profile default capabilities { observation_hooks }; }\nfn main() -> i32 { return 7; }").unwrap();
