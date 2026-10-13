@@ -241,6 +241,11 @@ pub enum ProviderFailure {
     /// the host's write or the provider's exit came first (card
     /// `HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING`). The text says which.
     RequestUnconsumed(String),
+    /// A process other than the provider still held the request pipe's read
+    /// end at the deadline, after the provider had exited successfully with
+    /// both outputs closed: it could still read, so the request's consumption
+    /// was never final (card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`).
+    RequestHeldByDescendant(String),
 }
 
 impl fmt::Display for ProviderFailure {
@@ -250,6 +255,9 @@ impl fmt::Display for ProviderFailure {
                 formatter.write_str(message)
             }
             Self::RequestUnconsumed(detail) => write!(formatter, "request-unconsumed: {detail}"),
+            Self::RequestHeldByDescendant(detail) => {
+                write!(formatter, "request-held-by-descendant: {detail}")
+            }
             Self::Timeout => formatter.write_str("provider timed out"),
             Self::Crashed(code) => write!(formatter, "provider exited unsuccessfully ({code:?})"),
             Self::OutputLimit => formatter.write_str("provider exceeded its output limit"),
@@ -503,6 +511,13 @@ pub enum ProcessOutcome {
     /// not depend on whether the host's write or the provider's exit came
     /// first. An unsuccessful exit still classifies as `Terminated`.
     RequestUnconsumed,
+    /// The provider exited successfully with both outputs closed, but a
+    /// process other than it still held the request pipe at the deadline (card
+    /// `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`). The host decides only as
+    /// the pipe's last holder, so this is the refusal of a decision the
+    /// deadline cut off, distinct from an unconsumed request and from a live
+    /// provider's timeout.
+    RequestHeldByDescendant,
     /// The response was not a well-formed protocol frame.
     Protocol,
 }
@@ -1558,6 +1573,9 @@ impl ProcessProvider {
             Err(ProviderFailure::Crashed(_)) => ProcessOutcome::Terminated,
             Err(ProviderFailure::Io(_)) => ProcessOutcome::Io,
             Err(ProviderFailure::RequestUnconsumed(_)) => ProcessOutcome::RequestUnconsumed,
+            Err(ProviderFailure::RequestHeldByDescendant(_)) => {
+                ProcessOutcome::RequestHeldByDescendant
+            }
             // `Crashed` gains stderr detail through `with_detail`, which
             // rewrites it as `Protocol`; a terminating status still classifies
             // the execution as terminated.
@@ -1717,9 +1735,9 @@ impl ProcessProvider {
             held_probe,
         } = request_consumption::request_pipe()
             .map_err(|error| ProviderFailure::Io(error.to_string()))?;
-        // Off Linux the probe is the read end kept from here; on Linux it is
-        // opened once the whole frame is written.
-        #[cfg_attr(not(target_os = "linux"), allow(unused_mut))]
+        // Off Linux the probe is the read end kept from here (and the holder
+        // check refuses there); on Linux it is opened once the whole frame is
+        // written, and each holder check that finds the pipe held reopens it.
         let mut probe = held_probe;
         let mut command = Command::new(&executable);
         command
@@ -1851,6 +1869,10 @@ impl ProcessProvider {
         let (mut output_done, mut error_done) = (false, false);
         // A request write met a broken pipe: no reader was left.
         let mut reader_lost = false;
+        // The direct child exited successfully with both outputs at end of
+        // file, but another process still held the request pipe at the last
+        // look, so the decision waits (`request_consumption::holders`).
+        let mut held = false;
         loop {
             // Observe direct-child exit before deciding which bound failed.
             // An exited provider can leave descendant-held output pipes even
@@ -1867,6 +1889,11 @@ impl ProcessProvider {
                         frame.len(),
                         sent,
                     ));
+                }
+                // The provider is done; only the request pipe's other holder
+                // kept the decision open.
+                if held {
+                    return Err(request_consumption::held_at_deadline(frame.len(), sent));
                 }
                 return Err(ProviderFailure::Timeout);
             }
@@ -1927,16 +1954,25 @@ impl ProcessProvider {
                         .with_detail(&String::from_utf8_lossy(error_output)));
                 }
                 // Decided from what the provider consumed, never from whether
-                // the host's write or the provider's exit came first.
-                request_consumption::classify(
-                    frame.len(),
-                    sent,
-                    reader_lost,
-                    probe.take().map(|probe| {
-                        probe.and_then(|probe| request_consumption::unread_bytes(&probe))
-                    }),
-                )?;
-                return decode_protocol_frame(output, limit);
+                // the host's write or the provider's exit came first, and only
+                // once no other process can read any more: a broken pipe has
+                // no reader left, and otherwise the host must be the pipe's
+                // last holder. While another process holds it the decision
+                // waits, bounded by the deadline above.
+                let holders = if reader_lost {
+                    // No reader is left and none can appear. The count is
+                    // gone with the pipe; `classify` refuses a lost reader
+                    // before it reads the holders.
+                    request_consumption::Holders::Released { unread: 0 }
+                } else {
+                    request_consumption::holders(stdin.is_some(), &mut probe)
+                };
+                if holders == request_consumption::Holders::Held {
+                    held = true;
+                } else {
+                    request_consumption::classify(frame.len(), sent, reader_lost, holders)?;
+                    return decode_protocol_frame(output, limit);
+                }
             }
             // Back off only when all pipes would block, and then wait for one of
             // them to become ready rather than for a fixed quantum. Sleeping

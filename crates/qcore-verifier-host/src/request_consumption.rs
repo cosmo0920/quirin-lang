@@ -26,9 +26,27 @@
 //! for every order of the host's write and the provider's exit. That is the
 //! Lean claim (`QCore.RequestConsumption`).
 //!
-//! The judgement is taken at that one moment. A descendant that keeps the
-//! request pipe open after the direct child exits, with both output pipes
-//! closed, can still read after it; its later reads are not credited.
+//! **Only the last holder's count decides** (card
+//! `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`). A descendant that inherited the
+//! request pipe as its stdin, with both output pipes closed, can still read
+//! after the direct child has exited and the outputs are at end of file, so the
+//! count at that moment is not final. The host therefore decides only once it
+//! is the pipe's last holder ([`holders`]):
+//!
+//! * while the host still writes, it holds no read end, so a write that does
+//!   not break proves another reader; the decision waits for the write to
+//!   finish or break;
+//! * once the frame is written, the host opens a write end through
+//!   `/proc/self/fd/<probe>`, closes the probe and polls that write end:
+//!   `POLLERR` is set exactly when no reader is left. Then no reader can appear
+//!   any more, and `FIONREAD` on the write end is the final unread count. If a
+//!   reader remains, the probe is reopened through the write end and the write
+//!   end closed again, so a reader waiting for end of file still gets it.
+//!
+//! The decision waits, bounded by the declared deadline; a pipe still held at
+//! the deadline is refused as [`ProviderFailure::RequestHeldByDescendant`].
+//! Off Linux the other holders cannot be observed, and every successful exit
+//! is refused as `Io` (fail-closed).
 
 use std::io;
 use std::os::fd::{AsRawFd, OwnedFd};
@@ -72,7 +90,9 @@ pub(crate) fn probe_after_full_write(writer: &std::io::PipeWriter) -> io::Result
 }
 
 /// Bytes in the pipe that no reader has taken. `FIONREAD` changes no flag and
-/// reads nothing, so it cannot itself consume the request.
+/// reads nothing, so it cannot itself consume the request. On a pipe it
+/// counts the same bytes through either end.
+#[cfg_attr(not(target_os = "linux"), allow(dead_code))]
 pub(crate) fn unread_bytes(probe: &OwnedFd) -> io::Result<usize> {
     let mut unread: libc::c_int = 0;
     // SAFETY: `probe` is an open descriptor owned by the caller and `unread`
@@ -83,44 +103,173 @@ pub(crate) fn unread_bytes(probe: &OwnedFd) -> io::Result<usize> {
     usize::try_from(unread).map_err(|_| io::Error::other("negative FIONREAD count"))
 }
 
+/// Who else holds the request pipe's read end at the decision.
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum Holders {
+    /// No process but the host holds a read end, so no byte can be read any
+    /// more; `unread` bytes were never read.
+    Released { unread: usize },
+    /// Another process still holds a read end and could still read.
+    Held,
+    /// Neither could be established; the text says why.
+    Unobservable(String),
+}
+
+/// Whether the host is the request pipe's last holder, for a direct child that
+/// exited successfully with both outputs at end of file.
+///
+/// `still_writing`: the host has not written the whole frame and its write end
+/// is open. On Linux it holds no read end while writing, and the caller's last
+/// write did not break, so another reader exists.
+///
+/// `probe` is the host's read end once the frame is written. A check that
+/// finds the pipe held leaves the (reopened) probe there for the next check; a
+/// check that finds it released, or fails, consumes it.
+#[cfg(target_os = "linux")]
+pub(crate) fn holders(still_writing: bool, probe: &mut Option<io::Result<OwnedFd>>) -> Holders {
+    if still_writing {
+        return Holders::Held;
+    }
+    match probe.take() {
+        None => Holders::Unobservable("no probe was taken".into()),
+        Some(Err(error)) => Holders::Unobservable(error.to_string()),
+        Some(Ok(read_end)) => match check_holders(read_end) {
+            Ok(HolderCheck::Released { unread }) => Holders::Released { unread },
+            Ok(HolderCheck::Held(read_end)) => {
+                *probe = Some(Ok(read_end));
+                Holders::Held
+            }
+            Err(error) => Holders::Unobservable(error.to_string()),
+        },
+    }
+}
+
+/// Off Linux `/dev/fd` is a `dup`: the host cannot open a second, independent
+/// end of the pipe, so it cannot tell its own read end from another process's.
+/// The holders are unobservable and the decision refuses.
+#[cfg(not(target_os = "linux"))]
+pub(crate) fn holders(still_writing: bool, probe: &mut Option<io::Result<OwnedFd>>) -> Holders {
+    let _ = (still_writing, probe);
+    Holders::Unobservable(
+        "the request pipe's other holders cannot be observed on this platform".into(),
+    )
+}
+
+/// One holder check's result.
+#[cfg(target_os = "linux")]
+enum HolderCheck {
+    Released {
+        unread: usize,
+    },
+    /// The probe, reopened, for the next check.
+    Held(OwnedFd),
+}
+
+/// Asks whether any process other than the host holds a read end of the pipe
+/// `read_end` belongs to.
+///
+/// The host's own read end would count as a reader, so it is traded for a
+/// write end on the same pipe (opened through `/proc/self/fd`, which for a pipe
+/// never waits for a partner) and closed. `poll` on a pipe's write end reports
+/// `POLLERR` exactly when the pipe has no reader. The write end exists only
+/// for the length of this check and nothing is written through it.
+#[cfg(target_os = "linux")]
+fn check_holders(read_end: OwnedFd) -> io::Result<HolderCheck> {
+    let write_end = reopen(&read_end, libc::O_WRONLY)?;
+    drop(read_end);
+    let mut poll = libc::pollfd {
+        fd: write_end.as_raw_fd(),
+        events: 0,
+        revents: 0,
+    };
+    loop {
+        // SAFETY: `poll` points at one valid `pollfd` whose descriptor is
+        // owned by `write_end` for the whole call; a zero timeout never
+        // blocks.
+        if unsafe { libc::poll(&mut poll, 1, 0) } >= 0 {
+            break;
+        }
+        let error = io::Error::last_os_error();
+        if error.kind() != io::ErrorKind::Interrupted {
+            return Err(error);
+        }
+    }
+    if poll.revents & libc::POLLERR != 0 {
+        // No reader is left, and none can appear: the count is final.
+        return Ok(HolderCheck::Released {
+            unread: unread_bytes(&write_end)?,
+        });
+    }
+    let read_end = reopen(&write_end, libc::O_RDONLY)?;
+    drop(write_end);
+    Ok(HolderCheck::Held(read_end))
+}
+
+/// A second, independent open of the pipe `end` belongs to, for reading or for
+/// writing. `O_NONBLOCK` belongs to the new open file description only.
+#[cfg(target_os = "linux")]
+fn reopen(end: &impl AsRawFd, mode: libc::c_int) -> io::Result<OwnedFd> {
+    use std::os::unix::fs::OpenOptionsExt;
+    std::fs::OpenOptions::new()
+        .read(mode == libc::O_RDONLY)
+        .write(mode == libc::O_WRONLY)
+        .custom_flags(libc::O_NONBLOCK)
+        .open(format!("/proc/self/fd/{}", end.as_raw_fd()))
+        .map(OwnedFd::from)
+}
+
 /// The consumption decision for a provider that exited successfully.
 ///
-/// * `reader_lost`: a request write met a broken pipe (or wrote nothing):
-///   no reader was left before the frame was delivered.
+/// * `reader_lost`: a request write met a broken pipe (or wrote nothing): no
+///   reader was left before the frame was delivered, and none can appear.
 /// * `delivered` of `length` bytes reached the pipe.
-/// * `unread`: the probe's `FIONREAD`, or why there is none.
+/// * `holders`: who else holds the read end ([`holders`]).
 ///
 /// Refuses with [`ProviderFailure::RequestUnconsumed`] unless the whole frame
-/// was delivered and none of it is left; refuses with `Io` when the probe could
-/// not be taken or read (consumption unobservable, fail-closed).
+/// was delivered and none of it is left once the host is the last holder; with
+/// [`ProviderFailure::RequestHeldByDescendant`] while another process holds the
+/// pipe (the caller passes [`Holders::Held`] only at the deadline); with `Io`
+/// when the holders or the count cannot be observed (fail-closed).
 pub(crate) fn classify(
     length: usize,
     delivered: usize,
     reader_lost: bool,
-    unread: Option<io::Result<usize>>,
+    holders: Holders,
 ) -> Result<(), ProviderFailure> {
     if reader_lost {
         return Err(ProviderFailure::RequestUnconsumed(format!(
             "the request pipe had no reader left after {delivered} of {length} bytes"
         )));
     }
+    let unread = match holders {
+        Holders::Held => return Err(held_at_deadline(length, delivered)),
+        Holders::Unobservable(reason) => {
+            return Err(ProviderFailure::Io(format!(
+                "request consumption is unobservable: {reason}"
+            )));
+        }
+        Holders::Released { unread } => unread,
+    };
     if delivered < length {
         return Err(ProviderFailure::RequestUnconsumed(format!(
             "the provider exited after {delivered} of {length} request bytes were delivered"
         )));
     }
-    match unread {
-        Some(Ok(0)) => Ok(()),
-        Some(Ok(unread)) => Err(ProviderFailure::RequestUnconsumed(format!(
+    if unread > 0 {
+        return Err(ProviderFailure::RequestUnconsumed(format!(
             "the provider exited with {unread} of {length} request bytes unread"
-        ))),
-        Some(Err(error)) => Err(ProviderFailure::Io(format!(
-            "request consumption is unobservable: {error}"
-        ))),
-        None => Err(ProviderFailure::Io(
-            "request consumption is unobservable: no probe was taken".into(),
-        )),
+        )));
     }
+    Ok(())
+}
+
+/// The refusal for a provider that exited successfully with both outputs
+/// closed while another process still held its request pipe at the deadline.
+pub(crate) fn held_at_deadline(length: usize, delivered: usize) -> ProviderFailure {
+    ProviderFailure::RequestHeldByDescendant(format!(
+        "a process other than the provider still held the request pipe at the deadline, \
+         after {delivered} of {length} bytes were delivered"
+    ))
 }
 
 /// The refusal for a live provider whose request pipe broke, at the deadline.
@@ -139,27 +288,109 @@ mod tests {
         matches!(result, Err(ProviderFailure::RequestUnconsumed(_)))
     }
 
+    fn released(unread: usize) -> Holders {
+        Holders::Released { unread }
+    }
+
     #[test]
     fn only_a_wholly_delivered_and_wholly_read_frame_is_consumed() {
-        assert_eq!(classify(10, 10, false, Some(Ok(0))), Ok(()));
-        assert!(unconsumed(classify(10, 10, false, Some(Ok(1)))));
-        assert!(unconsumed(classify(10, 10, false, Some(Ok(10)))));
-        assert!(unconsumed(classify(10, 9, false, Some(Ok(0)))));
-        assert!(unconsumed(classify(10, 0, false, None)));
+        assert_eq!(classify(10, 10, false, released(0)), Ok(()));
+        assert!(unconsumed(classify(10, 10, false, released(1))));
+        assert!(unconsumed(classify(10, 10, false, released(10))));
+        assert!(unconsumed(classify(10, 9, false, released(0))));
         // A broken pipe is the same refusal as unread bytes, whatever else.
-        assert!(unconsumed(classify(10, 10, true, Some(Ok(0)))));
-        assert!(unconsumed(classify(10, 4, true, None)));
+        assert!(unconsumed(classify(10, 10, true, released(0))));
+        assert!(unconsumed(classify(10, 4, true, Holders::Held)));
+        assert!(unconsumed(classify(
+            10,
+            4,
+            true,
+            Holders::Unobservable("probe".into())
+        )));
+    }
+
+    #[test]
+    fn a_request_pipe_held_by_another_process_is_never_accepted() {
+        for delivered in [0, 4, 10] {
+            assert!(matches!(
+                classify(10, delivered, false, Holders::Held),
+                Err(ProviderFailure::RequestHeldByDescendant(_))
+            ));
+        }
     }
 
     #[test]
     fn an_unobservable_consumption_refuses_and_never_accepts() {
+        for delivered in [0, 10] {
+            assert!(matches!(
+                classify(10, delivered, false, Holders::Unobservable("probe".into())),
+                Err(ProviderFailure::Io(_))
+            ));
+        }
+    }
+
+    /// The holder check sees a read end the host does not own until it is
+    /// closed, leaves no writer behind (a reader still meets end of file), and
+    /// then reports the final unread count.
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn the_holder_check_sees_another_reader_until_it_is_gone() {
+        use std::io::{Read, Write};
+        let RequestPipe {
+            mut child_stdin,
+            mut writer,
+            ..
+        } = request_pipe().unwrap();
+        writer.write_all(b"hello").unwrap();
+        let mut probe = Some(probe_after_full_write(&writer));
+        // While the host still writes, the unbroken write proves the reader.
+        assert_eq!(holders(true, &mut probe), Holders::Held);
+        drop(writer);
+        // `child_stdin` stands for a descendant's read end.
+        assert_eq!(holders(false, &mut probe), Holders::Held);
+        assert!(matches!(probe, Some(Ok(_))));
+        let mut two = [0; 2];
+        child_stdin.read_exact(&mut two).unwrap();
+        assert_eq!(holders(false, &mut probe), Holders::Held);
+        // No writer is left after a check: a nonblocking read meets end of
+        // file rather than `WouldBlock`.
+        let raw = child_stdin.as_raw_fd();
+        // SAFETY: `raw` is owned by `child_stdin`, alive for both calls.
+        let flags = unsafe { libc::fcntl(raw, libc::F_GETFL) };
+        assert_ne!(flags, -1);
+        assert_ne!(
+            unsafe { libc::fcntl(raw, libc::F_SETFL, flags | libc::O_NONBLOCK) },
+            -1
+        );
+        let mut rest = [0; 8];
+        assert_eq!(child_stdin.read(&mut rest).unwrap(), 3);
+        assert_eq!(&rest[..3], b"llo");
+        assert_eq!(child_stdin.read(&mut rest).unwrap(), 0);
+        assert_eq!(holders(false, &mut probe), Holders::Held);
+        drop(child_stdin);
+        assert_eq!(holders(false, &mut probe), released(0));
+        assert!(probe.is_none());
+    }
+
+    /// Once the other reader is gone, the count is the bytes it never read.
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn a_released_pipe_reports_what_no_reader_took() {
+        use std::io::Write;
+        let RequestPipe {
+            child_stdin,
+            mut writer,
+            ..
+        } = request_pipe().unwrap();
+        writer.write_all(b"hello").unwrap();
+        let mut probe = Some(probe_after_full_write(&writer));
+        drop(writer);
+        drop(child_stdin);
+        assert_eq!(holders(false, &mut probe), released(5));
+        // Without a probe, nothing is observable, and nothing is accepted.
         assert!(matches!(
-            classify(10, 10, false, None),
-            Err(ProviderFailure::Io(_))
-        ));
-        assert!(matches!(
-            classify(10, 10, false, Some(Err(io::Error::other("probe")))),
-            Err(ProviderFailure::Io(_))
+            holders(false, &mut probe),
+            Holders::Unobservable(_)
         ));
     }
 

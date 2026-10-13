@@ -7,6 +7,12 @@
 //! host stall and under `LD_PRELOAD` delays of the host's first request write
 //! and of its close, which move the provider's exit to either side of the
 //! write; every run must give the same outcome.
+//!
+//! Card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT` adds the cases whose
+//! request pipe a background descendant keeps after the direct child's exit,
+//! with both outputs closed: the host decides only as the pipe's last holder,
+//! so a descendant that reads the whole request is accepted wherever its reads
+//! fall, and one that still holds the pipe at the deadline is refused.
 #![cfg(unix)]
 
 use qcore_verifier_host::*;
@@ -178,6 +184,9 @@ impl Drop for Case {
 fn refused(tag: &str, id_bytes: usize, body: &str) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run(body);
+    if unobservable_here(tag, &result, &record) {
+        return;
+    }
     assert!(
         matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
         "{tag}: {result:?}"
@@ -194,8 +203,38 @@ fn refused(tag: &str, id_bytes: usize, body: &str) {
 fn accepted(tag: &str, id_bytes: usize, body: impl Fn(&Case) -> String) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run(&body(&case));
+    if unobservable_here(tag, &result, &record) {
+        return;
+    }
     assert_eq!(result, Ok(case.response.clone()), "{tag}: {record:?}");
     assert_eq!(record.outcome, ProcessOutcome::Completed, "{tag}");
+}
+
+/// Off Linux the host cannot tell its own read end of the request pipe from
+/// another process's, so it refuses every successful exit as `Io`, fail-closed
+/// (card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`). Asserts that, and says
+/// the case's own assertions do not apply. Never executed: no macOS host has
+/// run this binary (`HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`).
+fn unobservable_here(
+    tag: &str,
+    result: &Result<VerificationResponse, ProviderFailure>,
+    record: &ProcessExecutionRecord,
+) -> bool {
+    if cfg!(target_os = "linux") {
+        return false;
+    }
+    assert!(
+        matches!(result, Err(ProviderFailure::Io(_))),
+        "{tag}: {result:?}"
+    );
+    assert_eq!(record.outcome, ProcessOutcome::Io, "{tag}");
+    assert!(
+        record
+            .detail
+            .contains("request consumption is unobservable"),
+        "{record:?}"
+    );
+    true
 }
 
 const ANSWER: &str = "/bin/cat response.bin";
@@ -311,13 +350,30 @@ fn lend_request_detached(direct: &str) -> String {
 }
 
 /// A provider whose request pipe is still held by a descendant when the host
-/// would decide is refused.
+/// would decide is refused, at the deadline, as held: the host decides only as
+/// the pipe's last holder.
 fn held(tag: &str, id_bytes: usize, body: &str) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run_within(body, HELD_DEADLINE_MS);
-    assert!(result.is_err(), "{tag}: {result:?}");
-    assert_ne!(record.outcome, ProcessOutcome::Completed, "{tag}");
+    if unobservable_here(tag, &result, &record) {
+        return;
+    }
+    assert!(
+        matches!(result, Err(ProviderFailure::RequestHeldByDescendant(_))),
+        "{tag}: {result:?}"
+    );
+    assert_eq!(
+        record.outcome,
+        ProcessOutcome::RequestHeldByDescendant,
+        "{tag}"
+    );
     assert_eq!(record.exit_code, Some(0), "{tag}: {record:?}");
+    assert!(
+        record.detail.starts_with("request-held-by-descendant: "),
+        "{record:?}"
+    );
+    // Refused by the deadline, not before it: the host waited for the holder.
+    assert!(record.wall_time_ms >= HELD_DEADLINE_MS, "{record:?}");
 }
 
 #[test]
