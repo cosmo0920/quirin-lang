@@ -690,6 +690,203 @@ fn a_forced_unavailable_quota_mechanism_refuses_before_spawning() {
     assert!(!fixture.ran_marker().exists());
 }
 
+/// The manifest every quota row below declares: a quota of four tasks.
+#[cfg(target_os = "linux")]
+fn quota_manifest() -> PluginManifest {
+    let mut manifest = manifest();
+    manifest
+        .limits
+        .additional
+        .insert(MAX_EXECUTION_PROCESSES.into(), 4);
+    manifest
+}
+
+/// Card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`, executed: the per-execution
+/// cgroup exists, and duplicating its `cgroup.procs` descriptor for the child's
+/// join fails with `EMFILE`. The execution is refused **before spawning**,
+/// records no enforced limits and no observation, and never runs the package.
+///
+/// Before the card this failure was mapped to "no join": the child was spawned
+/// without it, ran outside its cgroup, and the record observed the empty cgroup
+/// under limits naming the quota. The marker is written into the *writable*
+/// directory, which the confinement admits, so a child spawned without the
+/// join would have left it behind. The control runs the same verified package
+/// without the override and shows it does.
+///
+/// The failure is injected at the real call site by the one-directional
+/// override: descriptor exhaustion cannot be isolated with `RLIMIT_NOFILE`,
+/// because the duplicate takes the slot `pids.max` released, and any limit that
+/// admits the cgroup's creation admits the duplicate.
+#[test]
+#[cfg(target_os = "linux")]
+fn a_failed_join_descriptor_refuses_before_spawning() {
+    let fixture = Fixture::new("join-descriptor");
+    let request = request();
+    fixture.response(&request);
+    fixture.script(": > ../writable/ran.marker\n/bin/cat response.bin");
+    fixture.install(quota_manifest());
+    let marker = fixture.writable().join("ran.marker");
+    let forced = MechanismAvailability {
+        quota_join_descriptor: MechanismProbe::ForcedUnavailable,
+        ..MechanismAvailability::default()
+    };
+    let provider = || {
+        verify_executable_package(fixture.package())
+            .expect("the installed fixture verifies")
+            .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+            .with_confinement_policy(fixture.policy())
+    };
+    let refused = provider().with_mechanism_availability(forced);
+    // The override is not consulted by the plan: the refusal below is the
+    // descriptor's, after the cgroup was created, not the mechanism's.
+    let Ok(enforced) = refused.enforced_limits() else {
+        // No delegated subtree here: the plan refuses first, so the descriptor
+        // is never reached. Said, and the pre-spawn refusal still asserted.
+        println!("QPDF: no delegated cgroup subtree; the descriptor leg did not run");
+        assert!(refused.verify(&request).is_err());
+        assert_eq!(
+            refused.last_execution().unwrap().outcome,
+            ProcessOutcome::RefusedByProfile
+        );
+        assert!(!marker.exists());
+        return;
+    };
+    assert!(enforced.process_quota.is_some());
+    assert!(refused.mechanism_availability().any_forced());
+
+    let failure = refused.verify(&request).unwrap_err();
+    let ProviderFailure::Protocol(message) = &failure else {
+        panic!("expected a pre-spawn refusal, got {failure:?}");
+    };
+    for expected in [
+        "cannot join the child to its declared `max_execution_processes` quota",
+        "refused before spawning",
+        "could not duplicate the write descriptor on",
+        "cgroup.procs",
+        "os error 24",
+        "availability override",
+        "not a statement about this kernel",
+    ] {
+        assert!(message.contains(expected), "`{expected}` in {message}");
+    }
+    let record = refused.last_execution().unwrap();
+    assert_eq!(record.outcome, ProcessOutcome::RefusedByProfile);
+    assert_eq!(record.detail, failure.to_string());
+    assert!(record.enforced.is_none());
+    assert!(record.quota_observed.is_none());
+    // A verified provider measures the window from its re-check to the spawn
+    // returning; there is none, because nothing was spawned.
+    assert!(record.identity_window_us.is_none());
+    assert!(record.exit_code.is_none() && record.signal.is_none());
+    assert!(!marker.exists(), "a refused execution must never run");
+
+    // Through a registry the refusal is `Unknown` under `QP006`, with no
+    // certificate, and still nothing ran.
+    let mut registry = VerifierRegistry::default();
+    registry
+        .register(Arc::new(provider().with_mechanism_availability(forced)))
+        .unwrap();
+    let outcome = registry.verify(&request);
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+    assert_eq!(outcome.diagnostics[0].code, "QP006");
+    assert!(outcome.certificate.is_none());
+    assert!(!marker.exists());
+
+    // The control: the same verified package without the override joins its
+    // cgroup, runs, writes the marker and is observed.
+    let control = provider();
+    control.verify(&request).unwrap();
+    let record = control.last_execution().unwrap();
+    assert_eq!(record.outcome, ProcessOutcome::Completed);
+    let observed = observed_quota(&record);
+    assert_eq!(observed.max_processes, 4);
+    if let Some(peak) = observed.peak_processes {
+        assert!(
+            peak >= 1,
+            "the child joined its cgroup: {}",
+            observed.summary()
+        );
+    }
+    assert!(observed.released, "{}", observed.summary());
+    assert!(record.identity_window_us.is_some());
+    assert!(marker.exists(), "the control must run the same package");
+}
+
+/// An execution refused after its cgroup was created, here by the package
+/// identity re-check, records no observation: no child joined that cgroup.
+/// Before the card the empty cgroup was observed for every execution that had
+/// created one.
+#[test]
+#[cfg(target_os = "linux")]
+fn an_identity_refusal_after_the_cgroup_exists_records_no_observation() {
+    let fixture = Fixture::new("identity-observation");
+    let request = request();
+    fixture.response(&request);
+    fixture.script(": > ../writable/ran.marker\n/bin/cat response.bin");
+    fixture.install(quota_manifest());
+    let provider = verify_executable_package(fixture.package())
+        .expect("the installed fixture verifies")
+        .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+        .with_confinement_policy(fixture.policy());
+    if quota_available(&fixture).is_none() {
+        println!("QPDF: no delegated cgroup subtree; no cgroup is created to observe");
+        assert!(provider.verify(&request).is_err());
+        return;
+    }
+    // Same path and inode, different bytes: the re-check refuses the spawn.
+    write_executable(
+        &fixture.package().join("provider.sh"),
+        format!("#!/bin/sh\n{READ_REQUEST}\n: > ../writable/ran.marker\nexit 0\n").as_bytes(),
+    );
+    assert!(provider.verify(&request).is_err());
+    let record = provider.last_execution().unwrap();
+    assert_eq!(
+        record.outcome,
+        ProcessOutcome::RefusedByIdentity,
+        "{}",
+        record.detail
+    );
+    assert!(record.enforced.is_none());
+    assert!(record.quota_observed.is_none());
+    assert!(!fixture.writable().join("ran.marker").exists());
+}
+
+/// A failed spawn records no observation either. The child was forked and may
+/// have joined before its `execve` failed, but a failed step is
+/// indistinguishable from a failed join once the spawn returns, so no
+/// observation is claimed. The package was never run.
+#[test]
+#[cfg(target_os = "linux")]
+fn a_failed_spawn_records_no_observation() {
+    use std::os::unix::fs::PermissionsExt;
+    let fixture = Fixture::new("spawn-observation");
+    let request = request();
+    fixture.response(&request);
+    fixture.script(": > ../writable/ran.marker\n/bin/cat response.bin");
+    let script = fixture.package().join("provider.sh");
+    fs::set_permissions(&script, fs::Permissions::from_mode(0o600)).unwrap();
+    let provider = UnverifiedProvider::new(quota_manifest(), fixture.package())
+        .unwrap()
+        .with_execution_profile(ProcessExecutionProfile::LinuxConfinedV1)
+        .with_confinement_policy(fixture.policy());
+    if quota_available(&fixture).is_none() {
+        println!("QPDF: no delegated cgroup subtree; no cgroup is created to observe");
+        assert!(provider.verify(&request).is_err());
+        return;
+    }
+    let failure = provider.verify(&request).unwrap_err();
+    assert!(matches!(failure, ProviderFailure::Spawn(_)), "{failure:?}");
+    let record = provider.last_execution().unwrap();
+    assert_eq!(
+        record.outcome,
+        ProcessOutcome::SpawnFailed,
+        "{}",
+        record.detail
+    );
+    assert!(record.quota_observed.is_none());
+    assert!(!fixture.writable().join("ran.marker").exists());
+}
+
 /// Refusal ground 4, executed: a kernel mechanism the profile needs is absent.
 /// Both halves — Landlock and the user namespace — refuse before the spawn,
 /// with no downgrade to an unconfined run, and the registry sees `Unknown`
@@ -777,6 +974,7 @@ fn a_forced_override_never_weakens_an_execution() {
         landlock: MechanismProbe::ForcedUnavailable,
         user_namespace: MechanismProbe::ForcedUnavailable,
         process_quota: MechanismProbe::ForcedUnavailable,
+        quota_join_descriptor: MechanismProbe::ForcedUnavailable,
     };
     // The confining profile refuses outright rather than running unconfined.
     let confined = UnverifiedProvider::new(manifest(), fixture.package())

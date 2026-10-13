@@ -238,6 +238,13 @@ pub struct MechanismAvailability {
     pub landlock: MechanismProbe,
     pub user_namespace: MechanismProbe,
     pub process_quota: MechanismProbe,
+    /// The parent's duplicate of the per-execution cgroup's `cgroup.procs`
+    /// descriptor, which the child's `pre_exec` join writes through. Unlike the
+    /// other three it is not consulted by the plan: forced unavailable, the
+    /// cgroup is still created, and the duplication itself then fails with
+    /// `EMFILE` at its real call site, so the refusal is the one a host out of
+    /// descriptors takes (card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`).
+    pub quota_join_descriptor: MechanismProbe,
 }
 
 impl MechanismAvailability {
@@ -245,10 +252,21 @@ impl MechanismAvailability {
     /// forced refusal as a kernel fact.
     #[must_use]
     pub fn any_forced(&self) -> bool {
-        [self.landlock, self.user_namespace, self.process_quota]
-            .contains(&MechanismProbe::ForcedUnavailable)
+        [
+            self.landlock,
+            self.user_namespace,
+            self.process_quota,
+            self.quota_join_descriptor,
+        ]
+        .contains(&MechanismProbe::ForcedUnavailable)
     }
 }
+
+/// The descriptor-table exhaustion a forced
+/// [`MechanismAvailability::quota_join_descriptor`] reports, as the kernel
+/// spells it for `dup`.
+#[cfg(target_os = "linux")]
+const FORCED_DESCRIPTOR_ERRNO: i32 = libc::EMFILE;
 
 #[cfg(target_os = "linux")]
 pub(crate) mod linux {
@@ -479,8 +497,32 @@ pub(crate) mod linux {
         /// `pre_exec` closure. The descriptor is opened here, in the parent,
         /// with the parent's credentials; the child writes `0` to it, which is
         /// the kernel's own spelling for "the writing process".
-        pub(crate) fn procs_descriptor(&self) -> std::io::Result<OwnedFd> {
-            self.procs.try_clone()
+        ///
+        /// The duplicate can fail (`EMFILE`, `ENFILE`, `ENOMEM`). That is a
+        /// refusal, never a spawn without the join: a child spawned without it
+        /// would run outside this cgroup while the record named the quota
+        /// (card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`). `probe` forced
+        /// unavailable makes the duplicate fail with `EMFILE` here, at the
+        /// real call site, and the reason says so.
+        pub(crate) fn procs_descriptor(&self, probe: MechanismProbe) -> Result<OwnedFd, String> {
+            let forced = probe.forced_refusal("per-execution cgroup join descriptor");
+            let duplicate = match forced {
+                Some(_) => Err(std::io::Error::from_raw_os_error(
+                    super::FORCED_DESCRIPTOR_ERRNO,
+                )),
+                None => self.procs.try_clone(),
+            };
+            duplicate.map_err(|error| {
+                let reason = format!(
+                    "could not duplicate the write descriptor on `{}` for the child's join: \
+                     {error}",
+                    self.path.join("cgroup.procs").display()
+                );
+                match forced {
+                    Some(forced) => format!("{reason}; {forced}"),
+                    None => reason,
+                }
+            })
         }
 
         fn read_number(&self, file: &str) -> Option<u64> {
@@ -566,8 +608,29 @@ pub(crate) mod linux {
         // SAFETY: `procs` is the live descriptor the parent opened and the
         // buffer is a static two-byte literal.
         let written = unsafe { libc::write(procs, SELF.as_ptr().cast(), SELF.len()) };
+        join_outcome(written, SELF.len(), std::io::Error::last_os_error)
+    }
+
+    /// The join's result from what its one `write` returned. Only the whole
+    /// buffer is a join: a negative count is the kernel's error, and a short
+    /// count is refused as `EIO` rather than taken as a membership the kernel
+    /// never confirmed. A `cgroup.procs` write on Linux returns the whole count
+    /// or an error, so the short arm is not expected to be reached; it is
+    /// checked so that no count is ignored (card
+    /// `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`).
+    ///
+    /// Allocation-free, because it runs in the forked child before `exec`:
+    /// both errors are raw OS errors.
+    pub(crate) fn join_outcome(
+        written: libc::ssize_t,
+        expected: usize,
+        os_error: impl FnOnce() -> std::io::Error,
+    ) -> std::io::Result<()> {
         if written < 0 {
-            return Err(std::io::Error::last_os_error());
+            return Err(os_error());
+        }
+        if written.unsigned_abs() != expected {
+            return Err(std::io::Error::from_raw_os_error(libc::EIO));
         }
         Ok(())
     }
@@ -697,6 +760,35 @@ mod tests {
                 "{name}"
             );
         }
+    }
+
+    /// Only a write of the whole buffer is a join. A short count is refused
+    /// with `EIO` and a negative one with the kernel's own error, so no count
+    /// the join's `write` returns is ignored; and the forced descriptor
+    /// override counts as forced.
+    #[test]
+    #[cfg(target_os = "linux")]
+    fn only_a_whole_join_write_is_a_join() {
+        use linux::join_outcome;
+        let unused = || panic!("only a negative count reads the OS error");
+        assert!(join_outcome(2, 2, unused).is_ok());
+        for short in [0, 1] {
+            let refused = join_outcome(short, 2, unused).unwrap_err();
+            assert_eq!(refused.raw_os_error(), Some(libc::EIO), "{short}");
+        }
+        assert_eq!(
+            join_outcome(3, 2, unused).unwrap_err().raw_os_error(),
+            Some(libc::EIO)
+        );
+        let failed = join_outcome(-1, 2, || std::io::Error::from_raw_os_error(libc::EBUSY));
+        assert_eq!(failed.unwrap_err().raw_os_error(), Some(libc::EBUSY));
+        assert!(
+            MechanismAvailability {
+                quota_join_descriptor: MechanismProbe::ForcedUnavailable,
+                ..MechanismAvailability::default()
+            }
+            .any_forced()
+        );
     }
 
     #[test]

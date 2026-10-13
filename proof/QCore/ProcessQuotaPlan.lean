@@ -632,4 +632,143 @@ theorem a_repeated_clock_reading_collides_only_the_legacy_key
   intro h
   exact hmn (session_keys_are_injective_in_the_sequence pid clock h)
 
+/-! ### The quota join and the record that names it
+
+Card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`. One execution that declares a
+quota creates its cgroup, then the parent duplicates the cgroup's
+`cgroup.procs` write descriptor for the child, and the child's first
+`pre_exec` step writes itself into the cgroup with it. Before the card a failed
+duplicate was mapped to "no join": the child was spawned without the join, ran
+outside its cgroup, and the record still carried an observation of the empty
+cgroup under limits naming the quota. `verify_process` also observed the
+cgroup of every execution that had created one, spawned or not.
+
+The model is the step function of `ProcessProvider::verify_process` and
+`run_process`: which steps succeeded, and what the record then says. A failed
+`pre_exec` step aborts the spawn, which is `std::process::Command`'s contract;
+the join is the first step, so a spawn that returned a child had joined. That
+the Rust follows this step order is pinned on the Rust side by
+`crates/qcore-verifier-host/tests/execution_quota.rs`
+(`a_failed_join_descriptor_refuses_before_spawning`,
+`an_identity_refusal_after_the_cgroup_exists_records_no_observation`,
+`a_failed_spawn_records_no_observation`). -/
+
+/-- What succeeded in one execution the host could spawn. A field is read only
+where the steps before it ran. -/
+structure ExecutionSteps where
+  /-- The execution declares a quota, so its cgroup was created. -/
+  quotaDeclared : Bool
+  /-- The parent's duplicate of the cgroup's `cgroup.procs` descriptor. -/
+  descriptorObtained : Bool
+  /-- The child's join write, when the join is installed. -/
+  joinWritten : Bool
+  /-- Every other step up to and including `execve` (the identity re-check,
+  the confinement, the `setrlimit` plan, the exec). -/
+  restSucceeded : Bool
+  deriving DecidableEq, Repr
+
+/-- Where an execution ended. -/
+inductive SpawnOutcome where
+  /-- Refused before anything was forked (`RefusedByProfile`). -/
+  | refusedBeforeSpawn
+  /-- No child was returned: a `pre_exec` step, the exec or a pre-spawn check
+  failed (`SpawnFailed`, `RefusedByIdentity`, a pre-spawn `Protocol`). -/
+  | notSpawned
+  /-- `spawn` returned a child that is running the package. -/
+  | spawned
+  deriving DecidableEq, Repr
+
+/-- The parts of `ProcessExecutionRecord` this section is about. -/
+structure QuotaRecord where
+  outcome : SpawnOutcome
+  /-- `enforced` is present and its `process_quota` names the quota. -/
+  namesQuota : Bool
+  /-- `quota_observed` is present. -/
+  observed : Bool
+  deriving DecidableEq, Repr
+
+/-- The child became a member of its cgroup: the join was installed and its
+write succeeded. -/
+def ExecutionSteps.joined (s : ExecutionSteps) : Bool :=
+  s.quotaDeclared && s.descriptorObtained && s.joinWritten
+
+/-- `spawn` returns a child when every installed `pre_exec` step succeeds,
+the join first, and the exec succeeds. -/
+def ExecutionSteps.spawnsWith (s : ExecutionSteps) (joinInstalled : Bool) : Bool :=
+  (!joinInstalled || s.joinWritten) && s.restSucceeded
+
+/-- The host after the card. A quota whose descriptor could not be duplicated
+refuses before spawning; otherwise the join is installed exactly when a quota
+was declared, and the cgroup is observed only when `spawn` returned a child. -/
+def recordOf (s : ExecutionSteps) : QuotaRecord :=
+  if s.quotaDeclared && !s.descriptorObtained then
+    ⟨.refusedBeforeSpawn, false, false⟩
+  else if s.spawnsWith s.quotaDeclared then
+    ⟨.spawned, s.quotaDeclared, s.quotaDeclared⟩
+  else
+    ⟨.notSpawned, s.quotaDeclared, false⟩
+
+/-- The host before the card: a failed duplicate only dropped the join, and
+every created cgroup was observed. -/
+def legacyRecordOf (s : ExecutionSteps) : QuotaRecord :=
+  if s.spawnsWith (s.quotaDeclared && s.descriptorObtained) then
+    ⟨.spawned, s.quotaDeclared, s.quotaDeclared⟩
+  else
+    ⟨.notSpawned, s.quotaDeclared, s.quotaDeclared⟩
+
+/-- **A failed duplicate refuses before spawning.** The record is the
+profile refusal: no limits named, no observation. -/
+theorem a_failed_join_descriptor_refuses_before_spawning
+    (s : ExecutionSteps) (hq : s.quotaDeclared = true)
+    (hd : s.descriptorObtained = false) :
+    recordOf s = ⟨.refusedBeforeSpawn, false, false⟩ := by
+  simp [recordOf, hq, hd]
+
+/-- **An observation implies the join.** No record carries an observation of a
+cgroup its child did not join. -/
+theorem an_observation_implies_the_join
+    (s : ExecutionSteps) (h : (recordOf s).observed = true) :
+    s.joined = true := by
+  obtain ⟨q, d, j, r⟩ := s
+  cases q <;> cases d <;> cases j <;> cases r <;>
+    simp_all [recordOf, ExecutionSteps.spawnsWith, ExecutionSteps.joined]
+
+/-- **A running package under a named quota joined it.** A record of a spawned
+child whose limits name the quota is a record of a child inside its cgroup. -/
+theorem a_spawned_record_naming_a_quota_implies_the_join
+    (s : ExecutionSteps) (hs : (recordOf s).outcome = .spawned)
+    (hn : (recordOf s).namesQuota = true) :
+    s.joined = true := by
+  obtain ⟨q, d, j, r⟩ := s
+  cases q <;> cases d <;> cases j <;> cases r <;>
+    simp_all [recordOf, ExecutionSteps.spawnsWith, ExecutionSteps.joined]
+
+/-- **A failed join never runs the package**, and leaves no observation. -/
+theorem a_failed_join_never_spawns
+    (s : ExecutionSteps) (hq : s.quotaDeclared = true) (hj : s.joinWritten = false) :
+    (recordOf s).outcome ≠ .spawned ∧ (recordOf s).observed = false := by
+  obtain ⟨q, d, j, r⟩ := s
+  cases q <;> cases d <;> cases j <;> cases r <;>
+    simp_all [recordOf, ExecutionSteps.spawnsWith]
+
+/-- **Nothing else moved.** An execution that declares no quota, or whose
+duplicate succeeded and whose child was spawned, has the record it had before
+the card. -/
+theorem the_repair_changes_only_failed_quota_executions
+    (s : ExecutionSteps)
+    (h : s.quotaDeclared = false ∨
+      (s.descriptorObtained = true ∧ (recordOf s).outcome = .spawned)) :
+    recordOf s = legacyRecordOf s := by
+  obtain ⟨q, d, j, r⟩ := s
+  cases q <;> cases d <;> cases j <;> cases r <;>
+    simp_all [recordOf, legacyRecordOf, ExecutionSteps.spawnsWith]
+
+/-- **What the card repaired.** Before it, a failed duplicate spawned a child
+outside its cgroup and recorded an observation under limits naming the quota. -/
+theorem the_legacy_host_observed_a_quota_its_child_never_joined :
+    ∃ s : ExecutionSteps,
+      (legacyRecordOf s).outcome = .spawned ∧ (legacyRecordOf s).namesQuota = true ∧
+        (legacyRecordOf s).observed = true ∧ s.joined = false :=
+  ⟨⟨true, false, true, true⟩, by decide⟩
+
 end QCore.ProcessQuotaPlan

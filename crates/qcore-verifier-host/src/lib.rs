@@ -1373,16 +1373,21 @@ type QuotaHandle = Option<process_quota::linux::QuotaSession>;
 #[cfg(all(unix, not(target_os = "linux")))]
 type QuotaHandle = Option<()>;
 
+/// The parent's duplicate of a declared quota's `cgroup.procs` descriptor,
+/// carried to the child's `pre_exec` join. `None` exactly when no quota was
+/// declared: a declared quota without one is refused before spawning.
+#[cfg(target_os = "linux")]
+type QuotaProcs = Option<std::os::fd::OwnedFd>;
+#[cfg(all(unix, not(target_os = "linux")))]
+type QuotaProcs = Option<()>;
+
 /// The kernel objects a profile installs in the child, carried together from
 /// the pre-spawn build to the `pre_exec` closures. Bundled so the spawn path
 /// takes one mechanism argument rather than one per mechanism.
 #[cfg(unix)]
 struct PreparedMechanisms {
     confinement: ConfinementHandle,
-    #[cfg(target_os = "linux")]
-    quota_procs: Option<std::os::fd::OwnedFd>,
-    #[cfg(not(target_os = "linux"))]
-    quota_procs: Option<()>,
+    quota_procs: QuotaProcs,
 }
 
 /// What the spawn path observed, carried back out so the execution record can
@@ -1396,22 +1401,32 @@ struct SpawnObservation {
     identity_refused: bool,
     /// Microseconds from the completed re-check to `spawn` returning.
     identity_window_us: Option<u64>,
+    /// `spawn` returned a child. Every `pre_exec` step succeeded, the quota
+    /// join first, so a declared quota's cgroup holds that child.
+    spawned: bool,
 }
 
 /// A write descriptor on the per-execution cgroup's `cgroup.procs`, for the
 /// child's `pre_exec` closure. Opened in the parent, with the parent's
 /// credentials.
+///
+/// `Ok(None)` only when no quota was declared. A declared quota whose
+/// descriptor cannot be duplicated is an error, which the caller turns into a
+/// refusal before spawning: mapping it to "no join" ran the child outside its
+/// cgroup while the record named the quota (card
+/// `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`).
 #[cfg(target_os = "linux")]
-fn quota_descriptor(quota: &QuotaHandle) -> Option<std::os::fd::OwnedFd> {
+fn quota_descriptor(quota: &QuotaHandle, probe: MechanismProbe) -> Result<QuotaProcs, String> {
     quota
         .as_ref()
-        .and_then(|session| session.procs_descriptor().ok())
+        .map(|session| session.procs_descriptor(probe))
+        .transpose()
 }
 
 #[cfg(all(unix, not(target_os = "linux")))]
-fn quota_descriptor(quota: &QuotaHandle) -> Option<()> {
-    let _ = quota;
-    None
+fn quota_descriptor(quota: &QuotaHandle, probe: MechanismProbe) -> Result<QuotaProcs, String> {
+    let _ = (quota, probe);
+    Ok(None)
 }
 
 /// Reads the quota's own counters and removes the per-execution cgroup.
@@ -1459,11 +1474,18 @@ impl ProcessProvider {
         // Building the Landlock ruleset opens every admitted path, and creating
         // the per-execution cgroup writes into a delegated subtree, so both can
         // fail; both happen here, before anything is spawned, so a failure is a
-        // refusal rather than an unconfined or unbounded execution.
+        // refusal rather than an unconfined or unbounded execution. So does the
+        // duplicate of the cgroup's join descriptor: without it the child
+        // could not join, and a child outside its cgroup is an unbounded
+        // execution under a record that names the bound.
         let prepared = self
             .prepare_confinement(&enforced)
-            .and_then(|confinement| Ok((confinement, self.prepare_quota(&enforced)?)));
-        let (confinement, quota) = match prepared {
+            .and_then(|confinement| Ok((confinement, self.prepare_quota(&enforced)?)))
+            .and_then(|(confinement, quota)| {
+                let procs = self.prepare_quota_join(&enforced, &quota)?;
+                Ok((confinement, quota, procs))
+            });
+        let (confinement, quota, quota_procs) = match prepared {
             Ok(prepared) => prepared,
             Err(error) => {
                 self.record_execution(ProcessExecutionRecord {
@@ -1490,7 +1512,7 @@ impl ProcessProvider {
             &enforced,
             PreparedMechanisms {
                 confinement,
-                quota_procs: quota_descriptor(&quota),
+                quota_procs,
             },
             &mut output,
             &mut error_output,
@@ -1498,8 +1520,17 @@ impl ProcessProvider {
         );
         let status = observed.status;
         // Observed before the cgroup is removed: `rmdir` only succeeds on an
-        // empty cgroup, and the counters go with it.
-        let quota_observed = finish_quota(quota);
+        // empty cgroup, and the counters go with it. Only a spawned child is
+        // known to have joined (the join is its first `pre_exec` step, and a
+        // failed step fails the spawn), so an execution refused before the
+        // spawn, or whose spawn failed, records no observation of a cgroup no
+        // child was shown to join; dropping the session still removes it.
+        let quota_observed = if observed.spawned {
+            finish_quota(quota)
+        } else {
+            drop(quota);
+            None
+        };
         let outcome = match &result {
             // The package identity re-check refused: nothing was spawned, and
             // the refusal is its own outcome rather than a profile refusal.
@@ -1563,6 +1594,30 @@ impl ProcessProvider {
                     enforced.profile, quota.kind
                 ))
             })
+    }
+
+    /// Duplicates the declared quota's join descriptor for the child, or
+    /// refuses the execution before anything is spawned.
+    ///
+    /// `None` means no quota was declared, exactly as for [`Self::prepare_quota`].
+    fn prepare_quota_join(
+        &self,
+        enforced: &EnforcedLimits,
+        quota: &QuotaHandle,
+    ) -> Result<QuotaProcs, ProviderFailure> {
+        // A session exists only for a declared quota, so the kind is always
+        // the declared one; the constant only spells the same kind.
+        let kind = enforced
+            .process_quota
+            .as_ref()
+            .map_or(process_quota::MAX_EXECUTION_PROCESSES, |quota| &quota.kind);
+        quota_descriptor(quota, self.availability.quota_join_descriptor).map_err(|error| {
+            ProviderFailure::Protocol(format!(
+                "execution profile `{}` cannot join the child to its declared `{kind}` quota, so \
+                 the execution is refused before spawning: {error}",
+                enforced.profile
+            ))
+        })
     }
 
     #[cfg(not(target_os = "linux"))]
@@ -1734,6 +1789,7 @@ impl ProcessProvider {
                 .spawn()
                 .map_err(|error| ProviderFailure::Spawn(error.to_string()))?,
         );
+        observed.spawned = true;
         // `spawn` returns after the child has reported a successful `execve`, so
         // this is a genuine upper bound on the residual window rather than an
         // estimate of it.

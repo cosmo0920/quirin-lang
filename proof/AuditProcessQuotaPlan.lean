@@ -67,3 +67,15 @@ import QCore.ProcessQuotaPlan
 #print axioms QCore.ProcessQuotaPlan.session_keys_are_injective_in_the_sequence
 #print axioms QCore.ProcessQuotaPlan.the_sessions_of_one_process_have_pairwise_distinct_keys
 #print axioms QCore.ProcessQuotaPlan.a_repeated_clock_reading_collides_only_the_legacy_key
+
+-- Card `QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN`: a failed duplicate of the
+-- cgroup's `cgroup.procs` descriptor refuses before spawning; an observation,
+-- and a spawned record naming the quota, each imply the child joined; a failed
+-- join never runs the package; nothing else moved; the legacy host recorded an
+-- observation of a quota its child never joined.
+#print axioms QCore.ProcessQuotaPlan.a_failed_join_descriptor_refuses_before_spawning
+#print axioms QCore.ProcessQuotaPlan.an_observation_implies_the_join
+#print axioms QCore.ProcessQuotaPlan.a_spawned_record_naming_a_quota_implies_the_join
+#print axioms QCore.ProcessQuotaPlan.a_failed_join_never_spawns
+#print axioms QCore.ProcessQuotaPlan.the_repair_changes_only_failed_quota_executions
+#print axioms QCore.ProcessQuotaPlan.the_legacy_host_observed_a_quota_its_child_never_joined
