@@ -140,11 +140,25 @@ impl Case {
         Result<VerificationResponse, ProviderFailure>,
         ProcessExecutionRecord,
     ) {
+        self.run_within(body, manifest().limits.timeout_ms)
+    }
+
+    /// Runs `body` under a declared deadline of `timeout_ms`.
+    fn run_within(
+        &self,
+        body: &str,
+        timeout_ms: u64,
+    ) -> (
+        Result<VerificationResponse, ProviderFailure>,
+        ProcessExecutionRecord,
+    ) {
         write_executable(
             &self.root.join("provider.sh"),
             format!("#!/bin/sh\n{body}\n").as_bytes(),
         );
-        let provider = UnverifiedProvider::new(manifest(), &self.root).unwrap();
+        let mut manifest = manifest();
+        manifest.limits.timeout_ms = timeout_ms;
+        let provider = UnverifiedProvider::new(manifest, &self.root).unwrap();
         let result = provider.verify(&self.request);
         let record = provider
             .last_execution()
@@ -253,6 +267,128 @@ fn a_provider_that_reads_exactly_a_large_frame_is_accepted() {
         format!(
             "/usr/bin/head -c {} > /dev/null\n{ANSWER}",
             case.frame_bytes
+        )
+    });
+}
+
+// Card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`: a descendant that inherited
+// the request pipe as its stdin, with both output pipes closed, so the host's
+// output pipes reach end of file when the direct child exits while the
+// descendant can still read. Whether its reads land before that moment is
+// scheduling; the host's outcome must not be.
+
+/// The declared deadline of a case whose descendant keeps the request pipe
+/// past the direct child's exit. Long enough for the harness's stalls, short
+/// enough that fifty runs are affordable; the deadline is the only bound a
+/// held request pipe has.
+const HELD_DEADLINE_MS: u64 = 1_000;
+
+/// Lends the provider's stdin, the request pipe, to a background subshell
+/// running `descendant` with its stdout and stderr on `/dev/null`, then runs
+/// `direct` in the direct child, which no longer holds the pipe itself.
+///
+/// The explicit `<&3` is needed: a non-interactive shell gives an
+/// asynchronous list `/dev/null` as stdin unless the list redirects it.
+fn lend_request(descendant: &str, direct: &str) -> String {
+    format!(
+        "exec 3<&0\n\
+         (exec 3<&- >/dev/null 2>/dev/null; {descendant}) <&3 &\n\
+         exec 3<&- 0<&-\n\
+         {direct}"
+    )
+}
+
+/// The same, but the descendant leaves the provider's process group and
+/// session (`setsid -f`), so the host's group kill cannot reach it. It ends on
+/// its own, three deadlines later.
+fn lend_request_detached(direct: &str) -> String {
+    format!(
+        "exec 3<&0\n\
+         /usr/bin/setsid -f /bin/sh -c 'exec >/dev/null 2>/dev/null; exec /bin/sleep 3' <&3\n\
+         exec 3<&- 0<&-\n\
+         {direct}"
+    )
+}
+
+/// A provider whose request pipe is still held by a descendant when the host
+/// would decide is refused.
+fn held(tag: &str, id_bytes: usize, body: &str) {
+    let case = Case::new(tag, id_bytes);
+    let (result, record) = case.run_within(body, HELD_DEADLINE_MS);
+    assert!(result.is_err(), "{tag}: {result:?}");
+    assert_ne!(record.outcome, ProcessOutcome::Completed, "{tag}");
+    assert_eq!(record.exit_code, Some(0), "{tag}: {record:?}");
+}
+
+#[test]
+fn a_descendant_holding_an_unread_request_is_refused() {
+    held(
+        "held-silent",
+        64,
+        &lend_request("exec /bin/sleep 30", ANSWER),
+    );
+}
+
+#[test]
+fn a_detached_descendant_holding_an_unread_request_is_refused() {
+    held("held-detached", 64, &lend_request_detached(ANSWER));
+}
+
+#[test]
+fn a_descendant_holding_an_undelivered_large_request_is_refused() {
+    held(
+        "held-large",
+        LARGE,
+        &lend_request("exec /bin/sleep 30", ANSWER),
+    );
+}
+
+#[test]
+fn a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused() {
+    held(
+        "held-after-reading",
+        64,
+        &lend_request("/bin/cat > /dev/null; exec /bin/sleep 30", ANSWER),
+    );
+}
+
+#[test]
+fn a_descendant_that_holds_an_unread_request_briefly_is_refused() {
+    refused(
+        "held-briefly",
+        64,
+        &lend_request("exec /bin/sleep 0.05", ANSWER),
+    );
+}
+
+#[test]
+fn a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted() {
+    accepted("descendant-reads", 64, |_| {
+        lend_request("exec /bin/cat > /dev/null", ANSWER)
+    });
+}
+
+#[test]
+fn a_descendant_that_reads_the_whole_request_late_is_accepted() {
+    accepted("descendant-reads-late", 64, |_| {
+        lend_request("/bin/sleep 0.05; exec /bin/cat > /dev/null", ANSWER)
+    });
+}
+
+#[test]
+fn a_descendant_that_reads_a_whole_large_request_is_accepted() {
+    accepted("descendant-reads-large", LARGE, |_| {
+        lend_request("exec /bin/cat > /dev/null", ANSWER)
+    });
+}
+
+#[test]
+fn a_background_descendant_with_stdin_from_dev_null_is_accepted() {
+    accepted("background-dev-null", 64, |_| {
+        format!(
+            "/bin/cat > /dev/null\n\
+             (exec /bin/sleep 30) </dev/null >/dev/null 2>/dev/null &\n\
+             {ANSWER}"
         )
     });
 }
