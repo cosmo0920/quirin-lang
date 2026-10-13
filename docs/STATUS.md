@@ -270,6 +270,11 @@ out-of-process writer, so a sibling test's fork cannot make its `execve` fail wi
 Under a close-delay shim with a forked-child stall, the base binaries deviated in 15 of 50
 (`subcommand_plugins`) and 1 of 50 (`cycle20_verifier_plugins`) runs; the fixed ones in 0 of 50
 ([PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE](reports/process-fixtures-fs-write/README.md)).
+The host now takes that decision only as the request pipe's last holder: a descendant that keeps
+the pipe with both outputs closed is waited for, up to the deadline, and a pipe still held then is
+refused (`RequestHeldByDescendant`). HDD_STATUS_FIGURES Off Linux the other holders cannot be
+observed, so every successful process-provider exit is refused there as `Io` (never executed)
+([HOST-REQUEST-READ-BY-DETACHED-DESCENDANT](reports/host-request-detached-descendant/README.md)).
 The summary-count and Clang recording mechanisms still have their disclosed
 limitations; see [validation policy](agents/validation.md). This integration
 does not discharge those measurement-mechanism limitations.

@@ -1,0 +1,14 @@
+compiler/examples/reevaluation_followup.rs:92: fs::write(&script, "#!/bin/sh\n/bin/sleep 0.4 &\nwait\n").unwrap();
+compiler/tests/cycle20_verifier_plugins.rs:764: "(/bin/sleep 0.15; : > descendant.marker) &\n{tail}"
+compiler/tests/cycle20_verifier_plugins.rs:835: "/bin/cat > /dev/null\n(/bin/sleep 0.15; : > success.marker) </dev/null >/dev/null 2>/dev/null &\n/bin/cat response.bin",
+crates/qcore-audit/src/prepare.rs:1164: .is_ok_and(|metadata| metadata.permissions().mode() & 0o111 != 0)
+crates/qcore-audit/tests/subcommand_plugins.rs:249: "sleep 30 &\necho $! > child.pid\nsleep 30",
+crates/qcore-verifier-host/tests/enforced_process_limits.rs:360: fixture.script("(/bin/sleep 1; : > descendant.marker) &\nexit 0");
+crates/qcore-verifier-host/tests/enforced_process_limits.rs:381: fixture.script("(/bin/sleep 1; : > descendant.marker) &\nexit 0");
+crates/qcore-verifier-host/tests/execution_quota.rs:441: "(i=0; while [ $i -lt 40 ]; do /bin/sleep 3 & i=$((i+1)); done) 2>/dev/null\n\
+crates/qcore-verifier-host/tests/execution_quota.rs:545: fixture.script("/bin/sleep 0.05 &\n/bin/sleep 0.05 &\n/bin/cat response.bin");
+crates/qcore-verifier-host/tests/execution_quota.rs:577: fixture.script("(/bin/sleep 1; : > ../writable/descendant.marker) &\n/bin/cat response.bin");
+crates/qcore-verifier-host/tests/request_consumption.rs:295: (exec 3<&- >/dev/null 2>/dev/null; {descendant}) <&3 &\n\
+crates/qcore-verifier-host/tests/request_consumption.rs:390: (exec /bin/sleep 30) </dev/null >/dev/null 2>/dev/null &\n\
+crates/qcore-verifier-host/tests/standalone_host.rs:171: write_script("exec 0<&-\n(/bin/sleep 0.3; : > descendant.marker) &\nexit 0");
+hits 13

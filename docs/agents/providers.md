@@ -216,9 +216,45 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     report). Lean: `QCore.RequestConsumption`
     (`decide_is_a_function_of_consumption`,
     `a_non_consuming_provider_is_never_decoded`). A descendant that keeps
-    the request pipe with both output pipes closed is outside the claim
-    (`HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`).
-    `host-unread-request-acceptance`.
+    the request pipe with both output pipes closed was outside that claim;
+    the next paragraph closes it. `host-unread-request-acceptance`.
+    **Only the request pipe's last holder decides (card
+    `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`, wave 48).** A descendant that
+    inherited the request pipe as its stdin, with both outputs closed, can
+    still read after the direct child's exit and the outputs' end of file. The
+    count at that moment was therefore not final, and on the base the same
+    provider was accepted or refused by timing. The decision now waits,
+    bounded by the declared deadline, until no process other than the host
+    holds the pipe (`request_consumption::holders`):
+    - While the host still writes, it holds no read end, so a write that does
+      not break proves another reader; the decision waits for the write to
+      finish or break.
+    - Once the frame is written, the host opens a write end through
+      `/proc/self/fd/<probe>`, closes the probe and polls the write end.
+      `POLLERR` is set exactly when no reader is left; then no reader can
+      appear and `FIONREAD` is final. Otherwise it reopens the probe and closes
+      the write end, so a reader waiting for end of file still gets it, and
+      checks again after its backoff.
+    - A pipe still held at the deadline is refused as
+      `ProcessOutcome::RequestHeldByDescendant`
+      (`request-held-by-descendant`), distinct from `RequestUnconsumed` and
+      from `WallClockTimeout`. A failed check refuses as `Io`.
+    - Off Linux the other holders cannot be observed, so every successful
+      exit is refused as `Io` (fail-closed, never executed;
+      `HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`).
+
+    The host waits rather than refusing at once, because a refusal whenever
+    another process holds the pipe still decides by timing for a descendant
+    that reads its whole request and exits; the wait decides on the final
+    consumption. The census found no provider or fixture with the shape (a
+    non-interactive `sh` gives a background job `/dev/null` as stdin), so no
+    existing Linux assertion moves and no wait is added where no other
+    process holds the pipe. Measured on the probe binary's nine new cases:
+    HDD_CAMPAIGN_SENTENCE Lean: `QCore.RequestConsumption`
+    (`decide_is_a_function_of_consumption_and_holders`,
+    `a_held_request_is_never_decoded`,
+    `the_wait_decides_from_the_final_consumption`).
+    `host-request-detached-descendant`.
 <!-- preserved:constraint-16:end -->
 
 <a id="constraint-17"></a>

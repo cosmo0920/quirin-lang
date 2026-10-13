@@ -1,0 +1,345 @@
+{
+ "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/bin-base/request_consumption",
+ "binary_sha256": "6c3cd4d7f40473753d18b20cf8f3e6c9726e3d23d92729ee4f6273c74be47d95",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/shim/fifo_delay.so",
+  "QCORE_DELAY_FIFO_CLOSE_US=30000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "load_pids": [],
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 5.06,
+     "running_total": "2/2794",
+     "uid_tasks": 2255,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528097) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.06,
+     "running_total": "1/2795",
+     "uid_tasks": 2256,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528227) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 5.06,
+     "running_total": "1/2796",
+     "uid_tasks": 2257,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528357) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 5.06,
+     "running_total": "1/2804",
+     "uid_tasks": 2265,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528516) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.06,
+     "running_total": "1/2805",
+     "uid_tasks": 2266,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528653) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.06,
+     "running_total": "1/2803",
+     "uid_tasks": 2266,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528783) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 4.97,
+     "running_total": "5/2803",
+     "uid_tasks": 2266,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (528913) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "1/2804",
+     "uid_tasks": 2265,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529045) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "1/2803",
+     "uid_tasks": 2264,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529175) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "1/2803",
+     "uid_tasks": 2264,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529305) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "1/2804",
+     "uid_tasks": 2265,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529435) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 4.97,
+     "running_total": "3/2804",
+     "uid_tasks": 2265,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529601) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "1/2804",
+     "uid_tasks": 2265,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529731) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 4.97,
+     "running_total": "1/2803",
+     "uid_tasks": 2266,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529861) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 4.97,
+     "running_total": "2/2805",
+     "uid_tasks": 2268,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (529991) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 5.22,
+     "running_total": "1/2809",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (530123) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.56,
+     "load1": 5.22,
+     "running_total": "1/2808",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (530258) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.22,
+     "running_total": "1/2808",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (530388) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.62,
+     "load1": 5.22,
+     "running_total": "1/2808",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (530518) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.22,
+     "running_total": "1/2808",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (530648) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-close-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 20
+  }
+ ]
+}

@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/host-request-detached-descendant"
-BASE = "e0b92ece6, rebased onto 1f53f9fa0"
+BASE = "b565f79ab"
 
 
 def main() -> int:
@@ -49,7 +49,7 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING card gate on base {BASE}, every code "
+        f"HOST-REQUEST-READ-BY-DETACHED-DESCENDANT card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/host-request-detached-descendant/scripts/gate.sh "
         f"and finish-gate.sh, logs private/hdd/gate-{name} of this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
@@ -57,7 +57,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/hdd/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (AuditRequestConsumption added); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (AuditRequestConsumption extended, no audit added); "
         "provider gate: providers/package.py build and verify qcore.libevent 0 / 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "

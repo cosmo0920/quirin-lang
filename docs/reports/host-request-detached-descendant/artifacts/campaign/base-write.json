@@ -1,0 +1,433 @@
+{
+ "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/bin-base/request_consumption",
+ "binary_sha256": "6c3cd4d7f40473753d18b20cf8f3e6c9726e3d23d92729ee4f6273c74be47d95",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/shim/fifo_delay.so",
+  "QCORE_DELAY_FIFO_WRITE_US=30000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "load_pids": [],
+   "runs": [
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.23,
+     "running_total": "1/2801",
+     "uid_tasks": 2263,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (525484) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (525486) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted' (525485) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.46,
+     "load1": 5.23,
+     "running_total": "1/2800",
+     "uid_tasks": 2264,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (525614) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (525616) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.23,
+     "running_total": "1/2803",
+     "uid_tasks": 2267,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (525744) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (525746) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.23,
+     "running_total": "9/2804",
+     "uid_tasks": 2268,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (525878) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (525876) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.23,
+     "running_total": "1/2806",
+     "uid_tasks": 2270,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526006) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526009) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted' (526007) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.45,
+     "running_total": "2/2807",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526139) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526137) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.45,
+     "running_total": "2/2807",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526273) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.45,
+     "running_total": "1/2807",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526401) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526399) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.45,
+     "running_total": "1/2807",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526529) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526531) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 33, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.45,
+     "running_total": "2/2807",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526659) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526662) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.45,
+     "running_total": "1/2805",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526790) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526792) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.45,
+     "running_total": "1/2805",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (526920) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted' (526921) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (526922) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.45,
+     "running_total": "1/2805",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527050) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527052) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.52,
+     "load1": 5.45,
+     "running_total": "2/2805",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527180) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527182) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 31, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.41,
+     "running_total": "1/2808",
+     "uid_tasks": 2269,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527312) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527310) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.51,
+     "load1": 5.41,
+     "running_total": "1/2800",
+     "uid_tasks": 2261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527446) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527443) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.41,
+     "running_total": "1/2800",
+     "uid_tasks": 2261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527575) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      },
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527573) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.41,
+     "running_total": "1/2800",
+     "uid_tasks": 2261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527703) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527706) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.57,
+     "load1": 5.41,
+     "running_total": "3/2800",
+     "uid_tasks": 2261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527833) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527835) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 101,
+     "wall_s": 0.52,
+     "load1": 5.41,
+     "running_total": "1/2800",
+     "uid_tasks": 2261,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [
+      {
+       "test": "a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused",
+       "panic": "thread 'a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused' (527963) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:318:5: :: held-after-reading: Ok(VerificationResponse { protocol_version: 1, request_id: \"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr\", plugin_id: PluginId(\"example.consumption\"), verdict: Unknown, diagnostics: [], evidence: None })"
+      },
+      {
+       "test": "a_descendant_that_reads_the_whole_request_late_is_accepted",
+       "panic": "thread 'a_descendant_that_reads_the_whole_request_late_is_accepted' (527965) panicked at crates/qcore-verifier-host/tests/request_consumption.rs:197:5: :: assertion `left == right` failed: descendant-reads-late: ProcessExecutionRecord { profile: UnenforcedLegacy, enforced: Some(EnforcedLimits { profile: UnenforcedLegacy, wall_clock_ms: 20000, stdout_bytes: 16777216, stderr_bytes: 65536, process_group_kill: true, rlimits: [], unenforced_kinds: [\"memory_bytes\"], confinement: None, process_quota: None }), outcome: RequestUnconsumed, wall_time_ms: 30, stdout_bytes: 193, stderr_bytes: 0, exit_code: Some(0), signal: None, detail: \"request-unconsumed: the provider exited with 558 of 558 request bytes unread\", quota_observed: None, identity_window_us: None }"
+      }
+     ],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/base-write-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 20
+  }
+ ]
+}

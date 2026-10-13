@@ -1,0 +1,5 @@
+holder alive, nothing read: other readers True, unread None
+reader read all and exited: other readers False, unread 0
+reader read nothing and exited: other readers False, unread 5
+reader read all and holds: other readers True, unread None
+reader waiting for end of file: released True, unread 0, exit 0
