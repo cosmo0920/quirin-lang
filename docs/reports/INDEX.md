@@ -883,6 +883,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [string-slice-io](string-slice-io/README.md) | STRING-SLICE-IO — rendering text, and the three decisions behind it (wave 24) |
 
+| [sup03-bounds-tally](sup03-bounds-tally/README.md) | SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN: the bounds tally on the integrated main |
+
 | [sup07-refused-test-accusation](sup07-refused-test-accusation/README.md) | SUP07-REFUSED-TEST-ACCUSATION: a leak claim does not rest on a refused test |
 
 | [sweep-blind-spots](sweep-blind-spots/README.md) | `SWEEP-BLIND-SPOTS` — the reconciliation sweep's measured blind spots, and wave 32 retro-swept |

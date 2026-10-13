@@ -1,0 +1,27 @@
+775de9be8d78b6208cab0f8d515f39b99afc6dd266789c898fe02aed59df45c2  a1-bounds.jsonl
+335bb9b540c4fa39f7a380609fcfc732e51531922541cba440fa960465faec07  a1-bounds.summary.json
+47687232b85f7683a1a0563a8d7623bccee5cdb99e6025f64157c2d7a3d4c626  a1-bounds.contracts.json
+bdf5f1c8931d0557474835f6bfde53f626ffe8563bc76e430925bd0062b83006  a1-bounds/resource-diagnostics.json
+79a901769071e33071ee90bdfc9aec92f5fc4114c3cb794e058ed49fcfab952b  base2-bounds.jsonl
+094d41c241cb637ab4afdd7cbfd8fcf4fb70a4bc89beb3eeca1fa331de08cfcf  base2-bounds.summary.json
+f8a896e93ea3d3035b52d25481165bf914330e25fc037155b3b9203caeba2798  base2-bounds.contracts.json
+ab8f5f14b1017c6cc2b289f394c066e88025c11b6087b2bb68ff22c4cf2d172a  base2-bounds/resource-diagnostics.json
+build.head: e0b92ece6f2d483ce3b21ff9e7c37655b753a458
+build.exit: 0
+submodule.exit: 0
+build.binary.sha256: 2b338d532b7eac113c1a3660c90854b54c07fa1e34aaf628405fb2558d7703e6  target/release/quirin-audit
+a1-bounds.head: f60cb6a2d707e2a7b7b706b95dcac6efbf134bc8
+a1-bounds.exit: 0
+a1-bounds.seconds: 412.249
+a1-bounds.binary.sha256: 2b338d532b7eac113c1a3660c90854b54c07fa1e34aaf628405fb2558d7703e6  target/release/quirin-audit
+base.rev: 43732604cd9864f898c45d6867dba21da07d5b77
+base-export.exit: 0 0
+base-build.exit: 0
+base-bounds.exit: 1
+base-bounds.seconds: 405.731
+base2.rev: 43732604cd9864f898c45d6867dba21da07d5b77
+base2-export.exit: 0 0
+base2-build.exit: 0
+base2-bounds.exit: 0
+base2-bounds.seconds: 405.577
+base2-bounds.binary.sha256: db28e0fc6333f2f476897376fb6abe20b1e9b4ba7c1845363830b7574d3b4aa3  target/release/quirin-audit
