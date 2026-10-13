@@ -208,8 +208,8 @@ pass.
 | `python3 scripts/run_test_binaries.py` | **101** | 488 units, 501 summaries; **7,955 passed, 1 failed**, 14 ignored (`private/pfw/tests-g1/`); the failure is `std_socket_inet` (below) |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
-| `python3 -m unittest discover -s scripts/tests` | PYTHON-EXIT | PYTHON-COUNT |
-| `python3 scripts/build_docs_index.py --check` | INDEX-EXIT | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **365** OK (and again after the matrix regeneration, 09b) |
+| `python3 scripts/build_docs_index.py --check` | 0 | (and after regeneration, 10b / 10c: 0 / 0); `build_matrix.py . --gate gate.json` 0 |
 | provider gate: `providers/package.py build` / `verify qcore.libevent` | 0 / 0 | |
 | provider gate: `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | **129 passed**, 0 failed, 1 ignored |
 | provider gate: `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
