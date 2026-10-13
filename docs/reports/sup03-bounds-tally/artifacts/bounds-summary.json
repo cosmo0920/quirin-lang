@@ -1,0 +1,331 @@
+{
+ "bounds_unsafe": [],
+ "custody_not_safe_x_bounds_safe": [
+  {
+   "custody": "Unknown",
+   "file": "cJSON.c",
+   "function": "cJSON_malloc"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4.c",
+   "function": "LZ4_NbCommonBytes"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4.c",
+   "function": "LZ4_create"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4.c",
+   "function": "LZ4_stream_t_alignment"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4frame.c",
+   "function": "LZ4F_optimalBSID"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4frame.c",
+   "function": "LZ4F_returnErrorCode"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4frame.c",
+   "function": "ctxTypeID_to_size"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4hc.c",
+   "function": "LZ4HC_rotatePattern"
+  },
+  {
+   "custody": "Unknown",
+   "file": "lz4hc.c",
+   "function": "LZ4_streamHC_t_alignment"
+  },
+  {
+   "custody": "Unknown",
+   "file": "mk_server/mk_net.c",
+   "function": "net_plain_close"
+  },
+  {
+   "custody": "Unknown",
+   "file": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_sched_get_thread_conf"
+  },
+  {
+   "custody": "Unknown",
+   "file": "nanopb/pb_common.c",
+   "function": "pb_const_cast"
+  },
+  {
+   "custody": "Unknown",
+   "file": "nanopb/pb_decode.c",
+   "function": "pb_istream_from_buffer"
+  },
+  {
+   "custody": "Unknown",
+   "file": "nanopb/pb_encode.c",
+   "function": "pb_ostream_from_buffer"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdbuf.c",
+   "function": "unittest_rdbuf"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdhdrhistogram.c",
+   "function": "unittest_rdhdrhistogram"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdhttp.c",
+   "function": "rd_http_global_init"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdhttp.c",
+   "function": "unittest_http"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_srand"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka.c",
+   "function": "rd_kafka_unittest"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_admin.c",
+   "function": "unittest_admin"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_assignor.c",
+   "function": "unittest_assignors"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_broker.c",
+   "function": "rd_kafka_socket_cb_linux"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_broker.c",
+   "function": "unittest_broker"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_cgrp.c",
+   "function": "unittest_cgrp"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_feature.c",
+   "function": "unittest_feature"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_mock.c",
+   "function": "unittest_mock_cluster"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_request.c",
+   "function": "rd_kafka_ListOffsetRequest_parameters_make"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_request.c",
+   "function": "unittest_request"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl.c",
+   "function": "rd_kafka_sasl_global_init"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl.c",
+   "function": "rd_kafka_sasl_global_term"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "function": "unittest_sasl_oauthbearer"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "unittest_sasl_oauthbearer_oidc"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "unittest_sasl_oauthbearer_oidc_assertion"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl_oauthbearer_oidc.c",
+   "function": "unittest_sasl_oauthbearer_oidc_jwt_bearer"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_sasl_scram.c",
+   "function": "unittest_scram"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_partition_offsets_list_new"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_ssl.c",
+   "function": "rd_kafka_transport_ssl_threadid_cb"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_telemetry.c",
+   "function": "unittest_telemetry"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decoded_int64"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decoded_type"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdmap.c",
+   "function": "unittest_map"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdrand.c",
+   "function": "rd_jitter"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdstring.c",
+   "function": "unittest_string"
+  },
+  {
+   "custody": "Unknown",
+   "file": "rdunittest_msgset_errors.c",
+   "function": "rd_kafka_unittest_msgset_errors"
+  },
+  {
+   "custody": "Unknown",
+   "file": "snappy.c",
+   "function": "find_lsb_set_non_zero"
+  },
+  {
+   "custody": "Unknown",
+   "file": "snappy.c",
+   "function": "find_lsb_set_non_zero64"
+  },
+  {
+   "custody": "Unknown",
+   "file": "snappy.c",
+   "function": "log2_floor"
+  },
+  {
+   "custody": "Unknown",
+   "file": "tinycthread_extra.c",
+   "function": "thrd_current_id"
+  }
+ ],
+ "custody_x_bounds": {
+  "Safe x Safe": 113,
+  "Safe x Unknown": 822,
+  "Unknown x Safe": 49,
+  "Unknown x Unknown": 3841,
+  "Unsafe x Unknown": 9,
+  "absent x Unknown": 87
+ },
+ "obligations_by_kind_and_outcome": {
+  "call-precondition / bounds-missing-extent": 91678,
+  "call-precondition / excluded": 100,
+  "dereference / bounds-missing-extent": 2903,
+  "dereference / in-bounds": 555,
+  "element-access / bounds-missing-extent": 1958,
+  "element-access / bounds-range-not-contained": 7,
+  "element-access / bounds-unsupported-range": 606,
+  "element-access / excluded": 19,
+  "element-access / in-bounds": 1796,
+  "formation / bounds-missing-extent": 1673,
+  "formation / bounds-range-not-contained": 4,
+  "formation / bounds-unsupported-range": 129,
+  "formation / excluded": 3,
+  "formation / in-bounds": 355,
+  "member-access / bounds-missing-extent": 87469,
+  "member-access / bounds-range-not-contained": 44,
+  "member-access / bounds-unsupported-range": 10,
+  "member-access / excluded": 26,
+  "member-access / in-bounds": 2930,
+  "same-object / bounds-missing-extent": 372
+ },
+ "rows": 4921,
+ "run_summary": {
+  "functions": 4921,
+  "functions_by_reason_code": {
+   "bounds-import-failure": 87,
+   "bounds-missing-extent": 4650,
+   "bounds-range-not-contained": 8,
+   "bounds-unsupported-form": 817,
+   "bounds-unsupported-range": 214
+  },
+  "property": "c.bounds.index-extent.v1",
+  "schema_version": 1,
+  "scope": "the bounds property of every projected function, reported separately from custody; `combined` joins the custody and bounds rows of a request naming both, a missing row counting Unknown; Unknown and Pending stay in every denominator",
+  "tally": {
+   "bounds": {
+    "Safe": 162,
+    "Unknown": 4759
+   },
+   "combined": {
+    "Safe": 113,
+    "Unknown": 4799,
+    "Unsafe": 9
+   },
+   "custody": {
+    "Safe": 935,
+    "Unknown": 3890,
+    "Unsafe": 9,
+    "absent": 87
+   }
+  }
+ },
+ "unknown_rows_by_code_set": {
+  "bounds-import-failure": 87,
+  "bounds-missing-extent": 3715,
+  "bounds-missing-extent + bounds-range-not-contained": 3,
+  "bounds-missing-extent + bounds-range-not-contained + bounds-unsupported-form + bounds-unsupported-range": 3,
+  "bounds-missing-extent + bounds-range-not-contained + bounds-unsupported-range": 2,
+  "bounds-missing-extent + bounds-unsupported-form": 730,
+  "bounds-missing-extent + bounds-unsupported-form + bounds-unsupported-range": 73,
+  "bounds-missing-extent + bounds-unsupported-range": 124,
+  "bounds-unsupported-form": 10,
+  "bounds-unsupported-form + bounds-unsupported-range": 1,
+  "bounds-unsupported-range": 11
+ },
+ "unknown_rows_by_reason_code": {
+  "bounds-import-failure": 87,
+  "bounds-missing-extent": 4650,
+  "bounds-range-not-contained": 8,
+  "bounds-unsupported-form": 817,
+  "bounds-unsupported-range": 214
+ }
+}

@@ -797,7 +797,7 @@ open. Each is registered in `named_followups` (recorded by
 |---|---|---|---|
 | SUP01-C03-CENSUS-INERTNESS-PROOF | Is the reach census provably inert now that verdict work relies on it? | High | none |
 | SUP02-MSVC-LLP64-WINDOWS-RUN | Do CG20's plain-`long` refusal and CG30's LLP64 refusal hold under a real MSVC-target Clang on Windows? | Medium (Windows host) | none |
-| SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN | What is the bounds property's tally on the integrated main? | Medium | none |
+| SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN | What is the bounds property's tally on the integrated main? | Medium | none; done (bounds unchanged, combined 111 → 113 Safe, [report](../../reports/sup03-bounds-tally/README.md)) |
 | SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
 | SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
 | SUP06-CONFIRMED-VERDICT-STATUS | A fifth verdict, `Confirmed`: fixed at the tip (release candidate) but not in master; Safe-equivalent yet handled on its own | High (verdict contract) | user decision on its semantics before dispatch |

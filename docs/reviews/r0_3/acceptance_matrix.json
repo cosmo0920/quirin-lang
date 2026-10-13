@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 763
+  "named_followups": 762
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -11799,13 +11799,6 @@
    "id": "SUP02-MSVC-LLP64-WINDOWS-RUN",
    "title": "CG20's plain-long refusal and CG30's LLP64 refusal are exercised only through a wrapper Clang on Linux",
    "why": "Supplemental card (user decision 2026-10-02: the four old unmerged branches are deleted after local archive tags, and the questions left open become supplemental cards; queue README §6). Not dispatched. CG20-NUMERIC-DOMAIN (rule 11q (6)) reads plain long as 64-bit only when the analysing Clang's default target is LP64; tests/c_numeric_abi_llp64.rs drives it with a wrapper Clang on Linux. CG30-DIALECTS-FLAGS-TYPES (rule 11y) refuses non-LP64 targets by flag. No run under a real x86_64-pc-windows-msvc default target exists; docs/reports/msvc-abi-reader/ still records the premise sentence CG20 amended. Effort Medium (Windows host). DISCHARGE: on the Windows host, run the CG20 and CG30 controls and the MSVC ABI reader fixtures against the native default target, record revision, Clang and exits per docs/development/platform-evidence.md, and correct the reader's premise record if any control disagrees. DISCHARGE also requires the queue's §4 acceptance: a frozen PREDICTION.md committed before implementation code, BEFORE/AFTER with attribution where figures can move, Lean parity for any semantic change, fail-closed throughout.",
-   "source": "docs/plans/clang-gap-cards/README.md",
-   "recorded_by": "CLANG-GAP-SUPPLEMENTAL"
-  },
-  {
-   "id": "SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN",
-   "title": "The bounds property's published tally is from base b6a3dc42, not the integrated main",
-   "why": "Supplemental card (user decision 2026-10-02: the four old unmerged branches are deleted after local archive tags, and the questions left open become supplemental cards; queue README §6). Not dispatched. CG16-INDEX-AND-OFFSET-EXTENTS' final AFTER on the integrated tree was lost when the integrator removed its worktree mid-run; the integrator re-ran custody only (byte-identical ceefb6c4). The STATUS bounds row (162 Safe / 0 Pending / 0 Unsafe / 4,759 Unknown over 4,921 definitions; combined 111 Safe) is measured on b6a3dc42. CG24's frame vocabulary landed after and reaches no function yet. Effort Medium. DISCHARGE: the corpus arbiter with QCORE_BOUNDS_PROPERTY on the current main, custody artifacts byte-identical to main's, the bounds and combined tallies attributed against the b6a3dc42 figures, and the STATUS bounds row updated. DISCHARGE also requires the queue's §4 acceptance: a frozen PREDICTION.md committed before implementation code, BEFORE/AFTER with attribution where figures can move, Lean parity for any semantic change, fail-closed throughout.",
    "source": "docs/plans/clang-gap-cards/README.md",
    "recorded_by": "CLANG-GAP-SUPPLEMENTAL"
   },
