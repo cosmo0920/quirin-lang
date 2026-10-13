@@ -2,7 +2,7 @@
 """write_gate_json.py NAME -- QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN (from
 GAPO-RETURN-CORRECTNESS's): gate.json from the standing gate's logs in
 private/qpdf/gate-NAME (exits, the runner's totals line, the Lean audit count,
-the Python suite's count, the concurrent arbiter's exit and overlap stamps)
+the Python suite's count, the standing gate's steps)
 and the Clang recording. No provider gate: the card changes nothing under
 providers/. Fails if any recorded exit is nonzero, so a red gate never yields
 a green summary. The one accounted nonzero exit is the Python suite before the
@@ -16,7 +16,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/quota-procs-descriptor-dup-fail-open"
-BASE = "440c41b8b"
+BASE = "e0b92ece6"
 
 
 def main() -> int:
@@ -42,27 +42,23 @@ def main() -> int:
         if (logs / "08-python.log").exists()
         else None
     )
-    stamps = dict(line.split() for line in (logs / "overlap.txt").read_text().splitlines())
-    t0 = float(stamps["arbiter-launch"])
-    rel = {k: round(float(v) - t0, 1) for k, v in stamps.items()}
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
         f"QUOTA-PROCS-DESCRIPTOR-DUP-FAIL-OPEN card gate on base {BASE}, every code step at "
         f"{head[:9]}, scripts docs/reports/quota-procs-descriptor-dup-fail-open/scripts/gate.sh "
         "and finish-gate.sh, logs "
-        f"private/qpdf/gate-{name} of this worktree. "
+        f"private/qpdf/gate-{name} of this worktree, every step under the shared heavy lock. "
         f"gate-{name}: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
-        f"(private/qpdf/tests-{name}), with no rerun, run CONCURRENTLY with the AFTER corpus "
-        f"arbiter (--jobs 4, exit {exits['04-arbiter']}): arbiter running at +{rel['arbiter-running']} s, "
-        f"suite +{rel['suite-start']} to +{rel['suite-end']} s, arbiter end +{rel['arbiter-end']} s; "
+        f"(private/qpdf/tests-{name}), with no rerun; "
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed "
-        "(AuditProcessQuotaPlan gains three theorems); python suite and docs index check per gate/ "
+        "(AuditProcessQuotaPlan gains six theorems); python suite and docs index check per gate/ "
         "(08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the "
-        "docs index (10b, 10c). No provider gate: providers/ is unchanged."
+        "docs index (10b, 10c). No provider gate: providers/ is unchanged. The arbiters were "
+        "measured separately (BEFORE/AFTER byte-identical, report section 6)."
     )
     gate = {
         "note": note,

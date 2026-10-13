@@ -159,7 +159,34 @@ measuring worktree's paths. No verdict moved, so no correction is named.
 
 ## 7. Gate
 
-GATE-SECTION
+Every code step ran at `1e47c8d50` (the code of `6167e17a9` plus records)
+with [`scripts/gate.sh`](scripts/gate.sh) `g1`, each step under the shared
+heavy lock, so no arbiter shared the host with the suite. Exits are in
+[gate/](gate/), logs in `private/qpdf/gate-g1/`, and the summary in
+[gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 487 units, 500 summaries; **7,943 passed, 0 failed**, 14 ignored; `private/qpdf/tests-g1/` |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **316** audits |
+| `python3 -m unittest discover -s scripts/tests`, `build_docs_index.py --check` (08, 09) | gate/ | |
+| `build_matrix.py . --gate gate.json`, the Python suite and the index again (`finish-gate.sh`, 09a–10c) | gate/ | |
+
+The test step passed on its first run; nothing was rerun in isolation. The
+suite is main's 7,939 plus the card's four rows. `execution_quota` ran 16 of 16
+in the runner's `EXCLUSIVE` phase.
+
+There is no provider gate, because `providers/` is unchanged. Its conformance
+crate depends on `qcore-verifier-host` by path, so
+[`scripts/providers-check.sh`](scripts/providers-check.sh) ran
+`cargo check --manifest-path providers/Cargo.toml --workspace --all-targets
+--locked --offline` once: exit 0. Clang: `clang --version` was recorded in this
+worktree (`gate/clang-version.txt`).
 
 ## 8. Prediction against outcome
 
