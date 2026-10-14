@@ -143,6 +143,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg22-indirect-calls-and-callbacks](cg22-indirect-calls-and-callbacks/README.md) | CG22-INDIRECT-CALLS-AND-CALLBACKS: candidate callee sets and the callback relation |
 
+| [cg22-op-callbacks-served-queues](cg22-op-callbacks-served-queues/README.md) | CG22-OP-CALLBACKS-AND-SERVED-QUEUES: op callbacks and served queues |
+
 | [cg23-relational-postconditions](cg23-relational-postconditions/README.md) | CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions and exit-specific summaries |
 
 | [cg24-alias-extent-frame-vocabulary](cg24-alias-extent-frame-vocabulary/README.md) | CG24-ALIAS-EXTENT-FRAME-VOCABULARY |

@@ -1,0 +1,125 @@
+{
+ "rd_kafka_op_destroy": {
+  "leaves": 132,
+  "functions": 83,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka_event.c::rd_kafka_event_destroy",
+   "rdunittest_fetcher.c::ut_op_destroy_free"
+  ]
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_serve"
+  ]
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop_serve"
+  ]
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop"
+  ]
+ },
+ "rd_kafka_poll_cb": {
+  "leaves": 4,
+  "functions": 4,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop": {
+  "leaves": 38,
+  "functions": 15,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_handle": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_handle_std": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_call": {
+  "leaves": 4,
+  "functions": 2,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new_cb": {
+  "leaves": 14,
+  "functions": 14,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new0": {
+  "leaves": 87,
+  "functions": 86,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_reply": {
+  "leaves": 13,
+  "functions": 7,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_error_reply": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_wait_result": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_purge0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_event_destroy": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ }
+}

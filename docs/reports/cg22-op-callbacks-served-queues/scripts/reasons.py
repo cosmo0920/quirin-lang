@@ -14,7 +14,8 @@ import sys
 
 KEYS = ["callback-undecided", "callback-uncontracted", "callback-effectful",
         "callback-registry-undecided", "callback-element-custody-undecided",
-        "callback-withdrawn"]
+        "callback-withdrawn", "callback-supplied-kept", "callback-member-open",
+        "arm-undeclared", "arm-undecided", "arm-withdrawn"]
 CALLEE = re.compile(r"^call to `([^`]*)`")
 CANDIDATE = re.compile(r"callback `([^`]*)` \(from")
 WHY = re.compile(r"not a closed set of functions \((.*)\) \(callback-undecided\)$")

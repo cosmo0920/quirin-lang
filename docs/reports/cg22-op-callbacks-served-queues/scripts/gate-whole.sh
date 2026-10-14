@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# gate-whole.sh [NAME] -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES (from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
+# PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's gate-g2.sh): the full standing
+# gate and the provider gate (gate.sh NAME all, NAME default g1) with
+# one exclusive flock on the shared heavy lock held for the whole gate, so no
+# other card's heavy step runs inside it. Run as
+#   flock <heavy.lock> bash gate-whole.sh [NAME]
+# The lock's hold times go to private/cg22op/gate-NAME-lock.txt.
+set -u
+name="${1:-g1}"
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/../../../.." && pwd)"
+mkdir -p "$repo/private/cg22op" || exit 2
+echo "lock held from $(date -u +%FT%T.%NZ)" > "$repo/private/cg22op/gate-$name-lock.txt"
+HELD=1 bash "$here/gate.sh" "$name" all
+rc=$?
+echo "gate.sh exit $rc, lock released at $(date -u +%FT%T.%NZ)" >> "$repo/private/cg22op/gate-$name-lock.txt"
+exit "$rc"

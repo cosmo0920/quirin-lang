@@ -1,0 +1,116 @@
+{
+ "rd_kafka_op_destroy": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_poll_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_handle": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_handle_std": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_call": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_reply": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_error_reply": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_wait_result": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_purge0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_event_destroy": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ }
+}

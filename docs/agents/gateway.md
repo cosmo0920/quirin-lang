@@ -5142,7 +5142,7 @@ own anchor here.
     members' candidates have none (`OP-CALLBACK-CANDIDATE-CONTRACTS`); the
     four forwarders hand a formal on (`SERVE-FORWARDED-CALLBACK-FORMALS`). The
     served-queue premise (C04.18) on `rd_kafka_q_wait_result` and
-    `rd_kafka_q_purge0` is unchanged. Measured: MEASURED-LINE;
+    `rd_kafka_q_purge0` is unchanged. Measured (corpus `66910c10` on main `579c2e6e2`, binary `21989e3e…`): **935 / 9 / 3,890 → 935 / 9 / 3,890** (`bdf5f1c8…` → `527a4cad…`), no status move, 102 Unknown rows trade leaves (`call to uncontracted function` 155 → `callback-member-open` 119, `callback-uncontracted` 16, `callback-withdrawn` 5 in `rdkafka_queue.c` by rule 13y, `callback-undecided` 1, access-gate refusals at member actuals 14); rule 12o validates `rd_kafka_op_destroy`'s arms in `rdkafka_op.c`; both op members close over the recorded units (27 and 4 candidates) and the fold reads them open for four data-only units (`CALLBACK-MEMBER-DATA-ONLY-UNITS`), demoting nothing; system 93 / 4 / 351 and slice 52 / 1 / 347 / 4 Pending, no row moves; the null property byte-identical on all three;
     [report](../reports/cg22-op-callbacks-served-queues/README.md).
 
 <a id="constraint-12q"></a>

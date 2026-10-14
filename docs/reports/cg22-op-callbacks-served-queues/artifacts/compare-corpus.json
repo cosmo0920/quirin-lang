@@ -1,0 +1,2072 @@
+{
+ "statuses_before": {
+  "Unknown": 3890,
+  "Safe": 935,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3890,
+  "Safe": 935,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 155
+ },
+ "added": {
+  "call to `_`: the callbacks stored in `_` are not a closed set of functions (no store into `_` in this unit names a function) (callback-member-open)": 119,
+  "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 16,
+  "indirect memory access is outside the resource projection": 14,
+  "call to `_`: its body in this unit does not validate the declared callback clause (callback-withdrawn)": 5,
+  "call to `_`: the callback `_` is not a closed set of functions (null pointer constant) (callback-undecided)": 1
+ },
+ "moving_rows": 102,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23964: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23964: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_callback0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23682: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "23682: call to `rd_kafka_q_serve`: callback `rd_kafka_consume_cb` (from `rd_kafka_consume_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23664: call to uncontracted function `rd_kafka_op_destroy`",
+    "23670: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23664: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23670: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23868: call to uncontracted function `rd_kafka_op_destroy`",
+    "23874: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23868: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23874: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_list_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25019: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "25019: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_memberid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24590: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_for_times",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24222: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "24222: call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24417: call to uncontracted function `rd_kafka_q_serve_maybe_consume`"
+   ],
+   "gained": [
+    "24417: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24325: call to uncontracted function `rd_kafka_op_destroy`",
+    "24358: call to uncontracted function `rd_kafka_op_destroy`",
+    "24412: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24325: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24358: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24412: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24107: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "24107: call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_poll",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24424: call to uncontracted function `rd_kafka_q_pop_serve_maybe_consume`"
+   ],
+   "gained": [
+    "24424: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_poll_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24433: call to uncontracted function `rd_kafka_q_serve_maybe_consume`"
+   ],
+   "gained": [
+    "24433: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23597: call to uncontracted function `rd_kafka_op_destroy`",
+    "23607: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23597: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23607: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23320: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "23320: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23355: call to uncontracted function `rd_kafka_q_serve`",
+    "23383: call to uncontracted function `rd_kafka_op_destroy`",
+    "23384: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "23355: indirect memory access is outside the resource projection",
+    "23383: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23384: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_poll",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23117: call to uncontracted function `rd_kafka_q_serve`",
+    "23141: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "23117: indirect memory access is outside the resource projection",
+    "23141: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22254: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "22254: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22037: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22037: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24166: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24166: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25792: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "25792: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23495: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23495: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreatePartitionsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21660: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21660: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21370: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21370: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24421: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24421: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23019: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23019: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21490: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21490: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23621: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23621: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeClusterResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26408: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "26408: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22390: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22390: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25633: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "25633: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26218: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "26218: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23817: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23817: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ElectLeadersResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26581: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "26581: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22158: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22158: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_common_worker_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20499: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20499: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_fanout_worker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20860: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20860: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_handle_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20560: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20560: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26701: call to uncontracted function `rd_kafka_op_destroy`",
+    "26705: call to uncontracted function `rd_kafka_op_destroy`",
+    "26710: call to uncontracted function `rd_kafka_op_destroy`",
+    "26721: call to uncontracted function `rd_kafka_op_destroy`",
+    "26725: call to uncontracted function `rd_kafka_op_destroy`",
+    "26730: call to uncontracted function `rd_kafka_op_destroy`",
+    "26742: call to uncontracted function `rd_kafka_op_destroy`",
+    "26746: call to uncontracted function `rd_kafka_op_destroy`",
+    "26750: call to uncontracted function `rd_kafka_op_destroy`",
+    "26755: call to uncontracted function `rd_kafka_op_destroy`",
+    "26765: call to uncontracted function `rd_kafka_op_destroy`",
+    "26770: call to uncontracted function `rd_kafka_op_destroy`",
+    "26774: call to uncontracted function `rd_kafka_op_destroy`",
+    "26779: call to uncontracted function `rd_kafka_op_destroy`",
+    "26789: call to uncontracted function `rd_kafka_op_destroy`",
+    "26793: call to uncontracted function `rd_kafka_op_destroy`",
+    "26797: call to uncontracted function `rd_kafka_op_destroy`",
+    "26802: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "26701: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26705: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26710: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26721: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26725: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26730: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26742: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26746: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26750: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26755: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26765: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26770: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26774: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26779: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26789: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26793: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26797: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "26802: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_queue_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20149: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20149: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20166: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "20166: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21766: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21766: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22841: call to uncontracted function `rd_kafka_op_destroy`",
+    "22851: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22841: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "22851: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24345: call to uncontracted function `rd_kafka_op_destroy`",
+    "24469: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24345: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "24469: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23742: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23742: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_group_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24590: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "24590: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "occurrence": 1,
+   "function": "rd_kafka_event_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19714: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19714: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20908: call to uncontracted function `rd_kafka_op_destroy`",
+    "20928: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20908: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20928: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21264: call to uncontracted function `rd_kafka_op_destroy`",
+    "21267: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21264: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "21267: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21140: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21140: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20807: call to uncontracted function `rd_kafka_op_destroy`",
+    "20827: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20807: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20827: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20259: call to uncontracted function `rd_kafka_op_destroy`",
+    "20268: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20259: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20268: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cluster_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23390: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "23390: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cluster_io_poll",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22374: call to uncontracted function `rd_kafka_q_serve`"
+   ],
+   "gained": [
+    "22374: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_topic_set_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22828: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22828: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_message_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20564: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20564: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20400: call to uncontracted function `rd_kafka_q_pop_serve`",
+    "20410: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20400: call to `rd_kafka_q_pop_serve`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)",
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_offset_reset_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20069: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20069: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_err_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20233: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20233: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20241: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20241: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20195: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20195: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20359: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20359: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20184: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20184: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22462: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22462: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_filter",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19885: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19885: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_outdated_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20089: call to uncontracted function `rd_kafka_op_destroy`",
+    "20103: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20089: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20103: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_fix_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20480: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20480: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_pop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19989: call to uncontracted function `rd_kafka_q_pop_serve`"
+   ],
+   "gained": [
+    "19989: call to `rd_kafka_q_pop_serve`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_pop_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19973: call to uncontracted function `rd_kafka_q_pop_serve0`"
+   ],
+   "gained": [
+    "19973: call to `rd_kafka_q_pop_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_pop_serve0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19961: call to uncontracted function `rd_kafka_q_pop_serve0`"
+   ],
+   "gained": [
+    "19961: call to `rd_kafka_q_pop_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_pop_serve_maybe_consume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19983: call to uncontracted function `rd_kafka_q_pop_serve0`"
+   ],
+   "gained": [
+    "19983: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19800: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19800: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge_toppar_version",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19834: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19834: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20063: call to uncontracted function `rd_kafka_q_serve0`"
+   ],
+   "gained": [
+    "20063: call to `rd_kafka_q_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20014: call to uncontracted function `rd_kafka_q_serve0`"
+   ],
+   "gained": [
+    "20014: call to `rd_kafka_q_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_maybe_consume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20072: call to uncontracted function `rd_kafka_q_serve0`"
+   ],
+   "gained": [
+    "20072: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20152: call to uncontracted function `rd_kafka_op_destroy`",
+    "20185: call to uncontracted function `rd_kafka_op_destroy`",
+    "20196: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20152: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20185: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20196: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_share_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20267: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20267: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_wait_result",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20434: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20434: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22066: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "22066: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21246: call to uncontracted function `rd_kafka_op_destroy`",
+    "21270: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21246: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "21270: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19762: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19762: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_protocol",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19741: call to uncontracted function `rd_kafka_op_destroy`",
+    "19745: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19741: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "19745: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_subscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19782: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19782: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21150: call to uncontracted function `rd_kafka_op_destroy`",
+    "21243: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21150: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "21243: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21076: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "21076: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_op_req0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20445: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20445: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_cumulative",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20288: call to uncontracted function `rd_kafka_op_destroy`",
+    "20289: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20288: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20289: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_empty",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20226: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_gaps",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20216: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20216: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20251: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20251: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20190: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20190: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_single_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20158: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20158: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_op_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19644: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19644: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20392: call to uncontracted function `rd_kafka_op_destroy`",
+    "20400: call to uncontracted function `rd_kafka_op_destroy`",
+    "20410: call to uncontracted function `rd_kafka_op_destroy`",
+    "20418: call to uncontracted function `rd_kafka_op_destroy`",
+    "20428: call to uncontracted function `rd_kafka_op_destroy`",
+    "20436: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20392: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20400: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20410: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20418: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20428: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20436: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20307: call to uncontracted function `rd_kafka_op_destroy`",
+    "20314: call to uncontracted function `rd_kafka_op_destroy`",
+    "20321: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20307: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20314: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20321: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20257: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20257: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19861: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19861: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19927: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19927: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20112: call to uncontracted function `rd_kafka_op_destroy`",
+    "20119: call to uncontracted function `rd_kafka_op_destroy`",
+    "20127: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20112: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20119: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20127: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20181: call to uncontracted function `rd_kafka_op_destroy`",
+    "20188: call to uncontracted function `rd_kafka_op_destroy`",
+    "20196: call to uncontracted function `rd_kafka_op_destroy`",
+    "20203: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20181: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20188: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20196: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20203: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20038: call to uncontracted function `rd_kafka_op_destroy`",
+    "20047: call to uncontracted function `rd_kafka_op_destroy`",
+    "20054: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "20038: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20047: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)",
+    "20054: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19985: call to uncontracted function `rd_kafka_op_destroy`"
+   ],
+   "gained": [
+    "19985: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ]
+  }
+ ]
+}
