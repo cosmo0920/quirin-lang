@@ -211,7 +211,33 @@ a tracked local `Safe`; measured once, the controls use tracked locals).
 
 ## 8. Gate
 
-GATE-SECTION
+Standing gate and provider gate **g2** at `81fdf2df9`, one exclusive flock on
+the shared heavy lock held for the whole gate (`scripts/gate-run.sh`,
+`gate-whole.sh`, `gate.sh`; exits in [gate/](gate/), logs
+`private/cg22op/gate-g2/`, [gate.json](gate.json)): `cargo check --workspace
+--all-targets` 0; submodule 0; `cargo fmt --check` 0; `clippy --locked
+--all-targets -D warnings` 0; `run_test_binaries.py` **490 units, 503
+summaries, 7,988 passed, 0 failed, 14 ignored**, exit 0
+(`private/cg22op/tests-g2/`), no rerun; both reevaluation probes 0;
+`check_lean_audits.py` **318** audits passed; provider gate: `package.py`
+build 0, verify `qcore.libevent` 0 and `qcore.librdkafka` 0, `cargo check
+--locked` in `providers/` 0, `contracts.py check` 0, `cargo test` 133 passed /
+0 failed, providers Python suite 25 OK, fmt 0, clippy 0; `cargo clean
+--profile dev` 0. The Python suite before the matrix regeneration (08) is 1 on
+the Lean count it reads from the committed matrix (317 → 318), as every card
+adding an audit sees; after `build_matrix.py . --gate gate.json` (09a) it is
+rerun (09b), then the docs index (10b, 10c), per [gate/](gate/). Clang:
+`gate/clang-version.txt`.
+
+**g1** (at `4f221643b`, retained in `private/cg22op/gate-g1/`, not evidence
+for the tip) failed only `run_test_binaries.py` (7,985 passed, 3 failed: the
+contract-view guard's census refused `rd_kafka_op_destroy`, now declared in
+both `librdkafka/client.qv` and `librdkafka/null_deref.qv`, as an unregistered
+multi-module declaration). The relation was registered
+(`contract_views.rs`, `null_deref_beside`; the pins 22 → 23 relations, 20 → 21
+functions) and the whole gate rerun as g2. A clippy pre-check before g1 found
+three lints in `callback_member_closure.rs` (fixed, `d77fd8412`, no behaviour
+change: the measured binary `a4` predates it).
 
 ## Files
 

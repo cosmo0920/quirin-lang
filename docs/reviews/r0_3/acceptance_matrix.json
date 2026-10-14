@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS card gate on base b565f79ab, rebased onto 5ee141946, every code step at 3b8a22c90, scripts docs/reports/plugin-package-build-write/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/ppb/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 488 units, 501 summaries, 7,956 passed, 0 failed, 14 ignored, exit 0 (private/ppb/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (no Lean change); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 7956,
+  "note": "CG22-OP-CALLBACKS-AND-SERVED-QUEUES card gate on base b565f79ab, rebased onto 98eddb50e, then 579c2e6e2, every code step at 81fdf2df9, scripts docs/reports/cg22-op-callbacks-served-queues/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/cg22op/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 490 units, 503 summaries, 7,988 passed, 0 failed, 14 ignored, exit 0 (private/cg22op/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 318 audits passed (QCore.OpCallbacks added); provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 7988,
   "provider_tests": 133,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 317,
+  "lean_audits": 318,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6942,6 +6942,7 @@
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditObservedWaitComposition.lean",
+   "AuditOpCallbacks.lean",
    "AuditOsEndpointPostState.lean",
    "AuditOwnedFieldCopyReach.lean",
    "AuditPackageIdentity.lean",
@@ -7083,7 +7084,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9cd1e362c8589ef1/docs/reports/plugin-package-build-write/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7901de81407d337f/docs/reports/cg22-op-callbacks-served-queues/gate.json)"
  },
  "named_followups": [
   {
