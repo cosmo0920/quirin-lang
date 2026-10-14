@@ -190,7 +190,24 @@ conservative demotion). `dimensions.named_followups` 769 → **771**.
 
 ## 8. Gate
 
-GATE
+Standing gate and provider gate **g1** at `4a7ccde2c` (the rebased tip with
+every record but this section), one exclusive flock on the shared heavy lock
+held for the whole gate (`scripts/gate-run.sh`, `gate-whole.sh`, `gate.sh`;
+exits in [gate/](gate/), logs `private/opctor/gate-g1/`,
+[gate.json](gate.json)): `cargo check --workspace --all-targets` 0; submodule
+0; `cargo fmt --check` 0; `clippy --locked --all-targets -D warnings` 0;
+`run_test_binaries.py` **493 units, 506 summaries, 8,023 passed, 0 failed,
+14 ignored**, exit 0 (`private/opctor/tests-g1/`), no rerun; both
+reevaluation probes 0; `check_lean_audits.py` **319** audits passed; Python
+suite 365 OK (08); docs index check 0 (09); provider gate: `package.py` build
+0, verify `qcore.libevent` 0 and `qcore.librdkafka` 0, `cargo check --locked`
+in `providers/` 0, `contracts.py check` 0, `cargo test` 133 passed / 0
+failed, providers Python suite 25 OK, fmt 0, clippy 0; `cargo clean
+--profile dev` 0. Then `build_matrix.py . --gate gate.json` (09a) 0, the
+Python suite again (09b) 0, the docs index (10b) 0 and its check (10c) 0.
+Clang: `gate/clang-version.txt`. The measured binary `a5` predates only a
+`cargo fmt` pass and one clippy lint (`while let`) in
+`contract_constructed_state.rs`, neither a behaviour change.
 
 ## Files
 
