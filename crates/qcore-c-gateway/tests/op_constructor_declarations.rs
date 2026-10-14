@@ -17,7 +17,8 @@ const PRELUDE: &str = "\
 #include <stddef.h>
 struct item { int x; };
 typedef int (*op_cb_t)(void *rk, void *rkq, void *rko);
-struct op { int type; op_cb_t op_cb; struct item *payload; };
+struct pair { int a; int b; };
+struct op { int type; op_cb_t op_cb; struct item *payload; struct pair u; };
 struct item *c_item_new(int n);
 void c_free(void *p);
 void *calloc(unsigned long n, unsigned long size);
@@ -226,6 +227,55 @@ fn a_guarded_rewrite_keeps_or_joins_the_arm() {
         across["link_and_destroy"].refused_with("arm-undecided"),
         "{:?}",
         across["link_and_destroy"]
+    );
+    // A rewrite whose object is later set to NULL still reads the guarded
+    // object (a null rebinding reaches no other object): 3 -> 1 joins.
+    let nulled = format!(
+        "void serve(struct op *o) {{ switch (o->type) {{ case 3: o->type = 1; o = NULL; break; default: break; }} }}\n{}",
+        linking("c_op_new(3)")
+    );
+    let nulled = rows(&nulled);
+    assert!(
+        nulled["link_and_destroy"].refused_with("arm-undecided"),
+        "{:?}",
+        nulled["link_and_destroy"]
+    );
+    // A rewrite of a rebound object is unclassified: even a decided 1 joins.
+    let rebound = format!(
+        "void serve(struct op *o, struct op *p) {{ switch (o->type) {{ case 3: o = p; o->type = 4; break; default: break; }} }}\n{}",
+        linking("c_op_new(1)")
+    );
+    let rebound = rows(&rebound);
+    assert!(
+        rebound["link_and_destroy"].refused_with("arm-undecided"),
+        "{:?}",
+        rebound["link_and_destroy"]
+    );
+}
+
+#[test]
+fn a_sub_object_write_keeps_and_a_whole_object_write_voids_the_state() {
+    if !clang_available() {
+        return;
+    }
+    // Copying a sub-object writes its members only: the decided 1 stands.
+    let sub = format!(
+        "void copy(struct op *a, struct op *b) {{ a->u = b->u; }}\n{}",
+        linking("c_op_new(1)")
+    );
+    let sub = rows(&sub);
+    assert!(sub["link_and_destroy"].safe(), "{:?}", sub["link_and_destroy"]);
+    // A whole-object assignment may write the member and the discriminant:
+    // both states are void, and the unit's closure (no store) refuses.
+    let whole = format!(
+        "void copy(struct op *a, struct op *b) {{ *a = *b; }}\n{}",
+        linking("c_op_new(1)")
+    );
+    let whole = rows(&whole);
+    assert!(
+        whole["link_and_destroy"].refused_with("callback-member-open"),
+        "{:?}",
+        whole["link_and_destroy"]
     );
 }
 

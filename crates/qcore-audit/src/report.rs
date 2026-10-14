@@ -206,6 +206,18 @@ impl AuditReport {
             contracts,
             &mut self.diagnostic_counts,
         );
+        // Card OP-CONSTRUCTOR-DECLARATIONS: a function the fold demoted is
+        // demoted in the property rows' custody column too, and their
+        // combined verdict recomputed, so no combined row reads a custody
+        // verdict the published custody row no longer has.
+        let demoted = crate::callback_member_fold::demoted_functions(&section);
+        if !demoted.is_empty() {
+            crate::callback_member_fold::demote_property_rows(
+                &mut self.null,
+                &mut self.bounds,
+                &demoted,
+            );
+        }
         let mut from_safe = 0;
         let mut from_pending = 0;
         for (row, before) in self.units.iter().zip(before) {

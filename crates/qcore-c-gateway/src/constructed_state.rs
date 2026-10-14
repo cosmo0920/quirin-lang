@@ -203,8 +203,9 @@ struct Locals {
     sources: BTreeMap<String, Option<BTreeSet<String>>>,
     /// Automatic (non-static) record locals.
     automatic: BTreeSet<String>,
-    /// Variables assigned other than by their initializer, or whose address
-    /// is taken.
+    /// Variables assigned other than by their initializer (a null pointer
+    /// constant excepted: a store through it after that reaches no object), or
+    /// whose address is taken.
     rebound: BTreeSet<String>,
 }
 
@@ -262,7 +263,9 @@ impl Locals {
                     && let Some(id) = variable(left)
                 {
                     self.assign(id, Some(right));
-                    self.rebound.insert(id.to_owned());
+                    if !null_constant(right) {
+                        self.rebound.insert(id.to_owned());
+                    }
                 }
             }
             "CompoundAssignOperator" => {
@@ -323,6 +326,41 @@ impl Collector<'_> {
             return Some(key);
         }
         self.unread.get(&key).cloned()
+    }
+
+    /// A write of a whole sub-object `place` (a record-typed member path, or
+    /// `&` of one): every stated key under it is stored opaquely. `true` when
+    /// `place` is such a member path (handled), `false` for anything else.
+    fn sub_object(&mut self, name: &str, place: &Value, why: &str) -> bool {
+        let place = strip_all(place);
+        let place = if kind(place) == "UnaryOperator" && place["opcode"].as_str() == Some("&") {
+            match children(place).first() {
+                Some(inner) => strip_all(inner),
+                None => return false,
+            }
+        } else {
+            place
+        };
+        if kind(place) != "MemberExpr" {
+            return false;
+        }
+        let key = self.facts.member_key(place);
+        let under = self
+            .keys
+            .iter()
+            .filter(|stated| stated.starts_with(&format!("{key}.")) || **stated == key)
+            .cloned()
+            .collect::<Vec<_>>();
+        for stated in under {
+            self.record(
+                stated,
+                StateStore::Other {
+                    function: name.to_owned(),
+                    why: why.to_owned(),
+                },
+            );
+        }
+        true
     }
 
     fn record(&mut self, key: String, store: StateStore) {
@@ -481,6 +519,7 @@ impl Collector<'_> {
                 if let [left, right] = children(node) {
                     self.store(name, left, "=", Some(right), locals, guards);
                     if let Some(record) = self.facts.record_of_node(strip_all(left), false)
+                        && !self.sub_object(name, left, "a sub-object assignment covers it")
                         && self.records.contains(&record)
                     {
                         self.out
@@ -526,6 +565,7 @@ impl Collector<'_> {
                 if let Some(callee) = direct_callee(node)
                     && WHOLE_WRITERS.contains(&callee)
                     && let Some(destination) = children(node).get(1)
+                    && !self.sub_object(name, destination, &format!("a `{callee}` into a sub-object covers it"))
                     && let Some(record) = self.facts.record_of_node(strip_all(destination), true)
                     && self.records.contains(&record)
                 {

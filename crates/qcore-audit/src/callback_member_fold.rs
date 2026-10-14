@@ -125,6 +125,80 @@ pub fn constructed_declarations(
         .collect()
 }
 
+/// Card OP-CONSTRUCTOR-DECLARATIONS: every `(library, file, function)` the
+/// fold's section lists as demoted (rule 12n's and the result states').
+#[must_use]
+pub fn demoted_functions(section: &Value) -> BTreeSet<(String, String, String)> {
+    section["demoted"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .chain(section["constructed_states"]["demoted"].as_array().into_iter().flatten())
+        .map(|entry| {
+            let text = |key: &str| entry[key].as_str().unwrap_or("").to_owned();
+            (text("library"), text("file"), text("function"))
+        })
+        .collect()
+}
+
+/// Card OP-CONSTRUCTOR-DECLARATIONS: the property rows (null, bounds) of a
+/// demoted function read `Unknown` custody, and their combined verdict is
+/// recomputed with it. Never promotes: only a `Safe` or `Pending` custody
+/// column moves.
+pub fn demote_property_rows(
+    null: &mut [Value],
+    bounds: &mut [Value],
+    demoted: &BTreeSet<(String, String, String)>,
+) {
+    let key = |row: &Value| {
+        let text = |key: &str| row[key].as_str().unwrap_or("").to_owned();
+        (text("library"), text("file"), text("function"))
+    };
+    let moves = |row: &Value| {
+        demoted.contains(&key(row)) && matches!(row["custody"].as_str(), Some("Safe" | "Pending"))
+    };
+    for row in null.iter_mut().filter(|row| moves(row)) {
+        use qcore_c_gateway::null_deref::{NullVerdict, Request, compose};
+        let verdict = match row["null"]["verdict"].as_str() {
+            Some("Safe") => Some(NullVerdict::Safe),
+            Some("Pending") => Some(NullVerdict::Pending),
+            Some("Unsafe") => Some(NullVerdict::Unsafe),
+            Some(_) => Some(NullVerdict::Unknown),
+            None => None,
+        };
+        row["custody"] = json!("Unknown");
+        let combined = compose(
+            Request {
+                custody: true,
+                null: true,
+            },
+            Some(NullVerdict::Unknown),
+            verdict,
+        );
+        row["combined"] = json!(combined.as_str());
+    }
+    for row in bounds.iter_mut().filter(|row| moves(row)) {
+        use qcore_c_gateway::index_extent::{BoundsVerdict, Request, compose};
+        let verdict = match row["bounds"]["verdict"].as_str() {
+            Some("Safe") => Some(BoundsVerdict::Safe),
+            Some("Pending") => Some(BoundsVerdict::Pending),
+            Some("Unsafe") => Some(BoundsVerdict::Unsafe),
+            Some(_) => Some(BoundsVerdict::Unknown),
+            None => None,
+        };
+        row["custody"] = json!("Unknown");
+        let combined = compose(
+            Request {
+                custody: true,
+                bounds: true,
+            },
+            Some(BoundsVerdict::Unknown),
+            verdict,
+        );
+        row["combined"] = json!(combined.as_str());
+    }
+}
+
 /// One unit's recorded facts.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct UnitFacts {
@@ -444,6 +518,34 @@ contract {
             facts,
             state: None,
         }
+    }
+
+    /// Card OP-CONSTRUCTOR-DECLARATIONS: a demoted function's property rows
+    /// read `Unknown` custody, and their combined verdict follows; other rows
+    /// and an `Unknown` custody column are untouched.
+    #[test]
+    fn a_demoted_function_demotes_its_property_rows() {
+        let demoted = BTreeSet::from([("l".to_owned(), "a.c".to_owned(), "f".to_owned())]);
+        let mut null = vec![
+            json!({"library": "l", "file": "a.c", "function": "f", "custody": "Safe",
+                   "null": {"verdict": "Safe"}, "combined": "Safe"}),
+            json!({"library": "l", "file": "a.c", "function": "g", "custody": "Safe",
+                   "null": {"verdict": "Safe"}, "combined": "Safe"}),
+        ];
+        let mut bounds = vec![
+            json!({"library": "l", "file": "a.c", "function": "f", "custody": "Pending",
+                   "bounds": {"verdict": "Safe"}, "combined": "Pending"}),
+        ];
+        demote_property_rows(&mut null, &mut bounds, &demoted);
+        assert_eq!(null[0]["custody"], "Unknown");
+        assert_eq!(null[0]["combined"], "Unknown");
+        assert_eq!(null[1]["combined"], "Safe");
+        assert_eq!(bounds[0]["custody"], "Unknown");
+        assert_eq!(bounds[0]["combined"], "Unknown");
+        let section = json!({"demoted": [{"library": "l", "file": "a.c", "function": "f"}],
+                             "constructed_states": {"demoted": [
+                                 {"library": "l", "file": "b.c", "function": "h"}]}});
+        assert_eq!(demoted_functions(&section).len(), 2);
     }
 
     #[test]
