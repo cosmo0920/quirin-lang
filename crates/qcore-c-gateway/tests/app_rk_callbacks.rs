@@ -256,6 +256,14 @@ fn a_record_value_copied_into_a_field_carries_its_own_keys() {
         closure(&[&unit], "handle_s.conf.log_cb"),
         Ok(names(&["quiet_log"]))
     );
+    // A nested list in the handle's initializer is mapped onto the conf: the
+    // handle's own list, unmappable for it, does not open the conf's member
+    // (only an opaque write of the handle does, as the memcpy above).
+    let nested = facts("struct handle_s top = { 1, { default_log, 0, 0 } };\n");
+    assert_eq!(
+        closure(&[&nested], "handle_s.conf.log_cb"),
+        Ok(names(&["default_log"]))
+    );
 }
 
 /// Q3: a union's members share their stores.

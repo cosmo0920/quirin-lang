@@ -577,6 +577,22 @@ impl MemberFacts {
         keys
     }
 
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: open a record for an opaque
+    /// whole-object write (a `memcpy`-family call, an assignment from another
+    /// type or a call). It replaces an initializer-list reason, which opens
+    /// the record's own members but not a member of a record it embeds, so
+    /// the stronger reason is the one a holder's member reads.
+    fn open_opaquely(&mut self, record: String, why: String) {
+        self.opened
+            .entry(record)
+            .and_modify(|earlier| {
+                if earlier == "an initializer list" {
+                    earlier.clone_from(&why);
+                }
+            })
+            .or_insert(why);
+    }
+
     /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: whether a node's type (or its
     /// pointee's) is a union.
     fn union_node(&self, node: &Value, pointee: bool) -> bool {
@@ -762,9 +778,7 @@ impl MemberFacts {
                     if self.record_of_node(source, false).as_deref() != Some(record.as_str())
                         || kind(source) == "CallExpr"
                     {
-                        self.opened
-                            .entry(record)
-                            .or_insert_with(|| "a whole-object assignment".to_owned());
+                        self.open_opaquely(record, "a whole-object assignment".to_owned());
                     }
                 }
                 self.walk(left, enclosing);
@@ -802,9 +816,7 @@ impl MemberFacts {
                         && let Some(destination) = arguments.get(1)
                         && let Some(record) = self.record_of_node(strip(destination), true)
                     {
-                        self.opened
-                            .entry(record)
-                            .or_insert_with(|| format!("a `{callee}` into it"));
+                        self.open_opaquely(record, format!("a `{callee}` into it"));
                     }
                     // The callee designator is not an address taken.
                     for argument in arguments.iter().skip(1) {
@@ -1308,11 +1320,18 @@ pub fn closure_prepared(
                     .clone()
                     .unwrap_or_else(|| BTreeSet::from([member.clone()]));
                 let mut records = BTreeSet::new();
+                // The records holding the member's record by value: an
+                // opaque write of one (a `memcpy`-family call, an assignment
+                // from another type) writes the member; an initializer list
+                // of one writes its embedded record only through a nested
+                // list or a value of that record, which the record's own key
+                // already reads, so it does not open the member.
+                let mut containers = BTreeSet::new();
                 let mut unread_names = BTreeSet::new();
                 for target in &targets {
                     tokens.insert(record_of_key(target).to_owned());
                     let record = record_of_key(target).to_owned();
-                    records.extend(tables.containers(&record));
+                    containers.extend(tables.containers(&record));
                     records.insert(record);
                     if target.ends_with(".*") {
                         for keys in tables.union_at(target) {
@@ -1339,6 +1358,7 @@ pub fn closure_prepared(
                 tokens.extend(
                     records
                         .iter()
+                        .chain(&containers)
                         .filter(|record| tables.carries_function(record))
                         .cloned(),
                 );
@@ -1352,6 +1372,15 @@ pub fn closure_prepared(
                 for facts in units {
                     for record in &records {
                         if let Some(why) = facts.opened.get(record) {
+                            notes.insert(format!("{why} writes a `struct {record}`"));
+                        }
+                    }
+                    for record in containers.difference(&records) {
+                        if let Some(why) = facts
+                            .opened
+                            .get(record)
+                            .filter(|why| *why != "an initializer list")
+                        {
                             notes.insert(format!("{why} writes a `struct {record}`"));
                         }
                     }
