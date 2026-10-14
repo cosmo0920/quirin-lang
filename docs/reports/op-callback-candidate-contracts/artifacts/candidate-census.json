@@ -1,0 +1,1168 @@
+{
+ "046accf6": {
+  "rd_kafka_DeleteRecords_leaders_queried_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:4397",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 91,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "reply",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_ListOffsets_leaders_queried_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:4293",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 98,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "reply",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_admin_fanout_worker": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:1393",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 58,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_OP_TYPE_ASSERT",
+    "partial_response",
+    "rd_kafka_dbg"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_admin_worker": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:1034",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 229,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_REPLYQ",
+    "rd_assert",
+    "rd_kafka_admin_common_worker_destroy",
+    "rd_kafka_admin_fanout_op_distribute",
+    "rd_kafka_admin_response_parse",
+    "rd_kafka_admin_result_fail",
+    "rd_kafka_admin_timeout_remains_us",
+    "rd_kafka_confval_get_int",
+    "rd_kafka_coord_req",
+    "rd_kafka_dbg",
+    "rd_kafka_enq_once_add_source",
+    "rd_kafka_op2str",
+    "rd_kafka_timer_start_oneshot",
+    "request"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_broker_monitor_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_broker.c:6413",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 7,
+   "log_reach": false,
+   "member": "rko_op_cb",
+   "member_callback_calls": [
+    "cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "cb"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:2140",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 27,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_cgrp_assignor_run"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:3056",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 46,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:2568",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 15,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_op_serve": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:7371",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 196,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_OffsetFetchRequest",
+    "rd_kafka_cgrp_coord_query",
+    "rd_kafka_cgrp_handle_assign_op",
+    "rd_kafka_cgrp_offsets_commit",
+    "rd_kafka_cgrp_subscribe",
+    "rd_kafka_cgrp_terminate0",
+    "rd_kafka_op_destroy",
+    "rd_kafka_op_reply"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_mock_cluster_op_serve": {
+   "app_reach": [
+    "rd_kafka_transport_close0"
+   ],
+   "defined": "rdkafka_mock.c:3158",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 27,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_mock_cluster_cmd",
+    "rd_kafka_op_reply"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_oauthbearer_refresh_op": {
+   "app_reach": [
+    "rd_kafka_oauthbearer_refresh_op"
+   ],
+   "defined": "rdkafka_sasl_oauthbearer.c:170",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [
+    "token_refresh_cb"
+   ],
+   "lines": 15,
+   "log_reach": false,
+   "member": "rko_op_cb",
+   "member_callback_calls": [
+    "token_refresh_cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_offset_reset_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_offset.c:767",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 11,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_offset_reset"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_offset_validate_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_offset.c:1098",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 9,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_offset_validate"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_ack_commit_cb_register_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3243",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 14,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_dbg"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_commit_async_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:4032",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 21,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_segregate_and_dispatch_acks",
+    "rd_list_cnt"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_commit_sync_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:4251",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 80,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_fetch_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3745",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 65,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_segregate_and_dispatch_acks",
+    "rd_list_cnt"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_fetch_reply_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3432",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 5,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_fetch_reply_op"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": [
+    "rd_kafka_share_fetch_reply_op"
+   ]
+  },
+  "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_partition.c:4155",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 7,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_topic_partition_list_query_leaders_async_worker"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": [
+    "rd_kafka_topic_partition_list_query_leaders_async_worker"
+   ]
+  },
+  "rd_kafka_toppar_op_serve": {
+   "app_reach": [
+    "rd_kafka_offset_file_open"
+   ],
+   "defined": "rdkafka_partition.c:2159",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "lines": 155,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [
+    "cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "cb",
+    "rd_kafka_assert",
+    "rd_kafka_consumer_err",
+    "rd_kafka_dbg",
+    "rd_kafka_handle_OffsetFetch_err_action",
+    "rd_kafka_op_reply",
+    "rd_kafka_toppar_fetch_start",
+    "rd_kafka_toppar_fetch_stop",
+    "rd_kafka_toppar_pause_resume",
+    "rd_kafka_toppar_seek"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_abort_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2655",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 98,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_abort_transaction_ack": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2761",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 24,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_ack_init_transactions": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1308",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 21,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_abort": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2608",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 39,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_commit": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2447",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 30,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1413",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 37,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_commit_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2339",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 100,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_commit_transaction_ack": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2485",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 24,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_init_transactions": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1258",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 41,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1934",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "lines": 58,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_REPLYQ",
+    "rd_kafka_AddOffsetsToTxnRequest"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": []
+  }
+ },
+ "66910c10": {
+  "rd_kafka_DeleteRecords_leaders_queried_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:4397",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 91,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "reply",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_ListOffsets_leaders_queried_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:4293",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 98,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "reply",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_admin_fanout_worker": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:1393",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 58,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_OP_TYPE_ASSERT",
+    "partial_response",
+    "rd_kafka_dbg"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_admin_worker": {
+   "app_reach": [],
+   "defined": "rdkafka_admin.c:1034",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 229,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_REPLYQ",
+    "rd_assert",
+    "rd_kafka_admin_common_worker_destroy",
+    "rd_kafka_admin_fanout_op_distribute",
+    "rd_kafka_admin_response_parse",
+    "rd_kafka_admin_result_fail",
+    "rd_kafka_admin_timeout_remains_us",
+    "rd_kafka_confval_get_int",
+    "rd_kafka_coord_req",
+    "rd_kafka_dbg",
+    "rd_kafka_enq_once_add_source",
+    "rd_kafka_op2str",
+    "rd_kafka_timer_start_oneshot",
+    "request"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_broker_monitor_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_broker.c:6413",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 7,
+   "log_reach": false,
+   "member": "rko_op_cb",
+   "member_callback_calls": [
+    "cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "cb"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:2140",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 27,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_cgrp_assignor_run"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:3056",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 46,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_handle_Metadata_op": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:2568",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 15,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_cgrp_op_serve": {
+   "app_reach": [],
+   "defined": "rdkafka_cgrp.c:7371",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 196,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_OffsetFetchRequest",
+    "rd_kafka_cgrp_coord_query",
+    "rd_kafka_cgrp_handle_assign_op",
+    "rd_kafka_cgrp_offsets_commit",
+    "rd_kafka_cgrp_subscribe",
+    "rd_kafka_cgrp_terminate0",
+    "rd_kafka_op_destroy",
+    "rd_kafka_op_reply"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_mock_cluster_op_serve": {
+   "app_reach": [
+    "rd_kafka_transport_close0"
+   ],
+   "defined": "rdkafka_mock.c:3158",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 27,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_mock_cluster_cmd",
+    "rd_kafka_op_reply"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_oauthbearer_refresh_op": {
+   "app_reach": [
+    "rd_kafka_oauthbearer_refresh_op"
+   ],
+   "defined": "rdkafka_sasl_oauthbearer.c:170",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [
+    "token_refresh_cb"
+   ],
+   "identical_at_046accf6": true,
+   "lines": 15,
+   "log_reach": false,
+   "member": "rko_op_cb",
+   "member_callback_calls": [
+    "token_refresh_cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_offset_reset_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_offset.c:767",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 11,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_offset_reset"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_offset_validate_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_offset.c:1098",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 9,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_offset_validate"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_ack_commit_cb_register_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3243",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 14,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_dbg"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_commit_async_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:4032",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 21,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_segregate_and_dispatch_acks",
+    "rd_list_cnt"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_commit_sync_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:4251",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 80,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_fetch_fanout_op": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3745",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 65,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_segregate_and_dispatch_acks",
+    "rd_list_cnt"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_share_fetch_reply_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka.c:3432",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 5,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_share_fetch_reply_op"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": [
+    "rd_kafka_share_fetch_reply_op"
+   ]
+  },
+  "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+   "app_reach": [],
+   "defined": "rdkafka_partition.c:4155",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 7,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "rd_kafka_topic_partition_list_query_leaders_async_worker"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": [
+    "rd_kafka_topic_partition_list_query_leaders_async_worker"
+   ]
+  },
+  "rd_kafka_toppar_op_serve": {
+   "app_reach": [
+    "rd_kafka_offset_file_open"
+   ],
+   "defined": "rdkafka_partition.c:2159",
+   "destroy_test_early": false,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 155,
+   "log_reach": true,
+   "member": "rko_serve",
+   "member_callback_calls": [
+    "cb"
+   ],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "cb",
+    "rd_kafka_assert",
+    "rd_kafka_consumer_err",
+    "rd_kafka_dbg",
+    "rd_kafka_handle_OffsetFetch_err_action",
+    "rd_kafka_op_reply",
+    "rd_kafka_toppar_fetch_start",
+    "rd_kafka_toppar_fetch_stop",
+    "rd_kafka_toppar_pause_resume",
+    "rd_kafka_toppar_seek"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_abort_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2655",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 98,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_abort_transaction_ack": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2761",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 24,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_ack_init_transactions": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1308",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 21,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_abort": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2608",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 39,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_commit": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2447",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 30,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_begin_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1413",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 37,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_commit_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2339",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 100,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_commit_transaction_ack": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:2485",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 24,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_init_transactions": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1258",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 41,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED"
+   ],
+   "returns_forwarded_from": []
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction": {
+   "app_reach": [],
+   "defined": "rdkafka_txnmgr.c:1934",
+   "destroy_test_early": true,
+   "direct_app_callbacks": [],
+   "identical_at_046accf6": true,
+   "lines": 58,
+   "log_reach": true,
+   "member": "rko_op_cb",
+   "member_callback_calls": [],
+   "op_formal": "rko",
+   "op_handed_to": [
+    "RD_KAFKA_REPLYQ",
+    "rd_kafka_AddOffsetsToTxnRequest"
+   ],
+   "returns": [
+    "RD_KAFKA_OP_RES_HANDLED",
+    "RD_KAFKA_OP_RES_KEEP"
+   ],
+   "returns_forwarded_from": []
+  }
+ }
+}
