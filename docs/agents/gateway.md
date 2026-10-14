@@ -5086,19 +5086,40 @@ own anchor here.
     copy or a function), a whole-object assignment or a `memcpy`-family call
     may write open it; a checkpoint
     composer refuses a run whose contracts invoke a member (it carries no
-    facts). A member invocation is a declared assumption (rule 13i). **Do
+    facts). A member invocation is a declared assumption (rule 13i). **The
+    unit's closed set orders the W4 derivation** (card
+    RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN):
+    `callback_route::callback_edges` gives a body that calls a
+    member-invoking declaration an edge to every in-unit function of the
+    member's closed set in its unit (an open set adds none), so the
+    candidates are summarised before their caller. Without it a formal
+    released through the call read `UnknownAlias`: the caller's summary was
+    derived first, read the candidates as uncontracted there and refused, so
+    the reported run (which decides the member as for a tracked local) never
+    bound the formal. This is ordering, not a soundness guard: whether a
+    candidate may alias the formal is answered, in every run, by its own
+    contract (a candidate that releases what it receives or a global, keeps
+    something or has none is not the identity and refuses). **Do
     not** decide a member over the unit's set alone, promote a row in the
     fold, follow an address-taken function's formal, read a value the
-    facts do not name as no candidate, or treat a unit whose AST was not read
-    (or a unit absent from the run) as closed. `QCore.OpCallbacks`
+    facts do not name as no candidate, treat a unit whose AST was not read
+    (or a unit absent from the run) as closed, or derive a member-invoking
+    caller before its closed candidates. `QCore.OpCallbacks`
     (`an_open_member_never_decides`, `an_open_run_demotes`,
     `a_kept_decision_covers_every_run_candidate`,
     `an_unread_unit_keeps_the_member_open`, `an_unread_unit_demotes`,
     `a_read_unit_without_a_store_adds_nothing`,
     `the_run_set_is_exactly_the_read_sets`, `run_vectors_hold`);
+    `QCore.MemberSummaryOrder`
+    (`a_closed_member_candidate_precedes_its_caller`,
+    `an_uninstalled_candidate_refuses_at_summary_time`,
+    `a_formal_reads_as_the_local_once_candidates_precede`,
+    `the_formal_is_never_safe_where_the_local_is_not`,
+    `a_candidate_that_could_alias_keeps_the_formal_unsafe`);
     `callback_member_closure`'s `CLOSURE_VECTORS`; `callback_member_fold`'s
     `RUN_VECTORS`; `tests/cg22_op_callbacks.rs`,
-    `tests/callback_member_data_only.rs`.
+    `tests/callback_member_data_only.rs`;
+    [report](../reports/retained-release-formal/README.md).
 
 <a id="constraint-12o"></a>
 

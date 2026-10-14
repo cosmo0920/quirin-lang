@@ -277,8 +277,6 @@ fn a_value_with_no_declared_arm_is_never_neutral() {
     if !clang_available() {
         return;
     }
-    let probe = rows("void drop(struct box *o) { c_op_free_all(o); }");
-    eprintln!("PROBE {:?}", probe["drop"]);
     let rows = rows("void drop(struct box *o) { c_op_free_partial(o); }");
     assert!(
         rows["drop"].refused_with("arm-undeclared"),
@@ -309,5 +307,83 @@ void use_free(struct box *o) { c_op_free(o); }";
         rows_mismatching["use_free"].refused_with("arm-withdrawn"),
         "{:?}",
         rows_mismatching["use_free"]
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Card RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN (rule 12n, amended): a
+// formal released through a decided member invocation is bound only by its
+// function's W4 summary, so the member's candidates are summarised first.
+// ---------------------------------------------------------------------------
+
+const FORMAL: &str = "\
+static int handler(void *rk, void *rkq, struct op *rko) { return 0; }
+void set_handler(struct op *o) { o->op_cb = handler; }
+void drop_local(void) { struct op *o = c_alloc(sizeof(struct op)); if (!o) return; c_op_destroy(o); }
+void drop_formal(struct op *o) { c_op_destroy(o); }
+void hand_on(void) { struct op *o = c_alloc(sizeof(struct op)); if (!o) return; drop_formal(o); }
+";
+
+#[test]
+fn a_formal_released_through_a_decided_member_reads_as_a_tracked_local() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows(FORMAL);
+    // Before the card: Unknown, `UnknownAlias` on `o` (the summary of
+    // `drop_formal` was derived before `handler`'s).
+    assert!(rows["drop_formal"].safe(), "{:?}", rows["drop_formal"]);
+    assert!(rows["drop_local"].safe(), "{:?}", rows["drop_local"]);
+    // A caller hands its tracked object on through the new summary.
+    assert!(rows["hand_on"].safe(), "{:?}", rows["hand_on"]);
+}
+
+#[test]
+fn a_formal_released_through_arms_only_stays_safe() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows("void drop_arms(struct box *o) { c_op_free_all(o); }");
+    assert!(rows["drop_arms"].safe(), "{:?}", rows["drop_arms"]);
+}
+
+#[test]
+fn a_formal_whose_candidate_could_alias_it_stays_refused() {
+    if !clang_available() {
+        return;
+    }
+    // The candidate releases the object it receives: the formal itself.
+    let itself = "\
+static int freeing(void *rk, void *rkq, struct op *rko) { c_free(rko); return 0; }
+void set_freeing(struct op *o) { o->op_cb = freeing; }
+void drop_formal(struct op *o) { c_op_destroy(o); }";
+    let rows_itself = rows(itself);
+    assert!(
+        rows_itself["drop_formal"].refused_with("callback-effectful"),
+        "{:?}",
+        rows_itself["drop_formal"]
+    );
+    // The candidate releases a global the formal may alias: it has no
+    // summary, so it has no contract in force.
+    let global = "\
+static struct op *last;
+static int dropping(void *rk, void *rkq, struct op *rko) { c_free(last); last = NULL; return 0; }
+void set_dropping(struct op *o) { o->op_cb = dropping; }
+void drop_formal(struct op *o) { c_op_destroy(o); }";
+    let rows_global = rows(global);
+    assert!(
+        rows_global["drop_formal"].refused_with("callback-uncontracted"),
+        "{:?}",
+        rows_global["drop_formal"]
+    );
+    // An open member set refuses the formal as it refuses a local.
+    let open = "\
+void set_any(struct op *o, void *f) { o->op_cb = f; }
+void drop_formal(struct op *o) { c_op_destroy(o); }";
+    let rows_open = rows(open);
+    assert!(
+        rows_open["drop_formal"].refused_with("callback-member-open"),
+        "{:?}",
+        rows_open["drop_formal"]
     );
 }

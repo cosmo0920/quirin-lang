@@ -1516,6 +1516,16 @@ pub(crate) fn settle(
 /// first, as a direct callee's is. An over-approximation (every candidate the
 /// body names once it calls such a declaration), which only orders the
 /// derivation; empty for every body that calls none.
+///
+/// Card RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN (rule 12n, amended): a
+/// body that calls a declaration with a member invocation also gets an edge to
+/// every in-unit function of that member's closed set in this unit (the set
+/// [`Parser::member_candidates`] decides over; an open set adds none, since
+/// the call refuses in every run). Those candidates are stores elsewhere in
+/// the unit, never named in the body, so without the edge the caller's
+/// summary could be derived before theirs, read them as uncontracted there,
+/// and leave a formal it releases through the call unbound (`UnknownAlias` in
+/// the reported run, which decides the member exactly as for a local).
 pub(crate) fn callback_edges(
     tokens: &[super::Token],
     function: &str,
@@ -1537,29 +1547,51 @@ pub(crate) fn callback_edges(
         return edges;
     };
     let body = &tokens[start + 1..end];
-    let invokes = body.iter().enumerate().any(|(at, token)| {
-        body.get(at + 1).is_some_and(|next| next.text == "(")
-            && contracts
-                .retaining_contract(&token.text)
-                .is_some_and(|declared| {
-                    declared.callbacks.iter().any(|clause| {
-                        matches!(
-                            clause,
-                            CallbackClause::Invoked { .. } | CallbackClause::Table { .. }
-                        )
-                    })
-                })
-    });
-    if !invokes {
-        return edges;
-    }
+    let mut invokes = false;
+    let mut members = BTreeSet::new();
     for (at, token) in body.iter().enumerate() {
-        if candidates.contains(&token.text)
-            && token.text != function
-            && body.get(at + 1).is_none_or(|next| next.text != "(")
-        {
-            edges.insert(token.text.clone());
+        if body.get(at + 1).is_none_or(|next| next.text != "(") {
+            continue;
         }
+        let Some(declared) = contracts.retaining_contract(&token.text) else {
+            continue;
+        };
+        for clause in &declared.callbacks {
+            match clause {
+                CallbackClause::Invoked { .. } | CallbackClause::Table { .. } => invokes = true,
+                CallbackClause::MemberInvoked { member, .. } => {
+                    members.insert(member.spelling());
+                }
+                _ => {}
+            }
+        }
+    }
+    if invokes {
+        for (at, token) in body.iter().enumerate() {
+            if candidates.contains(&token.text)
+                && token.text != function
+                && body.get(at + 1).is_none_or(|next| next.text != "(")
+            {
+                edges.insert(token.text.clone());
+            }
+        }
+    }
+    if !members.is_empty() {
+        let closed = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            members
+                .iter()
+                .filter_map(|member| {
+                    crate::callback_member_closure::closure(&[unit.member_facts()], member).ok()
+                })
+                .flatten()
+                .collect::<BTreeSet<_>>()
+        })
+        .unwrap_or_default();
+        edges.extend(
+            closed
+                .into_iter()
+                .filter(|name| candidates.contains(name) && name != function),
+        );
     }
     edges
 }
