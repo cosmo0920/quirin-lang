@@ -12,7 +12,40 @@ BEFORE binary `bin/before` (built from `b565f79ab`, `scripts/build.sh`),
 corpus arbiter `66910c10` (`scripts/measure-binary.sh`),
 `scripts/size_members.py` ([sizes](artifacts/size-before-corpus.json)):
 
-SIZES-TABLE
+| member | leaves | functions | decided alone | alone |
+| --- | ---: | ---: | ---: | --- |
+| `rd_kafka_op_destroy` | 132 | 83 | 2 | `rd_kafka_event_destroy`, `ut_op_destroy_free` |
+| `rd_kafka_q_serve0` | 3 | 3 | 2 | `rd_kafka_q_serve`, `rd_kafka_q_serve_maybe_consume` |
+| `rd_kafka_q_pop_serve0` | 3 | 3 | 2 | `rd_kafka_q_pop_serve`, `rd_kafka_q_pop_serve_maybe_consume` |
+| `rd_kafka_q_serve_maybe_consume` | 2 | 2 | 2 | `rd_kafka_poll`, `rd_kafka_queue_poll_callback` |
+| `rd_kafka_q_serve` | 12 | 10 | 0 |  |
+| `rd_kafka_q_pop_serve` | 2 | 2 | 1 | `rd_kafka_q_pop` |
+| `rd_kafka_poll_cb` | 4 | 4 | 0 |  |
+| `rd_kafka_q_pop_serve_maybe_consume` | 1 | 1 | 1 | `rd_kafka_queue_poll` |
+| `rd_kafka_q_pop` | 38 | 15 | 0 |  |
+| `rd_kafka_op_handle` | 2 | 2 | 0 |  |
+| `rd_kafka_op_handle_std` | 1 | 1 | 0 |  |
+| `rd_kafka_op_call` | 4 | 2 | 0 |  |
+| `rd_kafka_op_new_cb` | 14 | 14 | 0 |  |
+| `rd_kafka_op_new0` | 87 | 86 | 0 |  |
+| `rd_kafka_op_reply` | 13 | 7 | 0 |  |
+| `rd_kafka_op_error_reply` | 1 | 1 | 0 |  |
+| `rd_kafka_q_wait_result` | 0 | 0 | 0 |  |
+| `rd_kafka_q_purge0` | 0 | 0 | 0 |  |
+| `rd_kafka_event_destroy` | 1 | 1 | 0 |  |
+
+The ledger entry's seven sizes reproduce exactly on this base (132 / 83 / 2,
+3 / 3 / 2, 3 / 3 / 2, 2 / 2 / 2, 12 / 10 / 0, 2 / 2 / 1, 4 / 4 / 0); the rest
+are neighbours sized for the design. No member has a leaf on the system
+route or the tail-pause slice ([system](artifacts/size-before-system.json),
+[slice](artifacts/size-before-slice.json)): neither selects a librdkafka unit.
+
+BEFORE runs (`private/cg22op/`, binary `2ccd6e50…`, `run.json`'s
+`binary_sha256`): corpus **935 / 9 / 3,890** (`bdf5f1c8…`, the brief's;
+458.8 s); system **93 / 4 / 351** (`6fd1e8fa…`; the report embeds this
+worktree's paths, so its digest differs from the brief's `f596d64b…` while the
+totals agree; 62.4 s); slice **52 / 1 / 347, 4 Pending** (`75578164…`, paths
+embedded likewise; 28.1 s).
 
 Every body was read by hand at `66910c10` and `046accf6`
 (`scripts/body.py`): byte-identical at both for every member and every
@@ -223,7 +256,8 @@ contract {
 
 ### 2.3 Clause 3: a registration carried by the object
 
-The invocation names the member; the registrar names where it stores.
+The invocation names the member; the run's stores close its candidates. The
+registrar's optional member argument serves the per-path case only.
 
 ```qcore
 // rd_kafka_op_new_cb (rdkafka_op.c:785-792): rko->rko_op_cb = cb
@@ -246,20 +280,26 @@ ensures normal resource_callback_member_invoked(rko, rd_kafka_op_s, rko_op_cb, r
   the function pointer stored in `OBJ->FIELD` (`OBJ` a parameter or
   `handed`; `TAG` the struct tag, `FIELD` a dotted member path, as
   `nonnull_member(TAG, FIELD)` names one) is called zero or more times with
-  `A…`. `resource_callback_registered(F, H, TAG, FIELD)` adds where the
-  registrar stores `F` (rule 13y's store check then requires `H->FIELD = F`).
-* **Closure by evidence, run-wide** (the fold `nonnull_member` uses): every
-  store the analysed units make to `TAG.FIELD` must be a null constant, a
-  function designator, the `F` of a declared registrar naming that member
-  (each call of the registrar in any unit then contributes its actual, under
-  the same test), or a read of another closed member (`rko_serve =
-  orig_destq->rkq_serve`; the fold iterates to the least closed set). Any
-  other store (a formal of an undeclared function, a call's result, a cast,
-  an untyped whole-object write, an address-taken member) **opens** the
-  member for the run: every clause naming it refuses
-  (`callback-member-open`, naming the store). The candidate set is then
-  decided as rule 13u's (each candidate a contract in force, the identity on
-  the receiving positions, a `handed` position taken per clause 1).
+  `A…`.
+* **Closure by evidence, run-wide** (the fold `nonnull_member` uses), over
+  Clang's AST of every analysed unit: every store to `TAG.FIELD` must be a
+  null constant, a function designator, a read of another closed member
+  (`rko_serve = orig_destq->rkq_serve`, `rkq_serve = par_rkq->rkq_serve`,
+  `rd_kafka_op_new_cb(…, rko->rko_u.leaders.cb)`), or a formal of a function
+  defined in the run whose address is never taken (every call direct, not
+  variadic), which then stands for the union of its actuals at every call in
+  the run under the same test (`rd_kafka_op_new_cb`'s `cb`,
+  `rd_kafka_topic_partition_list_query_leaders_async`'s `cb`). The fold
+  iterates to the least closed set. Any other store (a call's result, a
+  cast, an address-taken function's formal, an untyped whole-object write, an
+  address-taken member) **opens** the member for the run: every clause
+  naming it refuses (`callback-member-open`, naming the store). So a
+  registrar needs no declaration of its own for the closure; the optional
+  `resource_callback_registered(F, H, TAG, FIELD)` serves only the per-path
+  registration below (rule 13y then checks the store `H->FIELD = F`). The
+  candidate set is then decided as rule 13u's (each candidate a contract in
+  force, the identity on the receiving positions, a `handed` position taken
+  per clause 1).
 * The per-path registration of rule 13w still wins where it exists: an op
   this body created with `rd_kafka_op_new_cb(…, f)` (or `rd_kafka_op_new`,
   no callback) has that one registration in force, not the run-wide set.
@@ -298,8 +338,108 @@ no candidate that calls an `rk->rk_conf` callback is declared, so it stays
 
 ## 5. Predicted yield per callee
 
-PREDICTED-YIELD
+Declared under the proposal (`qcore-provider-librdkafka`, `client.qv`, each
+body read at both revisions and pinned): `rd_kafka_q_serve0`,
+`rd_kafka_q_serve`, `rd_kafka_q_serve_maybe_consume` (clauses 1 and 3);
+`rd_kafka_q_pop_serve0`, `rd_kafka_q_pop_serve`,
+`rd_kafka_q_pop_serve_maybe_consume` (the same, plus the op a `PASS` hands
+back: `resource_return_owned(nullable)`); `rd_kafka_op_call` (clause 3);
+`rd_kafka_op_destroy` (clauses 2 and 3). **Not declared:** `rd_kafka_poll_cb`,
+`rd_kafka_consume_cb` and `rd_kafka_background_queue_serve` (each calls a
+callback the application registered in `rk`: the out-of-scope decision);
+`rd_kafka_q_pop` (`REFCOUNT-Q-POP-OWNED-OP` stands);
+`rd_kafka_q_wait_result` and `rd_kafka_q_purge0` keep their declarations
+(section 6).
+
+| callee | what its callers read after | Unknown → Safe |
+| --- | --- | ---: |
+| `rd_kafka_q_serve0` | the two forwarders hand a formal: `callback-undecided`; the member sets: `callback-uncontracted` | 0 |
+| `rd_kafka_q_serve`, `_serve_maybe_consume` | `rd_kafka_poll_cb` (7 sites), `rd_kafka_consume_cb`, `rd_kafka_background_queue_serve`: `callback-uncontracted`; the NULL sites: the `rko_serve` set (which holds `rd_kafka_poll_cb`) and the `rko_op_cb` set, `callback-uncontracted` | 0 |
+| `rd_kafka_q_pop_serve0`, `_pop_serve`, `_pop_serve_maybe_consume` | the same; `rd_kafka_q_pop`'s own row reads the member sets | 0 |
+| `rd_kafka_poll_cb` | unchanged (`call to uncontracted function`) | 0 |
+| `rd_kafka_op_call` | the `rko_op_cb` set: `callback-uncontracted` | 0 |
+| `rd_kafka_op_destroy` | the `rko_op_cb` set, 29 candidates with no contract: `callback-uncontracted`, except an op whose registration this body made (rule 13w), which needs a declared constructor (none is declared) | 0 |
+
+**Predicted totals: corpus, system and slice unchanged in status** (corpus 935 / 9 / 3,890,
+system 93 / 4 / 351, slice 52 / 1 / 347 / 4 Pending; the null property
+likewise, measured base against tip at implementation), no `Safe → non-Safe` correction (no `Safe` row of the BEFORE run
+calls or names a member the proposal declares: `scripts/safe_callers.py`,
+[0 rows](artifacts/safe-callers-before-corpus.json)), no leak, violation or
+`Unsafe` added. The movement is leaves only: every `call to uncontracted
+function` naming a declared member becomes a named refusal from section 4.
+The closure (clause 3) is predicted to **close** both op members (29 and 4
+candidates); a Clang store the textual census missed would open one
+(`callback-member-open`), which changes no status either.
+
+Why the yield is zero, and what would move it (each outside this card's
+three clauses, offered as follow-ups):
+
+1. **Every served queue may run `rd_kafka_poll_cb`**, whatever its caller
+   passes (`rko_serve` is copied from the destination queue's `rkq_serve`,
+   which is `rd_kafka_poll_cb` on `rk_ops` and `rk_logq`), and it calls the
+   application's `rk_conf` callbacks: blocked on the pending
+   `rd_kafka_destroy_app` decision (W48-CALLEE-DECISION-TABLE round 3).
+2. **The 29 `rko_op_cb` candidates and the other three `rkq_serve`
+   candidates have no contract.** Each would be a declared assumption read by
+   hand; 12 have no `ERR__DESTROY` test, and some do real work when
+   `rd_kafka_op_destroy` calls them (`rd_kafka_offset_reset_op_cb`), so they
+   are not the identity rule 13u needs.
+3. **The op constructors are undeclared** (`rd_kafka_op_new0`,
+   `rd_kafka_op_new_cb`, `rd_kafka_op_req*`), so no caller tracks an op it
+   destroys: clause 2's per-arm precision and rule 13w's per-path
+   registration have no caller to serve yet.
+4. **Forwarders.** Of the 10 rows a member decides alone, four are one-line
+   forwarders handing a callback formal on (`rd_kafka_q_serve`,
+   `_serve_maybe_consume`, `_pop_serve`, `_pop_serve_maybe_consume`); three
+   pass `rd_kafka_poll_cb` (`rd_kafka_poll`, `rd_kafka_queue_poll_callback`,
+   `rd_kafka_queue_poll`); `rd_kafka_q_pop` passes NULL and reaches it
+   through `rko_serve`; two destroy an op handed to them
+   (`rd_kafka_event_destroy`, `ut_op_destroy_free`: the `rko_op_cb` set). A forwarded
+   callback formal (a rule reading a formal handed to the same clause
+   position of a callee as its own declaration's clause, as rule 12s forwards
+   dispositions) could let the four forwarders stand on their own
+   declarations: a fourth mechanism, not one of the three, predicted +4 at
+   most if adopted.
 
 ## 6. The served-queue premise (C04.18)
 
-PREMISE-PARAGRAPH
+**Kept, with a sharper reason.** `rd_kafka_q_wait_result` pops through
+`rd_kafka_op_handle` with a null callback, so the op's `rko_serve` runs:
+its closed set holds `rd_kafka_poll_cb`, which calls the application's
+`rk_conf` callbacks with the served queue: deciding it would decide the
+out-of-scope class. `rd_kafka_q_purge0` runs only `rd_kafka_op_destroy`,
+which passes `rkq = NULL` to the op's callback, so no candidate receives the
+served queue as an argument; but the 29 candidates have no contract, and the
+arms run further carried callbacks (`rd_list_destroy` over lists whose
+`free_cb` the op's creator registered, `rd_kafka_buf_handle_op`'s
+`rkbuf_cb`), so the premise cannot be discharged by these clauses. Both
+declarations stay byte for byte (no re-pin; the closed sets and this reason
+go into the report and the module comment, which no digest covers): making
+them callback declarations would withhold them and turn every `Safe` row
+resting on them (one corpus row today:
+`rd_kafka_toppar_purge_and_disable_queues`, through `rd_kafka_q_purge0`; none
+through `rd_kafka_q_wait_result`) `Unknown` with nothing gained.
+
+## 7. Choices asked of the user
+
+1. **Clause 1's word:** `handed` (proposed), `given`, `supplied_owned` or
+   `_owned`; and whether a candidate that takes the object only on some
+   return codes is refused (proposed) or read per class (C04.13).
+2. **Clause 2's form:** per-arm clauses with `resource_discriminant` and
+   `when FIELD == K` / `otherwise` (proposed), the block form, or no member
+   arms (a plain release plus the closed invocation) while no caller tracks
+   an op.
+3. **Clause 3's spelling:** `resource_callback_member_invoked(OBJ, TAG,
+   FIELD, A…)` with the run-wide closure (proposed), a dotted `TAG.FIELD`,
+   or a declaration-level `requires resource_callback_member(TAG, FIELD);`.
+4. **Scope, given the zero predicted yield:** implement the three clauses
+   with Lean, body checks and the member declarations as proposed (the
+   DISCHARGE's "each measured") and register items 1–4 of section 5 as
+   follow-ups; or also add the forwarded-formal rule (item 4) here.
+
+Lean, after approval (`QCore.CallbackContracts` extended, audited): a handed
+object never stays with the callee (`a_handed_object_is_taken`); the arm
+release is the join over arms and an undeclared arm is never `Safe`
+(`arm_join_is_cautious`, `an_undeclared_arm_is_unknown`); an open member set
+never discharges (`an_open_member_never_decides`); vectors bound to the Rust
+tables as the existing module's are.

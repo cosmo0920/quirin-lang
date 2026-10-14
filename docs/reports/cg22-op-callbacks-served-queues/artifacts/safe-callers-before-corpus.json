@@ -1,0 +1,7 @@
+{
+ "safe_callers": [],
+ "premised": {
+  "rd_kafka_q_wait_result": 0,
+  "rd_kafka_q_purge0": 1
+ }
+}
