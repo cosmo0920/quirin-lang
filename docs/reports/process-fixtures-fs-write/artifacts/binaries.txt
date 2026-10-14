@@ -9,3 +9,4 @@ cd39c673b9bae43485b762c68dd7f10e552beb15b9a3f8832cc3ed1d2e0b4eee  target/debug/d
 f62c9a47ea6d3d1e5f8f071e104a5a5c377bbe3eb18ae980e6ae2051b6000fd5  target/debug/deps/subcommand_plugins-5d10039f56d44e43
 1ede6d22808848619192a06b855d6171d4fe38039153cee473ca69f3488225cf  target/debug/deps/user_contract_plugins-6d35a86be1914721
 ff080d2ea768abab2a84c490396d54bfd774f63adb3d82e84410b1242095ba0b  target/release/quirin-audit
+921e099b4c26a0310ab7a8d81e0936e573e708d6e9d5ca9cd64cc4107a738461  private/pfw/bin/tip2/quirin-audit (release at 3f3de2a5e, rustc 1.99.0)

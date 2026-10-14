@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE card gate on base b565f79ab, every code step at 04e308303 (implementation b30c9d4e7 plus records), docs steps at b8af22cab, scripts docs/reports/process-fixtures-fs-write/scripts/gate.sh and finish-gate.sh, logs private/pfw/gate-g1 of this worktree. INCOMPLETE: two steps failed on the first run and were not rerun to obtain a pass. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked -D warnings 101 under the host's rustup stable 1.99.0, which replaced 1.98.0 at 2026-10-14 02:48 +0900 during the card (needless_borrows_for_generic_args at three production sites unchanged since the base; a full clippy without -D reports only those three; STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS); run_test_binaries.py 488 units, 501 summaries, 7,955 passed, 1 failed (std_socket_inet the_declared_ipv4_example_runs_sanitized_twice_and_writes_the_reference_observation, fixed port 49301, SOCKET-INET-FIXED-PORT-COLLISION shape; 36 passed alone afterwards, recorded, not substituted), 14 ignored, exit 101 (private/pfw/tests-g1); both reevaluation probes exit 0; check_lean_audits.py 317 audits passed; provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK, cargo fmt and clippy -D warnings in providers/ 0 / 0; python suite 365 OK and docs index check 0 (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 7955,
+  "note": "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE card gate g2 (the gate of record) on base b565f79ab, every step at 7fdb7a1d3 (implementation b30c9d4e7, the integrator-requested clippy 1.99 borrow removals 3f3de2a5e, and records), with one exclusive flock on the shared heavy lock held for the whole gate (02:22:29Z to 02:44:45Z), scripts docs/reports/process-fixtures-fs-write/scripts/gate-g2.sh, gate.sh and finish-gate.sh, logs private/pfw/gate-g2 of this worktree, toolchain the host's rustup stable 1.99.0. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked -D warnings 0; run_test_binaries.py 488 units, 501 summaries, 7,956 passed, 0 failed, 14 ignored, exit 0 (private/pfw/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed; provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK, cargo fmt and clippy -D warnings in providers/ 0 / 0; python suite 365 OK and docs index check 0 (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate g1 (gate-g1.json, gate-g1/) failed clippy under the newly installed 1.99.0 and one fixed-port std_socket_inet run; both are recorded in the report.",
+  "workspace_tests": 7956,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 317,
@@ -7080,8 +7080,8 @@
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
-  "cargo_clippy": "failed",
-  "standing_gate": "incomplete",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
   "full_language_conformance": false,
   "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3ef47ba2bd7293c5/docs/reports/process-fixtures-fs-write/gate.json)"
  },

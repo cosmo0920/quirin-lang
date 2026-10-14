@@ -219,9 +219,48 @@ routes and the null property were re-run with the new tip's release binary
 [`scripts/arbiters2.sh`](scripts/arbiters2.sh). They were compared file for
 file against the same BEFORE as §5 (the base binary, built by 1.98.0).
 
-ARBITERS2-PENDING
+All three routes and their null-property streams are **byte-identical** to
+BEFORE ([artifacts/identity2.txt](artifacts/identity2.txt),
+[artifacts/totals2.txt](artifacts/totals2.txt)):
 
-GATE2-PENDING
+| Route | Custody (Safe / Unsafe / Unknown) | Report digest | Null property (unconditional / conditional / Unknown / Unsafe) |
+|---|---|---|---|
+| corpus | 935 / 9 / 3,890 | `bdf5f1c8…` | 1,113 / 1,435 / 2,355 / 18 |
+| system | 93 / 4 / 351 | `32741ce2…` | 84 / 125 / 245 |
+| slice | 52 / 1 / 347, 4 Pending | `773ab8b3…` | 71 / 103 / 232 |
+
+So neither the borrow removals nor the toolchain change moved a verdict.
+Wall time: corpus 526 s, system 82 s, slice 36 s (`--jobs 4`).
+
+**Gate g2.** Every step ran at `7fdb7a1d3`, which holds the implementation,
+`3f3de2a5e` and the records. The runner was
+[`scripts/gate-g2.sh`](scripts/gate-g2.sh), started as `flock <heavy.lock>
+bash gate-g2.sh`. That one exclusive lock was held for the whole gate (02:22:29Z
+to 02:44:45Z, `private/pfw/gate-g2-lock.txt`), so no other heavy step on the
+host ran inside it. Exits are in [gate/](gate/), logs in
+`private/pfw/gate-g2/`, and the summary in [gate.json](gate.json), which the
+matrix carries. The gate passed on its first run: nothing was rerun.
+
+| Step | Exit | Count |
+|---|---:|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` (stable 1.99.0) | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,956 passed, 0 failed**, 14 ignored (`private/pfw/tests-g2/`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **365** OK (and 0 again after the matrix regeneration, 09b) |
+| `python3 scripts/build_docs_index.py --check` | 0 | (10b / 10c after regeneration: 0 / 0); `build_matrix.py . --gate gate.json` (09a) 0 |
+| provider gate: `providers/package.py build` / `verify qcore.libevent` | 0 / 0 | |
+| provider gate: `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | **129 passed**, 0 failed, 1 ignored |
+| provider gate: `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
+| provider gate: `cargo fmt` / `cargo clippy` in `providers/` (`-D warnings`) | 0 / 0 | |
+
+Both of g1's failures (§6.2) are gone from this run:
+- **Clippy** passes, because `3f3de2a5e` removes the three borrows.
+- **`std_socket_inet`** passed 36 of 36 inside the full suite, with the lock
+  held: no other card's gate could bind its fixed port during the run.
 
 ### 6.2 g1 (the first run, kept as recorded)
 
@@ -303,7 +342,7 @@ This card adds no numbered line.
 | release binary byte-identical | held only with the base's commit string pinned: the build script embeds HEAD |
 | arbiters unchanged | held: byte-identical on all three routes and the null property |
 | ledger 764 → 764; rule 16 amended in place | held, through an intermediate 765: the toolchain follow-up was not foreseen, and it was registered at g1 and retired after the follow-up commit. Rule 16 amended in place |
-| standing gate passes on the first run | **did not** at g1: Clippy under the host's new stable (1.99.0), and the fixed-port `std_socket_inet` row (§6.2). G2-OUTCOME |
+| standing gate passes on the first run | **did not** at g1: Clippy under the host's new stable (1.99.0), and the fixed-port `std_socket_inet` row (§6.2). Gate g2 passed on its first run (§6.1) |
 
 ## 8. Follow-ups
 
