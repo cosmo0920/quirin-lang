@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "OP-CALLBACK-CANDIDATE-CONTRACTS card gate on base 2afce9973, every code step at b9ba30ec5, scripts docs/reports/op-callback-candidate-contracts/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/opcand/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 493 units, 506 summaries, 8,023 passed, 0 failed, 14 ignored, exit 0 (private/opcand/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 319 audits passed (no Lean change); provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 8023,
-  "provider_tests": 133,
+  "note": "SERVE-FORWARDED-CALLBACK-FORMALS card gate on base 2afce9973, every code step at 4c6988cb3, scripts docs/reports/serve-forwarded-callback-formals/scripts/gate.sh (HELD=1, part `all`, steps 00-09 in one run) and finish-gate.sh, the whole gate.sh run under one exclusive flock on the shared heavy lock, logs private/sf/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 494 units, 507 summaries, 8,036 passed, 0 failed, 14 ignored, exit 0 (private/sf/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 320 audits passed (QCore.CallbackForward added); no provider gate (providers/ unchanged); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8036,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
   "python_evidence_validator_tests": 365,
-  "lean_audits": 319,
+  "lean_audits": 320,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6788,6 +6788,7 @@
    "AuditCallInstantiation.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackContracts.lean",
+   "AuditCallbackForward.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
    "AuditCapacityBoundary.lean",
@@ -7085,7 +7086,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2e4321af7fb38314/docs/reports/op-callback-candidate-contracts/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/serve-forwarded-callback-formals/gate.json)"
  },
  "named_followups": [
   {

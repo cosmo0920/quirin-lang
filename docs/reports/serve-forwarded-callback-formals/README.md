@@ -2,7 +2,8 @@
 
 Card SERVE-FORWARDED-CALLBACK-FORMALS (wave 48, round 27), gateway rule
 **[15w](../../agents/gateway.md#constraint-15w)** (rules 13u and 13y amended in
-place), Lean `QCore.CallbackForward`. Base: local `main` at `2afce9973`. The
+place), Lean `QCore.CallbackForward`. Base: local `main` at `2afce9973`, rebased
+onto `89907068d` (OP-CALLBACK-CANDIDATE-CONTRACTS, section 9). The
 [prediction](PREDICTION.md) was committed before any implementation code.
 
 ## 1. Authority and decision
@@ -154,7 +155,7 @@ registered** (the six serve declarations withdrawn in one unit, 5 rows carrying
 the leaf, 3 alone; DISCHARGE: a declaration of `rd_kafka_op_handle` and a user
 decision on a recursive exact forward, whose coinductive reading is sound for
 this safety clause but is a stronger claim than the least fixed point).
-Ledger 771 → 771.
+Ledger 771 → 771 (774 → 774 after the rebase).
 
 ## 8. Gate
 
@@ -170,3 +171,53 @@ before the matrix regeneration (its one failure is the committed matrix's
 `build_matrix.py . --gate gate.json` 0 and the suite rerun 0 (**365 OK**);
 docs index 0 and its check 0. No provider gate: nothing under `providers/` or
 `crates/qcore-schemas/` changed.
+
+## 9. Rebase onto `89907068d` (OP-CALLBACK-CANDIDATE-CONTRACTS)
+
+That card put nineteen op-callback candidate declarations in force (librdkafka
+`client.qv`), amended rules 12n and 13u and moved the ledger to 774. It shares
+no code with this card. The record conflicts (STATUS, the increment record,
+the matrix) were resolved by taking main's text and reapplying
+`scripts/update_ledger.py` and `scripts/edit_records.py`, whose anchors now
+point at main's rows. Rule 13u's two amendments merged without conflict. Rule
+15w reads callee clauses in force, so both checks were rerun on the rebased tip
+`62f77988c`.
+
+**Targeted check** (`scripts/targeted.sh t1` under one exclusive flock on the
+shared heavy lock; logs in `private/sf/targeted-t1/`, exits in
+[gate-rebased/](gate-rebased/)):
+
+* `cargo check --workspace --all-targets`: 0.
+* `cargo test -p qcore-c-gateway --no-fail-fast`: 0 (167 summaries, 2,896
+  passed, 0 failed, 8 ignored).
+* The compiler's contract tests, all 0: `contract_loader` (10 passed),
+  `qcore_contract_corpus` (2 passed), `contract_view_census` (4 passed).
+* `check_lean_audits.py`: 0 (**320 audits**).
+* `build_matrix.py . --gate gate.json`: 0; then the Python suite: 0 (**365
+  OK**).
+* The docs index and its `--check`: 0 and 0.
+
+The full standing gate in section 8 ran before the rebase.
+
+**Combined arbiter measurement** ([summary](artifacts/summary-rebased.json),
+[corpus comparison](artifacts/compare-rebased-corpus.json)). Two binaries,
+every route run with `QCORE_NULL_PROPERTY`, and each corpus `run.json` names
+its binary:
+
+* main's `m2` (`560d9844…`), built from `89907068d` and run from a detached
+  checkout of it, so it read main's contracts;
+* the rebased tip's `b2` (`3f495627…`), built from `62f77988c`.
+
+| route | main `89907068d` | rebased tip | report sha256 |
+| --- | --- | --- | --- |
+| corpus | 936 / 9 / 3,889 | **936 / 9 / 3,889** | `0a38c3b3…`, byte-identical |
+| system | 93 / 4 / 351 | the same | `ed0a3380…`, byte-identical |
+| slice | 52 / 1 / 347, 4 Pending | the same | `20769011…`, byte-identical |
+| null rows (corpus / system / slice) | | identical | `e7bf22f8…`, `89f9d9d2…`, `9150b84a…` |
+
+**No row moves.** None of the nineteen new declarations carries a callback
+clause, so rule 15w finds no new forward and no new callee in force. The serve
+family is unchanged: its callees `rd_kafka_q_serve0` and
+`rd_kafka_q_pop_serve0` still hand `callback` to the undeclared
+`rd_kafka_op_handle` and to themselves. The parity log again differs only in
+Clang AST node addresses.

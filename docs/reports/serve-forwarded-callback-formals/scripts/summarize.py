@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""summarize.py BEFORE AFTER -- SERVE-FORWARDED-CALLBACK-FORMALS: the
-measurement summary (artifacts/summary.json) of two runs named in private/sf
+"""summarize.py BEFORE AFTER [OUT] -- SERVE-FORWARDED-CALLBACK-FORMALS: the
+measurement summary (artifacts/OUT, default summary.json) of two runs named in private/sf
 (measure.sh NAME): each route's report digest, the null-property rows'
 digests, the binaries, the wall times, and the corpus parity log compared as a
 multiset with Clang AST node addresses normalised (they differ per process)."""
@@ -61,7 +61,8 @@ def main():
     }
     pb, pa = parity(PRIVATE / f"{before}-parity.jsonl"), parity(PRIVATE / f"{after}-parity.jsonl")
     out["corpus_parity"] = {"before": pb, "after": pa, "equal_modulo_addresses": pb == pa}
-    (REPORT / "artifacts/summary.json").write_text(json.dumps(out, indent=1) + "\n")
+    name = sys.argv[3] if len(sys.argv) > 3 else "summary.json"
+    (REPORT / "artifacts" / name).write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps(out, indent=1))
 
 

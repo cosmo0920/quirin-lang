@@ -7359,7 +7359,9 @@ own anchor here.
     but their callees `rd_kafka_q_serve0` and `rd_kafka_q_pop_serve0` are
     withdrawn in `rdkafka_queue.c` (each hands `callback` to the undeclared
     `rd_kafka_op_handle` and to itself), so no forwarder's callee is in force
-    (`SERVE0-CALLBACK-HAND-ON-WITHDRAWN`).
+    (`SERVE0-CALLBACK-HAND-ON-WITHDRAWN`). Rebased onto `89907068d`
+    (OP-CALLBACK-CANDIDATE-CONTRACTS' candidates in force): corpus `0a38c3b3…`,
+    system and slice byte-identical against main's own binary.
     [report](../reports/serve-forwarded-callback-formals/README.md).
 
 <a id="constraint-15x"></a>

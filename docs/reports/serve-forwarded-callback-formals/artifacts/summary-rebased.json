@@ -1,0 +1,59 @@
+{
+ "card": "SERVE-FORWARDED-CALLBACK-FORMALS",
+ "before": "m2",
+ "after": "b2",
+ "binaries": {
+  "m2": "560d98441b1774e0ba12126c0008e8a648b13a443ea8b120662850096f0ec86e",
+  "b2": "3f495627446c25ba74d105803639b48ed3f3210f18ff17345cf9f7e8245cc350"
+ },
+ "after_built_from": "62f77988c5340687ec34df72700083393dba707e",
+ "corpus_run_json_binary_sha256": {
+  "m2": "560d98441b1774e0ba12126c0008e8a648b13a443ea8b120662850096f0ec86e",
+  "b2": "3f495627446c25ba74d105803639b48ed3f3210f18ff17345cf9f7e8245cc350"
+ },
+ "routes": {
+  "corpus": {
+   "report_before": "0a38c3b3ea495150ebf5e89564051b14f8453f9dd42ad3434be81af5c3bee892",
+   "report_after": "0a38c3b3ea495150ebf5e89564051b14f8453f9dd42ad3434be81af5c3bee892",
+   "report_identical": true,
+   "null_before": "e7bf22f81c27c7a623d7e65414ac7a74b1ea8c58ccb2e541a1646366f6669af2",
+   "null_after": "e7bf22f81c27c7a623d7e65414ac7a74b1ea8c58ccb2e541a1646366f6669af2",
+   "null_identical": true
+  },
+  "system": {
+   "report_before": "ed0a33804c3f1134a69edbc027e0655bae95217e7d389c046ae7fa2fb80a33f8",
+   "report_after": "ed0a33804c3f1134a69edbc027e0655bae95217e7d389c046ae7fa2fb80a33f8",
+   "report_identical": true,
+   "null_before": "89f9d9d2669ee2c711143b991bdf76a49b504baab53bda8d3623adfba913e545",
+   "null_after": "89f9d9d2669ee2c711143b991bdf76a49b504baab53bda8d3623adfba913e545",
+   "null_identical": true
+  },
+  "slice": {
+   "report_before": "2076901149114c71b7bfe69175dfd473d9b78946ee34e6c675aec4b090efc304",
+   "report_after": "2076901149114c71b7bfe69175dfd473d9b78946ee34e6c675aec4b090efc304",
+   "report_identical": true,
+   "null_before": "9150b84a03b0c40cfa6c983f8be6137b420ecbbee7240f5d4e8e47228f9f555e",
+   "null_after": "9150b84a03b0c40cfa6c983f8be6137b420ecbbee7240f5d4e8e47228f9f555e",
+   "null_identical": true
+  }
+ },
+ "seconds": {
+  "m2": "522.017",
+  "m2-system": "76.877",
+  "m2-slice": "38.747",
+  "b2": "522.313",
+  "b2-system": "77.280",
+  "b2-slice": "38.987"
+ },
+ "corpus_parity": {
+  "before": [
+   687095,
+   "47e5246ea5e7e069295e0427bb0e0c5ff468e3f51478c7efc4d99c831af5eda6"
+  ],
+  "after": [
+   687095,
+   "47e5246ea5e7e069295e0427bb0e0c5ff468e3f51478c7efc4d99c831af5eda6"
+  ],
+  "equal_modulo_addresses": true
+ }
+}
