@@ -14,7 +14,7 @@ set -u
 name="$1"
 routes="${2:-corpus,system,slice}"
 here="$(cd "$(dirname "$0")" && pwd)"
-repo="$(cd "$here/../../../.." && pwd)"
+repo="${REPO:-$(cd "$here/../../../.." && pwd)}"
 out="$repo/private/cg22op"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
 mkdir -p "$out" || exit 2

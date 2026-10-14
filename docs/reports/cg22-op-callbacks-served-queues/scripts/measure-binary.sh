@@ -8,7 +8,7 @@
 set -u
 name="$1"; binary="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"; routes="${3:-corpus,system,slice}"
 here="$(cd "$(dirname "$0")" && pwd)"
-repo="$(cd "$here/../../../.." && pwd)"
+repo="${REPO:-$(cd "$here/../../../.." && pwd)}"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
 case ",$routes," in *,corpus,*)
   mkdir -p "$repo/target/release" || exit 2
