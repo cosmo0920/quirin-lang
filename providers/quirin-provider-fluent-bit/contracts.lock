@@ -33,6 +33,70 @@
       ]
     },
     {
+      "function": "cb_kafka_logger",
+      "module": "fluent_bit/logging.qv",
+      "contract_sha256": "4d4360fa88f632e9c3737a6af10a43d1180d8a3fc0bc40211020e21fb0fa2e5a",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "plugins/out_kafka/kafka.c",
+              "kind": "definition",
+              "declaration_sha256": "df83b3c5ec264186834224ce1214430d07e19ad0b474a11f035a379273c3d819",
+              "body_sha256": "54794e77f7a24b78275d1e2de2c4ed13c474153ddbaf19653b1879af2a07a174"
+            },
+            {
+              "path": "plugins/out_kafka/kafka_callbacks.h",
+              "kind": "declaration",
+              "declaration_sha256": "df83b3c5ec264186834224ce1214430d07e19ad0b474a11f035a379273c3d819"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cb_kafka_msg",
+      "module": "fluent_bit/logging.qv",
+      "contract_sha256": "6898d0b33ef232ce5eeff3a29f74709123f7f56427d7af8b3847a3f72b267210",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "plugins/out_kafka/kafka.c",
+              "kind": "definition",
+              "declaration_sha256": "fa9176c00b89b24c83fdb6957f6844038b77c9ce40eaa450985512335b725eb8",
+              "body_sha256": "af98105dacf9f56683bc51cdd4098a704d025b790dd7611fd2e7db76430cd8f9"
+            },
+            {
+              "path": "plugins/out_kafka/kafka_callbacks.h",
+              "kind": "declaration",
+              "declaration_sha256": "fa9176c00b89b24c83fdb6957f6844038b77c9ce40eaa450985512335b725eb8"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cb_queue_chunks",
       "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",
@@ -1859,6 +1923,33 @@
               "kind": "definition",
               "declaration_sha256": "53064d14fec477ddd0c7ec308b7644143f776c6dc8846c7aed7461f3ed773fc0",
               "body_sha256": "499f143342e1d2d44a7351978063b664385ef426ec131324abf91b71d2a2d682"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "oauthbearer_token_refresh_cb",
+      "module": "fluent_bit/logging.qv",
+      "contract_sha256": "66f912691ce372a6567013c5070aca84a301b25f56ede9efcde5bdf3d622fe91",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "src/aws/flb_aws_msk_iam.c",
+              "kind": "definition",
+              "declaration_sha256": "9d35f9c60125e3296504767f2062b2d5ace29496fef2d4cb495faff0eca2e57f",
+              "body_sha256": "89e9f003dc78f38f6af05f15ea5f5b634aca381fd8c919e29696eafdca41bafe"
             }
           ]
         }
