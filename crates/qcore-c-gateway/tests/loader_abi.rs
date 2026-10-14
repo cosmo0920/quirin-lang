@@ -631,6 +631,19 @@ const ROWS: &[Row] = &[
         outcome: Some(AbiRefusal::ParameterTypeDisagreement),
     },
     Row {
+        label: "the served-queue shape: an enumeration-returning function type behind \
+                typedefs of its own parameter types",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef enum { K_A, K_B } k_kind_t;\n\
+            typedef enum { K_R1, K_R2 } k_res_t;\n\
+            typedef struct k_q_s k_q_t; typedef struct k_op_s k_op_t;\n\
+            typedef k_res_t(k_serve_cb_t)(void *rk, k_q_t *rkq, struct k_op_s *rko,\n\
+                                          k_kind_t cb_type, void *opaque)\n\
+                __attribute__((warn_unused_result));\n\
+            void k_use(k_q_t *p, k_serve_cb_t *n);",
+        outcome: None,
+    },
+    Row {
         label: "a pointer to a pointer to a function type stays refused",
         declared: "p: ptr<mut, u8>, n: i32",
         c: "typedef int(k_cb_t)(void *, int);\nvoid k_use(k_cb_t **p, int n);",

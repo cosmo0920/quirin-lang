@@ -976,7 +976,16 @@ fn read_function_pointer_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, Type
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES**: `typedef RET (NAME)(PARAMETERS)`
 /// or `typedef RET NAME(PARAMETERS)` — a function type, nothing else (a return
 /// type carrying its own declarator punctuation falls through, unread).
-fn read_function_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+fn read_function_typedef<'a>(mut slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+    // A trailing GNU attribute qualifies the function type, not its shape
+    // (`RD_WARN_UNUSED_RESULT`, `__attribute__((warn_unused_result))`).
+    while slice.last() == Some(&")") {
+        let open = matching_open(slice, slice.len() - 1)?;
+        match open.checked_sub(1).map(|at| slice[at]) {
+            Some("__attribute__") => slice = &slice[..open - 1],
+            _ => break,
+        }
+    }
     if slice.last() != Some(&")") {
         return None;
     }
