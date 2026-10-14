@@ -25,7 +25,7 @@ REGISTER = [
         "undeclared rd_kafka_op_handle and to themselves, so rule 15w's forwarders stay "
         "withdrawn",
         "why": "Registered by SERVE-FORWARDED-CALLBACK-FORMALS (corpus 66910c10 ec4ccfeb "
-        "936/9/3,889 -> MEASURED_CORPUS, system 93/4/351 and slice 52/1/347/4 Pending, "
+        "936/9/3,889 -> ec4ccfeb 936/9/3,889 byte-identical, binary 087147af, system 93/4/351 and slice 52/1/347/4 Pending, "
         "null property byte-identical; base main 2afce9973). Rule 15w validates "
         "rd_kafka_q_serve, rd_kafka_q_serve_maybe_consume, rd_kafka_q_pop_serve and "
         "rd_kafka_q_pop_serve_maybe_consume only on a callee whose declaration is in force "

@@ -1,0 +1,59 @@
+{
+ "card": "SERVE-FORWARDED-CALLBACK-FORMALS",
+ "before": "before",
+ "after": "a2",
+ "binaries": {
+  "before": "3eca209303efd28dc3cca1cf71bd3d66d3d1b356afee17bdb46958882d2b563d",
+  "a2": "087147afb7a459057a43050c830628d830616b5bd9326fb1c2054147a1b1eab3"
+ },
+ "after_built_from": "83041c5657ebc2ef324ad80ef467a0160c41fb77",
+ "corpus_run_json_binary_sha256": {
+  "before": "3eca209303efd28dc3cca1cf71bd3d66d3d1b356afee17bdb46958882d2b563d",
+  "a2": "087147afb7a459057a43050c830628d830616b5bd9326fb1c2054147a1b1eab3"
+ },
+ "routes": {
+  "corpus": {
+   "report_before": "ec4ccfeb796704636d3d6eb73d05ec6e7720d76ba5f8e718e1b7d70d6c62c75c",
+   "report_after": "ec4ccfeb796704636d3d6eb73d05ec6e7720d76ba5f8e718e1b7d70d6c62c75c",
+   "report_identical": true,
+   "null_before": "a1067ba099ba6e2f0b2e14251c128dfb8ff03b5de61cdda5303cd3135a184609",
+   "null_after": "a1067ba099ba6e2f0b2e14251c128dfb8ff03b5de61cdda5303cd3135a184609",
+   "null_identical": true
+  },
+  "system": {
+   "report_before": "968f193cf87f324fa4b1c8f9a705384dabd0f059d66dff290f4286c51cac58b6",
+   "report_after": "968f193cf87f324fa4b1c8f9a705384dabd0f059d66dff290f4286c51cac58b6",
+   "report_identical": true,
+   "null_before": "f42ef95e45ccba78eee47f11611b171deb412e4225fd4853ff381355e583bf3f",
+   "null_after": "f42ef95e45ccba78eee47f11611b171deb412e4225fd4853ff381355e583bf3f",
+   "null_identical": true
+  },
+  "slice": {
+   "report_before": "b882377483fc2a5cf46ddfa6da04675d798a7cca267c5b1b056615346edabbab",
+   "report_after": "b882377483fc2a5cf46ddfa6da04675d798a7cca267c5b1b056615346edabbab",
+   "report_identical": true,
+   "null_before": "c6a6f6830f98ab6635cbd3f34dbcf5f5b48ed386b1262f501b48b0204f5c20e4",
+   "null_after": "c6a6f6830f98ab6635cbd3f34dbcf5f5b48ed386b1262f501b48b0204f5c20e4",
+   "null_identical": true
+  }
+ },
+ "seconds": {
+  "before": "555.695",
+  "before-system": "77.596",
+  "before-slice": "38.736",
+  "a2": "522.213",
+  "a2-system": "84.461",
+  "a2-slice": "39.173"
+ },
+ "corpus_parity": {
+  "before": [
+   687062,
+   "82dc97e498d3be2e0c3b2a4222b3ce6eefeee6278e168e22af78b17a076f93a1"
+  ],
+  "after": [
+   687062,
+   "82dc97e498d3be2e0c3b2a4222b3ce6eefeee6278e168e22af78b17a076f93a1"
+  ],
+  "equal_modulo_addresses": true
+ }
+}

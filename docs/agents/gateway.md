@@ -7349,7 +7349,17 @@ own anchor here.
     `any_other_mention_refuses`, `no_mention_refuses`,
     `a_recursive_forward_alone_never_stands`, `forward_vectors_hold` bound to
     the module's `FORWARD_VECTORS`); `tests/serve_forwarded_callback_formals.rs`.
-    MEASUREMENT_PLACEHOLDER
+    Measured (corpus `66910c10`, system and tail-pause slice, base main
+    `2afce9973`, binary `087147af…`): corpus **936 / 9 / 3,889**, the report
+    byte-identical (`ec4ccfeb…`), system 93 / 4 / 351 and slice 52 / 1 /
+    347 / 4 Pending byte-identical, the null property's rows identical on
+    all three; no forward stands in the corpus: the four served-queue
+    forwarders (`rd_kafka_q_serve`, `_serve_maybe_consume`,
+    `rd_kafka_q_pop_serve`, `_pop_serve_maybe_consume`) are exact forwards,
+    but their callees `rd_kafka_q_serve0` and `rd_kafka_q_pop_serve0` are
+    withdrawn in `rdkafka_queue.c` (each hands `callback` to the undeclared
+    `rd_kafka_op_handle` and to itself), so no forwarder's callee is in force
+    (`SERVE0-CALLBACK-HAND-ON-WITHDRAWN`).
     [report](../reports/serve-forwarded-callback-formals/README.md).
 
 <a id="constraint-15x"></a>

@@ -20,14 +20,10 @@ import re
 import sys
 
 DECLARED = [
-    # CG22-CALLBACK-REGISTRY-CONTRACT: the callback declarations and the two
-    # re-declared in place (a lost or gained leaf naming one of them).
-    "bsearch", "qsort", "pthread_once",
-    "cmt_mpack_unpack_array", "cmt_mpack_unpack_map",
-    "ctr_mpack_unpack_array", "ctr_mpack_unpack_map",
-    "rd_list_init", "rd_list_new", "rd_list_add", "rd_list_destroy", "rd_list_clear",
-    "pb_write", "pb_encode_varint",
-    "rd_kafka_topic_partition_list_sort", "msgpack_packer_init",
+    # SERVE-FORWARDED-CALLBACK-FORMALS: the serve family rule 15w reads (a
+    # lost or gained leaf naming one of them).
+    "rd_kafka_q_serve", "rd_kafka_q_serve_maybe_consume", "rd_kafka_q_serve0",
+    "rd_kafka_q_pop_serve", "rd_kafka_q_pop_serve_maybe_consume", "rd_kafka_q_pop_serve0",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

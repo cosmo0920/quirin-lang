@@ -871,6 +871,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [schema-1-compatibility](schema-1-compatibility/README.md) | Schema 1.0 compatibility and package evidence |
 
+| [serve-forwarded-callback-formals](serve-forwarded-callback-formals/README.md) | SERVE-FORWARDED-CALLBACK-FORMALS: forwarded callback formals |
+
 | [slice-permissions-write-lend](slice-permissions-write-lend/README.md) | SLICE-PERMISSIONS-WRITE-LEND — the write half of CT07, and the fraction that finally exists (wave 29) |
 
 | [slot-move-and-interior-borrow](slot-move-and-interior-borrow/README.md) | SLOT-MOVE-AND-INTERIOR-BORROW: slot moves, borrowed results, derived out slots |
