@@ -1,0 +1,10 @@
+# scripts/identity_rebased.sh at 3b8a22c90 (rebased onto 5ee141946), under the
+# heavy lock. Exits: cli-build 0, sdk-package 0, sdk-verify-by-base 0,
+# packages-build 0, compare 0. Logs: private/ppb/identity-rebased/.
+# Compared against private/ppb/pkg/base (base CLI) and
+# private/ppb/packages/base (package.py at b565f79ab).
+sdk package files: 2 identical to base (bytes and mode): True
+  quirin-plugin-example-checker a0c85ff38cfe6d1ae7e98b8f2a0b1af540203560d5b96b7563516e4009db8788 0o755
+  verifier-plugin.json af35cd6bd2a0ce6641d4b64b49b609f33b6d06fb0a3e9b571280a1af9fc4c61f 0o664
+packages.json equal: True
+first-party installed files: 104 identical to base (bytes and mode): True

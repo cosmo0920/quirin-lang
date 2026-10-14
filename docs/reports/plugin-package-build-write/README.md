@@ -205,3 +205,53 @@ gave 3 of 10 in the pilot and the figures above.
   [wave-48-part7](../../development/increments/wave-48-part7.md); STATUS
   (follow-up count and the fixture-writer paragraph); docs index.
 - **No Lean.**
+
+## 8. Byte identity on the rebased tip
+
+[`scripts/identity_rebased.sh`](scripts/identity_rebased.sh) ran at
+`3b8a22c90` under the heavy lock, and every exit was 0
+([artifacts/identity-rebased.txt](artifacts/identity-rebased.txt)):
+- The rebased tip's `quirin-plugin package` of the saved checker is
+  byte-identical, in bytes and mode, to the base CLI's package (`a0c85ff3…`
+  `0o755`, `af35cd6b…`). The base CLI verifies it.
+- `providers/package.py build` at the rebased tip gives the same
+  `packages.json` and the same 104 installed files as at `b565f79ab`.
+
+As the integrator directed, the arbiters were not re-run; the
+by-construction argument of §6 stands.
+
+## 9. Gate
+
+[`gate.json`](gate.json) and [`gate/`](gate/) hold the record. The gate
+ran once (g1) at `3b8a22c90` (base `b565f79ab`, rebased onto `5ee141946`).
+The run used [`scripts/gate-whole.sh`](scripts/gate-whole.sh), which held
+one exclusive `flock` on the shared heavy lock for the whole gate (03:21:30Z
+to 03:38:55Z), then [`scripts/write_gate_json.py`](scripts/write_gate_json.py)
+and [`scripts/finish-gate.sh`](scripts/finish-gate.sh). Logs are in
+`private/ppb/gate-g1` of this worktree. Nothing was rerun.
+
+| Step | Exit | Count |
+|---|---|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update (`--init --recursive`) | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,956 passed, 0 failed**, 14 ignored (`private/ppb/tests-g1`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | 317 audits (no Lean change) |
+| `python3 -m unittest discover -s scripts/tests` (08, and 09b after the matrix) | 0 / 0 | 365 OK |
+| `build_docs_index.py --check` (09, 10c) | 0 / 0 | |
+| `build_matrix.py . --gate gate.json` (09a) | 0 | |
+| `providers/package.py build` / `verify qcore.libevent` | 0 / 0 | |
+| `cargo test` in `providers/` | 0 | **133 passed, 0 failed** (129 before, plus the new `sdk` test and three `package.rs` unit tests; the `sdk` binary finished in 18.18 s) |
+| `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
+| `cargo fmt` / `clippy -D warnings` in `providers/` | 0 / 0 | |
+
+Clang: Ubuntu clang version 21.1.8 (6ubuntu1). Toolchain: the host's
+rustup stable 1.99.0.
+
+The rule-id duplicate check `rg -o --no-filename '^[0-9]{1,2}[a-z]?\. '
+docs/agents/*.md | sort | uniq -d` prints `1.`–`7.` on this tree and on main
+alike. The card brief list in `operations.md` (items 1–7) collides with the
+plain-numbered rules in `diagnostics.md` and `gateway.md`. This card adds
+no numbered line to `docs/agents/`. The bold-form check is empty.
