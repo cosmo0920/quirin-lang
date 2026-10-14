@@ -156,8 +156,9 @@ heavy lock, logs `private/mdo/gate-g1/` of this worktree; exits in
 | `python3 scripts/run_test_binaries.py` | 0 | 491 units, 504 summaries; **7,996 passed; 0 failed; 14 ignored** (`private/mdo/tests-g1/`), no rerun |
 | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | **318** Lean audits (unchanged: an existing module extended) |
-| `python3 -m unittest discover -s scripts/tests` | gate/ | after the records (08), and after the matrix regeneration (09b) |
-| `python3 scripts/build_docs_index.py --check` | gate/ | 09, 10c |
+| `python3 -m unittest discover -s scripts/tests` | 0, 0 | 365 OK after the records (08, at `9f4f90c68`) and 365 OK after the matrix regeneration (09b) |
+| `build_matrix.py . --gate gate.json` | 0 | 09a (a first attempt exited 1: `gate.json` lacked `provider_tests`; it now states why the provider gate is not due) |
+| `python3 scripts/build_docs_index.py --check` | 0, 0 | 09, 10c (10b regenerated it, exit 0) |
 
 `providers/` is unchanged, so the provider gate does not apply. Clang:
 `Ubuntu clang version 21.1.8 (6ubuntu1)` ([recording](gate/clang-version.txt)).

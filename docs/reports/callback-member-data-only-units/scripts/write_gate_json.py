@@ -44,9 +44,10 @@ def main() -> int:
     head = (logs / "head").read_text().strip()
     note = (
         f"CALLBACK-MEMBER-DATA-ONLY-UNITS card gate on base {BASE}, every code "
-        f"step at {head[:9]}, scripts docs/reports/callback-member-data-only-units/scripts/gate-whole.sh, "
-        "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
-        f"whole gate, logs private/mdo/gate-{name} of this worktree. "
+        f"step at {head[:9]}, scripts docs/reports/callback-member-data-only-units/scripts/gate.sh "
+        "(HELD=1, `code` then `docs`) and finish-gate.sh, each part under one exclusive flock "
+        f"on the shared heavy lock held for that whole part, logs private/mdo/gate-{name} of "
+        "this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
@@ -60,6 +61,9 @@ def main() -> int:
     gate = {
         "note": note,
         "workspace_tests": int(totals.group(3)),
+        "provider_tests": "not run: this card changes nothing under providers/ or "
+        "crates/qcore-schemas/, so the provider gate is not due. Stated rather than "
+        "silently omitted.",
         "python_evidence_validator_tests": int(python.group(1)) if python else None,
         "reevaluation_probe_exit": int(exits["05-probe"]),
         "reevaluation_followup_exit": int(exits["06-followup"]),
