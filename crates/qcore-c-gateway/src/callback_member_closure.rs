@@ -1143,6 +1143,16 @@ impl Tables {
         out
     }
 
+    /// Whether a record holds a function pointer, directly or through
+    /// records it holds by value (only such a record can carry a store).
+    fn carries_function(&self, record: &str) -> bool {
+        self.records
+            .get(record)
+            .into_iter()
+            .flatten()
+            .any(|keys| !self.names(keys).is_empty())
+    }
+
     /// Every record that holds `record` by value, transitively.
     fn containers(&self, record: &str) -> BTreeSet<String> {
         self.records
@@ -1156,14 +1166,18 @@ impl Tables {
             .collect()
     }
 
-    /// Every field name below a record's keys, through embedded records.
+    /// Every function-pointer field name below a record's keys, through
+    /// embedded records: the names a store into a record that is not read
+    /// (`?.NAME`) may use, since only a function-pointer member is a store.
     fn names(&self, keys: &RecordKeys) -> BTreeSet<String> {
         let mut out = BTreeSet::new();
         let mut pending = vec![keys.clone()];
         let mut seen = BTreeSet::new();
         while let Some(keys) = pending.pop() {
             for (name, field) in &keys.fields {
-                out.insert(name.clone());
+                if *field == FieldKey::Function {
+                    out.insert(name.clone());
+                }
                 match field {
                     FieldKey::Named { record } => {
                         if seen.insert(record.clone()) {
@@ -1246,14 +1260,6 @@ pub fn closure_tokens(units: &[&MemberFacts], member: &str) -> BTreeSet<String> 
     closure_prepared(units, &Prepared::of(units), member).1
 }
 
-fn words(key: &str, tokens: &mut BTreeSet<String>) {
-    tokens.extend(
-        key.split('.')
-            .filter(|word| !word.is_empty() && *word != "*" && *word != "?")
-            .map(str::to_owned),
-    );
-}
-
 /// [`closure`] over an index built once, with the tokens it read.
 #[must_use]
 pub fn closure_prepared(
@@ -1292,17 +1298,20 @@ pub fn closure_prepared(
         };
         match node {
             Node::Member(member) => {
-                words(member, tokens);
+                if let Some(tag) = member.split('.').next() {
+                    tokens.insert(tag.to_owned());
+                }
                 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q3): every normal
                 // form, the records that hold it (a whole-object write of one
                 // writes it), and the names an unread record's store may use.
-                let targets = tables
-                    .normalise(member)
-                    .unwrap_or_else(|_| BTreeSet::from([member.clone()]));
+                let normalised = tables.normalise(member).ok();
+                let targets = normalised
+                    .clone()
+                    .unwrap_or_else(|| BTreeSet::from([member.clone()]));
                 let mut records = BTreeSet::new();
                 let mut unread_names = BTreeSet::new();
                 for target in &targets {
-                    words(target, tokens);
+                    tokens.insert(record_of_key(target).to_owned());
                     let record = record_of_key(target).to_owned();
                     records.extend(tables.containers(&record));
                     records.insert(record);
@@ -1323,8 +1332,23 @@ pub fn closure_prepared(
                         }
                     }
                 }
-                tokens.extend(records.iter().cloned());
-                tokens.extend(unread_names.iter().cloned());
+                // The tokens a unit must name to hold a store the closure
+                // reads: a record that can carry one (a whole-object write of
+                // a holder of the member writes it), and a function-pointer
+                // name an unread record's store may use.
+                tokens.extend(
+                    records
+                        .iter()
+                        .filter(|record| tables.carries_function(record))
+                        .cloned(),
+                );
+                // A member keyed by named records is written only by a unit
+                // that holds their definitions, which name the tags; the
+                // names an unread record's store may use are tokens only
+                // where the member is not keyed so.
+                if normalised.is_none() {
+                    tokens.extend(unread_names.iter().cloned());
+                }
                 for facts in units {
                     for record in &records {
                         if let Some(why) = facts.opened.get(record) {

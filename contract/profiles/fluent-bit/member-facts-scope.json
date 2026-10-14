@@ -33,6 +33,30 @@
     {
       "fragment": "/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c",
       "why": "bison output generated at build time from src/stream_processor/parser/sql.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/lib/luajit-7152e154/src/",
+      "why": "LuaJIT units including headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, whose raw texts name no token of the pre-pass (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/plugins/processor_sql/parser/sql_parser.c",
+      "why": "includes the bison header processor-sql_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/src/record_accessor/flb_ra_parser.c",
+      "why": "includes the bison header ra_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/src/stream_processor/parser/flb_sp_parser.c",
+      "why": "includes the bison header sql_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/src/fluent-bit.c",
+      "why": "includes libbacktrace's installed backtrace.h (through flb_stacktrace.h), absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/src/flb_dump.c",
+      "why": "includes libbacktrace's installed backtrace.h (through flb_stacktrace.h), absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
     }
   ]
 }

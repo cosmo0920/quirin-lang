@@ -3610,7 +3610,9 @@ callback_predicate =
      | "resource_released_if_constructed"), "(", IDENT, ")"                  (* holder *)
   | "resource_element_added", "(", IDENT, ",", IDENT, ")"                  (* element, holder *)
   | "resource_callback_member_invoked", "(", (IDENT | "supplied_owned"), ",", IDENT, ".", member_path,
-    { ",", callback_actual }, ")" ;                                          (* object, TAG.FIELD, actuals *)
+    { ",", callback_actual }, ")"                                            (* object, TAG.FIELD, actuals *)
+  | "resource_callback_member_registered", "(", IDENT, ",", IDENT, ".", member_path, ",", IDENT, ")" ;
+                                                  (* OP-APP-RK-CALLBACKS-VIA-POLL-CB: holder, TAG.FIELD, fnptr *)
 callback_actual = IDENT | "_" | "supplied_owned" ;
 (* card CG22-OP-CALLBACKS-AND-SERVED-QUEUES, contract specification C04.19.2 *)
 member_path = IDENT, { ".", IDENT } ;
@@ -3624,12 +3626,12 @@ result_state_predicate =
     "resource_discriminant_set", "(", "result", ",", IDENT, ".", member_path, ",",
         IDENT, ",", integer_literal, ")"                    (* TAG.FIELD, P, FLAGS *)
   | "resource_callback_member_registered", "(", "result", ",", IDENT, ".", member_path, ",",
-        (IDENT | "absent"), ")" ;                           (* TAG.FIELD, F *)
+        (IDENT | "absent"), ")" ;                           (* TAG.FIELD, F or a function *)
 result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, "absent" ], ";" ;   (* G05d *)
+    [ ":", IDENT, ".", member_path, MAPS_TO, ("absent" | IDENT) ], ";" ;   (* G05d *)
 ```
 
-The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result` or `absent` rejects the module; the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the word `absent`; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` is the only `quant` form resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
+The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result` or `absent` rejects the module; the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the word `absent`, or (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, USER DECISION 2026-10-14, D1) is an identifier naming no parameter, a function designator, the stated default; the same word with a parameter in place of `result` (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, Q2) is a setter's registration, read with the callback predicates: the holder names a depth-one pointer parameter, `resource_borrowed`, with no kind, `F` a `fnptr` parameter no other clause names, one registration per holder and member, and `result` there is the result state above; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` is the only `quant` form resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
 
 The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot or a reference predicate. Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 
@@ -3954,7 +3956,7 @@ in maps-to notation:
 
 ```ebnf
 result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, "absent" ], ";" ;
+    [ ":", IDENT, ".", member_path, MAPS_TO, ("absent" | IDENT) ], ";" ;
 MAPS_TO = "|->" ;   (* one lexer token, qcore_frontend::lexer::MAPS_TO *)
 ```
 
@@ -3970,11 +3972,18 @@ each rejecting the whole module with a named diagnostic: the binder is
 `#result` (`quant-live-result-shape`; a formal is a bounds-module liveness
 part, never a resource v1 one); the left of `|->` is a dotted `TAG.FIELD`
 (`quant-live-member`; `result->rko_op_cb` and a bare `->` reject with
-`quant-live-maps-to`, which names `|->`); the right is `absent` alone
-(`quant-live-value`). **Two levels:** the clause is the shorthand of `quant
+`quant-live-maps-to`, which names `|->`); the right is `absent` or, since card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER
+DECISION 2026-10-14, D1: "the right-hand side is either `absent` or a function
+designator. Anything else rejects the module"), one identifier naming a
+function: never a parameter of the declaration, `result`, C's `NULL` or
+`nullptr`, a number or an expression (`quant-live-value`). A function value
+is the member's stated default (`quant live #result: rd_kafka_conf_s.log_cb
+|-> rd_kafka_log_print;`), and its lower level is
+`resource_callback_member_registered(result, TAG.FIELD, f)`. **Two levels:** the clause is the shorthand of `quant
 live #result;` (the liveness part, restating `resource_return_owned(nonnull)`)
-and the member's `absent` state, written alone as
-`resource_callback_member_registered(result, TAG.FIELD, absent)`; the loader
+and the member's state (`absent` or the function), written alone as
+`resource_callback_member_registered(result, TAG.FIELD, absent)` (or `…, f)`;
+`QCore.AppRkCallbacks.the_function_shorthand_and_its_parts_mean_the_same`); the loader
 elaborates every spelling into these canonical parts
 (`crates/qcore-contract/src/contract_constructed_state.rs`), so the shorthand,
 its decomposition and both together give one `ConstructedState`

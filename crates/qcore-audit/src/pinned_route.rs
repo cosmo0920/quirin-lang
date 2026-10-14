@@ -214,6 +214,15 @@ pub fn run(
         crate::member_prepass::run(&prepass_entries, &contracts, &scope, jobs)
     };
     if let Some(prepass) = &prepass {
+        // Evidence only: the pre-pass section, written as soon as it is read
+        // when `QCORE_MEMBER_PREPASS_SECTION` names a file.
+        if let Some(path) = std::env::var_os("QCORE_MEMBER_PREPASS_SECTION") {
+            fs::write(
+                &path,
+                serde_json::to_vec_pretty(&prepass.section).map_err(|error| error.to_string())?,
+            )
+            .map_err(|error| format!("{}: {error}", Path::new(&path).display()))?;
+        }
         println!(
             "member facts pre-pass: {} unit(s), {} read, {} unread",
             prepass.section["units"],

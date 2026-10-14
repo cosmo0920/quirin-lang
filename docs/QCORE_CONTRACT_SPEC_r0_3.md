@@ -1002,6 +1002,15 @@ contract {
 
 **Not checked against bodies.** `supplied_owned` and a member invocation are declared assumptions (rule 13i); the synchronous invocation of C04.19 keeps rule 13y's check.
 
+**Registrations, keys and the run's set** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, gateway rule 12n amended; USER DECISIONS 2026-10-14: "Closed over FB's registrations", then "Build the agent's recommended set" — Q2, Q3, U2, R1, F1, E1, S1, recorded verbatim in the card's report).
+
+* **A setter's registration.** `resource_callback_member_registered(P, TAG.FIELD, F)` with `P` a depth-one pointer parameter (`resource_borrowed`, no kind) and `F` a `fnptr` parameter (`resource_borrowed`, named by no other clause; one registration per holder and member) states that after the call `P`'s object holds `F` in its member. At a call it changes nothing on the caller's state. For the run's closure every call of the declaration in any unit is a store of its `F` actual into the member, read exactly as a store of a formal: rule 11p's reading of the actual, an address-taken declaration opening the set. A declared assumption (rule 13i).
+* **A stated default.** A constructor's `quant live #result: TAG.FIELD |-> f;` (C04.19.4) is a store of `f` into the member.
+* **Keys.** A member is keyed by its **innermost named record**: a store `rk->rk_conf.F = V` through an embedded record and `conf->F = V` through a pointer to it are both `TAG.F` of the embedded record's tag, so a struct copy of that record (`rk->rk_conf = *conf`) copies values already counted; a whole-object write of a record holding the member by value (an assignment from another record, a `memcpy`-family call, an unmappable initializer list) opens it. A union's members share their stores: every member under a union is keyed `U.*` (a named union) or `TAG.PATH.*` (an anonymous one). A declaration may spell the exact path (`rd_kafka_s.rk_conf.dr_msg_cb`); the consumer normalises it through the run's record tables.
+* **The run's set (pre-pass).** Before any unit is analysed the pinned route reads the member facts of every unit of the production compile database (and the Monkey units the run analyses): a unit whose preprocessed text names no token of an invoked member's closure graph is skipped (it holds no store the closure reads), every other C unit is read whole, and a unit that names a token but is not read (C++, assembly, a failed preprocessing or Clang run) opens every member, except a unit the profile's `member-facts-scope.json` names outside the program with its evidence. Each unit then decides a member invocation over the run's set; the fold keeps a row exactly when that set is closed and still never promotes. A declared member that is not a function-pointer member of a record the run defines is never decided so. Without the pre-pass (every other route and the checkpoint composer) a unit decides over its own set as before.
+* **An empty set.** Over the run's set, a closed empty set invokes nothing: the call is the identity (`QCore.AppRkCallbacks.a_closed_empty_run_set_invokes_nothing`); a unit's own empty set is still refused.
+* **The premise.** Every declaration resting on an application rk_conf callback names `requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY …")`: no `plugin.library.paths` is configured, so no library outside the run registers into a conf. The setters also name `conf_property_writer`: `rd_kafka_anyconf_set_prop0`'s type-punned `_RK_C_PTR` store, which Clang's member facts do not see, writes a callback member only from a declared setter, a stated default, a copy of the same property, or the string API for a hidden property.
+
 #### C04.19.4. A constructor's result state
 
 Card OP-CONSTRUCTOR-DECLARATIONS (gateway rules 12o, 13w and 14e).
@@ -1085,13 +1094,35 @@ TAG`'s member path).
   per declaration (an identical repetition merges).
 * `resource_callback_member_registered(result, TAG.FIELD, F)`: `F` a `fnptr`
   parameter whose mode is `resource_borrowed`, registered or invoked by no
-  other clause of the declaration; or the word `absent`.
+  other clause of the declaration; or the word `absent`; or (card
+  OP-APP-RK-CALLBACKS-VIA-POLL-CB, D1) an identifier naming no parameter, a
+  function designator: the member's stated default.
 * `quant live #result: TAG.FIELD |-> absent;` (the maps-to token `|->`, the
   ASCII `↦`) and `quant live #result;`: the only `quant` forms resource v1
   admits. The left of `|->` is a dotted `TAG.FIELD` (anything else,
   `result->rko_op_cb` included, rejects: `quant-live-member`, or, for a bare
-  `->`, `quant-live-maps-to` naming `|->`); the right is `absent` only
-  (`quant-live-value`).
+  `->`, `quant-live-maps-to` naming `|->`); the right is `absent` or, since
+  card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1), a function designator: one
+  identifier that names no parameter and is not `result`, `NULL` or
+  `nullptr` (anything else: `quant-live-value`).
+
+> **USER DECISION 2026-10-14** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, as
+> relayed by the integrator, verbatim): "**D1:** function defaults are
+> written with your `|->` form, now extended so the right-hand side may name
+> a function. Example: `quant live #result: rd_kafka_conf_s.log_cb |->
+> rd_kafka_log_print;` The right-hand side is either `absent` or a function
+> designator. Anything else rejects the module. Extend the lower level to
+> match (`resource_callback_member_registered(result, TAG.FIELD, F)` with F
+> a function), and prove in Lean that the two levels are equivalent."
+>
+> **Meaning of a function value.** The returned object's member holds that
+> function; for rule 12n's run closure the statement is a store of it into
+> the member (`QCore.AppRkCallbacks.a_stated_default_is_a_candidate`), and
+> the shorthand and its lower level mean the same
+> (`the_function_shorthand_and_its_parts_mean_the_same`,
+> `both_function_levels_are_one_canonical_set`). Rule 14e's body check reads
+> a zero-allocated result with no write to an `absent` member; a function
+> value is a declared assumption.
 * One member is given one state (an agreeing overlap merges; a second,
   different state rejects). The clauses stand where a callback clause may
   and withhold the declaration from the function map.

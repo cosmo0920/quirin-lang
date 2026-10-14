@@ -143,9 +143,10 @@ fn is_c(entry: &CompileEntry) -> bool {
     entry.file.extension().and_then(|ext| ext.to_str()) == Some("c")
 }
 
-/// Preprocess a unit that is not C with its own command: `-c` and `-o FILE`
-/// dropped, `-E` added, run from its directory.
-fn preprocess_other(entry: &CompileEntry) -> Result<String, String> {
+/// Preprocess a unit with its own recorded command: `-c` and `-o FILE`
+/// dropped, `extra` added, run from its directory. The command the build
+/// compiled the unit with, so what it includes is what the program includes.
+fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String> {
     let words = shell_words(&entry.command)?;
     let (program, rest) = words.split_first().ok_or("empty command")?;
     let mut args = Vec::new();
@@ -162,7 +163,7 @@ fn preprocess_other(entry: &CompileEntry) -> Result<String, String> {
             _ => args.push(word.clone()),
         }
     }
-    args.push("-E".into());
+    args.extend(extra.iter().map(|word| (*word).to_owned()));
     let output = Command::new(program)
         .args(&args)
         .current_dir(&entry.directory)
@@ -186,38 +187,54 @@ fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
     if let Some(outside) = scope.iter().find(|outside| path.contains(&outside.fragment)) {
         return Reading::Outside(outside.why.clone());
     }
-    if !is_c(entry) {
-        return match preprocess_other(entry) {
-            Ok(text) => Reading::Other(
-                identifiers(&text),
-                format!(
-                    "a unit that is not C (`{}`)",
-                    entry.file.extension().and_then(|ext| ext.to_str()).unwrap_or("?")
-                ),
+    match preprocess_own(entry, &["-E"]) {
+        Ok(text) if is_c(entry) => Reading::C(identifiers(&text)),
+        Ok(text) => Reading::Other(
+            identifiers(&text),
+            format!(
+                "a unit that is not C (`{}`)",
+                entry.file.extension().and_then(|ext| ext.to_str()).unwrap_or("?")
             ),
-            Err(error) => Reading::Failed(format!("not C, and its preprocessing failed: {error}")),
-        };
-    }
-    let source = match fs::read_to_string(&entry.file) {
-        Ok(source) => source,
-        Err(error) => return Reading::Failed(format!("its source is not readable: {error}")),
-    };
-    let unit = match c_unit(entry, &source) {
-        Ok(unit) => unit,
-        Err(error) => return Reading::Failed(format!("its compile command is not read: {error}")),
-    };
-    match qcore_c_gateway::legacy_c::preprocess_unrestricted_c11(&unit) {
-        Ok(text) => Reading::C(identifiers(&text)),
+        ),
         Err(error) => Reading::Failed(format!("its preprocessing failed: {error}")),
     }
 }
 
+/// The C dialect a command names (`-std=`), for reading preprocessed text.
+fn dialect_of(entry: &CompileEntry) -> qcore_c_gateway::legacy_c::CCompilerDialect {
+    use qcore_c_gateway::legacy_c::CCompilerDialect;
+    let words = shell_words(&entry.command).unwrap_or_default();
+    match words
+        .iter()
+        .rev()
+        .find_map(|word| word.strip_prefix("-std="))
+    {
+        Some("c11") => CCompilerDialect::C11,
+        Some("gnu99" | "c99") => CCompilerDialect::Gnu99,
+        Some("gnu11") => CCompilerDialect::Gnu11,
+        _ => CCompilerDialect::Gnu17,
+    }
+}
+
+/// A unit's facts: read through the gateway's own preprocessing where its
+/// compile command is one the gateway reads (the analysis's input), and
+/// otherwise from the text its recorded command preprocesses (`-E -P`).
 fn read_facts(entry: &CompileEntry) -> Result<MemberFacts, String> {
     let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
-    let unit = c_unit(entry, &source)?;
-    let preprocessed = qcore_c_gateway::legacy_c::preprocess_unrestricted_c11(&unit)
-        .map_err(|error| error.to_string())?;
-    read_unit(&preprocessed, &unit)
+    if let Ok(unit) = c_unit(entry, &source)
+        && let Ok(preprocessed) = qcore_c_gateway::legacy_c::preprocess_unrestricted_c11(&unit)
+    {
+        return read_unit(&preprocessed, &unit);
+    }
+    let preprocessed = preprocess_own(entry, &["-E", "-P"])?;
+    read_unit(
+        &preprocessed,
+        &C11TranslationUnit {
+            source: &preprocessed,
+            dialect: dialect_of(entry),
+            ..Default::default()
+        },
+    )
 }
 
 /// What the pre-pass read, and its evidence for the sidecar.
@@ -337,6 +354,10 @@ pub fn run(
         "tokens": tokens,
         "declared_stores": declared.iter().map(|store| format!("{store:?}")).collect::<Vec<_>>(),
         "unread": facts.unread,
+        "unread_reasons": facts.unread.values().fold(BTreeMap::<String, usize>::new(), |mut counts, why| {
+            *counts.entry(why.chars().take(80).collect()).or_default() += 1;
+            counts
+        }),
         "outside_program": outside,
     });
     Some(Prepass { facts, section })
