@@ -626,6 +626,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // result. No variadic tail — the C declaration is not variadic.
     ("fluent_bit/logging.qv", "flb_errno_print", 5),
     ("fluent_bit/logging.qv", "flb_log_print", 7),
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: Fluent Bit's registered rk_conf callbacks.
+    ("fluent_bit/logging.qv", "cb_kafka_msg", 6),
+    ("fluent_bit/logging.qv", "cb_kafka_logger", 7),
+    ("fluent_bit/logging.qv", "oauthbearer_token_refresh_cb", 6),
     // Card W47-LOOP-OWNER-CONTRACTS: the marker, the loop-owner obligation, two
     // borrowed arguments, the neutral user clause and the scalar result.
     ("fluent_bit/loop_owner.qv", "flb_input_collector_running", 6),
@@ -1325,7 +1329,36 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         6,
     ),
     ("librdkafka/client.qv", "rd_kafka_cgrp_op_serve", 8),
-    ("librdkafka/client.qv", "rd_kafka_mock_cluster_op_serve", 9),
+    ("librdkafka/client.qv", "rd_kafka_mock_cluster_op_serve", 8),
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the rk_conf setters, `rd_kafka_conf_new`, the member
+    // invokers and the run-closed candidates.
+    ("librdkafka/client.qv", "rd_kafka_conf_set_background_event_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_dr_msg_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_consume_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_rebalance_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_offset_commit_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_error_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_throttle_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_log_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_stats_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_oauthbearer_token_refresh_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_socket_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_connect_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_closesocket_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_open_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_resolve_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_set_ssl_cert_verify_cb", 7),
+    ("librdkafka/client.qv", "rd_kafka_conf_new", 8),
+    ("librdkafka/client.qv", "rd_kafka_consume_cb", 9),
+    ("librdkafka/client.qv", "rd_kafka_background_queue_serve", 17),
+    ("librdkafka/client.qv", "rd_kafka_oauthbearer_refresh_op", 7),
+    ("librdkafka/client.qv", "rd_kafka_log_print", 6),
+    ("librdkafka/client.qv", "rd_kafka_oauthbearer_unsecured_token", 6),
+    ("librdkafka/client.qv", "rd_kafka_oidc_token_jwt_bearer_refresh_cb", 6),
+    ("librdkafka/client.qv", "rd_kafka_oidc_token_client_credentials_refresh_cb", 6),
+    ("librdkafka/client.qv", "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb", 6),
+    ("librdkafka/client.qv", "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb", 6),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

@@ -162,9 +162,19 @@ fn every_misuse_rejects_the_module() {
         &format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} NULL;"),
         "quant-live-value",
     );
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1): the right of `|->` is
+    // `absent` or a function designator, never a parameter of the
+    // declaration (`source`); a name that is no parameter (`cb` here) is a
+    // function designator and loads.
     rejects(
-        &format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} cb;"),
+        &format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} source;"),
         "quant-live-value",
+    );
+    assert!(
+        load(&new0(&format!(
+            "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} cb;"
+        )))
+        .is_ok()
     );
     rejects("    quant live #source;", "quant-live-result-shape");
     // Two states of one member.

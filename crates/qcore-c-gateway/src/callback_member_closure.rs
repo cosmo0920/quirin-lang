@@ -636,6 +636,11 @@ impl MemberFacts {
             if index > 0 {
                 // `base` is the previous member's value: a record object.
                 if self.union_node(base, false) {
+                    // A named union is keyed by itself (`U.*`), as the
+                    // tables normalise it; an anonymous one under its path.
+                    if let Some(record) = self.record_of_node(base, false) {
+                        return format!("{record}.*");
+                    }
                     path.push("*");
                     return format!("{tag}.{}", path.join("."));
                 }

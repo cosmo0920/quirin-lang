@@ -1041,6 +1041,21 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ),
         );
     }
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the run-closed candidates of the
+    // application's rk_conf callbacks, every parameter borrowed.
+    for name in [
+        "rd_kafka_log_print",
+        "rd_kafka_oauthbearer_unsecured_token",
+        "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+        "rd_kafka_oidc_token_client_credentials_refresh_cb",
+        "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+        "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+        "cb_kafka_msg",
+        "cb_kafka_logger",
+        "oauthbearer_token_refresh_cb",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static `print` returns
     // a fresh `hooks->allocate` buffer or NULL.
     old.insert_contract(
@@ -1927,9 +1942,17 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // candidates in `librdkafka/client.qv` (seventeen `rko_op_cb`, two
     // `rko_serve`), plain declarations in the function map. Selection and
     // rejected unchanged.
+    // 425 -> 455 by card OP-APP-RK-CALLBACKS-VIA-POLL-CB: in
+    // `librdkafka/client.qv` the seventeen rk_conf callback setters,
+    // `rd_kafka_conf_new`, `rd_kafka_consume_cb`,
+    // `rd_kafka_background_queue_serve` and `rd_kafka_oauthbearer_refresh_op`
+    // (withheld with the retaining declarations, 57 -> 78) and the six
+    // librdkafka candidates (`rd_kafka_log_print`, five OAUTHBEARER
+    // refreshers); in `fluent_bit/logging.qv` Fluent Bit's three registered
+    // callbacks (plain declarations). Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 425, 314)
+        (61, 455, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1964,7 +1987,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     assert_eq!(loaded.relational().len(), 6);
     // Card OP-CONSTRUCTOR-DECLARATIONS: the two op constructors (a result
     // state, C04.19.4) and the three requests (member invocations): 52 -> 57.
-    assert_eq!(loaded.retaining().len(), 57);
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the seventeen setters (member
+    // registrations), `rd_kafka_conf_new` (stated defaults) and three member
+    // invokers (`rd_kafka_consume_cb`, `rd_kafka_background_queue_serve`,
+    // `rd_kafka_oauthbearer_refresh_op`): 57 -> 78.
+    assert_eq!(loaded.retaining().len(), 78);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

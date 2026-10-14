@@ -192,3 +192,63 @@ contract {
     ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
+
+// BEGIN OP-APP-RK-CALLBACKS-VIA-POLL-CB (scripts/write_contracts.py)
+
+// # Fluent Bit's registered rk_conf callbacks
+//
+// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (gateway rule 12n), on the user's
+// decisions of 2026-10-14 ("Closed over FB's registrations"; "Each candidate
+// needs its own contract"; F1: declared-assumption standing for the three
+// Fluent Bit candidates, each body read). The callbacks Fluent Bit registers
+// through `rd_kafka_conf_set_*_cb`: `plugins/out_kafka/kafka_config.c:108`
+// (`dr_msg_cb`), `:111` (`log_cb`) and `src/aws/flb_aws_msk_iam.c:775`
+// (`sasl.oauthbearer.token_refresh_cb`). Each body was read at `66910c10` and
+// `046accf6` (identical); no analysed route defines them, so each is a
+// declared assumption (rule 13i). Each is pinned (C06.2).
+
+// `cb_kafka_msg(rk, rkmessage, opaque)` (`plugins/out_kafka/kafka.c:63-78`):
+// reads the opaque's plugin context and the message's error, length and
+// partition, and logs through `flb_plg_warn` / `flb_plg_debug`; keeps nothing.
+extern fn cb_kafka_msg(rk: ptr<mut, u8>, rkmessage: ptr<const, u8>, opaque: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkmessage);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// `cb_kafka_logger(rk, level, fac, buf)` (`plugins/out_kafka/kafka.c:80-104`):
+// `rd_kafka_opaque(rk)` for the plugin context, `rd_kafka_name(rk)`, and one
+// `flb_plg_*` line by level; keeps nothing.
+extern fn cb_kafka_logger(rk: ptr<const, u8>, level: i32, fac: ptr<const, u8>, buf: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(fac);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_return_none();
+};
+
+// `oauthbearer_token_refresh_cb(rk, oauthbearer_config, opaque)`
+// (`src/aws/flb_aws_msk_iam.c:609-717`, static): validates the opaque's MSK
+// IAM context, builds a payload (`build_msk_iam_payload`), creates a
+// temporary credentials provider and reads credentials, sets the token
+// (`rd_kafka_oauthbearer_set_token`, which copies) or its failure, then
+// destroys the credentials, the provider and the payload on every path that
+// made them; keeps nothing it is handed.
+extern fn oauthbearer_token_refresh_cb(rk: ptr<mut, u8>, oauthbearer_config: ptr<const, u8>, opaque: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(oauthbearer_config);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// END OP-APP-RK-CALLBACKS-VIA-POLL-CB

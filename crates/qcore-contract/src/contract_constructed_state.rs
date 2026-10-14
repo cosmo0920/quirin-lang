@@ -226,7 +226,12 @@ pub(super) fn quant_live_clause(source: &str) -> Result<Vec<Written>, String> {
     // names a parameter is checked with the declaration's names.
     let callback = match (word(at + 1), tokens.len() == at + 2) {
         (Some(ABSENT), true) => None,
-        (Some(name), true) if is_identifier(name) && name != RESULT => Some(name.to_owned()),
+        // C's null pointer is a value, not a function: `absent` states it.
+        (Some(name), true)
+            if is_identifier(name) && !matches!(name, RESULT | "NULL" | "nullptr") =>
+        {
+            Some(name.to_owned())
+        }
         (_, _) => {
             return Err(format!(
                 "quant-live-value: a member maps to `{ABSENT}` (no callback) or a function \
@@ -405,8 +410,28 @@ mod tests {
             .expect_err("an undotted member rejects");
         assert!(undotted.starts_with("quant-live-member:"), "{undotted}");
         let value = quant_live_clause(&format!("#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} NULL"))
-            .expect_err("only absent");
+            .expect_err("absent or a function, not C's null");
         assert!(value.starts_with("quant-live-value:"), "{value}");
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1): a function designator is
+        // admitted; a number or an expression is not.
+        let function = quant_live_clause(&format!(
+            "#result: rd_kafka_conf_s.log_cb {MAPS_TO} rd_kafka_log_print"
+        ))
+        .expect("a function designator");
+        assert!(matches!(
+            &function[1],
+            Written::Member { callback: Some(name), shorthand: true, .. } if name == "rd_kafka_log_print"
+        ));
+        for other in ["0", "f(x)", "&f", "a.b"] {
+            let error = quant_live_clause(&format!(
+                "#result: rd_kafka_conf_s.log_cb {MAPS_TO} {other}"
+            ))
+            .expect_err("not a designator");
+            assert!(
+                error.starts_with("quant-live-value:") || error.starts_with("quant-live-result-shape:"),
+                "{other}: {error}"
+            );
+        }
         let parameter = quant_live_clause("#rko").expect_err("only the result");
         assert!(
             parameter.starts_with("quant-live-result-shape:"),
