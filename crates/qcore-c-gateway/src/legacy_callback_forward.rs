@@ -146,6 +146,11 @@ fn names_position(clause: &CallbackClause, position: usize) -> usize {
         | CallbackClause::ElementsDropped { holder }
         | CallbackClause::ReleasedIfConstructed { holder } => usize::from(*holder == position),
         CallbackClause::MemberInvoked { actuals, .. } => in_actuals(actuals),
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q2): a setter names its holder
+        // and its callback.
+        CallbackClause::MemberRegistered {
+            object, callback, ..
+        } => usize::from(*object == position) + usize::from(*callback == position),
     }
 }
 
