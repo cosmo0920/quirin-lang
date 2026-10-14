@@ -362,6 +362,7 @@ import QCore.ResidualAccessReadings
 import QCore.CallbackContracts
 import QCore.OpCallbacks
 import QCore.MemberSummaryOrder
+import QCore.CallbackForward
 import QCore.NullDeref
 import QCore.NullDerefGrade
 import QCore.DerefDecomposition
