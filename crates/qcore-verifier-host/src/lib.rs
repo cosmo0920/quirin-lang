@@ -1735,9 +1735,10 @@ impl ProcessProvider {
             held_probe,
         } = request_consumption::request_pipe()
             .map_err(|error| ProviderFailure::Io(error.to_string()))?;
-        // Off Linux the probe is the read end kept from here (and the holder
-        // check refuses there); on Linux it is opened once the whole frame is
-        // written, and each holder check that finds the pipe held reopens it.
+        // Off Linux the probe is the read end kept from here, and the decision
+        // reads its count as before (the other holders are unobservable there);
+        // on Linux it is opened once the whole frame is written, and each
+        // holder check that finds the pipe held reopens it.
         let mut probe = held_probe;
         let mut command = Command::new(&executable);
         command

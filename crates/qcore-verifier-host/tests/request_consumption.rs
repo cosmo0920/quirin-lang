@@ -184,9 +184,6 @@ impl Drop for Case {
 fn refused(tag: &str, id_bytes: usize, body: &str) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run(body);
-    if unobservable_here(tag, &result, &record) {
-        return;
-    }
     assert!(
         matches!(result, Err(ProviderFailure::RequestUnconsumed(_))),
         "{tag}: {result:?}"
@@ -203,38 +200,8 @@ fn refused(tag: &str, id_bytes: usize, body: &str) {
 fn accepted(tag: &str, id_bytes: usize, body: impl Fn(&Case) -> String) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run(&body(&case));
-    if unobservable_here(tag, &result, &record) {
-        return;
-    }
     assert_eq!(result, Ok(case.response.clone()), "{tag}: {record:?}");
     assert_eq!(record.outcome, ProcessOutcome::Completed, "{tag}");
-}
-
-/// Off Linux the host cannot tell its own read end of the request pipe from
-/// another process's, so it refuses every successful exit as `Io`, fail-closed
-/// (card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`). Asserts that, and says
-/// the case's own assertions do not apply. Never executed: no macOS host has
-/// run this binary (`HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`).
-fn unobservable_here(
-    tag: &str,
-    result: &Result<VerificationResponse, ProviderFailure>,
-    record: &ProcessExecutionRecord,
-) -> bool {
-    if cfg!(target_os = "linux") {
-        return false;
-    }
-    assert!(
-        matches!(result, Err(ProviderFailure::Io(_))),
-        "{tag}: {result:?}"
-    );
-    assert_eq!(record.outcome, ProcessOutcome::Io, "{tag}");
-    assert!(
-        record
-            .detail
-            .contains("request consumption is unobservable"),
-        "{record:?}"
-    );
-    true
 }
 
 const ANSWER: &str = "/bin/cat response.bin";
@@ -349,13 +316,49 @@ fn lend_request_detached(direct: &str) -> String {
     )
 }
 
-/// A provider whose request pipe is still held by a descendant when the host
-/// would decide is refused, at the deadline, as held: the host decides only as
-/// the pipe's last holder.
-fn held(tag: &str, id_bytes: usize, body: &str) {
+/// What the host decides off Linux for one of this card's cases. There the
+/// pipe's other holders cannot be observed, and the host decides, as before
+/// the card, on the bytes left unread at the direct child's exit (the user's
+/// decision, "keep previous macOS"; `HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`).
+/// Never executed: no macOS host has run this binary
+/// (`HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`).
+#[derive(Clone, Copy)]
+enum OffLinux {
+    /// Nothing reads the request, so it is refused as unconsumed.
+    Unconsumed,
+    /// A descendant reads it on its own schedule: accepted when its reads land
+    /// before the decision, refused as unconsumed otherwise. This is the one
+    /// shape that stays timing-dependent off Linux.
+    EitherWay,
+}
+
+/// Asserts the off-Linux outcome `expected`.
+fn decided_as_before_off_linux(
+    tag: &str,
+    expected: OffLinux,
+    case: &Case,
+    result: &Result<VerificationResponse, ProviderFailure>,
+    record: &ProcessExecutionRecord,
+) {
+    let unconsumed = matches!(result, Err(ProviderFailure::RequestUnconsumed(_)))
+        && record.outcome == ProcessOutcome::RequestUnconsumed;
+    let completed =
+        result.as_ref() == Ok(&case.response) && record.outcome == ProcessOutcome::Completed;
+    match expected {
+        OffLinux::Unconsumed => assert!(unconsumed, "{tag}: {result:?}"),
+        OffLinux::EitherWay => assert!(unconsumed || completed, "{tag}: {result:?}"),
+    }
+    assert_eq!(record.exit_code, Some(0), "{tag}: {record:?}");
+}
+
+/// On Linux, a provider whose request pipe is still held by a descendant when
+/// the host would decide is refused, at the deadline, as held: the host
+/// decides only as the pipe's last holder.
+fn held(tag: &str, id_bytes: usize, body: &str, off_linux: OffLinux) {
     let case = Case::new(tag, id_bytes);
     let (result, record) = case.run_within(body, HELD_DEADLINE_MS);
-    if unobservable_here(tag, &result, &record) {
+    if !cfg!(target_os = "linux") {
+        decided_as_before_off_linux(tag, off_linux, &case, &result, &record);
         return;
     }
     assert!(
@@ -376,18 +379,40 @@ fn held(tag: &str, id_bytes: usize, body: &str) {
     assert!(record.wall_time_ms >= HELD_DEADLINE_MS, "{record:?}");
 }
 
+/// On Linux, a provider whose descendant reads the whole request, wherever its
+/// reads fall, is accepted: the host waits until the descendant is gone.
+fn read_by_descendant(tag: &str, id_bytes: usize, body: &str) {
+    let case = Case::new(tag, id_bytes);
+    let (result, record) = case.run(body);
+    if !cfg!(target_os = "linux") {
+        decided_as_before_off_linux(tag, OffLinux::EitherWay, &case, &result, &record);
+        return;
+    }
+    assert_eq!(result, Ok(case.response.clone()), "{tag}: {record:?}");
+    assert_eq!(record.outcome, ProcessOutcome::Completed, "{tag}");
+}
+
 #[test]
 fn a_descendant_holding_an_unread_request_is_refused() {
     held(
         "held-silent",
         64,
         &lend_request("exec /bin/sleep 30", ANSWER),
+        OffLinux::Unconsumed,
     );
 }
 
+// `setsid -f` is util-linux's. What this case adds over `held-silent`, a
+// holder outside the process group, matters only to the Linux holder check.
+#[cfg(target_os = "linux")]
 #[test]
 fn a_detached_descendant_holding_an_unread_request_is_refused() {
-    held("held-detached", 64, &lend_request_detached(ANSWER));
+    held(
+        "held-detached",
+        64,
+        &lend_request_detached(ANSWER),
+        OffLinux::Unconsumed,
+    );
 }
 
 #[test]
@@ -396,6 +421,7 @@ fn a_descendant_holding_an_undelivered_large_request_is_refused() {
         "held-large",
         LARGE,
         &lend_request("exec /bin/sleep 30", ANSWER),
+        OffLinux::Unconsumed,
     );
 }
 
@@ -405,6 +431,7 @@ fn a_descendant_that_reads_the_request_and_keeps_holding_it_is_refused() {
         "held-after-reading",
         64,
         &lend_request("/bin/cat > /dev/null; exec /bin/sleep 30", ANSWER),
+        OffLinux::EitherWay,
     );
 }
 
@@ -419,23 +446,29 @@ fn a_descendant_that_holds_an_unread_request_briefly_is_refused() {
 
 #[test]
 fn a_descendant_that_reads_the_whole_request_after_the_exit_is_accepted() {
-    accepted("descendant-reads", 64, |_| {
-        lend_request("exec /bin/cat > /dev/null", ANSWER)
-    });
+    read_by_descendant(
+        "descendant-reads",
+        64,
+        &lend_request("exec /bin/cat > /dev/null", ANSWER),
+    );
 }
 
 #[test]
 fn a_descendant_that_reads_the_whole_request_late_is_accepted() {
-    accepted("descendant-reads-late", 64, |_| {
-        lend_request("/bin/sleep 0.05; exec /bin/cat > /dev/null", ANSWER)
-    });
+    read_by_descendant(
+        "descendant-reads-late",
+        64,
+        &lend_request("/bin/sleep 0.05; exec /bin/cat > /dev/null", ANSWER),
+    );
 }
 
 #[test]
 fn a_descendant_that_reads_a_whole_large_request_is_accepted() {
-    accepted("descendant-reads-large", LARGE, |_| {
-        lend_request("exec /bin/cat > /dev/null", ANSWER)
-    });
+    read_by_descendant(
+        "descendant-reads-large",
+        LARGE,
+        &lend_request("exec /bin/cat > /dev/null", ANSWER),
+    );
 }
 
 #[test]

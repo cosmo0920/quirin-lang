@@ -21,7 +21,10 @@ the pipe's last holder, waiting until the deadline at most. A run now also says
 whether another process held the pipe when the host decided (`held`); the
 observation carries the holders (`Holders`); and the last section models the
 wait over time: once the last other holder is gone nobody can read, so the
-outcome is the final consumption's, whenever the host looks.
+outcome is the final consumption's, whenever the host looks. All of that is the
+**Linux** host. Off Linux the holders cannot be observed and the host decides
+as before the card (`Holders.countOnly`); the last section states what that
+decision is and the timing it keeps for a descendant that reads late.
 
 What is **not** modelled, and stays a Rust and OS boundary: that `FIONREAD`
 reports `delivered - consumed`, and that `POLLERR` on a write end opened
@@ -54,6 +57,11 @@ inductive Holders where
   | released (unread : Nat)
   | held
   | unobservable
+  /-- Off Linux only: the other holders cannot be observed, so the count at
+  the decision is decided on as it stands, as before card
+  `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT` (the user's decision, "keep
+  previous macOS"). -/
+  | countOnly (unread : Nat)
   deriving DecidableEq, Repr
 
 /-- What the host observes at the decision point. -/
@@ -92,7 +100,7 @@ def decide (exitSuccess : Bool) (o : Observation) : Outcome :=
     match o.holders with
     | .held => .heldByDescendant
     | .unobservable => .unobservable
-    | .released unread =>
+    | .released unread | .countOnly unread =>
       if o.delivered < o.length then .requestUnconsumed
       else if unread = 0 then .decoded
       else .requestUnconsumed
@@ -168,7 +176,8 @@ still held, after a broken pipe or not, and whatever its exit. -/
 theorem a_non_consuming_provider_is_never_decoded (r : Run)
     (hshort : r.consumed < r.length) (exitSuccess : Bool) (holders : Holders)
     (hholders : holders = .unobservable ∨ holders = .held ∨
-      holders = .released (r.delivered - r.consumed)) :
+      holders = .released (r.delivered - r.consumed) ∨
+      holders = .countOnly (r.delivered - r.consumed)) :
     decide exitSuccess ⟨r.length, r.delivered, r.readerLost, holders⟩ ≠ .decoded := by
   have hc := r.consumed_le_delivered
   unfold decide
@@ -177,9 +186,15 @@ theorem a_non_consuming_provider_is_never_decoded (r : Run)
   · simp only [Bool.true_eq_false, ite_false]
     cases r.readerLost
     · simp only [Bool.false_eq_true, ite_false]
-      rcases hholders with h | h | h
+      rcases hholders with h | h | h | h
       · simp [h]
       · simp [h]
+      · subst h
+        by_cases hd : r.delivered < r.length
+        · simp [hd]
+        · obtain ⟨k, hk⟩ : ∃ k, r.delivered - r.consumed = k + 1 :=
+            ⟨r.delivered - r.consumed - 1, by omega⟩
+          simp [hd, hk]
       · subst h
         by_cases hd : r.delivered < r.length
         · simp [hd]
@@ -342,5 +357,41 @@ theorem an_immediate_decision_would_still_depend_on_the_schedule :
       ∧ waitDecide lateReader 10 2 = .decoded
       ∧ waitDecide lateReader 10 7 = .decoded := by
   refine ⟨rfl, rfl, ?_, ?_, ?_, ?_⟩ <;> decide
+
+/-! ### Off Linux
+
+Everything above describes the Linux host: its observation of the holders is
+`held` or `released`, and the wait theorems are about it. Off Linux the host
+cannot tell its own read end from another process's, and by the user's decision
+("keep previous macOS") it decides as before this card, on the count at the
+direct child's exit (`countOnly`). That keeps the decision a function of the
+count at that instant, which for a descendant that reads on its own schedule
+is still timing. -/
+
+/-- What the off-Linux host observes, for a wholly written frame, when it
+decides at instant `t`. -/
+def Execution.observeOffLinuxAt (x : Execution) (t : Nat) : Observation :=
+  ⟨x.length, x.length, false, .countOnly (x.length - x.consumedAt t)⟩
+
+/-- **Off Linux the decision is the count at the decision**: exactly the
+pre-card decision `countDecide`, whoever still holds the pipe. -/
+theorem off_linux_decides_on_the_count_at_the_decision (x : Execution) (t : Nat) :
+    decide true (x.observeOffLinuxAt t) = countDecide x t := by
+  have hle := x.consumed_le t
+  unfold decide Execution.observeOffLinuxAt countDecide
+  by_cases hfull : x.consumedAt t = x.length
+  · simp [hfull]
+  · obtain ⟨k, hk⟩ : ∃ k, x.length - x.consumedAt t = k + 1 :=
+      ⟨x.length - x.consumedAt t - 1, by omega⟩
+    simp [hfull, hk]
+
+/-- **The residual off Linux.** For a descendant that reads its whole request
+and exits at instant 2, the off-Linux host refuses it when it decides before
+the read and accepts it after: the one shape that stays timing-dependent there
+(`HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`). -/
+theorem off_linux_a_late_reader_still_depends_on_the_schedule :
+    decide true (lateReader.observeOffLinuxAt 0) = .requestUnconsumed
+      ∧ decide true (lateReader.observeOffLinuxAt 2) = .decoded := by
+  constructor <;> decide
 
 end QCore.RequestConsumption

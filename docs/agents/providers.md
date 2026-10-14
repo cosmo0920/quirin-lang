@@ -239,8 +239,11 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
       `ProcessOutcome::RequestHeldByDescendant`
       (`request-held-by-descendant`), distinct from `RequestUnconsumed` and
       from `WallClockTimeout`. A failed check refuses as `Io`.
-    - Off Linux the other holders cannot be observed, so every successful
-      exit is refused as `Io` (fail-closed, never executed;
+    - Off Linux the other holders cannot be observed (`/dev/fd` is a `dup`).
+      By the user's decision ("keep previous macOS"), the host decides there
+      exactly as before the card, on the probe's count at the direct child's
+      exit. Only this shape, a descendant that reads on its own schedule,
+      stays timing-dependent there (never executed;
       `HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`).
 
     The host waits rather than refusing at once, because a refusal whenever

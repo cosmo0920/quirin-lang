@@ -6,7 +6,7 @@ decision (`crates/qcore-verifier-host/src/request_consumption.rs`, the
 decision branch and the deadline arm of `run_process` in `src/lib.rs`), adds
 `ProviderFailure::RequestHeldByDescendant` and
 `ProcessOutcome::RequestHeldByDescendant`, nine probe cases in
-`tests/request_consumption.rs`, three unit tests, and extends the Lean module
+`tests/request_consumption.rs`, four unit tests, and extends the Lean module
 `QCore.RequestConsumption`. No analyser, checker, contract or verdict code
 changes.
 
@@ -89,14 +89,33 @@ cost is that a provider whose descendant keeps the pipe takes its whole
 deadline before the refusal.
 
 **Off Linux** `/dev/fd` is a `dup`: the probe is the read end itself, and no
-mechanism was found that tells it from another process's. `holders` therefore
-reports the holders unobservable there, and **every successful exit is refused
-as `Io`** (fail-closed, as the brief directs). This has never been executed (no
-macOS host); the macOS CI job runs no verifier-host process row. The probe
-binary asserts the off-Linux outcome per platform. Two `standalone_host` arms
-and every other test that expects a process provider to complete are stale off
-Linux and were not edited: nothing executes them there, and the parallel card
-owns `standalone_host.rs`. Both points are recorded in the ledger (§9).
+mechanism was found that tells it from another process's.
+
+* **First version (`2a1414662`).** As the brief first directed, `holders`
+  reported the holders unobservable there, and every successful exit was
+  refused as `Io`.
+* **The user's decision ("keep previous macOS") replaced that.** Off Linux the
+  host now decides **exactly as at the base**. `holders` returns
+  `Holders::CountOnly`: while the host is still writing, an undelivered
+  remainder is unconsumed; otherwise `FIONREAD` on the kept read end is the
+  count, and a missing or unreadable probe still refuses as `Io`, with the
+  base's text. The wait and the `RequestHeldByDescendant` refusal are
+  Linux-only (`held` is never set off Linux).
+* **The residual off Linux.** A descendant that reads on its own schedule is
+  still accepted or refused by timing there, as at the base
+  (`HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`). That is the only shape the
+  off-Linux decision leaves open.
+
+Off Linux, every existing assertion holds again as at the base, including
+`standalone_host`'s and `cycle20_verifier_plugins`' per-platform arms. The
+probe binary's new cases assert what the off-Linux host decides:
+
+* `RequestUnconsumed` when nothing reads the request;
+* either outcome for a descendant that reads on its own schedule;
+* the `setsid -f` case is Linux-only, because `setsid` is util-linux's.
+
+None of this has been executed: there is no macOS host, and the macOS CI job
+runs no verifier-host process row (`HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`).
 
 ## 4. Order independence, measured
 
@@ -180,13 +199,14 @@ On the tip every case gives its one required outcome under every condition.
 None moved on Linux. The nine earlier probe cases kept their exact outcomes
 (§4), and the census found no fixture whose request pipe another process keeps,
 so every other verifier-host, compiler, audit and provider-conformance test is
-unchanged (§8). The probe binary was already in the runner's `EXCLUSIVE`
-table.
+unchanged (§8). Off Linux the decision is the base's, so every existing
+per-platform assertion holds there as before (§3). The probe binary was already
+in the runner's `EXCLUSIVE` table.
 
 ## 6. Lean
 
 `QCore.RequestConsumption` is extended in place; its audit,
-`AuditRequestConsumption.lean`, now prints 15 theorems (8 before). A `Run`
+`AuditRequestConsumption.lean`, now prints 17 theorems (8 before). A `Run`
 gains `held`, whether another process held the pipe at the decision, with the
 pipe fact that a broken pipe has no reader as a field, not an axiom. The
 observation carries `Holders` (`released unread`, `held`, `unobservable`), and
@@ -214,6 +234,17 @@ observation carries `Holders` (`released unread`, `held`, `unobservable`), and
     unconsumed at 0 and decoded at 2, refusing a held pipe gives
     held-by-descendant at 0 and decoded at 2, and the wait decodes at every
     check after the release.
+* **Platform split.** Everything above is the Linux host: `observe` yields
+  only `held` or `released`, and the wait theorems describe the Linux loop.
+  The off-Linux decision gets its own `Holders` constructor, `countOnly`,
+  which `decide` treats as the pre-card count. Two theorems state it:
+  - `off_linux_decides_on_the_count_at_the_decision`: off Linux, the decision
+    at instant `t` equals the pre-card `countDecide` at `t`, whoever holds the
+    pipe;
+  - `off_linux_a_late_reader_still_depends_on_the_schedule`: the residual, on
+    the same late reader, refused at 0 and decoded at 2.
+
+  `a_non_consuming_provider_is_never_decoded` also covers `countOnly`.
 
 Not proved, and measured instead: that `FIONREAD` reports the bytes nobody
 read, and that `POLLERR` on the reopened write end reports that no other reader
@@ -300,28 +331,30 @@ this card's `gate.json`, because the gate is incomplete. The ledger edit keeps
 | base: deviations in the "descendant reads" family and "held after reading" | held for "held after reading", "descendant reads" and "reads late"; **not** for "reads large", accepted in every base run (§4 explains the base's timing there) |
 | base: the always-held silent cases refused there too, as `RequestUnconsumed` | held (base-compatible assertion; no deviation) |
 | no existing Linux assertion moves | held (§5, §8) |
-| off Linux every successful exit becomes `Io`; stale off-Linux expectations recorded, not edited | as designed; never executed (§3, §10) |
+| off Linux every successful exit becomes `Io`; stale off-Linux expectations recorded, not edited | **superseded by the user's decision** ("keep previous macOS"): off Linux the host decides exactly as at the base, no off-Linux assertion is stale, and the detached-descendant shape stays timing-dependent there; never executed (§3, §10) |
 | corpus, system, slice and null property byte-identical | held (§7) |
-| tests: +9 probe tests plus unit tests | +12: 9 probe tests and 3 unit tests (§8) |
-| Lean: module extended in place, 317 audits | held: 8 → 15 printed theorems, 317 audits (§6, §8) |
-| ledger: entry retired, off-Linux entry amended | held, and the off-Linux refusal registered as its own entry: 764 → 764 (§10) |
+| tests: +9 probe tests plus unit tests | +13: 9 probe tests and 4 unit tests (§8) |
+| Lean: module extended in place, 317 audits | held: 8 → 17 printed theorems, 317 audits (§6, §8) |
+| ledger: entry retired, off-Linux entry amended | held, and the off-Linux residual registered as its own entry: 764 → 764 (§10) |
 
 ## 10. Follow-ups
 
 * **Retired:** `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`. Its DISCHARGE asks
   the host to refuse or wait for an execution in which another process holds
   the request pipe at the decision, with a test that forces the shape. That
-  holds (§3, §4): the host waits for any such process, not only members of the
-  provider's group, and refuses one still holding the pipe at the deadline.
-* **Registered:** `HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`. Off Linux
-  every successful process-provider exit is now refused as `Io`, because the
-  other holders cannot be observed there (§3). DISCHARGE: an off-Linux
-  observation (for example a request transport whose peer close the host can
-  see), measured on macOS, or a recorded user decision that process providers
-  are Linux-only.
-* **Amended:** `HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`. Its text now names
-  the off-Linux holder arm and the off-Linux expectations that are stale
-  (§3).
+  holds on Linux (§3, §4): the host waits for any such process, not only
+  members of the provider's group, and refuses one still holding the pipe at
+  the deadline. Off Linux the residual is registered separately.
+* **Registered:** `HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`. Off Linux the
+  other holders cannot be observed, and by the user's decision the host
+  decides as at the base, so a descendant that keeps the request pipe with both
+  outputs closed and reads on its own schedule still gets an outcome that
+  depends on timing there (§3). DISCHARGE: an off-Linux holder check (for
+  example a socket-pair request transport, whose peer close the host can
+  observe), measured on a macOS host.
+* **Amended:** `HOST-REQUEST-PROBE-OFF-LINUX-UNEXECUTED`. Its text now says
+  that the off-Linux arm is unchanged and that the probe binary's new
+  off-Linux expectations are unexecuted too (§3).
 * **Boundary, not registered:** a process with ptrace-level access to the
   host could open the host's own pipe descriptors through `/proc/<host>/fd`
   after the release. That is outside the provider model, which is not an OS

@@ -15,7 +15,11 @@ import QCore.RequestConsumption
 -- the final consumption whenever the host checks, refuses a holder that
 -- outlives the deadline, decodes nothing while the pipe is held, and an
 -- immediate decision (on the count, or refusing a held pipe) would still have
--- depended on the schedule. Not proved, and measured instead
+-- depended on the schedule. These are the Linux host's. Off Linux, where the
+-- holders cannot be observed and the host decides as before the card (the
+-- user's decision): the decision is the count at the direct child's exit, and a
+-- descendant that reads late still gets either outcome. Not proved, and
+-- measured instead
 -- (docs/reports/host-unread-request-acceptance/README.md,
 -- docs/reports/host-request-detached-descendant/README.md): that FIONREAD
 -- reports the bytes no reader took, that POLLERR on a reopened write end
@@ -37,3 +41,5 @@ import QCore.RequestConsumption
 #print axioms QCore.RequestConsumption.a_holder_past_the_deadline_is_refused
 #print axioms QCore.RequestConsumption.the_wait_decodes_only_after_the_release
 #print axioms QCore.RequestConsumption.an_immediate_decision_would_still_depend_on_the_schedule
+#print axioms QCore.RequestConsumption.off_linux_decides_on_the_count_at_the_decision
+#print axioms QCore.RequestConsumption.off_linux_a_late_reader_still_depends_on_the_schedule

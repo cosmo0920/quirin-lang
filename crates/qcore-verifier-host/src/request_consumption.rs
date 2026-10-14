@@ -45,8 +45,12 @@
 //!
 //! The decision waits, bounded by the declared deadline; a pipe still held at
 //! the deadline is refused as [`ProviderFailure::RequestHeldByDescendant`].
-//! Off Linux the other holders cannot be observed, and every successful exit
-//! is refused as `Io` (fail-closed).
+//! Off Linux the other holders cannot be observed (`/dev/fd` is a `dup`, so the
+//! probe is the read end itself). There the host decides exactly as before
+//! this card, on the bytes left unread at that moment ([`Holders::CountOnly`]),
+//! by the user's decision ("keep previous macOS"); the detached-descendant
+//! shape stays timing-dependent there
+//! (`HOST-REQUEST-HOLDERS-OFF-LINUX-UNOBSERVABLE`).
 
 use std::io;
 use std::os::fd::{AsRawFd, OwnedFd};
@@ -92,7 +96,6 @@ pub(crate) fn probe_after_full_write(writer: &std::io::PipeWriter) -> io::Result
 /// Bytes in the pipe that no reader has taken. `FIONREAD` changes no flag and
 /// reads nothing, so it cannot itself consume the request. On a pipe it
 /// counts the same bytes through either end.
-#[cfg_attr(not(target_os = "linux"), allow(dead_code))]
 pub(crate) fn unread_bytes(probe: &OwnedFd) -> io::Result<usize> {
     let mut unread: libc::c_int = 0;
     // SAFETY: `probe` is an open descriptor owned by the caller and `unread`
@@ -111,6 +114,12 @@ pub(crate) enum Holders {
     Released { unread: usize },
     /// Another process still holds a read end and could still read.
     Held,
+    /// Off Linux only: whether another process holds a read end cannot be
+    /// observed, so the count at the decision is decided on as it stands, as
+    /// before card `HOST-REQUEST-READ-BY-DETACHED-DESCENDANT`. A descendant
+    /// that still reads after this moment is not credited.
+    #[cfg_attr(target_os = "linux", allow(dead_code))]
+    CountOnly { unread: usize },
     /// Neither could be established; the text says why.
     Unobservable(String),
 }
@@ -145,14 +154,24 @@ pub(crate) fn holders(still_writing: bool, probe: &mut Option<io::Result<OwnedFd
 }
 
 /// Off Linux `/dev/fd` is a `dup`: the host cannot open a second, independent
-/// end of the pipe, so it cannot tell its own read end from another process's.
-/// The holders are unobservable and the decision refuses.
+/// end of the pipe, so it cannot tell its own read end (the probe kept from the
+/// spawn) from another process's. It decides as it did before this card: an
+/// undelivered remainder is unconsumed (`classify` sees `delivered < length`),
+/// and otherwise `FIONREAD` on the probe is the count. A probe that is missing
+/// or cannot be read is still unobservable, and refuses.
 #[cfg(not(target_os = "linux"))]
 pub(crate) fn holders(still_writing: bool, probe: &mut Option<io::Result<OwnedFd>>) -> Holders {
-    let _ = (still_writing, probe);
-    Holders::Unobservable(
-        "the request pipe's other holders cannot be observed on this platform".into(),
-    )
+    if still_writing {
+        return Holders::CountOnly { unread: 0 };
+    }
+    match probe.take() {
+        None => Holders::Unobservable("no probe was taken".into()),
+        Some(Err(error)) => Holders::Unobservable(error.to_string()),
+        Some(Ok(read_end)) => match unread_bytes(&read_end) {
+            Ok(unread) => Holders::CountOnly { unread },
+            Err(error) => Holders::Unobservable(error.to_string()),
+        },
+    }
 }
 
 /// One holder check's result.
@@ -248,7 +267,7 @@ pub(crate) fn classify(
                 "request consumption is unobservable: {reason}"
             )));
         }
-        Holders::Released { unread } => unread,
+        Holders::Released { unread } | Holders::CountOnly { unread } => unread,
     };
     if delivered < length {
         return Err(ProviderFailure::RequestUnconsumed(format!(
@@ -317,6 +336,17 @@ mod tests {
                 Err(ProviderFailure::RequestHeldByDescendant(_))
             ));
         }
+    }
+
+    /// Off Linux the count at the decision is decided on as it stands, exactly
+    /// as before the card: an undelivered remainder or unread bytes refuse.
+    #[test]
+    fn a_count_only_decision_is_the_decision_before_the_card() {
+        let count_only = |unread| Holders::CountOnly { unread };
+        assert_eq!(classify(10, 10, false, count_only(0)), Ok(()));
+        assert!(unconsumed(classify(10, 10, false, count_only(3))));
+        assert!(unconsumed(classify(10, 4, false, count_only(0))));
+        assert!(unconsumed(classify(10, 4, true, count_only(0))));
     }
 
     #[test]
