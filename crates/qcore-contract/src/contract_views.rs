@@ -1343,6 +1343,17 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rules 12n, 12o): the op
+    // destroyer's resource-v1 declaration (the release, the op's member
+    // callback, the arms) beside its `quant null-deref #rko`.
+    RegisteredRelation {
+        function: "rd_kafka_op_destroy",
+        detailed: "librdkafka/null_deref.qv",
+        view: "librdkafka/client.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     RegisteredRelation {
         function: "rd_list_destroy",
         detailed: "librdkafka/null_deref.qv",

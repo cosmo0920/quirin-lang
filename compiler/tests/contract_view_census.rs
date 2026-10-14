@@ -88,6 +88,12 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "mk_list_del",
         &["chunkio/list_unlink.qv", "monkey/intrusive_list.qv"],
     ),
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the op destroyer's
+    // resource-v1 declaration beside its `quant null-deref #rko`.
+    (
+        "rd_kafka_op_destroy",
+        &["librdkafka/client.qv", "librdkafka/null_deref.qv"],
+    ),
     // Card NULL-CANDIDATE-TRIAGE: the toppar constructor's member
     // declaration and rd_kafka_topic_keep's non-null result.
     (
@@ -166,10 +172,11 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
     // NULL-CANDIDATE-TRIAGE a member and a result declaration;
     // NULL-MEMBER-INVARIANT-SCOPE a function-scope entry;
     // W45-CALLEE-CASCADE-RESIDUAL round 3 `cfl_list_size`'s resource-v1
-    // declaration beside its result range).
-    assert_eq!(census_pairs(&report.census).len(), 22);
-    assert_eq!(REGISTERED_RELATIONS.len(), 22);
-    assert_eq!(report.relations.len(), 22);
+    // declaration beside its result range; CG22-OP-CALLBACKS-AND-SERVED-QUEUES
+    // `rd_kafka_op_destroy`: twenty-one functions, twenty-three pairs).
+    assert_eq!(census_pairs(&report.census).len(), 23);
+    assert_eq!(REGISTERED_RELATIONS.len(), 23);
+    assert_eq!(report.relations.len(), 23);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

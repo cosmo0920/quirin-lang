@@ -77,9 +77,10 @@ fn every_registered_relation_holds_on_the_corpus() {
     // +2 (a member and a result declaration beside resource views);
     // NULL-MEMBER-INVARIANT-SCOPE +1 (a function-scope entry);
     // W45-CALLEE-CASCADE-RESIDUAL round 3 +1 (`cfl_list_size`'s resource-v1
-    // declaration beside its result range).
-    assert_eq!(report.census.len(), 20);
-    assert_eq!(report.relations.len(), 22);
+    // declaration beside its result range); CG22-OP-CALLBACKS-AND-SERVED-QUEUES
+    // +1 (`rd_kafka_op_destroy`'s resource-v1 declaration beside its check).
+    assert_eq!(report.census.len(), 21);
+    assert_eq!(report.relations.len(), 23);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
@@ -92,7 +93,7 @@ fn every_registered_relation_holds_on_the_corpus() {
         kinds,
         BTreeMap::from([
             ("lifecycle_profiles", 2),
-            ("null_deref_beside", 9),
+            ("null_deref_beside", 10),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),
