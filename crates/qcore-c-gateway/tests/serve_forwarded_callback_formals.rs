@@ -148,7 +148,10 @@ fn assert_stands(rows: &BTreeMap<String, Row>, name: &str) {
     let caller = &rows[&format!("use_{name}")];
     assert!(caller.safe(), "use_{name} decides over `visit`: {caller:?}");
     let own = &rows[name];
-    assert!(own.safe(), "{name}'s forward is its declared invocation: {own:?}");
+    assert!(
+        own.safe(),
+        "{name}'s forward is its declared invocation: {own:?}"
+    );
 }
 
 /// The forwarder is withdrawn exactly as before the card.
@@ -165,7 +168,10 @@ fn an_exact_forward_is_accepted() {
     if !clang_available() {
         return;
     }
-    let rows = rows(&forwarder("fw_exact", "return fw_each(reader, cb, context);"));
+    let rows = rows(&forwarder(
+        "fw_exact",
+        "return fw_each(reader, cb, context);",
+    ));
     assert_stands(&rows, "fw_exact");
 }
 

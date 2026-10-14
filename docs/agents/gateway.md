@@ -6334,7 +6334,11 @@ own anchor here.
     fold). **Do not** read a callback as borrowed, admit a
     candidate on a summary of another unit, admit a releasing or keeping
     candidate outside a registry's `element` position, or place a call whose
-    Clang calls disagree. `QCore.CallbackContracts`
+    Clang calls disagree. **Amended by rule 15w**: an actual that is the
+    calling function's own callback formal, handed on exactly as that
+    function's declaration in force states its invocation, is that declared
+    invocation (decided at its own callers), not an open set.
+    `QCore.CallbackContracts`
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
     `identity_only_borrows_or_requires`, `requirements_are_owned_parameters`);
@@ -6446,7 +6450,11 @@ own anchor here.
     Evidence `13y` covers exactly those clauses (rule 13i,
     `ClauseKind::CallbackChecked`); every other callback clause is a declared
     assumption. **Do not** validate a clause on a body that hands `F` on,
-    rebinds it, or stores it anywhere else.
+    rebinds it, or stores it anywhere else. **Amended by rule 15w**: a body
+    whose every mention of `F` hands it on unchanged to the same clause
+    position of a callee whose declaration is in force (an exact forward)
+    lets the invocation stand, without `13y` evidence; every other hand-on
+    still withdraws.
 
 <a id="constraint-13z"></a>
 
@@ -7283,6 +7291,66 @@ own anchor here.
     direction). **Do not** reuse a cached memory value after a variable it
     names was assigned. Premise (trust boundary 28): the search's memory
     facts, so forgotten, hold for the C program.
+
+<a id="constraint-15w"></a>
+
+15w. **A callback formal handed on unchanged to the same clause position of
+    a callee whose declaration is in force satisfies the caller's own
+    declaration for that position, as rule 12s forwards dispositions; any
+    deviation keeps rule 13y's withdrawal.** Card
+    SERVE-FORWARDED-CALLBACK-FORMALS, on the user's decision of 2026-10-14
+    (no forwarded-formal rule in the CG22 card; this card carries it).
+    `crates/qcore-c-gateway/src/legacy_callback_forward.rs` (`forwards`,
+    `stated_invocation`, `corresponds`, `forward_validates`,
+    `Parser::forwarded_invocation`), hooks in `legacy_callback_route.rs`
+    (`settle`, `Parser::callback_operands`); shared items added:
+    `callback_route::{parameter_names, rebound}` become `pub(super)`. It
+    amends rules 13u and 13y. (1) **The forward.** A mention of a callback
+    formal `F` is a forward when it is the whole actual, at position `p`, of
+    a direct call `G(…)` (`G` an identifier, not reached through `.` or
+    `->`, not a keyword). The callee's declaration **in force** must name
+    `p` in exactly one clause, `resource_callback_invoked(p, A'…)`, keep it
+    `resource_borrowed`, never retain it and register it in no constructed
+    result (`stated_invocation`); and `A'…`, read through the call's
+    actuals, must be the caller's `A…` position by position: a caller
+    parameter word `k` against a callee parameter word `k'` whose actual is
+    exactly the caller's formal `k`, never rebound; `_` against `_`;
+    `supplied_owned` against `supplied_owned` (`corresponds`). (2) **The
+    body check (13y's forward case).** `resource_callback_invoked(F, A…)`
+    stands in a unit that defines its body when either rule 13y's direct
+    check holds or `F` is never rebound and **every** mention of `F` is
+    such a forward (`forward_validates`). A callee whose body the unit
+    defines is in force only once its own clauses stand, so the standing
+    set is the least fixed point of the check (`settle`): a declaration
+    whose only support would be itself (a recursive forward) never stands,
+    and nothing stands on a callee the unit withdrew. A declaration standing
+    by a forward records no body evidence (its clause rests on the callee's
+    declaration and stays a declared assumption, rule 13i); `13y` is
+    recorded only where the direct check holds alone. (3) **The forwarding
+    call (13u's forward case).** At a call whose actual at the callee's
+    stated position is the calling function's own formal `F`, where the
+    calling function's declaration is in force in the unit (so its body
+    validated) and every clause of it naming `F` is an invocation
+    corresponding to the callee's, the clause is that declared invocation,
+    decided at the calling function's own callers (rule 13u there), so this
+    call neither resolves `F` nor puts `F`'s candidates' requirements on it.
+    **Do not** read a forward through a reassignment, an address-of, a
+    store, a cast, a parenthesised use, an operand, a local invocation
+    beside a forward, another position, an actual that is not the caller's
+    own unchanged formal, a callee with no declaration in force there
+    (uncontracted, withdrawn, or the declaration itself), or a callee that
+    names the position otherwise; nor record body evidence for a forwarded
+    clause. Premises stated, not proved: faithful extraction (trust boundary
+    28) and the callee's declaration (constraint 4). `QCore.CallbackForward`
+    (`forwarded_invocations_meet_the_caller_clause`,
+    `an_exact_forward_stands_iff_the_callee_clause_is_in_force`,
+    `a_forward_to_a_callee_not_in_force_refuses`,
+    `a_forward_that_does_not_correspond_refuses`, `a_changed_formal_refuses`,
+    `any_other_mention_refuses`, `no_mention_refuses`,
+    `a_recursive_forward_alone_never_stands`, `forward_vectors_hold` bound to
+    the module's `FORWARD_VECTORS`); `tests/serve_forwarded_callback_formals.rs`.
+    MEASUREMENT_PLACEHOLDER
+    [report](../reports/serve-forwarded-callback-formals/README.md).
 
 <a id="constraint-15x"></a>
 

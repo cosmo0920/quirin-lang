@@ -96,7 +96,9 @@ pub(crate) fn forwards(body: &[&str], name: &str) -> Option<Vec<Forward>> {
             return None;
         }
         let spans = super::call_argument_spans(body, call)?;
-        let position = spans.iter().position(|&(start, end)| start <= at && at < end)?;
+        let position = spans
+            .iter()
+            .position(|&(start, end)| start <= at && at < end)?;
         if spans[position] != (at, at + 1) {
             return None;
         }
@@ -363,33 +365,75 @@ mod tests {
             CallbackActual::Supplied,
             CallbackActual::Parameter { index: 2 },
         ];
-        assert!(corresponds(&parameters, &caller, &caller, &arguments, &unchanged));
+        assert!(corresponds(
+            &parameters,
+            &caller,
+            &caller,
+            &arguments,
+            &unchanged
+        ));
         // A caller word against a callee `_`, or the other way round.
         let supplied = [
             CallbackActual::Parameter { index: 0 },
             CallbackActual::Supplied,
             CallbackActual::Supplied,
         ];
-        assert!(!corresponds(&parameters, &caller, &supplied, &arguments, &unchanged));
-        assert!(!corresponds(&parameters, &supplied, &caller, &arguments, &unchanged));
+        assert!(!corresponds(
+            &parameters,
+            &caller,
+            &supplied,
+            &arguments,
+            &unchanged
+        ));
+        assert!(!corresponds(
+            &parameters,
+            &supplied,
+            &caller,
+            &arguments,
+            &unchanged
+        ));
         // `supplied_owned` against `_`.
         let owned = [
             CallbackActual::Parameter { index: 0 },
             CallbackActual::SuppliedOwned,
             CallbackActual::Parameter { index: 2 },
         ];
-        assert!(!corresponds(&parameters, &owned, &caller, &arguments, &unchanged));
+        assert!(!corresponds(
+            &parameters,
+            &owned,
+            &caller,
+            &arguments,
+            &unchanged
+        ));
         // The callee's word reads another actual than the caller's formal.
         let swapped = vec![
             vec!["c".to_owned()],
             vec!["cb".to_owned()],
             vec!["r".to_owned()],
         ];
-        assert!(!corresponds(&parameters, &caller, &caller, &swapped, &unchanged));
+        assert!(!corresponds(
+            &parameters,
+            &caller,
+            &caller,
+            &swapped,
+            &unchanged
+        ));
         // A changed formal.
-        assert!(!corresponds(&parameters, &caller, &caller, &arguments, &|_| false));
+        assert!(!corresponds(
+            &parameters,
+            &caller,
+            &caller,
+            &arguments,
+            &|_| false
+        ));
         // Different arity.
-        assert!(!corresponds(&parameters, &caller, &caller[..2], &arguments, &unchanged));
+        assert!(!corresponds(
+            &parameters,
+            &caller,
+            &caller[..2],
+            &arguments,
+            &unchanged
+        ));
     }
 
     const DECLARATIONS: &str = "module contract;
@@ -422,7 +466,11 @@ contract {
         ("{ cb = 0 ; return g ( r , cb , c ) ; }", true, false),
         ("{ return g ( r , c , cb ) ; }", true, false),
         ("{ return h ( r , cb , c ) ; }", true, false),
-        ("{ cb ( r , 0 , c ) ; return g ( r , cb , c ) ; }", true, false),
+        (
+            "{ cb ( r , 0 , c ) ; return g ( r , cb , c ) ; }",
+            true,
+            false,
+        ),
         ("{ return g ( c , cb , r ) ; }", true, false),
         ("{ keep ( r , cb ) ; return 0 ; }", true, false),
     ];
@@ -430,10 +478,7 @@ contract {
     #[test]
     fn forward_vectors_hold() {
         let contracts = qcore_contract::contract_loader::load_resource_contract_sources(
-            &std::collections::BTreeMap::from([(
-                "forward.qv".to_owned(),
-                DECLARATIONS.to_owned(),
-            )]),
+            &std::collections::BTreeMap::from([("forward.qv".to_owned(), DECLARATIONS.to_owned())]),
         )
         .expect("the declarations load");
         let parameters = formals(&["r", "cb", "c"]);

@@ -1686,24 +1686,25 @@ pub(crate) fn settle(
         });
     }
     // One clause, rule 13y's own check (reading no other declaration), or,
-    // for a synchronous invocation, rule 15w's forward over `in_force`.
+    // where `forward`, for a synchronous invocation, rule 15w's forward over
+    // `in_force`.
     fn clause_stands<'c>(
         entry: &Checked<'_>,
         clause: &CallbackClause,
-        in_force: Option<&dyn Fn(&str) -> Option<&'c RetainingContract>>,
+        forward: bool,
+        in_force: &dyn Fn(&str) -> Option<&'c RetainingContract>,
     ) -> bool {
         match clause {
             CallbackClause::Invoked { callback, actuals } => {
                 invocation_validates(&entry.body, &entry.parameters, *callback, actuals)
-                    || in_force.is_some_and(|in_force| {
-                        super::callback_forward::forward_validates(
+                    || forward
+                        && super::callback_forward::forward_validates(
                             &entry.body,
                             &entry.parameters,
                             *callback,
                             actuals,
                             in_force,
                         )
-                    })
             }
             CallbackClause::Registered {
                 callback,
@@ -1728,7 +1729,7 @@ pub(crate) fn settle(
             if entry
                 .clauses
                 .iter()
-                .all(|clause| clause_stands(entry, clause, Some(&in_force)))
+                .all(|clause| clause_stands(entry, clause, true, &in_force))
             {
                 standing.insert(entry.name);
                 grew = true;
@@ -1745,7 +1746,7 @@ pub(crate) fn settle(
         } else if entry
             .clauses
             .iter()
-            .all(|clause| clause_stands(entry, clause, None))
+            .all(|clause| clause_stands(entry, clause, false, &|_| None))
         {
             crate::contract_dependencies::validated(entry.name, "13y");
         }
