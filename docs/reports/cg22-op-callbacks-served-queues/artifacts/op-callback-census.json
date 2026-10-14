@@ -1,0 +1,984 @@
+{
+ "66910c10": {
+  "stores": [
+   {
+    "file": "rdkafka.c",
+    "line": 2617,
+    "member": "rkq_serve",
+    "value": "rd_kafka_poll_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 2622,
+    "member": "rkq_serve",
+    "value": "rd_kafka_poll_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 3648,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_share_fetch_reply_op_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4188,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_share_fetch_reply_op_cb"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 500,
+    "member": "rkq_serve",
+    "value": "rd_kafka_cgrp_op_serve"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 503,
+    "member": "rkq_serve",
+    "value": "rkcg->rkcg_ops->rkq_serve"
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "line": 3356,
+    "member": "rkq_serve",
+    "value": "rd_kafka_mock_cluster_op_serve"
+   },
+   {
+    "file": "rdkafka_msgset_reader.c",
+    "line": 253,
+    "member": "rkq_serve",
+    "value": "par_rkq->rkq_serve"
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "line": 811,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_offset_reset_op_cb"
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "line": 1136,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_offset_validate_op_cb"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 790,
+    "member": "rko_op_cb",
+    "value": "cb"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 941,
+    "member": "rko_op_cb",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 1107,
+    "member": "rko_serve",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 264,
+    "member": "rkq_serve",
+    "value": "rd_kafka_toppar_op_serve"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4197,
+    "member": "leaders.cb",
+    "value": "cb"
+   },
+   {
+    "file": "rdkafka_queue.c",
+    "line": 98,
+    "member": "rkq_serve",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_queue.h",
+    "line": 452,
+    "member": "rko_serve",
+    "value": "orig_destq->rkq_serve"
+   }
+  ],
+  "registrations": [
+   {
+    "file": "rdkafka.c",
+    "line": 3293,
+    "actual": "rd_kafka_share_ack_commit_cb_register_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 3407,
+    "actual": "rd_kafka_share_fetch_fanout_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4376,
+    "actual": "rd_kafka_share_commit_async_fanout_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4465,
+    "actual": "rd_kafka_share_commit_sync_fanout_op"
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "line": 348,
+    "actual": "rd_kafka_admin_fanout_worker"
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "line": 632,
+    "actual": "rd_kafka_admin_worker"
+   },
+   {
+    "file": "rdkafka_broker.c",
+    "line": 6433,
+    "actual": "rd_kafka_broker_monitor_op_cb"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 2453,
+    "actual": "rd_kafka_cgrp_assignor_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 2661,
+    "actual": "rd_kafka_cgrp_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 3137,
+    "actual": "rd_kafka_cgrp_consumer_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4135,
+    "actual": "rko->rko_u.leaders.cb"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4190,
+    "actual": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+   },
+   {
+    "file": "rdkafka_sasl_oauthbearer.c",
+    "line": 194,
+    "actual": "rd_kafka_oauthbearer_refresh_op"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 422,
+    "actual": "op_cb"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2031,
+    "actual": "rd_kafka_txn_op_send_offsets_to_transaction"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 420,
+    "actual": "op_cb",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1367,
+    "actual": "rd_kafka_txn_op_init_transactions",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1393,
+    "actual": "rd_kafka_txn_op_ack_init_transactions",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1459,
+    "actual": "rd_kafka_txn_op_begin_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2532,
+    "actual": "rd_kafka_txn_op_begin_commit",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2582,
+    "actual": "rd_kafka_txn_op_commit_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2588,
+    "actual": "rd_kafka_txn_op_commit_transaction_ack",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2805,
+    "actual": "rd_kafka_txn_op_begin_abort",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2852,
+    "actual": "rd_kafka_txn_op_abort_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2858,
+    "actual": "rd_kafka_txn_op_abort_transaction_ack",
+    "via": "rd_kafka_txn_op_req"
+   }
+  ],
+  "candidates": {
+   "cb": {
+    "defined": null
+   },
+   "rd_kafka_admin_fanout_worker": {
+    "defined": "rdkafka_admin.c:1393",
+    "lines": 58,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_admin_worker": {
+    "defined": "rdkafka_admin.c:1034",
+    "lines": 229,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_broker_monitor_op_cb": {
+    "defined": "rdkafka_broker.c:6413",
+    "lines": 7,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:2140",
+    "lines": 27,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:3056",
+    "lines": 46,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:2568",
+    "lines": 15,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_op_serve": {
+    "defined": "rdkafka_cgrp.c:7371",
+    "lines": 196,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_mock_cluster_op_serve": {
+    "defined": "rdkafka_mock.c:3158",
+    "lines": 27,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_oauthbearer_refresh_op": {
+    "defined": "rdkafka_sasl_oauthbearer.c:170",
+    "lines": 15,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [
+     "rk_conf.sasl.oauthbearer.token_refresh_cb"
+    ],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_offset_reset_op_cb": {
+    "defined": "rdkafka_offset.c:767",
+    "lines": 11,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_offset_validate_op_cb": {
+    "defined": "rdkafka_offset.c:1098",
+    "lines": 9,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_poll_cb": {
+    "defined": "rdkafka.c:5813",
+    "lines": 284,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [
+     "rk_conf.consume_cb",
+     "rk_conf.dr_cb",
+     "rk_conf.dr_msg_cb",
+     "rk_conf.error_cb",
+     "rk_conf.log_cb",
+     "rk_conf.rebalance_cb",
+     "rk_conf.stats_cb",
+     "rk_conf.throttle_cb"
+    ],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_share_ack_commit_cb_register_op": {
+    "defined": "rdkafka.c:3243",
+    "lines": 14,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_commit_async_fanout_op": {
+    "defined": "rdkafka.c:4032",
+    "lines": 21,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_commit_sync_fanout_op": {
+    "defined": "rdkafka.c:4251",
+    "lines": 80,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_fetch_fanout_op": {
+    "defined": "rdkafka.c:3745",
+    "lines": 65,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_fetch_reply_op_cb": {
+    "defined": "rdkafka.c:3432",
+    "lines": 5,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+    "defined": "rdkafka_partition.c:4155",
+    "lines": 7,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_toppar_op_serve": {
+    "defined": "rdkafka_partition.c:2159",
+    "lines": 155,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_abort_transaction": {
+    "defined": "rdkafka_txnmgr.c:2655",
+    "lines": 98,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_abort_transaction_ack": {
+    "defined": "rdkafka_txnmgr.c:2761",
+    "lines": 24,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_ack_init_transactions": {
+    "defined": "rdkafka_txnmgr.c:1308",
+    "lines": 21,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_abort": {
+    "defined": "rdkafka_txnmgr.c:2608",
+    "lines": 39,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_commit": {
+    "defined": "rdkafka_txnmgr.c:2447",
+    "lines": 30,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_transaction": {
+    "defined": "rdkafka_txnmgr.c:1413",
+    "lines": 37,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_commit_transaction": {
+    "defined": "rdkafka_txnmgr.c:2339",
+    "lines": 100,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_commit_transaction_ack": {
+    "defined": "rdkafka_txnmgr.c:2485",
+    "lines": 24,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_init_transactions": {
+    "defined": "rdkafka_txnmgr.c:1258",
+    "lines": 41,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_send_offsets_to_transaction": {
+    "defined": "rdkafka_txnmgr.c:1934",
+    "lines": 58,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   }
+  }
+ },
+ "046accf6": {
+  "stores": [
+   {
+    "file": "rdkafka.c",
+    "line": 2617,
+    "member": "rkq_serve",
+    "value": "rd_kafka_poll_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 2622,
+    "member": "rkq_serve",
+    "value": "rd_kafka_poll_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 3648,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_share_fetch_reply_op_cb"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4188,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_share_fetch_reply_op_cb"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 500,
+    "member": "rkq_serve",
+    "value": "rd_kafka_cgrp_op_serve"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 503,
+    "member": "rkq_serve",
+    "value": "rkcg->rkcg_ops->rkq_serve"
+   },
+   {
+    "file": "rdkafka_mock.c",
+    "line": 3356,
+    "member": "rkq_serve",
+    "value": "rd_kafka_mock_cluster_op_serve"
+   },
+   {
+    "file": "rdkafka_msgset_reader.c",
+    "line": 253,
+    "member": "rkq_serve",
+    "value": "par_rkq->rkq_serve"
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "line": 811,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_offset_reset_op_cb"
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "line": 1136,
+    "member": "rko_op_cb",
+    "value": "rd_kafka_offset_validate_op_cb"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 790,
+    "member": "rko_op_cb",
+    "value": "cb"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 941,
+    "member": "rko_op_cb",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_op.c",
+    "line": 1107,
+    "member": "rko_serve",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 264,
+    "member": "rkq_serve",
+    "value": "rd_kafka_toppar_op_serve"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4197,
+    "member": "leaders.cb",
+    "value": "cb"
+   },
+   {
+    "file": "rdkafka_queue.c",
+    "line": 98,
+    "member": "rkq_serve",
+    "value": "NULL"
+   },
+   {
+    "file": "rdkafka_queue.h",
+    "line": 452,
+    "member": "rko_serve",
+    "value": "orig_destq->rkq_serve"
+   }
+  ],
+  "registrations": [
+   {
+    "file": "rdkafka.c",
+    "line": 3293,
+    "actual": "rd_kafka_share_ack_commit_cb_register_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 3407,
+    "actual": "rd_kafka_share_fetch_fanout_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4376,
+    "actual": "rd_kafka_share_commit_async_fanout_op"
+   },
+   {
+    "file": "rdkafka.c",
+    "line": 4465,
+    "actual": "rd_kafka_share_commit_sync_fanout_op"
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "line": 348,
+    "actual": "rd_kafka_admin_fanout_worker"
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "line": 632,
+    "actual": "rd_kafka_admin_worker"
+   },
+   {
+    "file": "rdkafka_broker.c",
+    "line": 6433,
+    "actual": "rd_kafka_broker_monitor_op_cb"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 2453,
+    "actual": "rd_kafka_cgrp_assignor_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 2661,
+    "actual": "rd_kafka_cgrp_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_cgrp.c",
+    "line": 3137,
+    "actual": "rd_kafka_cgrp_consumer_handle_Metadata_op"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4135,
+    "actual": "rko->rko_u.leaders.cb"
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "line": 4190,
+    "actual": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+   },
+   {
+    "file": "rdkafka_sasl_oauthbearer.c",
+    "line": 194,
+    "actual": "rd_kafka_oauthbearer_refresh_op"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 422,
+    "actual": "op_cb"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2031,
+    "actual": "rd_kafka_txn_op_send_offsets_to_transaction"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 420,
+    "actual": "op_cb",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1367,
+    "actual": "rd_kafka_txn_op_init_transactions",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1393,
+    "actual": "rd_kafka_txn_op_ack_init_transactions",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 1459,
+    "actual": "rd_kafka_txn_op_begin_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2532,
+    "actual": "rd_kafka_txn_op_begin_commit",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2582,
+    "actual": "rd_kafka_txn_op_commit_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2588,
+    "actual": "rd_kafka_txn_op_commit_transaction_ack",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2805,
+    "actual": "rd_kafka_txn_op_begin_abort",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2852,
+    "actual": "rd_kafka_txn_op_abort_transaction",
+    "via": "rd_kafka_txn_op_req"
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "line": 2858,
+    "actual": "rd_kafka_txn_op_abort_transaction_ack",
+    "via": "rd_kafka_txn_op_req"
+   }
+  ],
+  "candidates": {
+   "cb": {
+    "defined": null
+   },
+   "rd_kafka_admin_fanout_worker": {
+    "defined": "rdkafka_admin.c:1393",
+    "lines": 58,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_admin_worker": {
+    "defined": "rdkafka_admin.c:1034",
+    "lines": 229,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_broker_monitor_op_cb": {
+    "defined": "rdkafka_broker.c:6413",
+    "lines": 7,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:2140",
+    "lines": 27,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:3056",
+    "lines": 46,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_handle_Metadata_op": {
+    "defined": "rdkafka_cgrp.c:2568",
+    "lines": 15,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_cgrp_op_serve": {
+    "defined": "rdkafka_cgrp.c:7371",
+    "lines": 196,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_mock_cluster_op_serve": {
+    "defined": "rdkafka_mock.c:3158",
+    "lines": 27,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_oauthbearer_refresh_op": {
+    "defined": "rdkafka_sasl_oauthbearer.c:170",
+    "lines": 15,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [
+     "rk_conf.sasl.oauthbearer.token_refresh_cb"
+    ],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_offset_reset_op_cb": {
+    "defined": "rdkafka_offset.c:767",
+    "lines": 11,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_offset_validate_op_cb": {
+    "defined": "rdkafka_offset.c:1098",
+    "lines": 9,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_poll_cb": {
+    "defined": "rdkafka.c:5813",
+    "lines": 284,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [
+     "rk_conf.consume_cb",
+     "rk_conf.dr_cb",
+     "rk_conf.dr_msg_cb",
+     "rk_conf.error_cb",
+     "rk_conf.log_cb",
+     "rk_conf.rebalance_cb",
+     "rk_conf.stats_cb",
+     "rk_conf.throttle_cb"
+    ],
+    "calls_op_destroy": true
+   },
+   "rd_kafka_share_ack_commit_cb_register_op": {
+    "defined": "rdkafka.c:3243",
+    "lines": 14,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_commit_async_fanout_op": {
+    "defined": "rdkafka.c:4032",
+    "lines": 21,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_commit_sync_fanout_op": {
+    "defined": "rdkafka.c:4251",
+    "lines": 80,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_fetch_fanout_op": {
+    "defined": "rdkafka.c:3745",
+    "lines": 65,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_share_fetch_reply_op_cb": {
+    "defined": "rdkafka.c:3432",
+    "lines": 5,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+    "defined": "rdkafka_partition.c:4155",
+    "lines": 7,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_toppar_op_serve": {
+    "defined": "rdkafka_partition.c:2159",
+    "lines": 155,
+    "destroy_test_early": false,
+    "destroy_test_anywhere": false,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_abort_transaction": {
+    "defined": "rdkafka_txnmgr.c:2655",
+    "lines": 98,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_abort_transaction_ack": {
+    "defined": "rdkafka_txnmgr.c:2761",
+    "lines": 24,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_ack_init_transactions": {
+    "defined": "rdkafka_txnmgr.c:1308",
+    "lines": 21,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_abort": {
+    "defined": "rdkafka_txnmgr.c:2608",
+    "lines": 39,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_commit": {
+    "defined": "rdkafka_txnmgr.c:2447",
+    "lines": 30,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_begin_transaction": {
+    "defined": "rdkafka_txnmgr.c:1413",
+    "lines": 37,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_commit_transaction": {
+    "defined": "rdkafka_txnmgr.c:2339",
+    "lines": 100,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_commit_transaction_ack": {
+    "defined": "rdkafka_txnmgr.c:2485",
+    "lines": 24,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_init_transactions": {
+    "defined": "rdkafka_txnmgr.c:1258",
+    "lines": 41,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   },
+   "rd_kafka_txn_op_send_offsets_to_transaction": {
+    "defined": "rdkafka_txnmgr.c:1934",
+    "lines": 58,
+    "destroy_test_early": true,
+    "destroy_test_anywhere": true,
+    "app_callbacks": [],
+    "calls_op_destroy": false
+   }
+  }
+ }
+}

@@ -1,0 +1,691 @@
+{
+ "rows": [
+  {
+   "file": "rdkafka.c",
+   "line": 4942,
+   "function": "rd_kafka_consume_cb",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 4952,
+   "function": "rd_kafka_consume_cb",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 5288,
+   "function": "rd_kafka_consumer_close0",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 5295,
+   "function": "rd_kafka_consumer_close0",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 5970,
+   "function": "rd_kafka_poll_cb",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 6012,
+   "function": "rd_kafka_poll_cb",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 6093,
+   "function": "rd_kafka_poll_cb",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka.c",
+   "line": 6313,
+   "function": "rd_kafka_memberid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_req2"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 735,
+   "function": "rd_kafka_admin_common_worker_destroy",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 921,
+   "function": "rd_kafka_admin_handle_response",
+   "actual": "rko",
+   "origin": "local from rd_kafka_enq_once_disable"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 1447,
+   "function": "rd_kafka_admin_fanout_worker",
+   "actual": "rko_fanout",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10003,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10008,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10015,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_fanout",
+   "origin": "local from ut_make_ListConsumerGroups_fanout"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10033,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10038,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10045,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_fanout",
+   "origin": "local from ut_make_ListConsumerGroups_fanout"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10065,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10070,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10075,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10082,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_fanout",
+   "origin": "local from ut_make_ListConsumerGroups_fanout"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10100,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10106,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10111,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10118,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_fanout",
+   "origin": "local from ut_make_ListConsumerGroups_fanout"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10136,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10141,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10146,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_partial",
+   "origin": "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error"
+  },
+  {
+   "file": "rdkafka_admin.c",
+   "line": 10153,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "actual": "rko_fanout",
+   "origin": "local from ut_make_ListConsumerGroups_fanout"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 2682,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_new_cb"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 4548,
+   "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+   "actual": "rko_orig",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 4568,
+   "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+   "actual": "rko_orig",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 6359,
+   "function": "rd_kafka_cgrp_terminate0",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 7382,
+   "function": "rd_kafka_cgrp_op_serve",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "line": 7563,
+   "function": "rd_kafka_cgrp_op_serve",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_event.c",
+   "line": 112,
+   "function": "rd_kafka_event_destroy",
+   "actual": "rkev",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "line": 923,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "line": 950,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka_fetcher.c",
+   "line": 1568,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "line": 2493,
+   "function": "rd_kafka_mock_topic_set_error",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_new,rd_kafka_op_req"
+  },
+  {
+   "file": "rdkafka_mock.c",
+   "line": 3285,
+   "function": "rd_kafka_mock_cluster_destroy",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_req2"
+  },
+  {
+   "file": "rdkafka_msg.c",
+   "line": 1290,
+   "function": "rd_kafka_message_destroy",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 589,
+   "function": "rd_kafka_op_destroy",
+   "actual": "msg_rko",
+   "origin": "loop variable over a container"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 807,
+   "function": "rd_kafka_op_reply",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 832,
+   "function": "rd_kafka_op_error_reply",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 908,
+   "function": "rd_kafka_op_err_destroy",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 921,
+   "function": "rd_kafka_op_error_destroy",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_op.c",
+   "line": 1117,
+   "function": "rd_kafka_op_handle",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_partition.c",
+   "line": 4214,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_new_cb"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 238,
+   "function": "rd_kafka_q_purge0",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 288,
+   "function": "rd_kafka_q_purge_toppar_version",
+   "actual": "rko",
+   "origin": "local from TAILQ_FIRST"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 792,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "actual": "rko",
+   "origin": "local from TAILQ_FIRST"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 846,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "actual": "rko",
+   "origin": "local from TAILQ_FIRST"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 861,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "actual": "rko",
+   "origin": "local from TAILQ_FIRST"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 1208,
+   "function": "rd_kafka_q_wait_result",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdkafka_queue.c",
+   "line": 1287,
+   "function": "rd_kafka_q_fix_offsets",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "line": 1427,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "line": 1461,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_request.c",
+   "line": 2792,
+   "function": "rd_kafka_handle_Metadata",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_subscription.c",
+   "line": 303,
+   "function": "rd_kafka_rebalance_protocol",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_req2"
+  },
+  {
+   "file": "rdkafka_subscription.c",
+   "line": 309,
+   "function": "rd_kafka_rebalance_protocol",
+   "actual": "rko",
+   "origin": "local from rd_kafka_op_req2"
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "line": 442,
+   "function": "rd_kafka_txn_op_req0",
+   "actual": "rko",
+   "origin": "formal"
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "line": 1634,
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "line": 1761,
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdkafka_txnmgr.c",
+   "line": 1923,
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "actual": "rko",
+   "origin": "local, other"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 115,
+   "function": "ut_op_destroy_free",
+   "actual": "(rd_kafka_op_t *)ptr",
+   "origin": "other"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 946,
+   "function": "unittest_ack_mapping_single_partition",
+   "actual": "response_rko",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 991,
+   "function": "unittest_ack_mapping_multi_partition",
+   "actual": "response_rko",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 1028,
+   "function": "unittest_ack_mapping_gaps",
+   "actual": "response_rko",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 1047,
+   "function": "unittest_ack_mapping_empty",
+   "actual": "response_rko",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 1086,
+   "function": "unittest_ack_mapping_multi_entry",
+   "actual": "response_rko",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 1137,
+   "function": "unittest_ack_mapping_cumulative",
+   "actual": "response_rko1",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_fetcher.c",
+   "line": 1138,
+   "function": "unittest_ack_mapping_cumulative",
+   "actual": "response_rko2",
+   "origin": "local from ut_create_share_fetch_response_rko"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 491,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 602,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 702,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 788,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 807,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 820,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 914,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 925,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 939,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1032,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1043,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1057,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1068,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1153,
+   "function": "unittest_msgset_all_success",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1236,
+   "function": "unittest_msgset_all_errors",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1247,
+   "function": "unittest_msgset_all_errors",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1258,
+   "function": "unittest_msgset_all_errors",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1382,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1395,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1416,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1433,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1454,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  },
+  {
+   "file": "rdunittest_msgset_errors.c",
+   "line": 1471,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "actual": "rko",
+   "origin": "local from rd_kafka_q_pop"
+  }
+ ],
+ "tally": {
+  "formal": 16,
+  "local from rd_kafka_q_pop": 29,
+  "local from rd_kafka_op_req2": 4,
+  "local from rd_kafka_enq_once_disable": 1,
+  "local, other": 12,
+  "local from ut_make_ListConsumerGroups_partial,ut_make_ListConsumerGroups_partial_error": 13,
+  "local from ut_make_ListConsumerGroups_fanout": 5,
+  "local from rd_kafka_op_new_cb": 2,
+  "local from rd_kafka_op_new,rd_kafka_op_req": 1,
+  "loop variable over a container": 1,
+  "local from TAILQ_FIRST": 4,
+  "other": 1,
+  "local from ut_create_share_fetch_response_rko": 7
+ }
+}
