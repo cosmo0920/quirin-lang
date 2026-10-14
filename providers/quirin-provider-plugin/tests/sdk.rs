@@ -243,3 +243,121 @@ fn the_example_checker_packages_verifies_and_answers_a_claim() {
     assert!(response.evidence.is_none());
     assert_eq!(response.request_id, request.request_id);
 }
+
+/// Card PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build`
+/// called from a multi-threaded process while sibling threads fork and spawn
+/// back to back. Each package is executed the moment `build` returns. If
+/// `build` held a write descriptor on the executable, a sibling's forked,
+/// not-yet-`exec`ed child could hold a duplicate of it, and this `execve`
+/// would fail with `ETXTBSY` (`Text file busy`). The package must also be
+/// today's package: the digest is the source's SHA-256, the installed
+/// manifest is the embedded template with that digest, pretty-printed with a
+/// final newline, and the executable is `0o755`.
+#[test]
+fn a_multi_threaded_caller_builds_and_executes_packages_while_siblings_spawn() {
+    use std::sync::Arc;
+    use std::sync::atomic::AtomicBool;
+
+    let source = Path::new(env!("CARGO_BIN_EXE_quirin-plugin-example-checker"));
+    let bytes = fs::read(source).unwrap();
+    let digest = quirin_provider_plugin::sha256_hex(&bytes);
+    let mut expected = package::embedded_template(&bytes).unwrap();
+    expected.package_digest.clone_from(&digest);
+    let mut expected_installed = serde_json::to_vec_pretty(&expected).unwrap();
+    expected_installed.push(b'\n');
+
+    let stop = Arc::new(AtomicBool::new(false));
+    let spawned = Arc::new(AtomicUsize::new(0));
+    let siblings: Vec<_> = (0..2)
+        .map(|_| {
+            let (stop, spawned) = (Arc::clone(&stop), Arc::clone(&spawned));
+            std::thread::spawn(move || {
+                while !stop.load(Ordering::Relaxed) {
+                    let status = Command::new("/bin/true")
+                        .stdin(Stdio::null())
+                        .stdout(Stdio::null())
+                        .stderr(Stdio::null())
+                        .status()
+                        .expect("a sibling spawns /bin/true");
+                    assert!(status.success());
+                    spawned.fetch_add(1, Ordering::Relaxed);
+                }
+            })
+        })
+        .collect();
+    // Both siblings are forking before the first build starts.
+    while spawned.load(Ordering::Relaxed) < 2 && !siblings.iter().any(|s| s.is_finished()) {
+        std::thread::yield_now();
+    }
+    assert!(
+        !siblings.iter().any(|s| s.is_finished()),
+        "a sibling stopped spawning"
+    );
+
+    let root = scratch("threads");
+    let mut outcome = Ok(());
+    for index in 0..4 {
+        let output = root.join(format!("pool-check-{index}"));
+        let installed = match package::build(source, &output) {
+            Ok(installed) => installed,
+            Err(error) => {
+                outcome = Err(format!("build {index}: {error}"));
+                break;
+            }
+        };
+        let executable = output.join("quirin-plugin-example-checker");
+        let run = Command::new(&executable)
+            .arg("--verify-package")
+            .current_dir(&output)
+            .stdin(Stdio::null())
+            .output();
+        let run = match run {
+            Ok(run) => run,
+            Err(error) => {
+                outcome = Err(format!(
+                    "package {index} could not be executed right after build: {error} \
+                     (raw os error {:?})",
+                    error.raw_os_error()
+                ));
+                break;
+            }
+        };
+        assert!(
+            run.status.success(),
+            "package {index}: {}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let reported: qcore_schemas::plugin::PluginManifest =
+            serde_json::from_slice(&run.stdout).unwrap();
+        assert_eq!(reported, installed, "package {index} reports its manifest");
+        assert_eq!(installed, expected, "package {index}");
+        assert_eq!(installed.package_digest, digest, "package {index}");
+        assert_eq!(fs::read(&executable).unwrap(), bytes, "package {index}");
+        assert_eq!(
+            fs::read(output.join(package::INSTALLED_MANIFEST)).unwrap(),
+            expected_installed,
+            "package {index}: today's installed manifest bytes"
+        );
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            assert_eq!(
+                fs::metadata(&executable).unwrap().permissions().mode() & 0o7777,
+                0o755,
+                "package {index}"
+            );
+        }
+    }
+    stop.store(true, Ordering::Relaxed);
+    for sibling in siblings {
+        sibling.join().unwrap();
+    }
+    outcome.unwrap();
+    // Each package's bytes and manifest were compared above; the SDK's own
+    // verification (in debug, a scan of the whole executable) runs once.
+    assert_eq!(
+        package::verify(&root.join("pool-check-0")).unwrap(),
+        expected
+    );
+    fs::remove_dir_all(&root).unwrap();
+}
