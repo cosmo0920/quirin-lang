@@ -187,7 +187,22 @@ list them or their premises; 0 Safe or Pending rows on this run),
 
 ## 6. Gate
 
-See [gate/](gate/) and [gate.json](gate.json).
+Standing gate and provider gate **g1** at `b9ba30ec5` (every record but this
+section), one exclusive flock on the shared heavy lock held for the whole gate
+(12:10:51Z-12:28:58Z; `scripts/gate-run.sh`, `gate-whole.sh`, `gate.sh`; exits
+in [gate/](gate/), logs `private/opcand/gate-g1/`, [gate.json](gate.json)):
+`cargo check --workspace --all-targets` 0; submodule 0; `cargo fmt --check` 0;
+`clippy --locked --all-targets -D warnings` 0; `run_test_binaries.py` **493
+units, 506 summaries, 8,023 passed, 0 failed, 14 ignored**, exit 0
+(`private/opcand/tests-g1/`), no rerun; both reevaluation probes 0;
+`check_lean_audits.py` **319** audits passed; Python suite 365 OK (08); docs
+index check 0 (09); provider gate: `package.py` build 0, verify
+`qcore.libevent` 0 and `qcore.librdkafka` 0, `cargo check --locked` in
+`providers/` 0, `contracts.py check` 0, `cargo test` 133 passed / 0 failed,
+providers Python suite 25 OK, fmt 0, clippy 0; `cargo clean --profile dev` 0.
+Then `build_matrix.py . --gate gate.json` (09a) 0, the Python suite again
+(09b) 0, the docs index (10b) 0 and its check (10c) 0. Clang:
+`gate/clang-version.txt`.
 
 ## Files
 
