@@ -276,49 +276,39 @@ pub fn run(
     let mut read: BTreeMap<usize, MemberFacts> = BTreeMap::new();
     let mut unread: BTreeMap<String, String> = BTreeMap::new();
     let mut outside = BTreeMap::new();
-    let mut tokens = BTreeSet::new();
+    let mut tokens;
     let mut rounds = 0usize;
+    let mut failed_asts = BTreeMap::new();
+    // Read every C unit naming a token of the closures over what is read so
+    // far, until no unread C unit names one. The tokens are recomputed each
+    // round (the records read refine a member's keys, which may drop a
+    // member name the bootstrap round used); the read set only grows, so the
+    // loop ends, and at its end every C unit naming a final token is read.
     loop {
         rounds += 1;
-        // The tokens of every member's closure over what is read so far.
         let mut units = read.values().cloned().collect::<Vec<_>>();
         units.push(declarations.clone());
         let views = units.iter().collect::<Vec<_>>();
-        let mut next = tokens.clone();
+        tokens = BTreeSet::new();
         for member in &members {
-            next.extend(closure_tokens(&views, member));
+            tokens.extend(closure_tokens(&views, member));
         }
-        let hashes = next.iter().map(|token| hash(token)).collect::<BTreeSet<_>>();
+        let hashes = tokens.iter().map(|token| hash(token)).collect::<BTreeSet<_>>();
         let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
-        let mut selected = Vec::new();
-        for (index, reading) in readings.iter().enumerate() {
-            if read.contains_key(&index) {
-                continue;
-            }
-            let key = label(&entries[index]);
-            match reading {
-                Reading::C(ids) if names(ids) => selected.push(index),
-                Reading::C(_) => {}
-                Reading::Other(ids, why) if names(ids) => {
-                    unread.insert(key, why.clone());
-                }
-                Reading::Other(..) => {}
-                Reading::Failed(why) => {
-                    unread.insert(key, why.clone());
-                }
-                Reading::Outside(why) => {
-                    outside.insert(key, why.clone());
-                }
-            }
-        }
-        if selected.is_empty() && next == tokens {
-            tokens = next;
+        let selected = readings
+            .iter()
+            .enumerate()
+            .filter(|(index, reading)| {
+                !read.contains_key(index) && matches!(reading, Reading::C(ids) if names(ids))
+            })
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        if selected.is_empty() {
             break;
         }
-        tokens = next;
         let mut results = Vec::with_capacity(selected.len());
         let _ = crate::parallel::run_ordered(
-            selected.clone(),
+            selected,
             jobs,
             None,
             |index| (index, read_facts(&entries[index])),
@@ -333,15 +323,37 @@ pub fn run(
                     read.insert(index, facts);
                 }
                 Err(why) => {
-                    // Recorded once; never selected again.
-                    unread.insert(label(&entries[index]), format!("its AST is not read: {why}"));
+                    // Never selected again; unread below.
+                    failed_asts.insert(index, format!("its AST is not read: {why}"));
                     read.insert(index, MemberFacts::default());
                 }
             }
         }
     }
-    // An AST that failed was recorded with empty facts only to stop the
-    // loop; it is unread, so it opens every member below.
+    // The units the final tokens make relevant but that are not read: a
+    // unit that is not C naming a token, a unit whose preprocessing failed
+    // (its tokens are unknown), and a C unit whose AST failed.
+    let hashes = tokens.iter().map(|token| hash(token)).collect::<BTreeSet<_>>();
+    let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
+    for (index, reading) in readings.iter().enumerate() {
+        let key = label(&entries[index]);
+        match reading {
+            Reading::Other(ids, why) if names(ids) => {
+                unread.insert(key, why.clone());
+            }
+            Reading::Failed(why) => {
+                unread.insert(key, why.clone());
+            }
+            Reading::Outside(why) => {
+                outside.insert(key, why.clone());
+            }
+            _ => {}
+        }
+    }
+    for (index, why) in failed_asts {
+        unread.insert(label(&entries[index]), why);
+        read.remove(&index);
+    }
     let mut units = read.into_values().collect::<Vec<_>>();
     units.push(declarations);
     let read_count = units.len() - 1;
