@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/op-app-rk-callbacks"
-BASE = "2afce9973"
+BASE = "b7facc899"
 
 
 def main() -> int:
@@ -49,7 +49,7 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"OP-CALLBACK-CANDIDATE-CONTRACTS card gate on base {BASE}, every code "
+        f"OP-APP-RK-CALLBACKS-VIA-POLL-CB card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/op-app-rk-callbacks/scripts/gate-whole.sh, "
         "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/oprk/gate-{name} of this worktree. "
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/oprk/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (no Lean change); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (320 -> 321: QCore.AppRkCallbacks); "
         "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "

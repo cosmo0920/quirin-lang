@@ -302,7 +302,38 @@ Tests:
 
 ## 8. Gate
 
-See [gate/](gate/) and [gate.json](gate.json).
+The standing gate and the provider gate, **g2**, ran at `4f2ae88a3` (the
+tip's code; later commits change records only). One exclusive flock on the
+shared heavy lock was held for the whole gate (`scripts/gate-run.sh`,
+`gate-whole.sh`, `gate.sh`). Exits are in [gate/](gate/), logs in
+`private/oprk/gate-g2/`, and the summary in [gate.json](gate.json).
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 495 units, 508 summaries, **8,049 passed, 0 failed, 15 ignored** (`private/oprk/tests-g2/`), no rerun |
+| both reevaluation probes | 0 | |
+| `check_lean_audits.py` | 0 | **321** audits passed |
+| `package.py` build; verify `qcore.libevent`, `qcore.librdkafka` | 0, 0, 0 | provider gate |
+| `cargo check --locked` in `providers/` | 0 | provider gate |
+| `contracts.py check` | 0 | provider gate |
+| `cargo test` in `providers/` | 0 | 133 passed / 0 failed |
+| providers Python suite | 0 | 25 OK |
+| provider fmt and clippy | 0, 0 | |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | Fails only on the Lean count it reads from the committed matrix (320 → 321), as for every card that adds an audit. |
+| `build_matrix.py . --gate gate.json` (09a), Python suite again (09b), docs index (10b) and its check (10c) | 0 | |
+
+Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
+
+**g1** (at `b9ca36cca`, retained in `private/oprk/gate-g1/`) is not evidence
+for the tip. It failed only `run_test_binaries.py` (8,048 passed, 1 failed:
+`callback_member_data_only::a_list_that_cannot_be_mapped_opens_the_record`;
+see section 5, "The tip's binary"). The fix was measured as `a6` and the
+whole gate was rerun as g2.
 
 ## Files
 
