@@ -1,0 +1,609 @@
+{
+ "66910c10": {
+  "members": {
+   "ssl.cert_verify_cb": {
+    "property": "ssl.certificate.verify_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_ssl_cert_verify_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:422"
+    ]
+   },
+   "sasl.scram_H": {
+    "property": null,
+    "pdef": null,
+    "setters": [],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:752",
+      "value": "SHA1"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:756",
+      "value": "SHA256"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:760",
+      "value": "SHA512"
+     }
+    ],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:156"
+    ]
+   },
+   "sasl.oauthbearer.token_refresh_cb": {
+    "property": "oauthbearer_token_refresh_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_oauthbearer_token_refresh_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2655",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oauthbearer_unsecured_token"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2674",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2680",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2686",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_client_credentials_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2690",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_jwt_bearer_refresh_cb"
+     },
+     {
+      "at": "src/aws/flb_aws_msk_iam.c:775",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "kconf",
+      "callback": "oauthbearer_token_refresh_cb"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:180",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1330"
+    ]
+   },
+   "rebalance_cb": {
+    "property": "rebalance_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_rebalance_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5849"
+    ]
+   },
+   "offset_commit_cb": {
+    "property": "offset_commit_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_offset_commit_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": []
+   },
+   "dr_cb": {
+    "property": "dr_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_dr_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5938"
+    ]
+   },
+   "dr_msg_cb": {
+    "property": "dr_msg_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_dr_msg_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [
+     {
+      "at": "plugins/out_kafka/kafka_config.c:108",
+      "setter": "rd_kafka_conf_set_dr_msg_cb",
+      "conf": "ctx->conf",
+      "callback": "cb_kafka_msg"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5934"
+    ]
+   },
+   "consume_cb": {
+    "property": "consume_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_consume_cb"
+    ],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:4965",
+      "value": "consume_cb, .opaque = opaque}"
+     }
+    ],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:4950"
+    ]
+   },
+   "log_cb": {
+    "property": "log_cb",
+    "pdef": "rd_kafka_log_print",
+    "setters": [
+     "rd_kafka_conf_set_log_cb"
+    ],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:417",
+      "value": "func"
+     }
+    ],
+    "registrations": [
+     {
+      "at": "plugins/out_kafka/kafka_config.c:111",
+      "setter": "rd_kafka_conf_set_log_cb",
+      "conf": "ctx->conf",
+      "callback": "cb_kafka_logger"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:303",
+     "lib/librdkafka-2.15.0/src/rdkafka.c:6001"
+    ]
+   },
+   "error_cb": {
+    "property": "error_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_error_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5914"
+    ]
+   },
+   "throttle_cb": {
+    "property": "throttle_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_throttle_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5981"
+    ]
+   },
+   "stats_cb": {
+    "property": "stats_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_stats_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5991"
+    ]
+   },
+   "socket_cb": {
+    "property": "socket_cb",
+    "pdef": "rd_kafka_socket_cb_linux",
+    "setters": [
+     "rd_kafka_conf_set_socket_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:1133"
+    ]
+   },
+   "connect_cb": {
+    "property": "connect_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_connect_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:1158"
+    ]
+   },
+   "closesocket_cb": {
+    "property": "closesocket_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_closesocket_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:74"
+    ]
+   },
+   "open_cb": {
+    "property": "open_cb",
+    "pdef": "rd_kafka_open_cb_linux",
+    "setters": [
+     "rd_kafka_conf_set_open_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_offset.c:159"
+    ]
+   },
+   "resolve_cb": {
+    "property": "resolve_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_resolve_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": []
+   },
+   "background_event_cb": {
+    "property": "background_event_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_background_event_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_background.c:51"
+    ]
+   },
+   "ut.handle_ProduceResponse": {
+    "property": "ut_handle_ProduceResponse",
+    "pdef": null,
+    "setters": [],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c:5043"
+    ]
+   }
+  },
+  "librdkafka_src_sha256": "213a7cd3fc857ed0ffb43005d422ab0ff171e55d24fe212e970e694cec33c299"
+ },
+ "046accf6": {
+  "members": {
+   "ssl.cert_verify_cb": {
+    "property": "ssl.certificate.verify_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_ssl_cert_verify_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_ssl.c:422"
+    ]
+   },
+   "sasl.scram_H": {
+    "property": null,
+    "pdef": null,
+    "setters": [],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:752",
+      "value": "SHA1"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:756",
+      "value": "SHA256"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:760",
+      "value": "SHA512"
+     }
+    ],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_scram.c:156"
+    ]
+   },
+   "sasl.oauthbearer.token_refresh_cb": {
+    "property": "oauthbearer_token_refresh_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_oauthbearer_token_refresh_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2655",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oauthbearer_unsecured_token"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2674",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2680",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2686",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_client_credentials_refresh_cb"
+     },
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:2690",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "&rk->rk_conf",
+      "callback": "rd_kafka_oidc_token_jwt_bearer_refresh_cb"
+     },
+     {
+      "at": "src/aws/flb_aws_msk_iam.c:775",
+      "setter": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+      "conf": "kconf",
+      "callback": "oauthbearer_token_refresh_cb"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:180",
+     "lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c:1330"
+    ]
+   },
+   "rebalance_cb": {
+    "property": "rebalance_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_rebalance_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5849"
+    ]
+   },
+   "offset_commit_cb": {
+    "property": "offset_commit_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_offset_commit_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": []
+   },
+   "dr_cb": {
+    "property": "dr_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_dr_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5938"
+    ]
+   },
+   "dr_msg_cb": {
+    "property": "dr_msg_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_dr_msg_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [
+     {
+      "at": "plugins/out_kafka/kafka_config.c:108",
+      "setter": "rd_kafka_conf_set_dr_msg_cb",
+      "conf": "ctx->conf",
+      "callback": "cb_kafka_msg"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5934"
+    ]
+   },
+   "consume_cb": {
+    "property": "consume_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_consume_cb"
+    ],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:4965",
+      "value": "consume_cb, .opaque = opaque}"
+     }
+    ],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:4950"
+    ]
+   },
+   "log_cb": {
+    "property": "log_cb",
+    "pdef": "rd_kafka_log_print",
+    "setters": [
+     "rd_kafka_conf_set_log_cb"
+    ],
+    "direct_stores": [
+     {
+      "at": "lib/librdkafka-2.15.0/src/rdkafka.c:417",
+      "value": "func"
+     }
+    ],
+    "registrations": [
+     {
+      "at": "plugins/out_kafka/kafka_config.c:111",
+      "setter": "rd_kafka_conf_set_log_cb",
+      "conf": "ctx->conf",
+      "callback": "cb_kafka_logger"
+     }
+    ],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:303",
+     "lib/librdkafka-2.15.0/src/rdkafka.c:6001"
+    ]
+   },
+   "error_cb": {
+    "property": "error_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_error_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5914"
+    ]
+   },
+   "throttle_cb": {
+    "property": "throttle_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_throttle_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5981"
+    ]
+   },
+   "stats_cb": {
+    "property": "stats_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_stats_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka.c:5991"
+    ]
+   },
+   "socket_cb": {
+    "property": "socket_cb",
+    "pdef": "rd_kafka_socket_cb_linux",
+    "setters": [
+     "rd_kafka_conf_set_socket_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:1133"
+    ]
+   },
+   "connect_cb": {
+    "property": "connect_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_connect_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:1158"
+    ]
+   },
+   "closesocket_cb": {
+    "property": "closesocket_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_closesocket_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_transport.c:74"
+    ]
+   },
+   "open_cb": {
+    "property": "open_cb",
+    "pdef": "rd_kafka_open_cb_linux",
+    "setters": [
+     "rd_kafka_conf_set_open_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_offset.c:159"
+    ]
+   },
+   "resolve_cb": {
+    "property": "resolve_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_resolve_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": []
+   },
+   "background_event_cb": {
+    "property": "background_event_cb",
+    "pdef": null,
+    "setters": [
+     "rd_kafka_conf_set_background_event_cb"
+    ],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_background.c:51"
+    ]
+   },
+   "ut.handle_ProduceResponse": {
+    "property": "ut_handle_ProduceResponse",
+    "pdef": null,
+    "setters": [],
+    "direct_stores": [],
+    "registrations": [],
+    "invocations": [
+     "lib/librdkafka-2.15.0/src/rdkafka_request.c:5043"
+    ]
+   }
+  },
+  "librdkafka_src_sha256": "213a7cd3fc857ed0ffb43005d422ab0ff171e55d24fe212e970e694cec33c299"
+ },
+ "build": {
+  "WITH_LIBDL": "1",
+  "WITH_PLUGINS": "1"
+ },
+ "identical_librdkafka": true
+}
