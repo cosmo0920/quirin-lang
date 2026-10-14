@@ -77,12 +77,23 @@ pub struct UnitRecord {
     /// function-pointer member facts, recorded when the environment holds a
     /// member invocation, for the run's closure. `None` otherwise.
     pub callback_members: Option<crate::callback_member_closure::MemberFacts>,
+    /// Card **OP-CONSTRUCTOR-DECLARATIONS** (rules 12o, 13w, 14e): the unit's
+    /// classified stores into the members a result state names, recorded
+    /// when the environment holds a result state. `None` otherwise.
+    pub constructed_states: Option<crate::constructed_state::StateFacts>,
 }
 
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): record the unit's
 /// function-pointer member facts (outside every hypothetical analysis).
 pub fn member_evidence(facts: crate::callback_member_closure::MemberFacts) {
     with_evidence(|record| record.callback_members = Some(facts));
+}
+
+/// Card **OP-CONSTRUCTOR-DECLARATIONS** (rules 12o, 13w, 14e): record the
+/// unit's classified stores into the stated members (outside every
+/// hypothetical analysis).
+pub fn state_evidence(facts: crate::constructed_state::StateFacts) {
+    with_evidence(|record| record.constructed_states = Some(facts));
 }
 
 /// What one unit's bodies made of one declaration they define.

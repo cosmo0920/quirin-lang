@@ -169,7 +169,7 @@ fn strip_qualifiers(text: &str) -> &str {
     }
 }
 
-fn strip(mut node: &Value) -> &Value {
+pub(crate) fn strip(mut node: &Value) -> &Value {
     loop {
         match kind(node) {
             "ParenExpr" | "ImplicitCastExpr" => match children(node).first() {
@@ -181,7 +181,7 @@ fn strip(mut node: &Value) -> &Value {
     }
 }
 
-fn null_constant(node: &Value) -> bool {
+pub(crate) fn null_constant(node: &Value) -> bool {
     let node = strip(node);
     match kind(node) {
         "ImplicitValueInitExpr" | "GNUNullExpr" => true,
@@ -191,7 +191,7 @@ fn null_constant(node: &Value) -> bool {
     }
 }
 
-fn designator(node: &Value) -> Option<&str> {
+pub(crate) fn designator(node: &Value) -> Option<&str> {
     let node = strip(node);
     (kind(node) == "DeclRefExpr" && node["referencedDecl"]["kind"].as_str() == Some("FunctionDecl"))
         .then(|| node["referencedDecl"]["name"].as_str())
@@ -199,7 +199,7 @@ fn designator(node: &Value) -> Option<&str> {
 }
 
 /// The direct callee of a call node, when it is a function designator.
-fn direct_callee(call: &Value) -> Option<&str> {
+pub(crate) fn direct_callee(call: &Value) -> Option<&str> {
     children(call).first().and_then(designator)
 }
 
@@ -212,7 +212,7 @@ struct Enclosing<'a> {
 impl MemberFacts {
     /// Whether a type spelling is a function pointer (directly, or a pointer
     /// to a function typedef, or a typedef of a function pointer).
-    fn function_pointer(&self, node: &Value) -> bool {
+    pub(crate) fn function_pointer(&self, node: &Value) -> bool {
         for text in [type_text(node), qual_text(node)] {
             if text.contains("(*)") {
                 return true;
@@ -244,14 +244,14 @@ impl MemberFacts {
         spelled_record(bare).or_else(|| self.record_typedefs.get(bare).cloned())
     }
 
-    fn record_of_node(&self, node: &Value, pointee: bool) -> Option<String> {
+    pub(crate) fn record_of_node(&self, node: &Value, pointee: bool) -> Option<String> {
         self.record_of(type_text(node), pointee)
             .or_else(|| self.record_of(qual_text(node), pointee))
     }
 
     /// `TAG.PATH` of a member expression, `?.NAME` when its record is not
     /// read.
-    fn member_key(&self, member: &Value) -> String {
+    pub(crate) fn member_key(&self, member: &Value) -> String {
         let mut segments = Vec::new();
         let mut node = member;
         let tag = loop {

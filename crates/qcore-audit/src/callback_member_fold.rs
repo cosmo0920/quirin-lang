@@ -15,10 +15,20 @@
 //! that can store into it). Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a data-only
 //! unit records the facts read from its AST ([`data_only_facts`]), so only a
 //! unit whose AST is not read opens a member. The fold never promotes a row.
+//!
+//! Card **OP-CONSTRUCTOR-DECLARATIONS** (rules 12o, 13w, 14e): a unit reads
+//! a constructor's stated result state only where its own stores keep it; the
+//! fold reads every analysed unit's classified stores
+//! ([`qcore_c_gateway::constructed_state::stability`]) and demotes a `Safe`
+//! or `Pending` row whose dependencies name a constructor stating a state on
+//! a member the run's stores do not keep (`constructed-state-open`); a unit
+//! that recorded no facts opens every stated member (premise
+//! `P-OPCTOR-STORES-SEEN`).
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::callback_member_closure::{MemberFacts, closure};
+use qcore_c_gateway::constructed_state::{StateFacts, stability, stated_keys};
 use qcore_schemas::callback::CallbackClause;
 use qcore_schemas::contract::ResourceContracts;
 use serde_json::{Value, json};
@@ -32,6 +42,10 @@ pub const DECLARATIONS_KEY: &str = "callback_member_declarations";
 
 /// What the section means, carried in it.
 pub const MEANING: &str = "the run's closure of every function-pointer member a resource_callback_member_invoked clause names (rule 12n): over every analysed unit's Clang stores into the member, a designator joins the set, a null pointer adds nothing, a read of another such member adds its set, a formal of a function whose address no unit takes adds its actuals at every call, and anything else opens it; a unit that recorded no facts opens it (premise P-CG22-MEMBER-CLOSED-WORLD). `demoted` lists the Safe or Pending rows whose unit decided a member over a set the run's closure is not contained in, now Unknown (callback-member-open). `members_over_recorded_units` is the same closure over the units that did record facts, and `units_without_facts_named` names the others (evidence only). Evidence and a demotion only: no row is promoted";
+
+/// What the result-state part of the section means (card
+/// OP-CONSTRUCTOR-DECLARATIONS).
+pub const CONSTRUCTED_MEANING: &str = "the run's stability of every member a constructor's stated result state names (rules 12o, 13w, 14e): every store into the member in every analysed unit is classified (a store into an object its function obtained from an owned-result call only or an automatic object, a null pointer into a function-pointer member, a constant flag-or, a case-guarded rewrite); anything else, a whole-object write of the record, or a unit that recorded no facts (premise P-OPCTOR-STORES-SEEN) leaves it not kept. `demoted` lists the Safe or Pending rows resting on a constructor whose stated member the run does not keep, now Unknown (constructed-state-open). Evidence and a demotion only: no row is promoted";
 
 /// Every declaration of `contracts` that invokes a member, with the members.
 #[must_use]
@@ -65,12 +79,61 @@ pub(crate) fn data_only_facts(
     qcore_c_gateway::callback_member_closure::read_unit(preprocessed?, unit).ok()
 }
 
+/// Card **OP-CONSTRUCTOR-DECLARATIONS**: a data-only unit's classified
+/// stores into the members `contracts`' result states name, read from its
+/// whole Clang AST; `None` (every stated member open) when it has none or the
+/// AST is not read, and when no declaration states a result state.
+pub(crate) fn data_only_state(
+    preprocessed: Option<&str>,
+    unit: &qcore_c_gateway::legacy_c::C11TranslationUnit<'_>,
+    contracts: &ResourceContracts,
+) -> Option<StateFacts> {
+    let keys = stated_keys(
+        contracts
+            .retaining()
+            .values()
+            .map(|declared| &declared.constructed),
+    );
+    if keys.is_empty() {
+        return None;
+    }
+    qcore_c_gateway::constructed_state::read_unit(preprocessed?, unit, &keys).ok()
+}
+
+/// Card OP-CONSTRUCTOR-DECLARATIONS: every declaration of `contracts`
+/// that states a result state, with the members it states (and whether each
+/// is a discriminant).
+#[must_use]
+pub fn constructed_declarations(
+    contracts: &ResourceContracts,
+) -> BTreeMap<String, BTreeMap<String, bool>> {
+    contracts
+        .retaining()
+        .iter()
+        .filter(|(_, declared)| !declared.constructed.is_empty())
+        .map(|(name, declared)| {
+            let mut members = stated_keys([&declared.constructed])
+                .into_iter()
+                .map(|key| (key, false))
+                .collect::<BTreeMap<_, _>>();
+            if let Some(set) = &declared.constructed.discriminant {
+                members.insert(set.member.spelling(), true);
+            }
+            (name.clone(), members)
+        })
+        .filter(|(_, members)| !members.is_empty())
+        .collect()
+}
+
 /// One unit's recorded facts.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct UnitFacts {
     pub library: String,
     pub file: String,
     pub facts: Option<MemberFacts>,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS: the unit's classified stores into
+    /// the stated members.
+    pub state: Option<StateFacts>,
 }
 
 fn closure_value(result: &Result<BTreeSet<String>, BTreeSet<String>>) -> Value {
@@ -90,7 +153,8 @@ pub fn fold(
     diagnostic_counts: &mut BTreeMap<String, usize>,
 ) -> Value {
     let declarations = member_declarations(contracts);
-    if declarations.is_empty() {
+    let constructed = constructed_declarations(contracts);
+    if declarations.is_empty() && constructed.is_empty() {
         return Value::Null;
     }
     let members = declarations
@@ -122,6 +186,32 @@ pub fn fold(
         .filter(|unit| unit.is_none_or(|unit| unit.facts.is_none()))
         .count()
         + facts.len().saturating_sub(next);
+    // Card OP-CONSTRUCTOR-DECLARATIONS: the run's stability of every stated
+    // member, over every unit row (a row with no recorded state facts opens
+    // it).
+    let owned = |name: &str| {
+        let owned = |result: qcore_schemas::contract::ResourceReturnMode| {
+            matches!(result, qcore_schemas::contract::ResourceReturnMode::Owned { .. })
+        };
+        contracts
+            .contract(name)
+            .is_some_and(|contract| owned(contract.result))
+            || contracts
+                .retaining_contract(name)
+                .is_some_and(|declared| owned(declared.contract.result))
+    };
+    let state_units = paired
+        .iter()
+        .map(|unit| unit.and_then(|unit| unit.state.as_ref()))
+        .collect::<Vec<_>>();
+    let mut state_stability: BTreeMap<String, Result<(), BTreeSet<String>>> = BTreeMap::new();
+    for members in constructed.values() {
+        for (member, discriminant) in members {
+            state_stability.entry(member.clone()).or_insert_with(|| {
+                stability(&state_units, member, *discriminant, &owned).map(|_| ())
+            });
+        }
+    }
     // The units with no facts, named for the section.
     let without = units
         .iter()
@@ -158,7 +248,8 @@ pub fn fold(
         })
         .collect::<BTreeMap<_, _>>();
     let mut demoted = Vec::new();
-    for (row, unit) in units.iter_mut().zip(paired) {
+    let mut state_demoted = Vec::new();
+    for (row, unit) in units.iter_mut().zip(paired.iter().copied()) {
         let own_facts = unit.and_then(|unit| unit.facts.as_ref());
         let (library, file) = (
             row["library"].as_str().unwrap_or("").to_owned(),
@@ -180,6 +271,48 @@ pub fn fold(
                         .map(|members| (name.to_owned(), members))
                 })
                 .collect::<Vec<_>>();
+            // Card OP-CONSTRUCTOR-DECLARATIONS: a row resting on a
+            // constructor's stated state keeps it only when the run's stores
+            // keep every member it states.
+            let opened = function["contract_dependencies"]["declarations"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(Value::as_str)
+                .filter_map(|name| constructed.get(name).map(|members| (name.to_owned(), members)))
+                .flat_map(|(name, members)| {
+                    members
+                        .keys()
+                        .filter(|member| state_stability.get(*member).is_some_and(Result::is_err))
+                        .map(move |member| (name.clone(), member.clone()))
+                })
+                .collect::<Vec<_>>();
+            if let Some((declaration, member)) = opened.first()
+                && function["status"].as_str() != Some("Unknown")
+            {
+                function["status"] = json!("Unknown");
+                let description = format!(
+                    "call to `{declaration}`: the run's stores into `{member}` do not keep the \
+                     stated result state (constructed-state-open)"
+                );
+                if let Some(diagnostics) = function["diagnostics"].as_array_mut() {
+                    diagnostics.push(json!({
+                        "line": 0,
+                        "origin": Value::Null,
+                        "category": "unsupported",
+                        "description": description,
+                    }));
+                }
+                *diagnostic_counts.entry("unsupported".into()).or_default() += 1;
+                demoted_here += 1;
+                state_demoted.push(json!({
+                    "library": library,
+                    "file": file,
+                    "function": function["function"],
+                    "declaration": declaration,
+                    "member": member,
+                }));
+            }
             for (declaration, members) in relied {
                 for member in members {
                     let own = own_facts.map(|facts| closure(&[facts], member));
@@ -229,7 +362,7 @@ pub fn fold(
             }
         }
     }
-    json!({
+    let mut section = json!({
         "meaning": MEANING,
         "declarations": declarations,
         "members": run.iter().map(|(member, result)| (member.clone(), closure_value(result))).collect::<BTreeMap<_, _>>(),
@@ -237,7 +370,27 @@ pub fn fold(
         "units_without_facts_named": without,
         "members_over_recorded_units": recorded_only,
         "demoted": demoted,
-    })
+    });
+    // Card OP-CONSTRUCTOR-DECLARATIONS: present only when a declaration
+    // states a result state.
+    if !constructed.is_empty() {
+        section["constructed_states"] = json!({
+            "meaning": CONSTRUCTED_MEANING,
+            "declarations": constructed,
+            "members": state_stability
+                .iter()
+                .map(|(member, result)| {
+                    let value = match result {
+                        Ok(()) => json!({"kept": true}),
+                        Err(open) => json!({"kept": false, "open": open}),
+                    };
+                    (member.clone(), value)
+                })
+                .collect::<BTreeMap<_, _>>(),
+            "demoted": state_demoted,
+        });
+    }
+    section
 }
 
 #[cfg(test)]
@@ -289,6 +442,7 @@ contract {
             library: "l".into(),
             file: file.into(),
             facts,
+            state: None,
         }
     }
 

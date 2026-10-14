@@ -56,13 +56,15 @@ open QCore.ContractDependencies (Outcome unitOutcome)
 inductive ClauseKind where
   | parameter | result | borrowedResult | referenceResult | container | countedUser
   | retention | guard | holderReset | slotMove | outDerived | reference | exitClass
-  | premise | variadicTail | noReturn | callback | callbackChecked | arm | unreadable
+  | premise | variadicTail | noReturn | callback | callbackChecked | arm | memberState
+  | unreadable
   deriving DecidableEq, Repr
 
 def allKinds : List ClauseKind :=
   [.parameter, .result, .borrowedResult, .referenceResult, .container, .countedUser,
    .retention, .guard, .holderReset, .slotMove, .outDerived, .reference, .exitClass,
-   .premise, .variadicTail, .noReturn, .callback, .callbackChecked, .arm, .unreadable]
+   .premise, .variadicTail, .noReturn, .callback, .callbackChecked, .arm, .memberState,
+   .unreadable]
 
 /-- The clauses of the custody projection. -/
 def ClauseKind.custody : ClauseKind → Bool
@@ -74,9 +76,11 @@ def ClauseKind.custody : ClauseKind → Bool
 refines it (`QCore.DeclaredEntryCheck`); card CG22-CALLBACK-REGISTRY-CONTRACT
 adds `r13y`, the callback body check (`QCore.CallbackContracts`); card
 CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `r12o`, the arm check of a
-type-switched release (`QCore.OpCallbacks`). -/
+type-switched release (`QCore.OpCallbacks`); card OP-CONSTRUCTOR-DECLARATIONS
+adds `r14e`, the result-state check of a constructor's body
+(`QCore.OpCallbacks`). -/
 inductive Evidence where
-  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y | r12o
+  | w4 | entry | r11r | r12w | r13a | r13c | r13d | r13m | r13y | r12o | r14e
   deriving DecidableEq, Repr
 
 /-- Whether a piece of evidence covers a clause kind (rule 13i). -/
@@ -91,6 +95,7 @@ def covers : Evidence → ClauseKind → Bool
   | .r13d, k => k == .referenceResult
   | .r13y, k => k == .callbackChecked
   | .r12o, k => k == .arm
+  | .r14e, k => k == .memberState
 
 /-- The structural checks. -/
 def Evidence.structural : Evidence → Bool
@@ -107,6 +112,7 @@ def reads : Evidence → List ClauseKind
   | .r13d => [.referenceResult]
   | .r13y => [.callbackChecked]
   | .r12o => [.arm]
+  | .r14e => [.memberState]
 
 /-- A structural check's evidence never covers a clause of another kind. -/
 theorem a_structural_check_covers_only_what_it_reads (e : Evidence) (k : ClauseKind)
@@ -343,6 +349,7 @@ def ClauseKind.spelling : ClauseKind → String
   | .callback => "callback"
   | .callbackChecked => "callbackChecked"
   | .arm => "arm"
+  | .memberState => "memberState"
   | .unreadable => "unreadable"
 
 def Evidence.spelling : Evidence → String
@@ -356,6 +363,7 @@ def Evidence.spelling : Evidence → String
   | .r13m => "13m"
   | .r13y => "13y"
   | .r12o => "12o"
+  | .r14e => "14e"
 
 /-- (evidence, the clause kinds it covers). -/
 def coverageVectors : List (String × List String) := [
@@ -368,11 +376,12 @@ def coverageVectors : List (String × List String) := [
   ("13d", ["referenceResult"]),
   ("13m", ["parameter", "result", "borrowedResult", "referenceResult"]),
   ("13y", ["callbackChecked"]),
-  ("12o", ["arm"])
+  ("12o", ["arm"]),
+  ("14e", ["memberState"])
 ]
 
 def allEvidence : List Evidence :=
-  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13y, .r12o]
+  [.w4, .entry, .r11r, .r12w, .r13a, .r13c, .r13d, .r13m, .r13y, .r12o, .r14e]
 
 theorem coverage_vectors_hold :
     (allEvidence.zip coverageVectors).all (fun (e, v) =>
@@ -399,6 +408,7 @@ def unitOf : String → UnitView
   | "13m+13a" => ⟨false, [.r13m, .r13a]⟩
   | "13y" => ⟨false, [.r13y]⟩
   | "12o" => ⟨false, [.r12o]⟩
+  | "14e" => ⟨false, [.r14e]⟩
   | _ => ⟨true, []⟩
 
 def kindOf (s : String) : ClauseKind :=
@@ -433,7 +443,9 @@ def clauseStandingVectors : List (Bool × List String × List String × String) 
   (false, ["parameter", "container"], ["13m"], "partly-validated"),
   (false, ["parameter", "callbackChecked", "result"], ["13y"], "partly-validated"),
   (false, ["parameter", "callback", "result"], ["W4"], "partly-validated"),
-  (false, ["parameter", "arm", "arm", "callback"], ["12o"], "partly-validated")
+  (false, ["parameter", "arm", "arm", "callback"], ["12o"], "partly-validated"),
+  (false, ["parameter", "memberState", "memberState", "result"], ["14e"], "partly-validated"),
+  (false, ["parameter", "memberState", "result"], ["W4"], "partly-validated")
 ]
 
 theorem clause_standing_vectors_hold :

@@ -1884,9 +1884,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // serving declarations and `rd_kafka_op_destroy` in
     // `librdkafka/client.qv`, all withheld with the retaining declarations.
     // Selection and rejected unchanged.
+    // 401 -> 406 by card OP-CONSTRUCTOR-DECLARATIONS: the op constructors
+    // `rd_kafka_op_new0` and `rd_kafka_op_new_cb` and the request family
+    // `rd_kafka_op_req0`, `_req`, `_req2` in `librdkafka/client.qv`, all
+    // withheld with the retaining declarations. Selection and rejected
+    // unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 401, 314)
+        (61, 406, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1919,7 +1924,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the six queue serving
     // declarations and `rd_kafka_op_destroy` (C04.19.1-C04.19.3): 45 -> 52.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 52);
+    // Card OP-CONSTRUCTOR-DECLARATIONS: the two op constructors (a result
+    // state, C04.19.4) and the three requests (member invocations): 52 -> 57.
+    assert_eq!(loaded.retaining().len(), 57);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

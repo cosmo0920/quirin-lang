@@ -292,6 +292,12 @@ pub(super) struct AbstractState {
     /// function that calls no registering callee, which keeps the join as it
     /// was.
     pub(super) registries: BTreeMap<callback_route::RegistryKey, callback_route::Registration>,
+    /// Card **OP-CONSTRUCTOR-DECLARATIONS** (rules 12o, 13w, 14e): the
+    /// states a constructor stated of a tracked result, by site and member.
+    /// A state not held alike on every arriving path is undecided (dropped).
+    /// Empty in every function that calls no constructor with a stated
+    /// state, which keeps the join as it was.
+    pub(super) constructed: BTreeMap<(usize, String), super::constructed_route::ObjectState>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -416,6 +422,7 @@ impl AbstractState {
         slot_move_route::join(self, incoming);
         reference_route::join(self, incoming);
         callback_route::join(&mut self.registries, &incoming.registries);
+        super::constructed_route::join(&mut self.constructed, &incoming.constructed);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);

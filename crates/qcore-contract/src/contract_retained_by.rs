@@ -306,5 +306,7 @@ pub(super) fn declaration(
         discriminant: None,
         arms: Vec::new(),
         arms_withdrawn: false,
+        constructed: Default::default(),
+        constructed_withdrawn: false,
     })
 }

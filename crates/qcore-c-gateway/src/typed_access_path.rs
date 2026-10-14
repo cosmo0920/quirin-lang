@@ -420,6 +420,12 @@ struct AstIndex {
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the stores into
     /// function-pointer members and their sources.
     member_facts: Arc<crate::callback_member_closure::MemberFacts>,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): the unit's
+    /// classified stores into the members a result state names, by the set
+    /// of members asked for (computed once per set).
+    state_facts: std::cell::RefCell<
+        BTreeMap<BTreeSet<String>, std::rc::Rc<crate::constructed_state::StateFacts>>,
+    >,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -595,6 +601,7 @@ impl AstIndex {
             no_return_declarations: Arc::new(retained.no_return_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
             member_facts: Arc::new(retained.member_facts),
+            state_facts: std::cell::RefCell::default(),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -619,6 +626,7 @@ impl AstIndex {
             no_return_declarations: Arc::new(retained.no_return_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
             member_facts: Arc::new(retained.member_facts),
+            state_facts: std::cell::RefCell::default(),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -828,6 +836,32 @@ impl IndirectCallUnit<'_> {
     /// function-pointer member facts.
     pub(crate) fn member_facts(&self) -> &crate::callback_member_closure::MemberFacts {
         &self.ast.member_facts
+    }
+
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): the unit's
+    /// classified stores into `keys`, over every function body it defines.
+    pub(crate) fn state_facts(
+        &self,
+        keys: &BTreeSet<String>,
+    ) -> std::rc::Rc<crate::constructed_state::StateFacts> {
+        if let Some(found) = self.ast.state_facts.borrow().get(keys) {
+            return found.clone();
+        }
+        let functions = self.ast.functions.iter().flat_map(|(name, entries)| {
+            entries
+                .iter()
+                .map(move |entry| (name.as_str(), entry.ast.as_ref()))
+        });
+        let facts = std::rc::Rc::new(crate::constructed_state::collect(
+            &self.ast.member_facts,
+            functions,
+            keys,
+        ));
+        self.ast
+            .state_facts
+            .borrow_mut()
+            .insert(keys.clone(), facts.clone());
+        facts
     }
 
     /// A node's tokens, exactly as the gateway tokenizes the analysed source.

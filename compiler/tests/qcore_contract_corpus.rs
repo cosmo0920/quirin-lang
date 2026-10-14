@@ -1245,6 +1245,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         11,
     ),
     ("librdkafka/client.qv", "rd_kafka_op_destroy", 175),
+    // Card OP-CONSTRUCTOR-DECLARATIONS: the op constructors (a result state,
+    // C04.19.4; `rd_kafka_op_new0`'s `quant live #result` state clause is one
+    // clause) and the request family.
+    ("librdkafka/client.qv", "rd_kafka_op_new0", 7),
+    ("librdkafka/client.qv", "rd_kafka_op_new_cb", 9),
+    ("librdkafka/client.qv", "rd_kafka_op_req0", 8),
+    ("librdkafka/client.qv", "rd_kafka_op_req", 7),
+    ("librdkafka/client.qv", "rd_kafka_op_req2", 6),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

@@ -288,3 +288,91 @@ fn distinguishes_lifetimes_from_character_literals() {
         ]
     );
 }
+
+/// Card OP-CONSTRUCTOR-DECLARATIONS (USER DECISION 2026-10-14): the maps-to
+/// token [`MAPS_TO`] is one three-byte token, told apart from the pipe `|>`,
+/// the logical or `||` and the arrow `->`.
+#[test]
+fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
+    let kinds = |source: &str| {
+        lex(source)
+            .unwrap()
+            .into_iter()
+            .map(|token| token.kind)
+            .collect::<Vec<_>>()
+    };
+    let maps = format!("rd_kafka_op_s.rko_op_cb {MAPS_TO} absent");
+    assert_eq!(
+        kinds(&maps),
+        vec![
+            TokenKind::Word("rd_kafka_op_s".into()),
+            TokenKind::Symbol(Symbol::Dot),
+            TokenKind::Word("rko_op_cb".into()),
+            TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Word("absent".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // The pipe keeps its two bytes.
+    assert_eq!(
+        kinds("a |> b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipeInto),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // `||` keeps its two bytes, and `||->` is the or then an arrow, never a
+    // bar then the maps-to.
+    assert_eq!(
+        kinds("a || b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipePipe),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    assert_eq!(
+        kinds("a ||-> b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipePipe),
+            TokenKind::Symbol(Symbol::Arrow),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // A bare arrow is the arrow, and a spaced bar is a bar then an arrow.
+    assert_eq!(
+        kinds("a -> b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::Arrow),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    assert_eq!(
+        kinds("a | -> b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Symbol(Symbol::Arrow),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // `|-` short of the third byte is a bar then a minus.
+    assert_eq!(
+        kinds("a |- b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Symbol(Symbol::Minus),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+}

@@ -9,6 +9,7 @@
 // Card CG22-CALLBACK-REGISTRY-CONTRACT: callback contracts.
 pub mod arm_release;
 pub mod callback;
+pub mod constructed_state;
 pub mod contract;
 // Card VERDICT-CONTRACT-DEPENDENCIES (gateway rule 13f): the per-thread log of
 // the names a resource environment was asked for; evidence only.

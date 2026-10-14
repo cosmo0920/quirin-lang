@@ -347,6 +347,10 @@ pub(crate) mod reference_result_route;
 // the transfer keeps, the release refusal, the body checks).
 #[path = "legacy_callback_route.rs"]
 pub(crate) mod callback_route;
+// Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a constructor's
+// stated result state on route G.
+#[path = "legacy_constructed_route.rs"]
+pub(crate) mod constructed_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before

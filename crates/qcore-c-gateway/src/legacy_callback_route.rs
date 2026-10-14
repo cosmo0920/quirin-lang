@@ -19,7 +19,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_schemas::callback::{CallbackActual, CallbackClause, CallbackHolder};
+use qcore_schemas::callback::{CallbackActual, CallbackClause, CallbackHolder, MemberObject};
 use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract};
 use qcore_schemas::retained_by::RetainingContract;
 use serde_json::Value;
@@ -85,6 +85,12 @@ pub struct Operands {
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the
     /// type-switched release, read under the cautious join of its arms.
     pub arms: Option<ArmOperands>,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): what a
+    /// constructor states of its result.
+    pub constructed: Option<super::constructed_route::ConstructedOperands>,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rules 13w, 14e): member invocations
+    /// the unit's closure refuses, read against the object's path state.
+    pub member_uses: Vec<super::constructed_route::MemberUse>,
 }
 
 /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the arms of a
@@ -97,6 +103,9 @@ pub struct ArmOperands {
     pub object: Vec<String>,
     /// Every member path some arm releases, with the join of the arms there.
     pub released: BTreeMap<String, ArmJoin>,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rule 12o): the decided-arm reading,
+    /// for an object whose path state decides its discriminant.
+    pub decided: super::constructed_route::DecidedArms,
 }
 
 /// What a holder keys on in the path state.
@@ -252,6 +261,11 @@ fn direct_callee(call: &Value) -> Option<&str> {
             _ => return None,
         }
     }
+}
+
+/// Card OP-CONSTRUCTOR-DECLARATIONS: every call node below `node`.
+pub(super) fn calls_of<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
+    calls(node, out);
 }
 
 fn calls<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
@@ -551,7 +565,10 @@ impl Parser<'_> {
                 ARM_WITHDRAWN,
             ));
         }
-        if declaration.callbacks.is_empty() && declaration.discriminant.is_none() {
+        if declaration.callbacks.is_empty()
+            && declaration.discriminant.is_none()
+            && declaration.constructed.is_empty()
+        {
             return Ok(None);
         }
         let text = |index: usize| actual(index).map_or_else(|| "?".to_owned(), |w| w.join(" "));
@@ -580,7 +597,21 @@ impl Parser<'_> {
             texts: Vec::new(),
             owned: BTreeMap::new(),
             arms: None,
+            constructed: None,
+            member_uses: Vec::new(),
         };
+        // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a
+        // constructor's stated result state, unless its body in this unit
+        // withdrew it (rule 14e: the result is then tracked, its state
+        // undecided).
+        if !declaration.constructed.is_empty() && !declaration.constructed_withdrawn {
+            operands.constructed = Some(self.constructed_operands(
+                function,
+                &declaration.constructed,
+                line,
+                |callback| self.callback_candidates(function, line, callback, true).ok(),
+            ));
+        }
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the
         // discriminant is undecided at every call, so the arms are read under
         // their cautious join; with no `otherwise`, some value has no
@@ -613,6 +644,7 @@ impl Parser<'_> {
             operands.arms = Some(ArmOperands {
                 object: actual(discriminant.parameter).unwrap_or_default(),
                 released,
+                decided: self.decided_arms(declaration, &discriminant.field),
             });
         }
         for clause in &declaration.callbacks {
@@ -737,35 +769,80 @@ impl Parser<'_> {
                 // member (the run's fold checks the unit saw them all), then
                 // decided as rule 13u's.
                 CallbackClause::MemberInvoked {
-                    member, actuals, ..
+                    object,
+                    member,
+                    actuals,
                 } => {
                     let spelled = member.spelling();
-                    let candidates = self.member_candidates(&spelled).map_err(|why| {
-                        refusal(
-                            function,
-                            &format!(
-                                "the callbacks stored in `{spelled}` are not a closed set of \
-                                 functions ({why})"
-                            ),
-                            MEMBER_OPEN,
-                        )
-                    })?;
+                    // Card OP-CONSTRUCTOR-DECLARATIONS (rules 13w, 14e): a
+                    // refusal over the unit's closure is deferred to the
+                    // transfer when the object may carry a constructor's
+                    // decided state (a stated member the unit's stores keep,
+                    // stored nowhere in this function); with no such state
+                    // there, the same refusal is made there.
+                    let deferred = |description: String| {
+                        let MemberObject::Parameter { index } = object else {
+                            return None;
+                        };
+                        let words = actual(*index)?;
+                        let [name] = words.as_slice() else {
+                            return None;
+                        };
+                        (is_identifier(name)
+                            && self.states_member(&spelled)
+                            && self.usable(&spelled, false).is_some())
+                        .then(|| super::constructed_route::MemberUse {
+                            object: name.clone(),
+                            key: spelled.clone(),
+                            actuals: actuals.clone(),
+                            refusal: description,
+                        })
+                    };
+                    let candidates = match self.member_candidates(&spelled) {
+                        Ok(candidates) => candidates,
+                        Err(why) => {
+                            let description = refusal(
+                                function,
+                                &format!(
+                                    "the callbacks stored in `{spelled}` are not a closed set of \
+                                     functions ({why})"
+                                ),
+                                MEMBER_OPEN,
+                            );
+                            match deferred(description.clone()) {
+                                Some(use_) => {
+                                    operands.member_uses.push(use_);
+                                    continue;
+                                }
+                                None => return Err(description),
+                            }
+                        }
+                    };
                     let classes = self.classified(&candidates, actuals);
                     if let Decision::Refused(reason, candidate) = decide(Ok(&classes), false) {
-                        return Err(refusal(
+                        let description = refusal(
                             function,
                             &invocation_detail(reason, candidate.as_deref(), &spelled),
                             reason,
-                        ));
+                        );
+                        match deferred(description.clone()) {
+                            Some(use_) => {
+                                operands.member_uses.push(use_);
+                                continue;
+                            }
+                            None => return Err(description),
+                        }
                     }
                     self.require(&candidates, actuals, &mut operands.owned);
                 }
             }
         }
-        Ok(
-            (!operands.uses.is_empty() || !operands.owned.is_empty() || operands.arms.is_some())
-                .then_some(operands),
-        )
+        Ok((!operands.uses.is_empty()
+            || !operands.owned.is_empty()
+            || operands.arms.is_some()
+            || operands.constructed.is_some()
+            || !operands.member_uses.is_empty())
+        .then_some(operands))
     }
 
     /// Whether `name` is a frame registry holder of the calling function.
@@ -848,8 +925,37 @@ pub(super) fn apply(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     let callee = crate::retained_by::retained_callee(called).unwrap_or(called);
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rules 13w, 14e): a member invocation
+    // the closure refused reads the object's path state, before the call's
+    // own effects.
+    for use_ in &operands.member_uses {
+        match super::constructed_route::decide_member(state, use_) {
+            Ok(()) => {}
+            Err(super::constructed_route::MemberRefusal::Undecided) => {
+                refuse(function, line, use_.refusal.clone(), state, diagnostics);
+            }
+            Err(super::constructed_route::MemberRefusal::Decided(reason, candidate)) => refuse(
+                function,
+                line,
+                refusal(
+                    callee,
+                    &invocation_detail(reason, candidate.as_deref(), &use_.key),
+                    reason,
+                ),
+                state,
+                diagnostics,
+            ),
+        }
+    }
     if let Some(arms) = &operands.arms {
         apply_arms(function, line, callee, arms, state, diagnostics);
+    }
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): the stated
+    // result state goes onto the tracked result.
+    if let Some(constructed) = &operands.constructed
+        && let Some(RegistryKey::Site(site)) = key_of(state, &RegistryHolder::Result, destination)
+    {
+        super::constructed_route::record(state, site, constructed);
     }
     // The registration a use reads: the one in force before this call (an
     // unregistration does not hide it from the self-release that follows).
@@ -1106,7 +1212,34 @@ fn apply_arms(
             continue;
         };
         for (field, children) in fields {
-            let join = arms.released.get(&field).copied().unwrap_or(ArmJoin::None);
+            // Card OP-CONSTRUCTOR-DECLARATIONS (rule 12o): a decided
+            // discriminant selects exactly its reachable values' arms.
+            let join = match super::constructed_route::decided_arm_join(
+                state,
+                name,
+                &arms.decided,
+                &field,
+            ) {
+                Some(Some(join)) => join,
+                Some(None) => {
+                    refuse(
+                        function,
+                        line,
+                        refusal(
+                            callee,
+                            &format!(
+                                "the decided discriminant of `{name}` reaches a value with no \
+                                 declared arm"
+                            ),
+                            ARM_UNDECLARED,
+                        ),
+                        state,
+                        diagnostics,
+                    );
+                    continue;
+                }
+                None => arms.released.get(&field).copied().unwrap_or(ArmJoin::None),
+            };
             match join {
                 ArmJoin::None => {}
                 ArmJoin::Some => refuse(
@@ -1415,6 +1548,51 @@ pub(crate) fn settle(
     {
         crate::contract_dependencies::member_evidence(facts);
     }
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): the unit's
+    // classified stores into the stated members, the run's stability
+    // evidence, whenever a result state is in the environment.
+    let stated = crate::constructed_state::stated_keys(
+        contracts
+            .retaining()
+            .values()
+            .map(|declared| &declared.constructed),
+    );
+    if !stated.is_empty()
+        && let Some(facts) = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            unit.state_facts(&stated).as_ref().clone()
+        })
+    {
+        crate::contract_dependencies::state_evidence(facts);
+    }
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rule 14e): a stated `absent` member
+    // stands in a unit that defines the constructor only when its Clang body
+    // validates the stated result state; otherwise the state is withdrawn
+    // there (the result stays tracked, its state undecided).
+    let mut constructed_withdrawn = Vec::new();
+    for (name, declaration) in contracts.retaining() {
+        if !declaration.constructed.states_absent()
+            || declaration.constructed_withdrawn
+            || super::slot_move_route::defined_body(tokens, name).is_none()
+        {
+            continue;
+        }
+        let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            unit.function(name).map(|function| {
+                crate::constructed_state::result_state_validates(
+                    function,
+                    &declaration.constructed,
+                    unit.member_facts().enumerators(),
+                )
+            })
+        })
+        .flatten()
+        .unwrap_or_else(|| Err("the body's Clang AST is not read".to_owned()));
+        if checked.is_ok() {
+            crate::contract_dependencies::validated(name, "14e");
+        } else {
+            constructed_withdrawn.push(name.clone());
+        }
+    }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): arms stand in a
     // unit that defines the body only when its Clang body validates them.
     let mut arms_withdrawn = Vec::new();
@@ -1489,7 +1667,7 @@ pub(crate) fn settle(
             withdrawn.push((name.clone(), declaration.clone()));
         }
     }
-    if withdrawn.is_empty() && arms_withdrawn.is_empty() {
+    if withdrawn.is_empty() && arms_withdrawn.is_empty() && constructed_withdrawn.is_empty() {
         return None;
     }
     let mut settled = contracts.clone();
@@ -1505,6 +1683,15 @@ pub(crate) fn settle(
             .cloned()
             .expect("a retaining declaration");
         declaration.arms_withdrawn = true;
+        settled.insert_retaining(name, declaration);
+    }
+    for name in constructed_withdrawn {
+        crate::contract_dependencies::withdrawn(&name, "14e", true);
+        let mut declaration = settled
+            .retaining_contract(&name)
+            .cloned()
+            .expect("a retaining declaration");
+        declaration.constructed_withdrawn = true;
         settled.insert_retaining(name, declaration);
     }
     Some(settled)

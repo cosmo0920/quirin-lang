@@ -1,0 +1,53 @@
+module contract;
+
+// Card OP-CONSTRUCTOR-DECLARATIONS (gateway rules 12o, 13w, 14e, contract
+// spec C04.19.4): synthetic `c_*` callees. Trusted test assumptions, not
+// facts about any library.
+
+extern fn c_item_new(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn c_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+// A constructor: the result's `type` is the actual, its `op_cb` absent.
+extern fn c_op_new(type: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(type);
+    ensures normal resource_discriminant_set(result, op.type, type, 0);
+    quant live #result: op.op_cb |-> absent;
+    ensures normal resource_return_owned(nonnull);
+};
+
+// A constructor registering `cb` in the result's `op_cb`, flag 256 OR-ed in.
+extern fn c_op_new_cb(type: i32, cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(type);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_discriminant_set(result, op.type, type, 256);
+    ensures normal resource_callback_member_registered(result, op.op_cb, cb);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// The op's own callback runs, then the release chosen by `type & ~256`:
+// type 1 frees the payload, every other type frees nothing of it.
+extern fn c_op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, type, 256);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_callback_member_invoked(rko, op.op_cb, _, _, rko);
+    ensures normal resource_arm_released(rko, payload) when type == 1;
+    ensures normal resource_arm_empty(rko) otherwise;
+    ensures normal resource_return_none();
+};

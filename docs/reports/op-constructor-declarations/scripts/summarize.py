@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""summarize.py BEFORE AFTER -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES): from the
+"""summarize.py BEFORE AFTER -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES: from the
 two runs under private/opctor/ (and the slice runs under the shared prepared
 attempt): the custody totals and digests per route, the contract-dependency
 counts and Safe roll-up, the member fold section (written to

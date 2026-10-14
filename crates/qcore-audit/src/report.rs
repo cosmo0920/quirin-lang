@@ -176,12 +176,14 @@ impl AuditReport {
         library: &str,
         file: &str,
         facts: Option<qcore_c_gateway::callback_member_closure::MemberFacts>,
+        state: Option<qcore_c_gateway::constructed_state::StateFacts>,
     ) {
         self.callback_members
             .push(crate::callback_member_fold::UnitFacts {
                 library: library.to_owned(),
                 file: file.to_owned(),
                 facts,
+                state,
             });
     }
 

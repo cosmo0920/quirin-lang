@@ -329,6 +329,9 @@ mod callback;
 // (§C04.19.2).
 #[path = "contract_arm_release.rs"]
 mod arm_release;
+// Card OP-CONSTRUCTOR-DECLARATIONS: a constructor's result state (§C04.19.4).
+#[path = "contract_constructed_state.rs"]
+mod constructed_state;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1629,6 +1632,9 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
                     "ensures normal"
                 }
+                // Card OP-CONSTRUCTOR-DECLARATIONS (§C04.19.4): a result
+                // state, read below; every other `quant` form still rejects.
+                SourceContractClauseKind::QuantLive => "quant live",
                 _ => return Err("unsupported error, any-exit, or quantitative clause"),
             };
             Ok(format!("{prefix} {};", c.value.expression_source))
@@ -1700,7 +1706,16 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // clauses, as written, in clause order.
     let mut discriminants: Vec<arm_release::WrittenDiscriminant> = Vec::new();
     let mut arm_clauses: Vec<arm_release::WrittenArm> = Vec::new();
+    // Card OP-CONSTRUCTOR-DECLARATIONS: the result-state clauses, as written,
+    // in clause order (both levels of rule 14e's shorthand).
+    let mut constructed_clauses: Vec<constructed_state::Written> = Vec::new();
     for clause in clauses {
+        if clause.value.kind == SourceContractClauseKind::QuantLive {
+            constructed_clauses.extend(constructed_state::quant_live_clause(
+                &clause.value.expression_source,
+            )?);
+            continue;
+        }
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
         // requirement) or clause-level (wrapping one `ensures normal` clause,
@@ -1876,6 +1891,13 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         // the retention guard (which refuses every other guarded clause).
         if let Some(written) = arm_release::arm_clause(expression)? {
             arm_clauses.push(written);
+            continue;
+        }
+        // Card OP-CONSTRUCTOR-DECLARATIONS (§C04.19.4): the discriminant set
+        // at construction and a member registration, whose dotted member the
+        // identifier-only predicate reader does not read.
+        if let Some(written) = constructed_state::ensures_clause(expression)? {
+            constructed_clauses.push(written);
             continue;
         }
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.3): a member
@@ -2362,6 +2384,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         && callback_clauses.is_empty()
         && discriminants.is_empty()
         && arm_clauses.is_empty()
+        && constructed_clauses.is_empty()
     {
         None
     } else {
@@ -2487,6 +2510,39 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         }
         declared.discriminant = discriminant;
         declared.arms = arms;
+        // Card OP-CONSTRUCTOR-DECLARATIONS (§C04.19.4): the result state
+        // stands where a callback clause may; a registered callback is
+        // registered once and invoked by no clause of the declaration.
+        let constructed = constructed_state::declaration(
+            &constructed_clauses,
+            &contract,
+            &parameter_types,
+            &names,
+        )?;
+        if !constructed.is_empty()
+            && (!declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty())
+        {
+            return Err(
+                "a result state stands only beside retentions and plain predicates".into(),
+            );
+        }
+        for state in &constructed.members {
+            if let qcore_schemas::constructed_state::MemberValue::Callback { callback } =
+                state.value
+                && declared.callbacks.iter().any(|clause| match clause {
+                    qcore_schemas::callback::CallbackClause::Invoked { callback: named, .. }
+                    | qcore_schemas::callback::CallbackClause::Registered {
+                        callback: named, ..
+                    } => *named == callback,
+                    _ => false,
+                })
+            {
+                return Err("a callback is invoked or registered by one clause".into());
+            }
+        }
+        declared.constructed = constructed;
         Some(declared)
     };
     Ok(LoadedDeclaration {

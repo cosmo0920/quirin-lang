@@ -106,13 +106,17 @@ pub enum ClauseKind {
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the discriminant
     /// and the arms of a type-switched release.
     Arm,
+    /// Card OP-CONSTRUCTOR-DECLARATIONS (rule 14e): a constructor's stated
+    /// result state (`quant live #result`, `resource_discriminant_set`, a
+    /// member's registration or `absent`).
+    MemberState,
     /// The retained text could not be reread: a clause nothing covers.
     Unreadable,
 }
 
 impl ClauseKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 20] = [
+    pub const ALL: [Self; 21] = [
         Self::Parameter,
         Self::Result,
         Self::BorrowedResult,
@@ -132,6 +136,7 @@ impl ClauseKind {
         Self::Callback,
         Self::CallbackChecked,
         Self::Arm,
+        Self::MemberState,
         Self::Unreadable,
     ];
 
@@ -158,6 +163,7 @@ impl ClauseKind {
             Self::Callback => "callback",
             Self::CallbackChecked => "callbackChecked",
             Self::Arm => "arm",
+            Self::MemberState => "memberState",
             Self::Unreadable => "unreadable",
         }
     }
@@ -177,9 +183,10 @@ impl ClauseKind {
 /// card DECLARED-ASSUMPTION-BODY-CHECKS adds `13m` (the declaration's own
 /// entry check on a body whose W4 summary only refines it); card
 /// CG22-CALLBACK-REGISTRY-CONTRACT adds `13y` (the callback body check);
-/// card CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `12o` (the arm check).
-pub const EVIDENCE: [&str; 10] = [
-    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y", "12o",
+/// card CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `12o` (the arm check);
+/// card OP-CONSTRUCTOR-DECLARATIONS adds `14e` (the result-state check).
+pub const EVIDENCE: [&str; 11] = [
+    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y", "12o", "14e",
 ];
 
 /// Whether the evidence spelled `evidence` covers a clause of `kind` (rule
@@ -202,6 +209,8 @@ pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
         "13y" => kind == ClauseKind::CallbackChecked,
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o).
         "12o" => kind == ClauseKind::Arm,
+        // Card OP-CONSTRUCTOR-DECLARATIONS (rule 14e).
+        "14e" => kind == ClauseKind::MemberState,
         _ => false,
     }
 }
@@ -499,6 +508,40 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
             clauses.push(Clause::new(ClauseKind::Arm, format!("{effect} {guard}")));
         }
     }
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rule 14e): the result state, by its
+    // canonical parts (both levels of the shorthand read alike).
+    let state = &declared.constructed;
+    if state.live {
+        clauses.push(Clause::new(
+            ClauseKind::MemberState,
+            "quant live #result".to_owned(),
+        ));
+    }
+    if let Some(set) = &state.discriminant {
+        clauses.push(Clause::new(
+            ClauseKind::MemberState,
+            format!(
+                "resource_discriminant_set(result, {}, #{}, {})",
+                set.member.spelling(),
+                set.parameter,
+                set.flags
+            ),
+        ));
+    }
+    for member in &state.members {
+        use qcore_schemas::constructed_state::{ABSENT, MemberValue};
+        let value = match member.value {
+            MemberValue::Callback { callback } => format!("#{callback}"),
+            MemberValue::Absent => ABSENT.to_owned(),
+        };
+        clauses.push(Clause::new(
+            ClauseKind::MemberState,
+            format!(
+                "resource_callback_member_registered(result, {}, {value})",
+                member.member.spelling()
+            ),
+        ));
+    }
     clauses
 }
 
@@ -739,6 +782,8 @@ mod tests {
                 discriminant: None,
                 arms: Vec::new(),
                 arms_withdrawn: false,
+                constructed: Default::default(),
+                constructed_withdrawn: false,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

@@ -569,9 +569,18 @@ pub fn project_unit_into(
         report.record_data_only(library, file, result.as_ref().err());
         // Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): the unit's member
         // facts, read from its AST, only when a declaration invokes a member.
-        if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
+        // Card OP-CONSTRUCTOR-DECLARATIONS: and its classified stores into
+        // the stated members, when a declaration states a result state.
+        if !crate::callback_member_fold::member_declarations(contracts).is_empty()
+            || !crate::callback_member_fold::constructed_declarations(contracts).is_empty()
+        {
             let facts = crate::callback_member_fold::data_only_facts(result.as_deref().ok(), unit);
-            report.record_callback_members(library, file, facts);
+            let state = crate::callback_member_fold::data_only_state(
+                result.as_deref().ok(),
+                unit,
+                contracts,
+            );
+            report.record_callback_members(library, file, facts, state);
         }
         report.record_enumeration(inventory);
         match result {
@@ -714,7 +723,9 @@ pub fn project_prepared_unit_into(
         report.record_data_only(library, file, prepared.validation_error());
         // Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): the unit's member
         // facts, read from its AST, only when a declaration invokes a member.
-        if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
+        if !crate::callback_member_fold::member_declarations(contracts).is_empty()
+            || !crate::callback_member_fold::constructed_declarations(contracts).is_empty()
+        {
             let view = C11TranslationUnit {
                 source: prepared.raw_source(),
                 include_paths: prepared.include_paths().to_vec(),
@@ -727,7 +738,12 @@ pub fn project_prepared_unit_into(
                 prepared.preprocessed_source().ok(),
                 &view,
             );
-            report.record_callback_members(library, file, facts);
+            let state = crate::callback_member_fold::data_only_state(
+                prepared.preprocessed_source().ok(),
+                &view,
+                contracts,
+            );
+            report.record_callback_members(library, file, facts, state);
         }
         report.record_enumeration(inventory);
         if let Some(error) = prepared.validation_error() {
@@ -935,8 +951,17 @@ fn record_projection(
     }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member
     // facts for the run's closure, only when a declaration invokes a member.
-    if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
-        report.record_callback_members(library, file, dependencies.callback_members.clone());
+    // Card OP-CONSTRUCTOR-DECLARATIONS: and the unit's classified stores into
+    // the stated members, when a declaration states a result state.
+    if !crate::callback_member_fold::member_declarations(contracts).is_empty()
+        || !crate::callback_member_fold::constructed_declarations(contracts).is_empty()
+    {
+        report.record_callback_members(
+            library,
+            file,
+            dependencies.callback_members.clone(),
+            dependencies.constructed_states.clone(),
+        );
     }
     report.record_enumeration(inventory);
     // Card W45-USER-CONTRACT-PLUGINS: the unit is tallied and printed under

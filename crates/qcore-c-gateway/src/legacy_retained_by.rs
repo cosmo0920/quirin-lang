@@ -279,6 +279,7 @@ impl Parser<'_> {
             || declaration.callbacks_withdrawn
             || declaration.discriminant.is_some()
             || declaration.arms_withdrawn
+            || !declaration.constructed.is_empty()
         {
             let owned = |index: usize| -> Option<Vec<String>> {
                 actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())

@@ -23,6 +23,14 @@ pub enum TokenKind {
     Eof,
 }
 
+/// The maps-to token `↦` of a contract state clause (card
+/// `OP-CONSTRUCTOR-DECLARATIONS`, USER DECISION 2026-10-14). `->` was rejected
+/// (C member access in contract text, and the `.qr` return-type arrow), `>->`
+/// was rejected (Z's injective function `↣`); `|->` is the standard ASCII of
+/// `↦` (Z, Isabelle, TLA+). Every reader, diagnostic and test names this
+/// constant, so the spelling is one edit.
+pub const MAPS_TO: &str = "|->";
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Symbol {
     Colon,
@@ -109,6 +117,15 @@ pub enum Symbol {
     /// [`Self::Ampersand`], the bitwise-and operator of a different sort.
     AndAnd,
     Arrow,
+    /// [`MAPS_TO`], the ASCII maps-to `↦` of a contract state clause (card
+    /// `OP-CONSTRUCTOR-DECLARATIONS`, USER DECISION 2026-10-14: `quant live
+    /// #result: TAG.FIELD |-> absent;`). Three bytes, matched before every
+    /// two-byte spelling, so `|>` stays [`Self::PipeInto`] and `||` stays
+    /// [`Self::PipePipe`]. Before the card the same bytes were a [`Self::Pipe`]
+    /// followed by an [`Self::Arrow`], which no reader admitted; only a
+    /// contract state clause reads it, and every other reader refuses it as
+    /// an unexpected symbol.
+    MapsTo,
     FatArrow,
     ColonColon,
     Define,
@@ -305,6 +322,19 @@ impl Lexer<'_> {
     /// > 0` is the spaced spelling and it parses; `1 |> 2` is a pipeline in a
     /// condition and refuses at `Q045`.
     fn symbol(&mut self, start: usize, first: char) -> Result<Symbol, LexError> {
+        // Card OP-CONSTRUCTOR-DECLARATIONS: the one three-byte spelling,
+        // tried first, so the width-two rule below is unchanged for `|>`,
+        // `||` and `|]`.
+        if self
+            .source
+            .get(start..)
+            .is_some_and(|rest| rest.starts_with(MAPS_TO))
+        {
+            for _ in 1..MAPS_TO.len() {
+                self.bump();
+            }
+            return Ok(Symbol::MapsTo);
+        }
         let pair = self
             .source
             .get(start..self.offset + self.peek().map_or(0, char::len_utf8));

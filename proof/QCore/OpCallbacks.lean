@@ -1,4 +1,5 @@
 import QCore.CallbackContracts
+import QCore.DerefDecomposition
 
 /-!
 # Op callbacks and served queues (card CG22-OP-CALLBACKS-AND-SERVED-QUEUES)
@@ -483,6 +484,239 @@ def closureOf : Closure → Option (List String)
 
 theorem run_vectors_hold :
     runVectors.all (fun (us, c) => closureOf (runClosure (us.map readingOf)) == c) = true := by
+  decide
+
+/-! ## Constructor result states (card OP-CONSTRUCTOR-DECLARATIONS, rules 12o, 13w, 14e)
+
+USER DECISIONS 2026-10-14: the four-operand `resource_discriminant_set`, the
+member registration `resource_callback_member_registered`, and the `quant`
+state clause `quant live #result: TAG.FIELD |-> absent;` with its two levels.
+A constructor states its result's discriminant and members; the calling
+body keeps the state per path; a later call reads it only while every store
+the run makes into the member is classified (the stability check). Values
+here are the discriminant already read under the release's mask (the mask is
+the schema's, bound by `crates/qcore-schemas/src/constructed_state.rs`). -/
+
+/-- The decided join at `p` over the values `vs` a decided discriminant may
+reach: `none` when some value has no arm; otherwise every, none or some of
+their arms release `p` (`decided_join` of `constructed_state.rs`). -/
+def decidedJoin (arms : List ArmClause) (vs : List Int) (p : String) : Option Join :=
+  (vs.mapM (armOf arms)).map fun sets =>
+    if !(sets.any (fun s => s.contains p)) then .none
+    else if sets.all (fun s => s.contains p) then .every
+    else .some
+
+/-- **A decided discriminant selects exactly its arm.** -/
+theorem a_decided_discriminant_selects_exactly_its_arm (arms : List ArmClause) (v : Int)
+    (p : String) (ps : List String) (h : armOf arms v = some ps) :
+    decidedJoin arms [v] p = some (if ps.contains p then .every else .none) := by
+  by_cases hp : p ∈ ps <;> simp [decidedJoin, List.mapM, List.mapM.loop, h, hp]
+
+/-- A value no arm and no `otherwise` declares leaves the decided reading
+undecided (`none`), never neutral. -/
+theorem a_decided_value_with_no_arm_is_unknown (arms : List ArmClause) (v : Int) (p : String)
+    (hv : ∀ c ∈ arms, c.1 ≠ some v) (ho : ∀ c ∈ arms, c.1 ≠ Option.none) :
+    decidedJoin arms [v] p = Option.none := by
+  simp [decidedJoin, List.mapM, List.mapM.loop, an_undeclared_arm_is_unknown arms v hv ho]
+
+/-- A rewrite inside one arm keeps it: two values with the same arm read as
+one. -/
+theorem a_rewrite_within_one_arm_keeps_it (arms : List ArmClause) (v w : Int) (p : String)
+    (same : armOf arms w = armOf arms v) :
+    decidedJoin arms [v, w] p = decidedJoin arms [v] p := by
+  cases hv : armOf arms v with
+  | none => simp [decidedJoin, List.mapM, List.mapM.loop, hv]
+  | some ps =>
+      rw [hv] at same
+      by_cases hp : p ∈ ps <;> simp [decidedJoin, List.mapM, List.mapM.loop, hv, same, hp]
+
+/-- **The decided join refines the cautious one**: where every arm releases
+`p` (`otherwise` declared), every decided value's arm releases it too. -/
+theorem the_decided_join_refines_the_cautious_join (arms : List ArmClause) (p : String)
+    (h : joinAt arms p = .every) (v : Int) :
+    decidedJoin arms [v] p = some .every := by
+  obtain ⟨ps, hps, mp⟩ := the_cautious_join_is_sound arms p h v
+  rw [a_decided_discriminant_selects_exactly_its_arm arms v p ps hps]
+  simp [mp]
+
+/-- What a destroy reads of the discriminant: the decided values when the
+path state is decided, otherwise the cautious join. -/
+def armReading (arms : List ArmClause) (state : Option (List Int)) (p : String) : Option Join :=
+  match state with
+  | some vs => decidedJoin arms vs p
+  | Option.none => some (joinAt arms p)
+
+/-- **An undecided discriminant gives the join.** -/
+theorem an_undecided_discriminant_gives_the_join (arms : List ArmClause) (p : String) :
+    armReading arms Option.none p = some (joinAt arms p) := rfl
+
+/-! ### The stability of a stated member -/
+
+/-- One store into a stated member, as the run's stores are classified. -/
+inductive Store where
+  /-- Into an object its function obtained from calls only, each handing an
+  owned result (`owned`) or not. -/
+  | fresh (owned : Bool)
+  | automatic
+  | null
+  | flagOr
+  | rewrite
+  | other
+  deriving DecidableEq, Repr
+
+/-- Whether a store keeps a stated state (a discriminant's, or a
+function-pointer member's). -/
+def Store.keeps (discriminant : Bool) : Store → Bool
+  | .fresh owned => owned
+  | .automatic => true
+  | .null => !discriminant
+  | .flagOr => discriminant
+  | .rewrite => discriminant
+  | .other => false
+
+/-- The run's stores keep a stated state when every one does. -/
+def stable (discriminant : Bool) (stores : List Store) : Bool :=
+  stores.all (Store.keeps discriminant)
+
+/-- The path state a later call reads: the stated one only when the stores
+keep it. -/
+def pathState {α : Type} (keeps : Bool) (state : Option α) : Option α :=
+  if keeps then state else Option.none
+
+/-- **An unstable discriminant gives the join.** -/
+theorem an_unstable_discriminant_gives_the_join (arms : List ArmClause) (p : String)
+    (stores : List Store) (h : stable true stores = false) (state : Option (List Int)) :
+    armReading arms (pathState (stable true stores) state) p = some (joinAt arms p) := by
+  simp [pathState, h, armReading]
+
+/-- A member invocation over a path state: the registered candidates (`[]`
+is `absent`: no candidate, nothing invoked), else the run closure (rule
+12n). -/
+def stateDecision (candidates : List String) (classOf : String → SuppliedClass) : Decision :=
+  if candidates.isEmpty then .identity else decideSupplied false (candidates.map classOf)
+
+def invokedDecision (state : Option (List String)) (closure : Closure)
+    (classOf : String → SuppliedClass) : Decision :=
+  match state with
+  | some candidates => stateDecision candidates classOf
+  | Option.none => memberDecision closure classOf
+
+/-- **A constructor registration followed by destroy invokes only the
+registered candidate**: the decision reads that candidate's class alone,
+whatever the run closure holds. -/
+theorem a_registration_then_destroy_invokes_only_the_registered_candidate (c : String)
+    (closure : Closure) (classOf : String → SuppliedClass) :
+    invokedDecision (some [c]) closure classOf = decideSupplied false [classOf c] := rfl
+
+/-- **An op that maps to `absent` invokes no candidate at its destroy.** -/
+theorem an_absent_member_invokes_no_candidate (closure : Closure)
+    (classOf : String → SuppliedClass) :
+    invokedDecision (some []) closure classOf = .identity := rfl
+
+/-- **An unclassified store voids the `absent` state**: the destroy reads the
+run closure again (an open one never decides). -/
+theorem an_unclassified_store_voids_the_absent_state (stores : List Store)
+    (h : Store.other ∈ stores) (closure : Closure) (classOf : String → SuppliedClass) :
+    invokedDecision (pathState (stable false stores) (some [])) closure classOf =
+      memberDecision closure classOf := by
+  have hs : stable false stores = false :=
+    List.all_eq_false.mpr ⟨.other, h, by simp [Store.keeps]⟩
+  simp [pathState, hs, invokedDecision]
+
+/-! ### The two levels of `quant live #result: TAG.FIELD |-> absent` (rule 14e)
+
+The shorthand is the liveness part of `QCore.DerefDecomposition` (`quant live
+#result`: the identity has not been released) together with the member state
+`absent`. Its meaning is derived from the parts' meanings, not asserted. -/
+
+/-- A returned object: the pointer value of `QCore.DerefDecomposition` and
+what each function-pointer member holds (`none`: `absent`). -/
+structure Result where
+  ptr : QCore.DerefDecomposition.Ptr
+  member : String → Option String
+
+/-- A canonical part. -/
+inductive Part where
+  | live
+  | absent (m : String)
+  deriving DecidableEq, Repr
+
+/-- What a part says of the returned object. -/
+def Part.holds : Part → Result → Prop
+  | .live, r => QCore.DerefDecomposition.liveness r.ptr
+  | .absent m, r => r.member m = Option.none
+
+/-- A written form: the shorthand, or one of its two parts. -/
+inductive Form where
+  | shorthand (m : String)
+  | live
+  | memberAbsent (m : String)
+  deriving DecidableEq, Repr
+
+/-- The loader's elaboration into canonical parts. -/
+def elaborate : Form → List Part
+  | .shorthand m => [.live, .absent m]
+  | .live => [.live]
+  | .memberAbsent m => [.absent m]
+
+/-- What a list of written forms says: every part it elaborates to holds. -/
+def meaning (fs : List Form) (r : Result) : Prop :=
+  ∀ f ∈ fs, ∀ p ∈ elaborate f, p.holds r
+
+/-- **The shorthand entails its decomposition, and back.** -/
+theorem the_shorthand_and_its_parts_mean_the_same (m : String) (r : Result) :
+    meaning [.shorthand m] r ↔ meaning [.live, .memberAbsent m] r := by
+  simp [meaning, elaborate]
+
+/-- **The shorthand means the result is live and its member maps to
+`absent`.** -/
+theorem the_shorthand_is_live_and_absent (m : String) (r : Result) :
+    meaning [.shorthand m] r ↔
+      QCore.DerefDecomposition.liveness r.ptr ∧ r.member m = Option.none := by
+  simp [meaning, elaborate, Part.holds]
+
+/-- The shorthand entails `quant live #result` alone. -/
+theorem the_shorthand_entails_quant_live (m : String) (r : Result)
+    (h : meaning [.shorthand m] r) : meaning [.live] r := by
+  intro f hf q hq
+  simp only [List.mem_singleton] at hf
+  subst hf
+  simp only [elaborate, List.mem_singleton] at hq
+  subst hq
+  exact h (.shorthand m) (by simp) .live (by simp [elaborate])
+
+/-- The canonical set of a list of forms: whether liveness is stated and the
+members stated `absent`. -/
+def canonical (fs : List Form) : Bool × (String → Bool) :=
+  (fs.any (fun f => (elaborate f).contains .live),
+   fun x => fs.any (fun f => (elaborate f).contains (.absent x)))
+
+/-- **Both levels, and both together, are one canonical set**: a shorthand and
+its decomposition read identically, and an agreeing overlap merges. -/
+theorem both_levels_are_one_canonical_set (m : String) :
+    canonical [.shorthand m] = canonical [.live, .memberAbsent m] ∧
+      canonical [.shorthand m, .live, .memberAbsent m] = canonical [.shorthand m] := by
+  constructor <;>
+    · refine Prod.ext ?_ (funext fun x => ?_)
+      · simp [canonical, elaborate]
+      · by_cases hx : x = m
+        · subst hx
+          simp [canonical, elaborate]
+        · simp [canonical, elaborate, hx]
+
+/-- `DECIDED_JOIN_VECTORS`: arms, the reachable values, a path and the
+decided join. -/
+def decidedJoinVectors : List (List ArmClause × List Int × String × Option Join) := [
+  ([(some 6, some "u.c.p"), (some 9, some "u.x"), (Option.none, Option.none)], [6], "u.c.p", some .every),
+  ([(some 6, some "u.c.p"), (some 9, some "u.x"), (Option.none, Option.none)], [9], "u.c.p", some .none),
+  ([(some 6, some "u.c.p"), (Option.none, Option.none)], [17], "u.c.p", some .none),
+  ([(some 6, some "u.c.p"), (Option.none, Option.none)], [16, 17], "u.c.p", some .none),
+  ([(some 6, some "u.c.p"), (Option.none, Option.none)], [6, 17], "u.c.p", some .some),
+  ([(some 6, some "u.c.p")], [7], "u.c.p", Option.none)
+]
+
+theorem decided_join_vectors_hold :
+    decidedJoinVectors.all (fun (arms, vs, p, j) => decidedJoin arms vs p == j) = true := by
   decide
 
 end QCore.OpCallbacks
