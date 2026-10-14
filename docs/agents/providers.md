@@ -386,6 +386,26 @@ dependency. Its checker packages are built and verified by the SDK
 (`quirin-plugin package`/`verify`), not by `providers/package.py`, which still
 builds exactly the five first-party packages.
 [Report](../reports/w45-user-contract-plugins/README.md).
+**`package::build` holds no write descriptor on the executable (card
+`PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS`).** While the caller
+holds a write descriptor, any thread's fork copies it into a child that keeps
+it until its own `exec`. An `execve` of the package then fails with
+`ETXTBSY`. Neither close-on-exec nor a temporary file and `rename` closes
+that window. So on Unix the SDK pipes the bytes it digested to a separate,
+single-threaded `tee -- FILE`, which has exited before `build` continues.
+`build` then:
+- refuses unless the file is a regular file holding exactly those bytes;
+- sets `0o755` by path;
+- still writes the installed manifest last, so any writer failure is an
+  `Err` and leaves nothing that verifies.
+
+Off Unix the write is unchanged. Package bytes, digest, manifest and mode are
+unchanged. **USER DECISION (2026-10-14): "Accept tee on PATH".** The new Unix
+requirement is `tee` on `PATH`; it is documented on `build` and named in its
+`Err`. `providers/package.py` and `quirin-audit prepare`'s copy are tracked
+separately (`PROVIDER-PACKAGE-PY-WRITES-EXECUTABLE-IN-PROCESS`,
+`PREPARE-COPY-KEEPS-EXECUTABLE-MODE-IN-PROCESS`).
+[Report](../reports/plugin-package-build-write/README.md).
 
 **Resource view (W44-PROVIDER-RESOURCE-VIEW).** Each load-path crate record
 also carries `resource_view`: the owned modules the resource-contract loader

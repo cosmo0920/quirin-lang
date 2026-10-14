@@ -546,6 +546,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [pipe-drop-stage](pipe-drop-stage/README.md) | PIPE-DROP-STAGE — the releasing pipeline stage (wave 23) |
 
+| [plugin-package-build-write](plugin-package-build-write/README.md) | PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable |
+
 | [process-fixtures-fs-write](process-fixtures-fs-write/README.md) | PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture |
 
 | [proof-leg-batch](proof-leg-batch/README.md) | Two proof rows withdrawn by measurement: CT12 and CT14 are CT01's artifact (PROOF-LEG-BATCH) |

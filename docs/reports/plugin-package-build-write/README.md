@@ -1,8 +1,15 @@
 # PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable
 
-Card of wave 48 (round 25, third card), base `b565f79ab`. Prediction frozen
-at `29b7ddcab` ([PREDICTION.md](PREDICTION.md)); the test alone at
-`1e445efca`; the fix at `e84a41d49`. Production change:
+Card of wave 48 (round 25, third card), base `b565f79ab`, rebased onto
+`5ee141946` (PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE landed; the rebase
+was clean and left every file of this card unchanged). Commits after the
+rebase:
+- prediction frozen at `18ffb5c21` ([PREDICTION.md](PREDICTION.md));
+- the test alone at `7ff2afcf9`;
+- the fix at `854e42ec9`.
+
+Before the rebase they were `29b7ddcab`, `1e445efca` and `e84a41d49`. The
+measurement binaries were built from those, at the same trees. Production change:
 `providers/quirin-provider-plugin/src/package.rs` only. No new crate or
 dependency, no `unsafe`, no Lean (an I/O mechanism; no verifier-host or
 package-verification semantics change).
@@ -29,8 +36,8 @@ PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's.
 | Site (base) | Executable written | Executed by | Threads that can fork concurrently | Disposition |
 |---|---|---|---|---|
 | `providers/quirin-provider-plugin/src/package.rs:97` `package::build` | the packaged checker | the host, `--verify-package`, any caller | **any thread of a library caller**. Today: the `quirin-plugin package` CLI (one thread) and `tests/sdk.rs` (spawns after `build` returns) | **fixed** |
-| `crates/qcore-audit/src/prepare.rs:1234` `copy_with_times` | `fs::copy` keeps the mode: Monkey's `configure`, `debian.sh`, `qa/run_tests.sh`, libevent's `autogen.sh`, … are copied executable | nobody in the flow: CMake's configure runs `perl` and the compilers, no copied script | none today: `quirin-audit prepare` copies on its only thread before its first `cmake` spawn | follow-up |
-| `providers/package.py:412-413` `build` | `shutil.copyfile` of each provider, then `chmod(0o755)` | `verify()` runs it right after (`--verify-package`, `--contract-manifest`) | none today: no threading import; every `subprocess.run` is sequential on one thread | follow-up |
+| `crates/qcore-audit/src/prepare.rs:1234` `copy_with_times` | `fs::copy` keeps the mode: Monkey's `configure`, `debian.sh`, `qa/run_tests.sh`, libevent's `autogen.sh`, … are copied executable | nobody in the flow: CMake's configure runs `perl` and the compilers, no copied script | none today: `quirin-audit prepare` copies on its only thread before its first `cmake` spawn | follow-up `PREPARE-COPY-KEEPS-EXECUTABLE-MODE-IN-PROCESS` |
+| `providers/package.py:412-413` `build` | `shutil.copyfile` of each provider, then `chmod(0o755)` | `verify()` runs it right after (`--verify-package`, `--contract-manifest`) | none today: no threading import; every `subprocess.run` is sequential on one thread | follow-up `PROVIDER-PACKAGE-PY-WRITES-EXECUTABLE-IN-PROCESS` |
 
 Not executable writes: the installed manifest (`package.rs`), the user load
 path (`main.rs:77`), the template's crate sources (`template.rs:48`,
@@ -180,3 +187,21 @@ gave 3 of 10 in the pilot and the figures above.
   Pending, null property 1,113 / 1,435 / 2,355 / 18; 84 / 125 / 245; 71 /
   103 / 232) are unchanged **by construction**. The arbiters were not re-run
   on the pre-rebase tip.
+
+## 7. Records
+
+- **Rule.** The SDK packaging paragraph ("User contract crates") of
+  [providers](../../agents/providers.md) is amended in place with the
+  mechanism and the USER DECISION. No new rule id.
+- **Ledger** 764 → 765 ([`scripts/update_ledger.py`](scripts/update_ledger.py)):
+  - `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS` is retired. Its
+    DISCHARGE holds by its first clause: `package::build` writes the
+    executable without holding a write descriptor in the calling process.
+  - `PROVIDER-PACKAGE-PY-WRITES-EXECUTABLE-IN-PROCESS` is registered, with
+    its own DISCHARGE.
+  - `PREPARE-COPY-KEEPS-EXECUTABLE-MODE-IN-PROCESS` is registered, with its
+    own DISCHARGE.
+- **Other records.** Increment paragraph in
+  [wave-48-part7](../../development/increments/wave-48-part7.md); STATUS
+  (follow-up count and the fixture-writer paragraph); docs index.
+- **No Lean.**
