@@ -846,6 +846,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [resource-helper-functions](resource-helper-functions/README.md) | Bounded resource-aware helper functions |
 
+| [retained-release-formal](retained-release-formal/README.md) | RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN |
+
 | [review-audit-runner](review-audit-runner/README.md) | Review audit-runner cancellation and failure observation |
 
 | [review-certificate-scope](review-certificate-scope/README.md) | E01-TAIL-CERT-SCOPE — independent Safe-certificate denominator |
