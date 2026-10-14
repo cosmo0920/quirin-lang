@@ -5138,9 +5138,22 @@ own anchor here.
     `apply_arms`): with no `otherwise`, every call refuses (`arm-undeclared`);
     after the declared release, an object linked at a member every arm
     releases is released, one some arms release refuses (`arm-undecided`),
-    one no arm releases stays (premise P-B08-SHALLOW). The discriminant is
-    never decided at a call (no declared constructor states it,
-    `OP-CONSTRUCTOR-DECLARATIONS`). Body check
+    one no arm releases stays (premise P-B08-SHALLOW). **A decided
+    discriminant** (card OP-CONSTRUCTOR-DECLARATIONS, C04.19.4, on the
+    user's decision of 2026-10-14, A1): a constructor declaring
+    `resource_discriminant_set(result, TAG.FIELD, P, FLAGS)` puts on its
+    tracked result's site, per path, the value `actual | FLAGS` when Clang's
+    call folds the actual to a constant (a formal or computed actual decides
+    nothing); the join keeps a value only when every arriving path holds it
+    (`legacy_constructed_route.rs`). At the release, an object whose path
+    state decides `FIELD` reads, at each linked member, the join of the arms
+    its reachable values select (the decided value closed under the run's
+    classified flag-ors and case-guarded rewrites, rule 14e;
+    `constructed_state::decided_join`), each value read under the release's
+    own mask; a reachable value with no arm and no `otherwise` refuses
+    (`arm-undeclared`). The state is read only where the unit's stores keep
+    it and the calling function stores into `FIELD` nowhere itself; anything
+    else reads the cautious join. Body check
     `crates/qcore-c-gateway/src/arm_release_check.rs` (evidence `12o`, rule
     13i's `ClauseKind::Arm`): one `switch` reading `P->FIELD` (`& E`, `E`
     folding to `~MASK`); case groups read with stacked labels and
@@ -5151,10 +5164,20 @@ own anchor here.
     a `break` under an `if` outside a loop refuses; otherwise the declaration
     is withdrawn in that unit (`arm-withdrawn`). **Do not** read an
     undeclared value as releasing nothing, decide a discriminant at a call,
-    or read the arms' calls as proved releases. `QCore.OpCallbacks`
+    or read the arms' calls as proved releases; decide a discriminant from
+    an undeclared constructor, a type actual that does not fold, or a state
+    the run's stores do not keep. `QCore.OpCallbacks`
     (`an_undeclared_arm_is_unknown`, `the_cautious_join_is_sound`,
     `a_call_without_otherwise_is_refused`, `an_undecided_link_is_refused`,
-    `armJoinVectors`); `QCore.BodyClauseStanding` gains `arm` and `r12o`.
+    `armJoinVectors`; OP-CONSTRUCTOR-DECLARATIONS:
+    `a_decided_discriminant_selects_exactly_its_arm`,
+    `a_decided_value_with_no_arm_is_unknown`,
+    `a_rewrite_within_one_arm_keeps_it`,
+    `the_decided_join_refines_the_cautious_join`,
+    `an_undecided_discriminant_gives_the_join`,
+    `an_unstable_discriminant_gives_the_join`, `decidedJoinVectors`);
+    `QCore.BodyClauseStanding` gains `arm` and `r12o`;
+    `tests/op_constructor_declarations.rs`.
 
 <a id="constraint-12p"></a>
 
@@ -6322,9 +6345,27 @@ own anchor here.
     registry took (rule 13x); a mixed, uncontracted, effectful or
     requirement-bearing registration refuses. **Do not** read a registration
     made in another frame (a holder reached through a formal or a member),
-    or keep one across a join that does not agree.
-    `QCore.CallbackContracts` (`an_invocation_needs_a_registration`,
-    `an_undecided_registration_refuses`, `the_callback_trace_agrees`).
+    or keep one across a join that does not agree. **Through a member**
+    (card OP-CONSTRUCTOR-DECLARATIONS, C04.19.4, on the user's decision of
+    2026-10-14, B1): `resource_callback_member_registered(result, TAG.FIELD,
+    F)` records on the constructor's tracked result, per path, the candidates
+    of `F` (rule 11p; a null constant: none) in its member `TAG.FIELD`, and
+    rule 14e's `absent` records none; a join keeps it only when every
+    arriving path holds it alike. A later `resource_callback_member_invoked`
+    on that object (rule 12n), when the unit's closure refuses, reads the
+    registration instead: an identity set decides, `absent` invokes nothing,
+    and anything else refuses naming the registered candidate; with no state
+    in force there the closure's refusal stands. The state is read only where
+    the unit's stores into the member keep it (rule 14e) and the calling
+    function stores into it nowhere itself, and the run's fold demotes a row
+    resting on the constructor when the run's stores do not keep it
+    (`constructed-state-open`). `QCore.CallbackContracts`
+    (`an_invocation_needs_a_registration`,
+    `an_undecided_registration_refuses`, `the_callback_trace_agrees`);
+    `QCore.OpCallbacks`
+    (`a_registration_then_destroy_invokes_only_the_registered_candidate`,
+    `an_absent_member_invokes_no_candidate`,
+    `an_unclassified_store_voids_the_absent_state`).
 
 <a id="constraint-13x"></a>
 
@@ -6514,6 +6555,60 @@ own anchor here.
     `QCore.ResidualAccessReadings` (`offset_vectors_hold`,
     `a_bound_name_is_never_read`, `a_statement_reads_only_a_path_operand`),
     bound to `OFFSET_VECTORS`.
+
+<a id="constraint-14e"></a>
+
+14e. **A constructor's stated result state (`quant live #result: TAG.FIELD
+    |-> absent;`, `resource_discriminant_set`,
+    `resource_callback_member_registered`) is read at a later call only
+    while every store the run makes into the member is classified; the
+    `absent` state stands in a unit that defines the constructor only where
+    its body zero-allocates the result and never writes the member.** Card
+    OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4, grammar
+    G05 and G05d), on the user's decisions of 2026-10-14 (A1, B1, C; the
+    maps-to token `|->`, `qcore_frontend::lexer::MAPS_TO`).
+    `qcore_schemas::constructed_state` (`ConstructedState`, the canonical
+    parts of both levels), the loader `contract_constructed_state.rs` (the
+    shorthand elaborates into `quant live #result;` and the member's
+    `absent`, and the two levels give one state; a bare `->` there rejects
+    the module naming `|->`), `crates/qcore-c-gateway/src/constructed_state.rs`
+    (`StateStore`, `collect`, `stability`, `result_state_validates`), route
+    G's `legacy_constructed_route.rs`, the run fold in
+    `qcore_audit::callback_member_fold` (`constructed_states`). Every store
+    into a stated `TAG.FIELD` in every unit (a data-only unit read whole) is
+    classified: into an object a local of the storing function holds that
+    only direct calls of owned-result declarations assign (a constructor's
+    own result; never another activation's object), or an automatic record;
+    a null pointer constant into a function-pointer member (a candidate
+    removed); a constant flag-or `P->F |= E`; a store `P->F = C` inside a
+    case group of a `switch` reading the same `P->F` (`& E` allowed), `P`
+    rebound only to a null constant in the function (a rewrite: the decided
+    values gain `C`); a sub-object write touches only the members under it.
+    Anything else, a whole-object write of the record (an assignment, a
+    `memcpy`- or `memset`-family call) and a unit with no facts leave the
+    state not kept (premise `P-OPCTOR-STORES-SEEN`: every unit that can store
+    into the member is analysed and no store is type-punned past the
+    record). A unit reads a state only where its own stores keep it and the
+    calling function stores into the member nowhere; the fold demotes a
+    `Safe` or `Pending` row resting on a constructor whose stated member the
+    run does not keep, and the demoted function's null and bounds rows read
+    `Unknown` custody (their combined verdict follows). Body check (evidence
+    `14e`, rule 13i's `ClauseKind::MemberState`): one local returned on
+    every `return`, assigned once from `calloc` or `rd_calloc`, used only as
+    a member store's base, the return and inside `sizeof`, no store reaching
+    an `absent` member, a stated discriminant stored once from its
+    parameter with its flags; otherwise the state is withdrawn in that unit
+    (the result is tracked, the state undecided) and stays a declared
+    assumption elsewhere (rules 13i-13k). **Do not** read a state across an
+    unclassified store, a whole-object write, a non-null rebinding, or a
+    store the calling function makes itself; validate `absent` on a body
+    that does not zero the object; or promote a row in the fold.
+    `QCore.OpCallbacks` (`the_shorthand_and_its_parts_mean_the_same`,
+    `the_shorthand_is_live_and_absent`, `the_shorthand_entails_quant_live`,
+    `both_levels_are_one_canonical_set`,
+    `an_unclassified_store_voids_the_absent_state`); `QCore.BodyClauseStanding`
+    gains `memberState` and `r14e`; `tests/op_constructor_declarations.rs`,
+    `crates/qcore-contract/tests/op_constructor_clause.rs`.
 
 <a id="constraint-14f"></a>
 

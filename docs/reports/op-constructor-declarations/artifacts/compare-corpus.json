@@ -1,0 +1,3376 @@
+{
+ "statuses_before": {
+  "Unknown": 3890,
+  "Safe": 935,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 1
+ },
+ "status_moves_by_label": {
+  "other": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 116,
+  "unresolved resource identity `_`": 115,
+  "call to `_`: the callbacks stored in `_` are not a closed set of functions (no store into `_` in this unit names a function) (callback-member-open)": 1
+ },
+ "added": {
+  "unresolved resource identity `_`": 161,
+  "indirect memory access is outside the resource projection": 15,
+  "loop re-acquisition: an earlier generation that may be live is still held": 9,
+  "nullable resource `_` used by a non-null contract": 7,
+  "a holder retaining `_` may outlive this function's frame (retention-undecided)": 4,
+  "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (retention-undecided)": 3,
+  "call to `_`: the callbacks stored in `_` are not a closed set of functions (no store into `_` in this unit names a function) (callback-member-open)": 2
+ },
+ "moving_rows": 178,
+ "status_moves": [
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_create_fetch_op_with_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19639: call to uncontracted function `rd_kafka_op_new0`",
+    "19640: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23940: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "23940: loop re-acquisition: an earlier generation that may be live is still held",
+    "23953: unresolved resource identity `rko`",
+    "23964: nullable resource `rko` used by a non-null contract",
+    "23964: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23664: unresolved resource identity `rko`",
+    "23670: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23868: unresolved resource identity `rko`",
+    "23874: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_log_buf",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21209: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_memberid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24585: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "24585: indirect memory access is outside the resource projection",
+    "24590: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "24325: unresolved resource identity `rko`",
+    "24358: unresolved resource identity `rko`",
+    "24412: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23597: unresolved resource identity `rko`",
+    "23607: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_set_fatal_error0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21583: call to uncontracted function `rd_kafka_op_new0`",
+    "21584: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23328: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "23328: call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23371: call to uncontracted function `rd_kafka_op_new_cb`",
+    "23374: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "23371: call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)",
+    "23383: unresolved resource identity `rko_reply`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_enqueue_fetch_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22938: call to uncontracted function `rd_kafka_op_new0`",
+    "22939: unresolved resource identity `rko_sf`",
+    "22940: unresolved resource identity `rk`",
+    "22940: unresolved resource identity `rko_sf`",
+    "22942: unresolved resource identity `rko_sf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_enqueue_sync_ack_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23224: call to uncontracted function `rd_kafka_op_new0`",
+    "23225: unresolved resource identity `rko_sf`",
+    "23226: unresolved resource identity `rkb`",
+    "23226: unresolved resource identity `rko_sf`",
+    "23228: unresolved resource identity `rko_sf`",
+    "23229: unresolved resource identity `rkb`",
+    "23229: unresolved resource identity `rko_sf`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_fanout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22844: call to uncontracted function `rd_kafka_op_new_cb`",
+    "22846: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "0: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_set_acknowledgement_commit_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22786: call to uncontracted function `rd_kafka_op_new_cb`",
+    "22789: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "22786: call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_stats_emit_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22120: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22037: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "24166: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23495: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreatePartitionsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21660: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_CreateTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21370: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "24421: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23019: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteTopicsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21490: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23621: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22390: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "25633: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23817: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ElectLeadersResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "26581: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22158: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_common_worker_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20499: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_fanout_op_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20779: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "20797: nullable resource `rko` used by a non-null contract",
+    "20797: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_fanout_worker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20860: unresolved resource identity `rko_fanout`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_handle_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20560: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_request_op_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20449: call to uncontracted function `rd_kafka_op_new_cb`",
+    "20450: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "20466: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "20466: nullable resource `rko` used by a non-null contract",
+    "20466: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_result_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20287: call to uncontracted function `rd_kafka_op_new_cb`",
+    "20295: call to uncontracted function `rd_kafka_op_new0`",
+    "20297: unresolved resource identity `rko_result`",
+    "20300: unresolved resource identity `rko_result`"
+   ],
+   "gained": [
+    "20287: indirect memory access is outside the resource projection",
+    "20310: nullable resource `rko_result` used by a non-null contract",
+    "20310: unresolved resource identity `rko_result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_ListConsumerGroups_response_merge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "26701: unresolved resource identity `rko_partial`",
+    "26705: unresolved resource identity `rko_partial`",
+    "26710: unresolved resource identity `rko_fanout/rko_partial`",
+    "26710: unresolved resource identity `rko_fanout`",
+    "26721: unresolved resource identity `rko_partial/rko_fanout`",
+    "26721: unresolved resource identity `rko_partial`",
+    "26725: unresolved resource identity `rko_partial/rko_fanout`",
+    "26725: unresolved resource identity `rko_partial`",
+    "26730: unresolved resource identity `rko_fanout/rko_partial`",
+    "26730: unresolved resource identity `rko_fanout`",
+    "26742: unresolved resource identity `rko_partial/rko_fanout`",
+    "26742: unresolved resource identity `rko_partial`",
+    "26746: unresolved resource identity `rko_partial/rko_fanout`",
+    "26746: unresolved resource identity `rko_partial`",
+    "26750: unresolved resource identity `rko_partial/rko_fanout`",
+    "26750: unresolved resource identity `rko_partial`",
+    "26755: unresolved resource identity `rko_fanout/rko_partial`",
+    "26755: unresolved resource identity `rko_fanout`",
+    "26765: unresolved resource identity `rko_partial/rko_fanout`",
+    "26765: unresolved resource identity `rko_partial`",
+    "26770: unresolved resource identity `rko_partial/rko_fanout`",
+    "26770: unresolved resource identity `rko_partial`",
+    "26774: unresolved resource identity `rko_partial/rko_fanout`",
+    "26774: unresolved resource identity `rko_partial`",
+    "26779: unresolved resource identity `rko_fanout/rko_partial`",
+    "26779: unresolved resource identity `rko_fanout`",
+    "26789: unresolved resource identity `rko_partial/rko_fanout`",
+    "26789: unresolved resource identity `rko_partial`",
+    "26793: unresolved resource identity `rko_partial/rko_fanout`",
+    "26793: unresolved resource identity `rko_partial`",
+    "26797: unresolved resource identity `rko_partial/rko_fanout`",
+    "26797: unresolved resource identity `rko_partial`",
+    "26802: unresolved resource identity `rko_fanout/rko_partial`",
+    "26802: unresolved resource identity `rko_fanout`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_make_ListConsumerGroups_fanout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26658: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "26662: unresolved resource identity `rko_fanout`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_make_ListConsumerGroups_partial",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26628: call to uncontracted function `rd_kafka_op_new0`",
+    "26629: unresolved resource identity `rko_partial`",
+    "26630: unresolved resource identity `rko_partial`"
+   ],
+   "gained": [
+    "26645: nullable resource `rko_partial` used by a non-null contract",
+    "26645: unresolved resource identity `rko_partial`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "ut_make_ListConsumerGroups_partial_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26650: call to uncontracted function `rd_kafka_op_new0`",
+    "26651: unresolved resource identity `rko_partial`",
+    "26652: unresolved resource identity `rko_partial`"
+   ],
+   "gained": [
+    "26654: unresolved resource identity `rko_partial`"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_queue_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20149: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_buf_enq_replyq",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21571: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_buf_retry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22421: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_connect_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22118: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_purge_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24048: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_schedule_connection",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24124: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_start_reauth_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24197: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_thread_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23426: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_trigger_monitors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24149: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "24149: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23952: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_wakeup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23979: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_dr_msgq0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22483: call to uncontracted function `rd_kafka_op_new0`",
+    "22484: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_buf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19866: call to uncontracted function `rd_kafka_op_new0`",
+    "19871: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_assigned_offsets_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22944: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22014: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "22014: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21632: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "21632: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21754: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "21754: indirect memory access is outside the resource projection",
+    "21766: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_offsets_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22925: call to uncontracted function `rd_kafka_op_new0`",
+    "22927: unresolved resource identity `reply`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24327: call to uncontracted function `rd_kafka_op_new0`",
+    "24328: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22841: unresolved resource identity `rko_orig`",
+    "22851: unresolved resource identity `rko_orig`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "24345: unresolved resource identity `rko`",
+    "24469: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_partition_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22630: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_partition_del",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22649: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23802: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "23742: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_group_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24585: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "24585: indirect memory access is outside the resource projection",
+    "24590: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21059: call to uncontracted function `rd_kafka_op_new0`",
+    "21060: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_op_incr",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21011: call to uncontracted function `rd_kafka_op_new0`",
+    "21012: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_req_fail",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20298: call to uncontracted function `rd_kafka_op_new0`",
+    "20300: unresolved resource identity `reply`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "occurrence": 1,
+   "function": "rd_kafka_event_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19714: unresolved resource identity `rkev`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Fetch_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20531: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20875: call to uncontracted function `rd_kafka_op_new0`",
+    "20928: call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (no store into `rd_kafka_op_s.rko_op_cb` in this unit names a function) (callback-member-open)"
+   ],
+   "gained": [
+    "20892: unresolved resource identity `candidate/msg_rko`",
+    "20908: unresolved resource identity `msg_rko`",
+    "20928: unresolved resource identity `response_rko/msg_rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21264: unresolved resource identity `rko`",
+    "21267: unresolved resource identity `response_rko/rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21140: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20807: unresolved resource identity `rko`",
+    "20827: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20241: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "20241: loop re-acquisition: an earlier generation that may be live is still held",
+    "20255: unresolved resource identity `rko`",
+    "20259: nullable resource `rko` used by a non-null contract",
+    "20259: unresolved resource identity `rko`",
+    "20268: nullable resource `rko` used by a non-null contract",
+    "20268: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22487: call to uncontracted function `rd_kafka_op_new0`",
+    "22488: unresolved resource identity `rko`",
+    "22489: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_decommission",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22470: call to uncontracted function `rd_kafka_op_new0`",
+    "22471: unresolved resource identity `rko`",
+    "22472: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_remove_from_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22479: call to uncontracted function `rd_kafka_op_new0`",
+    "22480: unresolved resource identity `rko`",
+    "22481: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_set_down",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22947: call to uncontracted function `rd_kafka_op_new0`",
+    "22948: unresolved resource identity `rko`",
+    "22949: unresolved resource identity `rko`",
+    "22950: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_set_rack",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22979: call to uncontracted function `rd_kafka_op_new0`",
+    "22980: unresolved resource identity `rko`",
+    "22982: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_set_rtt",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22968: call to uncontracted function `rd_kafka_op_new0`",
+    "22969: unresolved resource identity `rko`",
+    "22970: unresolved resource identity `rko`",
+    "22971: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_broker_set_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22957: call to uncontracted function `rd_kafka_op_new0`",
+    "22958: unresolved resource identity `rko`",
+    "22959: unresolved resource identity `rko`",
+    "22960: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cluster_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23388: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "23388: indirect memory access is outside the resource projection",
+    "23390: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_coordinator_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23007: call to uncontracted function `rd_kafka_op_new0`",
+    "23010: unresolved resource identity `rko`",
+    "23011: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_delete_records",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22857: call to uncontracted function `rd_kafka_op_new0`",
+    "22859: unresolved resource identity `rko`",
+    "22860: unresolved resource identity `rko`",
+    "22861: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_push_leader_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22912: call to uncontracted function `rd_kafka_op_new0`",
+    "22914: unresolved resource identity `rko`",
+    "22915: unresolved resource identity `rko`",
+    "22916: unresolved resource identity `rko`",
+    "22917: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_push_request_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22928: call to uncontracted function `rd_kafka_op_new0`",
+    "22931: unresolved resource identity `rko`",
+    "22933: unresolved resource identity `rko`",
+    "22934: unresolved resource identity `rko`",
+    "22935: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_set_follower",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22883: call to uncontracted function `rd_kafka_op_new0`",
+    "22885: unresolved resource identity `rko`",
+    "22886: unresolved resource identity `rko`",
+    "22887: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_set_follower_wmarks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22897: call to uncontracted function `rd_kafka_op_new0`",
+    "22899: unresolved resource identity `rko`",
+    "22900: unresolved resource identity `rko`",
+    "22901: unresolved resource identity `rko`",
+    "22902: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_partition_set_leader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22870: call to uncontracted function `rd_kafka_op_new0`",
+    "22872: unresolved resource identity `rko`",
+    "22873: unresolved resource identity `rko`",
+    "22874: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_set_apiversion",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23020: call to uncontracted function `rd_kafka_op_new0`",
+    "23021: unresolved resource identity `rko`",
+    "23022: unresolved resource identity `rko`",
+    "23023: unresolved resource identity `rko`",
+    "23024: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_telemetry_set_push_interval",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23049: call to uncontracted function `rd_kafka_op_new0`",
+    "23050: unresolved resource identity `rko`",
+    "23051: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_telemetry_set_requested_metrics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23032: call to uncontracted function `rd_kafka_op_new0`",
+    "23033: unresolved resource identity `rko`",
+    "23042: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_topic_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22835: call to uncontracted function `rd_kafka_op_new0`",
+    "22837: unresolved resource identity `rko`",
+    "22838: unresolved resource identity `rko`",
+    "22839: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_topic_delete",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22846: call to uncontracted function `rd_kafka_op_new0`",
+    "22848: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_topic_set_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22822: call to uncontracted function `rd_kafka_op_new0`",
+    "22824: unresolved resource identity `rko`",
+    "22825: unresolved resource identity `rko`",
+    "22826: call to uncontracted function `rd_kafka_op_req`"
+   ],
+   "gained": [
+    "22826: indirect memory access is outside the resource projection",
+    "22827: unresolved resource identity `rko`",
+    "22828: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_message_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20564: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20330: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20410: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_reset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20607: call to uncontracted function `rd_kafka_op_new0`",
+    "20610: unresolved resource identity `rko`",
+    "20612: unresolved resource identity `rko`",
+    "20613: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_validate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20798: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_err",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20118: call to uncontracted function `rd_kafka_op_new0`",
+    "20119: unresolved resource identity `rko`",
+    "20120: unresolved resource identity `rko`",
+    "20121: unresolved resource identity `rko`",
+    "20123: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20069: unresolved resource identity `msg_rko`",
+    "20083: unresolved resource identity `rko/msg_rko`",
+    "20084: unresolved resource identity `rko/msg_rko`",
+    "20086: unresolved resource identity `rko/msg_rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_err_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20233: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20241: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20195: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20359: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_new_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20177: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_new_fetch_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20280: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "20296: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_new_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20166: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": [
+    "20166: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20184: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20220: call to uncontracted function `rd_kafka_op_req0`"
+   ],
+   "gained": [
+    "20220: call to `rd_kafka_op_req0`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (no store into `rd_kafka_op_s.rko_serve` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `rd_kafka_op_new0`",
+    "20227: call to uncontracted function `rd_kafka_op_req`"
+   ],
+   "gained": [
+    "20227: call to `rd_kafka_op_req`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (no store into `rd_kafka_op_s.rko_serve` in this unit names a function) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_throttle_time",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20312: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_op_err",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20098: call to uncontracted function `rd_kafka_op_new0`",
+    "20099: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_msgset_err_ops",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20151: call to uncontracted function `rd_kafka_op_new0`",
+    "20152: unresolved resource identity `rko`",
+    "20153: unresolved resource identity `rko`",
+    "20154: unresolved resource identity `rko`",
+    "20156: unresolved resource identity `rko`",
+    "20157: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "20151: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22447: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "0: a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "22462: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22417: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "22417: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_broker_leave_for_remove",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20846: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_broker_migrate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20820: call to uncontracted function `rd_kafka_op_new0`",
+    "20823: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_enq_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21529: call to uncontracted function `rd_kafka_op_new0`",
+    "21530: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_fetch_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21121: call to uncontracted function `rd_kafka_op_new0`",
+    "21122: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_fetch_stopped",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21139: call to uncontracted function `rd_kafka_op_new0`",
+    "21141: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_offset_fetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20928: call to uncontracted function `rd_kafka_op_new0`",
+    "20932: unresolved resource identity `rko`",
+    "20934: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21367: call to uncontracted function `rd_kafka_op_new0`",
+    "21368: unresolved resource identity `rko`",
+    "21372: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_op_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21436: call to uncontracted function `rd_kafka_op_new0`",
+    "21450: unresolved resource identity `rko`",
+    "21451: unresolved resource identity `rko`",
+    "21452: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_op_version_bump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20315: call to uncontracted function `rd_kafka_op_new0`",
+    "20316: unresolved resource identity `rko`",
+    "20317: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_seek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21199: call to uncontracted function `rd_kafka_op_new0`",
+    "21200: unresolved resource identity `rko`",
+    "21201: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_filter",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19885: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_outdated_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20089: unresolved resource identity `rko`",
+    "20103: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_fix_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20471: unresolved resource identity `next/rko`",
+    "20480: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19800: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge_toppar_version",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19834: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20152: unresolved resource identity `rko`",
+    "20185: unresolved resource identity `rko`",
+    "20196: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_share_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20267: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_wait_result",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20434: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "22066: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Produce_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22693: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21262: call to uncontracted function `rd_kafka_op_new0`",
+    "21264: unresolved resource identity `rko_reply`",
+    "21266: unresolved resource identity `rko_reply`"
+   ],
+   "gained": [
+    "21246: unresolved resource identity `rko`",
+    "21270: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafkap_share_leader_changes_apply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22618: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oauthbearer_enqueue_token_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20244: call to uncontracted function `rd_kafka_op_new_cb`"
+   ],
+   "gained": [
+    "20244: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_send_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20300: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_enqueue_ack_commit_cb_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20224: call to uncontracted function `rd_kafka_op_new0`",
+    "20225: unresolved resource identity `cb_rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assign0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19684: call to uncontracted function `rd_kafka_op_new0`",
+    "19685: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19756: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "19756: indirect memory access is outside the resource projection",
+    "19762: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_protocol",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19736: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "19736: indirect memory access is outside the resource projection",
+    "19741: unresolved resource identity `rko`",
+    "19745: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19664: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19624: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_subscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19776: call to uncontracted function `rd_kafka_op_req2`"
+   ],
+   "gained": [
+    "19776: indirect memory access is outside the resource projection",
+    "19782: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry.c",
+   "occurrence": 1,
+   "function": "rd_kafka_telemetry_await_termination",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21047: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_send_offsets_to_transaction",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21311: call to uncontracted function `rd_kafka_op_new_cb`",
+    "21316: unresolved resource identity `rko`"
+   ],
+   "gained": [
+    "21318: a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21150: unresolved resource identity `rko`",
+    "21243: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21076: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_op_req0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20445: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_cumulative",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20288: unresolved resource identity `response_rko1`",
+    "20289: unresolved resource identity `response_rko2/response_rko1`",
+    "20289: unresolved resource identity `response_rko2`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_empty",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20226: unresolved resource identity `response_rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_gaps",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20216: unresolved resource identity `response_rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20251: unresolved resource identity `response_rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20190: unresolved resource identity `response_rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_single_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20158: unresolved resource identity `response_rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_all_acquired",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19676: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19676: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_disjoint_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19728: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19728: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_no_ranges",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19765: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19765: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_partial_range",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19702: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19702: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_range_beyond_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19812: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19812: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_filter_sparse_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:ut_create_fetch_op_with_offset"
+   ],
+   "lost": [
+    "19786: call to uncontracted function `ut_create_fetch_op_with_offset`"
+   ],
+   "gained": [
+    "19786: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_create_fetch_op_with_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19639: call to uncontracted function `rd_kafka_op_new0`",
+    "19640: unresolved resource identity `rko`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_create_share_fetch_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19647: call to uncontracted function `rd_kafka_op_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_op_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19644: unresolved resource identity `ptr`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20392: unresolved resource identity `rko`",
+    "20400: unresolved resource identity `rko`",
+    "20410: unresolved resource identity `rko`",
+    "20418: unresolved resource identity `rko`",
+    "20428: unresolved resource identity `rko`",
+    "20436: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20307: unresolved resource identity `rko`",
+    "20314: unresolved resource identity `rko`",
+    "20321: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20257: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19861: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19927: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20112: unresolved resource identity `rko`",
+    "20119: unresolved resource identity `rko`",
+    "20127: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20181: unresolved resource identity `rko`",
+    "20188: unresolved resource identity `rko`",
+    "20196: unresolved resource identity `rko`",
+    "20203: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20038: unresolved resource identity `rko`",
+    "20047: unresolved resource identity `rko`",
+    "20054: unresolved resource identity `rko`"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "19985: unresolved resource identity `rko`"
+   ]
+  }
+ ]
+}

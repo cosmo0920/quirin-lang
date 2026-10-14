@@ -975,7 +975,7 @@ contract {
 
 **Grammar** (G05, total-or-reject). `requires resource_discriminant(P, FIELD, MASK)`: `P` a depth-one pointer parameter with no kind that the declaration releases (`resource_released`), `FIELD` a member path (identifiers joined by `.`), `MASK` a canonical decimal (C04.5's spelling) naming the bits the body clears before switching (`0`: none). At most one per declaration, and only beside arm clauses. Each arm is `resource_arm_released(P, PATH)` (the arm releases the object at the member path `PATH` of `P`'s object; `PATH` is not `FIELD`) or `resource_arm_empty(P)` (it releases none), followed by `when FIELD == VALUE` (`==` only; `VALUE` a canonical decimal, never a name, its enumerator and source line in a comment; a value the mask clears rejects) or `otherwise` (every value no `when` arm names). A guard carries either one empty arm or released paths, never both, and never one path twice. The clauses stand where a callback clause may, and withhold the declaration from the function map.
 
-**Meaning.** The arm of a value is the clauses guarded by it, else the `otherwise` clauses; a value neither names has **no arm**, never a neutral one. A consumer decides the discriminant only from a declared constructor that states it, which none does yet (`OP-CONSTRUCTOR-DECLARATIONS`), so every call reads the **cautious join** over every arm:
+**Meaning.** The arm of a value is the clauses guarded by it, else the `otherwise` clauses; a value neither names has **no arm**, never a neutral one. A consumer decides the discriminant only from a declared constructor that states it (C04.19.4, card OP-CONSTRUCTOR-DECLARATIONS: the arms its reachable values select, where the run's stores keep the state); every other call reads the **cautious join** over every arm:
 
 * no `otherwise` arm: some value has no declared arm, and the call is refused (`arm-undeclared`);
 * a tracked object linked at a member path every arm releases (`otherwise` included) is released with the object; at a path some arms release and others do not, the call is refused (`arm-undecided`); at a path no arm releases, the object stays as a plain release leaves it (premise P-B08-SHALLOW).
@@ -1001,6 +1001,153 @@ contract {
 **The candidates: the run's closed set (premise P-CG22-MEMBER-CLOSED-WORLD).** Over Clang's AST of every unit of the run (an analysed unit, and a data-only unit read whole for its member facts alone, card CALLBACK-MEMBER-DATA-ONLY-UNITS), a member's set is the least one the stores admit: a store into the member (an assignment `X->F = V`, `X.a.b = V`, or an entry of an initializer list of a record the unit defines once at file scope, mapped onto its fields, an implicit entry being a null pointer) adds a function designator, nothing for a null pointer constant, the set of another member it reads (`rko_serve = orig_destq->rkq_serve`), or, for a formal of a function-pointer type of a function whose address no unit takes, every actual some call of that function passes there (an internal function's in its own unit only); any other value (a variable, a call's result, a cast, a formal of another type), a member whose address is taken, and a record an initializer list that cannot be mapped so (an anonymous member, a tag defined again inside a function, an entry for another field that is a record or array copy or a function), a whole-object assignment or a `memcpy`-family call may write open the set. A unit whose AST is not read (its preprocessing, Clang run or JSON fails) opens every member; a unit read with no store contributes the empty set, read from its AST. The premise: every unit that can store into the member is in the run (a unit outside it, or a type-punned store, is not seen). A consumer decides a call over the set the analysing unit sees (rule 12n: an open or empty set is refused, `callback-member-open`), with C04.19's loop-safe composition; the run's fold then keeps a `Safe` or `Pending` row resting on the declaration only when the run's set is closed and contained in the unit's, and demotes it to `Unknown` otherwise (never promoting anything). A checkpointed run, which folds nothing, refuses to compose when a declaration invokes a member.
 
 **Not checked against bodies.** `supplied_owned` and a member invocation are declared assumptions (rule 13i); the synchronous invocation of C04.19 keeps rule 13y's check.
+
+#### C04.19.4. A constructor's result state
+
+Card OP-CONSTRUCTOR-DECLARATIONS (gateway rules 12o, 13w and 14e).
+
+> **USER DECISION 2026-10-14** (as relayed by the integrator, verbatim).
+> **A. Use your A1.** The 4-operand form: `ensures normal
+> resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, FLAGS);`,
+> with FLAGS = 0 for new0 and 536870912 for new_cb. The value is exact; the
+> consumer applies its mask.
+> **B. Use your B1.** `ensures normal
+> resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, cb);`
+> **C. The user wants it in this card**, as a quant-family state clause in
+> mathematical maps-to notation: `quant live #result: rd_kafka_op_s.rko_op_cb
+> -> absent;` 1. **Meaning.** The result is live (exactly as `quant live
+> #result`), and its member `rko_op_cb` maps to `absent` (↦), meaning no
+> callback is registered. `->` is "maps to" here, not C member access. 2.
+> **Grammar.** The left of `->` must be a dotted `TAG.FIELD`. A C-style
+> `result->rko_op_cb`, or any other expression, rejects the module
+> (total-or-reject). `absent` is a new reserved word, distinct from C NULL.
+> Admit only `absent` as the right-hand side for now. Any other value rejects.
+> The form sits in the same envelope as the existing `quant` clauses (G05
+> family). Document it in the implemented grammars beside `quant live` /
+> `quant deref`. 3. **Two levels.** It decomposes into `quant live #result;`
+> plus the member-empty fact. Prove the entailment in Lean, the same way the
+> `quant deref` decomposition was derived. Do not hand-assert it. A user may
+> write either level, and both must read identically. 4. **Body check.**
+> Validate it against `rd_kafka_op_new0`'s body at both revisions. The object
+> is zero-allocated (`rd_calloc`), and `rko_op_cb` is not written before
+> return. If that cannot be shown, withdraw the clause; it then counts as a
+> declared assumption only per rules 13i–13k. At a destroy of an op whose
+> per-path state says absent, no member candidate is invoked. A later store
+> into the member, anywhere the run sees it, replaces or opens the state, as
+> you described for B. The run-wide closure still governs any op whose path
+> state is not decided. 5. **Lean.** The three theorems from the brief. The
+> decomposition entailment. An op that maps to absent invokes no candidate at
+> its destroy. An unclassified store voids the absent state.
+>
+> **USER DECISION 2026-10-14, the maps-to token** (verbatim): "Final token,
+> per the user's decision on 2026-10-14: `|->`, the ASCII maps-to ↦. The
+> clause is: `quant live #result: rd_kafka_op_s.rko_op_cb |-> absent;`"
+> Rationale: `->` is rejected because it collides with C member access in
+> contract text and with the .qr return-type arrow; `>->` is rejected
+> because in Z / set-theory notation it reads as ↣, an injective function;
+> `|->` is the standard ASCII for ↦ (Z, Isabelle, TLA+). The lexer tells
+> `|->` apart from the `|>` pipe and from `||`, and a bare `->` in this
+> position rejects the module with a diagnostic naming `|->`.
+
+```qcore
+extern fn rd_kafka_op_new0(source: ptr<const, u8>, type: u32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(source);
+    ensures normal resource_borrowed(type);
+    ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 0);
+    quant live #result: rd_kafka_op_s.rko_op_cb |-> absent;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn rd_kafka_op_new_cb(rk: ptr<mut, u8>, type: u32, cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(type);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_retained_by(rk, result);
+    ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 536870912);
+    ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, cb);
+    ensures normal resource_return_owned(nonnull);
+};
+```
+
+**Grammar** (G05 and G05d, total-or-reject). Each clause names the
+returned object with the word `result`, which requires
+`resource_return_owned(nonnull)` (the caller owns the live object the state
+describes; otherwise `quant-live-unbacked`); a parameter named `result` or
+`absent` rejects the module; the member is a dotted `TAG.FIELD` (`struct
+TAG`'s member path).
+
+* `resource_discriminant_set(result, TAG.FIELD, P, FLAGS)`: `P` an integer
+  parameter, `FLAGS` a canonical non-negative decimal (`0`: none); at most one
+  per declaration (an identical repetition merges).
+* `resource_callback_member_registered(result, TAG.FIELD, F)`: `F` a `fnptr`
+  parameter whose mode is `resource_borrowed`, registered or invoked by no
+  other clause of the declaration; or the word `absent`.
+* `quant live #result: TAG.FIELD |-> absent;` (the maps-to token `|->`, the
+  ASCII `↦`) and `quant live #result;`: the only `quant` forms resource v1
+  admits. The left of `|->` is a dotted `TAG.FIELD` (anything else,
+  `result->rko_op_cb` included, rejects: `quant-live-member`, or, for a bare
+  `->`, `quant-live-maps-to` naming `|->`); the right is `absent` only
+  (`quant-live-value`).
+* One member is given one state (an agreeing overlap merges; a second,
+  different state rejects). The clauses stand where a callback clause may
+  and withhold the declaration from the function map.
+
+**Two levels.** `quant live #result: TAG.FIELD |-> absent;` is the shorthand
+of its two canonical parts: `quant live #result;` (the result is live, the
+liveness part of C09.3's decomposition, restating
+`resource_return_owned(nonnull)`) and the member's `absent` state, written
+on its own as `resource_callback_member_registered(result, TAG.FIELD,
+absent)`. The loader elaborates every spelling into the canonical parts, so
+the shorthand, its decomposition, and both together read identically
+(`QCore.OpCallbacks`: `the_shorthand_and_its_parts_mean_the_same`,
+`the_shorthand_is_live_and_absent`, `the_shorthand_entails_quant_live`,
+`both_levels_are_one_canonical_set`, derived from the parts' meanings over
+`QCore.DerefDecomposition`'s pointer value).
+
+**Meaning.** At a call of the constructor, the consumer puts on the tracked
+result, per path: the discriminant's value `actual | FLAGS` when the actual
+folds to a constant (a formal or computed actual decides nothing), and each
+member's state (the registered callback's candidates by rule 11p, or none for
+`absent`). A path join keeps a state only when every arriving path holds it.
+A later type-switched release (C04.19.2) of that object reads the arms its
+reachable values select, each under the release's own mask, instead of the
+cautious join; a later member invocation (C04.19.3) the unit's closure
+refuses reads the member's state instead (`absent` invokes nothing). Any
+other object, and any object whose state is not decided, reads C04.19.2's
+cautious join and C04.19.3's closure as before.
+
+**Stability (premise P-OPCTOR-STORES-SEEN).** A state is read only while
+every store the run makes into the member is classified, over Clang's AST of
+every analysed unit (a data-only unit read whole): a store into an object its
+function obtained only from direct calls of owned-result declarations (a
+constructor's own result: never another activation's object) or into an
+automatic record; a null pointer constant into a function-pointer member; a
+constant flag-or `P->F |= E`; a store `P->F = C` in a case group of a
+`switch` reading the same `P->F` (masked or not), `P` rebound in the function
+only to a null constant — a rewrite: the decided values close under it
+(`rd_kafka_broker_op_serve`'s `PARTITION_LEAVE` → `PARTITION_JOIN`, both in
+`rd_kafka_op_destroy`'s `otherwise` arm, so a decided `PARTITION_LEAVE` still
+selects exactly `otherwise`). A write of a sub-object touches only the
+members under it. Any other store, a whole-object write of the record, and a
+unit that recorded no facts void the state. A function that stores into the
+member itself reads no state on it. The run's fold demotes a `Safe` or
+`Pending` row resting on a constructor whose stated member the run does not
+keep (`constructed-state-open`), and the demoted function's property rows
+read `Unknown` custody.
+
+**Checked against the body (rule 14e).** In a unit that defines a
+constructor stating `absent`, the state stands only when its Clang body
+returns one local on every `return`, assigns it once from a zeroing
+allocator (`calloc`, `rd_calloc`), uses it only as a member store's base, in
+the return and inside `sizeof`, never stores into an `absent` member, and
+stores a stated discriminant exactly once from its parameter (with its
+flags); otherwise the state is withdrawn in that unit and the clause stays a
+declared assumption (rules 13i–13k). `resource_discriminant_set` and a
+callback registration are otherwise declared assumptions.
 
 ## C05. Manifests and immutable assumptions
 

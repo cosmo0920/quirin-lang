@@ -3619,7 +3619,17 @@ arm_predicate =
     ( "resource_arm_released", "(", IDENT, ",", member_path, ")"
     | "resource_arm_empty", "(", IDENT, ")" ),
     ( "when", member_path, "==", integer_literal | "otherwise" ) ;
+(* card OP-CONSTRUCTOR-DECLARATIONS, contract specification C04.19.4 *)
+result_state_predicate =
+    "resource_discriminant_set", "(", "result", ",", IDENT, ".", member_path, ",",
+        IDENT, ",", integer_literal, ")"                    (* TAG.FIELD, P, FLAGS *)
+  | "resource_callback_member_registered", "(", "result", ",", IDENT, ".", member_path, ",",
+        (IDENT | "absent"), ")" ;                           (* TAG.FIELD, F *)
+result_state_clause = "quant", "live", "#", "result",
+    [ ":", IDENT, ".", member_path, MAPS_TO, "absent" ], ";" ;   (* G05d *)
 ```
+
+The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result` or `absent` rejects the module; the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the word `absent`; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` is the only `quant` form resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
 
 The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot or a reference predicate. Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 
@@ -3934,6 +3944,43 @@ canonical digest. Resource v1 and every other consumer reject both clause
 kinds. On an audit route, a liveness part is admitted only where the
 function's resource v1 declaration in force states `resource_owned` at that
 position (`quant-live-unbacked`, `quant-live-contradicts-custody`).
+
+**Result states in resource v1** (card OP-CONSTRUCTOR-DECLARATIONS, contract
+specification [C04.19.4](QCORE_CONTRACT_SPEC_r0_3.md#c04194-a-constructors-result-state),
+gateway rule [14e](agents/gateway.md#constraint-14e); USER DECISION
+2026-10-14, C, and the maps-to token). Beside `quant live` and `quant deref`,
+a constructor's resource v1 declaration may state its result's member state
+in maps-to notation:
+
+```ebnf
+result_state_clause = "quant", "live", "#", "result",
+    [ ":", IDENT, ".", member_path, MAPS_TO, "absent" ], ";" ;
+MAPS_TO = "|->" ;   (* one lexer token, qcore_frontend::lexer::MAPS_TO *)
+```
+
+`|->` is the ASCII maps-to `↦`: `->` was rejected because it collides with C
+member access in contract text and with the `.qr` return-type arrow, `>->`
+because Z and set-theory notation read it as `↣`, an injective function;
+`|->` is the standard ASCII for `↦` (Z, Isabelle, TLA+). It is one lexer
+token (`Symbol::MapsTo`), matched before every two-byte spelling, so `|>`
+stays the pipe and `||` the logical or (and `||->` is `||` then `->`); before
+the card the same bytes lexed as `|` then `->`, which no reader admitted.
+`absent` is a reserved word, distinct from C's `NULL`. Static conditions,
+each rejecting the whole module with a named diagnostic: the binder is
+`#result` (`quant-live-result-shape`; a formal is a bounds-module liveness
+part, never a resource v1 one); the left of `|->` is a dotted `TAG.FIELD`
+(`quant-live-member`; `result->rko_op_cb` and a bare `->` reject with
+`quant-live-maps-to`, which names `|->`); the right is `absent` alone
+(`quant-live-value`). **Two levels:** the clause is the shorthand of `quant
+live #result;` (the liveness part, restating `resource_return_owned(nonnull)`)
+and the member's `absent` state, written alone as
+`resource_callback_member_registered(result, TAG.FIELD, absent)`; the loader
+elaborates every spelling into these canonical parts
+(`crates/qcore-contract/src/contract_constructed_state.rs`), so the shorthand,
+its decomposition and both together give one `ConstructedState`
+(`crates/qcore-contract/tests/op_constructor_clause.rs`). The pinned digest
+covers the text as written. Every other `quant` form still rejects in
+resource v1.
 ## G05e. Null-property member and result declarations
 
 Card NULL-CANDIDATE-TRIAGE, contract specification
