@@ -1,0 +1,47 @@
+{
+ "graph_rows_changed": 3,
+ "graph_rows_unmatched": 0,
+ "other_rows_changed": 0,
+ "rows": [
+  {
+   "functions_in_graph": 249,
+   "edges_added": [
+    "rd_kafka_committed -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_consume_callback0 -> rd_kafka_poll_cb",
+    "rd_kafka_consume_callback0 -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_consume_cb -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_consumer_close0 -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_list_groups -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_memberid -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_offsets_for_times -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_poll -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_poll_cb -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_query_watermark_offsets -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_queue_poll -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_queue_poll_callback -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_seek_partitions -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_share_commit_async -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_share_commit_sync -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_share_poll -> rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_thread_main -> rd_kafka_poll_cb",
+    "rd_kafka_thread_main -> rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "edges_removed": []
+  },
+  {
+   "functions_in_graph": 187,
+   "edges_added": [
+    "rd_kafka_mock_cluster_io_poll -> rd_kafka_mock_cluster_op_serve"
+   ],
+   "edges_removed": []
+  },
+  {
+   "functions_in_graph": 64,
+   "edges_added": [
+    "rd_kafka_commit_queue -> rd_kafka_offset_reset_op_cb",
+    "rd_kafka_commit_queue -> rd_kafka_offset_validate_op_cb"
+   ],
+   "edges_removed": []
+  }
+ ]
+}
