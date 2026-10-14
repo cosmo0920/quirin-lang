@@ -1,15 +1,24 @@
 # PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS: `package::build` holds no write descriptor on the executable
 
-Card of wave 48 (round 25, third card), base `b565f79ab`, rebased onto
-`5ee141946` (PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE landed; the rebase
-was clean and left every file of this card unchanged). Commits after the
-rebase:
-- prediction frozen at `18ffb5c21` ([PREDICTION.md](PREDICTION.md));
-- the test alone at `7ff2afcf9`;
-- the fix at `854e42ec9`.
+Card of wave 48 (round 25, third card), base `b565f79ab`. It was rebased
+twice:
+- onto `5ee141946`, when PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE
+  landed. The rebase was clean and left every file of this card unchanged.
+  Gate g1 (§9) ran on this tree.
+- onto `98eddb50e`, when HOST-REQUEST-READ-BY-DETACHED-DESCENDANT landed. That
+  card changed only `crates/qcore-verifier-host`, its Lean module and
+  records. This rebase was records-only, and the targeted check (§10) ran
+  on it.
 
-Before the rebase they were `29b7ddcab`, `1e445efca` and `e84a41d49`. The
-measurement binaries were built from those, at the same trees. Production change:
+The card's commits now are:
+- prediction frozen at `72744cd48` ([PREDICTION.md](PREDICTION.md));
+- the test alone at `d547c06f2`;
+- the fix at `4e388ff8a`.
+
+Before the first rebase they were `29b7ddcab`, `1e445efca` and
+`e84a41d49`, and after it `18ffb5c21`, `7ff2afcf9` and `854e42ec9`. The
+measurement binaries were built from the originals; the card's own files
+are the same in every one of these trees. Production change:
 `providers/quirin-provider-plugin/src/package.rs` only. No new crate or
 dependency, no `unsafe`, no Lean (an I/O mechanism; no verifier-host or
 package-verification semantics change).
@@ -255,3 +264,38 @@ docs/agents/*.md | sort | uniq -d` prints `1.`–`7.` on this tree and on main
 alike. The card brief list in `operations.md` (items 1–7) collides with the
 plain-numbered rules in `diagnostics.md` and `gateway.md`. This card adds
 no numbered line to `docs/agents/`. The bold-form check is empty.
+
+## 10. Rebase onto `98eddb50e` and the targeted check
+
+HOST-REQUEST-READ-BY-DETACHED-DESCENDANT landed after g1. Its commits touch
+only `crates/qcore-verifier-host`, Lean `QCore.RequestConsumption` and
+records, which are disjoint from this card's code. Under the landing-race
+policy the integrator asked for a records-only rebase and a targeted check,
+not a second full gate.
+
+**Rebase.**
+- STATUS and part 7 conflicted; both cards' paragraphs were kept, with this
+  card's increment newest first.
+- The acceptance matrix was taken from main and rebuilt with
+  [`scripts/update_ledger.py`](scripts/update_ledger.py): 765 entries, equal
+  to `dimensions.named_followups`.
+- [`scripts/rebase_audit.py`](scripts/rebase_audit.py) is
+  `audit_card_lines.sh` in Python, given
+  `git diff --output=… 5ee141946 2d7f7fbdc` over the record files. It
+  confirms that all 37 record lines the card added are still present and
+  that the ledger is as intended. Exit 0.
+- No conflict markers remain, and the bold rule-id duplicate check is
+  empty.
+
+**Targeted check.** [`scripts/targeted.sh`](scripts/targeted.sh) ran at
+`f55d6615d` under `flock` on the heavy lock, from 03:54:13Z to 04:02:53Z.
+Logs are in `private/ppb/targeted-t1`.
+
+| Step | Exit | Count |
+|---|---|---|
+| `cargo check --workspace --all-targets` | 0 | |
+| `cargo test` in `providers/` (`--workspace --locked --offline`) | 0 | 133 passed, 0 failed |
+| `cargo test -p qcore-verifier-host --locked` | 0 | 149 passed, 0 failed |
+| `build_matrix.py . --gate gate.json` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| `build_docs_index.py`, then `--check` | 0 / 0 | |
