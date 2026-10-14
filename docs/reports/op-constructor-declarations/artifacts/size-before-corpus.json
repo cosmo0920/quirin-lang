@@ -1,0 +1,79 @@
+{
+ "rd_kafka_op_new0": {
+  "leaves": 87,
+  "functions": 86,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new_cb": {
+  "leaves": 14,
+  "functions": 14,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_req": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_req0": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_req2": {
+  "leaves": 6,
+  "functions": 6,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_destroy": {
+  "leaves": 132,
+  "functions": 83,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka_event.c::rd_kafka_event_destroy",
+   "rdunittest_fetcher.c::ut_op_destroy_free"
+  ]
+ },
+ "rd_kafka_q_pop": {
+  "leaves": 38,
+  "functions": 15,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_enq": {
+  "leaves": 87,
+  "functions": 83,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka.c::rd_kafka_share_fetch_fanout_enqueue"
+  ]
+ },
+ "rd_kafka_op_set_replyq": {
+  "leaves": 7,
+  "functions": 7,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_new_reply": {
+  "leaves": 2,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_reply": {
+  "leaves": 13,
+  "functions": 7,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_err_destroy": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ }
+}
