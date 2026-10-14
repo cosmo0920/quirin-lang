@@ -610,6 +610,32 @@ const ROWS: &[Row] = &[
         c: "typedef int (*k_write)(void *);\ntypedef int k_write;\nvoid k_use(void *p, k_write n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- a pointer to a function-type typedef (card
+    //    CG22-OP-CALLBACKS-AND-SERVED-QUEUES, `rd_kafka_q_serve_cb_t *`) -----
+    Row {
+        label: "one pointer to a function-type typedef is `fnptr`",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef int(k_cb_t)(void *, int);\nvoid k_use(void *p, k_cb_t *n);",
+        outcome: None,
+    },
+    Row {
+        label: "so is one written without parentheses around the name",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef int k_cb_t(void *, int);\nvoid k_use(void *p, k_cb_t *n);",
+        outcome: None,
+    },
+    Row {
+        label: "an object-pointer spelling of it disagrees",
+        declared: "p: ptr<mut, u8>, n: ptr<mut, u8>",
+        c: "typedef int(k_cb_t)(void *, int);\nvoid k_use(void *p, k_cb_t *n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "a pointer to a pointer to a function type stays refused",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef int(k_cb_t)(void *, int);\nvoid k_use(k_cb_t **p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
     // -- types with no established spelling --------------------------------
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): implementation-defined, so
     // read from Clang (`unsigned int` here), never assumed `int`.

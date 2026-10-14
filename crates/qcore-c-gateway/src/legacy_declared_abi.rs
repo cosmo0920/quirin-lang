@@ -834,6 +834,12 @@ enum TypedefTarget {
     /// A pointer to function, at exactly one pointer level —
     /// `typedef int (*msgpack_packer_write)(void *, const char *, size_t);`.
     FunctionPointer,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES**: a function *type* —
+    /// `typedef rd_kafka_op_res_t(rd_kafka_q_serve_cb_t)(rd_kafka_t *, …);`.
+    /// A pointer to it, at exactly one level, is the same `fnptr` the
+    /// pointer typedef and the inline declarator read; the type itself, and
+    /// a deeper pointer, stay unread.
+    Function,
     /// This reader does not commit to the target.
     Unresolved,
 }
@@ -906,6 +912,9 @@ fn read_typedef_declarator<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTar
     if let Some(read) = read_function_pointer_typedef(slice) {
         return Some(read);
     }
+    if let Some(read) = read_function_typedef(slice) {
+        return Some(read);
+    }
     if let Some(read) = read_aggregate_typedef(slice) {
         return Some(read);
     }
@@ -962,6 +971,38 @@ fn read_function_pointer_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, Type
         return None;
     }
     Some((name, TypedefTarget::FunctionPointer))
+}
+
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES**: `typedef RET (NAME)(PARAMETERS)`
+/// or `typedef RET NAME(PARAMETERS)` — a function type, nothing else (a return
+/// type carrying its own declarator punctuation falls through, unread).
+fn read_function_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+    if slice.last() != Some(&")") {
+        return None;
+    }
+    let parameters_open = matching_open(slice, slice.len() - 1)?;
+    let before = parameters_open.checked_sub(1)?;
+    let (name, head_end) = if slice[before] == ")" {
+        let declarator_open = matching_open(slice, before)?;
+        let [name] = &slice[declarator_open + 1..before] else {
+            return None;
+        };
+        (*name, declarator_open)
+    } else {
+        (slice[before], before)
+    };
+    if !is_c_identifier(name) {
+        return None;
+    }
+    let head = &slice[..head_end];
+    if head.is_empty()
+        || head
+            .iter()
+            .any(|text| matches!(*text, "(" | ")" | "[" | "]" | "," | "{" | "}"))
+    {
+        return None;
+    }
+    Some((name, TypedefTarget::Function))
 }
 
 /// `typedef struct|union|enum [TAG] { … } *^k NAME` — nothing else.
@@ -1518,6 +1559,13 @@ fn project_declarator(
                     // pointer's storage into a custody-bearing spelling. No
                     // declaration in scope needs it, so it stays refused.
                     Some(TypedefTarget::FunctionPointer) => return None,
+                    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: one pointer to
+                    // a function type is a function pointer
+                    // (`rd_kafka_q_serve_cb_t *callback`); deeper stays refused.
+                    Some(TypedefTarget::Function) if stars == 1 => {
+                        return Some(BTreeSet::from([FUNCTION_POINTER_ABI_TYPE]));
+                    }
+                    Some(TypedefTarget::Function) => return None,
                     Some(TypedefTarget::Unresolved) | None => false,
                 }
             }
@@ -1590,6 +1638,7 @@ fn resolve_typedef(
     let (specifiers, stars) = match typedefs.get(name)? {
         TypedefTarget::Unresolved => return None,
         TypedefTarget::FunctionPointer => return Some(TypedefTarget::FunctionPointer),
+        TypedefTarget::Function => return Some(TypedefTarget::Function),
         TypedefTarget::Aggregate { stars } => {
             return Some(TypedefTarget::Aggregate { stars: *stars });
         }
@@ -1636,6 +1685,15 @@ fn resolve_typedef(
                 return Some(TypedefTarget::FunctionPointer);
             }
             Some(TypedefTarget::FunctionPointer) => return None,
+            // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: a name for a function
+            // type stays one; one pointer to it is a function pointer.
+            Some(TypedefTarget::Function) if stars == 0 => {
+                return Some(TypedefTarget::Function);
+            }
+            Some(TypedefTarget::Function) if stars == 1 => {
+                return Some(TypedefTarget::FunctionPointer);
+            }
+            Some(TypedefTarget::Function) => return None,
             Some(TypedefTarget::Unresolved) | None => {}
         }
     }
@@ -1844,7 +1902,8 @@ fn project_scalar(
                 // The payoff of this card: a pointer to function has its own
                 // projection, which no custody mode can be written on.
                 TypedefTarget::FunctionPointer => Some(BTreeSet::from([FUNCTION_POINTER_ABI_TYPE])),
-                TypedefTarget::Unresolved => None,
+                // A function type's value is no parameter spelling.
+                TypedefTarget::Function | TypedefTarget::Unresolved => None,
             }
         }
         // An enumeration's compatible integer type is implementation-defined
