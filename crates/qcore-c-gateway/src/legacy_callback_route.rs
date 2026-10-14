@@ -653,6 +653,13 @@ impl Parser<'_> {
         for clause in &declaration.callbacks {
             match clause {
                 CallbackClause::Invoked { callback, actuals } => {
+                    // Card SERVE-FORWARDED-CALLBACK-FORMALS (rule 15w): the
+                    // calling function's own callback formal, handed on
+                    // exactly as its declaration in force states it, is that
+                    // declared invocation, decided at its own callers.
+                    if self.forwarded_invocation(declaration, *callback, actual) {
+                        continue;
+                    }
                     let resolution = self.callback_candidates(function, line, *callback, false);
                     let classes = resolution
                         .as_ref()
@@ -1333,7 +1340,7 @@ pub(super) fn refuse_release_of_registry(
 /// `definition` reads them, except that an inline function-pointer
 /// declarator `RET (*NAME)(…)` names `NAME` (`rd_list_init`'s `free_cb`);
 /// any other parenthesised declarator names nothing, which the check refuses.
-fn parameter_names(tokens: &[super::Token], function: &str) -> Option<Vec<String>> {
+pub(super) fn parameter_names(tokens: &[super::Token], function: &str) -> Option<Vec<String>> {
     let (open, _) = super::find_function_body(tokens, function)?;
     let close = open.checked_sub(1)?;
     let mut depth = 0usize;
@@ -1399,7 +1406,7 @@ fn parameter_names(tokens: &[super::Token], function: &str) -> Option<Vec<String
 }
 
 /// Whether the formal `name` is rebound or has its address taken in `body`.
-fn rebound(body: &[&str], name: &str) -> bool {
+pub(super) fn rebound(body: &[&str], name: &str) -> bool {
     body.iter().enumerate().any(|(at, word)| {
         if *word != name || matches!(at.checked_sub(1).map(|b| body[b]), Some("." | "->")) {
             return false;
@@ -1626,7 +1633,22 @@ pub(crate) fn settle(
             arms_withdrawn.push((name.clone(), declaration.clone()));
         }
     }
-    let mut withdrawn = Vec::new();
+    // Card SERVE-FORWARDED-CALLBACK-FORMALS (rule 15w): a synchronous
+    // invocation also stands on a body whose every mention of the callback
+    // formal is an exact forward to a callee whose declaration is in force
+    // here. A callee whose body this unit defines is in force only once its
+    // own clauses stand, so the standing set is the least fixed point: a
+    // declaration whose only support would be itself (a recursive forward)
+    // never stands, and nothing stands on a withdrawn callee.
+    struct Checked<'a> {
+        name: &'a str,
+        declaration: &'a RetainingContract,
+        clauses: Vec<&'a CallbackClause>,
+        body: Vec<&'a str>,
+        parameters: Vec<String>,
+    }
+    let mut defined = BTreeSet::new();
+    let mut pending = Vec::new();
     for (name, declaration) in contracts.retaining() {
         if declaration.callbacks_withdrawn {
             continue;
@@ -1651,24 +1673,85 @@ pub(crate) fn settle(
         let Some((_, body)) = super::slot_move_route::defined_body(tokens, name) else {
             continue;
         };
+        defined.insert(name.as_str());
         let Some(parameters) = parameter_names(tokens, name) else {
             continue;
         };
-        let valid = checked.iter().all(|clause| match clause {
+        pending.push(Checked {
+            name,
+            declaration,
+            clauses: checked,
+            body,
+            parameters,
+        });
+    }
+    // One clause, rule 13y's own check (reading no other declaration), or,
+    // for a synchronous invocation, rule 15w's forward over `in_force`.
+    fn clause_stands<'c>(
+        entry: &Checked<'_>,
+        clause: &CallbackClause,
+        in_force: Option<&dyn Fn(&str) -> Option<&'c RetainingContract>>,
+    ) -> bool {
+        match clause {
             CallbackClause::Invoked { callback, actuals } => {
-                invocation_validates(&body, &parameters, *callback, actuals)
+                invocation_validates(&entry.body, &entry.parameters, *callback, actuals)
+                    || in_force.is_some_and(|in_force| {
+                        super::callback_forward::forward_validates(
+                            &entry.body,
+                            &entry.parameters,
+                            *callback,
+                            actuals,
+                            in_force,
+                        )
+                    })
             }
             CallbackClause::Registered {
                 callback,
                 holder: CallbackHolder::Parameter { index },
-            } => registration_validates(&body, &parameters, *callback, *index),
+            } => registration_validates(&entry.body, &entry.parameters, *callback, *index),
             _ => false,
-        });
-        if valid {
-            crate::contract_dependencies::validated(name, "13y");
-        } else {
-            withdrawn.push((name.clone(), declaration.clone()));
         }
+    }
+    let mut standing = BTreeSet::new();
+    loop {
+        let mut grew = false;
+        for entry in &pending {
+            if standing.contains(entry.name) {
+                continue;
+            }
+            let in_force = |callee: &str| {
+                if defined.contains(callee) && !standing.contains(callee) {
+                    return None;
+                }
+                contracts.retaining_contract(callee)
+            };
+            if entry
+                .clauses
+                .iter()
+                .all(|clause| clause_stands(entry, clause, Some(&in_force)))
+            {
+                standing.insert(entry.name);
+                grew = true;
+            }
+        }
+        if !grew {
+            break;
+        }
+    }
+    let mut withdrawn = Vec::new();
+    for entry in &pending {
+        if !standing.contains(entry.name) {
+            withdrawn.push((entry.name.to_owned(), entry.declaration.clone()));
+        } else if entry
+            .clauses
+            .iter()
+            .all(|clause| clause_stands(entry, clause, None))
+        {
+            crate::contract_dependencies::validated(entry.name, "13y");
+        }
+        // A clause standing by a forward rests on the callee's declaration:
+        // no body evidence is recorded for it, so the declaration stays a
+        // declared assumption (rule 13i).
     }
     if withdrawn.is_empty() && arms_withdrawn.is_empty() && constructed_withdrawn.is_empty() {
         return None;

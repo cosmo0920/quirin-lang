@@ -347,6 +347,11 @@ pub(crate) mod reference_result_route;
 // the transfer keeps, the release refusal, the body checks).
 #[path = "legacy_callback_route.rs"]
 pub(crate) mod callback_route;
+// Card SERVE-FORWARDED-CALLBACK-FORMALS (rule 15w): a callback formal handed
+// on unchanged to the same clause position of a callee in force, read at the
+// body check (`callback_route::settle`) and at the forwarding call.
+#[path = "legacy_callback_forward.rs"]
+pub(crate) mod callback_forward;
 // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a constructor's
 // stated result state on route G.
 #[path = "legacy_constructed_route.rs"]

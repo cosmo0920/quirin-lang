@@ -1,0 +1,121 @@
+module contract;
+
+// Card SERVE-FORWARDED-CALLBACK-FORMALS (gateway rule 15w): synthetic `fw_*`
+// callees and forwarders, one per forwarding shape. Trusted test assumptions,
+// not facts about any library.
+
+// The served callee: invokes `cb` with (reader, _, context); no body in the
+// test units, so its declaration is in force there.
+extern fn fw_each(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+// Invokes `cb`; `alt` is only borrowed (no clause names it).
+extern fn fw_pair(reader: ptr<mut, u8>, cb: fnptr, alt: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(alt);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+// The forwarders: each declares the served callee's clause over its own
+// formals; the test units define their bodies.
+extern fn fw_exact(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_reassigned(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_position(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_uncontracted(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_both(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_swapped(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_chain(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_on_withdrawn(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
+
+extern fn fw_self(reader: ptr<mut, u8>, cb: fnptr, context: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(context);
+    ensures normal resource_callback_invoked(cb, reader, _, context);
+    ensures normal resource_return_none();
+};
