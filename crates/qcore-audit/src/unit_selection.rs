@@ -123,7 +123,7 @@ impl UnitSelection {
                 )));
             }
             for file in &group.files {
-                check_relative_source(file).map_err(&at)?;
+                check_relative_source(file).map_err(at)?;
                 if !files.insert(file.as_str()) {
                     return Err(at(format!("`{file}` is selected twice")));
                 }

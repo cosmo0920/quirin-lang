@@ -183,7 +183,7 @@ pub fn resolve_source_bundle(
                 "supplied snapshots exceed runtime import byte bound".into(),
             ));
         }
-        let key = resolver.key(Path::new(&file.path)).map_err(&fail)?;
+        let key = resolver.key(Path::new(&file.path)).map_err(fail)?;
         if let Some(previous) = resolver.supplied.insert(key.clone(), file.clone()) {
             return Err(fail(format!(
                 "ambiguous source snapshots `{}` and `{}` have the same lookup identity",

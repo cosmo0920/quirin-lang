@@ -740,7 +740,7 @@ fn census_inner(
             // apart.
             let lifecycle_split =
                 crate::lifecycle_census::release_split(reading_release).map(|split| {
-                    let conforming_site = split.conforming.as_ref().map(&release_site);
+                    let conforming_site = split.conforming.as_ref().map(release_site);
                     LifecycleSplitVerdict {
                         conforming_paths: split.conforming_paths,
                         undetermined_paths: split.undetermined_paths,
