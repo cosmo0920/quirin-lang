@@ -78,8 +78,12 @@ rule, and std opens Windows handles non-inheritable.
 **Visible to plugin authors:** the signature, package layout, digest,
 installed manifest and mode are unchanged, and no item is added to the public
 API. The new requirement is `tee` on `PATH` on Unix, documented on `build`
-and named in its `Err`. The integrator should decide whether that needs the
-user's sign-off (PREDICTION §3).
+and named in its `Err`.
+
+**USER DECISION (2026-10-14): "Accept tee on PATH".** The mechanism lands as
+built. The new Unix requirement is that `package::build` needs `tee` on
+`PATH`. It is documented on `build` and named in its `Err`. PREDICTION §3
+had put this to the user; that question is now answered.
 
 ## 4. Tests
 
