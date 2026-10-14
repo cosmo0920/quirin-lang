@@ -312,6 +312,26 @@ void make_and_destroy(void) { struct op *o = c_op_new_cb(2, freeing); c_op_destr
     );
 }
 
+/// A registered candidate defined after its caller is summarised first (the
+/// derivation edge of rule 13w's per-path registration).
+#[test]
+fn a_registered_candidate_precedes_its_caller() {
+    if !clang_available() {
+        return;
+    }
+    let later = "\
+static int handler(void *rk, void *rkq, void *rko);
+void make_and_destroy(void) { struct op *o = c_op_new_cb(2, handler); c_op_destroy(o); }
+static int handler(void *rk, void *rkq, void *rko) { return 0; }
+void tail(void) { }";
+    let later = rows(later);
+    assert!(
+        later["make_and_destroy"].safe(),
+        "{:?}",
+        later["make_and_destroy"]
+    );
+}
+
 #[test]
 fn an_absent_member_invokes_no_candidate() {
     if !clang_available() {

@@ -1720,10 +1720,20 @@ pub(crate) fn callback_edges(
     contracts: &ResourceContracts,
 ) -> BTreeSet<String> {
     let mut edges = BTreeSet::new();
+    // Card OP-CONSTRUCTOR-DECLARATIONS (rule 13w): a constructor registering
+    // a callback in its result's member is a callback declaration here too.
+    let registers = |declared: &RetainingContract| {
+        declared.constructed.members.iter().any(|state| {
+            matches!(
+                state.value,
+                qcore_schemas::constructed_state::MemberValue::Callback { .. }
+            )
+        })
+    };
     if contracts
         .retaining()
         .values()
-        .all(|declared| declared.callbacks.is_empty())
+        .all(|declared| declared.callbacks.is_empty() && !registers(declared))
     {
         return edges;
     }
@@ -1743,6 +1753,12 @@ pub(crate) fn callback_edges(
         let Some(declared) = contracts.retaining_contract(&token.text) else {
             continue;
         };
+        // Card OP-CONSTRUCTOR-DECLARATIONS (rule 13w): a per-path registered
+        // candidate is read at a later member invocation in this body, so it
+        // precedes its caller as a synchronous candidate does.
+        if registers(declared) {
+            invokes = true;
+        }
         for clause in &declared.callbacks {
             match clause {
                 CallbackClause::Invoked { .. } | CallbackClause::Table { .. } => invokes = true,
