@@ -1126,3 +1126,397 @@ contract {
     ensures normal resource_borrowed(expected_value_double);
     ensures normal resource_return_none();
 };
+
+// BEGIN CG22-OP-CALLBACKS-AND-SERVED-QUEUES (scripts/write_contracts.py)
+
+// # Served queues and the op destroyer
+//
+// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (gateway rules 12m-12o, contract
+// specification C04.19.1-C04.19.3), on the user's decision of 2026-10-14:
+// `supplied_owned` for an object the callee hands its callback, a member
+// invocation `TAG.FIELD` whose candidates are the run's closed set of stores
+// into the member (premise P-CG22-MEMBER-CLOSED-WORLD), and a type-switched
+// release, one `when FIELD == VALUE` / `otherwise` clause per arm. Every body
+// was read at `66910c10` and `046accf6` (byte-identical, `scripts/body.py` of
+// the card's report); each declaration is pinned (C06.2).
+//
+// The queue serving family (`rdkafka_queue.c:398-680`): under `rkq->rkq_lock`
+// a forward queue is kept (`rd_kafka_q_fwd_get`), served recursively and
+// dropped (`rd_kafka_q_destroy`); otherwise each dequeued op goes to
+// `rd_kafka_op_handle` (`rdkafka_op.c:1096-1124`), which runs the op's own
+// `rko_op_cb` when it is a callback op (`rd_kafka_op_handle_std` ->
+// `rd_kafka_op_call`), replaces the caller's `callback` and `opaque` with the
+// op's `rko_serve` / `rko_serve_opaque` when set, destroys a handled op, and
+// otherwise hands the op to `callback(rk, rkq, rko, cb_type, opaque)`, which
+// takes it (`rd_kafka_q_serve0` asserts the result is not `PASS`; the pop
+// variants hand a `PASS` op back as their result). `rkq`, `opaque` and the
+// other arguments are only read: `resource_borrowed`. `cb_type` is
+// `rd_kafka_q_cb_type_t` (`rdkafka_op.h:270-277`, no negative value: `u32`),
+// `rd_ts_t` is `int64_t` (`rdtypes.h:44`), `rd_bool_t` is `uint8_t`
+// (`rdtypes.h:49`). The op's own `rko_op_cb` borrows the op (`_`: a handled op
+// is destroyed by the callee, a kept one is the callback's, which rule 13u
+// refuses as effectful); `rko_serve` takes it as `callback` does.
+//
+// These declarations decide nothing in the corpus today: every callback the
+// corpus passes (`rd_kafka_poll_cb`, `rd_kafka_consume_cb`,
+// `rd_kafka_background_queue_serve`) calls a callback the application
+// registered in `rk` (the pending `rd_kafka_destroy_app` decision) and has no
+// contract, and the op members' closed sets hold candidates with no contract
+// (`OP-CALLBACK-CANDIDATE-CONTRACTS`). They replace an uncontracted call with
+// a named refusal. The served-queue premise on `rd_kafka_q_wait_result` and
+// `rd_kafka_q_purge0` (C04.18, above) is unchanged.
+
+
+// `rd_kafka_q_serve0` (`rdkafka_queue.c:558-649`).
+extern fn rd_kafka_q_serve0(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>, is_consume_call: u8) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_borrowed(max_cnt);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_borrowed(is_consume_call);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_serve` (`rdkafka_queue.c:652-660`, `rd_kafka_q_serve0(…, rd_false)`).
+extern fn rd_kafka_q_serve(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_borrowed(max_cnt);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_serve_maybe_consume` (`rdkafka_queue.c:667-677`).
+extern fn rd_kafka_q_serve_maybe_consume(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_borrowed(max_cnt);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_pop_serve0` (`rdkafka_queue.c:398-505`, static).
+extern fn rd_kafka_q_pop_serve0(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>, is_consume_call: u8) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_us);
+    ensures normal resource_borrowed(version);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_borrowed(is_consume_call);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_q_pop_serve` (`rdkafka_queue.c:507-515`).
+extern fn rd_kafka_q_pop_serve(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_us);
+    ensures normal resource_borrowed(version);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_q_pop_serve_maybe_consume` (`rdkafka_queue.c:522-533`).
+extern fn rd_kafka_q_pop_serve_maybe_consume(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_us);
+    ensures normal resource_borrowed(version);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, cb_type, _);
+    ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_op_destroy(rko)` (`rdkafka_op.c:345-628`): when the op is a
+// callback op with `rko_op_cb`, sets `rko_err = RD_KAFKA_RESP_ERR__DESTROY` and
+// calls `rko_op_cb(rko->rko_rk, NULL, rko)` (asserting neither `YIELD` nor
+// `KEEP`: the callback borrows the op); then `switch (rko->rko_type &
+// ~RD_KAFKA_OP_FLAGMASK)` (`RD_KAFKA_OP_FLAGMASK = RD_KAFKA_OP_CB |
+// RD_KAFKA_OP_REPLY = (1 << 29) | (1 << 30) = 1610612736`,
+// `rdkafka_op.h:227-229`) releases the members of the op's union arm the case
+// group hands to a call (`rd_free`, the list and partition-list destroyers,
+// reference drops, `rd_kafka_msgq_purge`; `RD_IF_FREE` and `RD_LIST_FOREACH`
+// expanded); `default: break;` releases none; then the op's `rko_rktp`,
+// `rko_error` and reply queue, and `rd_free(rko)`. The arms below are exactly
+// the payload paths under `rko_u` each value's case group hands to a call, as
+// rule 12o's check reads them (`scripts/op_destroy_arms.py`); that each call
+// releases its member stays a declared assumption. `rko` is read first
+// (`rko->rko_type`): `resource_released(rko, nonnull)`.
+extern fn rd_kafka_op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, rko_type, 1610612736);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_callback_member_invoked(rko, rd_kafka_op_s.rko_op_cb, _, _, rko);
+    // RD_KAFKA_OP_FETCH = 1 (rdkafka_op.h:86)
+    ensures normal resource_arm_released(rko, rko_u.fetch.rkm) when rko_type == 1;
+    // RD_KAFKA_OP_ERR = 2 (rdkafka_op.h:87)
+    ensures normal resource_arm_released(rko, rko_u.err.errstr) when rko_type == 2;
+    ensures normal resource_arm_released(rko, rko_u.err.rkm) when rko_type == 2;
+    // RD_KAFKA_OP_CONSUMER_ERR = 3 (rdkafka_op.h:88)
+    ensures normal resource_arm_released(rko, rko_u.err.errstr) when rko_type == 3;
+    ensures normal resource_arm_released(rko, rko_u.err.rkm) when rko_type == 3;
+    // RD_KAFKA_OP_DR = 4 (rdkafka_op.h:89)
+    ensures normal resource_arm_released(rko, rko_u.dr.msgq) when rko_type == 4;
+    ensures normal resource_arm_released(rko, rko_u.dr.msgq2) when rko_type == 4;
+    ensures normal resource_arm_released(rko, rko_u.dr.presult) when rko_type == 4;
+    ensures normal resource_arm_released(rko, rko_u.dr.rkt) when rko_type == 4;
+    // RD_KAFKA_OP_STATS = 5 (rdkafka_op.h:91)
+    ensures normal resource_arm_released(rko, rko_u.stats.json) when rko_type == 5;
+    // RD_KAFKA_OP_OFFSET_COMMIT = 6 (rdkafka_op.h:93)
+    ensures normal resource_arm_released(rko, rko_u.offset_commit.partitions) when rko_type == 6;
+    ensures normal resource_arm_released(rko, rko_u.offset_commit.reason) when rko_type == 6;
+    // RD_KAFKA_OP_XMIT_BUF = 8 (rdkafka_op.h:96)
+    ensures normal resource_arm_released(rko, rko_u.xbuf.rkbuf) when rko_type == 8;
+    // RD_KAFKA_OP_RECV_BUF = 9 (rdkafka_op.h:97)
+    ensures normal resource_arm_released(rko, rko_u.xbuf.rkbuf) when rko_type == 9;
+    // RD_KAFKA_OP_XMIT_RETRY = 10 (rdkafka_op.h:98)
+    ensures normal resource_arm_released(rko, rko_u.xbuf.rkbuf) when rko_type == 10;
+    // RD_KAFKA_OP_OFFSET_FETCH = 15 (rdkafka_op.h:103)
+    ensures normal resource_arm_released(rko, rko_u.offset_fetch.partitions) when rko_type == 15;
+    // RD_KAFKA_OP_REBALANCE = 18 (rdkafka_op.h:110)
+    ensures normal resource_arm_released(rko, rko_u.rebalance.partitions) when rko_type == 18;
+    // RD_KAFKA_OP_TERMINATE = 19 (rdkafka_op.h:112)
+    ensures normal resource_arm_released(rko, rko_u.terminated.ack_batches) when rko_type == 19;
+    // RD_KAFKA_OP_SUBSCRIBE = 21 (rdkafka_op.h:114)
+    ensures normal resource_arm_released(rko, rko_u.subscribe.topics) when rko_type == 21;
+    // RD_KAFKA_OP_ASSIGN = 22 (rdkafka_op.h:115)
+    ensures normal resource_arm_released(rko, rko_u.assign.partitions) when rko_type == 22;
+    // RD_KAFKA_OP_GET_SUBSCRIPTION = 23 (rdkafka_op.h:116)
+    ensures normal resource_arm_released(rko, rko_u.subscribe.topics) when rko_type == 23;
+    // RD_KAFKA_OP_GET_ASSIGNMENT = 24 (rdkafka_op.h:118)
+    ensures normal resource_arm_released(rko, rko_u.assign.partitions) when rko_type == 24;
+    // RD_KAFKA_OP_THROTTLE = 25 (rdkafka_op.h:120)
+    ensures normal resource_arm_released(rko, rko_u.throttle.nodename) when rko_type == 25;
+    // RD_KAFKA_OP_NAME = 26 (rdkafka_op.h:121)
+    ensures normal resource_arm_released(rko, rko_u.name.str) when rko_type == 26;
+    // RD_KAFKA_OP_CG_METADATA = 27 (rdkafka_op.h:122)
+    ensures normal resource_arm_released(rko, rko_u.cg_metadata) when rko_type == 27;
+    // RD_KAFKA_OP_OFFSET_RESET = 28 (rdkafka_op.h:123)
+    ensures normal resource_arm_released(rko, rko_u.offset_reset.reason) when rko_type == 28;
+    // RD_KAFKA_OP_METADATA = 29 (rdkafka_op.h:124)
+    ensures normal resource_arm_released(rko, rko_u.metadata.md) when rko_type == 29;
+    // RD_KAFKA_OP_LOG = 30 (rdkafka_op.h:125)
+    ensures normal resource_arm_released(rko, rko_u.log.str) when rko_type == 30;
+    // RD_KAFKA_OP_CREATETOPICS = 32 (rdkafka_op.h:127)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 32;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 32;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 32;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 32;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 32;
+    // RD_KAFKA_OP_DELETETOPICS = 33 (rdkafka_op.h:128)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 33;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 33;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 33;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 33;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 33;
+    // RD_KAFKA_OP_CREATEPARTITIONS = 34 (rdkafka_op.h:129)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 34;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 34;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 34;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 34;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 34;
+    // RD_KAFKA_OP_ALTERCONFIGS = 35 (rdkafka_op.h:131)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 35;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 35;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 35;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 35;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 35;
+    // RD_KAFKA_OP_INCREMENTALALTERCONFIGS = 36 (rdkafka_op.h:132)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 36;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 36;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 36;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 36;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 36;
+    // RD_KAFKA_OP_DESCRIBECONFIGS = 37 (rdkafka_op.h:135)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 37;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 37;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 37;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 37;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 37;
+    // RD_KAFKA_OP_DELETERECORDS = 38 (rdkafka_op.h:137)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 38;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 38;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 38;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 38;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 38;
+    // RD_KAFKA_OP_LISTCONSUMERGROUPS = 39 (rdkafka_op.h:139)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 39;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 39;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 39;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 39;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 39;
+    // RD_KAFKA_OP_DESCRIBECONSUMERGROUPS = 40 (rdkafka_op.h:142)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 40;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 40;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 40;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 40;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 40;
+    // RD_KAFKA_OP_DESCRIBECLUSTER = 41 (rdkafka_op.h:145)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 41;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 41;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 41;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 41;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 41;
+    // RD_KAFKA_OP_DESCRIBETOPICS = 42 (rdkafka_op.h:149)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 42;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 42;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 42;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 42;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 42;
+    // RD_KAFKA_OP_DELETEGROUPS = 43 (rdkafka_op.h:152)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 43;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 43;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 43;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 43;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 43;
+    // RD_KAFKA_OP_DELETECONSUMERGROUPOFFSETS = 44 (rdkafka_op.h:153)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 44;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 44;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 44;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 44;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 44;
+    // RD_KAFKA_OP_CREATEACLS = 45 (rdkafka_op.h:156)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 45;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 45;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 45;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 45;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 45;
+    // RD_KAFKA_OP_DESCRIBEACLS = 46 (rdkafka_op.h:157)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 46;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 46;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 46;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 46;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 46;
+    // RD_KAFKA_OP_DELETEACLS = 47 (rdkafka_op.h:158)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 47;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 47;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 47;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 47;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 47;
+    // RD_KAFKA_OP_ALTERCONSUMERGROUPOFFSETS = 48 (rdkafka_op.h:159)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 48;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 48;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 48;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 48;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 48;
+    // RD_KAFKA_OP_LISTCONSUMERGROUPOFFSETS = 49 (rdkafka_op.h:162)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 49;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 49;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 49;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 49;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 49;
+    // RD_KAFKA_OP_ADMIN_FANOUT = 50 (rdkafka_op.h:165)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 50;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 50;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.fanout.results) when rko_type == 50;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 50;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 50;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 50;
+    // RD_KAFKA_OP_ADMIN_RESULT = 51 (rdkafka_op.h:166)
+    ensures normal resource_arm_released(rko, rko_u.admin_result.args) when rko_type == 51;
+    ensures normal resource_arm_released(rko, rko_u.admin_result.errstr) when rko_type == 51;
+    ensures normal resource_arm_released(rko, rko_u.admin_result.results) when rko_type == 51;
+    // RD_KAFKA_OP_MOCK = 55 (rdkafka_op.h:170)
+    ensures normal resource_arm_released(rko, rko_u.mock.errs) when rko_type == 55;
+    ensures normal resource_arm_released(rko, rko_u.mock.metrics) when rko_type == 55;
+    ensures normal resource_arm_released(rko, rko_u.mock.name) when rko_type == 55;
+    ensures normal resource_arm_released(rko, rko_u.mock.str) when rko_type == 55;
+    // RD_KAFKA_OP_BROKER_MONITOR = 56 (rdkafka_op.h:171)
+    ensures normal resource_arm_released(rko, rko_u.broker_monitor.rkb) when rko_type == 56;
+    // RD_KAFKA_OP_TXN = 57 (rdkafka_op.h:172)
+    ensures normal resource_arm_released(rko, rko_u.txn.cgmetadata) when rko_type == 57;
+    ensures normal resource_arm_released(rko, rko_u.txn.group_id) when rko_type == 57;
+    ensures normal resource_arm_released(rko, rko_u.txn.offsets) when rko_type == 57;
+    // RD_KAFKA_OP_LEADERS = 59 (rdkafka_op.h:174)
+    ensures normal resource_arm_released(rko, rko_u.leaders.leaders) when rko_type == 59;
+    ensures normal resource_arm_released(rko, rko_u.leaders.partitions) when rko_type == 59;
+    // RD_KAFKA_OP_DESCRIBEUSERSCRAMCREDENTIALS = 62 (rdkafka_op.h:177)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 62;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 62;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 62;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 62;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 62;
+    // RD_KAFKA_OP_ALTERUSERSCRAMCREDENTIALS = 63 (rdkafka_op.h:180)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 63;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 63;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 63;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 63;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 63;
+    // RD_KAFKA_OP_LISTOFFSETS = 64 (rdkafka_op.h:183)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 64;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 64;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 64;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 64;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 64;
+    // RD_KAFKA_OP_METADATA_UPDATE = 65 (rdkafka_op.h:184)
+    ensures normal resource_arm_released(rko, rko_u.metadata.md) when rko_type == 65;
+    // RD_KAFKA_OP_SET_TELEMETRY_BROKER = 66 (rdkafka_op.h:185)
+    ensures normal resource_arm_released(rko, rko_u.telemetry_broker.rkb) when rko_type == 66;
+    // RD_KAFKA_OP_ELECTLEADERS = 68 (rdkafka_op.h:189)
+    ensures normal resource_arm_released(rko, rko_u.admin_request.args) when rko_type == 68;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.coordkey) when rko_type == 68;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_states.u.PTR) when rko_type == 68;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.options.match_consumer_group_types.u.PTR) when rko_type == 68;
+    ensures normal resource_arm_released(rko, rko_u.admin_request.replyq) when rko_type == 68;
+    // RD_KAFKA_OP_SHARE_FETCH = 69 (rdkafka_op.h:192)
+    ensures normal resource_arm_released(rko, rko_u.share_fetch.ack_details) when rko_type == 69;
+    ensures normal resource_arm_released(rko, rko_u.share_fetch.target_broker) when rko_type == 69;
+    // RD_KAFKA_OP_SHARE_FETCH_FANOUT = 70 (rdkafka_op.h:194)
+    ensures normal resource_arm_released(rko, rko_u.share_fetch_fanout.ack_batches) when rko_type == 70;
+    // RD_KAFKA_OP_SHARE_COMMIT_ASYNC_FANOUT = 71 (rdkafka_op.h:195)
+    ensures normal resource_arm_released(rko, rko_u.share_commit_async_fanout.ack_batches) when rko_type == 71;
+    // RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT = 72 (rdkafka_op.h:198)
+    ensures normal resource_arm_released(rko, rko_u.share_commit_sync_fanout.ack_batches) when rko_type == 72;
+    ensures normal resource_arm_released(rko, rko_u.share_commit_sync_fanout.results) when rko_type == 72;
+    // RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT_REPLY = 73 (rdkafka_op.h:202)
+    ensures normal resource_arm_released(rko, rko_u.share_commit_sync_fanout_reply.results) when rko_type == 73;
+    // RD_KAFKA_OP_SHARE_FETCH_RESPONSE = 76 (rdkafka_op.h:211)
+    ensures normal resource_arm_released(rko, rko_u.share_fetch_response.inflight_acks) when rko_type == 76;
+    ensures normal resource_arm_released(rko, rko_u.share_fetch_response.message_rkos) when rko_type == 76;
+    // RD_KAFKA_OP_SHARE_ACK_COMMIT_CB_EXECUTE = 77 (rdkafka_op.h:214)
+    ensures normal resource_arm_released(rko, rko_u.share_ack_commit_cb_execute.partitions) when rko_type == 77;
+    // `default: break;`
+    ensures normal resource_arm_empty(rko) otherwise;
+    ensures normal resource_return_none();
+};
+
+// END CG22-OP-CALLBACKS-AND-SERVED-QUEUES

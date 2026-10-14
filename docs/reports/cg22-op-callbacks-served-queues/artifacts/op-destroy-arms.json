@@ -1,0 +1,353 @@
+{
+ "groups": {
+  "1": [
+   "rko_u.fetch.rkm"
+  ],
+  "15": [
+   "rko_u.offset_fetch.partitions"
+  ],
+  "6": [
+   "rko_u.offset_commit.partitions",
+   "rko_u.offset_commit.reason"
+  ],
+  "21": [
+   "rko_u.subscribe.topics"
+  ],
+  "23": [
+   "rko_u.subscribe.topics"
+  ],
+  "22": [
+   "rko_u.assign.partitions"
+  ],
+  "24": [
+   "rko_u.assign.partitions"
+  ],
+  "18": [
+   "rko_u.rebalance.partitions"
+  ],
+  "26": [
+   "rko_u.name.str"
+  ],
+  "27": [
+   "rko_u.cg_metadata"
+  ],
+  "2": [
+   "rko_u.err.errstr",
+   "rko_u.err.rkm"
+  ],
+  "3": [
+   "rko_u.err.errstr",
+   "rko_u.err.rkm"
+  ],
+  "25": [
+   "rko_u.throttle.nodename"
+  ],
+  "5": [
+   "rko_u.stats.json"
+  ],
+  "10": [
+   "rko_u.xbuf.rkbuf"
+  ],
+  "8": [
+   "rko_u.xbuf.rkbuf"
+  ],
+  "9": [
+   "rko_u.xbuf.rkbuf"
+  ],
+  "4": [
+   "rko_u.dr.msgq",
+   "rko_u.dr.msgq2",
+   "rko_u.dr.presult",
+   "rko_u.dr.rkt"
+  ],
+  "28": [
+   "rko_u.offset_reset.reason"
+  ],
+  "29": [
+   "rko_u.metadata.md"
+  ],
+  "30": [
+   "rko_u.log.str"
+  ],
+  "50": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.fanout.results",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "32": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "33": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "34": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "35": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "36": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "37": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "38": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "39": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "40": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "43": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "44": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "45": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "46": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "47": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "48": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "42": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "41": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "49": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "63": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "62": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "64": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "68": [
+   "rko_u.admin_request.args",
+   "rko_u.admin_request.coordkey",
+   "rko_u.admin_request.options.match_consumer_group_states.u.PTR",
+   "rko_u.admin_request.options.match_consumer_group_types.u.PTR",
+   "rko_u.admin_request.replyq"
+  ],
+  "51": [
+   "rko_u.admin_result.args",
+   "rko_u.admin_result.errstr",
+   "rko_u.admin_result.results"
+  ],
+  "55": [
+   "rko_u.mock.errs",
+   "rko_u.mock.metrics",
+   "rko_u.mock.name",
+   "rko_u.mock.str"
+  ],
+  "56": [
+   "rko_u.broker_monitor.rkb"
+  ],
+  "57": [
+   "rko_u.txn.cgmetadata",
+   "rko_u.txn.group_id",
+   "rko_u.txn.offsets"
+  ],
+  "59": [
+   "rko_u.leaders.leaders",
+   "rko_u.leaders.partitions"
+  ],
+  "65": [
+   "rko_u.metadata.md"
+  ],
+  "66": [
+   "rko_u.telemetry_broker.rkb"
+  ],
+  "69": [
+   "rko_u.share_fetch.ack_details",
+   "rko_u.share_fetch.target_broker"
+  ],
+  "19": [
+   "rko_u.terminated.ack_batches"
+  ],
+  "70": [
+   "rko_u.share_fetch_fanout.ack_batches"
+  ],
+  "71": [
+   "rko_u.share_commit_async_fanout.ack_batches"
+  ],
+  "72": [
+   "rko_u.share_commit_sync_fanout.ack_batches",
+   "rko_u.share_commit_sync_fanout.results"
+  ],
+  "73": [
+   "rko_u.share_commit_sync_fanout_reply.results"
+  ],
+  "76": [
+   "rko_u.share_fetch_response.inflight_acks",
+   "rko_u.share_fetch_response.message_rkos"
+  ],
+  "77": [
+   "rko_u.share_ack_commit_cb_execute.partitions"
+  ],
+  "default": []
+ },
+ "names": {
+  "1": "RD_KAFKA_OP_FETCH",
+  "15": "RD_KAFKA_OP_OFFSET_FETCH",
+  "6": "RD_KAFKA_OP_OFFSET_COMMIT",
+  "21": "RD_KAFKA_OP_SUBSCRIBE",
+  "23": "RD_KAFKA_OP_GET_SUBSCRIPTION",
+  "22": "RD_KAFKA_OP_ASSIGN",
+  "24": "RD_KAFKA_OP_GET_ASSIGNMENT",
+  "18": "RD_KAFKA_OP_REBALANCE",
+  "26": "RD_KAFKA_OP_NAME",
+  "27": "RD_KAFKA_OP_CG_METADATA",
+  "2": "RD_KAFKA_OP_ERR",
+  "3": "RD_KAFKA_OP_CONSUMER_ERR",
+  "25": "RD_KAFKA_OP_THROTTLE",
+  "5": "RD_KAFKA_OP_STATS",
+  "10": "RD_KAFKA_OP_XMIT_RETRY",
+  "8": "RD_KAFKA_OP_XMIT_BUF",
+  "9": "RD_KAFKA_OP_RECV_BUF",
+  "4": "RD_KAFKA_OP_DR",
+  "28": "RD_KAFKA_OP_OFFSET_RESET",
+  "29": "RD_KAFKA_OP_METADATA",
+  "30": "RD_KAFKA_OP_LOG",
+  "50": "RD_KAFKA_OP_ADMIN_FANOUT",
+  "32": "RD_KAFKA_OP_CREATETOPICS",
+  "33": "RD_KAFKA_OP_DELETETOPICS",
+  "34": "RD_KAFKA_OP_CREATEPARTITIONS",
+  "35": "RD_KAFKA_OP_ALTERCONFIGS",
+  "36": "RD_KAFKA_OP_INCREMENTALALTERCONFIGS",
+  "37": "RD_KAFKA_OP_DESCRIBECONFIGS",
+  "38": "RD_KAFKA_OP_DELETERECORDS",
+  "39": "RD_KAFKA_OP_LISTCONSUMERGROUPS",
+  "40": "RD_KAFKA_OP_DESCRIBECONSUMERGROUPS",
+  "43": "RD_KAFKA_OP_DELETEGROUPS",
+  "44": "RD_KAFKA_OP_DELETECONSUMERGROUPOFFSETS",
+  "45": "RD_KAFKA_OP_CREATEACLS",
+  "46": "RD_KAFKA_OP_DESCRIBEACLS",
+  "47": "RD_KAFKA_OP_DELETEACLS",
+  "48": "RD_KAFKA_OP_ALTERCONSUMERGROUPOFFSETS",
+  "42": "RD_KAFKA_OP_DESCRIBETOPICS",
+  "41": "RD_KAFKA_OP_DESCRIBECLUSTER",
+  "49": "RD_KAFKA_OP_LISTCONSUMERGROUPOFFSETS",
+  "63": "RD_KAFKA_OP_ALTERUSERSCRAMCREDENTIALS",
+  "62": "RD_KAFKA_OP_DESCRIBEUSERSCRAMCREDENTIALS",
+  "64": "RD_KAFKA_OP_LISTOFFSETS",
+  "68": "RD_KAFKA_OP_ELECTLEADERS",
+  "51": "RD_KAFKA_OP_ADMIN_RESULT",
+  "55": "RD_KAFKA_OP_MOCK",
+  "56": "RD_KAFKA_OP_BROKER_MONITOR",
+  "57": "RD_KAFKA_OP_TXN",
+  "59": "RD_KAFKA_OP_LEADERS",
+  "65": "RD_KAFKA_OP_METADATA_UPDATE",
+  "66": "RD_KAFKA_OP_SET_TELEMETRY_BROKER",
+  "69": "RD_KAFKA_OP_SHARE_FETCH",
+  "19": "RD_KAFKA_OP_TERMINATE",
+  "70": "RD_KAFKA_OP_SHARE_FETCH_FANOUT",
+  "71": "RD_KAFKA_OP_SHARE_COMMIT_ASYNC_FANOUT",
+  "72": "RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT",
+  "73": "RD_KAFKA_OP_SHARE_COMMIT_SYNC_FANOUT_REPLY",
+  "76": "RD_KAFKA_OP_SHARE_FETCH_RESPONSE",
+  "77": "RD_KAFKA_OP_SHARE_ACK_COMMIT_CB_EXECUTE"
+ }
+}

@@ -80,6 +80,11 @@ pub struct MemberFacts {
     /// Typedef name -> the record it names (build state).
     #[serde(skip)]
     record_typedefs: BTreeMap<String, String>,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): every enumerator's
+    /// value by declaration id, for the arm check's case labels (not
+    /// evidence).
+    #[serde(skip)]
+    enumerators: BTreeMap<String, i64>,
 }
 
 const COPIERS: [&str; 6] = [
@@ -320,8 +325,46 @@ impl MemberFacts {
         })
     }
 
+    /// The value of the enumerator declared with `id`, as Clang read the
+    /// unit (implicit values counted on from the previous enumerator).
+    #[must_use]
+    pub fn enumerator(&self, id: &str) -> Option<i64> {
+        self.enumerators.get(id).copied()
+    }
+
+    /// Every enumerator's value by declaration id.
+    #[must_use]
+    pub fn enumerators(&self) -> &BTreeMap<String, i64> {
+        &self.enumerators
+    }
+
+    fn collect_enumerators(&mut self, node: &Value) {
+        if kind(node) == "EnumDecl" {
+            let mut next = Some(0i64);
+            for constant in children(node) {
+                if kind(constant) != "EnumConstantDecl" {
+                    continue;
+                }
+                let value = match children(constant).first() {
+                    Some(init) => crate::arm_release_check::fold_with(init, &self.enumerators),
+                    None => next,
+                };
+                if let (Some(value), Some(id)) = (value, constant["id"].as_str()) {
+                    self.enumerators.insert(id.to_owned(), value);
+                }
+                next = value.and_then(|value| value.checked_add(1));
+            }
+        }
+        for child in children(node) {
+            if matches!(kind(child), "EnumDecl" | "TypedefDecl" | "RecordDecl") {
+                self.collect_enumerators(child);
+            }
+        }
+    }
+
     /// Read one top-level declaration.
     pub fn collect(&mut self, node: &Value) {
+        self.collect_enumerators(node);
         match kind(node) {
             "TypedefDecl" => {
                 let Some(name) = node["name"].as_str() else {

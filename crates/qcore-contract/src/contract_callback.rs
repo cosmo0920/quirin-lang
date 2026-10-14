@@ -330,13 +330,6 @@ pub(super) fn declaration(
                     .split_once('.')
                     .ok_or_else(|| format!("a member is spelled `TAG.FIELD`, not `{member}`"))?;
                 let actuals = actuals(rest, None, false, true)?;
-                if object == MemberObject::SuppliedOwned
-                    && !actuals.contains(&CallbackActual::SuppliedOwned)
-                {
-                    return Err(format!(
-                        "a member of the `{SUPPLIED_OWNED}` object is invoked with that object"
-                    ));
-                }
                 let member = CallbackMember {
                     tag: tag.to_owned(),
                     path: path.to_owned(),
@@ -393,6 +386,30 @@ pub(super) fn declaration(
         {
             return Err("a declaration registers a callback or uses a registry, not both".into());
         }
+    }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: a member of the supplied
+    // object is read only where the declaration hands a callback that object.
+    let supplied = clauses.iter().any(|clause| match clause {
+        CallbackClause::Invoked { actuals, .. } | CallbackClause::MemberInvoked { actuals, .. } => {
+            actuals.contains(&CallbackActual::SuppliedOwned)
+        }
+        _ => false,
+    });
+    if !supplied
+        && clauses.iter().any(|clause| {
+            matches!(
+                clause,
+                CallbackClause::MemberInvoked {
+                    object: MemberObject::SuppliedOwned,
+                    ..
+                }
+            )
+        })
+    {
+        return Err(format!(
+            "a member of the `{SUPPLIED_OWNED}` object is read only where a callback is handed \
+             that object"
+        ));
     }
     Ok(clauses)
 }

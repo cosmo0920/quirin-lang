@@ -20,6 +20,9 @@ lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qui
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
 binary="${BINARY:-$repo/target/release/quirin-audit}"
+# NULL=1 also selects the null-dereference property on every route, its rows
+# beside each run as NAME[-system|-slice]-null.jsonl.
+null() { if [ "${NULL:-0}" = 1 ]; then export QCORE_NULL_PROPERTY="$1"; else unset QCORE_NULL_PROPERTY; fi; }
 sha256sum "$binary" > "$out/$name.binary.sha256"
 timed() {
   # timed SECONDS-FILE EXIT-FILE STDOUT STDERR COMMAND... : run under the lock, time inside it
@@ -35,6 +38,7 @@ timed() {
   ' _ "$seconds" "$exitfile" "$stdout" "$stderr" "$@"
 }
 case ",$routes," in *,corpus,*)
+  null "$out/$name-null.jsonl"
   QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" timed "$out/$name.seconds" "$out/$name.exit" \
     "$out/$name.log" "$out/$name.stderr" \
     python3 scripts/run_pinned_audit.py "$out/$name" 66910c10 \
@@ -43,6 +47,7 @@ esac
 case ",$routes," in *,system,*)
   prepared=/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1
   mkdir -p "$out/$name-system" || exit 2
+  null "$out/$name-system-null.jsonl"
   QCORE_TYPED_PATH_PARITY="$out/$name-system-parity.jsonl" QCORE_CLANG="${SYSTEM_CLANG:-/usr/lib/llvm-21/bin/clang}" \
     timed "$out/$name-system.seconds" "$out/$name-system.exit" \
     "$out/$name-system/console.log" "$out/$name-system/stderr.log" \
@@ -54,6 +59,7 @@ case ",$routes," in *,system,*)
     --jobs 4 --report "$out/$name-system/resource-diagnostics.json";;
 esac
 case ",$routes," in *,slice,*)
+  null "$out/$name-slice-null.jsonl"
   QCORE_TYPED_PATH_PARITY="$out/$name-slice-parity.jsonl" \
     timed "$out/$name-slice.seconds" "$out/$name-slice.exit" \
     "$out/$name-slice.log" "$out/$name-slice.stderr" \

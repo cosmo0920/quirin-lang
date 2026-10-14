@@ -1429,7 +1429,12 @@ pub(crate) fn settle(
         }
         let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
             unit.function(name).map(|function| {
-                crate::arm_release_check::validates(function, discriminant, &declaration.arms)
+                crate::arm_release_check::validates(
+                    function,
+                    discriminant,
+                    &declaration.arms,
+                    unit.member_facts().enumerators(),
+                )
             })
         })
         .flatten()

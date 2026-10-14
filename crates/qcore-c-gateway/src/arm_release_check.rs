@@ -43,9 +43,11 @@ fn strip(mut node: &Value) -> &Value {
     }
 }
 
-/// Fold an integer constant expression of literals, casts, `~`, `-`, `|`,
-/// `&`, `<<`, `>>` and `+`.
-fn fold(node: &Value) -> Option<i64> {
+/// Fold an integer constant expression of literals, casts, enumerators (by
+/// `enumerators`, declaration id to value), `~`, `-`, `|`, `&`, `<<`, `>>`
+/// and `+`.
+pub(crate) fn fold_with(node: &Value, enumerators: &BTreeMap<String, i64>) -> Option<i64> {
+    let fold = |node: &Value| fold_with(node, enumerators);
     if kind(node) == "ConstantExpr"
         && let Some(value) = node["value"].as_str()
     {
@@ -54,6 +56,11 @@ fn fold(node: &Value) -> Option<i64> {
     let node = strip(node);
     match kind(node) {
         "IntegerLiteral" => node["value"].as_str()?.parse().ok(),
+        "DeclRefExpr"
+            if node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl") =>
+        {
+            enumerators.get(node["referencedDecl"]["id"].as_str()?).copied()
+        }
         "UnaryOperator" => {
             let inner = fold(children(node).first()?)?;
             match node["opcode"].as_str()? {
@@ -153,6 +160,7 @@ fn stray_break(node: &Value) -> bool {
 }
 
 struct Groups<'a> {
+    enumerators: &'a BTreeMap<String, i64>,
     parameter: &'a str,
     roots: BTreeSet<&'a str>,
     active: BTreeSet<Label>,
@@ -165,7 +173,7 @@ impl Groups<'_> {
             "CaseStmt" => {
                 let value = children(node)
                     .first()
-                    .and_then(fold)
+                    .and_then(|label| fold_with(label, self.enumerators))
                     .ok_or("a case label the check does not fold")?;
                 self.label(Label::Value(value));
                 if let Some(body) = children(node).get(1) {
@@ -232,7 +240,13 @@ fn switches<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
 }
 
 /// Whether a switch condition reads the declared discriminant.
-fn reads_discriminant(condition: &Value, parameter: &str, discriminant: &Discriminant) -> bool {
+fn reads_discriminant(
+    condition: &Value,
+    parameter: &str,
+    discriminant: &Discriminant,
+    enumerators: &BTreeMap<String, i64>,
+) -> bool {
+    let fold = |node: &Value| fold_with(node, enumerators);
     let condition = strip(condition);
     if discriminant.mask == 0 {
         return path_of(condition, parameter).as_deref() == Some(discriminant.field.as_str());
@@ -258,6 +272,7 @@ pub fn validates(
     function: &Value,
     discriminant: &Discriminant,
     arms: &[ArmClause],
+    enumerators: &BTreeMap<String, i64>,
 ) -> Result<(), String> {
     let parameter = children(function)
         .iter()
@@ -272,7 +287,9 @@ pub fn validates(
         .filter(|switch| {
             children(switch)
                 .first()
-                .is_some_and(|condition| reads_discriminant(condition, parameter, discriminant))
+                .is_some_and(|condition| {
+                    reads_discriminant(condition, parameter, discriminant, enumerators)
+                })
         })
         .collect::<Vec<_>>();
     let [switch] = selected.as_slice() else {
@@ -290,6 +307,7 @@ pub fn validates(
         })
         .collect::<BTreeSet<_>>();
     let mut groups = Groups {
+        enumerators,
         parameter,
         roots,
         active: BTreeSet::new(),
@@ -432,7 +450,7 @@ mod tests {
             (Some(4), Some("u.c.z")),
             (None, None),
         ]);
-        assert_eq!(validates(&body, &discriminant(), &declared), Ok(()));
+        assert_eq!(validates(&body, &discriminant(), &declared, &BTreeMap::new()), Ok(()));
         // A missing release, or a declared one the body does not hand on.
         let missing = arms(&[
             (Some(1), Some("u.a.x")),
@@ -442,9 +460,9 @@ mod tests {
             (Some(4), Some("u.c.z")),
             (None, None),
         ]);
-        assert!(validates(&body, &discriminant(), &missing).is_err());
+        assert!(validates(&body, &discriminant(), &missing, &BTreeMap::new()).is_err());
         let extra = arms(&[(Some(9), Some("u.a.x")), (None, None)]);
-        assert!(validates(&body, &discriminant(), &extra).is_err());
+        assert!(validates(&body, &discriminant(), &extra, &BTreeMap::new()).is_err());
     }
 
     #[test]
@@ -456,10 +474,10 @@ mod tests {
         ]);
         // A declared arm for 7 releasing nothing agrees with the default.
         let declared = arms(&[(Some(1), Some("u.a.x")), (Some(7), None), (None, None)]);
-        assert_eq!(validates(&body, &discriminant(), &declared), Ok(()));
+        assert_eq!(validates(&body, &discriminant(), &declared, &BTreeMap::new()), Ok(()));
         // `otherwise` releasing something the default does not.
         let wrong = arms(&[(Some(1), Some("u.a.x")), (None, Some("u.a.x"))]);
-        assert!(validates(&body, &discriminant(), &wrong).is_err());
+        assert!(validates(&body, &discriminant(), &wrong, &BTreeMap::new()).is_err());
     }
 
     #[test]
@@ -475,6 +493,6 @@ mod tests {
             serde_json::json!({"kind": "BreakStmt"}),
         ]);
         let declared = arms(&[(Some(1), Some("u.a.x")), (None, None)]);
-        assert!(validates(&body, &discriminant(), &declared).is_err());
+        assert!(validates(&body, &discriminant(), &declared, &BTreeMap::new()).is_err());
     }
 }

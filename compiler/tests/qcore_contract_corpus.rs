@@ -1230,6 +1230,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     ("librdkafka/client.qv", "unit_test_telemetry", 13),
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the queue serving family
+    // (marker, every formal borrowed, the callback invocation, the two op
+    // member invocations, the result) and `rd_kafka_op_destroy` (marker, the
+    // discriminant, the release, the op callback, 170 arm clauses, `none`).
+    ("librdkafka/client.qv", "rd_kafka_q_serve0", 12),
+    ("librdkafka/client.qv", "rd_kafka_q_serve", 11),
+    ("librdkafka/client.qv", "rd_kafka_q_serve_maybe_consume", 11),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve0", 12),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve", 11),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve_maybe_consume", 11),
+    ("librdkafka/client.qv", "rd_kafka_op_destroy", 175),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

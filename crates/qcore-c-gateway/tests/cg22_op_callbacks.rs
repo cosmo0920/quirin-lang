@@ -52,7 +52,6 @@ fn clang_available() -> bool {
 struct Row {
     status: AnalysisStatus,
     unsupported: Vec<String>,
-    kinds: Vec<String>,
 }
 
 impl Row {
@@ -115,7 +114,6 @@ fn rows(source: &str) -> BTreeMap<String, Row> {
                             _ => None,
                         })
                         .collect(),
-                    kinds: row.diagnostics.iter().map(|d| format!("{d:?}")).collect(),
                 },
             )
         })

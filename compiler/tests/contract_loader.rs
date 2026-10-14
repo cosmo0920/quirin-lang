@@ -1880,9 +1880,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 393 -> 394 by card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static
     // `print` in `librdkafka/cjson.qv`, the declaration round 3 withdrew while
     // the module could not compile off the print-call route.
+    // 394 -> 401 by card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the six queue
+    // serving declarations and `rd_kafka_op_destroy` in
+    // `librdkafka/client.qv`, all withheld with the retaining declarations.
+    // Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 394, 314)
+        (61, 401, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1912,8 +1916,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 28 -> 44.
     // Card W45-CALLEE-CASCADE-RESIDUAL round 3: `unit_test_telemetry`, a
     // synchronous callback invocation, is withheld into the same table: 44 -> 45.
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the six queue serving
+    // declarations and `rd_kafka_op_destroy` (C04.19.1-C04.19.3): 45 -> 52.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 45);
+    assert_eq!(loaded.retaining().len(), 52);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
