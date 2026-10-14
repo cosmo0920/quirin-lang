@@ -561,9 +561,9 @@ impl MemberFacts {
                         // through it is keyed by that record (`a[i].cb` reads
                         // its base's record).
                         let element = text.split('[').next().unwrap_or(text);
-                        match spelled_record(strip_qualifiers(element))
-                            .or_else(|| self.record_typedefs.get(strip_qualifiers(element)).cloned())
-                        {
+                        match spelled_record(strip_qualifiers(element)).or_else(|| {
+                            self.record_typedefs.get(strip_qualifiers(element)).cloned()
+                        }) {
                             Some(record) => FieldKey::Named { record },
                             None => FieldKey::Plain,
                         }
@@ -1261,7 +1261,6 @@ pub fn closure_tokens(units: &[&MemberFacts], member: &str) -> BTreeSet<String> 
 }
 
 /// [`closure`] over an index built once, with the tokens it read.
-#[must_use]
 pub fn closure_prepared(
     units: &[&MemberFacts],
     prepared: &Prepared,
@@ -1324,7 +1323,8 @@ pub fn closure_prepared(
                         unread_names.insert(last_segment(target).to_owned());
                     }
                 }
-                let aliased = |store: &str| targets.iter().any(|target| tables.aliases(target, store));
+                let aliased =
+                    |store: &str| targets.iter().any(|target| tables.aliases(target, store));
                 for (_, store, _) in &prepared.stores {
                     if store.ends_with(".*") && aliased(store) {
                         for keys in tables.union_at(store) {
@@ -1359,9 +1359,7 @@ pub fn closure_prepared(
                 for (unit, store, flows) in &prepared.stores {
                     if let Some(name) = store.strip_prefix("?.") {
                         if unread_names.contains(name) {
-                            notes.insert(format!(
-                                "a store into `{name}` whose record is not read"
-                            ));
+                            notes.insert(format!("a store into `{name}` whose record is not read"));
                             take(flows, *unit);
                         }
                     } else if aliased(store) {
@@ -1568,12 +1566,17 @@ mod tests {
         // Every record the key's path names, each field a function pointer
         // unless a row says it holds a record.
         let mut facts = MemberFacts::default();
-        let mut tags = rows.iter().flat_map(|(t, _, r)| [*t, *r]).collect::<Vec<_>>();
+        let mut tags = rows
+            .iter()
+            .flat_map(|(t, _, r)| [*t, *r])
+            .collect::<Vec<_>>();
         tags.push(key.split('.').next().unwrap());
         for tag in tags {
             let mut keys = RecordKeys::default();
             for segment in key.split('.').skip(1) {
-                keys.fields.entry(segment.to_owned()).or_insert(FieldKey::Function);
+                keys.fields
+                    .entry(segment.to_owned())
+                    .or_insert(FieldKey::Function);
             }
             for (t, field, record) in rows {
                 if *t == tag {
@@ -1611,6 +1614,45 @@ mod tests {
             );
         }
         facts
+    }
+
+    /// A development aid: the tables of one preprocessed unit
+    /// (`QCORE_DEBUG_UNIT`), the containers and embedded records of
+    /// `QCORE_DEBUG_RECORD`.
+    #[test]
+    #[ignore = "a development aid over a local preprocessed unit"]
+    fn debug_tables() {
+        let path = std::env::var("QCORE_DEBUG_UNIT").expect("QCORE_DEBUG_UNIT");
+        let record = std::env::var("QCORE_DEBUG_RECORD").expect("QCORE_DEBUG_RECORD");
+        let text = std::fs::read_to_string(path).unwrap();
+        let facts = read_unit(
+            &text,
+            &crate::legacy_c::C11TranslationUnit {
+                source: &text,
+                dialect: crate::legacy_c::CCompilerDialect::Gnu11,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let tables = Tables::of(&[&facts]);
+        println!("containers {:?}", tables.containers(&record));
+        for keys in tables.records.get(&record).into_iter().flatten() {
+            println!("embedded {:?}", tables.embedded(keys));
+        }
+        for (tag, readings) in &tables.records {
+            for keys in readings {
+                if tables.embedded(keys).contains(&record) {
+                    let direct = keys
+                        .fields
+                        .iter()
+                        .filter(|(_, field)| {
+                            matches!(field, FieldKey::Named { .. } | FieldKey::Inline { .. })
+                        })
+                        .collect::<Vec<_>>();
+                    println!("{tag} embeds via {direct:?}");
+                }
+            }
+        }
     }
 
     #[test]

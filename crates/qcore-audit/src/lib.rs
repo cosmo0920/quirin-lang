@@ -53,9 +53,9 @@ pub mod null_tally;
 pub mod callback_member_fold;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, R1, F1): the member-facts
 // pre-pass of the pinned route.
-pub mod member_prepass;
 pub mod contract_dependencies;
 pub mod contract_tip;
+pub mod member_prepass;
 pub mod prepare;
 mod prepare_json;
 pub mod projection;

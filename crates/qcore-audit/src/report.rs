@@ -158,7 +158,6 @@ pub struct AuditReport {
     )>,
 }
 
-
 impl AuditReport {
     pub fn new(revision: &str) -> Self {
         Self {
@@ -223,7 +222,9 @@ impl AuditReport {
             &self.callback_members,
             contracts,
             &mut self.diagnostic_counts,
-            self.member_prepass.as_ref().map(|(facts, _)| facts.as_ref()),
+            self.member_prepass
+                .as_ref()
+                .map(|(facts, _)| facts.as_ref()),
         );
         // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the pre-pass's evidence.
         if let (Some((_, prepass)), false) = (&self.member_prepass, section.is_null()) {

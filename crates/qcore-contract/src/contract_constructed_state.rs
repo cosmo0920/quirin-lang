@@ -428,7 +428,8 @@ mod tests {
             ))
             .expect_err("not a designator");
             assert!(
-                error.starts_with("quant-live-value:") || error.starts_with("quant-live-result-shape:"),
+                error.starts_with("quant-live-value:")
+                    || error.starts_with("quant-live-result-shape:"),
                 "{other}: {error}"
             );
         }

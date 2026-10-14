@@ -36,7 +36,7 @@
     },
     {
       "fragment": "/lib/luajit-7152e154/src/",
-      "why": "LuaJIT units including headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, whose raw texts name no token of the pre-pass (artifacts/scope-check.json)"
+      "why": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)"
     },
     {
       "fragment": "/plugins/processor_sql/parser/sql_parser.c",

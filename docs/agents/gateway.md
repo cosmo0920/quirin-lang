@@ -5126,8 +5126,47 @@ own anchor here.
     it, so a declared candidate frees no row by itself; measured, the 13
     `callback-uncontracted` leaves of `rd_kafka_op_destroy` in `rdkafka.c`
     and `rdkafka_offset.c` decide and no status moves.
-    [Report](../reports/op-callback-candidate-contracts/README.md). **Do
-    not** decide a member over the unit's set alone, promote a row in the
+    [Report](../reports/op-callback-candidate-contracts/README.md).
+    **Application rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB,
+    C04.19.3 and C04.19.4 amended; USER DECISIONS 2026-10-14, "Closed over
+    FB's registrations" and "Build the agent's recommended set": D1, Q2, Q3,
+    U2, R1, F1, E1, S1). *Keys:* the callback closure keys a member by its
+    innermost named record (`MemberFacts::callback_key`; `rk->rk_conf.F`
+    and `conf->F` are `rd_kafka_conf_s.F`, so `rk->rk_conf = *conf` copies
+    values already counted), a union's members share one key (`U.*` or
+    `TAG.PATH.*`), and a declared spelling is normalised through the run's
+    record tables (`callback_member_closure::Tables`: a whole-object write of
+    a record holding the member by value opens it; a union key aliases the
+    records it embeds). *Registrations:* every call of a declaration stating
+    `resource_callback_member_registered(P, TAG.FIELD, F)` with `P` a
+    parameter (a setter) is a store of its `F` actual, and a constructor's
+    stated function default (`quant live #result: TAG.FIELD |-> f;`) a store
+    of `f` (`member_run_facts::declarations_unit`). *The run's set:* the
+    pinned route's pre-pass (`qcore_audit::member_prepass`) preprocesses
+    every unit of the production compile database with its own command,
+    reads every C unit naming a token of an invoked member's closure graph
+    (record tags that can carry a store, setters and formals' functions,
+    iterated to a fixed point) and installs the run's facts on each
+    analysing thread (`member_run_facts::scoped`); a unit then decides over
+    the run's set, a closed empty set invokes nothing (E1,
+    `callback_contracts::decide_run`), a member that is not a
+    function-pointer member of a record the run defines refuses, a unit that
+    names a token but is not read opens every member, and the profile's
+    `member-facts-scope.json` names the units outside the program with their
+    evidence (the unlinked `rdkafka++` wrapper; generated units and units
+    whose generated headers are absent from the pinned inputs, their raw
+    texts checked); the fold compares the run's set with itself and stays
+    demote-only. Every route without the pre-pass keeps the unit's own set.
+    Measured (corpus `66910c10` on main `b7facc899`): 936 / 9 / 3,889 → 936
+    / 9 / 3,889, 97 Unknown rows trade leaves; the pre-pass reads 845 of
+    1,444 units, none unread; the rk_conf members close (`dr_msg_cb`
+    {`cb_kafka_msg`}, `log_cb` {`cb_kafka_logger`, `rd_kafka_log_print`},
+    `sasl.oauthbearer.token_refresh_cb` {Fluent Bit's and librdkafka's five},
+    the other seven empty) and `rd_kafka_op_s.rko_op_cb` reads open (its
+    union-keyed `rko_u` dependency).
+    [Report](../reports/op-app-rk-callbacks/README.md). **Do
+    not** decide a member over the unit's set alone where the run's facts
+    are installed, promote a row in the
     fold, follow an address-taken function's formal, read a value the
     facts do not name as no candidate, treat a unit whose AST was not read
     (or a unit absent from the run) as closed, or derive a member-invoking
@@ -5147,6 +5186,18 @@ own anchor here.
     `RUN_VECTORS`; `tests/cg22_op_callbacks.rs`,
     `tests/callback_member_data_only.rs`;
     [report](../reports/retained-release-formal/README.md).
+    `QCore.AppRkCallbacks`
+    (`a_registration_closes_the_member_only_with_every_run_store`,
+    `the_registered_set_is_exactly_the_read_and_registered_sets`,
+    `an_open_run_member_never_decides`,
+    `a_closed_empty_run_set_invokes_nothing`,
+    `a_unit_empty_set_stays_refused`,
+    `skipping_a_silent_unit_keeps_the_run_set`,
+    `an_embedded_store_and_a_direct_store_share_the_key`,
+    `normalise_is_idempotent`, `a_stated_default_is_a_candidate`,
+    `key_vectors_hold`, `run_decision_vectors_hold`);
+    `callback_member_closure`'s `KEY_VECTORS`; `member_run_facts`'s
+    `RUN_DECISION_VECTORS`; `tests/app_rk_callbacks.rs`.
 
 <a id="constraint-12o"></a>
 

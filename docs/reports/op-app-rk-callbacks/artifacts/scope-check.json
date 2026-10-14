@@ -1,0 +1,1668 @@
+{
+ "tokens": 68,
+ "grammars": {
+  "processor-sql-parser_lex.c": {
+   "grammar": "plugins/processor_sql/parser/sql-parser.l",
+   "token_hits": {}
+  },
+  "processor-sql_parser.c": {
+   "grammar": "plugins/processor_sql/parser/sql-parser.y",
+   "token_hits": {}
+  },
+  "ra_lex.c": {
+   "grammar": "src/record_accessor/ra.l",
+   "token_hits": {}
+  },
+  "ra_parser.c": {
+   "grammar": "src/record_accessor/ra.y",
+   "token_hits": {}
+  },
+  "sql_lex.c": {
+   "grammar": "src/stream_processor/parser/sql.l",
+   "token_hits": {}
+  },
+  "sql_parser.c": {
+   "grammar": "src/stream_processor/parser/sql.y",
+   "token_hits": {}
+  }
+ },
+ "unpreprocessed": {
+  "lib/luajit-7152e154/src/lib_aux.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/wait.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_base.c": {
+   "files_read": 29,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_bit.c": {
+   "files_read": 21,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_buffer.c": {
+   "files_read": 22,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_debug.c": {
+   "files_read": 13,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_ffi.c": {
+   "files_read": 25,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_init.c": {
+   "files_read": 6,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdio.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_io.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_jit.c": {
+   "files_read": 33,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_libdef.h",
+    "luajit.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/utsname.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_math.c": {
+   "files_read": 13,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_libdef.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_os.c": {
+   "files_read": 14,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_libdef.h",
+    "locale.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "time.h",
+    "unistd.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_package.c": {
+   "files_read": 11,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "dlfcn.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_string.c": {
+   "files_read": 22,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lib_table.c": {
+   "files_read": 16,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_ffdef.h",
+    "lj_libdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_alloc.c": {
+   "files_read": 7,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "sys/mman.h",
+    "sys/resource.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_api.c": {
+   "files_read": 26,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_asm.c": {
+   "files_read": 41,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_assert.c": {
+   "files_read": 6,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_bc.c": {
+   "files_read": 7,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "lj_bcdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_bcread.c": {
+   "files_read": 20,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_bcwrite.c": {
+   "files_read": 20,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_buf.c": {
+   "files_read": 13,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_carith.c": {
+   "files_read": 17,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_ccall.c": {
+   "files_read": 20,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_ccallback.c": {
+   "files_read": 30,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "pthread.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "sys/mman.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_cconv.c": {
+   "files_read": 16,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_cdata.c": {
+   "files_read": 13,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_char.c": {
+   "files_read": 5,
+   "token_hits": {},
+   "unresolved_includes": [
+    "assert.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_clib.c": {
+   "files_read": 17,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "dlfcn.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_cparse.c": {
+   "files_read": 19,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_crecord.c": {
+   "files_read": 33,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_ctype.c": {
+   "files_read": 15,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_debug.c": {
+   "files_read": 19,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_dispatch.c": {
+   "files_read": 29,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "luajit.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_err.c": {
+   "files_read": 22,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_ffrecord.c": {
+   "files_read": 29,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "lj_recdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_func.c": {
+   "files_read": 15,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_gc.c": {
+   "files_read": 27,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_gdbjit.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_ir.c": {
+   "files_read": 26,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_lex.c": {
+   "files_read": 21,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_lib.c": {
+   "files_read": 24,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_load.c": {
+   "files_read": 19,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_mcode.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "pthread.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "sys/mman.h",
+    "valgrind/valgrind.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_meta.c": {
+   "files_read": 19,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_obj.c": {
+   "files_read": 6,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_dce.c": {
+   "files_read": 9,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_fold.c": {
+   "files_read": 23,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_folddef.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_loop.c": {
+   "files_read": 20,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_mem.c": {
+   "files_read": 13,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_narrow.c": {
+   "files_read": 15,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_sink.c": {
+   "files_read": 15,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_opt_split.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_parse.c": {
+   "files_read": 22,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_prng.c": {
+   "files_read": 6,
+   "token_hits": {},
+   "unresolved_includes": [
+    "Availability.h",
+    "TargetConditionals.h",
+    "assert.h",
+    "bcrypt.h",
+    "fcntl.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "sys/syscall.h",
+    "unistd.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_profile.c": {
+   "files_read": 18,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "luajit.h",
+    "pthread.h",
+    "ptrauth.h",
+    "signal.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "sys/time.h",
+    "sys/timer.h",
+    "time.h",
+    "windows.h",
+    "xbox.h",
+    "xtl.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_record.c": {
+   "files_read": 29,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "lj_ffdef.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_serialize.c": {
+   "files_read": 17,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_snap.c": {
+   "files_read": 26,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_state.c": {
+   "files_read": 27,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "luajit.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_str.c": {
+   "files_read": 12,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_strfmt.c": {
+   "files_read": 17,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_strfmt_num.c": {
+   "files_read": 10,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_strscan.c": {
+   "files_read": 8,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_tab.c": {
+   "files_read": 10,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_trace.c": {
+   "files_read": 34,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "unistd.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_udata.c": {
+   "files_read": 10,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_vmevent.c": {
+   "files_read": 15,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/lj_vmmath.c": {
+   "files_read": 8,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "math.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdlib.h",
+    "string.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/luajit.c": {
+   "files_read": 6,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "io.h",
+    "luajit.h",
+    "signal.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "unistd.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/minilua.c": {
+   "files_read": 1,
+   "token_hits": {},
+   "unresolved_includes": [
+    "ctype.h",
+    "errno.h",
+    "limits.h",
+    "math.h",
+    "setjmp.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "time.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/buildvm.c": {
+   "files_read": 23,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "buildvm_arch.h",
+    "errno.h",
+    "fcntl.h",
+    "io.h",
+    "luajit.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/types.h",
+    "windows.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/buildvm_asm.c": {
+   "files_read": 7,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/types.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/buildvm_fold.c": {
+   "files_read": 8,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/types.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/buildvm_lib.c": {
+   "files_read": 10,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "ptrauth.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/types.h"
+   ]
+  },
+  "lib/luajit-7152e154/src/host/buildvm_peobj.c": {
+   "files_read": 7,
+   "token_hits": {},
+   "unresolved_includes": [
+    "TargetConditionals.h",
+    "assert.h",
+    "errno.h",
+    "stdarg.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string.h",
+    "sys/types.h"
+   ]
+  },
+  "plugins/processor_sql/parser/sql_parser.c": {
+   "files_read": 202,
+   "token_hits": {},
+   "unresolved_includes": [
+    "BaseTsd.h",
+    "TargetConditionals.h",
+    "Wincrypt.h",
+    "Winsock2.h",
+    "afunix.h",
+    "altivec.h",
+    "arm_neon.h",
+    "arm_sve.h",
+    "arpa/inet.h",
+    "assert.h",
+    "byteswap.h",
+    "ctype.h",
+    "direct.h",
+    "dlfcn.h",
+    "emmintrin.h",
+    "endian.h",
+    "errno.h",
+    "event.h",
+    "fcntl.h",
+    "getopt.h",
+    "gogoproto/gogo.pb-c.h",
+    "immintrin.h",
+    "intrin.h",
+    "inttypes.h",
+    "io.h",
+    "jemalloc/jemalloc.h",
+    "kqueue/sys/event.h",
+    "lasxintrin.h",
+    "libgen.h",
+    "libkern/OSByteOrder.h",
+    "limits.h",
+    "lsxintrin.h",
+    "mmintrin.h",
+    "mpack-common.h",
+    "mpack-config.h",
+    "mpack-platform.h",
+    "mpack-reader.h",
+    "msgpack/predef/other/endian.h",
+    "netdb.h",
+    "netinet/in.h",
+    "netinet/tcp.h",
+    "poll.h",
+    "process.h",
+    "processor-sql-parser_lex.h",
+    "processor-sql_parser.h",
+    "pthread.h",
+    "s390intrin.h",
+    "stdarg.h",
+    "stdbool.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string",
+    "string.h",
+    "strings.h",
+    "sys/endian.h",
+    "sys/epoll.h",
+    "sys/event.h",
+    "sys/select.h",
+    "sys/socket.h",
+    "sys/stat.h",
+    "sys/time.h",
+    "sys/types.h",
+    "sys/uio.h",
+    "sys/un.h",
+    "time.h",
+    "unistd.h",
+    "utility",
+    "valgrind/valgrind.h",
+    "wchar.h",
+    "windows.h",
+    "winsock2.h",
+    "ws2tcpip.h"
+   ]
+  },
+  "src/record_accessor/flb_ra_parser.c": {
+   "files_read": 73,
+   "token_hits": {},
+   "unresolved_includes": [
+    "BaseTsd.h",
+    "Wincrypt.h",
+    "Winsock2.h",
+    "altivec.h",
+    "arm_neon.h",
+    "arm_sve.h",
+    "arpa/inet.h",
+    "assert.h",
+    "direct.h",
+    "dlfcn.h",
+    "emmintrin.h",
+    "endian.h",
+    "errno.h",
+    "event.h",
+    "fcntl.h",
+    "getopt.h",
+    "immintrin.h",
+    "intrin.h",
+    "inttypes.h",
+    "io.h",
+    "jemalloc/jemalloc.h",
+    "kqueue/sys/event.h",
+    "lasxintrin.h",
+    "libgen.h",
+    "libkern/OSByteOrder.h",
+    "limits.h",
+    "lsxintrin.h",
+    "mmintrin.h",
+    "netdb.h",
+    "netinet/in.h",
+    "netinet/tcp.h",
+    "poll.h",
+    "process.h",
+    "pthread.h",
+    "ra_lex.h",
+    "ra_parser.h",
+    "s390intrin.h",
+    "stdarg.h",
+    "stdbool.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string",
+    "string.h",
+    "strings.h",
+    "sys/endian.h",
+    "sys/epoll.h",
+    "sys/event.h",
+    "sys/select.h",
+    "sys/socket.h",
+    "sys/time.h",
+    "sys/types.h",
+    "sys/uio.h",
+    "sys/un.h",
+    "time.h",
+    "unistd.h",
+    "utility",
+    "wchar.h",
+    "windows.h",
+    "winsock2.h",
+    "ws2tcpip.h"
+   ]
+  },
+  "src/stream_processor/parser/flb_sp_parser.c": {
+   "files_read": 203,
+   "token_hits": {},
+   "unresolved_includes": [
+    "BaseTsd.h",
+    "TargetConditionals.h",
+    "Wincrypt.h",
+    "Winsock2.h",
+    "afunix.h",
+    "altivec.h",
+    "arm_neon.h",
+    "arm_sve.h",
+    "arpa/inet.h",
+    "assert.h",
+    "byteswap.h",
+    "ctype.h",
+    "direct.h",
+    "dlfcn.h",
+    "emmintrin.h",
+    "endian.h",
+    "errno.h",
+    "event.h",
+    "fcntl.h",
+    "getopt.h",
+    "gogoproto/gogo.pb-c.h",
+    "immintrin.h",
+    "intrin.h",
+    "inttypes.h",
+    "io.h",
+    "jemalloc/jemalloc.h",
+    "kqueue/sys/event.h",
+    "lasxintrin.h",
+    "libgen.h",
+    "libkern/OSByteOrder.h",
+    "limits.h",
+    "lsxintrin.h",
+    "mmintrin.h",
+    "mpack-common.h",
+    "mpack-config.h",
+    "mpack-platform.h",
+    "mpack-reader.h",
+    "msgpack/predef/other/endian.h",
+    "netdb.h",
+    "netinet/in.h",
+    "netinet/tcp.h",
+    "poll.h",
+    "process.h",
+    "pthread.h",
+    "s390intrin.h",
+    "sql_lex.h",
+    "sql_parser.h",
+    "stdarg.h",
+    "stdbool.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string",
+    "string.h",
+    "strings.h",
+    "sys/endian.h",
+    "sys/epoll.h",
+    "sys/event.h",
+    "sys/select.h",
+    "sys/socket.h",
+    "sys/stat.h",
+    "sys/time.h",
+    "sys/types.h",
+    "sys/uio.h",
+    "sys/un.h",
+    "time.h",
+    "unistd.h",
+    "utility",
+    "valgrind/valgrind.h",
+    "wchar.h",
+    "windows.h",
+    "winsock2.h",
+    "ws2tcpip.h"
+   ]
+  },
+  "src/fluent-bit.c": {
+   "files_read": 225,
+   "token_hits": {},
+   "unresolved_includes": [
+    "BaseTsd.h",
+    "ConsoleApi.h",
+    "TargetConditionals.h",
+    "Wincrypt.h",
+    "Winsock2.h",
+    "aclapi.h",
+    "afunix.h",
+    "altivec.h",
+    "arm_neon.h",
+    "arm_sve.h",
+    "arpa/inet.h",
+    "assert.h",
+    "backtrace-supported.h",
+    "backtrace.h",
+    "byteswap.h",
+    "ctype.h",
+    "direct.h",
+    "dirent.h",
+    "dlfcn.h",
+    "emmintrin.h",
+    "endian.h",
+    "errno.h",
+    "event.h",
+    "fcntl.h",
+    "getopt.h",
+    "gogoproto/gogo.pb-c.h",
+    "immintrin.h",
+    "intrin.h",
+    "inttypes.h",
+    "io.h",
+    "jemalloc/jemalloc.h",
+    "kqueue/sys/event.h",
+    "lasxintrin.h",
+    "libgen.h",
+    "libkern/OSByteOrder.h",
+    "limits.h",
+    "lsxintrin.h",
+    "mcheck.h",
+    "mmintrin.h",
+    "mpack-common.h",
+    "mpack-config.h",
+    "mpack-platform.h",
+    "mpack-reader.h",
+    "msgpack/predef/other/endian.h",
+    "netdb.h",
+    "netinet/in.h",
+    "netinet/tcp.h",
+    "poll.h",
+    "process.h",
+    "pthread.h",
+    "s390intrin.h",
+    "signal.h",
+    "stdarg.h",
+    "stdbool.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string",
+    "string.h",
+    "strings.h",
+    "sys/endian.h",
+    "sys/epoll.h",
+    "sys/event.h",
+    "sys/select.h",
+    "sys/socket.h",
+    "sys/stat.h",
+    "sys/time.h",
+    "sys/types.h",
+    "sys/uio.h",
+    "sys/un.h",
+    "time.h",
+    "unistd.h",
+    "utility",
+    "valgrind/valgrind.h",
+    "wchar.h",
+    "windows.h",
+    "winsock2.h",
+    "ws2tcpip.h"
+   ]
+  },
+  "src/flb_dump.c": {
+   "files_read": 171,
+   "token_hits": {},
+   "unresolved_includes": [
+    "BaseTsd.h",
+    "TargetConditionals.h",
+    "Wincrypt.h",
+    "Winsock2.h",
+    "aclapi.h",
+    "altivec.h",
+    "arm_neon.h",
+    "arm_sve.h",
+    "arpa/inet.h",
+    "assert.h",
+    "backtrace-supported.h",
+    "backtrace.h",
+    "byteswap.h",
+    "direct.h",
+    "dirent.h",
+    "dlfcn.h",
+    "emmintrin.h",
+    "endian.h",
+    "errno.h",
+    "event.h",
+    "fcntl.h",
+    "getopt.h",
+    "gogoproto/gogo.pb-c.h",
+    "immintrin.h",
+    "intrin.h",
+    "inttypes.h",
+    "io.h",
+    "jemalloc/jemalloc.h",
+    "kqueue/sys/event.h",
+    "lasxintrin.h",
+    "libgen.h",
+    "libkern/OSByteOrder.h",
+    "limits.h",
+    "lsxintrin.h",
+    "mmintrin.h",
+    "mpack-common.h",
+    "mpack-config.h",
+    "mpack-platform.h",
+    "mpack-reader.h",
+    "msgpack/predef/other/endian.h",
+    "netdb.h",
+    "netinet/in.h",
+    "netinet/tcp.h",
+    "poll.h",
+    "process.h",
+    "pthread.h",
+    "s390intrin.h",
+    "stdarg.h",
+    "stdbool.h",
+    "stddef.h",
+    "stdint.h",
+    "stdio.h",
+    "stdlib.h",
+    "string",
+    "string.h",
+    "strings.h",
+    "sys/endian.h",
+    "sys/epoll.h",
+    "sys/event.h",
+    "sys/select.h",
+    "sys/socket.h",
+    "sys/stat.h",
+    "sys/time.h",
+    "sys/types.h",
+    "sys/uio.h",
+    "sys/un.h",
+    "time.h",
+    "unistd.h",
+    "utility",
+    "valgrind/valgrind.h",
+    "wchar.h",
+    "windows.h",
+    "winsock2.h",
+    "ws2tcpip.h"
+   ]
+  }
+ },
+ "links": {
+  "src/CMakeFiles/fluent-bit-bin.dir/link.txt": {
+   "librdkafka.a": true,
+   "rdkafka++": false
+  },
+  "src/CMakeFiles/fluent-bit-shared.dir/link.txt": {
+   "librdkafka.a": true,
+   "rdkafka++": false
+  }
+ }
+}

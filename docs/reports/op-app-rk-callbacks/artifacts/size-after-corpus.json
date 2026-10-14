@@ -1,0 +1,129 @@
+{
+ "rd_kafka_poll_cb": {
+  "leaves": 4,
+  "functions": 4,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_consume_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_background_queue_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_serve"
+  ]
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop"
+  ]
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop_serve"
+  ]
+ },
+ "rd_kafka_q_pop": {
+  "leaves": 38,
+  "functions": 15,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_conf_set_dr_msg_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_conf_set_log_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_conf_set_oauthbearer_token_refresh_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_conf_set_opaque": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_conf_new": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_new": {
+  "leaves": 14,
+  "functions": 14,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_destroy": {
+  "leaves": 14,
+  "functions": 14,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_destroy_app": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 2,
+  "alone_functions": [
+   "rdkafka.c::rd_kafka_destroy",
+   "rdkafka.c::rd_kafka_destroy_flags"
+  ]
+ },
+ "rd_kafka_q_wait_result": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_log0": {
+  "leaves": 47,
+  "functions": 35,
+  "alone": 3,
+  "alone_functions": [
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_active",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_active",
+   "rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_member_active"
+  ]
+ }
+}

@@ -184,7 +184,10 @@ fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String
 
 fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
     let path = entry.file.to_string_lossy();
-    if let Some(outside) = scope.iter().find(|outside| path.contains(&outside.fragment)) {
+    if let Some(outside) = scope
+        .iter()
+        .find(|outside| path.contains(&outside.fragment))
+    {
         return Reading::Outside(outside.why.clone());
     }
     match preprocess_own(entry, &["-E"]) {
@@ -193,7 +196,11 @@ fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
             identifiers(&text),
             format!(
                 "a unit that is not C (`{}`)",
-                entry.file.extension().and_then(|ext| ext.to_str()).unwrap_or("?")
+                entry
+                    .file
+                    .extension()
+                    .and_then(|ext| ext.to_str())
+                    .unwrap_or("?")
             ),
         ),
         Err(error) => Reading::Failed(format!("its preprocessing failed: {error}")),
@@ -293,7 +300,10 @@ pub fn run(
         for member in &members {
             tokens.extend(closure_tokens(&views, member));
         }
-        let hashes = tokens.iter().map(|token| hash(token)).collect::<BTreeSet<_>>();
+        let hashes = tokens
+            .iter()
+            .map(|token| hash(token))
+            .collect::<BTreeSet<_>>();
         let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
         let selected = readings
             .iter()
@@ -333,7 +343,10 @@ pub fn run(
     // The units the final tokens make relevant but that are not read: a
     // unit that is not C naming a token, a unit whose preprocessing failed
     // (its tokens are unknown), and a C unit whose AST failed.
-    let hashes = tokens.iter().map(|token| hash(token)).collect::<BTreeSet<_>>();
+    let hashes = tokens
+        .iter()
+        .map(|token| hash(token))
+        .collect::<BTreeSet<_>>();
     let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
     for (index, reading) in readings.iter().enumerate() {
         let key = label(&entries[index]);

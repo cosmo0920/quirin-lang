@@ -380,7 +380,8 @@ pub(super) fn declaration(
                     tag: tag.to_owned(),
                     path: path.to_owned(),
                 };
-                if !members_named.insert((MemberObject::Parameter { index: holder }, member.clone()))
+                if !members_named
+                    .insert((MemberObject::Parameter { index: holder }, member.clone()))
                 {
                     return Err(format!("duplicate `{MEMBER_REGISTERED}` clause"));
                 }

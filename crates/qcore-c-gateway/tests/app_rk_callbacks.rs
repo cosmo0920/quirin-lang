@@ -20,9 +20,7 @@ use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, UnrestrictedLegacyResult,
     analyze_unrestricted_c11,
 };
-use qcore_c_gateway::member_run_facts::{
-    DeclaredStore, RunMemberFacts, declarations_unit, scoped,
-};
+use qcore_c_gateway::member_run_facts::{DeclaredStore, RunMemberFacts, declarations_unit, scoped};
 use qcore_contract::contract_loader::load_resource_contract_sources;
 use qcore_schemas::contract::ResourceContracts;
 
@@ -239,6 +237,27 @@ fn an_embedded_store_and_a_direct_store_share_the_innermost_key() {
     assert!(closure(&[&copied], "conf_s.log_cb").is_err());
 }
 
+/// Q3 (`CALLBACK-MEMBER-EMBEDDED-RECORD-KEYS`, second part): a record value
+/// copied into a field, by an initializer list or an assignment, carries
+/// only values the embedded record's own key already counts, so the copy
+/// adds no candidate and opens nothing; the conf's own stores reach the
+/// handle's embedded member.
+#[test]
+fn a_record_value_copied_into_a_field_carries_its_own_keys() {
+    if !clang_available() {
+        return;
+    }
+    let unit = facts(
+        "void a(struct conf_s *c) { c->log_cb = quiet_log; }\n\
+         void init(struct conf_s proto) { struct handle_s h = { 1, proto }; serve(&h); }\n\
+         void assign(struct handle_s *h, struct conf_s proto) { h->conf = proto; }\n",
+    );
+    assert_eq!(
+        closure(&[&unit], "handle_s.conf.log_cb"),
+        Ok(names(&["quiet_log"]))
+    );
+}
+
 /// Q3: a union's members share their stores.
 #[test]
 fn a_unions_members_share_their_stores() {
@@ -275,7 +294,12 @@ fn a_closed_member_decides_over_the_registrations_and_the_default() {
     // Without the run's facts the unit sees no store: refused.
     let (status, leaves) = row_of("use", None);
     assert_ne!(status, AnalysisStatus::Safe);
-    assert!(leaves.iter().any(|leaf| leaf.contains("callback-member-open")), "{leaves:?}");
+    assert!(
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("callback-member-open")),
+        "{leaves:?}"
+    );
 }
 
 /// A registered candidate that releases what it receives is refused.
@@ -291,7 +315,12 @@ fn an_effectful_registration_is_refused() {
     let run = run(vec![registrar, facts(CALLER), declared()]);
     let (status, leaves) = row_of("use", Some(run));
     assert_ne!(status, AnalysisStatus::Safe);
-    assert!(leaves.iter().any(|leaf| leaf.contains("callback-effectful")), "{leaves:?}");
+    assert!(
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("callback-effectful")),
+        "{leaves:?}"
+    );
 }
 
 /// An open member: an unclassified store (a variable), an address-taken
@@ -301,15 +330,20 @@ fn an_unclassified_store_or_an_unread_unit_opens_the_member() {
     if !clang_available() {
         return;
     }
-    let unclassified = facts(
-        "log_fn *chosen;\nvoid set(struct handle_s *h) { h->conf.log_cb = chosen; }\n",
-    );
+    let unclassified =
+        facts("log_fn *chosen;\nvoid set(struct handle_s *h) { h->conf.log_cb = chosen; }\n");
     let open = run(vec![unclassified, facts(CALLER), declared()]);
     assert!(open.closure("conf_s.log_cb").is_err());
     let (status, leaves) = row_of("use", Some(open));
     assert_ne!(status, AnalysisStatus::Safe);
-    assert!(leaves.iter().any(|leaf| leaf.contains("callback-member-open")), "{leaves:?}");
-    let taken = facts("log_fn *(*p)(void) ; void (*q)(struct conf_s *, log_fn *) = conf_set_log;\n");
+    assert!(
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("callback-member-open")),
+        "{leaves:?}"
+    );
+    let taken =
+        facts("log_fn *(*p)(void) ; void (*q)(struct conf_s *, log_fn *) = conf_set_log;\n");
     assert!(
         run(vec![taken, facts(CALLER), declared()])
             .closure("conf_s.log_cb")
@@ -331,10 +365,7 @@ fn a_default_candidate_joins_the_run_set() {
         return;
     }
     let run = run(vec![facts(CALLER), declared()]);
-    assert_eq!(
-        run.closure("conf_s.log_cb"),
-        Ok(names(&["default_log"]))
-    );
+    assert_eq!(run.closure("conf_s.log_cb"), Ok(names(&["default_log"])));
     let (status, leaves) = row_of("use", Some(run));
     assert_eq!(status, AnalysisStatus::Safe, "{leaves:?}");
 }
@@ -356,7 +387,9 @@ fn a_run_closed_empty_member_invokes_nothing_and_a_misspelling_refuses() {
     let (status, leaves) = row_of("use_nope", Some(run));
     assert_ne!(status, AnalysisStatus::Safe);
     assert!(
-        leaves.iter().any(|leaf| leaf.contains("not a member the run's records define")),
+        leaves
+            .iter()
+            .any(|leaf| leaf.contains("not a member the run's records define")),
         "{leaves:?}"
     );
 }

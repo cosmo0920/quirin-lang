@@ -291,18 +291,20 @@ pub fn run(
             let result = match contexts[index].wait() {
                 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the unit is
                 // analysed with the run's member facts installed.
-                Some(context) => qcore_c_gateway::member_run_facts::scoped(run_facts.clone(), || {
-                    audit_unit(
-                        plan,
-                        context,
-                        entry,
-                        &revision,
-                        contracts,
-                        &source_contracts,
-                        &provider,
-                        &mut output,
-                    )
-                }),
+                Some(context) => {
+                    qcore_c_gateway::member_run_facts::scoped(run_facts.clone(), || {
+                        audit_unit(
+                            plan,
+                            context,
+                            entry,
+                            &revision,
+                            contracts,
+                            &source_contracts,
+                            &provider,
+                            &mut output,
+                        )
+                    })
+                }
                 // Unreachable in the fold: the prelude's own failure is
                 // consumed first and stops it.
                 None => Err(format!("{}: library prelude failed", plan.library)),

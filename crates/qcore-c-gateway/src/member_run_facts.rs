@@ -70,7 +70,6 @@ impl RunMemberFacts {
     }
 
     /// The run's closure of `member`: open while any unit is unread.
-    #[must_use]
     pub fn closure(&self, member: &str) -> Closure {
         let views = self.units.iter().collect::<Vec<_>>();
         let result = closure_prepared(&views, self.prepared(), member).0;
@@ -189,10 +188,11 @@ mod tests {
         // Unit 0 calls the setter with `h`; the declarations' unit stores the
         // setter's formal 1 into `T.f`.
         let mut caller = MemberFacts::default();
-        caller.calls.entry("set_f".into()).or_default().insert(
-            1,
-            BTreeSet::from([Flow::Function { name: "h".into() }]),
-        );
+        caller
+            .calls
+            .entry("set_f".into())
+            .or_default()
+            .insert(1, BTreeSet::from([Flow::Function { name: "h".into() }]));
         let declared = declarations_unit(&[DeclaredStore::Parameter {
             member: "T.f".into(),
             function: "set_f".into(),
