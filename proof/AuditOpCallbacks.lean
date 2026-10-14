@@ -17,3 +17,8 @@ import QCore.OpCallbacks
 #print axioms QCore.OpCallbacks.an_open_member_never_decides
 #print axioms QCore.OpCallbacks.an_open_run_demotes
 #print axioms QCore.OpCallbacks.a_kept_decision_covers_every_run_candidate
+#print axioms QCore.OpCallbacks.an_unread_unit_keeps_the_member_open
+#print axioms QCore.OpCallbacks.an_unread_unit_demotes
+#print axioms QCore.OpCallbacks.a_read_unit_without_a_store_adds_nothing
+#print axioms QCore.OpCallbacks.the_run_set_is_exactly_the_read_sets
+#print axioms QCore.OpCallbacks.run_vectors_hold

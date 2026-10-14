@@ -20,9 +20,19 @@
 //! * every function named other than as a direct callee (its address may
 //!   escape, so its formals may be reached by a call no fact records);
 //! * the functions the unit defines with internal linkage;
-//! * every record whose function-pointer members an initializer list, a
-//!   whole-object assignment from anything but an object of the same record,
-//!   or a `memcpy`-family call may write (the record is open).
+//! * every initializer list of a record the unit defines once at file scope,
+//!   mapped onto its fields (card CALLBACK-MEMBER-DATA-ONLY-UNITS): each
+//!   function-pointer field's entry is a store into `TAG.FIELD`, an implicit
+//!   entry a null pointer;
+//! * every record whose function-pointer members an initializer list that
+//!   cannot be mapped so, a whole-object assignment from anything but an
+//!   object of the same record, or a `memcpy`-family call may write (the
+//!   record is open).
+//!
+//! A unit the gateway does not analyse (a data-only unit) is read the same
+//! way by [`read_unit`] (card CALLBACK-MEMBER-DATA-ONLY-UNITS), so every unit
+//! of the run contributes facts read from its AST; a unit whose AST is not
+//! read contributes none, which opens every member.
 //!
 //! # Closure (any set of units)
 //!
@@ -85,6 +95,26 @@ pub struct MemberFacts {
     /// evidence).
     #[serde(skip)]
     enumerators: BTreeMap<String, i64>,
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): each record the unit
+    /// defines once at file scope, with its fields in initializer order;
+    /// `None` when its fields cannot be mapped (an anonymous member, a second
+    /// different definition, a definition inside a function) (build state).
+    #[serde(skip)]
+    record_fields: BTreeMap<String, Option<RecordShape>>,
+}
+
+/// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a record's fields as an initializer
+/// list names them (unnamed bit-fields take no initializer).
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct RecordShape {
+    union: bool,
+    fields: Vec<FieldShape>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct FieldShape {
+    name: String,
+    function_pointer: bool,
 }
 
 const COPIERS: [&str; 6] = [
@@ -325,6 +355,129 @@ impl MemberFacts {
         })
     }
 
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: whether an initializer entry for
+    /// a field that is not a function pointer carries no callback: an implicit
+    /// value, a string literal, a nested list whose entries carry none, or a
+    /// scalar that is neither a function nor a function pointer. A record or
+    /// array value (a copy that may carry function pointers) carries one.
+    fn carries_no_callback(&self, node: &Value) -> bool {
+        let inner = strip(node);
+        match kind(inner) {
+            "ImplicitValueInitExpr" | "StringLiteral" => true,
+            "InitListExpr" => children(inner)
+                .iter()
+                .all(|child| self.carries_no_callback(child)),
+            _ => {
+                designator(inner).is_none()
+                    && (null_constant(node) || !self.function_pointer(node))
+                    && !self.function_pointer(inner)
+                    && self.record_of_node(inner, false).is_none()
+                    && !type_text(inner).contains('[')
+            }
+        }
+    }
+
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): map an initializer
+    /// list of `record` onto its fields: each function-pointer field's entry
+    /// is a store of that value into `TAG.FIELD` (an implicit entry is a null
+    /// pointer). `false`, recording nothing, when the list cannot be mapped
+    /// exactly (the record's fields are unknown or ambiguous, the entries do
+    /// not match them one for one, a union names no field, or another
+    /// field's entry may carry a callback); the caller then opens the record.
+    fn map_initializer(
+        &mut self,
+        record: &str,
+        node: &Value,
+        enclosing: Option<&Enclosing<'_>>,
+    ) -> bool {
+        let Some(Some(shape)) = self.record_fields.get(record) else {
+            return false;
+        };
+        let entries = children(node);
+        let pairs: Vec<(&FieldShape, &Value)> = if shape.union {
+            let Some(name) = node["field"]["name"].as_str() else {
+                return false;
+            };
+            let ([entry], Some(field)) = (
+                entries,
+                shape.fields.iter().find(|field| field.name == name),
+            ) else {
+                return false;
+            };
+            vec![(field, entry)]
+        } else {
+            if entries.len() != shape.fields.len() {
+                return false;
+            }
+            shape.fields.iter().zip(entries).collect()
+        };
+        let mut stores = Vec::new();
+        for (field, entry) in pairs {
+            if field.function_pointer {
+                stores.push((
+                    format!("{record}.{}", field.name),
+                    self.flows(entry, enclosing),
+                ));
+            } else if !self.carries_no_callback(entry) {
+                return false;
+            }
+        }
+        for (key, flows) in stores {
+            self.stores.entry(key).or_default().extend(flows);
+        }
+        true
+    }
+
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a record definition's fields in
+    /// initializer order, `None` when they cannot be mapped.
+    fn record_shape(&self, node: &Value) -> Option<RecordShape> {
+        let mut fields = Vec::new();
+        for child in children(node) {
+            if kind(child) != "FieldDecl" {
+                continue;
+            }
+            match child["name"].as_str().filter(|name| !name.is_empty()) {
+                // An unnamed bit-field takes no initializer.
+                None if child["isBitfield"].as_bool() == Some(true) => {}
+                // An anonymous structure or union member.
+                None => return None,
+                Some(name) => fields.push(FieldShape {
+                    name: name.to_owned(),
+                    function_pointer: self.function_pointer(child),
+                }),
+            }
+        }
+        Some(RecordShape {
+            union: node["tagUsed"].as_str() == Some("union"),
+            fields,
+        })
+    }
+
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: every file-scope record
+    /// definition (nested ones included), each tag once.
+    fn collect_records(&mut self, node: &Value) {
+        if kind(node) != "RecordDecl" {
+            return;
+        }
+        for child in children(node) {
+            self.collect_records(child);
+        }
+        if node["completeDefinition"].as_bool() != Some(true) {
+            return;
+        }
+        let Some(name) = node["name"].as_str().filter(|name| !name.is_empty()) else {
+            return;
+        };
+        let shape = self.record_shape(node);
+        let entry = self
+            .record_fields
+            .entry(name.to_owned())
+            .or_insert(shape.clone());
+        if *entry != shape {
+            *entry = None;
+        }
+    }
+
     /// The value of the enumerator declared with `id`, as Clang read the
     /// unit (implicit values counted on from the previous enumerator).
     #[must_use]
@@ -365,6 +518,7 @@ impl MemberFacts {
     /// Read one top-level declaration.
     pub fn collect(&mut self, node: &Value) {
         self.collect_enumerators(node);
+        self.collect_records(node);
         match kind(node) {
             "TypedefDecl" => {
                 let Some(name) = node["name"].as_str() else {
@@ -493,9 +647,24 @@ impl MemberFacts {
                     self.address_taken.insert(name.to_owned());
                 }
             }
+            // Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a record defined inside a
+            // function may reuse a file-scope tag, so no list of that tag is
+            // mapped onto fields.
+            "RecordDecl" if enclosing.is_some() => {
+                if let Some(name) = node["name"].as_str().filter(|name| !name.is_empty()) {
+                    self.record_fields.insert(name.to_owned(), None);
+                }
+                for child in children(node) {
+                    self.walk(child, enclosing);
+                }
+            }
             "InitListExpr" => {
+                // Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a list mapped onto its
+                // record's fields stores each function-pointer entry;
+                // otherwise the record is open, as before.
                 if let Some(record) = self.record_of_node(node, false)
                     && self.initializes_function_pointer(node)
+                    && !self.map_initializer(&record, node, enclosing)
                 {
                     self.opened
                         .entry(record)
@@ -511,6 +680,99 @@ impl MemberFacts {
                 }
             }
         }
+    }
+}
+
+/// Card **CALLBACK-MEMBER-DATA-ONLY-UNITS** (rule 12n): one unit's facts
+/// read from its whole Clang AST, for a unit the gateway does not otherwise
+/// analyse (a data-only unit). `source` is the unit's preprocessed text and
+/// `unit` gives its dialect and frontend flags: the input an analysed unit's
+/// index is read from. Every top-level declaration is read with
+/// [`MemberFacts::collect`], so a unit with no store into a member contributes
+/// an empty set read from its AST. `Err` when Clang or the JSON fails, or the
+/// document is not a translation unit with a declaration array; the caller
+/// then records no facts, which opens every member.
+pub fn read_unit(
+    source: &str,
+    unit: &crate::legacy_c::C11TranslationUnit<'_>,
+) -> Result<MemberFacts, String> {
+    crate::typed_c_ast::translation_unit_ast_with(source, unit, |bytes| {
+        crate::deep_unit_ast::from_slice::<FactsRoot>(bytes)
+    })
+    .map(|FactsRoot(facts)| facts)
+}
+
+/// The translation unit, read for its member facts alone.
+struct FactsRoot(MemberFacts);
+
+/// The translation unit's declaration array.
+struct FactsDeclarations(MemberFacts);
+
+impl<'de> Deserialize<'de> for FactsDeclarations {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct Declarations;
+        impl<'de> serde::de::Visitor<'de> for Declarations {
+            type Value = FactsDeclarations;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("a Clang translation-unit declaration array")
+            }
+
+            fn visit_seq<A: serde::de::SeqAccess<'de>>(
+                self,
+                mut seq: A,
+            ) -> Result<Self::Value, A::Error> {
+                let mut facts = MemberFacts::default();
+                while let Some(node) = seq.next_element::<Value>()? {
+                    facts.collect(&node);
+                }
+                Ok(FactsDeclarations(facts))
+            }
+        }
+        // Anything but an array is refused (serde's default for the other
+        // shapes): a unit whose declarations are not read records no facts.
+        deserializer.deserialize_seq(Declarations)
+    }
+}
+
+impl<'de> Deserialize<'de> for FactsRoot {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct Root;
+        impl<'de> serde::de::Visitor<'de> for Root {
+            type Value = FactsRoot;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("a Clang translation-unit AST object")
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                mut map: A,
+            ) -> Result<Self::Value, A::Error> {
+                let mut facts = None;
+                let mut root_kind = Value::Null;
+                while let Some(key) = map.next_key::<String>()? {
+                    match key.as_str() {
+                        // A duplicate key replaces every earlier set, as the
+                        // analysed unit's index reads it.
+                        "inner" => facts = Some(map.next_value::<FactsDeclarations>()?.0),
+                        "kind" => root_kind = map.next_value::<Value>()?,
+                        _ => {
+                            map.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                if root_kind.as_str() != Some("TranslationUnitDecl") {
+                    return Err(serde::de::Error::custom(
+                        "expected Clang TranslationUnitDecl",
+                    ));
+                }
+                facts
+                    .map(FactsRoot)
+                    .ok_or_else(|| serde::de::Error::custom("no declaration array"))
+            }
+        }
+        deserializer.deserialize_map(Root)
     }
 }
 

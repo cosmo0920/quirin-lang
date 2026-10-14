@@ -12,7 +12,9 @@
 //! otherwise it is demoted to `Unknown` with the reason
 //! `callback-member-open`. A unit that recorded no facts opens every member
 //! (premise `P-CG22-MEMBER-CLOSED-WORLD`: the analysed units are every unit
-//! that can store into it). The fold never promotes a row.
+//! that can store into it). Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a data-only
+//! unit records the facts read from its AST ([`data_only_facts`]), so only a
+//! unit whose AST is not read opens a member. The fold never promotes a row.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -49,6 +51,18 @@ pub fn member_declarations(contracts: &ResourceContracts) -> BTreeMap<String, BT
             (!members.is_empty()).then(|| (name.clone(), members))
         })
         .collect()
+}
+
+/// Card **CALLBACK-MEMBER-DATA-ONLY-UNITS** (rule 12n): the facts of a unit
+/// the gateway does not analyse, read from its whole Clang AST
+/// ([`qcore_c_gateway::callback_member_closure::read_unit`]) over its
+/// preprocessed text; `None` (every member open) when it has none (its
+/// preprocessing failed) or the AST is not read.
+pub(crate) fn data_only_facts(
+    preprocessed: Option<&str>,
+    unit: &qcore_c_gateway::legacy_c::C11TranslationUnit<'_>,
+) -> Option<MemberFacts> {
+    qcore_c_gateway::callback_member_closure::read_unit(preprocessed?, unit).ok()
 }
 
 /// One unit's recorded facts.
@@ -326,5 +340,153 @@ contract {
             &mut BTreeMap::new(),
         );
         assert_eq!(units[0]["status"], "Safe");
+    }
+
+    /// `RUN_VECTORS` (`QCore.OpCallbacks.runVectors`): each unit's reading of
+    /// the member (`None` unread, `Some(None)` open, `Some(Some(names))` read
+    /// with those stores, `Some(Some(&[]))` read with none) and the run's
+    /// closure (`None` open).
+    #[allow(clippy::type_complexity)]
+    const RUN_VECTORS: &[(&[Option<Option<&[&str]>>], Option<&[&str]>)] = &[
+        (&[], Some(&[])),
+        (&[Some(Some(&["a"])), Some(Some(&[]))], Some(&["a"])),
+        (&[Some(Some(&["a"])), Some(Some(&["b"]))], Some(&["a", "b"])),
+        (&[Some(Some(&["a"])), None], None),
+        (&[Some(Some(&[])), None, Some(Some(&["b"]))], None),
+        (&[Some(Some(&["a"])), Some(None)], None),
+    ];
+
+    #[test]
+    fn run_vectors_hold() {
+        for (readings, expected) in RUN_VECTORS {
+            let mut rows = Vec::new();
+            let mut recorded = Vec::new();
+            for (index, reading) in readings.iter().enumerate() {
+                let file = format!("u{index}.c");
+                rows.push(row(&file, "Unknown", &[]));
+                let facts = reading.map(|reading| match reading {
+                    Some(names) => facts(names),
+                    None => {
+                        let mut open = MemberFacts::default();
+                        open.stores.insert(
+                            "op.cb".to_owned(),
+                            BTreeSet::from([
+                                qcore_c_gateway::callback_member_closure::Flow::Open {
+                                    why: "open".to_owned(),
+                                },
+                            ]),
+                        );
+                        open
+                    }
+                });
+                recorded.push(unit(&file, facts));
+            }
+            let section = fold(&mut rows, &recorded, &contracts(), &mut BTreeMap::new());
+            let member = &section["members"]["op.cb"];
+            let got = (member["closed"] == true).then(|| {
+                member["candidates"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|name| name.as_str().unwrap().to_owned())
+                    .collect::<Vec<_>>()
+            });
+            let expected =
+                expected.map(|names| names.iter().map(|name| (*name).to_owned()).collect());
+            assert_eq!(got, expected, "{readings:?}");
+        }
+        assert_eq!(RUN_VECTORS.len(), 6);
+    }
+
+    fn clang_available() -> bool {
+        match qcore_c_gateway::clang_command() {
+            Ok(_) => true,
+            Err(reason) => {
+                assert!(
+                    std::env::var_os("QCORE_CLANG").is_none(),
+                    "explicit QCORE_CLANG configuration is invalid: {reason}"
+                );
+                eprintln!("skipping Clang-dependent data-only member test: {reason}");
+                false
+            }
+        }
+    }
+
+    /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: project `units` (file, source)
+    /// as the audit does and fold the run; the `op.cb` closure.
+    fn project_and_fold(units: &[(&str, &str)]) -> Value {
+        use qcore_c_gateway::legacy_c::{C11TranslationUnit, enumerate_source_definitions};
+        let contracts = contracts();
+        let mut report = crate::report::AuditReport::new("test");
+        let mut counts = crate::projection::AuditCounts::default();
+        for (file, source) in units {
+            let unit = C11TranslationUnit {
+                source,
+                ..Default::default()
+            };
+            let inventory = enumerate_source_definitions(&unit);
+            let mut out = String::new();
+            crate::projection::project_unit_into(
+                "l",
+                file,
+                &unit,
+                &inventory,
+                &contracts,
+                &mut report,
+                &mut counts,
+                &mut out,
+            )
+            .expect("projects");
+        }
+        let (section, _, _) = report.fold_callback_members(&contracts);
+        section
+    }
+
+    const RECORD: &str = "struct op { int kind; int (*cb)(void *); };\n";
+
+    #[test]
+    fn a_data_only_unit_is_read_from_its_ast() {
+        if !clang_available() {
+            return;
+        }
+        let analysed = format!(
+            "{RECORD}int h(void *);\nvoid destroy(struct op *o);\n\
+             void set(struct op *o) {{ o->cb = h; }}\n\
+             void drop(struct op *o) {{ destroy(o); }}\n"
+        );
+        // A data-only unit whose designated initializer stores into the
+        // member: its candidate joins the run's closed set.
+        let storing = format!("{RECORD}int g(void *);\nconst struct op tmpl = {{ .cb = g }};\n");
+        let section = project_and_fold(&[("a.c", &analysed), ("d.c", &storing)]);
+        assert_eq!(section["units_without_facts"], 0, "{section}");
+        assert_eq!(
+            section["members"]["op.cb"],
+            json!({"closed": true, "candidates": ["g", "h"]})
+        );
+        // A data-only unit with no store into the member closes: the run's
+        // set is the analysed unit's own.
+        let silent = format!("{RECORD}int x = 1;\nconst struct op none = {{ 3 }};\n");
+        let section = project_and_fold(&[("a.c", &analysed), ("d.c", &silent)]);
+        assert_eq!(
+            section["members"]["op.cb"],
+            json!({"closed": true, "candidates": ["h"]})
+        );
+        // An empty unit (the measured `ctr_utils.c`) closes too.
+        let section = project_and_fold(&[("a.c", &analysed), ("e.c", "")]);
+        assert_eq!(
+            section["members"]["op.cb"],
+            json!({"closed": true, "candidates": ["h"]})
+        );
+        // A data-only unit whose AST is not read (preprocessing fails) records
+        // no facts and keeps the member open.
+        let unreadable = format!("{RECORD}#error unreadable\n");
+        let section = project_and_fold(&[("a.c", &analysed), ("f.c", &unreadable)]);
+        assert_eq!(section["units_without_facts"], 1, "{section}");
+        assert_eq!(section["members"]["op.cb"]["closed"], false);
+        assert_eq!(
+            section["units_without_facts_named"],
+            json!(["l/f.c"]),
+            "{section}"
+        );
     }
 }

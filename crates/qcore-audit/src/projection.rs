@@ -567,6 +567,12 @@ pub fn project_unit_into(
         counts.data_only_units += 1;
         let result = validate_unrestricted_c11(unit);
         report.record_data_only(library, file, result.as_ref().err());
+        // Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): the unit's member
+        // facts, read from its AST, only when a declaration invokes a member.
+        if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
+            let facts = crate::callback_member_fold::data_only_facts(result.as_deref().ok(), unit);
+            report.record_callback_members(library, file, facts);
+        }
         report.record_enumeration(inventory);
         match result {
             Ok(_) => say!(out, "  {library}/{file}: data-only gateway pass"),
@@ -706,6 +712,23 @@ pub fn project_prepared_unit_into(
     if source_functions.is_empty() {
         counts.data_only_units += 1;
         report.record_data_only(library, file, prepared.validation_error());
+        // Card CALLBACK-MEMBER-DATA-ONLY-UNITS (rule 12n): the unit's member
+        // facts, read from its AST, only when a declaration invokes a member.
+        if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
+            let view = C11TranslationUnit {
+                source: prepared.raw_source(),
+                include_paths: prepared.include_paths().to_vec(),
+                definitions: prepared.definitions().to_vec(),
+                preprocessor_options: prepared.preprocessor_options().to_vec(),
+                dialect: prepared.dialect(),
+                ..Default::default()
+            };
+            let facts = crate::callback_member_fold::data_only_facts(
+                prepared.preprocessed_source().ok(),
+                &view,
+            );
+            report.record_callback_members(library, file, facts);
+        }
         report.record_enumeration(inventory);
         if let Some(error) = prepared.validation_error() {
             counts.gateway_failures += 1;

@@ -380,4 +380,109 @@ theorem a_kept_decision_covers_every_run_candidate {us rs : List String}
   have mu : x ∈ us := by simpa using hx
   exact an_admitted_decision_takes_or_is_identity h (classOf x) (List.mem_map.mpr ⟨x, mu, rfl⟩)
 
+/-! ## Every unit read (card CALLBACK-MEMBER-DATA-ONLY-UNITS, rule 12n)
+
+Each unit of the run, analysed or data-only, contributes its reading of the
+member: `none` when its Clang AST was not read (its preprocessing, Clang run or
+JSON failed), otherwise the closure its own facts give. A unit read with no
+store into the member contributes `.closed []`, read from its AST, not
+assumed. -/
+
+/-- One unit's reading of a member. -/
+abbrev UnitReading := Option Closure
+
+/-- The run's closure: open when any unit is unread or open, otherwise every
+read unit's designators. -/
+def runClosure : List UnitReading → Closure
+  | [] => .closed []
+  | none :: _ => .opened
+  | some .opened :: _ => .opened
+  | some (.closed ns) :: rest =>
+      match runClosure rest with
+      | .opened => .opened
+      | .closed rs => .closed (ns ++ rs)
+
+/-- **An unread unit keeps the member open.** -/
+theorem an_unread_unit_keeps_the_member_open {us : List UnitReading} (h : none ∈ us) :
+    runClosure us = .opened := by
+  induction us with
+  | nil => cases h
+  | cons u rest ih =>
+    rcases List.mem_cons.mp h with he | hr
+    · subst he; rfl
+    · rcases u with _ | (ns | _)
+      · rfl
+      · simp [runClosure, ih hr]
+      · rfl
+
+/-- Hence the fold demotes every decision resting on a member while any unit
+of the run is unread. -/
+theorem an_unread_unit_demotes (unit : Closure) {us : List UnitReading} (h : none ∈ us) :
+    foldKeeps unit (runClosure us) = false := by
+  rw [an_unread_unit_keeps_the_member_open h]
+  exact an_open_run_demotes unit
+
+/-- A unit read with no store into the member changes nothing. -/
+theorem a_read_unit_without_a_store_adds_nothing (us : List UnitReading) :
+    runClosure (some (.closed []) :: us) = runClosure us := by
+  cases hr : runClosure us <;> simp [runClosure, hr]
+
+/-- **A unit's set read from its AST is exact.** When the run is closed, its
+set is exactly the designators the units read, so a candidate a data-only
+unit's initializer stores is in it, and nothing else is. -/
+theorem the_run_set_is_exactly_the_read_sets {us : List UnitReading} {rs : List String}
+    (h : runClosure us = .closed rs) (x : String) :
+    x ∈ rs ↔ ∃ ns, some (Closure.closed ns) ∈ us ∧ x ∈ ns := by
+  induction us generalizing rs with
+  | nil =>
+    simp only [runClosure, Closure.closed.injEq] at h
+    subst h
+    simp
+  | cons u rest ih =>
+    rcases u with _ | (ns | _)
+    · simp [runClosure] at h
+    · cases hr : runClosure rest with
+      | opened => simp [runClosure, hr] at h
+      | closed rs' =>
+        simp only [runClosure, hr, Closure.closed.injEq] at h
+        subst h
+        rw [List.mem_append, ih hr]
+        constructor
+        · rintro (hx | ⟨ms, hm, hx⟩)
+          · exact ⟨ns, by simp, hx⟩
+          · exact ⟨ms, List.mem_cons_of_mem _ hm, hx⟩
+        · rintro ⟨ms, hm, hx⟩
+          rcases List.mem_cons.mp hm with he | hm
+          · cases he
+            exact Or.inl hx
+          · exact Or.inr ⟨ms, hm, hx⟩
+    · simp [runClosure] at h
+
+/-- `RUN_VECTORS` (`callback_member_fold.rs`): each unit's reading of `T.f`
+(`none` unread, `some none` open, `some (some names)` closed) and the run's
+closure (`none` open). -/
+def runVectors : List (List (Option (Option (List String))) × Option (List String)) := [
+  ([], some []),
+  ([some (some ["a"]), some (some [])], some ["a"]),
+  ([some (some ["a"]), some (some ["b"])], some ["a", "b"]),
+  ([some (some ["a"]), none], none),
+  ([some (some []), none, some (some ["b"])], none),
+  ([some (some ["a"]), some none], none)
+]
+
+/-- The vector spelling of a reading. -/
+def readingOf : Option (Option (List String)) → UnitReading
+  | none => none
+  | some none => some .opened
+  | some (some names) => some (.closed names)
+
+/-- The vector spelling of a closure. -/
+def closureOf : Closure → Option (List String)
+  | .opened => none
+  | .closed names => some names
+
+theorem run_vectors_hold :
+    runVectors.all (fun (us, c) => closureOf (runClosure (us.map readingOf)) == c) = true := by
+  decide
+
 end QCore.OpCallbacks
