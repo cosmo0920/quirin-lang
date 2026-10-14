@@ -533,12 +533,14 @@ fn last_segment(member: &str) -> &str {
     member.rsplit('.').next().unwrap_or(member)
 }
 
+/// A node's direct contributions: designators, dependencies, why it is open.
+type Contribution = (BTreeSet<String>, BTreeSet<Node>, BTreeSet<String>);
+
 /// The closure of `member` (`TAG.PATH`) over `units`.
-#[must_use]
 pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
     // The direct contributions of one node: designators, dependencies and
     // reasons it is open.
-    let direct = |node: &Node| -> (BTreeSet<String>, BTreeSet<Node>, BTreeSet<String>) {
+    let direct = |node: &Node| -> Contribution {
         let mut names = BTreeSet::new();
         let mut dependencies = BTreeSet::new();
         let mut open = BTreeSet::new();
@@ -606,8 +608,7 @@ pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
         (names, dependencies, open)
     };
     // Discover the reachable graph, then iterate to the least fixed point.
-    let mut graph: BTreeMap<Node, (BTreeSet<String>, BTreeSet<Node>, BTreeSet<String>)> =
-        BTreeMap::new();
+    let mut graph: BTreeMap<Node, Contribution> = BTreeMap::new();
     let mut pending = vec![Node::Member(member.to_owned())];
     while let Some(node) = pending.pop() {
         if graph.contains_key(&node) {
@@ -655,6 +656,7 @@ pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
 /// `call:F:i`, an actual of `F` at `i`; `addr:F` marks `F` address-taken and
 /// `static:F` internal.
 #[cfg(test)]
+#[allow(clippy::type_complexity)]
 pub(crate) const CLOSURE_VECTORS: &[(&[(usize, &str, &str)], Option<&[&str]>)] = &[
     (&[(0, "T.f", "fn:a"), (1, "T.f", "fn:b")], Some(&["a", "b"])),
     (&[(0, "T.f", "null")], Some(&[])),
