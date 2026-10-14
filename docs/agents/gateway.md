@@ -5064,20 +5064,41 @@ own anchor here.
     name a member-invoking declaration stays only when the run's set is closed
     and a subset of its unit's, otherwise it is demoted to `Unknown` with the
     reason; a unit row with no facts opens every member; the sidecar's
-    `callback_members` section lists each member's run closure. A formal
+    `callback_members` section lists each member's run closure. Card
+    CALLBACK-MEMBER-DATA-ONLY-UNITS: a data-only unit (no definitions, so never
+    analysed) is read whole for its facts alone
+    (`callback_member_closure::read_unit` over its preprocessed text, dialect
+    and frontend flags, from `projection`'s data-only branches through
+    `callback_member_fold::data_only_facts`), so a unit with no store
+    contributes the empty set read from its AST; a unit whose preprocessing,
+    Clang run or JSON fails, or whose root is not a translation unit with a
+    declaration array, records none and opens every member. An initializer
+    list of a record the unit defines once at file scope is mapped onto its
+    fields (unnamed bit-fields skipped, a union by its `field`): each
+    function-pointer field's entry is a store into `TAG.FIELD`, an implicit
+    entry a null pointer. A formal
     stands for its callers' actuals only when it is a function pointer and its
     function's address no unit takes (an internal function's in its own unit);
     a variable, a call's result, a cast, a non-function-pointer formal, an
-    address-taken member and a record an initializer list, a whole-object
-    assignment or a `memcpy`-family call may write open it; a checkpoint
+    address-taken member and a record an initializer list that cannot be
+    mapped so (an anonymous member, a tag defined again inside a function, an
+    entry count that differs, another field's entry that is a record or array
+    copy or a function), a whole-object assignment or a `memcpy`-family call
+    may write open it; a checkpoint
     composer refuses a run whose contracts invoke a member (it carries no
     facts). A member invocation is a declared assumption (rule 13i). **Do
     not** decide a member over the unit's set alone, promote a row in the
-    fold, follow an address-taken function's formal, or read a value the
-    facts do not name as no candidate. `QCore.OpCallbacks`
+    fold, follow an address-taken function's formal, read a value the
+    facts do not name as no candidate, or treat a unit whose AST was not read
+    (or a unit absent from the run) as closed. `QCore.OpCallbacks`
     (`an_open_member_never_decides`, `an_open_run_demotes`,
-    `a_kept_decision_covers_every_run_candidate`); `callback_member_closure`'s
-    `CLOSURE_VECTORS`; `tests/cg22_op_callbacks.rs`.
+    `a_kept_decision_covers_every_run_candidate`,
+    `an_unread_unit_keeps_the_member_open`, `an_unread_unit_demotes`,
+    `a_read_unit_without_a_store_adds_nothing`,
+    `the_run_set_is_exactly_the_read_sets`, `run_vectors_hold`);
+    `callback_member_closure`'s `CLOSURE_VECTORS`; `callback_member_fold`'s
+    `RUN_VECTORS`; `tests/cg22_op_callbacks.rs`,
+    `tests/callback_member_data_only.rs`.
 
 <a id="constraint-12o"></a>
 
