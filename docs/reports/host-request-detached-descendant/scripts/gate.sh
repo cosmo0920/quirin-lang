@@ -18,9 +18,16 @@ out="$private/gate-$name"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0
+# HELD_LOCK=1: the caller already holds the heavy lock for the whole gate
+# (`flock LOCK bash gate.sh NAME`), so a step must not take it again: a second
+# open of the lock file would wait for the caller forever.
 step() {
   local label="$1"; shift
-  flock "$lock" "$@" > "$out/$label.log" 2>&1
+  if [ "${HELD_LOCK:-0}" = 1 ]; then
+    "$@" > "$out/$label.log" 2>&1
+  else
+    flock "$lock" "$@" > "$out/$label.log" 2>&1
+  fi
   echo $? > "$out/$label.exit"
 }
 if [ "$part" != docs ]; then
