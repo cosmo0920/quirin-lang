@@ -1,0 +1,13 @@
+{
+  "note": "SERVE-FORWARDED-CALLBACK-FORMALS card gate on base 2afce9973, every code step at 4c6988cb3, scripts docs/reports/serve-forwarded-callback-formals/scripts/gate.sh (HELD=1, part `all`, steps 00-09 in one run) and finish-gate.sh, the whole gate.sh run under one exclusive flock on the shared heavy lock, logs private/sf/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 494 units, 507 summaries, 8,036 passed, 0 failed, 14 ignored, exit 0 (private/sf/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 320 audits passed (QCore.CallbackForward added); no provider gate (providers/ unchanged); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8036,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 320,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

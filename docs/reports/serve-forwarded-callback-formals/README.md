@@ -158,4 +158,15 @@ Ledger 771 → 771.
 
 ## 8. Gate
 
-Filled in by the gate commit; see `gate.json` and `gate/`.
+Standing gate at `4c6988cb3` (`scripts/gate-whole.sh g1`: `gate.sh` steps
+00-09 under one exclusive flock on the shared heavy lock, then
+`finish-gate.sh`; logs `private/sf/gate-g1/`, exits copied to [gate/](gate/),
+[gate.json](gate.json)): cargo check 0; submodule 0; fmt 0; clippy `--locked`
+0; `run_test_binaries.py` 0, **494 units, 507 summaries, 8,036 passed, 0
+failed, 14 ignored**, no rerun (`private/sf/tests-g1/`); both reevaluation
+probes 0; `check_lean_audits.py` 0, **320 Lean audits**; the Python suite 1
+before the matrix regeneration (its one failure is the committed matrix's
+`lean_audits` 319 against the produced 320, by design), then
+`build_matrix.py . --gate gate.json` 0 and the suite rerun 0 (**365 OK**);
+docs index 0 and its check 0. No provider gate: nothing under `providers/` or
+`crates/qcore-schemas/` changed.
