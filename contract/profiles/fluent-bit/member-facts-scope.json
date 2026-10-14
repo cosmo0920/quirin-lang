@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "meaning": "Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (gateway rule 12n, user decisions R1 and F1): units of the production compile database the member-facts pre-pass does not read, each with its recorded evidence. Every other unit is preprocessed; a unit that names a token of an invoked member's closure and cannot be read as C opens every member.",
+  "outside_program": [
+    {
+      "fragment": "/lib/librdkafka-2.15.0/src-cpp/",
+      "why": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S",
+      "why": "LuaJIT's VM assembly generated at build time by buildvm, absent from the pinned inputs; assembly names no C record or function of the run"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql-parser_lex.c",
+      "why": "flex output generated at build time from plugins/processor_sql/parser/sql-parser.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql_parser.c",
+      "why": "bison output generated at build time from plugins/processor_sql/parser/sql-parser.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/src/record_accessor/ra_lex.c",
+      "why": "flex output generated at build time from src/record_accessor/ra.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/src/record_accessor/ra_parser.c",
+      "why": "bison output generated at build time from src/record_accessor/ra.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/src/stream_processor/parser/sql_lex.c",
+      "why": "flex output generated at build time from src/stream_processor/parser/sql.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    },
+    {
+      "fragment": "/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c",
+      "why": "bison output generated at build time from src/stream_processor/parser/sql.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)"
+    }
+  ]
+}

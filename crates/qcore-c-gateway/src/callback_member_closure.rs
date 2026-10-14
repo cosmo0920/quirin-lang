@@ -1516,6 +1516,92 @@ pub(crate) fn vector_units(facts: &[(usize, &str, &str)]) -> Vec<MemberFacts> {
 mod tests {
     use super::*;
 
+    /// `KEY_VECTORS` (`QCore.AppRkCallbacks.keyVectors`): a record table
+    /// (`(tag, field, record)`: the field holds that record by value), a key
+    /// and its normal form. Every other field is a function pointer; an
+    /// anonymous record (`sasl`, `oauthbearer`) is inline.
+    #[allow(clippy::type_complexity)]
+    const KEY_VECTORS: &[(&[(&str, &str, &str)], &str, &str)] = &[
+        (
+            &[("rd_kafka_s", "rk_conf", "rd_kafka_conf_s")],
+            "rd_kafka_s.rk_conf.dr_msg_cb",
+            "rd_kafka_conf_s.dr_msg_cb",
+        ),
+        (
+            &[("rd_kafka_s", "rk_conf", "rd_kafka_conf_s")],
+            "rd_kafka_conf_s.dr_msg_cb",
+            "rd_kafka_conf_s.dr_msg_cb",
+        ),
+        (
+            &[],
+            "rd_kafka_conf_s.sasl.oauthbearer.token_refresh_cb",
+            "rd_kafka_conf_s.sasl.oauthbearer.token_refresh_cb",
+        ),
+        (&[("a", "b", "c"), ("c", "d", "e")], "a.b.d.f", "e.f"),
+    ];
+
+    fn vector_tables(rows: &[(&str, &str, &str)], key: &str) -> MemberFacts {
+        // Every record the key's path names, each field a function pointer
+        // unless a row says it holds a record.
+        let mut facts = MemberFacts::default();
+        let mut tags = rows.iter().flat_map(|(t, _, r)| [*t, *r]).collect::<Vec<_>>();
+        tags.push(key.split('.').next().unwrap());
+        for tag in tags {
+            let mut keys = RecordKeys::default();
+            for segment in key.split('.').skip(1) {
+                keys.fields.entry(segment.to_owned()).or_insert(FieldKey::Function);
+            }
+            for (t, field, record) in rows {
+                if *t == tag {
+                    keys.fields.insert(
+                        (*field).to_owned(),
+                        FieldKey::Named {
+                            record: (*record).to_owned(),
+                        },
+                    );
+                }
+            }
+            facts.records.insert(tag.to_owned(), Some(keys));
+        }
+        // The anonymous records of the third vector.
+        if key.contains(".sasl.") {
+            let inner = |name: &str, field: FieldKey| RecordKeys {
+                union: false,
+                fields: BTreeMap::from([(name.to_owned(), field)]),
+            };
+            let oauth = inner("token_refresh_cb", FieldKey::Function);
+            let sasl = inner(
+                "oauthbearer",
+                FieldKey::Inline {
+                    keys: Box::new(oauth),
+                },
+            );
+            facts.records.insert(
+                "rd_kafka_conf_s".into(),
+                Some(inner(
+                    "sasl",
+                    FieldKey::Inline {
+                        keys: Box::new(sasl),
+                    },
+                )),
+            );
+        }
+        facts
+    }
+
+    #[test]
+    fn key_vectors_hold() {
+        for (rows, key, normal) in KEY_VECTORS {
+            let facts = vector_tables(rows, key);
+            assert_eq!(
+                Tables::of(&[&facts]).normalise(key),
+                Ok(BTreeSet::from([(*normal).to_owned()])),
+                "{key}"
+            );
+        }
+        assert_eq!(KEY_VECTORS.len(), 4);
+    }
+
     #[test]
     fn closure_vectors_hold() {
         for (facts, expected) in CLOSURE_VECTORS {
