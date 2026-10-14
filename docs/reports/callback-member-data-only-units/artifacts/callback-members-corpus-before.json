@@ -1,0 +1,97 @@
+{
+ "declarations": {
+  "rd_kafka_op_destroy": [
+   "rd_kafka_op_s.rko_op_cb"
+  ],
+  "rd_kafka_q_pop_serve": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_pop_serve0": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_pop_serve_maybe_consume": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve0": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve_maybe_consume": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ]
+ },
+ "demoted": [],
+ "meaning": "the run's closure of every function-pointer member a resource_callback_member_invoked clause names (rule 12n): over every analysed unit's Clang stores into the member, a designator joins the set, a null pointer adds nothing, a read of another such member adds its set, a formal of a function whose address no unit takes adds its actuals at every call, and anything else opens it; a unit that recorded no facts opens it (premise P-CG22-MEMBER-CLOSED-WORLD). `demoted` lists the Safe or Pending rows whose unit decided a member over a set the run's closure is not contained in, now Unknown (callback-member-open). `members_over_recorded_units` is the same closure over the units that did record facts, and `units_without_facts_named` names the others (evidence only). Evidence and a demotion only: no row is promoted",
+ "members": {
+  "rd_kafka_op_s.rko_op_cb": {
+   "closed": false,
+   "open": [
+    "4 analysed unit(s) recorded no facts"
+   ]
+  },
+  "rd_kafka_op_s.rko_serve": {
+   "closed": false,
+   "open": [
+    "4 analysed unit(s) recorded no facts"
+   ]
+  }
+ },
+ "members_over_recorded_units": {
+  "rd_kafka_op_s.rko_op_cb": {
+   "candidates": [
+    "rd_kafka_DeleteRecords_leaders_queried_cb",
+    "rd_kafka_ListOffsets_leaders_queried_cb",
+    "rd_kafka_admin_fanout_worker",
+    "rd_kafka_admin_worker",
+    "rd_kafka_broker_monitor_op_cb",
+    "rd_kafka_cgrp_assignor_handle_Metadata_op",
+    "rd_kafka_cgrp_consumer_handle_Metadata_op",
+    "rd_kafka_cgrp_handle_Metadata_op",
+    "rd_kafka_oauthbearer_refresh_op",
+    "rd_kafka_offset_reset_op_cb",
+    "rd_kafka_offset_validate_op_cb",
+    "rd_kafka_share_ack_commit_cb_register_op",
+    "rd_kafka_share_commit_async_fanout_op",
+    "rd_kafka_share_commit_sync_fanout_op",
+    "rd_kafka_share_fetch_fanout_op",
+    "rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+    "rd_kafka_txn_op_abort_transaction",
+    "rd_kafka_txn_op_abort_transaction_ack",
+    "rd_kafka_txn_op_ack_init_transactions",
+    "rd_kafka_txn_op_begin_abort",
+    "rd_kafka_txn_op_begin_commit",
+    "rd_kafka_txn_op_begin_transaction",
+    "rd_kafka_txn_op_commit_transaction",
+    "rd_kafka_txn_op_commit_transaction_ack",
+    "rd_kafka_txn_op_init_transactions",
+    "rd_kafka_txn_op_send_offsets_to_transaction"
+   ],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_serve": {
+   "candidates": [
+    "rd_kafka_cgrp_op_serve",
+    "rd_kafka_mock_cluster_op_serve",
+    "rd_kafka_poll_cb",
+    "rd_kafka_toppar_op_serve"
+   ],
+   "closed": true
+  }
+ },
+ "units_without_facts": 4,
+ "units_without_facts_named": [
+  "ctraces/ctr_utils.c",
+  "librdkafka/opentelemetry/common.pb.c",
+  "librdkafka/opentelemetry/metrics.pb.c",
+  "librdkafka/opentelemetry/resource.pb.c"
+ ]
+}
