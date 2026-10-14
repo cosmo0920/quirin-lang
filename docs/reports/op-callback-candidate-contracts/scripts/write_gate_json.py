@@ -14,8 +14,8 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/op-constructor-declarations"
-BASE = "f3e1d724c, rebased onto 2f0f65a60, then a7e7e8cee"
+REPORT = REPO / "docs/reports/op-callback-candidate-contracts"
+BASE = "2afce9973"
 
 
 def main() -> int:
@@ -49,8 +49,8 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"OP-CONSTRUCTOR-DECLARATIONS card gate on base {BASE}, every code "
-        f"step at {head[:9]}, scripts docs/reports/op-constructor-declarations/scripts/gate-whole.sh, "
+        f"OP-CALLBACK-CANDIDATE-CONTRACTS card gate on base {BASE}, every code "
+        f"step at {head[:9]}, scripts docs/reports/op-callback-candidate-contracts/scripts/gate-whole.sh, "
         "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/opcand/gate-{name} of this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/opcand/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (QCore.OpCallbacks extended, no audit file added); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (no Lean change); "
         "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "

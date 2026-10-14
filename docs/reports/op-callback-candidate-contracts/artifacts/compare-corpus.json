@@ -1,0 +1,189 @@
+{
+ "statuses_before": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 13,
+  "indirect memory access is outside the resource projection": 3
+ },
+ "added": {
+  "unmodeled expression may mutate a formal resource identity": 3
+ },
+ "moving_rows": 9,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "23964: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "23664: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23670: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "23868: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23874: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_memberid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "24325: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24358: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24412: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "23597: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23607: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_share_fetch_reply_op_cb"
+   ],
+   "lost": [
+    "23383: call to `rd_kafka_op_destroy`: callback `rd_kafka_share_fetch_reply_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24350: indirect memory access is outside the resource projection",
+    "24352: indirect memory access is outside the resource projection",
+    "24356: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "24350: unmodeled expression may mutate a formal resource identity",
+    "24352: unmodeled expression may mutate a formal resource identity",
+    "24356: unmodeled expression may mutate a formal resource identity"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_offset_reset_op_cb"
+   ],
+   "lost": [
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_offset_reset_op_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": []
+  }
+ ]
+}

@@ -5099,7 +5099,34 @@ own anchor here.
     bound the formal. This is ordering, not a soundness guard: whether a
     candidate may alias the formal is answered, in every run, by its own
     contract (a candidate that releases what it receives or a global, keeps
-    something or has none is not the identity and refuses). **Do
+    something or has none is not the identity and refuses). **The
+    candidates' own contracts** (card OP-CALLBACK-CANDIDATE-CONTRACTS):
+    the op callback protocol reads `PASS` (the op stays with
+    `rd_kafka_op_handle`) and `HANDLED` (the handler destroys it) as an
+    `rko_op_cb` candidate borrowing the op, and `KEEP` and `YIELD` as it
+    taking the op; `rd_kafka_op_destroy`'s call (`RD_KAFKA_RESP_ERR__DESTROY`,
+    neither `KEEP` nor `YIELD` asserted) borrows it; an `rko_serve`
+    candidate owns the op on every result but `PASS`. So an `rko_op_cb`
+    candidate is declared only as the identity (every formal borrowed,
+    `resource_return_none()`) when it returns only `HANDLED` or `PASS` and
+    releases, keeps or moves out nothing the op holds, and an `rko_serve`
+    candidate only as taking the op (`resource_consumed(rko, nonnull)`, rule
+    12m) when it never returns `PASS`. A candidate taking the op on `KEEP`
+    only (C04.13 states no disposition over the unsigned
+    `rd_kafka_op_res_t`, and rule 12m refuses it anyway), one that releases
+    or moves out an object the op's members hold, and one calling an
+    application callback stay undeclared: 19 of the 30 non-poll candidates
+    are declared (`client.qv`, each body read at `66910c10` and `046accf6`,
+    pinned, every one a declared assumption carrying the premise
+    `rk_log_callback` for the application's `rk_conf.log_cb`), 11 are
+    residuals (nine in the amended `OP-CALLBACK-CANDIDATE-CONTRACTS`, two in
+    `OP-CALLBACK-CANDIDATES-APP-CALLBACKS`, after
+    `OP-APP-RK-CALLBACKS-VIA-POLL-CB`). A unit decides a member only over its
+    own closed set and the fold keeps a row only when the run's set is in
+    it, so a declared candidate frees no row by itself; measured, the 13
+    `callback-uncontracted` leaves of `rd_kafka_op_destroy` in `rdkafka.c`
+    and `rdkafka_offset.c` decide and no status moves.
+    [Report](../reports/op-callback-candidate-contracts/README.md). **Do
     not** decide a member over the unit's set alone, promote a row in the
     fold, follow an address-taken function's formal, read a value the
     facts do not name as no candidate, treat a unit whose AST was not read
@@ -6296,7 +6323,15 @@ own anchor here.
     a direct call of the candidate with that actual carries). Then any number
     of invocations is the identity and the call is its custody contract so
     strengthened. A designator at a callback position is a W4 call-graph edge
-    (summarised first). **Do not** read a callback as borrowed, admit a
+    (summarised first). A named premise (C04.18) on a candidate's
+    declaration is not a side clause: it changes no mode, and it is published
+    with the candidate's declaration (card OP-CALLBACK-CANDIDATE-CONTRACTS:
+    `rk_log_callback` and the other premises of the op-callback candidates).
+    A row deciding a member through candidates its body does not spell does
+    not list them among its own dependencies
+    (`MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED`); on the measured runs none
+    stays `Safe`, because no unit's own set holds the run's (rule 12n's
+    fold). **Do not** read a callback as borrowed, admit a
     candidate on a summary of another unit, admit a releasing or keeping
     candidate outside a registry's `element` position, or place a call whose
     Clang calls disagree. `QCore.CallbackContracts`

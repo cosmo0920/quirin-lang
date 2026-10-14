@@ -1,0 +1,268 @@
+{
+ "rd_kafka_op_destroy": {
+  "leaves": 118,
+  "functions": 75,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_serve"
+  ]
+ },
+ "rd_kafka_q_serve": {
+  "leaves": 3,
+  "functions": 3,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_pop_serve0": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop_serve"
+  ]
+ },
+ "rd_kafka_q_pop_serve": {
+  "leaves": 2,
+  "functions": 2,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_queue.c::rd_kafka_q_pop"
+  ]
+ },
+ "rd_kafka_q_pop_serve_maybe_consume": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_req0": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_op_req": {
+  "leaves": 1,
+  "functions": 1,
+  "alone": 1,
+  "alone_functions": [
+   "rdkafka_op.c::rd_kafka_op_req2"
+  ]
+ },
+ "rd_kafka_op_req2": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_purge0": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_q_wait_result": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_DeleteRecords_leaders_queried_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_ListOffsets_leaders_queried_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_admin_fanout_worker": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_admin_worker": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_broker_monitor_op_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_cgrp_handle_Metadata_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_oauthbearer_refresh_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_offset_reset_op_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_offset_validate_op_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_share_ack_commit_cb_register_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_share_commit_async_fanout_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_share_commit_sync_fanout_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_share_fetch_fanout_op": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_share_fetch_reply_op_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_abort_transaction": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_abort_transaction_ack": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_ack_init_transactions": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_begin_abort": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_begin_commit": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_begin_transaction": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_commit_transaction": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_commit_transaction_ack": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_init_transactions": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_txn_op_send_offsets_to_transaction": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_cgrp_op_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_mock_cluster_op_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_toppar_op_serve": {
+  "leaves": 0,
+  "functions": 0,
+  "alone": 0,
+  "alone_functions": []
+ },
+ "rd_kafka_poll_cb": {
+  "leaves": 4,
+  "functions": 4,
+  "alone": 0,
+  "alone_functions": []
+ }
+}
