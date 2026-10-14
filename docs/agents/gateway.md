@@ -5015,6 +5015,136 @@ own anchor here.
     `tests/quant_index_checks.rs`;
     [report](../reports/quant-index-checks/README.md).
 
+<a id="constraint-12m"></a>
+
+12m. **An object a callee hands its callback (`supplied_owned`) is admitted
+    only when every candidate takes it on every return; one that borrows or
+    keeps it, or takes it on some return codes only, is refused.** Card
+    CG22-OP-CALLBACKS-AND-SERVED-QUEUES (contract specification C04.19.1,
+    grammar G05), on the user's decision of 2026-10-14 (clause 1's word).
+    `qcore_schemas::callback::CallbackActual::SuppliedOwned`; the loader
+    (`contract_callback.rs`) admits it once per actual list of a synchronous
+    or member invocation; `callback_contracts::classify` reads a candidate's
+    position there as `TakesSupplied` (`resource_consumed` /
+    `resource_released`) or `KeepsSupplied` (`resource_borrowed` /
+    `resource_owned`), and `legacy_callback_route::Parser::classified` reads a
+    candidate with only a return-code disposition (C04.13) as
+    `KeepsSupplied`; `decide` refuses `callback-supplied-kept`, and reads a
+    call whose every candidate takes it (and is the identity elsewhere) as its
+    custody contract: the handed object was never the caller's. The
+    requirement a candidate puts on the call (rule 13u) never comes from a
+    `supplied_owned` position. A synchronous invocation keeps rule 13y's body
+    check (`supplied_owned`, like `_`, matches any actual not naming the
+    callback). **Do not** read a borrowing candidate as taking the object, a
+    relational candidate as taking it, or a handed object as the caller's.
+    `QCore.OpCallbacks` (`a_kept_supplied_object_is_refused`,
+    `a_taking_candidate_takes_the_object`,
+    `an_admitted_hand_off_never_leaves_the_callee_holding`, the shared
+    `suppliedClassifyVectors`, `suppliedDecisionVectors`);
+    `tests/cg22_op_callbacks.rs`.
+
+<a id="constraint-12n"></a>
+
+12n. **A member invocation (`resource_callback_member_invoked(OBJ,
+    TAG.FIELD, A…)`) is decided only over a closed set of the stores into the
+    member, in the unit and then in the run; an open, empty or uncovered set
+    is never decided.** Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (contract
+    specification C04.19.3), on the user's decision of 2026-10-14 (clause 3,
+    dotted `TAG.FIELD`, premise `P-CG22-MEMBER-CLOSED-WORLD`).
+    `crates/qcore-c-gateway/src/callback_member_closure.rs` (`MemberFacts`,
+    collected from every top-level declaration of the unit's Clang AST beside
+    rule 11p's tables; `closure`, the least set over any units);
+    `legacy_callback_route::Parser::member_candidates` decides a call over the
+    unit's own set (rule 13u's composition; `callback-member-open` for an open
+    or empty set, naming why); the facts are recorded per unit
+    (`contract_dependencies::member_evidence`, from rule 13y's `settle`
+    hook, whenever a member invocation is in the environment), and
+    `crates/qcore-audit/src/callback_member_fold.rs` folds them over the run
+    after every unit: a `Safe` or `Pending` row whose `contract_dependencies`
+    name a member-invoking declaration stays only when the run's set is closed
+    and a subset of its unit's, otherwise it is demoted to `Unknown` with the
+    reason; a unit row with no facts opens every member; the sidecar's
+    `callback_members` section lists each member's run closure. A formal
+    stands for its callers' actuals only when it is a function pointer and its
+    function's address no unit takes (an internal function's in its own unit);
+    a variable, a call's result, a cast, a non-function-pointer formal, an
+    address-taken member and a record an initializer list, a whole-object
+    assignment or a `memcpy`-family call may write open it; a checkpoint
+    composer refuses a run whose contracts invoke a member (it carries no
+    facts). A member invocation is a declared assumption (rule 13i). **Do
+    not** decide a member over the unit's set alone, promote a row in the
+    fold, follow an address-taken function's formal, or read a value the
+    facts do not name as no candidate. `QCore.OpCallbacks`
+    (`an_open_member_never_decides`, `an_open_run_demotes`,
+    `a_kept_decision_covers_every_run_candidate`); `callback_member_closure`'s
+    `CLOSURE_VECTORS`; `tests/cg22_op_callbacks.rs`.
+
+<a id="constraint-12o"></a>
+
+12o. **A type-switched release reads, under an undecided discriminant, the
+    cautious join over its arms; a value no arm and no `otherwise` declares is
+    refused, never neutral; the arms stand in a unit that defines the body
+    only where its switch hands exactly the declared members to calls.** Card
+    CG22-OP-CALLBACKS-AND-SERVED-QUEUES (contract specification C04.19.2), on
+    the user's decision of 2026-10-14 (clause 2's per-arm `when` /
+    `otherwise` form). `qcore_schemas::arm_release` (`Discriminant`,
+    `ArmClause`, `join_at`), the loader `contract_arm_release.rs`
+    (`requires resource_discriminant(P, FIELD, MASK)`,
+    `resource_arm_released(P, PATH)` / `resource_arm_empty(P)` with `when
+    FIELD == VALUE` or `otherwise`), `RetainingContract::{discriminant, arms,
+    arms_withdrawn}`; route G (`legacy_callback_route::ArmOperands`,
+    `apply_arms`): with no `otherwise`, every call refuses (`arm-undeclared`);
+    after the declared release, an object linked at a member every arm
+    releases is released, one some arms release refuses (`arm-undecided`),
+    one no arm releases stays (premise P-B08-SHALLOW). The discriminant is
+    never decided at a call (no declared constructor states it,
+    `OP-CONSTRUCTOR-DECLARATIONS`). Body check
+    `crates/qcore-c-gateway/src/arm_release_check.rs` (evidence `12o`, rule
+    13i's `ClauseKind::Arm`): one `switch` reading `P->FIELD` (`& E`, `E`
+    folding to `~MASK`); case groups read with stacked labels and
+    fall-through, enumerator labels folded from the unit's enumerations; each
+    value's payload paths (member paths of `P` under the declared arms' first
+    segments, handed as a call's actual through `&`, casts and a subscript's
+    base) equal to the declared ones, an unlabelled value taking `default:`;
+    a `break` under an `if` outside a loop refuses; otherwise the declaration
+    is withdrawn in that unit (`arm-withdrawn`). **Do not** read an
+    undeclared value as releasing nothing, decide a discriminant at a call,
+    or read the arms' calls as proved releases. `QCore.OpCallbacks`
+    (`an_undeclared_arm_is_unknown`, `the_cautious_join_is_sound`,
+    `a_call_without_otherwise_is_refused`, `an_undecided_link_is_refused`,
+    `armJoinVectors`); `QCore.BodyClauseStanding` gains `arm` and `r12o`.
+
+<a id="constraint-12p"></a>
+
+12p. **The queue serving family and `rd_kafka_op_destroy` are declared with
+    the three clauses, decide nothing in the corpus, and the served-queue
+    premise stays.** Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES. In
+    `qcore-provider-librdkafka/contracts/librdkafka/client.qv` (written by the
+    report's `scripts/write_contracts.py`, every body read at `66910c10` and
+    `046accf6`, pinned at both): `rd_kafka_q_serve0`, `_serve`,
+    `_serve_maybe_consume`, `rd_kafka_q_pop_serve0`, `_pop_serve`,
+    `_pop_serve_maybe_consume` (every formal borrowed;
+    `resource_callback_invoked(callback, _, _, supplied_owned, cb_type,
+    opaque)`; the op's `rd_kafka_op_s.rko_serve` taking it the same way and
+    its `rko_op_cb` borrowing it; the pop variants' `PASS` op an owned
+    nullable result) and `rd_kafka_op_destroy` (`resource_released(rko,
+    nonnull)`, the op's `rko_op_cb` over `(_, _, rko)`, the discriminant
+    `rko_type` under `RD_KAFKA_OP_FLAGMASK = 1610612736`, 169 arm releases
+    over 60 values and `otherwise` empty, as rule 12o's reading of the body
+    gives them). The declared-ABI reader (`legacy_declared_abi.rs`,
+    `read_function_typedef`) reads one pointer to a function-type typedef
+    (`typedef R (T)(…)`, `T *callback`, as `rd_kafka_q_serve_cb_t *`) as the
+    same `fnptr` the pointer typedef and the inline declarator read; the type
+    itself and a deeper pointer stay unread (`tests/loader_abi.rs`). Every corpus callback candidate (`rd_kafka_poll_cb`,
+    `rd_kafka_consume_cb`, `rd_kafka_background_queue_serve`) calls a callback
+    the application registered in `rk` (the pending `rd_kafka_destroy_app`
+    decision, `OP-APP-RK-CALLBACKS-VIA-POLL-CB`) and has no contract; the op
+    members' candidates have none (`OP-CALLBACK-CANDIDATE-CONTRACTS`); the
+    four forwarders hand a formal on (`SERVE-FORWARDED-CALLBACK-FORMALS`). The
+    served-queue premise (C04.18) on `rd_kafka_q_wait_result` and
+    `rd_kafka_q_purge0` is unchanged. Measured: MEASURED-LINE;
+    [report](../reports/cg22-op-callbacks-served-queues/README.md).
+
 <a id="constraint-12q"></a>
 
 12q. **State a consultation, scope or lowering sets belongs to it and is gone

@@ -3522,7 +3522,9 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", contract_review_marker, ";"
                 | "requires", "resource_body_checked", ";"
                 | "requires", named_premise, ";"
+                | "requires", discriminant, ";"
                 | "ensures", "normal", resource_predicate, ";"
+                | "ensures", "normal", arm_predicate, ";"
                 | "ensures", "normal", return_code_disposition, ";"
                 | "ensures", "normal", clause_review_marker, ";"
                 | "requires", contract_revision_marker, ";"
@@ -3606,11 +3608,22 @@ callback_predicate =
   | "resource_callback_registry_invoked", "(", IDENT, { ",", (callback_actual | "element") }, ")"
   | ("resource_callback_unregistered" | "resource_elements_dropped"
      | "resource_released_if_constructed"), "(", IDENT, ")"                  (* holder *)
-  | "resource_element_added", "(", IDENT, ",", IDENT, ")" ;                 (* element, holder *)
-callback_actual = IDENT | "_" ;
+  | "resource_element_added", "(", IDENT, ",", IDENT, ")"                  (* element, holder *)
+  | "resource_callback_member_invoked", "(", (IDENT | "supplied_owned"), ",", IDENT, ".", member_path,
+    { ",", callback_actual }, ")" ;                                          (* object, TAG.FIELD, actuals *)
+callback_actual = IDENT | "_" | "supplied_owned" ;
+(* card CG22-OP-CALLBACKS-AND-SERVED-QUEUES, contract specification C04.19.2 *)
+member_path = IDENT, { ".", IDENT } ;
+discriminant = "resource_discriminant", "(", IDENT, ",", member_path, ",", integer_literal, ")" ;
+arm_predicate =
+    ( "resource_arm_released", "(", IDENT, ",", member_path, ")"
+    | "resource_arm_empty", "(", IDENT, ")" ),
+    ( "when", member_path, "==", integer_literal | "otherwise" ) ;
 ```
 
 The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot or a reference predicate. Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
+
+The predicates of card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (contract specification C04.19.1-C04.19.3; USER DECISION 2026-10-14) carry static conditions of their own. `supplied_owned` is an actual of `resource_callback_invoked` and `resource_callback_member_invoked` only, at most once per actual list; a declaration with a parameter named `supplied_owned` rejects every callback predicate. A member invocation's object is a depth-one pointer parameter with no kind whose mode is `resource_borrowed` or `resource_released`, or `supplied_owned` (only where some clause of the declaration hands a callback that object); its member is `TAG.FIELD` with at least one `.`; one clause per object and member. A `discriminant` names a depth-one pointer parameter with no kind that the declaration releases, a member path and a canonical decimal mask; a declaration carries at most one, and exactly when it carries arm predicates. Each arm names the discriminated parameter; its guard is `when FIELD == VALUE` with the discriminant's member path and a canonical decimal `VALUE` (`==` only, no name, no value the mask clears) or `otherwise`; a guard carries one `resource_arm_empty` or released paths, never both and never one path twice, and a path is never the discriminant itself. Arm predicates and the discriminant stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
 
 The reference predicates (card REFCOUNT-RESOURCE-KIND, contract specification C04.17) carry static conditions of their own: the named parameter is a depth-one pointer (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carries no kind; a declaration carries at most one reference predicate; a keep's result is `resource_return_alias(p, nonnull)` on the same parameter or `resource_return_none()`, a drop's is `resource_return_none()`; the referenced parameter is never also retained, a slot or a derived out slot's base; a reference predicate stands where a retention predicate may; and the kind `reference` is spelled by `resource_return_kind(reference)` only beside `resource_return_owned` (a returned reference) and never by `resource_kind` on a parameter (the module is rejected). Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 

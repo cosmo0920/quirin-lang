@@ -29,7 +29,7 @@ pub const SECTION_KEY: &str = "callback_members";
 pub const DECLARATIONS_KEY: &str = "callback_member_declarations";
 
 /// What the section means, carried in it.
-pub const MEANING: &str = "the run's closure of every function-pointer member a resource_callback_member_invoked clause names (rule 12n): over every analysed unit's Clang stores into the member, a designator joins the set, a null pointer adds nothing, a read of another such member adds its set, a formal of a function whose address no unit takes adds its actuals at every call, and anything else opens it; a unit that recorded no facts opens it (premise P-CG22-MEMBER-CLOSED-WORLD). `demoted` lists the Safe or Pending rows whose unit decided a member over a set the run's closure is not contained in, now Unknown (callback-member-open). Evidence and a demotion only: no row is promoted";
+pub const MEANING: &str = "the run's closure of every function-pointer member a resource_callback_member_invoked clause names (rule 12n): over every analysed unit's Clang stores into the member, a designator joins the set, a null pointer adds nothing, a read of another such member adds its set, a formal of a function whose address no unit takes adds its actuals at every call, and anything else opens it; a unit that recorded no facts opens it (premise P-CG22-MEMBER-CLOSED-WORLD). `demoted` lists the Safe or Pending rows whose unit decided a member over a set the run's closure is not contained in, now Unknown (callback-member-open). `members_over_recorded_units` is the same closure over the units that did record facts, and `units_without_facts_named` names the others (evidence only). Evidence and a demotion only: no row is promoted";
 
 /// Every declaration of `contracts` that invokes a member, with the members.
 #[must_use]
@@ -108,6 +108,24 @@ pub fn fold(
         .filter(|unit| unit.is_none_or(|unit| unit.facts.is_none()))
         .count()
         + facts.len().saturating_sub(next);
+    // The units with no facts, named for the section.
+    let without = units
+        .iter()
+        .zip(&paired)
+        .filter(|(_, unit)| unit.is_none_or(|unit| unit.facts.is_none()))
+        .map(|(row, _)| {
+            format!(
+                "{}/{}",
+                row["library"].as_str().unwrap_or("?"),
+                row["file"].as_str().unwrap_or("?")
+            )
+        })
+        .collect::<Vec<_>>();
+    // Evidence only: the closure over the units that did record facts.
+    let recorded_only = members
+        .iter()
+        .map(|member| (member.clone(), closure_value(&closure(&recorded, member))))
+        .collect::<BTreeMap<_, _>>();
     let run = members
         .iter()
         .map(|member| {
@@ -202,6 +220,8 @@ pub fn fold(
         "declarations": declarations,
         "members": run.iter().map(|(member, result)| (member.clone(), closure_value(result))).collect::<BTreeMap<_, _>>(),
         "units_without_facts": missing,
+        "units_without_facts_named": without,
+        "members_over_recorded_units": recorded_only,
         "demoted": demoted,
     })
 }

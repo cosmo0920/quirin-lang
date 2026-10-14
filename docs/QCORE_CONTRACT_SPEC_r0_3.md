@@ -932,7 +932,75 @@ contract {
 
 **Summaries** (rule 13u). A designator a body hands a synchronous invocation or table dispatch is a call-graph edge for W4's bottom-up order, so the callback is summarised before its caller.
 
-**Not in this vocabulary** (recorded in the card's report with sizes): an invocation through a member of an object the caller holds whose registration happened elsewhere (`rd_kafka_op_destroy`'s `rko_op_cb`, `pb_write` over a stream `pb_ostream_from_buffer` returned by value), a type-switched union release (`rd_kafka_op_destroy`), a callback that takes custody of an object the callee supplies (`rd_kafka_q_serve*`), a result returning what a holder retains (`pthread_getspecific`). The Lean model is `QCore.CallbackContracts`.
+**Not in this vocabulary** (recorded in the card's report with sizes): `pb_write` over a stream `pb_ostream_from_buffer` returned by value, a result returning what a holder retains (`pthread_getspecific`). Since card CG22-OP-CALLBACKS-AND-SERVED-QUEUES the vocabulary states an invocation through a member registered elsewhere (C04.19.3), a type-switched union release (C04.19.2) and a callback that takes custody of an object the callee supplies (C04.19.1). The Lean model is `QCore.CallbackContracts`.
+
+#### C04.19.1. An object the callee hands its callback
+
+Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (gateway rule 12m), on the user's decision recorded here verbatim from the card's brief:
+
+> **USER DECISION 2026-10-14.** "Clauses + follow-ups". Implement the three clauses with Lean and measurements. Register every blocker as its own follow-up with a DISCHARGE: application rk_conf callbacks via `rd_kafka_poll_cb` (tie it to the pending destroy_app decision; do not decide it), the 29+3 op-callback candidate contracts, the undeclared op constructors, and the forwarded-formal forwarders. No forwarded-formal rule in this card. **Clause 1 word:** `supplied_owned`, not `handed`. Example: `resource_callback_invoked(callback, _, _, supplied_owned, cb_type, opaque)`. A callback that takes the object only on some return codes is refused, as proposed. **Clause 2 form:** per-arm `when` / `otherwise`, as proposed, with `resource_discriminant`, `resource_arm_released` and `resource_arm_empty`; decimal constants citing the source. **Clause 3 spelling:** dotted `TAG.FIELD`. Example: `resource_callback_member_invoked(rko, rd_kafka_op_s.rko_op_cb, _, _, rko)`. The closure semantics stay as proposed, with premise `P-CG22-MEMBER-CLOSED-WORLD`.
+
+```qcore
+extern fn serve(q: ptr<mut, u8>, cb: fnptr, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(cb, _, supplied_owned, opaque);
+    ensures normal resource_return_none();
+};
+```
+
+**The actual word.** `supplied_owned` in the actual list of `resource_callback_invoked` or `resource_callback_member_invoked` (C04.19.3) is a live object the callee supplies and owns, whose custody it hands the callback at each invocation (an op `rd_kafka_q_serve0` dequeued). At most one per list; never in a table or registry invocation; a declaration with a parameter named `supplied_owned` rejects every callback clause.
+
+**What a consumer MUST apply.** The handed object was never the caller's, so the call is still the identity on the caller's state; but the callee's declaration says it gives the object away, so a candidate is admitted only when its contract in force takes it at that position, unconditionally: `resource_consumed(p, n)` or `resource_released(p, n)`. A candidate that borrows or requires it there, or takes it on some return codes only (a return-code disposition, C04.13, never in the function map), leaves it with the callee and is refused (`callback-supplied-kept`). Every other position is decided as C04.19's loop-safe composition decides it.
+
+#### C04.19.2. A release chosen by a discriminant
+
+Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (gateway rule 12o).
+
+```qcore
+extern fn op_free(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, rko_type, 1610612736);  // switch (rko->rko_type & ~FLAGMASK)
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_arm_released(rko, rko_u.offset_commit.partitions) when rko_type == 6;  // RD_KAFKA_OP_OFFSET_COMMIT, rdkafka_op.h:93
+    ensures normal resource_arm_empty(rko) when rko_type == 17;
+    ensures normal resource_arm_empty(rko) otherwise;  // default: break;
+    ensures normal resource_return_none();
+};
+```
+
+**Grammar** (G05, total-or-reject). `requires resource_discriminant(P, FIELD, MASK)`: `P` a depth-one pointer parameter with no kind that the declaration releases (`resource_released`), `FIELD` a member path (identifiers joined by `.`), `MASK` a canonical decimal (C04.5's spelling) naming the bits the body clears before switching (`0`: none). At most one per declaration, and only beside arm clauses. Each arm is `resource_arm_released(P, PATH)` (the arm releases the object at the member path `PATH` of `P`'s object; `PATH` is not `FIELD`) or `resource_arm_empty(P)` (it releases none), followed by `when FIELD == VALUE` (`==` only; `VALUE` a canonical decimal, never a name, its enumerator and source line in a comment; a value the mask clears rejects) or `otherwise` (every value no `when` arm names). A guard carries either one empty arm or released paths, never both, and never one path twice. The clauses stand where a callback clause may, and withhold the declaration from the function map.
+
+**Meaning.** The arm of a value is the clauses guarded by it, else the `otherwise` clauses; a value neither names has **no arm**, never a neutral one. A consumer decides the discriminant only from a declared constructor that states it, which none does yet (`OP-CONSTRUCTOR-DECLARATIONS`), so every call reads the **cautious join** over every arm:
+
+* no `otherwise` arm: some value has no declared arm, and the call is refused (`arm-undeclared`);
+* a tracked object linked at a member path every arm releases (`otherwise` included) is released with the object; at a path some arms release and others do not, the call is refused (`arm-undecided`); at a path no arm releases, the object stays as a plain release leaves it (premise P-B08-SHALLOW).
+
+**Checked against bodies (rule 12o).** In a unit that defines the declared function, the arms stand only when its Clang body has exactly one `switch` whose condition reads `P->FIELD` (with `MASK`, `P->FIELD & E` where `E` folds to `~MASK`), and, read case group by case group (stacked labels and fall-through accumulate; `break` and `return` end a group; enumerator labels folded from the unit's enumerations), each value's payload paths — member paths of `P` handed as a call's actual (through `&`, casts and a subscript's base) whose first segment is the first segment of some declared arm path — are exactly the declared ones, a value no label names taking `default:` (or nothing), which `otherwise` must match. Otherwise the declaration is withdrawn in that unit (every call refuses, `arm-withdrawn`). The check establishes which members each arm hands to a call; that the call releases them stays a declared assumption.
+
+#### C04.19.3. A registration carried by the object
+
+Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (gateway rule 12n).
+
+```qcore
+extern fn op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_callback_member_invoked(rko, rd_kafka_op_s.rko_op_cb, _, _, rko);
+    ensures normal resource_return_none();
+};
+```
+
+**Grammar** (G05). `resource_callback_member_invoked(OBJ, TAG.FIELD, A…)`: during the call the function pointer stored in `OBJ`'s member `FIELD` (a dotted path below `struct TAG`) is called zero or more times with `A…`. `OBJ` is a depth-one pointer parameter with no kind, `resource_borrowed` or `resource_released` (the member is read before the release), or `supplied_owned` (each object the callee supplies; only in a declaration that hands a callback that object). One clause per object and member.
+
+**The candidates: the run's closed set (premise P-CG22-MEMBER-CLOSED-WORLD).** Over Clang's AST of every analysed unit, a member's set is the least one the stores admit: a store into the member (an assignment `X->F = V`, `X.a.b = V`) adds a function designator, nothing for a null pointer constant, the set of another member it reads (`rko_serve = orig_destq->rkq_serve`), or, for a formal of a function-pointer type of a function whose address no unit takes, every actual some call of that function passes there (an internal function's in its own unit only); any other value (a variable, a call's result, a cast, a formal of another type), a member whose address is taken, and a record an initializer list, a whole-object assignment or a `memcpy`-family call may write open the set. The premise: every unit that can store into the member is analysed (an unanalysed unit's or a type-punned store is not seen). A consumer decides a call over the set the analysing unit sees (rule 12n: an open or empty set is refused, `callback-member-open`), with C04.19's loop-safe composition; the run's fold then keeps a `Safe` or `Pending` row resting on the declaration only when the run's set is closed and contained in the unit's, and demotes it to `Unknown` otherwise (never promoting anything). A checkpointed run, which folds nothing, refuses to compose when a declaration invokes a member.
+
+**Not checked against bodies.** `supplied_owned` and a member invocation are declared assumptions (rule 13i); the synchronous invocation of C04.19 keeps rule 13y's check.
 
 ## C05. Manifests and immutable assumptions
 
