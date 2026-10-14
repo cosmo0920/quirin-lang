@@ -45,8 +45,8 @@ def main() -> int:
     note = (
         f"RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/retained-release-formal/scripts/gate.sh "
-        "(HELD=1, `code` then `docs`) and finish-gate.sh, each part under one exclusive flock "
-        f"on the shared heavy lock held for that whole part, logs private/rr/gate-{name} of "
+        "(HELD=1, part `all`, steps 00-09 in one run) and finish-gate.sh, the whole gate.sh run "
+        f"under one exclusive flock on the shared heavy lock, logs private/rr/gate-{name} of "
         "this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "

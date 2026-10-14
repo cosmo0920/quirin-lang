@@ -1,0 +1,13 @@
+{
+  "note": "RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN card gate on base f3e1d724c, rebased onto 2f0f65a60, every code step at a10bf1e12, scripts docs/reports/retained-release-formal/scripts/gate.sh (HELD=1, part `all`, steps 00-09 in one run) and finish-gate.sh, the whole gate.sh run under one exclusive flock on the shared heavy lock, logs private/rr/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 491 units, 504 summaries, 7,999 passed, 0 failed, 14 ignored, exit 0 (private/rr/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 319 audits passed (QCore.MemberSummaryOrder added); no provider gate (providers/ unchanged); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 7999,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 319,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

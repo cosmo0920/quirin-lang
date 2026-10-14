@@ -154,4 +154,30 @@ Nothing new is registered. `dimensions.named_followups` 770 → **769**.
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+Standing gate **g1** at `a10bf1e12`, the rebased tip with every code
+change. Records: [gate.json](gate.json), exits in [gate/](gate/). Logs are in
+`private/rr/gate-g1/` of the worktree. `scripts/gate.sh g1 all` ran with
+`HELD=1` under one exclusive flock on the shared heavy lock; then
+`scripts/write_gate_json.py` and `scripts/finish-gate.sh` ran.
+
+| step | result |
+| --- | --- |
+| `cargo check --workspace --all-targets` | 0 |
+| submodule | 0 |
+| `cargo fmt --check` | 0 |
+| `clippy --locked --all-targets -D warnings` | 0 |
+| `run_test_binaries.py` (`private/rr/tests-g1/`) | **491 units, 504 summaries, 7,999 passed, 0 failed, 14 ignored**, exit 0, no rerun |
+| both reevaluation probes | 0 |
+| `check_lean_audits.py` | **319** audits passed |
+| Python suite before the matrix regeneration (08) | 1 (see below) |
+| docs index check (09) | 0 |
+| `build_matrix.py . --gate gate.json` (09a) | 0 |
+| Python suite rerun (09b) | 365 OK, 0 |
+| docs index and check (10b, 10c) | 0 / 0 |
+
+- **Step 08.** It fails only on
+  `test_the_derived_facts_are_recomputed_rather_than_carried`. That test
+  reads the committed matrix's Lean count, which is 318 before the
+  regeneration. Every card that adds an audit sees this.
+- **Provider gate.** Not run: `providers/` is unchanged, so it is not due.
+- **Clang.** Recorded in `gate/clang-version.txt`.
