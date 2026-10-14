@@ -104,6 +104,21 @@ pub fn compose(
 ) -> Result<ComposeSummary, String> {
     let mut members = open_members(files)?;
     let global = members[0].global.clone();
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's member
+    // closure is folded over every unit's facts, which a checkpoint does not
+    // carry; a run whose contracts invoke a member is refused here rather
+    // than composed without the fold (fail-closed).
+    if global.assumptions.to_json()?[crate::callback_member_fold::DECLARATIONS_KEY]
+        .as_array()
+        .is_some_and(|names| !names.is_empty())
+    {
+        return Err(
+            "a checkpointed run whose contracts invoke a callback member cannot be composed: \
+             the member closure (rule 12n) is folded over the whole run; run it without \
+             checkpoints"
+                .into(),
+        );
+    }
     let groups = members[0].plan.groups.clone();
     // Merge the small per-unit results; print group lines in plan order.
     if console == Console::Full {

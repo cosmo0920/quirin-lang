@@ -215,6 +215,20 @@ pub struct RetainingContract {
     /// omitted when false.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub callbacks_withdrawn: bool,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (§C04.19.2, rule 12o):
+    /// `requires resource_discriminant(P, FIELD, MASK)`. Omitted when absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub discriminant: Option<crate::arm_release::Discriminant>,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): the arm
+    /// clauses, in clause order. Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub arms: Vec<crate::arm_release::ArmClause>,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): set only in a
+    /// translation unit whose own body of the declaration does not validate
+    /// its arms. Every call there refuses (`arm-withdrawn`); never set by the
+    /// loader; omitted when false.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub arms_withdrawn: bool,
 }
 
 impl RetainingContract {

@@ -221,8 +221,9 @@ fn clause_standing_rows() -> Vec<(bool, Vec<String>, Vec<String>, String)> {
 fn lean_clause_standing_vectors_match_the_run_standing() {
     let rows = clause_standing_rows();
     // Card CG22-CALLBACK-REGISTRY-CONTRACT adds two rows (a checked callback
-    // clause under `13y`, an unchecked one under `W4`): 19 -> 21.
-    assert_eq!(rows.len(), 21);
+    // clause under `13y`, an unchecked one under `W4`): 19 -> 21; card
+    // CG22-OP-CALLBACKS-AND-SERVED-QUEUES one (arms under `12o`): 22.
+    assert_eq!(rows.len(), 22);
     for (held, clauses, units, expected) in rows {
         // Each unit of the vector as a unit row the audit folds, its clause
         // coverage computed by the gateway's `covers` (one label per kind).

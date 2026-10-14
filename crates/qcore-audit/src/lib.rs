@@ -50,6 +50,7 @@ pub mod null_member_scope_fold;
 pub mod null_tally;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the row fields and the
 // run's dependency section.
+pub mod callback_member_fold;
 pub mod contract_dependencies;
 pub mod contract_tip;
 pub mod prepare;
@@ -660,6 +661,20 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
             "source_specific_evidence": "Unknown: historical source summaries, provider and native observations were not replayed",
             "contract_scope": "declared resource contracts are assumptions at the selected revision, not verified upstream behavior",
         });
+    }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's closure
+    // of every invoked member, folded over the rows before anything is
+    // published; it only demotes.
+    let (members, from_safe, from_pending) = report.fold_callback_members(&contracts);
+    counts.safe_units -= from_safe;
+    counts.pending_units -= from_pending;
+    counts.unknown_units += from_safe + from_pending;
+    if !members.is_null() {
+        println!(
+            "callback members: {} demoted",
+            members["demoted"].as_array().map_or(0, Vec::len)
+        );
+        assumptions[callback_member_fold::SECTION_KEY] = members;
     }
     // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
     // flexible assumptions, beside the contract sources they are read from.

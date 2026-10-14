@@ -60,6 +60,22 @@ pub const ELEMENT_UNDECIDED: &str = "callback-element-custody-undecided";
 /// The stable reason key of a declaration whose body in this unit does not
 /// validate its checked callback clause (rule 13y).
 pub const WITHDRAWN: &str = "callback-withdrawn";
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12m): a candidate that
+/// does not take, on every return, the object the callee supplies it at a
+/// `supplied_owned` position.
+pub const SUPPLIED_KEPT: &str = "callback-supplied-kept";
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): a member whose
+/// stores do not close into a set of functions.
+pub const MEMBER_OPEN: &str = "callback-member-open";
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a discriminant
+/// value no arm declares.
+pub const ARM_UNDECLARED: &str = "arm-undeclared";
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a tracked object
+/// linked at a member some arms release and others do not.
+pub const ARM_UNDECIDED: &str = "arm-undecided";
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12o): a declaration
+/// whose body in this unit does not validate its arms.
+pub const ARM_WITHDRAWN: &str = "arm-withdrawn";
 
 /// What one candidate's contract is to an invocation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -73,6 +89,16 @@ pub enum CandidateClass {
     ReleasesElement,
     /// Anything else.
     Effectful,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): the identity on
+    /// the caller's state, taking (`resource_consumed` or
+    /// `resource_released`, unconditionally) the object the callee supplies
+    /// at its `supplied_owned` position.
+    TakesSupplied,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): the identity
+    /// elsewhere, but it leaves the supplied object with the callee
+    /// (`resource_borrowed` or `resource_owned` there), or takes it only on
+    /// some return codes (a return-code disposition).
+    KeepsSupplied,
 }
 
 /// Whether a contract states no custody effect besides its modes.
@@ -97,8 +123,18 @@ pub fn classify(
         return CandidateClass::Effectful;
     }
     let mut releases = false;
+    let mut takes = false;
+    let mut keeps = false;
     for (mode, actual) in contract.parameters.iter().zip(actuals) {
         match (mode, actual) {
+            (
+                ResourceParameterMode::Consumed { .. } | ResourceParameterMode::Released { .. },
+                CallbackActual::SuppliedOwned,
+            ) => takes = true,
+            (
+                ResourceParameterMode::Borrowed | ResourceParameterMode::Owned { .. },
+                CallbackActual::SuppliedOwned,
+            ) => keeps = true,
             // `resource_owned` is a requirement (a live non-null object),
             // not an effect: the callee meets it with what it supplies, and
             // at a parameter position [`requirements`] puts it on the call.
@@ -107,7 +143,11 @@ pub fn classify(
             _ => return CandidateClass::Effectful,
         }
     }
-    if releases {
+    if keeps {
+        CandidateClass::KeepsSupplied
+    } else if takes {
+        CandidateClass::TakesSupplied
+    } else if releases {
         CandidateClass::ReleasesElement
     } else {
         CandidateClass::Identity
@@ -174,8 +214,18 @@ pub fn decide(candidates: Result<&[(String, CandidateClass)], ()>, elements: boo
     if let Some((name, _)) = candidates.iter().find(|(_, class)| {
         *class == CandidateClass::Effectful
             || (!elements && *class == CandidateClass::ReleasesElement)
+            || (elements && *class == CandidateClass::TakesSupplied)
     }) {
         return Decision::Refused(EFFECTFUL, Some(name.clone()));
+    }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): a callback that
+    // leaves the supplied object with the callee is refused, never read as
+    // taking it.
+    if let Some((name, _)) = candidates
+        .iter()
+        .find(|(_, class)| *class == CandidateClass::KeepsSupplied)
+    {
+        return Decision::Refused(SUPPLIED_KEPT, Some(name.clone()));
     }
     let releasing = candidates
         .iter()
@@ -246,6 +296,10 @@ pub fn invocation_detail(reason: &str, candidate: Option<&str>, actual: &str) ->
         (ELEMENT_UNDECIDED, _) => {
             format!("callbacks from `{actual}` do not agree on the elements' custody")
         }
+        (SUPPLIED_KEPT, Some(name)) => format!(
+            "callback `{name}` (from `{actual}`) does not take, on every return, the object the \
+             callee supplies it"
+        ),
         _ => format!("the callback `{actual}` is not a closed set of functions"),
     }
 }
@@ -365,6 +419,32 @@ pub(crate) const DECISION_VECTORS: &[(bool, &[CandidateClass], bool, u8)] = &[
     (false, &[CandidateClass::Identity], true, 0),
 ];
 
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: `SUPPLIED_DECISION_VECTORS`
+/// (open?, candidate classes, decision kind), shared with
+/// `QCore.OpCallbacks.suppliedDecisionVectors`; outside a registry.
+#[cfg(test)]
+pub(crate) const SUPPLIED_DECISION_VECTORS: &[(bool, &[CandidateClass], u8)] = &[
+    (false, &[CandidateClass::TakesSupplied], 0),
+    (
+        false,
+        &[CandidateClass::TakesSupplied, CandidateClass::TakesSupplied],
+        0,
+    ),
+    (
+        false,
+        &[CandidateClass::TakesSupplied, CandidateClass::KeepsSupplied],
+        2,
+    ),
+    (
+        false,
+        &[CandidateClass::TakesSupplied, CandidateClass::Missing],
+        2,
+    ),
+    (false, &[CandidateClass::Effectful], 2),
+    (true, &[CandidateClass::TakesSupplied], 2),
+    (false, &[], 2),
+];
+
 /// `REGISTRY_VECTORS`: (trace, verdict), shared with
 /// `QCore.CallbackContracts.registryVectors`.
 #[cfg(test)]
@@ -464,6 +544,8 @@ mod tests {
             CandidateClass::Identity => ".identity",
             CandidateClass::ReleasesElement => ".releasesElement",
             CandidateClass::Effectful => ".effectful",
+            CandidateClass::TakesSupplied => ".takesSupplied",
+            CandidateClass::KeepsSupplied => ".keepsSupplied",
         }
     }
 
@@ -584,6 +666,121 @@ mod tests {
         (&[], CandidateClass::Identity),
     ];
 
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: `SUPPLIED_CLASSIFY_VECTORS`
+    /// (`QCore.OpCallbacks.suppliedClassifyVectors`).
+    const SUPPLIED_CLASSIFY_VECTORS: &[(&[(&str, CallbackActual)], CandidateClass)] = &[
+        (
+            &[
+                ("borrowed", CallbackActual::Supplied),
+                ("released", CallbackActual::SuppliedOwned),
+                ("borrowed", CallbackActual::Parameter { index: 5 }),
+            ],
+            CandidateClass::TakesSupplied,
+        ),
+        (
+            &[("other", CallbackActual::SuppliedOwned)],
+            CandidateClass::TakesSupplied,
+        ),
+        (
+            &[("borrowed", CallbackActual::SuppliedOwned)],
+            CandidateClass::KeepsSupplied,
+        ),
+        (
+            &[("owned", CallbackActual::SuppliedOwned)],
+            CandidateClass::KeepsSupplied,
+        ),
+        (
+            &[
+                ("released", CallbackActual::SuppliedOwned),
+                ("released", CallbackActual::Supplied),
+            ],
+            CandidateClass::Effectful,
+        ),
+        (
+            &[
+                ("borrowed", CallbackActual::Parameter { index: 0 }),
+                ("owned", CallbackActual::Supplied),
+            ],
+            CandidateClass::Identity,
+        ),
+    ];
+
+    const OP_LEAN: &str = include_str!("../../../proof/QCore/OpCallbacks.lean");
+
+    fn op_lean_rows(header: &str) -> Vec<String> {
+        let start = OP_LEAN.find(header).expect("the Lean vector list") + header.len();
+        let body = &OP_LEAN[start..];
+        let end = body.find("\n]").expect("the list's end");
+        body[..end]
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .map(|line| line.trim_end_matches(',').to_owned())
+            .collect()
+    }
+
+    fn render_actual(actual: &CallbackActual) -> String {
+        match actual {
+            CallbackActual::Parameter { index } => format!(".parameter {index}"),
+            CallbackActual::Supplied => ".supplied".to_owned(),
+            CallbackActual::Element => ".element".to_owned(),
+            CallbackActual::SuppliedOwned => ".suppliedOwned".to_owned(),
+        }
+    }
+
+    #[test]
+    fn supplied_vectors_hold_and_are_the_lean_vectors() {
+        let rows = op_lean_rows(
+            "def suppliedClassifyVectors : List (List (Mode × SActual) × SuppliedClass) := [",
+        );
+        let mut rendered = Vec::new();
+        for (positions, class) in SUPPLIED_CLASSIFY_VECTORS {
+            let contract = ResourceFunctionContract {
+                parameters: positions.iter().map(|(m, _)| mode(m)).collect(),
+                result: ResourceReturnMode::None,
+                ..ResourceFunctionContract::default()
+            };
+            let actuals = positions.iter().map(|(_, a)| *a).collect::<Vec<_>>();
+            assert_eq!(classify(Some(&contract), &actuals), *class, "{positions:?}");
+            rendered.push(format!(
+                "([{}], {})",
+                positions
+                    .iter()
+                    .map(|(m, a)| format!("(.{m}, {})", render_actual(a)))
+                    .collect::<Vec<_>>()
+                    .join(", "),
+                lean_class(*class)
+            ));
+        }
+        assert_eq!(rows, rendered);
+        let rows = op_lean_rows(
+            "def suppliedDecisionVectors : List (Bool × List SuppliedClass × Nat) := [",
+        );
+        let mut rendered = Vec::new();
+        for (open, classes, kind) in SUPPLIED_DECISION_VECTORS {
+            let candidates = classes
+                .iter()
+                .enumerate()
+                .map(|(at, class)| (format!("f{at}"), *class))
+                .collect::<Vec<_>>();
+            let resolution = if *open {
+                Err(())
+            } else {
+                Ok(candidates.as_slice())
+            };
+            assert_eq!(decision_kind(&decide(resolution, false)), *kind);
+            rendered.push(format!(
+                "({open}, [{}], {kind})",
+                classes
+                    .iter()
+                    .map(|class| lean_class(*class))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
+        }
+        assert_eq!(rows, rendered);
+    }
+
     fn mode(spelling: &str) -> ResourceParameterMode {
         match spelling {
             "borrowed" => ResourceParameterMode::Borrowed,
@@ -616,6 +813,7 @@ mod tests {
                             CallbackActual::Parameter { index } => format!(".parameter {index}"),
                             CallbackActual::Supplied => ".supplied".to_owned(),
                             CallbackActual::Element => ".element".to_owned(),
+                            CallbackActual::SuppliedOwned => ".suppliedOwned".to_owned(),
                         }
                     ))
                     .collect::<Vec<_>>()

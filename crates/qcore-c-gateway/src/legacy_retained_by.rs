@@ -275,7 +275,11 @@ impl Parser<'_> {
         // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13x): the
         // synchronous invocations and table dispatches, decided here, and the
         // registry operands, or the call's refusal.
-        if !declaration.callbacks.is_empty() || declaration.callbacks_withdrawn {
+        if !declaration.callbacks.is_empty()
+            || declaration.callbacks_withdrawn
+            || declaration.discriminant.is_some()
+            || declaration.arms_withdrawn
+        {
             let owned = |index: usize| -> Option<Vec<String>> {
                 actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
             };

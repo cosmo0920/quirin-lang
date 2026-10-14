@@ -303,5 +303,8 @@ pub(super) fn declaration(
         references_withdrawn: false,
         callbacks: Vec::new(),
         callbacks_withdrawn: false,
+        discriminant: None,
+        arms: Vec::new(),
+        arms_withdrawn: false,
     })
 }

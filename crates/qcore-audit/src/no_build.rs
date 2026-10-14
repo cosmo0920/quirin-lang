@@ -998,6 +998,20 @@ impl NoBuildAudit {
 
     /// Print the tallies and write the report and its assumption sidecar.
     pub fn finish(mut self, path: Option<&Path>) -> Result<AuditCounts, String> {
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's
+        // closure of every invoked member, folded over the rows before
+        // anything is published; it only demotes.
+        let (members, from_safe, from_pending) = self.report.fold_callback_members(&self.contracts);
+        self.counts.safe_units -= from_safe;
+        self.counts.pending_units -= from_pending;
+        self.counts.unknown_units += from_safe + from_pending;
+        if !members.is_null() {
+            println!(
+                "callback members: {} demoted",
+                members["demoted"].as_array().map_or(0, Vec::len)
+            );
+            self.sidecar[crate::callback_member_fold::SECTION_KEY] = members;
+        }
         let not_prepared: usize = self.reasons.values().sum();
         println!(
             "no-build: {} unit(s), {} prepared under the assumptions, {} not prepared: {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures (every verdict relative to the recorded assumptions)",

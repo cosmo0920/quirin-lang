@@ -360,6 +360,7 @@ import QCore.DeepUnitAst
 import QCore.DeepAstTransports
 import QCore.ResidualAccessReadings
 import QCore.CallbackContracts
+import QCore.OpCallbacks
 import QCore.NullDeref
 import QCore.NullDerefGrade
 import QCore.DerefDecomposition

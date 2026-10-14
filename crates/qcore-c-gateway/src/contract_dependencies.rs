@@ -73,6 +73,16 @@ pub struct UnitRecord {
     /// Declared names whose body failed a check here, with why: a subset of
     /// the reasons of [`Self::withdrawn`] that speak about the body.
     pub failed: BTreeMap<String, BTreeSet<String>>,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): the unit's
+    /// function-pointer member facts, recorded when the environment holds a
+    /// member invocation, for the run's closure. `None` otherwise.
+    pub callback_members: Option<crate::callback_member_closure::MemberFacts>,
+}
+
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): record the unit's
+/// function-pointer member facts (outside every hypothetical analysis).
+pub fn member_evidence(facts: crate::callback_member_closure::MemberFacts) {
+    with_evidence(|record| record.callback_members = Some(facts));
 }
 
 /// What one unit's bodies made of one declaration they define.

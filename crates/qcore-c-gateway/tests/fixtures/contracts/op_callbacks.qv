@@ -1,0 +1,87 @@
+module contract;
+
+// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (gateway rules 12m-12o, contract
+// spec C04.19.1-C04.19.3): synthetic `c_*` callees, one per clause. Trusted
+// test assumptions, not facts about any library.
+
+extern fn c_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn c_box_new(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn c_item_new(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn c_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+// Each op the callee dequeues goes to `cb`, which takes it.
+extern fn c_serve(q: ptr<mut, u8>, cb: fnptr, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(cb, _, supplied_owned, opaque);
+    ensures normal resource_return_none();
+};
+
+// The op's own callback runs, then the op is freed.
+extern fn c_op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(rko, nullable);
+    ensures normal resource_callback_member_invoked(rko, op.op_cb, _, _, rko);
+    ensures normal resource_return_none();
+};
+
+// A type-switched release: type 1 frees the payload, every other type frees
+// nothing of it.
+extern fn c_op_free(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, type, 0);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_arm_released(rko, payload) when type == 1;
+    ensures normal resource_arm_empty(rko) otherwise;
+    ensures normal resource_return_none();
+};
+
+// Every type frees the payload.
+extern fn c_op_free_all(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, type, 0);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_arm_released(rko, payload) when type == 1;
+    ensures normal resource_arm_released(rko, payload) otherwise;
+    ensures normal resource_return_none();
+};
+
+// No `otherwise`: a value other than 1 has no declared arm.
+extern fn c_op_free_partial(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, type, 0);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_arm_released(rko, payload) when type == 1;
+    ensures normal resource_return_none();
+};
+

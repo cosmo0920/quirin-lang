@@ -417,6 +417,9 @@ struct AstIndex {
     no_return_declarations: Arc<BTreeSet<String>>,
     /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): constant tables.
     indirect_tables: Arc<crate::indirect_calls::TableFacts>,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the stores into
+    /// function-pointer members and their sources.
+    member_facts: Arc<crate::callback_member_closure::MemberFacts>,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -439,6 +442,8 @@ struct RetainedDeclarations {
     no_return_declarations: BTreeSet<String>,
     /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
     indirect_tables: crate::indirect_calls::TableFacts,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n).
+    member_facts: crate::callback_member_closure::MemberFacts,
 }
 
 impl RetainedDeclarations {
@@ -456,6 +461,8 @@ impl RetainedDeclarations {
         crate::aggregate_value::AggregateFacts::collect(&node, &mut self.aggregates);
         // Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
         crate::indirect_calls::TableFacts::collect(&node, &mut self.indirect_tables);
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n).
+        self.member_facts.collect(&node);
         if kind(&node) == "FunctionDecl"
             && children(&node)
                 .iter()
@@ -587,6 +594,7 @@ impl AstIndex {
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
+            member_facts: Arc::new(retained.member_facts),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -610,6 +618,7 @@ impl AstIndex {
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
             indirect_tables: Arc::new(retained.indirect_tables),
+            member_facts: Arc::new(retained.member_facts),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -813,6 +822,12 @@ impl IndirectCallUnit<'_> {
 
     pub(crate) fn tables(&self) -> &crate::indirect_calls::TableFacts {
         &self.ast.indirect_tables
+    }
+
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's
+    /// function-pointer member facts.
+    pub(crate) fn member_facts(&self) -> &crate::callback_member_closure::MemberFacts {
+        &self.ast.member_facts
     }
 
     /// A node's tokens, exactly as the gateway tokenizes the analysed source.

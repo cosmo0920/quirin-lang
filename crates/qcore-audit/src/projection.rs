@@ -910,6 +910,11 @@ fn record_projection(
         // the verdict is settled; additive.
         crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts);
     }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member
+    // facts for the run's closure, only when a declaration invokes a member.
+    if !crate::callback_member_fold::member_declarations(contracts).is_empty() {
+        report.record_callback_members(library, file, dependencies.callback_members.clone());
+    }
     report.record_enumeration(inventory);
     // Card W45-USER-CONTRACT-PLUGINS: the unit is tallied and printed under
     // the verdict its row publishes, which is the result's own verdict unless

@@ -103,13 +103,16 @@ pub enum ClauseKind {
     /// Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y): a synchronous
     /// invocation, or a registration in a parameter holder.
     CallbackChecked,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the discriminant
+    /// and the arms of a type-switched release.
+    Arm,
     /// The retained text could not be reread: a clause nothing covers.
     Unreadable,
 }
 
 impl ClauseKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 19] = [
+    pub const ALL: [Self; 20] = [
         Self::Parameter,
         Self::Result,
         Self::BorrowedResult,
@@ -128,6 +131,7 @@ impl ClauseKind {
         Self::NoReturn,
         Self::Callback,
         Self::CallbackChecked,
+        Self::Arm,
         Self::Unreadable,
     ];
 
@@ -153,6 +157,7 @@ impl ClauseKind {
             Self::NoReturn => "noReturn",
             Self::Callback => "callback",
             Self::CallbackChecked => "callbackChecked",
+            Self::Arm => "arm",
             Self::Unreadable => "unreadable",
         }
     }
@@ -171,9 +176,10 @@ impl ClauseKind {
 /// The evidence spellings of rule 13g, in the order the report names them;
 /// card DECLARED-ASSUMPTION-BODY-CHECKS adds `13m` (the declaration's own
 /// entry check on a body whose W4 summary only refines it); card
-/// CG22-CALLBACK-REGISTRY-CONTRACT adds `13y` (the callback body check).
-pub const EVIDENCE: [&str; 9] = [
-    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y",
+/// CG22-CALLBACK-REGISTRY-CONTRACT adds `13y` (the callback body check);
+/// card CG22-OP-CALLBACKS-AND-SERVED-QUEUES adds `12o` (the arm check).
+pub const EVIDENCE: [&str; 10] = [
+    "W4", "entry", "11r", "12w", "13a", "13c", "13d", "13m", "13y", "12o",
 ];
 
 /// Whether the evidence spelled `evidence` covers a clause of `kind` (rule
@@ -194,6 +200,8 @@ pub fn covers(evidence: &str, kind: ClauseKind) -> bool {
         "13d" => kind == ClauseKind::ReferenceResult,
         // Card CG22-CALLBACK-REGISTRY-CONTRACT (rule 13y).
         "13y" => kind == ClauseKind::CallbackChecked,
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o).
+        "12o" => kind == ClauseKind::Arm,
         _ => false,
     }
 }
@@ -467,6 +475,30 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
     for clause in &declared.callbacks {
         clauses.push(callback_clause(clause));
     }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o).
+    if let Some(discriminant) = &declared.discriminant {
+        clauses.push(Clause::new(
+            ClauseKind::Arm,
+            format!(
+                "resource_discriminant(#{}, {}, {})",
+                discriminant.parameter, discriminant.field, discriminant.mask
+            ),
+        ));
+        for arm in &declared.arms {
+            use qcore_schemas::arm_release::{ArmEffect, ArmGuard};
+            let effect = match &arm.effect {
+                ArmEffect::Released { path } => {
+                    format!("resource_arm_released(#{}, {path})", discriminant.parameter)
+                }
+                ArmEffect::Empty => format!("resource_arm_empty(#{})", discriminant.parameter),
+            };
+            let guard = match arm.guard {
+                ArmGuard::Equals { value } => format!("when {} == {value}", discriminant.field),
+                ArmGuard::Otherwise => "otherwise".to_owned(),
+            };
+            clauses.push(Clause::new(ClauseKind::Arm, format!("{effect} {guard}")));
+        }
+    }
     clauses
 }
 
@@ -480,6 +512,7 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
                 CallbackActual::Parameter { index } => format!(", #{index}"),
                 CallbackActual::Supplied => ", _".to_owned(),
                 CallbackActual::Element => ", element".to_owned(),
+                CallbackActual::SuppliedOwned => ", supplied_owned".to_owned(),
             })
             .collect::<String>()
     };
@@ -516,6 +549,22 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
         | CallbackClause::ElementsDropped { holder }
         | CallbackClause::ReleasedIfConstructed { holder } => {
             (ClauseKind::Callback, format!("#{holder}"))
+        }
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): a declared
+        // assumption (no body check reads it).
+        CallbackClause::MemberInvoked {
+            object,
+            member,
+            actuals: a,
+        } => {
+            let object = match object {
+                qcore_schemas::callback::MemberObject::Parameter { index } => format!("#{index}"),
+                qcore_schemas::callback::MemberObject::SuppliedOwned => "supplied_owned".to_owned(),
+            };
+            (
+                ClauseKind::Callback,
+                format!("{object}, {}{}", member.spelling(), actuals(a)),
+            )
         }
     };
     Clause::new(kind, format!("{keyword}({arguments})"))
@@ -687,6 +736,9 @@ mod tests {
                 references_withdrawn: false,
                 callbacks: Vec::new(),
                 callbacks_withdrawn: false,
+                discriminant: None,
+                arms: Vec::new(),
+                arms_withdrawn: false,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

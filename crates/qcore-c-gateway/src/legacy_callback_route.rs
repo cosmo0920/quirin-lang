@@ -26,10 +26,12 @@ use serde_json::Value;
 
 use super::{AbstractState, LegacyDiagnostic, LegacyDiagnosticKind, Parser};
 use crate::callback_contracts::{
-    CandidateClass, Decision, ELEMENT_UNDECIDED, REGISTRY_UNDECIDED, RegistryClass, UNDECIDED,
-    WITHDRAWN, classify, decide, invocation_detail, refusal, registry_class,
+    ARM_UNDECIDED, ARM_UNDECLARED, ARM_WITHDRAWN, CandidateClass, Decision, ELEMENT_UNDECIDED,
+    MEMBER_OPEN, REGISTRY_UNDECIDED, RegistryClass, UNDECIDED, WITHDRAWN, classify, decide,
+    invocation_detail, refusal, registry_class,
 };
 use crate::typed_c_ast::{children, kind};
+use qcore_schemas::arm_release::{ArmEffect, ArmJoin, join_at};
 
 /// A registry holder's actual, as spelled.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -80,6 +82,21 @@ pub struct Operands {
     /// position, with `n` (every candidate's `n` joined): the classifier
     /// reads each as `resource_owned(n)` on the call itself.
     pub owned: BTreeMap<usize, bool>,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the
+    /// type-switched release, read under the cautious join of its arms.
+    pub arms: Option<ArmOperands>,
+}
+
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the arms of a
+/// type-switched release at one call, joined over every arm (the
+/// discriminant is never decided at a call: no declared constructor states
+/// it, `OP-CONSTRUCTOR-DECLARATIONS`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ArmOperands {
+    /// The discriminated object's actual, as spelled.
+    pub object: Vec<String>,
+    /// Every member path some arm releases, with the join of the arms there.
+    pub released: BTreeMap<String, ArmJoin>,
 }
 
 /// What a holder keys on in the path state.
@@ -454,12 +471,39 @@ impl Parser<'_> {
         candidates
             .iter()
             .map(|name| {
-                (
-                    name.clone(),
-                    classify(self.contracts.contract(name), actuals),
-                )
+                let contract = self.contracts.contract(name);
+                // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): a
+                // candidate that takes the supplied object only on some
+                // return codes (a disposition, never in the function map)
+                // leaves it with the callee on the others.
+                let class = if contract.is_none()
+                    && actuals.contains(&CallbackActual::SuppliedOwned)
+                    && self.contracts.relational_contract(name).is_some()
+                {
+                    CandidateClass::KeepsSupplied
+                } else {
+                    classify(contract, actuals)
+                };
+                (name.clone(), class)
             })
             .collect()
+    }
+
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the candidates
+    /// of `member` over this unit's stores, `Err` with why the unit does not
+    /// close it.
+    fn member_candidates(&self, member: &str) -> Result<BTreeSet<String>, String> {
+        let closure = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            crate::callback_member_closure::closure(&[unit.member_facts()], member)
+        })
+        .ok_or_else(|| "the unit's AST is not read".to_owned())?;
+        match closure {
+            Ok(names) if names.is_empty() => Err(format!(
+                "no store into `{member}` in this unit names a function"
+            )),
+            Ok(names) => Ok(names),
+            Err(open) => Err(open.into_iter().take(3).collect::<Vec<_>>().join("; ")),
+        }
     }
 
     /// The requirements every candidate puts on the call's parameters
@@ -500,7 +544,14 @@ impl Parser<'_> {
                 WITHDRAWN,
             ));
         }
-        if declaration.callbacks.is_empty() {
+        if declaration.arms_withdrawn {
+            return Err(refusal(
+                function,
+                "its body in this unit does not validate the declared arms",
+                ARM_WITHDRAWN,
+            ));
+        }
+        if declaration.callbacks.is_empty() && declaration.discriminant.is_none() {
             return Ok(None);
         }
         let text = |index: usize| actual(index).map_or_else(|| "?".to_owned(), |w| w.join(" "));
@@ -528,7 +579,42 @@ impl Parser<'_> {
             uses: Vec::new(),
             texts: Vec::new(),
             owned: BTreeMap::new(),
+            arms: None,
         };
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the
+        // discriminant is undecided at every call, so the arms are read under
+        // their cautious join; with no `otherwise`, some value has no
+        // declared arm, which is never read as neutral.
+        if let Some(discriminant) = &declaration.discriminant {
+            if !qcore_schemas::arm_release::has_otherwise(&declaration.arms) {
+                return Err(refusal(
+                    function,
+                    &format!(
+                        "the discriminant `{}->{}` is not decided here and some value has no \
+                         declared arm",
+                        text(discriminant.parameter),
+                        discriminant.field
+                    ),
+                    ARM_UNDECLARED,
+                ));
+            }
+            let released = declaration
+                .arms
+                .iter()
+                .filter_map(|arm| match &arm.effect {
+                    ArmEffect::Released { path } => Some(path.clone()),
+                    ArmEffect::Empty => None,
+                })
+                .map(|path| {
+                    let join = join_at(&declaration.arms, &path);
+                    (path, join)
+                })
+                .collect();
+            operands.arms = Some(ArmOperands {
+                object: actual(discriminant.parameter).unwrap_or_default(),
+                released,
+            });
+        }
         for clause in &declaration.callbacks {
             match clause {
                 CallbackClause::Invoked { callback, actuals } => {
@@ -646,9 +732,40 @@ impl Parser<'_> {
                         .uses
                         .push(RegistryUse::ReleaseIfConstructed { holder });
                 }
+                // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the
+                // candidates are the unit's closed set of stores into the
+                // member (the run's fold checks the unit saw them all), then
+                // decided as rule 13u's.
+                CallbackClause::MemberInvoked {
+                    member, actuals, ..
+                } => {
+                    let spelled = member.spelling();
+                    let candidates = self.member_candidates(&spelled).map_err(|why| {
+                        refusal(
+                            function,
+                            &format!(
+                                "the callbacks stored in `{spelled}` are not a closed set of \
+                                 functions ({why})"
+                            ),
+                            MEMBER_OPEN,
+                        )
+                    })?;
+                    let classes = self.classified(&candidates, actuals);
+                    if let Decision::Refused(reason, candidate) = decide(Ok(&classes), false) {
+                        return Err(refusal(
+                            function,
+                            &invocation_detail(reason, candidate.as_deref(), &spelled),
+                            reason,
+                        ));
+                    }
+                    self.require(&candidates, actuals, &mut operands.owned);
+                }
             }
         }
-        Ok((!operands.uses.is_empty() || !operands.owned.is_empty()).then_some(operands))
+        Ok(
+            (!operands.uses.is_empty() || !operands.owned.is_empty() || operands.arms.is_some())
+                .then_some(operands),
+        )
     }
 
     /// Whether `name` is a frame registry holder of the calling function.
@@ -731,6 +848,9 @@ pub(super) fn apply(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     let callee = crate::retained_by::retained_callee(called).unwrap_or(called);
+    if let Some(arms) = &operands.arms {
+        apply_arms(function, line, callee, arms, state, diagnostics);
+    }
     // The registration a use reads: the one in force before this call (an
     // unregistration does not hide it from the self-release that follows).
     let before = state.registries.clone();
@@ -962,6 +1082,87 @@ pub(super) fn apply(
     }
 }
 
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): after the declared
+/// release of the discriminated object, each object a member of it links is
+/// released when every arm releases that member, refused when only some do,
+/// and left as a plain release leaves it (premise P-B08-SHALLOW) when none
+/// does.
+fn apply_arms(
+    function: &str,
+    line: usize,
+    callee: &str,
+    arms: &ArmOperands,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let [name] = arms.object.as_slice() else {
+        return;
+    };
+    let Some(pointer) = state.pointers.get(name).cloned() else {
+        return;
+    };
+    for site in &pointer.targets {
+        let Some(fields) = state.field_links.get(site).cloned() else {
+            continue;
+        };
+        for (field, children) in fields {
+            let join = arms.released.get(&field).copied().unwrap_or(ArmJoin::None);
+            match join {
+                ArmJoin::None => {}
+                ArmJoin::Some => refuse(
+                    function,
+                    line,
+                    refusal(
+                        callee,
+                        &format!(
+                            "`{name}->{field}` links an object some arms release and others do not"
+                        ),
+                        ARM_UNDECIDED,
+                    ),
+                    state,
+                    diagnostics,
+                ),
+                ArmJoin::Every => {
+                    let single = !pointer.unknown && pointer.targets.len() == 1;
+                    let live = children.iter().all(|child| {
+                        state.resources.get(child).copied().unwrap_or(0) & super::LIVE != 0
+                    });
+                    if !single || !live {
+                        refuse(
+                            function,
+                            line,
+                            refusal(
+                                callee,
+                                &format!(
+                                    "`{name}->{field}` does not link one live object every arm \
+                                     releases"
+                                ),
+                                ARM_UNDECIDED,
+                            ),
+                            state,
+                            diagnostics,
+                        );
+                        continue;
+                    }
+                    for child in &children {
+                        let status = state.resources.get(child).copied().unwrap_or(0);
+                        state.resources.insert(
+                            *child,
+                            (status & !(super::LIVE | super::CONTAINED)) | super::RELEASED,
+                        );
+                    }
+                    if let Some(links) = state.field_links.get_mut(site) {
+                        links.remove(&field);
+                        if links.is_empty() {
+                            state.field_links.remove(site);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// Hook 3: a holder whose registry still holds elements is released only
 /// through the registry. `true` when it refused.
 pub(super) fn refuse_release_of_registry(
@@ -1141,7 +1342,9 @@ fn invocation_validates(
                             && !rebound(body, formal)
                     })
                 }
-                CallbackActual::Supplied => !argument.contains(&name.as_str()),
+                CallbackActual::Supplied | CallbackActual::SuppliedOwned => {
+                    !argument.contains(&name.as_str())
+                }
                 CallbackActual::Element => false,
             };
             if !fits {
@@ -1199,6 +1402,44 @@ pub(crate) fn settle(
     tokens: &[super::Token],
     contracts: &ResourceContracts,
 ) -> Option<ResourceContracts> {
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the unit's member
+    // facts, the run's closure evidence, whenever a member invocation is in
+    // the environment.
+    if contracts.retaining().values().any(|declared| {
+        declared
+            .callbacks
+            .iter()
+            .any(|clause| matches!(clause, CallbackClause::MemberInvoked { .. }))
+    }) && let Some(facts) =
+        crate::typed_access_path::with_indirect_call_unit(|unit| unit.member_facts().clone())
+    {
+        crate::contract_dependencies::member_evidence(facts);
+    }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): arms stand in a
+    // unit that defines the body only when its Clang body validates them.
+    let mut arms_withdrawn = Vec::new();
+    for (name, declaration) in contracts.retaining() {
+        let Some(discriminant) = &declaration.discriminant else {
+            continue;
+        };
+        if declaration.arms_withdrawn
+            || super::slot_move_route::defined_body(tokens, name).is_none()
+        {
+            continue;
+        }
+        let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            unit.function(name).map(|function| {
+                crate::arm_release_check::validates(function, discriminant, &declaration.arms)
+            })
+        })
+        .flatten()
+        .unwrap_or_else(|| Err("the body's Clang AST is not read".to_owned()));
+        if checked.is_ok() {
+            crate::contract_dependencies::validated(name, "12o");
+        } else {
+            arms_withdrawn.push((name.clone(), declaration.clone()));
+        }
+    }
     let mut withdrawn = Vec::new();
     for (name, declaration) in contracts.retaining() {
         if declaration.callbacks_withdrawn {
@@ -1243,13 +1484,22 @@ pub(crate) fn settle(
             withdrawn.push((name.clone(), declaration.clone()));
         }
     }
-    if withdrawn.is_empty() {
+    if withdrawn.is_empty() && arms_withdrawn.is_empty() {
         return None;
     }
     let mut settled = contracts.clone();
     for (name, mut declaration) in withdrawn {
         crate::contract_dependencies::withdrawn(&name, "13y", true);
         declaration.callbacks_withdrawn = true;
+        settled.insert_retaining(name, declaration);
+    }
+    for (name, _) in arms_withdrawn {
+        crate::contract_dependencies::withdrawn(&name, "12o", true);
+        let mut declaration = settled
+            .retaining_contract(&name)
+            .cloned()
+            .expect("a retaining declaration");
+        declaration.arms_withdrawn = true;
         settled.insert_retaining(name, declaration);
     }
     Some(settled)

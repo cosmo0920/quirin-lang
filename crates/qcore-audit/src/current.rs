@@ -205,6 +205,14 @@ impl CurrentAudit {
         // premises, recorded before any unit so a composer has them.
         assumptions[crate::contract_dependencies::PREMISES_KEY] =
             crate::contract_dependencies::premises(&contracts)?;
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the declarations
+        // whose member closure the run folds, recorded before any unit so a
+        // checkpoint composer, which cannot fold it, refuses the run.
+        let invoking = crate::callback_member_fold::member_declarations(&contracts);
+        if !invoking.is_empty() {
+            assumptions[crate::callback_member_fold::DECLARATIONS_KEY] =
+                serde_json::json!(invoking.keys().collect::<Vec<_>>());
+        }
         if let Some(record) = input.provider_record() {
             assumptions["provider_selection"] = record.clone();
         }
@@ -517,6 +525,20 @@ impl CurrentAudit {
     pub fn finish(mut self, path: Option<&Path>) -> Result<AuditCounts, String> {
         if crate::checkout_head(&self.checkout)? != self.revision {
             return Err("checkout HEAD changed during audit; rerun with stable inputs".into());
+        }
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's
+        // closure of every invoked member, folded over the rows before
+        // anything is published; it only demotes.
+        let (members, from_safe, from_pending) = self.report.fold_callback_members(&self.contracts);
+        self.counts.safe_units -= from_safe;
+        self.counts.pending_units -= from_pending;
+        self.counts.unknown_units += from_safe + from_pending;
+        if !members.is_null() {
+            println!(
+                "callback members: {} demoted",
+                members["demoted"].as_array().map_or(0, Vec::len)
+            );
+            self.assumptions[crate::callback_member_fold::SECTION_KEY] = members;
         }
         println!(
             "current revision: {} source file(s), {} configuration(s): {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",

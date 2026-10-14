@@ -325,6 +325,10 @@ mod reference_count;
 // Card CG22-CALLBACK-REGISTRY-CONTRACT: the callback clauses (§C04.19).
 #[path = "contract_callback.rs"]
 mod callback;
+// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the type-switched release
+// (§C04.19.2).
+#[path = "contract_arm_release.rs"]
+mod arm_release;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1692,6 +1696,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card CG22-CALLBACK-REGISTRY-CONTRACT: every callback clause, as
     // written, in clause order.
     let mut callback_clauses: Vec<callback::WrittenCallback> = Vec::new();
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the discriminant and the arm
+    // clauses, as written, in clause order.
+    let mut discriminants: Vec<arm_release::WrittenDiscriminant> = Vec::new();
+    let mut arm_clauses: Vec<arm_release::WrittenArm> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1822,6 +1830,13 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 });
                 continue;
             }
+            // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): the
+            // discriminant of a type-switched release; validated below with
+            // its arms.
+            if let Some(written) = arm_release::discriminant_clause(expression)? {
+                discriminants.push(written);
+                continue;
+            }
             // Card VERDICT-CONTRACT-DEPENDENCIES: a named premise, at most
             // once per name. It narrows nothing and widens nothing: it names
             // an assumption the declaration rests on, for the report.
@@ -1854,6 +1869,20 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 ));
             }
             literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
+            continue;
+        }
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): an arm
+        // clause, guarded by `when FIELD == VALUE` or `otherwise`, read before
+        // the retention guard (which refuses every other guarded clause).
+        if let Some(written) = arm_release::arm_clause(expression)? {
+            arm_clauses.push(written);
+            continue;
+        }
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.3): a member
+        // invocation, whose dotted member the identifier-only predicate reader
+        // does not read.
+        if let Some(written) = callback::member_clause(expression)? {
+            callback_clauses.push(written);
             continue;
         }
         // Card W43-ABI-ENUM-AND-CONST-PP (§C04.14.1, rule 12w): a guarded
@@ -2331,6 +2360,8 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         && slot_clauses.is_empty()
         && reference_clauses.is_empty()
         && callback_clauses.is_empty()
+        && discriminants.is_empty()
+        && arm_clauses.is_empty()
     {
         None
     } else {
@@ -2437,6 +2468,25 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             }
         }
         declared.callbacks = callbacks;
+        // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): the
+        // type-switched release stands where a callback clause may.
+        let (discriminant, arms) = arm_release::declaration(
+            &discriminants,
+            &arm_clauses,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?;
+        if discriminant.is_some()
+            && (!declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty())
+        {
+            return Err("an arm clause stands only beside retentions and plain predicates".into());
+        }
+        declared.discriminant = discriminant;
+        declared.arms = arms;
         Some(declared)
     };
     Ok(LoadedDeclaration {

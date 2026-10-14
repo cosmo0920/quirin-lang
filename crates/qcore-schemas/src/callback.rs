@@ -38,6 +38,41 @@ pub enum CallbackActual {
     Supplied,
     /// `element` (a registry invocation only): each element the holder holds.
     Element,
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (§C04.19.1, rule 12m):
+    /// `supplied_owned`, a live object the callee supplies and owns, whose
+    /// custody it hands to the callback at each invocation (an op
+    /// `rd_kafka_q_serve0` dequeued). The callback must take it on every
+    /// return; the caller's state never holds it.
+    SuppliedOwned,
+}
+
+/// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (§C04.19.3, rule 12n): a
+/// function-pointer member `TAG.FIELD`, the dotted path `FIELD` read from a
+/// `struct TAG` object (`rd_kafka_op_s.rko_op_cb`,
+/// `rd_kafka_op_s.rko_u.leaders.cb`).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct CallbackMember {
+    pub tag: String,
+    /// The member path below the record, segments joined by `.`.
+    pub path: String,
+}
+
+impl CallbackMember {
+    /// The spelling `TAG.FIELD`.
+    #[must_use]
+    pub fn spelling(&self) -> String {
+        format!("{}.{}", self.tag, self.path)
+    }
+}
+
+/// Whose member a member invocation reads.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "object")]
+pub enum MemberObject {
+    /// The object the parameter at this index designates.
+    Parameter { index: usize },
+    /// Each object the callee supplies at its `supplied_owned` position.
+    SuppliedOwned,
 }
 
 /// Who keeps a registered callback.
@@ -91,6 +126,15 @@ pub enum CallbackClause {
     /// Rule 13x: the call releases `holder`'s object exactly when its
     /// registration in force was made by a constructor ([`CallbackHolder::Result`]).
     ReleasedIfConstructed { holder: usize },
+    /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): during the
+    /// call the function pointer stored in `object`'s `member` is called zero
+    /// or more times with `actuals`. Its candidates are the run's closed set
+    /// of stores into `member` (premise `P-CG22-MEMBER-CLOSED-WORLD`).
+    MemberInvoked {
+        object: MemberObject,
+        member: CallbackMember,
+        actuals: Vec<CallbackActual>,
+    },
 }
 
 impl CallbackClause {
@@ -106,6 +150,7 @@ impl CallbackClause {
             Self::ElementAdded { .. } => "resource_element_added",
             Self::ElementsDropped { .. } => "resource_elements_dropped",
             Self::ReleasedIfConstructed { .. } => "resource_released_if_constructed",
+            Self::MemberInvoked { .. } => "resource_callback_member_invoked",
         }
     }
 

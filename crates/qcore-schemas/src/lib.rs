@@ -7,6 +7,7 @@
 //! only; the trusted core re-exports these types for compatibility.
 
 // Card CG22-CALLBACK-REGISTRY-CONTRACT: callback contracts.
+pub mod arm_release;
 pub mod callback;
 pub mod contract;
 // Card VERDICT-CONTRACT-DEPENDENCIES (gateway rule 13f): the per-thread log of

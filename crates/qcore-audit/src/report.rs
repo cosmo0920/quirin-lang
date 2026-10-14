@@ -7,6 +7,7 @@ use qcore_c_gateway::legacy_c::{
     LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, SourceDefinitionInventory, SourceLineMap,
     UnrestrictedLegacyResult, unlocated_site,
 };
+use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::reason::ReasonCategory;
 use serde_json::{Value, json};
 
@@ -144,6 +145,11 @@ pub struct AuditReport {
     /// run before the null rows are written. Never part of the custody
     /// document.
     null_evidence: Vec<Value>,
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): each analysed
+    /// unit's function-pointer member facts, in unit order, recorded only
+    /// when a declaration invokes a member; folded over the run by
+    /// [`Self::fold_callback_members`] before anything is published.
+    callback_members: Vec<crate::callback_member_fold::UnitFacts>,
 }
 
 impl AuditReport {
@@ -159,7 +165,57 @@ impl AuditReport {
             bounds_evidence: Vec::new(),
             null: Vec::new(),
             null_evidence: Vec::new(),
+            callback_members: Vec::new(),
         }
+    }
+
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): one analysed
+    /// unit's member facts (`None` when it recorded none).
+    pub(crate) fn record_callback_members(
+        &mut self,
+        library: &str,
+        file: &str,
+        facts: Option<qcore_c_gateway::callback_member_closure::MemberFacts>,
+    ) {
+        self.callback_members
+            .push(crate::callback_member_fold::UnitFacts {
+                library: library.to_owned(),
+                file: file.to_owned(),
+                facts,
+            });
+    }
+
+    /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): fold the run's
+    /// member closure over the rows, demoting what it does not keep; the
+    /// section, `Value::Null` when no declaration invokes a member, and how
+    /// many unit rows it moved from `Safe` and from `Pending` to `Unknown`.
+    pub fn fold_callback_members(
+        &mut self,
+        contracts: &ResourceContracts,
+    ) -> (Value, usize, usize) {
+        let before = self
+            .units
+            .iter()
+            .map(|row| row["status"].as_str().unwrap_or("").to_owned())
+            .collect::<Vec<_>>();
+        let section = crate::callback_member_fold::fold(
+            &mut self.units,
+            &self.callback_members,
+            contracts,
+            &mut self.diagnostic_counts,
+        );
+        let mut from_safe = 0;
+        let mut from_pending = 0;
+        for (row, before) in self.units.iter().zip(before) {
+            if row["status"].as_str() == Some("Unknown") {
+                match before.as_str() {
+                    "Safe" => from_safe += 1,
+                    "Pending" => from_pending += 1,
+                    _ => {}
+                }
+            }
+        }
+        (section, from_safe, from_pending)
     }
 
     /// Card NULL-SAFETY-PROPERTY: one function's null row.
@@ -345,6 +401,7 @@ impl AuditReport {
             bounds_evidence,
             null,
             null_evidence,
+            callback_members,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -363,6 +420,7 @@ impl AuditReport {
         self.bounds_evidence.extend(bounds_evidence);
         self.null.extend(null);
         self.null_evidence.extend(null_evidence);
+        self.callback_members.extend(callback_members);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
@@ -737,6 +795,7 @@ impl AuditReport {
             bounds_evidence: Vec::new(),
             null: Vec::new(),
             null_evidence: Vec::new(),
+            callback_members: Vec::new(),
         }
     }
 

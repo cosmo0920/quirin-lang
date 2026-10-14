@@ -25,7 +25,9 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_schemas::callback::{CallbackActual, CallbackClause, CallbackHolder};
+use qcore_schemas::callback::{
+    CallbackActual, CallbackClause, CallbackHolder, CallbackMember, MemberObject,
+};
 use qcore_schemas::contract::{
     ResourceFunctionContract, ResourceKind, ResourceParameterMode, ResourceReturnMode,
 };
@@ -38,11 +40,17 @@ pub(super) const UNREGISTERED: &str = "resource_callback_unregistered";
 pub(super) const ELEMENT_ADDED: &str = "resource_element_added";
 pub(super) const ELEMENTS_DROPPED: &str = "resource_elements_dropped";
 pub(super) const RELEASED_IF_CONSTRUCTED: &str = "resource_released_if_constructed";
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.3, rule 12n).
+pub(super) const MEMBER_INVOKED: &str = "resource_callback_member_invoked";
 
 /// The actual word for a value the callee supplies.
 pub(super) const SUPPLIED: &str = "_";
 /// The actual word for each element a registry holds.
 pub(super) const ELEMENT: &str = "element";
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.1, rule 12m; USER
+/// DECISION 2026-10-14, clause 1's word): a live object the callee supplies
+/// and hands the callback, which must take it.
+pub(super) const SUPPLIED_OWNED: &str = "supplied_owned";
 /// The holder word for the object the call returns.
 pub(super) const RESULT: &str = "result";
 
@@ -78,6 +86,46 @@ pub(super) fn clause(words: &[&str]) -> Option<WrittenCallback> {
     })
 }
 
+/// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: read
+/// `resource_callback_member_invoked(OBJ, TAG.FIELD, A…)`, whose dotted
+/// member the identifier-only predicate reader does not read; `None` for any
+/// other predicate.
+pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>, String> {
+    let Some(rest) = expression.trim().strip_prefix(MEMBER_INVOKED) else {
+        return Ok(None);
+    };
+    let malformed = || format!("malformed `{MEMBER_INVOKED}` clause `{expression}`");
+    let inner = rest
+        .trim_start()
+        .strip_prefix('(')
+        .and_then(|inner| inner.strip_suffix(')'))
+        .ok_or_else(malformed)?;
+    let arguments = inner.split(',').map(str::trim).collect::<Vec<_>>();
+    let word = |text: &str, dotted: bool| {
+        !text.is_empty()
+            && text.split('.').all(|segment| {
+                !segment.is_empty()
+                    && !segment.starts_with(|ch: char| ch.is_ascii_digit())
+                    && segment
+                        .chars()
+                        .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+            })
+            && (dotted || !text.contains('.'))
+    };
+    if arguments.len() < 2
+        || arguments
+            .iter()
+            .enumerate()
+            .any(|(at, argument)| !word(argument, at == 1))
+    {
+        return Err(malformed());
+    }
+    Ok(Some(WrittenCallback {
+        keyword: MEMBER_INVOKED,
+        arguments: arguments.into_iter().map(str::to_owned).collect(),
+    }))
+}
+
 /// Validate the callback clauses of one declaration whose custody contract
 /// `contract` is already loaded.
 pub(super) fn declaration(
@@ -90,7 +138,7 @@ pub(super) fn declaration(
     if written.is_empty() {
         return Ok(Vec::new());
     }
-    for reserved in [SUPPLIED, ELEMENT] {
+    for reserved in [SUPPLIED, ELEMENT, SUPPLIED_OWNED] {
         if names.contains_key(reserved) {
             return Err(format!(
                 "a callback clause reads `{reserved}` as an actual word: rename the parameter \
@@ -130,11 +178,18 @@ pub(super) fn declaration(
         }
         Ok(at)
     };
-    let actuals = |words: &[String], callback: Option<usize>, element: bool| {
+    let actuals = |words: &[String], callback: Option<usize>, element: bool, owned: bool| {
+        if words.iter().filter(|word| *word == SUPPLIED_OWNED).count() > 1 {
+            return Err(format!("at most one `{SUPPLIED_OWNED}` per actual list"));
+        }
         words
             .iter()
             .map(|word| match word.as_str() {
                 SUPPLIED => Ok(CallbackActual::Supplied),
+                SUPPLIED_OWNED if owned => Ok(CallbackActual::SuppliedOwned),
+                SUPPLIED_OWNED => Err(format!(
+                    "`{SUPPLIED_OWNED}` is an actual of a synchronous or member invocation only"
+                )),
                 ELEMENT if element => Ok(CallbackActual::Element),
                 ELEMENT => Err(format!(
                     "`{ELEMENT}` is an actual of a registry invocation only"
@@ -152,6 +207,7 @@ pub(super) fn declaration(
     let mut clauses = Vec::with_capacity(written.len());
     let mut seen: BTreeSet<(&str, usize)> = BTreeSet::new();
     let mut callbacks_named: BTreeSet<usize> = BTreeSet::new();
+    let mut members_named: BTreeSet<(MemberObject, CallbackMember)> = BTreeSet::new();
     for clause in written {
         let arguments = clause.arguments.as_slice();
         let shape = || format!("malformed `{}` clause", clause.keyword);
@@ -164,7 +220,7 @@ pub(super) fn declaration(
                 }
                 CallbackClause::Invoked {
                     callback,
-                    actuals: actuals(rest, Some(callback), false)?,
+                    actuals: actuals(rest, Some(callback), false, true)?,
                 }
             }
             TABLE => {
@@ -172,7 +228,7 @@ pub(super) fn declaration(
                 let table = object(table, "callback table")?;
                 CallbackClause::Table {
                     table,
-                    actuals: actuals(rest, None, false)?,
+                    actuals: actuals(rest, None, false, false)?,
                 }
             }
             REGISTERED => {
@@ -212,7 +268,7 @@ pub(super) fn declaration(
                 let holder = object(holder, "callback holder")?;
                 CallbackClause::RegistryInvoked {
                     holder,
-                    actuals: actuals(rest, None, true)?,
+                    actuals: actuals(rest, None, true, false)?,
                 }
             }
             UNREGISTERED | ELEMENTS_DROPPED | RELEASED_IF_CONSTRUCTED => {
@@ -237,8 +293,69 @@ pub(super) fn declaration(
                 }
                 CallbackClause::ElementAdded { element, holder }
             }
+            MEMBER_INVOKED => {
+                let [object, member, rest @ ..] = arguments else {
+                    return Err(shape());
+                };
+                let object = if object == SUPPLIED_OWNED {
+                    MemberObject::SuppliedOwned
+                } else {
+                    // The member is read before any release the declaration
+                    // states of the object (`rd_kafka_op_destroy` calls the
+                    // op's callback, then frees the op).
+                    let at = index(object)?;
+                    if !DEPTH_ONE.contains(&parameter_types[at].as_str()) {
+                        return Err(format!(
+                            "a member invocation reads a depth-one pointer parameter, not \
+                             `{object}`"
+                        ));
+                    }
+                    if !matches!(
+                        contract.parameters[at],
+                        ResourceParameterMode::Borrowed | ResourceParameterMode::Released { .. }
+                    ) {
+                        return Err(format!(
+                            "a member invocation's object is `resource_borrowed` or \
+                             `resource_released` (`{object}`)"
+                        ));
+                    }
+                    if parameter_kinds[at].is_some() {
+                        return Err(format!(
+                            "a member invocation's object carries no kind (`{object}`)"
+                        ));
+                    }
+                    MemberObject::Parameter { index: at }
+                };
+                let (tag, path) = member
+                    .split_once('.')
+                    .ok_or_else(|| format!("a member is spelled `TAG.FIELD`, not `{member}`"))?;
+                let actuals = actuals(rest, None, false, true)?;
+                if object == MemberObject::SuppliedOwned
+                    && !actuals.contains(&CallbackActual::SuppliedOwned)
+                {
+                    return Err(format!(
+                        "a member of the `{SUPPLIED_OWNED}` object is invoked with that object"
+                    ));
+                }
+                let member = CallbackMember {
+                    tag: tag.to_owned(),
+                    path: path.to_owned(),
+                };
+                if !members_named.insert((object, member.clone())) {
+                    return Err(format!("duplicate `{MEMBER_INVOKED}` clause"));
+                }
+                CallbackClause::MemberInvoked {
+                    object,
+                    member,
+                    actuals,
+                }
+            }
             other => return Err(format!("unsupported callback clause `{other}`")),
         };
+        if matches!(declared, CallbackClause::MemberInvoked { .. }) {
+            clauses.push(declared);
+            continue;
+        }
         // At most one clause of each keyword per position.
         let position = match &declared {
             CallbackClause::Invoked { callback, .. } => *callback,
@@ -249,6 +366,7 @@ pub(super) fn declaration(
             | CallbackClause::ElementsDropped { holder }
             | CallbackClause::ReleasedIfConstructed { holder }
             | CallbackClause::ElementAdded { holder, .. } => *holder,
+            CallbackClause::MemberInvoked { .. } => unreachable!("pushed above"),
         };
         if !seen.insert((clause.keyword, position)) {
             return Err(format!("duplicate `{}` clause", clause.keyword));
