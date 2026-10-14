@@ -5135,9 +5135,11 @@ own anchor here.
     and `conf->F` are `rd_kafka_conf_s.F`, so `rk->rk_conf = *conf` copies
     values already counted), a union's members share one key (`U.*` or
     `TAG.PATH.*`), and a declared spelling is normalised through the run's
-    record tables (`callback_member_closure::Tables`: a whole-object write of
-    a record holding the member by value opens it; a union key aliases the
-    records it embeds). *Registrations:* every call of a declaration stating
+    record tables (`callback_member_closure::Tables`: an opaque
+    whole-object write of a record holding the member by value, a
+    `memcpy`-family call or an assignment from another type, opens it, and
+    its initializer list does not; a union key aliases the records it
+    embeds). *Registrations:* every call of a declaration stating
     `resource_callback_member_registered(P, TAG.FIELD, F)` with `P` a
     parameter (a setter) is a store of its `F` actual, and a constructor's
     stated function default (`quant live #result: TAG.FIELD |-> f;`) a store

@@ -218,6 +218,21 @@ run, the pre-pass adds about 150 s of wall time, and the S1 refusal shows as
 `callback-uncontracted` (not `callback-supplied-kept`), because the poll
 callback cannot be declared at all.
 
+**The tip's binary.** Gate g1 found one test,
+`callback_member_data_only::a_list_that_cannot_be_mapped_opens_the_record`.
+The record-holder rule had opened an embedded record's member on the
+holder's unmappable initializer list, which writes the embedded record only
+through a nested list or a value that the record's own key already reads.
+After the fix:
+
+* the holder's initializer list no longer opens the member;
+* an opaque write (a `memcpy`-family call, an assignment from another type)
+  still opens it and takes precedence in the unit's facts.
+
+`a6` (`7d000e3f…`, the fixed code) reproduces `a5` byte for byte on all
+three routes: the same report digests, null rows and member sets, corpus
+665.1 s ([summary](artifacts/summary.json)).
+
 **Discarded attempts** (retained under `private/oprk/`, not evidence):
 
 * **`a1`.** Its pre-pass left 386 units unread (the gateway's strict option
