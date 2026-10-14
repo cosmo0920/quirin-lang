@@ -443,6 +443,17 @@ pub fn run(
              compile_commands.json to run the C gateway projection"
         );
     }
+    // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's closure
+    // of every invoked member, folded over the rows before anything is
+    // published; it only demotes. The per-library console lines above are the
+    // analysis's own; the fold's demotions are tallied here.
+    let (members, _, _) = report.fold_callback_members(&contracts);
+    if !members.is_null() {
+        println!(
+            "callback members: {} demoted",
+            members["demoted"].as_array().map_or(0, Vec::len)
+        );
+    }
     // Card W45-CONTRACT-DEFERRED-REVIEW: the pending reviews and what they
     // held, tallied on the console and added to the contract sidecar. Additive:
     // every other byte of the sidecar is the one written before the analysis.
@@ -470,6 +481,9 @@ pub fn run(
         inputs["contract_revision"] = revision_section;
         inputs["refuted_contracts"] = refuted_section;
         inputs[crate::contract_dependencies::SECTION_KEY] = dependency_section;
+        if !members.is_null() {
+            inputs[crate::callback_member_fold::SECTION_KEY] = members;
+        }
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }

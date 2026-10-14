@@ -205,3 +205,106 @@ pub fn fold(
         "demoted": demoted,
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn contracts() -> ResourceContracts {
+        qcore_contract::contract_loader::load_resource_contract_sources(&BTreeMap::from([(
+            "fold.qv".to_owned(),
+            "module contract;
+extern fn destroy(o: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(o, nonnull);
+    ensures normal resource_callback_member_invoked(o, op.cb, _, o);
+    ensures normal resource_return_none();
+};
+"
+            .to_owned(),
+        )]))
+        .expect("loads")
+    }
+
+    fn facts(names: &[&str]) -> MemberFacts {
+        let mut facts = MemberFacts::default();
+        facts.stores.insert(
+            "op.cb".to_owned(),
+            names
+                .iter()
+                .map(
+                    |name| qcore_c_gateway::callback_member_closure::Flow::Function {
+                        name: (*name).to_owned(),
+                    },
+                )
+                .collect(),
+        );
+        facts
+    }
+
+    fn row(file: &str, status: &str, declarations: &[&str]) -> Value {
+        json!({"library": "l", "file": file, "status": status, "reason": null,
+               "diagnostic_counts": {},
+               "functions": [{"function": "f", "status": status, "diagnostics": [],
+                              "contract_dependencies": {"declarations": declarations}}]})
+    }
+
+    fn unit(file: &str, facts: Option<MemberFacts>) -> UnitFacts {
+        UnitFacts {
+            library: "l".into(),
+            file: file.into(),
+            facts,
+        }
+    }
+
+    #[test]
+    fn a_row_is_kept_only_when_the_run_set_is_the_units() {
+        let mut counts = BTreeMap::new();
+        // Unit a decided over {h}; the run adds unit b's {g}: demoted.
+        let mut units = vec![row("a.c", "Safe", &["destroy"]), row("b.c", "Unknown", &[])];
+        let section = fold(
+            &mut units,
+            &[
+                unit("a.c", Some(facts(&["h"]))),
+                unit("b.c", Some(facts(&["g"]))),
+            ],
+            &contracts(),
+            &mut counts,
+        );
+        assert_eq!(units[0]["status"], "Unknown");
+        assert_eq!(units[0]["functions"][0]["status"], "Unknown");
+        assert_eq!(section["demoted"].as_array().map(Vec::len), Some(1));
+        assert_eq!(counts["unsupported"], 1);
+        // The run's set is the unit's own: kept.
+        let mut units = vec![row("a.c", "Safe", &["destroy"]), row("b.c", "Unknown", &[])];
+        fold(
+            &mut units,
+            &[
+                unit("a.c", Some(facts(&["h"]))),
+                unit("b.c", Some(facts(&["h"]))),
+            ],
+            &contracts(),
+            &mut BTreeMap::new(),
+        );
+        assert_eq!(units[0]["status"], "Safe");
+        // A unit with no facts opens every member: demoted.
+        let mut units = vec![row("a.c", "Safe", &["destroy"]), row("b.c", "Unknown", &[])];
+        fold(
+            &mut units,
+            &[unit("a.c", Some(facts(&["h"]))), unit("b.c", None)],
+            &contracts(),
+            &mut BTreeMap::new(),
+        );
+        assert_eq!(units[0]["status"], "Unknown");
+        // A row resting on no member-invoking declaration is never touched.
+        let mut units = vec![row("a.c", "Safe", &["other"])];
+        fold(
+            &mut units,
+            &[unit("a.c", None)],
+            &contracts(),
+            &mut BTreeMap::new(),
+        );
+        assert_eq!(units[0]["status"], "Safe");
+    }
+}

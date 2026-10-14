@@ -56,10 +56,10 @@ pub(crate) fn fold_with(node: &Value, enumerators: &BTreeMap<String, i64>) -> Op
     let node = strip(node);
     match kind(node) {
         "IntegerLiteral" => node["value"].as_str()?.parse().ok(),
-        "DeclRefExpr"
-            if node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl") =>
-        {
-            enumerators.get(node["referencedDecl"]["id"].as_str()?).copied()
+        "DeclRefExpr" if node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl") => {
+            enumerators
+                .get(node["referencedDecl"]["id"].as_str()?)
+                .copied()
         }
         "UnaryOperator" => {
             let inner = fold(children(node).first()?)?;
@@ -285,11 +285,9 @@ pub fn validates(
     let selected = found
         .into_iter()
         .filter(|switch| {
-            children(switch)
-                .first()
-                .is_some_and(|condition| {
-                    reads_discriminant(condition, parameter, discriminant, enumerators)
-                })
+            children(switch).first().is_some_and(|condition| {
+                reads_discriminant(condition, parameter, discriminant, enumerators)
+            })
         })
         .collect::<Vec<_>>();
     let [switch] = selected.as_slice() else {
@@ -450,7 +448,10 @@ mod tests {
             (Some(4), Some("u.c.z")),
             (None, None),
         ]);
-        assert_eq!(validates(&body, &discriminant(), &declared, &BTreeMap::new()), Ok(()));
+        assert_eq!(
+            validates(&body, &discriminant(), &declared, &BTreeMap::new()),
+            Ok(())
+        );
         // A missing release, or a declared one the body does not hand on.
         let missing = arms(&[
             (Some(1), Some("u.a.x")),
@@ -474,7 +475,10 @@ mod tests {
         ]);
         // A declared arm for 7 releasing nothing agrees with the default.
         let declared = arms(&[(Some(1), Some("u.a.x")), (Some(7), None), (None, None)]);
-        assert_eq!(validates(&body, &discriminant(), &declared, &BTreeMap::new()), Ok(()));
+        assert_eq!(
+            validates(&body, &discriminant(), &declared, &BTreeMap::new()),
+            Ok(())
+        );
         // `otherwise` releasing something the default does not.
         let wrong = arms(&[(Some(1), Some("u.a.x")), (None, Some("u.a.x"))]);
         assert!(validates(&body, &discriminant(), &wrong, &BTreeMap::new()).is_err());
