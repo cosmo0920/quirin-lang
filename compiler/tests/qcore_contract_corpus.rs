@@ -1253,6 +1253,79 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_op_req0", 8),
     ("librdkafka/client.qv", "rd_kafka_op_req", 7),
     ("librdkafka/client.qv", "rd_kafka_op_req2", 6),
+    // Card OP-CALLBACK-CANDIDATE-CONTRACTS: the declared op-callback
+    // candidates. An `rko_op_cb` candidate: marker, the `rk_log_callback`
+    // premise, three borrowed formals, `none` (6), plus one more premise for
+    // the broker monitor and the assignor (7); an `rko_serve` candidate:
+    // marker, the premise, the op consumed, four borrowed, `none` (8), plus
+    // the `rk_closesocket_callback` premise for the mock cluster (9).
+    ("librdkafka/client.qv", "rd_kafka_broker_monitor_op_cb", 7),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_cgrp_assignor_handle_Metadata_op",
+        7,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_cgrp_consumer_handle_Metadata_op",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_cgrp_handle_Metadata_op",
+        6,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_offset_reset_op_cb", 6),
+    ("librdkafka/client.qv", "rd_kafka_offset_validate_op_cb", 6),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_share_ack_commit_cb_register_op",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_share_fetch_reply_op_cb",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_init_transactions",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_ack_init_transactions",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_begin_transaction",
+        6,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_commit", 6),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_commit_transaction",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_commit_transaction_ack",
+        6,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_txn_op_begin_abort", 6),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_abort_transaction",
+        6,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_abort_transaction_ack",
+        6,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_cgrp_op_serve", 8),
+    ("librdkafka/client.qv", "rd_kafka_mock_cluster_op_serve", 9),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

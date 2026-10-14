@@ -13,13 +13,16 @@ import pathlib
 import re
 import sys
 
+import candidate_census  # noqa: E402  (the candidate lists)
+
 MEMBERS = [
-    # this card's members: the constructors and the request family
-    "rd_kafka_op_new0", "rd_kafka_op_new_cb", "rd_kafka_op_req", "rd_kafka_op_req0",
-    "rd_kafka_op_req2",
-    # their readers: the type-switched release and the member invocations
-    "rd_kafka_op_destroy", "rd_kafka_q_pop", "rd_kafka_q_enq", "rd_kafka_op_set_replyq",
-    "rd_kafka_op_new_reply", "rd_kafka_op_reply", "rd_kafka_op_err_destroy",
+    # OP-CALLBACK-CANDIDATE-CONTRACTS: the member-invoking declarations whose
+    # calls the candidates decide, and every candidate (a leaf naming one).
+    "rd_kafka_op_destroy", "rd_kafka_q_serve0", "rd_kafka_q_serve",
+    "rd_kafka_q_serve_maybe_consume", "rd_kafka_q_pop_serve0", "rd_kafka_q_pop_serve",
+    "rd_kafka_q_pop_serve_maybe_consume", "rd_kafka_op_req0", "rd_kafka_op_req",
+    "rd_kafka_op_req2", "rd_kafka_q_purge0", "rd_kafka_q_wait_result",
+    *candidate_census.OP_CB, *candidate_census.SERVE, "rd_kafka_poll_cb",
 ]
 NAMED = re.compile(r"`([^`]*)`")
 

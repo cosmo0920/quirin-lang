@@ -1637,3 +1637,380 @@ contract {
 };
 
 // END OP-CONSTRUCTOR-DECLARATIONS
+
+// BEGIN OP-CALLBACK-CANDIDATE-CONTRACTS (scripts/write_contracts.py)
+
+// # Op callback candidates
+//
+// Card OP-CALLBACK-CANDIDATE-CONTRACTS (gateway rules 12m, 12n, 13u). Rule
+// 12n closes `rd_kafka_op_s.rko_op_cb` over 27 candidates and
+// `rd_kafka_op_s.rko_serve` over 4 for the run; this section declares the
+// ones whose custody the vocabulary states. Every body was read at
+// `66910c10` and `046accf6` (byte-identical, `scripts/body.py` of the card's
+// report); each declaration is pinned (C06.2). `rd_kafka_op_res_t` and
+// `rd_kafka_q_cb_type_t` are enumerations with no negative value
+// (`rdkafka_op.h:255-277`): `u32` (rule 12u).
+//
+// The op callback protocol (`rdkafka_op.h:249-264`; `rd_kafka_op_call`,
+// `rdkafka_op.c:933-943`; `rd_kafka_op_handle_std` and `rd_kafka_op_handle`,
+// `:1056-1126`; `rd_kafka_op_destroy`, `:345-354`; the serving loops,
+// `rdkafka_queue.c:398-505` and `:558-650`):
+//
+// * `rko_op_cb(rk, rkq, rko)`, reached through `rd_kafka_op_call` for an op
+//   whose type carries `RD_KAFKA_OP_CB`:
+//   * `PASS`: not handled; the op stays with `rd_kafka_op_handle`, which hands
+//     it to the serve callback (or a pop returns it);
+//   * `HANDLED`: `rd_kafka_op_handle` destroys the op (`rd_kafka_op_call`
+//     clears `rko_op_cb` first, so the destroy does not call it again): the
+//     callback only borrowed it;
+//   * `KEEP`: the callback took the op, which `rd_kafka_op_handle` must not
+//     destroy; not permitted under `RD_KAFKA_RESP_ERR__DESTROY`;
+//   * `YIELD`: `rd_kafka_op_handle` returns without touching the op, which the
+//     callback must have re-enqueued or destroyed: taken. `rd_kafka_op_call`
+//     also turns any result into `YIELD` when `rd_kafka_yield_thread` is set
+//     (only `rd_kafka_yield`, called from an application callback, sets it).
+//   `rd_kafka_op_destroy` calls `rko_op_cb(rko->rko_rk, NULL, rko)` with
+//   `rko_err = RD_KAFKA_RESP_ERR__DESTROY` and asserts neither `YIELD` nor
+//   `KEEP`: there the callback borrows the op.
+// * `rko_serve(rk, rkq, rko, cb_type, opaque)`, reached from
+//   `rd_kafka_op_handle` after `PASS`: the callback owns the op on every
+//   result but `PASS` (`rd_kafka_q_serve0` asserts the result is not `PASS`;
+//   `rd_kafka_q_pop_serve0` returns a `PASS` op to its caller).
+//
+// So an op callback that returns only `HANDLED` (or `PASS`) borrows the op
+// (`resource_borrowed(rko)`: the identity rule 13u admits), and a serve
+// callback that never returns `PASS` takes it on every return
+// (`resource_consumed(rko, nonnull)`: rule 12m's taking candidate). A
+// callback that takes the op only on `KEEP` takes it on some return codes
+// only: rule 12m refuses that, and a return-code disposition (C04.13) is not
+// even stated over the unsigned `rd_kafka_op_res_t`, so it is not declared.
+//
+// Every declared candidate may log (`rd_kafka_dbg`, `rd_kafka_log` ->
+// `rd_kafka_log0` -> `rd_kafka_log_buf`, `rdkafka.c:280-305`), which calls
+// the log callback registered in `rk->rk_conf` when no log queue is set:
+// Fluent Bit's `out_kafka` registers `cb_kafka_logger` and no log queue
+// (`plugins/out_kafka/kafka_config.c:111`). That is an application rk_conf
+// callback (the user's decision of 2026-10-14 on `rd_kafka_destroy_app`); each
+// declaration states the dependency as the premise `rk_log_callback`, which
+// `OP-APP-RK-CALLBACKS-VIA-POLL-CB` discharges by contracting the logger.
+//
+// Not declared (the card's report, section 3, with each candidate's sizes):
+//
+// * taking the op on `KEEP` only: `rd_kafka_admin_worker` (`KEEP` while it
+//   waits for a broker, the controller, the broker list or a response),
+//   `rd_kafka_txn_op_send_offsets_to_transaction` (`KEEP` once the op is the
+//   `AddOffsetsToTxn` request's opaque),
+//   `rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb` (`KEEP`
+//   while the eonce waits for metadata);
+// * releasing or moving out an object the op's members hold, an effect a
+//   plain declaration cannot state: `rd_kafka_admin_fanout_worker` (destroys
+//   the fanout parent when its last result arrives),
+//   `rd_kafka_DeleteRecords_leaders_queried_cb` and
+//   `rd_kafka_ListOffsets_leaders_queried_cb` (destroy the fanout op held in
+//   `rko_u.leaders.opaque` on an error, `RD_KAFKA_RESP_ERR__DESTROY`
+//   included), `rd_kafka_share_commit_async_fanout_op`,
+//   `rd_kafka_share_fetch_fanout_op` (hand `ack_batches` on and clear it),
+//   `rd_kafka_share_commit_sync_fanout_op` (moves `ack_batches`, `results`
+//   and the op's reply-queue reference into the consumer group);
+// * calling an application callback (`OP-APP-RK-CALLBACKS-VIA-POLL-CB`):
+//   `rd_kafka_oauthbearer_refresh_op` (`rk_conf.sasl.oauthbearer.token_refresh_cb`,
+//   which Fluent Bit registers, `src/aws/flb_aws_msk_iam.c:775`) and
+//   `rd_kafka_toppar_op_serve` (`rko_u.offset_commit.cb`, which holds
+//   `rk_conf.offset_commit_cb` or the callback `rd_kafka_commit_queue` is
+//   handed);
+// * `rd_kafka_poll_cb` (the fourth `rko_serve` candidate): the app-rk card's.
+
+// `rd_kafka_broker_monitor_op_cb` (`rdkafka_broker.c:6413-6419`, static):
+// unless `rko_err` is `RD_KAFKA_RESP_ERR__DESTROY`, calls the monitor callback
+// `rko_u.broker_monitor.cb(rko_u.broker_monitor.rkb)`; returns `HANDLED`. The
+// only callbacks registered (`rd_kafka_broker_monitor_add`) are
+// `rd_kafka_coord_rkb_monitor_cb` (`rdkafka_broker.c:5497`; runs the
+// coordinator request state machines, `rdkafka_coord.c:593-601`) and
+// `rd_kafka_txn_coord_monitor_cb` (`rdkafka_txnmgr.c:3248`; starts a
+// coordinator query or moves the idempotence state, `:3152-3187`), both
+// read by hand: each receives only the broker. The op is only read:
+// borrowed.
+extern fn rd_kafka_broker_monitor_op_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(broker_monitor_callback, "the monitor callback in rko_u.broker_monitor.cb is rd_kafka_coord_rkb_monitor_cb or rd_kafka_txn_coord_monitor_cb, the only two rd_kafka_broker_monitor_add registers, which receive only the broker and take no custody of the op, its handle or its queue");
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_cgrp_assignor_handle_Metadata_op` (`rdkafka_cgrp.c:2140-2166`,
+// static): `HANDLED` at once on `RD_KAFKA_RESP_ERR__DESTROY`, in a join state
+// other than `WAIT_METADATA` or without group-leader members; otherwise runs
+// the group's assignor over `rko_u.metadata.mdi`, which it only reads
+// (`rd_kafka_cgrp_assignor_run`, `:2075`; the assign callback is one
+// librdkafka registers: range, roundrobin or cooperative-sticky,
+// `rd_kafka_assignor_add`), and returns `HANDLED`. The op is only read:
+// borrowed.
+extern fn rd_kafka_cgrp_assignor_handle_Metadata_op(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(assignor_callback, "the assign callback the group assignor runs is range, roundrobin or cooperative-sticky, the only ones rd_kafka_assignor_add registers, which read the metadata and members and take no custody of the op");
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_cgrp_consumer_handle_Metadata_op` (`rdkafka_cgrp.c:3056-3101`,
+// static): `HANDLED` at once on `RD_KAFKA_RESP_ERR__DESTROY` or without a next
+// target assignment; otherwise builds the assignment with metadata (a list it
+// destroys itself) and returns
+// `rd_kafka_cgrp_consumer_handle_next_assignment`'s result, `HANDLED` on
+// every return (`:2918-2992`). The op is only read (`rko_err`): borrowed.
+extern fn rd_kafka_cgrp_consumer_handle_Metadata_op(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_cgrp_handle_Metadata_op` (`rdkafka_cgrp.c:2568-2582`, static):
+// `HANDLED` at once on `RD_KAFKA_RESP_ERR__DESTROY`; otherwise, when the
+// subscription version still matches, `rd_kafka_cgrp_metadata_update_check`;
+// returns `HANDLED`. The op is only read: borrowed.
+extern fn rd_kafka_cgrp_handle_Metadata_op(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_offset_reset_op_cb` (`rdkafka_offset.c:767-777`, static): no
+// `RD_KAFKA_RESP_ERR__DESTROY` test, so `rd_kafka_op_destroy` runs it in full.
+// Locks the op's partition `rko_rktp`, runs a whole offset reset
+// (`rd_kafka_offset_reset(rktp, broker_id, pos, rko_err, "%s", reason)`,
+// `:792-891`: from another thread it enqueues a new reset op holding its own
+// partition reference; otherwise it applies `auto.offset.reset`, may enqueue a
+// consumer error op, moves the fetch state and may send an offset request),
+// unlocks and returns `HANDLED`. The op and its partition reference are only
+// read; nothing the op holds is released or moved: borrowed.
+extern fn rd_kafka_offset_reset_op_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_offset_validate_op_cb` (`rdkafka_offset.c:1098-1106`, static):
+// no `RD_KAFKA_RESP_ERR__DESTROY` test. Locks `rko_rktp`, runs
+// `rd_kafka_offset_validate(rktp, "%s", reason)` (`:1118-1225`: from another
+// thread a new op with its own partition reference; otherwise it may move the
+// fetch state and send an `OffsetForLeaderEpoch` request holding a new
+// partition reference), unlocks and returns `HANDLED`. The op is only read:
+// borrowed.
+extern fn rd_kafka_offset_validate_op_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_share_ack_commit_cb_register_op` (`rdkafka.c:3243-3256`,
+// static): no `RD_KAFKA_RESP_ERR__DESTROY` test. On a share consumer, copies
+// `rko_u.share_ack_commit_cb_register.registered` into the handle's flag and
+// logs; returns `HANDLED`. The op is only read: borrowed.
+extern fn rd_kafka_share_ack_commit_cb_register_op(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_share_fetch_reply_op_cb` (`rdkafka.c:3432-3436`, static):
+// `return rd_kafka_share_fetch_reply_op(rk, rko)` (`:3442-3610`). No early
+// `RD_KAFKA_RESP_ERR__DESTROY` test. It reads the reply's `share_fetch` fields,
+// marks the batches' errors, enqueues an acknowledgement callback op per batch
+// for the application queue (each with a partition list it builds,
+// `rd_kafka_share_enqueue_ack_commit_cb_op`), updates the consumer group's and
+// the target broker's counters and flags, and may enqueue new share fetch ops
+// to brokers (each holding its own broker reference) or apply a commit-sync
+// result; every return is `HANDLED`. Nothing the op holds is released or
+// moved (`rd_kafka_op_destroy`'s `SHARE_FETCH` arm releases `ack_details` and
+// `target_broker` afterwards): borrowed.
+extern fn rd_kafka_share_fetch_reply_op_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// The transaction ops (`rdkafka_txnmgr.c`), registered by
+// `rd_kafka_txn_op_req` (`rd_kafka_op_new_cb(rk, RD_KAFKA_OP_TXN, op_cb)`):
+// each returns `HANDLED` at once when `rko_err` is
+// `RD_KAFKA_RESP_ERR__DESTROY`, and otherwise checks and moves the
+// transaction state under `rd_kafka_wrlock(rk)` and replies to the waiting
+// application call (`rd_kafka_txn_curr_api_set_result`, which takes the
+// local `error`); every return is `HANDLED`. The op is only read (`rko_err`,
+// `rko_u.txn`): borrowed. `rk` and `rkq` are only read: borrowed.
+
+// `rd_kafka_txn_op_init_transactions` (`rdkafka_txnmgr.c:1258-1298`, static): starts the idempotent producer (`rd_kafka_idemp_start`) in `WAIT_PID`.
+extern fn rd_kafka_txn_op_init_transactions(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_ack_init_transactions` (`rdkafka_txnmgr.c:1308-1328`, static): moves `READY_NOT_ACKED` to `READY`.
+extern fn rd_kafka_txn_op_ack_init_transactions(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_begin_transaction` (`rdkafka_txnmgr.c:1413-1449`, static): moves `READY` to `IN_TRANSACTION`, frees the previous `txn_errstr` and wakes the broker threads.
+extern fn rd_kafka_txn_op_begin_transaction(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_begin_commit` (`rdkafka_txnmgr.c:2447-2476`, static): moves `IN_TRANSACTION` to `BEGIN_COMMIT`.
+extern fn rd_kafka_txn_op_begin_commit(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_commit_transaction` (`rdkafka_txnmgr.c:2339-2438`, static): sends `EndTxn` (commit) or completes an empty transaction (`rd_kafka_txn_endtxn_complete`), and records an abortable error.
+extern fn rd_kafka_txn_op_commit_transaction(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_commit_transaction_ack` (`rdkafka_txnmgr.c:2485-2508`, static): completes the acknowledged commit (`rd_kafka_txn_complete`).
+extern fn rd_kafka_txn_op_commit_transaction_ack(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_begin_abort` (`rdkafka_txnmgr.c:2608-2646`, static): moves to `BEGIN_ABORT` and clears the pending partitions under `txn_pending_lock`.
+extern fn rd_kafka_txn_op_begin_abort(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_abort_transaction` (`rdkafka_txnmgr.c:2655-2752`, static): sends `EndTxn` (abort), completes an empty transaction, or waits for a PID bump.
+extern fn rd_kafka_txn_op_abort_transaction(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_txn_op_abort_transaction_ack` (`rdkafka_txnmgr.c:2761-2784`, static): completes the acknowledged abort (`rd_kafka_txn_complete`).
+extern fn rd_kafka_txn_op_abort_transaction_ack(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_cgrp_op_serve` (`rdkafka_cgrp.c:7371-7566`, static), the consumer
+// group queue's `rkq_serve` (`:500`): `opaque` is the group, only read. Every
+// path hands the op on or destroys it: a terminated group destroys it; the
+// `NAME`, `CG_METADATA`, `SUBSCRIBE`, `GET_SUBSCRIPTION`, `GET_ASSIGNMENT` and
+// `GET_REBALANCE_PROTOCOL` arms reply (`rd_kafka_op_reply`: re-queued to its
+// reply queue or destroyed); `OFFSET_FETCH` hands it to the request or its
+// handler, `OFFSET_COMMIT` to the commit, `ASSIGN` to
+// `rd_kafka_cgrp_handle_assign_op`, `TERMINATE` to
+// `rd_kafka_cgrp_terminate0`; every other arm leaves it to the final
+// `rd_kafka_op_destroy`. Every return is `HANDLED`: the op is taken on every
+// return.
+extern fn rd_kafka_cgrp_op_serve(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>, cb_type: u32, opaque: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_consumed(rko, nonnull);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_mock_cluster_op_serve` (`rdkafka_mock.c:3158-3184`, static), the
+// mock cluster queue's `rkq_serve` (`:3356`): `opaque` is the mock cluster.
+// `TERMINATE` clears its run flag, `MOCK` runs the command
+// (`rd_kafka_mock_cluster_cmd`, `:2898`, which only reads the op's
+// `rko_u.mock`; closing a mock broker's connections may call
+// `rk_conf.closesocket_cb`, which Fluent Bit never registers and librdkafka
+// leaves NULL, `rdkafka_conf.c:741-746`), then `rd_kafka_op_reply(rko, err)`
+// takes the op; returns `HANDLED`: the op is taken on every return.
+extern fn rd_kafka_mock_cluster_op_serve(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>, cb_type: u32, opaque: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(rk_closesocket_callback, "closing a mock connection may call rk_conf.closesocket_cb, which Fluent Bit never registers and librdkafka leaves NULL, so close runs instead, until OP-APP-RK-CALLBACKS-VIA-POLL-CB closes the rk_conf callbacks");
+    requires resource_premise(rk_log_callback, "a line the callback logs through rd_kafka_log0 may call the log callback registered in rk_conf (Fluent Bit out_kafka registers cb_kafka_logger and no log queue), which receives the handle, a level and two strings and is assumed to take no custody until OP-APP-RK-CALLBACKS-VIA-POLL-CB contracts it");
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_consumed(rko, nonnull);
+    ensures normal resource_borrowed(cb_type);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_return_none();
+};
+
+// END OP-CALLBACK-CANDIDATE-CONTRACTS

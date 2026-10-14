@@ -19,11 +19,13 @@ import pathlib
 import re
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import candidate_census  # noqa: E402
+
 DECLARED = [
-    # OP-CONSTRUCTOR-DECLARATIONS: the op constructors and the request family
-    # (a lost or gained leaf naming one of them).
-    "rd_kafka_op_new0", "rd_kafka_op_new_cb", "rd_kafka_op_req0", "rd_kafka_op_req",
-    "rd_kafka_op_req2",
+    # OP-CALLBACK-CANDIDATE-CONTRACTS: every op-callback candidate (a lost or
+    # gained leaf naming one of them, declared or not).
+    *candidate_census.OP_CB, *candidate_census.SERVE,
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

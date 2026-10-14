@@ -24,9 +24,8 @@ step() {
 }
 # PINS: "crate:function ..." per stage, from the environment (default: stage
 # (a)'s declarations).
-# REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: this card's ten new declarations
-# and the re-declared `rd_kafka_queue_new0`.
-pins="${PINS:-qcore-provider-librdkafka:rd_kafka_op_new0 qcore-provider-librdkafka:rd_kafka_op_new_cb qcore-provider-librdkafka:rd_kafka_op_req0 qcore-provider-librdkafka:rd_kafka_op_req qcore-provider-librdkafka:rd_kafka_op_req2}"
+# OP-CALLBACK-CANDIDATE-CONTRACTS: the nineteen declared op-callback candidates.
+pins="${PINS:-qcore-provider-librdkafka:rd_kafka_broker_monitor_op_cb qcore-provider-librdkafka:rd_kafka_cgrp_assignor_handle_Metadata_op qcore-provider-librdkafka:rd_kafka_cgrp_consumer_handle_Metadata_op qcore-provider-librdkafka:rd_kafka_cgrp_handle_Metadata_op qcore-provider-librdkafka:rd_kafka_offset_reset_op_cb qcore-provider-librdkafka:rd_kafka_offset_validate_op_cb qcore-provider-librdkafka:rd_kafka_share_ack_commit_cb_register_op qcore-provider-librdkafka:rd_kafka_share_fetch_reply_op_cb qcore-provider-librdkafka:rd_kafka_txn_op_init_transactions qcore-provider-librdkafka:rd_kafka_txn_op_ack_init_transactions qcore-provider-librdkafka:rd_kafka_txn_op_begin_transaction qcore-provider-librdkafka:rd_kafka_txn_op_begin_commit qcore-provider-librdkafka:rd_kafka_txn_op_commit_transaction qcore-provider-librdkafka:rd_kafka_txn_op_commit_transaction_ack qcore-provider-librdkafka:rd_kafka_txn_op_begin_abort qcore-provider-librdkafka:rd_kafka_txn_op_abort_transaction qcore-provider-librdkafka:rd_kafka_txn_op_abort_transaction_ack qcore-provider-librdkafka:rd_kafka_cgrp_op_serve qcore-provider-librdkafka:rd_kafka_mock_cluster_op_serve}"
 crates=$(for pin in $pins; do echo "${pin%%:*}"; done | sort -u | tr '\n' ' ')
 if [ "$mode" = pin ]; then
   for root in "$old" "$new"; do

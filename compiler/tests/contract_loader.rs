@@ -1007,6 +1007,40 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "rd_kafka_mem_calloc",
         ResourceFunctionContract::new([], R::Owned { nullable: true }),
     );
+    // Card OP-CALLBACK-CANDIDATE-CONTRACTS: nineteen op-callback candidates
+    // had no previous reading. The seventeen `rko_op_cb` candidates borrow
+    // every formal and return no custody; the two `rko_serve` candidates take
+    // the op they are handed (`rko`, the third formal) on every return.
+    for name in [
+        "rd_kafka_broker_monitor_op_cb",
+        "rd_kafka_cgrp_assignor_handle_Metadata_op",
+        "rd_kafka_cgrp_consumer_handle_Metadata_op",
+        "rd_kafka_cgrp_handle_Metadata_op",
+        "rd_kafka_offset_reset_op_cb",
+        "rd_kafka_offset_validate_op_cb",
+        "rd_kafka_share_ack_commit_cb_register_op",
+        "rd_kafka_share_fetch_reply_op_cb",
+        "rd_kafka_txn_op_init_transactions",
+        "rd_kafka_txn_op_ack_init_transactions",
+        "rd_kafka_txn_op_begin_transaction",
+        "rd_kafka_txn_op_begin_commit",
+        "rd_kafka_txn_op_commit_transaction",
+        "rd_kafka_txn_op_commit_transaction_ack",
+        "rd_kafka_txn_op_begin_abort",
+        "rd_kafka_txn_op_abort_transaction",
+        "rd_kafka_txn_op_abort_transaction_ack",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    for name in ["rd_kafka_cgrp_op_serve", "rd_kafka_mock_cluster_op_serve"] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                [P::Borrowed, P::Borrowed, P::Consumed { nullable: false }],
+                R::None,
+            ),
+        );
+    }
     // Card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static `print` returns
     // a fresh `hooks->allocate` buffer or NULL.
     old.insert_contract(
@@ -1889,9 +1923,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `rd_kafka_op_req0`, `_req`, `_req2` in `librdkafka/client.qv`, all
     // withheld with the retaining declarations. Selection and rejected
     // unchanged.
+    // 406 -> 425 by card OP-CALLBACK-CANDIDATE-CONTRACTS: nineteen op-callback
+    // candidates in `librdkafka/client.qv` (seventeen `rko_op_cb`, two
+    // `rko_serve`), plain declarations in the function map. Selection and
+    // rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 406, 314)
+        (61, 425, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
