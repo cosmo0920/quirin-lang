@@ -1,7 +1,10 @@
 # HOST-REQUEST-READ-BY-DETACHED-DESCENDANT: only the request pipe's last holder decides
 
-Card of wave 48, base `b565f79ab`; prediction frozen at `7d81fdbac`
-([PREDICTION.md](PREDICTION.md)). It changes the verifier host's consumption
+Card of wave 48, base `b565f79ab`, rebased onto `5ee141946`
+(PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE); prediction frozen at
+`7d81fdbac` ([PREDICTION.md](PREDICTION.md)). Commits are named as they were
+when measured; after the rebase, `7d81fdbac` is `40eb00a03`, `2a1414662` is
+`1af047aa5` and `6c28b19d5` is `203cc034a`. It changes the verifier host's consumption
 decision (`crates/qcore-verifier-host/src/request_consumption.rs`, the
 decision branch and the deadline arm of `run_process` in `src/lib.rs`), adds
 `ProviderFailure::RequestHeldByDescendant` and
@@ -287,47 +290,60 @@ paths, as earlier cards recorded. No verdict moved, so no correction is named.
 No real provider is newly refused: the pinned audit routes launch no process
 provider, and the census found none with the shape (§2).
 
+The arbiters were not re-run after the rebase. The two changes under the
+rebased tip were each measured byte-identical against `b565f79ab`: this
+card's in this section, and PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's
+(three behaviour-neutral clippy borrow removals, besides test code) in its own
+report. The off-Linux change after these measurements changes only code
+compiled off Linux, plus a `Holders` variant that the Linux build never
+constructs, and the Linux decision path is identical.
+
 ## 8. Gate
 
-Every code step ran at `277ad447d` (the code is the final tip's) with
-[`scripts/gate.sh`](scripts/gate.sh) `g1 code`, one step at a time under the
-shared heavy lock. Exits are in [gate/](gate/), logs in `private/hdd/gate-g1/`,
-and the summary in [gate.json](gate.json).
+**Gate g2, the record.** The card was rebased onto `5ee141946`
+(PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE, which also carries the three
+clippy 1.99 fixes). The whole gate then ran at `ece1dede0`, whose code is the
+final tip's, with [`scripts/gate.sh`](scripts/gate.sh) `g2 all` under **one
+exclusive hold** of the shared heavy lock (`HELD_LOCK=1`; no other gate or
+build ran beside it). Exits are in [gate/](gate/), logs in
+`private/hdd/gate-g2/`, and the summary in [gate.json](gate.json). Every step
+ran under rustc and clippy 1.99.0.
 
 | Step | Exit | Count |
 |---|---:|---|
 | `cargo check --workspace --all-targets` | 0 | |
 | `git submodule update --init --recursive` | 0 | |
 | `cargo fmt --all -- --check` | 0 | |
-| `cargo clippy --locked --all-targets -- -D warnings` | **101** | see below |
-| `python3 scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,968 passed, 0 failed**, 14 ignored; `private/hdd/tests-g1/` |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 488 units, 501 summaries; **7,969 passed, 0 failed**, 14 ignored; `private/hdd/tests-g2/` |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
 | `providers/package.py build`, then `verify qcore.libevent` | 0 / 0 | |
 | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed, 0 failed |
 | `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
-| `python3 -m unittest discover -s scripts/tests`, `build_docs_index.py --check` | see [gate/](gate/) | 08, 09 |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| `build_matrix.py . --gate gate.json`, then the Python suite and the docs index again ([`scripts/finish-gate.sh`](scripts/finish-gate.sh)) | see [gate/](gate/) | 09a, 09b, 10b, 10c |
 
-The test step passed on its first run, and no row was rerun. The card adds
-twelve tests: the nine probe cases and three unit tests in
-`request_consumption`.
-
-**The gate is incomplete: the clippy step is red, on a line this card does not
-touch.** The host's stable toolchain was updated to rustc and clippy 1.99.0 at
-02:48 (+0900) on 2026-10-14, while the card ran, and every gate step ran under
-1.99.0. Its `needless_borrows_for_generic_args` lint fires once:
-`crates/qcore-verification/src/source_imports.rs:186`, `map_err(&fail)`,
-unchanged since `29a965faf` (2026-09-27). Clippy stops at that crate, so the
-same command was rerun as a diagnostic with only that lint allowed
-(`private/hdd/clippy-diagnostic.log`). It exits 0 over the whole workspace,
-this card's crate included. The one-character fix lies outside this card's
-scope and is left to the integrator. Every other step is green.
+The test step passed on its first run, and no row was rerun. The count is
+main's 7,956 plus the card's thirteen tests: the nine probe cases and four
+unit tests in `request_consumption`.
 
 `providers/` is unchanged. The provider gate was still run, because every real
 provider package passes through the changed decision. Clang was recorded in
-this worktree (`gate/clang-version.txt`). The matrix was not regenerated with
-this card's `gate.json`, because the gate is incomplete. The ledger edit keeps
+this worktree (`gate/clang-version.txt`). The ledger edit keeps
 `dimensions.named_followups` equal to the list length (764).
+
+**Gate g1, superseded.** The first gate ran at `277ad447d` on base
+`b565f79ab`, on the card's first version (off Linux every successful exit
+refused as `Io`). Its exits are kept in [gate/g1/](gate/g1/), with logs in
+`private/hdd/gate-g1/`. It gave 7,968 passed and 0 failed, 317 audits, a green
+provider gate and 365 Python OK. It was incomplete: the host's stable
+toolchain became rustc and clippy 1.99.0 at 02:48 (+0900) on 2026-10-14, while
+the card ran, and its `needless_borrows_for_generic_args` lint failed clippy at
+`crates/qcore-verification/src/source_imports.rs:186`, a line this card does
+not touch. With only that lint allowed, clippy exited 0 over the whole
+workspace. The fix landed with PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE.
 
 ## 9. Prediction against outcome
 

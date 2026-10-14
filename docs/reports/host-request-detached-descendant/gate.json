@@ -1,13 +1,13 @@
 {
-  "note": "HOST-REQUEST-READ-BY-DETACHED-DESCENDANT card gate on base b565f79ab, every code step at 277ad447d, scripts docs/reports/host-request-detached-descendant/scripts/gate.sh, logs private/hdd/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 101: INCOMPLETE. The host's stable toolchain became rustc/clippy 1.99.0 during the card, and its needless_borrows_for_generic_args lint fires at crates/qcore-verification/src/source_imports.rs:186:63 (`map_err(&fail)`), a line this card does not touch; the same command with only that lint allowed exits 0 over the whole workspace (private/hdd/clippy-diagnostic.log). Not fixed here (out of scope), owed to the integrator; run_test_binaries.py 488 units, 501 summaries, 7,968 passed, 0 failed, 14 ignored, exit 0 (private/hdd/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (AuditRequestConsumption extended, no audit added); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK; the python suite and the docs index check per gate/ (08, 09). The matrix was not regenerated with this file, because the gate is incomplete.",
-  "workspace_tests": 7968,
+  "note": "HOST-REQUEST-READ-BY-DETACHED-DESCENDANT card gate on base b565f79ab, rebased onto 5ee141946, the whole gate under one exclusive heavy lock, every code step at ece1dede0, scripts docs/reports/host-request-detached-descendant/scripts/gate.sh, logs private/hdd/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 488 units, 501 summaries, 7,969 passed, 0 failed, 14 ignored, exit 0 (private/hdd/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (AuditRequestConsumption extended, no audit added); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK; the python suite and the docs index check per gate/ (08, 09).",
+  "workspace_tests": 7969,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
-  "cargo_clippy": "red: one needless_borrows_for_generic_args finding at crates/qcore-verification/src/source_imports.rs:186:63, a line this card does not touch; clean with that lint allowed",
-  "standing_gate": "incomplete (clippy)",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
   "lean_audits": 317,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

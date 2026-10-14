@@ -18,7 +18,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/host-request-detached-descendant"
-BASE = "b565f79ab"
+BASE = "b565f79ab, rebased onto 5ee141946, the whole gate under one exclusive heavy lock"
 LINT = "needless_borrows_for_generic_args"
 SITE = "crates/qcore-verification/src/source_imports.rs:186:63"
 

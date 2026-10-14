@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE card gate g2 (the gate of record) on base b565f79ab, every step at 7fdb7a1d3 (implementation b30c9d4e7, the integrator-requested clippy 1.99 borrow removals 3f3de2a5e, and records), with one exclusive flock on the shared heavy lock held for the whole gate (02:22:29Z to 02:44:45Z), scripts docs/reports/process-fixtures-fs-write/scripts/gate-g2.sh, gate.sh and finish-gate.sh, logs private/pfw/gate-g2 of this worktree, toolchain the host's rustup stable 1.99.0. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked -D warnings 0; run_test_binaries.py 488 units, 501 summaries, 7,956 passed, 0 failed, 14 ignored, exit 0 (private/pfw/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed; provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK, cargo fmt and clippy -D warnings in providers/ 0 / 0; python suite 365 OK and docs index check 0 (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate g1 (gate-g1.json, gate-g1/) failed clippy under the newly installed 1.99.0 and one fixed-port std_socket_inet run; both are recorded in the report.",
-  "workspace_tests": 7956,
+  "note": "HOST-REQUEST-READ-BY-DETACHED-DESCENDANT card gate on base b565f79ab, rebased onto 5ee141946, the whole gate under one exclusive heavy lock, every code step at ece1dede0, scripts docs/reports/host-request-detached-descendant/scripts/gate.sh, logs private/hdd/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 488 units, 501 summaries, 7,969 passed, 0 failed, 14 ignored, exit 0 (private/hdd/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 317 audits passed (AuditRequestConsumption extended, no audit added); provider gate: providers/package.py build and verify qcore.libevent 0 / 0, cargo test in providers/ 129 passed / 0 failed, providers/tests 25 OK; the python suite and the docs index check per gate/ (08, 09).",
+  "workspace_tests": 7969,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 317,
@@ -7083,7 +7083,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3ef47ba2bd7293c5/docs/reports/process-fixtures-fs-write/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/docs/reports/host-request-detached-descendant/gate.json)"
  },
  "named_followups": [
   {
