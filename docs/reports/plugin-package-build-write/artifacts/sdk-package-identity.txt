@@ -1,0 +1,8 @@
+# `quirin-plugin package --executable private/ppb/checker --output private/ppb/pkg/{base,tip}`
+# with the base and tip CLIs (artifacts/binaries.txt); sha256, mode, size.
+a0c85ff38cfe6d1ae7e98b8f2a0b1af540203560d5b96b7563516e4009db8788  755  39440640  base/quirin-plugin-example-checker
+af35cd6bd2a0ce6641d4b64b49b609f33b6d06fb0a3e9b571280a1af9fc4c61f  664      1039  base/verifier-plugin.json
+a0c85ff38cfe6d1ae7e98b8f2a0b1af540203560d5b96b7563516e4009db8788  755  39440640  tip/quirin-plugin-example-checker
+af35cd6bd2a0ce6641d4b64b49b609f33b6d06fb0a3e9b571280a1af9fc4c61f  664      1039  tip/verifier-plugin.json
+# cmp: both files identical. package_digest a0c85ff3… in both (= sha256 of the input).
+# The base CLI verifies the tip package: "verified acme.pool_check (a0c85ff3…)".

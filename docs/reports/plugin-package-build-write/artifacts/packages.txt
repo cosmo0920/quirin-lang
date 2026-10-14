@@ -1,0 +1,11 @@
+# scripts/packages.sh b565f79ab e84a41d49, under the heavy lock. Exits: base
+# build 0, tip build 0, tree left at tip 0, compare 0. Logs in
+# private/ppb/packages/{base,tip}.log.
+# plugin_id executable_sha256 archive_sha256
+packages.json equal: True
+qcore.chunkio 81aa0c09342d81e4fc984b99a29e34d41d7823530c18665d1d46845c78fb2c3e 2afffd91f6da201642ad03873c7522e665900cae8e447e88403be8aca0e14b3d
+qcore.cmetrics ef1b29427756b6c133be4f3297591fa06db78e4f5d2fafef3b6a683bcce1b473 e9337a8aa3c659f6de846ae24b265440c9a4afe467a66041256a9ab3b5ffd2bd
+qcore.ctraces 89a35f9a79aecf6561ac75f0aeacd59c7e02dae53d1ae0ebaaffb6da05d4718c 84385e8d6b2dab89946e21f8a246fc75d6769b36f23ae0c0ae4b57d8370f9ccd
+qcore.libevent 6eeb51d9e427f9dd43a451d33656349d2a5292c846974b1d19e8cef1c5a2cbc1 2fe4bc0fe2bb515af030e5b7507c6260dc610b055c8489c9c2c9b9810492d288
+qcore.librdkafka ee7c40c055cb7c48e257ce8d2b4a79aded62e86b92f280610d0fbfde47de5c56 66b5f265683791fe889ea739e2c9822e12d7ecdbf6280c35cde91fcc04b1146f
+installed files: 104 identical (bytes and mode): True

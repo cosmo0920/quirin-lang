@@ -1,0 +1,10 @@
+# Saved privately under private/ppb/ (ignored). Base = 1e445efca (the
+# test-only commit on b565f79ab: base package.rs, the new sdk test); tip =
+# e84a41d49 (the fix). rustc 1.99.0 (b940084d7 2026-09-28).
+c8dcbed520aa5b9e2340e58baf11b7c172bcf35d9fb694f7c139d2b7d12a12f5  bin/base-rel/sdk         cargo test --release --no-run, base
+0910c996954b2f61cb30b9beb592eb04363efbec54fb6ea1b239440f07dab714  bin/tip-rel/sdk          cargo test --release --no-run, tip
+f78a03dbbd14363a9362a3e625332f74644622a1721b9ca6728d75b5c6337474  bin/base/sdk             debug, base (pilots only)
+2bffa951c2267ce0aa623093ed81c24f487978e9175abb332044cc8bea7a4633  bin/tip/sdk              debug, tip
+da978a303c1601b5e04427572d013d16bedc1ced0a20ac748412b90b56895121  bin/base/quirin-plugin   debug CLI, base
+ed6853e8d7c0d72209089417182ab424f0b228d69f5c1944823067e2a9da9da6  bin/tip/quirin-plugin    debug CLI, tip
+a0c85ff38cfe6d1ae7e98b8f2a0b1af540203560d5b96b7563516e4009db8788  checker                  the example checker packaged by both CLIs (debug build)
