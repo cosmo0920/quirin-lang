@@ -116,7 +116,11 @@ fn both_levels_read_identically() {
     let shorthand = format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;");
     let parts = "    quant live #result;
     ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, absent);";
-    for state in [shorthand.clone(), parts.to_owned(), format!("{shorthand}\n{parts}")] {
+    for state in [
+        shorthand.clone(),
+        parts.to_owned(),
+        format!("{shorthand}\n{parts}"),
+    ] {
         let contracts = load(&new0(&state)).expect("loads");
         assert_eq!(
             contracts
@@ -184,16 +188,31 @@ fn every_misuse_rejects_the_module() {
         "resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 0)",
         "resource_discriminant_set(result, rd_kafka_op_s.rko_type, source, 0)",
     );
-    assert!(load(&wrong).expect_err("a pointer").contains("integer parameter"));
+    assert!(
+        load(&wrong)
+            .expect_err("a pointer")
+            .contains("integer parameter")
+    );
     let wrong = new0("").replace(
         "resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 0)",
         "resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, RD_KAFKA_OP_CB)",
     );
-    assert!(load(&wrong).expect_err("a name").contains("canonical decimal"));
+    assert!(
+        load(&wrong)
+            .expect_err("a name")
+            .contains("canonical decimal")
+    );
     // An unbacked result: a nullable owned result is not live.
     let nullable = new0(&format!(
         "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;"
     ))
-    .replace("resource_return_owned(nonnull)", "resource_return_owned(nullable)");
-    assert!(load(&nullable).expect_err("unbacked").contains("quant-live-unbacked"));
+    .replace(
+        "resource_return_owned(nonnull)",
+        "resource_return_owned(nullable)",
+    );
+    assert!(
+        load(&nullable)
+            .expect_err("unbacked")
+            .contains("quant-live-unbacked")
+    );
 }

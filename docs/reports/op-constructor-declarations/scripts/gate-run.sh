@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate-run.sh NAME -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES: take the shared
+# gate-run.sh NAME -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES): take the shared
 # heavy lock once and run the whole gate under it (gate-whole.sh NAME), then
 # clean the dev profile under the lock again.
 set -u

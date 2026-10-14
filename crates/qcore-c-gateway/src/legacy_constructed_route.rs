@@ -32,7 +32,9 @@ use qcore_schemas::retained_by::RetainingContract;
 use super::callback_route::Registration;
 use super::{AbstractState, Parser};
 use crate::callback_contracts::{Decision, classify, decide};
-use crate::constructed_state::{Stable, StateFacts, reachable, stability, stated_keys, stores_into};
+use crate::constructed_state::{
+    Stable, StateFacts, reachable, stability, stated_keys, stores_into,
+};
 use crate::typed_c_ast::children;
 
 /// A per-path state of a tracked object's member.
@@ -130,21 +132,21 @@ impl Parser<'_> {
         if stores_into(&facts, key, &self.typed_path_function) {
             return None;
         }
-        stability(
-            &[Some(facts.as_ref())],
-            key,
-            discriminant,
-            &|name: &str| self.owned_result(name),
-        )
+        stability(&[Some(facts.as_ref())], key, discriminant, &|name: &str| {
+            self.owned_result(name)
+        })
         .ok()
     }
 
     /// Whether some declaration of the environment states `key`.
     pub(super) fn states_member(&self, key: &str) -> bool {
-        self.contracts
-            .retaining()
-            .values()
-            .any(|declared| declared.constructed.members.iter().any(|state| state.member.spelling() == key))
+        self.contracts.retaining().values().any(|declared| {
+            declared
+                .constructed
+                .members
+                .iter()
+                .any(|state| state.member.spelling() == key)
+        })
     }
 
     /// The decided-arm reading of a release discriminated by `field`.
@@ -177,9 +179,9 @@ impl Parser<'_> {
                         && unit.node_line(call) == Some(line)
                 })
                 .map(|call| {
-                    children(call)
-                        .get(position + 1)
-                        .and_then(|argument| crate::arm_release_check::fold_with(argument, enumerators))
+                    children(call).get(position + 1).and_then(|argument| {
+                        crate::arm_release_check::fold_with(argument, enumerators)
+                    })
                 });
             let first = answers.next()??;
             answers.all(|answer| answer == Some(first)).then_some(first)
@@ -232,7 +234,10 @@ impl Parser<'_> {
 /// The single tracked site an actual names, when it names exactly one.
 fn site_of(state: &AbstractState, object: &str) -> Option<usize> {
     let pointer = state.pointers.get(object)?;
-    match (pointer.unknown, pointer.targets.iter().collect::<Vec<_>>().as_slice()) {
+    match (
+        pointer.unknown,
+        pointer.targets.iter().collect::<Vec<_>>().as_slice(),
+    ) {
         (false, [site]) => Some(**site),
         _ => None,
     }
@@ -262,7 +267,8 @@ pub(super) enum MemberRefusal {
 /// `absent`) is the identity there.
 pub(super) fn decide_member(state: &AbstractState, use_: &MemberUse) -> Result<(), MemberRefusal> {
     let Some(ObjectState::Member(Registration::InForce { candidates, .. })) =
-        site_of(state, &use_.object).and_then(|site| state.constructed.get(&(site, use_.key.clone())))
+        site_of(state, &use_.object)
+            .and_then(|site| state.constructed.get(&(site, use_.key.clone())))
     else {
         return Err(MemberRefusal::Undecided);
     };
@@ -301,7 +307,8 @@ pub(super) fn decided_arm_join(
 ) -> Option<Option<ArmJoin>> {
     let site = site_of(state, object)?;
     decided.stable.iter().find_map(|(key, stable)| {
-        let Some(ObjectState::Discriminant(value)) = state.constructed.get(&(site, key.clone())) else {
+        let Some(ObjectState::Discriminant(value)) = state.constructed.get(&(site, key.clone()))
+        else {
             return None;
         };
         let values = reachable(*value, stable);

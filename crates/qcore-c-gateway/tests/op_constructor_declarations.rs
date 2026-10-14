@@ -142,10 +142,18 @@ fn a_decided_discriminant_selects_exactly_its_arm() {
     }
     // Type 1: its arm frees the payload, and the op's callback is absent.
     let one = rows(&linking("c_op_new(1)"));
-    assert!(one["link_and_destroy"].safe(), "{:?}", one["link_and_destroy"]);
+    assert!(
+        one["link_and_destroy"].safe(),
+        "{:?}",
+        one["link_and_destroy"]
+    );
     // Type 2: `otherwise` frees nothing of it; the payload is never released.
     let two = rows(&linking("c_op_new(2)"));
-    assert!(!two["link_and_destroy"].safe(), "{:?}", two["link_and_destroy"]);
+    assert!(
+        !two["link_and_destroy"].safe(),
+        "{:?}",
+        two["link_and_destroy"]
+    );
     // The stated flag (256) is cleared by the release's mask.
     let flagged = format!(
         "static int handler(void *rk, void *rkq, void *rko) {{ return 0; }}\n{}",
@@ -264,7 +272,11 @@ fn a_sub_object_write_keeps_and_a_whole_object_write_voids_the_state() {
         linking("c_op_new(1)")
     );
     let sub = rows(&sub);
-    assert!(sub["link_and_destroy"].safe(), "{:?}", sub["link_and_destroy"]);
+    assert!(
+        sub["link_and_destroy"].safe(),
+        "{:?}",
+        sub["link_and_destroy"]
+    );
     // A whole-object assignment may write the member and the discriminant:
     // both states are void, and the unit's closure (no store) refuses.
     let whole = format!(
@@ -339,7 +351,11 @@ fn an_absent_member_invokes_no_candidate() {
     }
     let absent = "void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
     let absent = rows(absent);
-    assert!(absent["make_and_destroy"].safe(), "{:?}", absent["make_and_destroy"]);
+    assert!(
+        absent["make_and_destroy"].safe(),
+        "{:?}",
+        absent["make_and_destroy"]
+    );
 }
 
 #[test]
@@ -362,7 +378,11 @@ void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
 void clear(struct op *o) { o->op_cb = NULL; }
 void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
     let null = rows(null);
-    assert!(null["make_and_destroy"].safe(), "{:?}", null["make_and_destroy"]);
+    assert!(
+        null["make_and_destroy"].safe(),
+        "{:?}",
+        null["make_and_destroy"]
+    );
     // A store into the member in the creating function: the state is open
     // there, and the unit's closure decides.
     let own = "\
@@ -385,7 +405,11 @@ fn the_absent_state_stands_where_the_body_validates_it() {
 struct op *c_op_new(int type) { struct op *o; o = calloc(1, sizeof(*o)); o->type = type; return o; }
 void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
     let zeroed = rows(zeroed);
-    assert!(zeroed["make_and_destroy"].safe(), "{:?}", zeroed["make_and_destroy"]);
+    assert!(
+        zeroed["make_and_destroy"].safe(),
+        "{:?}",
+        zeroed["make_and_destroy"]
+    );
     // Not zeroed: the state is withdrawn in this unit, and the unit's
     // closure (no store) does not decide.
     let unzeroed = "\

@@ -25,7 +25,9 @@ use qcore_schemas::callback::CallbackMember;
 use qcore_schemas::constructed_state::{
     ABSENT, ConstructedState, DiscriminantSet, MemberState, MemberValue,
 };
-use qcore_schemas::contract::{ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode};
+use qcore_schemas::contract::{
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+};
 
 pub(super) const DISCRIMINANT_SET: &str = "resource_discriminant_set";
 pub(super) const MEMBER_REGISTERED: &str = "resource_callback_member_registered";
@@ -62,7 +64,9 @@ pub(super) enum Written {
 fn is_identifier(text: &str) -> bool {
     !text.is_empty()
         && !text.starts_with(|ch: char| ch.is_ascii_digit())
-        && text.chars().all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+        && text
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
 }
 
 /// `TAG.FIELD` with at least one `.`, every segment an identifier.
@@ -173,10 +177,7 @@ pub(super) fn quant_live_clause(source: &str) -> Result<Vec<Written>, String> {
     // The left of the maps-to: `TAG.FIELD`, words joined by dots.
     let mut at = 3;
     let mut segments = Vec::new();
-    loop {
-        let Some(segment) = word(at) else {
-            break;
-        };
+    while let Some(segment) = word(at) {
         segments.push(segment);
         at += 1;
         if symbol(at, Symbol::Dot) {
@@ -284,7 +285,11 @@ pub(super) fn declaration(
                     parameter: at,
                     flags: *flags,
                 };
-                if state.discriminant.as_ref().is_some_and(|earlier| *earlier != set) {
+                if state
+                    .discriminant
+                    .as_ref()
+                    .is_some_and(|earlier| *earlier != set)
+                {
                     return Err(format!(
                         "a declaration states one discriminant of its result (`{DISCRIMINANT_SET}`)"
                     ));
@@ -315,7 +320,11 @@ pub(super) fn declaration(
                     member: member.clone(),
                     value,
                 };
-                match state.members.iter().find(|earlier| earlier.member == *member) {
+                match state
+                    .members
+                    .iter()
+                    .find(|earlier| earlier.member == *member)
+                {
                     Some(earlier) if *earlier == stated => {}
                     Some(_) => {
                         return Err(format!(
@@ -337,16 +346,20 @@ mod tests {
 
     #[test]
     fn the_shorthand_reads_as_its_two_parts() {
-        let shorthand =
-            quant_live_clause(&format!("#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent"))
-                .expect("reads");
+        let shorthand = quant_live_clause(&format!(
+            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent"
+        ))
+        .expect("reads");
         assert_eq!(shorthand.len(), 2);
         assert_eq!(shorthand[0], Written::Live);
         assert!(matches!(
             &shorthand[1],
             Written::Member { member, callback: None, .. } if member.spelling() == "rd_kafka_op_s.rko_op_cb"
         ));
-        assert_eq!(quant_live_clause("#result").expect("reads"), vec![Written::Live]);
+        assert_eq!(
+            quant_live_clause("#result").expect("reads"),
+            vec![Written::Live]
+        );
     }
 
     #[test]
@@ -365,7 +378,10 @@ mod tests {
             .expect_err("only absent");
         assert!(value.starts_with("quant-live-value:"), "{value}");
         let parameter = quant_live_clause("#rko").expect_err("only the result");
-        assert!(parameter.starts_with("quant-live-result-shape:"), "{parameter}");
+        assert!(
+            parameter.starts_with("quant-live-result-shape:"),
+            "{parameter}"
+        );
         let trailing = quant_live_clause(&format!(
             "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent absent"
         ))

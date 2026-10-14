@@ -13,7 +13,7 @@
   "Unknown -> Safe": 1
  },
  "status_moves_by_label": {
-  "other": 1
+  "callee:rd_kafka_op_new0": 1
  },
  "removed": {
   "call to uncontracted function `_`": 116,
@@ -41,7 +41,7 @@
     "Safe"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19639: call to uncontracted function `rd_kafka_op_new0`",
@@ -61,7 +61,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23940: call to uncontracted function `rd_kafka_op_new0`"
@@ -119,7 +119,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21209: call to uncontracted function `rd_kafka_op_new0`"
@@ -136,7 +136,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "24585: call to uncontracted function `rd_kafka_op_req2`"
@@ -193,7 +193,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21583: call to uncontracted function `rd_kafka_op_new0`",
@@ -211,7 +211,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "23328: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -230,7 +230,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "23371: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -251,7 +251,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22938: call to uncontracted function `rd_kafka_op_new0`",
@@ -272,7 +272,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23224: call to uncontracted function `rd_kafka_op_new0`",
@@ -295,7 +295,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "22844: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -315,7 +315,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "22786: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -335,7 +335,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22120: call to uncontracted function `rd_kafka_op_new0`"
@@ -607,7 +607,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20779: call to uncontracted function `rd_kafka_op_new0`"
@@ -661,7 +661,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "20449: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -683,7 +683,8 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0",
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "20287: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -757,7 +758,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "26658: call to uncontracted function `rd_kafka_op_new0`"
@@ -776,7 +777,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "26628: call to uncontracted function `rd_kafka_op_new0`",
@@ -798,7 +799,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "26650: call to uncontracted function `rd_kafka_op_new0`",
@@ -836,7 +837,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21571: call to uncontracted function `rd_kafka_op_new0`"
@@ -853,7 +854,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22421: call to uncontracted function `rd_kafka_op_new0`"
@@ -870,7 +871,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22118: call to uncontracted function `rd_kafka_op_new0`"
@@ -887,7 +888,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "24048: call to uncontracted function `rd_kafka_op_new0`"
@@ -904,7 +905,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "24124: call to uncontracted function `rd_kafka_op_new0`"
@@ -921,7 +922,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "24197: call to uncontracted function `rd_kafka_op_new0`"
@@ -938,7 +939,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23426: call to uncontracted function `rd_kafka_op_new0`"
@@ -955,7 +956,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "24149: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -974,7 +975,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23952: call to uncontracted function `rd_kafka_op_new0`"
@@ -991,7 +992,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23979: call to uncontracted function `rd_kafka_op_new0`"
@@ -1008,7 +1009,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22483: call to uncontracted function `rd_kafka_op_new0`",
@@ -1026,7 +1027,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19866: call to uncontracted function `rd_kafka_op_new0`",
@@ -1044,7 +1045,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22944: call to uncontracted function `rd_kafka_op_new0`"
@@ -1061,7 +1062,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "22014: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -1080,7 +1081,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "21632: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -1099,7 +1100,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "21754: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -1119,7 +1120,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22925: call to uncontracted function `rd_kafka_op_new0`",
@@ -1137,7 +1138,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "24327: call to uncontracted function `rd_kafka_op_new0`",
@@ -1191,7 +1192,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22630: call to uncontracted function `rd_kafka_op_new0`"
@@ -1208,7 +1209,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22649: call to uncontracted function `rd_kafka_op_new0`"
@@ -1225,7 +1226,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23802: call to uncontracted function `rd_kafka_op_new0`"
@@ -1259,7 +1260,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "24585: call to uncontracted function `rd_kafka_op_req2`"
@@ -1279,7 +1280,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21059: call to uncontracted function `rd_kafka_op_new0`",
@@ -1297,7 +1298,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21011: call to uncontracted function `rd_kafka_op_new0`",
@@ -1315,7 +1316,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20298: call to uncontracted function `rd_kafka_op_new0`",
@@ -1350,7 +1351,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20531: call to uncontracted function `rd_kafka_op_new0`"
@@ -1367,7 +1368,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20875: call to uncontracted function `rd_kafka_op_new0`",
@@ -1442,7 +1443,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20241: call to uncontracted function `rd_kafka_op_new0`"
@@ -1466,7 +1467,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22487: call to uncontracted function `rd_kafka_op_new0`",
@@ -1485,7 +1486,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22470: call to uncontracted function `rd_kafka_op_new0`",
@@ -1504,7 +1505,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22479: call to uncontracted function `rd_kafka_op_new0`",
@@ -1523,7 +1524,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22947: call to uncontracted function `rd_kafka_op_new0`",
@@ -1543,7 +1544,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22979: call to uncontracted function `rd_kafka_op_new0`",
@@ -1562,7 +1563,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22968: call to uncontracted function `rd_kafka_op_new0`",
@@ -1582,7 +1583,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22957: call to uncontracted function `rd_kafka_op_new0`",
@@ -1602,7 +1603,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "23388: call to uncontracted function `rd_kafka_op_req2`"
@@ -1622,7 +1623,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23007: call to uncontracted function `rd_kafka_op_new0`",
@@ -1641,7 +1642,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22857: call to uncontracted function `rd_kafka_op_new0`",
@@ -1661,7 +1662,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22912: call to uncontracted function `rd_kafka_op_new0`",
@@ -1682,7 +1683,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22928: call to uncontracted function `rd_kafka_op_new0`",
@@ -1703,7 +1704,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22883: call to uncontracted function `rd_kafka_op_new0`",
@@ -1723,7 +1724,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22897: call to uncontracted function `rd_kafka_op_new0`",
@@ -1744,7 +1745,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22870: call to uncontracted function `rd_kafka_op_new0`",
@@ -1764,7 +1765,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23020: call to uncontracted function `rd_kafka_op_new0`",
@@ -1785,7 +1786,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23049: call to uncontracted function `rd_kafka_op_new0`",
@@ -1804,7 +1805,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "23032: call to uncontracted function `rd_kafka_op_new0`",
@@ -1823,7 +1824,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22835: call to uncontracted function `rd_kafka_op_new0`",
@@ -1843,7 +1844,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22846: call to uncontracted function `rd_kafka_op_new0`",
@@ -1861,7 +1862,8 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0",
+    "callee:rd_kafka_op_req"
    ],
    "lost": [
     "22822: call to uncontracted function `rd_kafka_op_new0`",
@@ -1902,7 +1904,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20330: call to uncontracted function `rd_kafka_op_new0`"
@@ -1936,7 +1938,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20607: call to uncontracted function `rd_kafka_op_new0`",
@@ -1956,7 +1958,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20798: call to uncontracted function `rd_kafka_op_new0`"
@@ -1973,7 +1975,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20118: call to uncontracted function `rd_kafka_op_new0`",
@@ -2082,7 +2084,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20177: call to uncontracted function `rd_kafka_op_new0`"
@@ -2099,7 +2101,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20280: call to uncontracted function `rd_kafka_op_new0`"
@@ -2118,7 +2120,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20166: call to uncontracted function `rd_kafka_op_new0`"
@@ -2154,7 +2156,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req0"
    ],
    "lost": [
     "20220: call to uncontracted function `rd_kafka_op_req0`"
@@ -2173,7 +2175,8 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0",
+    "callee:rd_kafka_op_req"
    ],
    "lost": [
     "20226: call to uncontracted function `rd_kafka_op_new0`",
@@ -2193,7 +2196,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20312: call to uncontracted function `rd_kafka_op_new0`"
@@ -2210,7 +2213,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20098: call to uncontracted function `rd_kafka_op_new0`",
@@ -2228,7 +2231,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20151: call to uncontracted function `rd_kafka_op_new0`",
@@ -2252,7 +2255,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "22447: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -2272,7 +2275,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "22417: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -2291,7 +2294,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20846: call to uncontracted function `rd_kafka_op_new0`"
@@ -2308,7 +2311,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20820: call to uncontracted function `rd_kafka_op_new0`",
@@ -2326,7 +2329,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21529: call to uncontracted function `rd_kafka_op_new0`",
@@ -2344,7 +2347,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21121: call to uncontracted function `rd_kafka_op_new0`",
@@ -2362,7 +2365,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21139: call to uncontracted function `rd_kafka_op_new0`",
@@ -2380,7 +2383,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20928: call to uncontracted function `rd_kafka_op_new0`",
@@ -2399,7 +2402,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21367: call to uncontracted function `rd_kafka_op_new0`",
@@ -2418,7 +2421,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21436: call to uncontracted function `rd_kafka_op_new0`",
@@ -2438,7 +2441,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20315: call to uncontracted function `rd_kafka_op_new0`",
@@ -2457,7 +2460,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21199: call to uncontracted function `rd_kafka_op_new0`",
@@ -2633,7 +2636,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22693: call to uncontracted function `rd_kafka_op_new0`"
@@ -2650,7 +2653,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21262: call to uncontracted function `rd_kafka_op_new0`",
@@ -2672,7 +2675,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "22618: call to uncontracted function `rd_kafka_op_new0`"
@@ -2689,7 +2692,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "20244: call to uncontracted function `rd_kafka_op_new_cb`"
@@ -2708,7 +2711,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20300: call to uncontracted function `rd_kafka_op_new0`"
@@ -2725,7 +2728,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "20224: call to uncontracted function `rd_kafka_op_new0`",
@@ -2743,7 +2746,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19684: call to uncontracted function `rd_kafka_op_new0`",
@@ -2761,7 +2764,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "19756: call to uncontracted function `rd_kafka_op_req2`"
@@ -2781,7 +2784,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "19736: call to uncontracted function `rd_kafka_op_req2`"
@@ -2802,7 +2805,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19664: call to uncontracted function `rd_kafka_op_new0`"
@@ -2819,7 +2822,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19624: call to uncontracted function `rd_kafka_op_new0`"
@@ -2836,7 +2839,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_req2"
    ],
    "lost": [
     "19776: call to uncontracted function `rd_kafka_op_req2`"
@@ -2856,7 +2859,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "21047: call to uncontracted function `rd_kafka_op_new0`"
@@ -2873,7 +2876,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new_cb"
    ],
    "lost": [
     "21311: call to uncontracted function `rd_kafka_op_new_cb`",
@@ -3163,7 +3166,7 @@
     "Safe"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19639: call to uncontracted function `rd_kafka_op_new0`",
@@ -3181,7 +3184,7 @@
     "Unknown"
    ],
    "labels": [
-    "other"
+    "callee:rd_kafka_op_new0"
    ],
    "lost": [
     "19647: call to uncontracted function `rd_kafka_op_new0`"

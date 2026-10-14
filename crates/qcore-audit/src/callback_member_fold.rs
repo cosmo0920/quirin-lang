@@ -133,7 +133,12 @@ pub fn demoted_functions(section: &Value) -> BTreeSet<(String, String, String)> 
         .as_array()
         .into_iter()
         .flatten()
-        .chain(section["constructed_states"]["demoted"].as_array().into_iter().flatten())
+        .chain(
+            section["constructed_states"]["demoted"]
+                .as_array()
+                .into_iter()
+                .flatten(),
+        )
         .map(|entry| {
             let text = |key: &str| entry[key].as_str().unwrap_or("").to_owned();
             (text("library"), text("file"), text("function"))
@@ -265,7 +270,10 @@ pub fn fold(
     // it).
     let owned = |name: &str| {
         let owned = |result: qcore_schemas::contract::ResourceReturnMode| {
-            matches!(result, qcore_schemas::contract::ResourceReturnMode::Owned { .. })
+            matches!(
+                result,
+                qcore_schemas::contract::ResourceReturnMode::Owned { .. }
+            )
         };
         contracts
             .contract(name)
@@ -353,7 +361,11 @@ pub fn fold(
                 .into_iter()
                 .flatten()
                 .filter_map(Value::as_str)
-                .filter_map(|name| constructed.get(name).map(|members| (name.to_owned(), members)))
+                .filter_map(|name| {
+                    constructed
+                        .get(name)
+                        .map(|members| (name.to_owned(), members))
+                })
                 .flat_map(|(name, members)| {
                     members
                         .keys()

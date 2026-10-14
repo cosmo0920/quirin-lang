@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate-whole.sh [NAME] -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES (from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
+# gate-whole.sh [NAME] -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
 # PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's gate-g2.sh): the full standing
 # gate and the provider gate (gate.sh NAME all, NAME default g1) with
 # one exclusive flock on the shared heavy lock held for the whole gate, so no

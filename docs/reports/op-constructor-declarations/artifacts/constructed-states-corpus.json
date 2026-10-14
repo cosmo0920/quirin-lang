@@ -1,0 +1,22 @@
+{
+ "declarations": {
+  "rd_kafka_op_new0": {
+   "rd_kafka_op_s.rko_op_cb": false,
+   "rd_kafka_op_s.rko_type": true
+  },
+  "rd_kafka_op_new_cb": {
+   "rd_kafka_op_s.rko_op_cb": false,
+   "rd_kafka_op_s.rko_type": true
+  }
+ },
+ "demoted": [],
+ "meaning": "the run's stability of every member a constructor's stated result state names (rules 12o, 13w, 14e): every store into the member in every analysed unit is classified (a store into an object its function obtained from an owned-result call only or an automatic object, a null pointer into a function-pointer member, a constant flag-or, a case-guarded rewrite); anything else, a whole-object write of the record, or a unit that recorded no facts (premise P-OPCTOR-STORES-SEEN) leaves it not kept. `demoted` lists the Safe or Pending rows resting on a constructor whose stated member the run does not keep, now Unknown (constructed-state-open). Evidence and a demotion only: no row is promoted",
+ "members": {
+  "rd_kafka_op_s.rko_op_cb": {
+   "kept": true
+  },
+  "rd_kafka_op_s.rko_type": {
+   "kept": true
+  }
+ }
+}

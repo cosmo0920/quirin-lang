@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# finish-gate.sh NAME -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES (from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
+# finish-gate.sh NAME -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
 # PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's, from HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING's, from EXECUTION-QUOTA-LOAD-INDEPENDENCE's): after gate.sh into private/opctor/gate-NAME
 # and gate.json written: copy the exits, heads and Clang version into gate/,
 # regenerate the matrix with gate.json (09a), rerun the Python suite (09b), the
@@ -9,7 +9,7 @@ name="$1"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 logs="$repo/private/opctor/gate-$name"
-report="$repo/docs/reports/cg22-op-callbacks-served-queues"
+report="$repo/docs/reports/op-constructor-declarations"
 cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""write_gate_json.py NAME -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES (from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
+"""write_gate_json.py NAME -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
 HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING's, from EXECUTION-QUOTA-LOAD-INDEPENDENCE's): gate.json from the standing gate's logs
 in private/opctor/gate-NAME (exits, the runner's totals line, the Lean audit
 count, the Python suite's count, the provider gate's counts) and the Clang
@@ -14,8 +14,8 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/cg22-op-callbacks-served-queues"
-BASE = "b565f79ab, rebased onto 98eddb50e, then 579c2e6e2"
+REPORT = REPO / "docs/reports/op-constructor-declarations"
+BASE = "f3e1d724c, rebased onto 2f0f65a60, then a7e7e8cee"
 
 
 def main() -> int:
@@ -49,8 +49,8 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"CG22-OP-CALLBACKS-AND-SERVED-QUEUES card gate on base {BASE}, every code "
-        f"step at {head[:9]}, scripts docs/reports/cg22-op-callbacks-served-queues/scripts/gate-whole.sh, "
+        f"OP-CONSTRUCTOR-DECLARATIONS card gate on base {BASE}, every code "
+        f"step at {head[:9]}, scripts docs/reports/op-constructor-declarations/scripts/gate-whole.sh, "
         "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/opctor/gate-{name} of this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/opctor/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (QCore.OpCallbacks added); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (QCore.OpCallbacks extended, no audit file added); "
         "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "

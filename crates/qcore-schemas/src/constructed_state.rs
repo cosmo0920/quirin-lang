@@ -211,14 +211,22 @@ mod tests {
     )] = &[
         // A decided value selects exactly its arm.
         (
-            &[(Some(6), Some("u.c.p")), (Some(9), Some("u.x")), (None, None)],
+            &[
+                (Some(6), Some("u.c.p")),
+                (Some(9), Some("u.x")),
+                (None, None),
+            ],
             6,
             &[],
             "u.c.p",
             Some(ArmJoin::Every),
         ),
         (
-            &[(Some(6), Some("u.c.p")), (Some(9), Some("u.x")), (None, None)],
+            &[
+                (Some(6), Some("u.c.p")),
+                (Some(9), Some("u.x")),
+                (None, None),
+            ],
             9,
             &[],
             "u.c.p",
@@ -266,7 +274,8 @@ mod tests {
             .filter(|line| !line.is_empty())
             .map(|line| line.trim_end_matches(',').to_owned())
             .collect::<Vec<_>>();
-        let spell = |value: Option<String>| value.map_or("Option.none".to_owned(), |v| format!("some {v}"));
+        let spell =
+            |value: Option<String>| value.map_or("Option.none".to_owned(), |v| format!("some {v}"));
         let rendered = DECIDED_JOIN_VECTORS
             .iter()
             .map(|(list, value, rewrites, path, join)| {
@@ -334,7 +343,10 @@ mod tests {
             decided_join(&list, 1_610_612_736, &values, "u.c.p"),
             Some(ArmJoin::Every)
         );
-        assert_eq!(decided_join(&list, 0, &values, "u.c.p"), Some(ArmJoin::None));
+        assert_eq!(
+            decided_join(&list, 0, &values, "u.c.p"),
+            Some(ArmJoin::None)
+        );
     }
 
     #[test]

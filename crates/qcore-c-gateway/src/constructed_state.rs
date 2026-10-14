@@ -274,12 +274,7 @@ impl Locals {
                     self.rebound.insert(id.to_owned());
                 }
             }
-            "UnaryOperator"
-                if matches!(
-                    node["opcode"].as_str(),
-                    Some("&" | "++" | "--")
-                ) =>
-            {
+            "UnaryOperator" if matches!(node["opcode"].as_str(), Some("&" | "++" | "--")) => {
                 if let Some(id) = children(node).first().and_then(variable) {
                     self.sources.insert(id.to_owned(), None);
                     self.rebound.insert(id.to_owned());
@@ -450,9 +445,7 @@ impl Collector<'_> {
             return;
         }
         let class = match (opcode, value) {
-            ("=", Some(value))
-                if null_constant(value) && self.facts.function_pointer(place) =>
-            {
+            ("=", Some(value)) if null_constant(value) && self.facts.function_pointer(place) => {
                 StateStore::Null {
                     function: name.to_owned(),
                 }
@@ -470,7 +463,9 @@ impl Collector<'_> {
             ("|=", Some(value)) => match constant_values(value, self.enumerators) {
                 Some(values) => StateStore::FlagOr {
                     function: name.to_owned(),
-                    bits: values.iter().fold(0u64, |bits, value| bits | (*value as u64)),
+                    bits: values
+                        .iter()
+                        .fold(0u64, |bits, value| bits | (*value as u64)),
                 },
                 None => StateStore::Other {
                     function: name.to_owned(),
@@ -487,17 +482,16 @@ impl Collector<'_> {
 
     fn switch_guard(&self, condition: &Value) -> Option<Guard> {
         let condition = strip_all(condition);
-        let (member, mask) = if kind(condition) == "BinaryOperator"
-            && condition["opcode"].as_str() == Some("&")
-        {
-            let [left, right] = children(condition) else {
-                return None;
+        let (member, mask) =
+            if kind(condition) == "BinaryOperator" && condition["opcode"].as_str() == Some("&") {
+                let [left, right] = children(condition) else {
+                    return None;
+                };
+                let kept = fold_with(strip_all(right), self.enumerators)?;
+                (strip_all(left), Some(!(kept as u64)))
+            } else {
+                (condition, None)
             };
-            let kept = fold_with(strip_all(right), self.enumerators)?;
-            (strip_all(left), Some(!(kept as u64)))
-        } else {
-            (condition, None)
-        };
         if kind(member) != "MemberExpr" || member["isArrow"].as_bool() != Some(true) {
             return None;
         }
@@ -565,7 +559,11 @@ impl Collector<'_> {
                 if let Some(callee) = direct_callee(node)
                     && WHOLE_WRITERS.contains(&callee)
                     && let Some(destination) = children(node).get(1)
-                    && !self.sub_object(name, destination, &format!("a `{callee}` into a sub-object covers it"))
+                    && !self.sub_object(
+                        name,
+                        destination,
+                        &format!("a `{callee}` into a sub-object covers it"),
+                    )
                     && let Some(record) = self.facts.record_of_node(strip_all(destination), true)
                     && self.records.contains(&record)
                 {
@@ -579,7 +577,9 @@ impl Collector<'_> {
                 let parts = children(node);
                 if let ([condition, body], Some(guard)) = (
                     parts,
-                    parts.first().and_then(|condition| self.switch_guard(condition)),
+                    parts
+                        .first()
+                        .and_then(|condition| self.switch_guard(condition)),
                 ) {
                     self.walk(name, condition, locals, guards);
                     guards.push(guard);
@@ -609,7 +609,9 @@ impl Collector<'_> {
                 match kind(inner) {
                     "CaseStmt" => {
                         let parts = children(inner);
-                        let value = parts.first().and_then(|label| fold_with(label, self.enumerators));
+                        let value = parts
+                            .first()
+                            .and_then(|label| fold_with(label, self.enumerators));
                         if let Some(top) = guards.last_mut() {
                             match (value, top.labels.as_mut(), parts.len()) {
                                 (Some(value), Some(labels), 2) => {
@@ -661,7 +663,10 @@ pub fn collect<'a>(
             .iter()
             .map(|key| (format!("?.{}", last_segment(key)), key.clone()))
             .collect(),
-        records: keys.iter().map(|key| record_of_key(key).to_owned()).collect(),
+        records: keys
+            .iter()
+            .map(|key| record_of_key(key).to_owned())
+            .collect(),
         out: StateFacts::default(),
     };
     for (name, function) in functions {
@@ -853,7 +858,9 @@ pub fn result_state_validates(
         Some(Some(callees))
             if assignments == 1
                 && callees.len() == 1
-                && callees.iter().all(|callee| ZEROING_ALLOCATORS.contains(&callee.as_str())) => {}
+                && callees
+                    .iter()
+                    .all(|callee| ZEROING_ALLOCATORS.contains(&callee.as_str())) => {}
         _ => {
             return Err(format!(
                 "the result is not assigned once from a zeroing allocator ({})",
@@ -1053,7 +1060,10 @@ mod tests {
 
     #[test]
     fn reachable_values_close_under_flags_and_rewrites() {
-        assert_eq!(reachable(17, &stable(&[(17, 16)], &[])), BTreeSet::from([16, 17]));
+        assert_eq!(
+            reachable(17, &stable(&[(17, 16)], &[])),
+            BTreeSet::from([16, 17])
+        );
         assert_eq!(reachable(9, &stable(&[(17, 16)], &[])), BTreeSet::from([9]));
         assert_eq!(
             reachable(6, &stable(&[], &[1 << 29, 1 << 30])),
@@ -1098,10 +1108,17 @@ mod tests {
         )]);
         assert!(stability(&[Some(&unit), Some(&other)], "op.cb", false, &owned).is_err());
         assert!(stability(&[Some(&unit), None], "op.cb", false, &owned).is_err());
-        let null = facts(&[("op.cb", StateStore::Null { function: "call".into() })]);
+        let null = facts(&[(
+            "op.cb",
+            StateStore::Null {
+                function: "call".into(),
+            },
+        )]);
         assert!(stability(&[Some(&null)], "op.cb", false, &owned).is_ok());
         let mut whole = StateFacts::default();
-        whole.whole_writes.insert("op".into(), "a `memset` into it".into());
+        whole
+            .whole_writes
+            .insert("op".into(), "a `memset` into it".into());
         assert!(stability(&[Some(&whole)], "op.cb", false, &owned).is_err());
         assert!(stores_into(&unit, "op.cb", "make"));
         assert!(!stores_into(&unit, "op.cb", "other"));
@@ -1175,7 +1192,13 @@ mod tests {
         );
         // A store into the absent member withdraws it.
         let store_cb = assign(&arrow(&result, "cb"), &call("f"));
-        let bad = constructor(&[local.clone(), set.clone(), store_type.clone(), store_cb, ret.clone()]);
+        let bad = constructor(&[
+            local.clone(),
+            set.clone(),
+            store_type.clone(),
+            store_cb,
+            ret.clone(),
+        ]);
         assert!(result_state_validates(&bad, &state(), &BTreeMap::new()).is_err());
         // An allocator that does not zero.
         let malloc = assign(&result, &call("rd_malloc"));
@@ -1186,7 +1209,13 @@ mod tests {
             r#"{{"kind":"CallExpr","inner":[{},{result}]}}"#,
             r#"{"kind":"ImplicitCastExpr","inner":[{"kind":"DeclRefExpr","referencedDecl":{"kind":"FunctionDecl","name":"g"}}]}"#
         );
-        let bad = constructor(&[local.clone(), set.clone(), store_type.clone(), handed, ret.clone()]);
+        let bad = constructor(&[
+            local.clone(),
+            set.clone(),
+            store_type.clone(),
+            handed,
+            ret.clone(),
+        ]);
         assert!(result_state_validates(&bad, &state(), &BTreeMap::new()).is_err());
         // No store of the discriminant.
         let bad = constructor(&[local, set, ret]);

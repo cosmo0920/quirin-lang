@@ -2524,15 +2524,15 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 || !declared.derived_outs.is_empty()
                 || !declared.references.is_empty())
         {
-            return Err(
-                "a result state stands only beside retentions and plain predicates".into(),
-            );
+            return Err("a result state stands only beside retentions and plain predicates".into());
         }
         for state in &constructed.members {
             if let qcore_schemas::constructed_state::MemberValue::Callback { callback } =
                 state.value
                 && declared.callbacks.iter().any(|clause| match clause {
-                    qcore_schemas::callback::CallbackClause::Invoked { callback: named, .. }
+                    qcore_schemas::callback::CallbackClause::Invoked {
+                        callback: named, ..
+                    }
                     | qcore_schemas::callback::CallbackClause::Registered {
                         callback: named, ..
                     } => *named == callback,

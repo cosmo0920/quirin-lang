@@ -609,7 +609,10 @@ impl Parser<'_> {
                 function,
                 &declaration.constructed,
                 line,
-                |callback| self.callback_candidates(function, line, callback, true).ok(),
+                |callback| {
+                    self.callback_candidates(function, line, callback, true)
+                        .ok()
+                },
             ));
         }
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the

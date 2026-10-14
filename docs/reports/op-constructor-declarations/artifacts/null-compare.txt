@@ -1,0 +1,4 @@
+before3-null -> a5-null: 4921 rows, 1 differ; tallies equal: True {'Safe (conditional on its preconditions)': 1435, 'Safe (unconditional)': 1113, 'Unknown': 2355, 'Unsafe': 18}
+   ('librdkafka', 'rdunittest_fetcher.c', 'ut_create_fetch_op_with_offset') ['combined', 'custody'] {'custody': ('Unknown', 'Safe'), 'combined': ('Unknown', 'Safe')}
+before3-system-null -> a5-system-null: 237 rows, 0 differ; tallies equal: True {'Safe (conditional on its preconditions)': 125, 'Safe (unconditional)': 84, 'Unknown': 245}
+before3-slice-null -> a5-slice-null: 271 rows, 0 differ; tallies equal: True {'Safe (conditional on its preconditions)': 103, 'Safe (unconditional)': 71, 'Unknown': 232}

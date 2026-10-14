@@ -231,7 +231,10 @@ pub struct RetainingContract {
     pub arms_withdrawn: bool,
     /// Card **OP-CONSTRUCTOR-DECLARATIONS** (§C04.19.4, rules 12o, 13w,
     /// 14e): the result state a constructor states. Omitted when empty.
-    #[serde(default, skip_serializing_if = "crate::constructed_state::ConstructedState::is_empty")]
+    #[serde(
+        default,
+        skip_serializing_if = "crate::constructed_state::ConstructedState::is_empty"
+    )]
     pub constructed: crate::constructed_state::ConstructedState,
     /// Card **OP-CONSTRUCTOR-DECLARATIONS** (rule 14e): set only in a
     /// translation unit whose own body of the declaration does not validate

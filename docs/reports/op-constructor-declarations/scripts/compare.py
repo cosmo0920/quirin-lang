@@ -20,14 +20,10 @@ import re
 import sys
 
 DECLARED = [
-    # CG22-CALLBACK-REGISTRY-CONTRACT: the callback declarations and the two
-    # re-declared in place (a lost or gained leaf naming one of them).
-    "bsearch", "qsort", "pthread_once",
-    "cmt_mpack_unpack_array", "cmt_mpack_unpack_map",
-    "ctr_mpack_unpack_array", "ctr_mpack_unpack_map",
-    "rd_list_init", "rd_list_new", "rd_list_add", "rd_list_destroy", "rd_list_clear",
-    "pb_write", "pb_encode_varint",
-    "rd_kafka_topic_partition_list_sort", "msgpack_packer_init",
+    # OP-CONSTRUCTOR-DECLARATIONS: the op constructors and the request family
+    # (a lost or gained leaf naming one of them).
+    "rd_kafka_op_new0", "rd_kafka_op_new_cb", "rd_kafka_op_req0", "rd_kafka_op_req",
+    "rd_kafka_op_req2",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

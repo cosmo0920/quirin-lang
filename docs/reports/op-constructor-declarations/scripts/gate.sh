@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate.sh NAME [PART] -- CG22-OP-CALLBACKS-AND-SERVED-QUEUES (from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, copied from
+# gate.sh NAME [PART] -- OP-CONSTRUCTOR-DECLARATIONS (from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, copied from
 # PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's, from HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING's, from EXECUTION-QUOTA-LOAD-INDEPENDENCE's scripts/gate.sh): cargo check and the
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/opctor/gate-NAME/, nothing piped, each step under the shared
