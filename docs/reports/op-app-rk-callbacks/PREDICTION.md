@@ -398,3 +398,36 @@ release of `rk` without `RD_KAFKA_DESTROY_F_IMMEDIATE` is C04.5's literal
 premise `flags = 0` on `rd_kafka_destroy`, which is existing vocabulary. Its
 consumer close stays refused through the poll callback (S1). It is named as a
 residual.
+
+## 5. The user's decision (recorded after the freeze)
+
+> **USER DECISION 2026-10-14** (relayed by the integrator, verbatim): The
+> user's answer was: "Build the agent's recommended set". In detail:
+>
+> - **D1:** function defaults are written with your `|->` form, now extended
+>   so the right-hand side may name a function. Example: `quant live #result:
+>   rd_kafka_conf_s.log_cb |-> rd_kafka_log_print;` The right-hand side is
+>   either `absent` or a function designator. Anything else rejects the
+>   module. Extend the lower level to match
+>   (`resource_callback_member_registered(result, TAG.FIELD, F)` with F a
+>   function), and prove in Lean that the two levels are equivalent.
+> - **Q2 as written:** setter declarations
+>   `resource_callback_member_registered(conf, rd_kafka_conf_s.FIELD, cb)`,
+>   each a declared assumption with a named premise that covers the
+>   property-table writer.
+> - **Q3:** no new word. Key members by their innermost named record, and let
+>   union members share stores. The embedded-record part also discharges
+>   `CALLBACK-MEMBER-EMBEDDED-RECORD-KEYS`, if it holds.
+> - **U2:** use the named premise `P-RK-NO-PLUGIN-LIBRARY` ("no
+>   plugin.library.paths configured"). The user chose this explicitly. List
+>   it in every dependent verdict.
+> - **R1:** add the facts pre-pass, so a unit decides over the run's set. The
+>   fold stays demote-only.
+> - **F1:** read member facts from every Fluent Bit production unit.
+>   Declared-assumption standing for the three FB candidates, with each body
+>   read.
+> - **E1:** a run-closed empty set decides "invokes nothing". No new word.
+> - **S1:** keep rule 12m. `rd_kafka_poll_cb` stays refused at the serves.
+
+The prediction of section 4's second row stands for this set: no status move,
+leaves only, null property unchanged.
