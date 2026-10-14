@@ -12,7 +12,15 @@
 | after `dbc9d3f2` | first write +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | after `dbc9d3f2` | close +30 ms | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | after `dbc9d3f2` | both delays + 20 ms stall | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | idle | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | 20 ms host stall | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | 50 ms host stall | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | first write +30 ms | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | close +30 ms | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| after2 `8cbaabb0` | both delays + 20 ms stall | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 base: 120 runs, 194 deviating case-runs
 
 after: 300 runs, 0 deviating case-runs
+
+after2: 120 runs, 0 deviating case-runs

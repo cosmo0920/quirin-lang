@@ -1,0 +1,245 @@
+{
+ "binary": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/bin-after2/request_consumption",
+ "binary_sha256": "8cbaabb0486356f9fd154d137f37d2c1706fb2d11146c44c11ae6a9491270be5",
+ "nproc": 16,
+ "runs_per_level": 20,
+ "env": [
+  "LD_PRELOAD=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/shim/fifo_delay.so",
+  "QCORE_DELAY_FIFO_CLOSE_US=30000"
+ ],
+ "levels": [
+  {
+   "sleepers": 0,
+   "spinners": 0,
+   "forkers": 0,
+   "peers": 0,
+   "netns": 0,
+   "stall_ms": 0,
+   "child_stall_ms": 0,
+   "load_pids": [],
+   "runs": [
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 4.32,
+     "running_total": "2/2975",
+     "uid_tasks": 2430,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-000.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 4.32,
+     "running_total": "1/2979",
+     "uid_tasks": 2435,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-001.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.32,
+     "running_total": "2/2980",
+     "uid_tasks": 2436,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-002.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 4.13,
+     "running_total": "1/2978",
+     "uid_tasks": 2436,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-003.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 4.13,
+     "running_total": "1/2980",
+     "uid_tasks": 2436,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-004.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 4.13,
+     "running_total": "1/2980",
+     "uid_tasks": 2436,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-005.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.52,
+     "load1": 3.96,
+     "running_total": "3/2973",
+     "uid_tasks": 2431,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-006.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 3.96,
+     "running_total": "2/2974",
+     "uid_tasks": 2430,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-007.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.52,
+     "load1": 3.96,
+     "running_total": "3/2974",
+     "uid_tasks": 2430,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-008.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.52,
+     "load1": 3.96,
+     "running_total": "1/2971",
+     "uid_tasks": 2427,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-009.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.12,
+     "running_total": "3/2968",
+     "uid_tasks": 2427,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-010.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.12,
+     "running_total": "1/2978",
+     "uid_tasks": 2434,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-011.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.12,
+     "running_total": "1/2978",
+     "uid_tasks": 2434,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-012.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 3.95,
+     "running_total": "3/3008",
+     "uid_tasks": 2466,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-013.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 3.95,
+     "running_total": "3/3010",
+     "uid_tasks": 2466,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-014.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 3.95,
+     "running_total": "1/3010",
+     "uid_tasks": 2466,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-015.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.47,
+     "load1": 3.95,
+     "running_total": "3/3010",
+     "uid_tasks": 2466,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-016.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.04,
+     "running_total": "1/3008",
+     "uid_tasks": 2466,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-017.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.04,
+     "running_total": "1/3003",
+     "uid_tasks": 2459,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-018.log"
+    },
+    {
+     "exit": 0,
+     "wall_s": 1.42,
+     "load1": 4.04,
+     "running_total": "1/3003",
+     "uid_tasks": 2459,
+     "stalls": 0,
+     "child_stalls": 0,
+     "failures": [],
+     "log": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9499597eea0c3ff3/private/hdd/campaign/after2-close-logs/0-0-0-019.log"
+    }
+   ],
+   "failed_runs": 0
+  }
+ ]
+}

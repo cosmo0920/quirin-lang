@@ -194,6 +194,13 @@ On the base, the shape went both ways, and the condition decided which:
 
 On the tip every case gives its one required outcome under every condition.
 
+**After the off-Linux change** (`6c28b19d5`, §3), the probe binary was rebuilt
+(`8cbaabb0`), and a shorter confirmation run checked that the Linux path is
+unchanged: 20 runs under each of the six conditions, **120 runs, 0
+deviations** (the `after2-*.json` files and
+[SUMMARY.md](artifacts/campaign/SUMMARY.md)). The change touches only
+`cfg(not(target_os = "linux"))` code and the probe's off-Linux expectations.
+
 ## 5. Existing assertions
 
 None moved on Linux. The nine earlier probe cases kept their exact outcomes

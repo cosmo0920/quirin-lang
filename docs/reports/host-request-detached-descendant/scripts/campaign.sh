@@ -29,7 +29,7 @@ K="--env LD_PRELOAD=$S --env QCORE_DELAY_FIFO_CLOSE_US=30000"
 B="--env LD_PRELOAD=$S --env QCORE_DELAY_FIFO_WRITE_US=30000 --env QCORE_DELAY_FIFO_CLOSE_US=30000"
 mkdir -p "$H/campaign" || exit 2
 for side in ${SIDES:-base after}; do
-  case "$side" in base*) runs=20;; *) runs=50;; esac
+  case "$side" in base*) runs=${RUNS:-20};; *) runs=${RUNS:-50};; esac
   bin=$H/bin-$side/request_consumption
   out=$H/campaign/$side
   flock "$L" sh -c "
