@@ -42,6 +42,10 @@ pub(super) const ELEMENTS_DROPPED: &str = "resource_elements_dropped";
 pub(super) const RELEASED_IF_CONSTRUCTED: &str = "resource_released_if_constructed";
 /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.3, rule 12n).
 pub(super) const MEMBER_INVOKED: &str = "resource_callback_member_invoked";
+/// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (§C04.19.3, rule 12n; user decision
+/// Q2): a registration into a parameter's member, a setter. The `result`
+/// holder of the same word is a constructor's result state (§C04.19.4).
+pub(super) const MEMBER_REGISTERED: &str = "resource_callback_member_registered";
 
 /// The actual word for a value the callee supplies.
 pub(super) const SUPPLIED: &str = "_";
@@ -91,10 +95,18 @@ pub(super) fn clause(words: &[&str]) -> Option<WrittenCallback> {
 /// member the identifier-only predicate reader does not read; `None` for any
 /// other predicate.
 pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>, String> {
-    let Some(rest) = expression.trim().strip_prefix(MEMBER_INVOKED) else {
-        return Ok(None);
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q2): a setter's registration into
+    // a parameter's member, `resource_callback_member_registered(P,
+    // TAG.FIELD, F)` (the `result` holder is read by the result-state reader
+    // first, so only a parameter holder reaches here).
+    let (keyword, rest) = match expression.trim().strip_prefix(MEMBER_INVOKED) {
+        Some(rest) => (MEMBER_INVOKED, rest),
+        None => match expression.trim().strip_prefix(MEMBER_REGISTERED) {
+            Some(rest) => (MEMBER_REGISTERED, rest),
+            None => return Ok(None),
+        },
     };
-    let malformed = || format!("malformed `{MEMBER_INVOKED}` clause `{expression}`");
+    let malformed = || format!("malformed `{keyword}` clause `{expression}`");
     let inner = rest
         .trim_start()
         .strip_prefix('(')
@@ -113,6 +125,7 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
             && (dotted || !text.contains('.'))
     };
     if arguments.len() < 2
+        || (keyword == MEMBER_REGISTERED && arguments.len() != 3)
         || arguments
             .iter()
             .enumerate()
@@ -121,7 +134,7 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
         return Err(malformed());
     }
     Ok(Some(WrittenCallback {
-        keyword: MEMBER_INVOKED,
+        keyword,
         arguments: arguments.into_iter().map(str::to_owned).collect(),
     }))
 }
@@ -343,9 +356,46 @@ pub(super) fn declaration(
                     actuals,
                 }
             }
+            // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (§C04.19.3, Q2): a setter
+            // stores its callback parameter into its object parameter's
+            // member. One registration per member and per callback.
+            MEMBER_REGISTERED => {
+                let [holder, member, callback] = arguments else {
+                    return Err(shape());
+                };
+                if holder == RESULT {
+                    return Err(format!(
+                        "`{MEMBER_REGISTERED}(result, …)` is a result state (§C04.19.4)"
+                    ));
+                }
+                let holder = object(holder, "member registration's holder")?;
+                let callback = function_pointer(callback)?;
+                if !callbacks_named.insert(callback) {
+                    return Err("a callback is invoked or registered by one clause".into());
+                }
+                let (tag, path) = member
+                    .split_once('.')
+                    .ok_or_else(|| format!("a member is spelled `TAG.FIELD`, not `{member}`"))?;
+                let member = CallbackMember {
+                    tag: tag.to_owned(),
+                    path: path.to_owned(),
+                };
+                if !members_named.insert((MemberObject::Parameter { index: holder }, member.clone()))
+                {
+                    return Err(format!("duplicate `{MEMBER_REGISTERED}` clause"));
+                }
+                CallbackClause::MemberRegistered {
+                    object: holder,
+                    member,
+                    callback,
+                }
+            }
             other => return Err(format!("unsupported callback clause `{other}`")),
         };
-        if matches!(declared, CallbackClause::MemberInvoked { .. }) {
+        if matches!(
+            declared,
+            CallbackClause::MemberInvoked { .. } | CallbackClause::MemberRegistered { .. }
+        ) {
             clauses.push(declared);
             continue;
         }
@@ -359,7 +409,9 @@ pub(super) fn declaration(
             | CallbackClause::ElementsDropped { holder }
             | CallbackClause::ReleasedIfConstructed { holder }
             | CallbackClause::ElementAdded { holder, .. } => *holder,
-            CallbackClause::MemberInvoked { .. } => unreachable!("pushed above"),
+            CallbackClause::MemberInvoked { .. } | CallbackClause::MemberRegistered { .. } => {
+                unreachable!("pushed above")
+            }
         };
         if !seen.insert((clause.keyword, position)) {
             return Err(format!("duplicate `{}` clause", clause.keyword));

@@ -21,14 +21,14 @@
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
-use crate::callback_member_closure::{Closure, Flow, MemberFacts, closure};
+use crate::callback_member_closure::{Closure, Flow, MemberFacts, Prepared, closure_prepared};
 
 /// What the pre-pass read: every read unit's facts, the declared
 /// registrations and stated defaults as one more unit, and the units it could
 /// not read although they may name a token of a member's closure.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Debug, Default)]
 pub struct RunMemberFacts {
     /// Every unit read for its facts, then the declarations' unit.
     pub units: Vec<MemberFacts>,
@@ -36,14 +36,44 @@ pub struct RunMemberFacts {
     /// were not read (a C++ or assembly unit, a failed preprocessing or
     /// Clang run), with why. Any such unit opens every member.
     pub unread: BTreeMap<String, String>,
+    /// The units' stores by normal key, built once.
+    prepared: OnceLock<Prepared>,
 }
 
 impl RunMemberFacts {
+    /// The facts the pre-pass read.
+    #[must_use]
+    pub fn new(units: Vec<MemberFacts>, unread: BTreeMap<String, String>) -> Self {
+        Self {
+            units,
+            unread,
+            prepared: OnceLock::new(),
+        }
+    }
+
+    fn prepared(&self) -> &Prepared {
+        self.prepared.get_or_init(|| {
+            let views = self.units.iter().collect::<Vec<_>>();
+            Prepared::of(&views)
+        })
+    }
+
+    /// The normal forms of a declared member over the run's records (rule
+    /// 12n, Q3). `Err` when it is not a function-pointer member of a record
+    /// the run defines: such a member is never decided over the run's set,
+    /// so a misspelled member can never read as "invokes nothing".
+    ///
+    /// # Errors
+    /// Why the member is not read.
+    pub fn normalise(&self, member: &str) -> Result<BTreeSet<String>, String> {
+        self.prepared().tables.normalise(member)
+    }
+
     /// The run's closure of `member`: open while any unit is unread.
     #[must_use]
     pub fn closure(&self, member: &str) -> Closure {
         let views = self.units.iter().collect::<Vec<_>>();
-        let result = closure(&views, member);
+        let result = closure_prepared(&views, self.prepared(), member).0;
         if self.unread.is_empty() {
             return result;
         }
@@ -163,37 +193,39 @@ mod tests {
             1,
             BTreeSet::from([Flow::Function { name: "h".into() }]),
         );
-        let run = RunMemberFacts {
-            units: vec![
-                caller,
-                declarations_unit(&[DeclaredStore::Parameter {
-                    member: "T.f".into(),
-                    function: "set_f".into(),
-                    index: 1,
-                }]),
-            ],
-            unread: BTreeMap::new(),
-        };
+        let declared = declarations_unit(&[DeclaredStore::Parameter {
+            member: "T.f".into(),
+            function: "set_f".into(),
+            index: 1,
+        }]);
+        let run = RunMemberFacts::new(vec![caller.clone(), declared.clone()], BTreeMap::new());
         assert_eq!(run.closure("T.f"), Ok(BTreeSet::from(["h".to_owned()])));
         // A stated default joins the set.
-        let mut with_default = run.clone();
-        with_default
-            .units
-            .push(declarations_unit(&[DeclaredStore::Default {
-                member: "T.f".into(),
-                function: "d".into(),
-            }]));
+        let with_default = RunMemberFacts::new(
+            vec![
+                caller.clone(),
+                declared.clone(),
+                declarations_unit(&[DeclaredStore::Default {
+                    member: "T.f".into(),
+                    function: "d".into(),
+                }]),
+            ],
+            BTreeMap::new(),
+        );
         assert_eq!(
             with_default.closure("T.f"),
             Ok(BTreeSet::from(["d".to_owned(), "h".to_owned()]))
         );
         // An address-taken setter opens it.
-        let mut taken = run.clone();
-        taken.units[0].address_taken.insert("set_f".into());
+        let mut taken = caller.clone();
+        taken.address_taken.insert("set_f".into());
+        let taken = RunMemberFacts::new(vec![taken, declared.clone()], BTreeMap::new());
         assert!(taken.closure("T.f").is_err());
         // An unread unit opens it.
-        let mut unread = run;
-        unread.unread.insert("x.cpp".into(), "a C++ unit".into());
+        let unread = RunMemberFacts::new(
+            vec![caller, declared],
+            BTreeMap::from([("x.cpp".to_owned(), "a C++ unit".to_owned())]),
+        );
         assert!(unread.closure("T.f").is_err());
     }
 

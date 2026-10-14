@@ -67,6 +67,43 @@ pub fn member_declarations(contracts: &ResourceContracts) -> BTreeMap<String, BT
         .collect()
 }
 
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n; user decisions Q2,
+/// D1): every declared registration into a parameter's member (each call a
+/// store of its callback actual) and every stated function default of a
+/// constructor's result (a store of the function), for the run's closure.
+#[must_use]
+pub fn declared_stores(
+    contracts: &ResourceContracts,
+) -> Vec<qcore_c_gateway::member_run_facts::DeclaredStore> {
+    use qcore_c_gateway::member_run_facts::DeclaredStore;
+    use qcore_schemas::constructed_state::MemberValue;
+    let mut out = Vec::new();
+    for (name, declared) in contracts.retaining() {
+        for clause in &declared.callbacks {
+            if let CallbackClause::MemberRegistered {
+                member, callback, ..
+            } = clause
+            {
+                out.push(DeclaredStore::Parameter {
+                    member: member.spelling(),
+                    function: name.clone(),
+                    index: *callback,
+                });
+            }
+        }
+        for state in &declared.constructed.members {
+            if let MemberValue::Function { function } = &state.value {
+                out.push(DeclaredStore::Default {
+                    member: state.member.spelling(),
+                    function: function.clone(),
+                });
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
 /// Card **CALLBACK-MEMBER-DATA-ONLY-UNITS** (rule 12n): the facts of a unit
 /// the gateway does not analyse, read from its whole Clang AST
 /// ([`qcore_c_gateway::callback_member_closure::read_unit`]) over its
@@ -231,6 +268,20 @@ pub fn fold(
     contracts: &ResourceContracts,
     diagnostic_counts: &mut BTreeMap<String, usize>,
 ) -> Value {
+    fold_with(units, facts, contracts, diagnostic_counts, None)
+}
+
+/// [`fold`], with the run's facts the pre-pass read (card
+/// OP-APP-RK-CALLBACKS-VIA-POLL-CB, user decision R1): every unit decided a
+/// member over that run's set itself, so the run's closure is the pre-pass's
+/// and a row is kept exactly when it is closed. Still demote-only.
+pub fn fold_with(
+    units: &mut [Value],
+    facts: &[UnitFacts],
+    contracts: &ResourceContracts,
+    diagnostic_counts: &mut BTreeMap<String, usize>,
+    prepass: Option<&qcore_c_gateway::member_run_facts::RunMemberFacts>,
+) -> Value {
     let declarations = member_declarations(contracts);
     let constructed = constructed_declarations(contracts);
     if declarations.is_empty() && constructed.is_empty() {
@@ -315,6 +366,11 @@ pub fn fold(
     let run = members
         .iter()
         .map(|member| {
+            // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the pre-pass's set,
+            // which every unit decided over.
+            if let Some(prepass) = prepass {
+                return (member.clone(), prepass.closure(member));
+            }
             let mut result = closure(&recorded, member);
             if missing > 0 {
                 let reason = format!("{missing} analysed unit(s) recorded no facts");
@@ -401,7 +457,12 @@ pub fn fold(
             }
             for (declaration, members) in relied {
                 for member in members {
-                    let own = own_facts.map(|facts| closure(&[facts], member));
+                    // With the pre-pass, the unit decided over the run's set
+                    // itself: kept exactly when that set is closed.
+                    let own = match prepass {
+                        Some(prepass) => Some(prepass.closure(member)),
+                        None => own_facts.map(|facts| closure(&[facts], member)),
+                    };
                     let kept = matches!(
                         (&own, &run[member]),
                         (Some(Ok(own)), Ok(all)) if all.is_subset(own)

@@ -101,6 +101,36 @@ pub struct MemberFacts {
     /// different definition, a definition inside a function) (build state).
     #[serde(skip)]
     record_fields: BTreeMap<String, Option<RecordShape>>,
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, Q3): each record the
+    /// unit defines at file scope, as member keys read it (`None`: defined
+    /// differently twice in the unit).
+    #[serde(default)]
+    pub records: BTreeMap<String, Option<RecordKeys>>,
+    /// The union tags the unit defines (build state).
+    #[serde(skip)]
+    unions: BTreeSet<String>,
+}
+
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n, Q3): a record's
+/// fields as member keys read them.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RecordKeys {
+    pub union: bool,
+    pub fields: BTreeMap<String, FieldKey>,
+}
+
+/// What one field holds, for member keys.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "field")]
+pub enum FieldKey {
+    /// A function pointer.
+    Function,
+    /// A named record by value (or an array of them).
+    Named { record: String },
+    /// An anonymous record by value.
+    Inline { keys: Box<RecordKeys> },
+    /// Anything else.
+    Plain,
 }
 
 /// Card CALLBACK-MEMBER-DATA-ONLY-UNITS: a record's fields as an initializer
@@ -290,8 +320,10 @@ impl MemberFacts {
             return BTreeSet::from([Flow::Null]);
         }
         match kind(node) {
+            // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q3): keyed by its
+            // innermost named record.
             "MemberExpr" => BTreeSet::from([Flow::Member {
-                member: self.member_key(node),
+                member: self.callback_key(node),
             }]),
             // A formal of another type (a `void *` a caller may hand any
             // function pointer through) is open: its calls record no actual.
@@ -476,6 +508,145 @@ impl MemberFacts {
         if *entry != shape {
             *entry = None;
         }
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, Q3): the record as
+        // member keys read it.
+        let keys = self.record_keys(node);
+        if keys.union {
+            self.unions.insert(name.to_owned());
+        }
+        let entry = self
+            .records
+            .entry(name.to_owned())
+            .or_insert(Some(keys.clone()));
+        if entry.as_ref() != Some(&keys) {
+            *entry = None;
+        }
+    }
+
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, Q3): a record
+    /// definition's fields as member keys read them. An anonymous record a
+    /// field names is read inline from the record declaration Clang puts just
+    /// before it.
+    fn record_keys(&self, node: &Value) -> RecordKeys {
+        let mut keys = RecordKeys {
+            union: node["tagUsed"].as_str() == Some("union"),
+            fields: BTreeMap::new(),
+        };
+        let mut anonymous: Option<&Value> = None;
+        for child in children(node) {
+            match kind(child) {
+                "RecordDecl" => {
+                    anonymous = (child["name"].as_str().is_none_or(str::is_empty)
+                        && child["completeDefinition"].as_bool() == Some(true))
+                    .then_some(child);
+                }
+                "FieldDecl" => {
+                    let name = child["name"].as_str().unwrap_or("").to_owned();
+                    let text = type_text(child);
+                    let field = if self.function_pointer(child) {
+                        FieldKey::Function
+                    } else if text.contains("(unnamed") || text.contains("(anonymous") {
+                        match anonymous {
+                            Some(record) if !text.contains('*') && !text.contains('[') => {
+                                FieldKey::Inline {
+                                    keys: Box::new(self.record_keys(record)),
+                                }
+                            }
+                            _ => FieldKey::Plain,
+                        }
+                    } else if text.contains('*') {
+                        FieldKey::Plain
+                    } else {
+                        // A record by value, or an array of them: a store
+                        // through it is keyed by that record (`a[i].cb` reads
+                        // its base's record).
+                        let element = text.split('[').next().unwrap_or(text);
+                        match spelled_record(strip_qualifiers(element))
+                            .or_else(|| self.record_typedefs.get(strip_qualifiers(element)).cloned())
+                        {
+                            Some(record) => FieldKey::Named { record },
+                            None => FieldKey::Plain,
+                        }
+                    };
+                    keys.fields.insert(name, field);
+                    anonymous = None;
+                }
+                _ => {}
+            }
+        }
+        keys
+    }
+
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: whether a node's type (or its
+    /// pointee's) is a union.
+    fn union_node(&self, node: &Value, pointee: bool) -> bool {
+        [type_text(node), qual_text(node)].into_iter().any(|text| {
+            let mut bare = strip_qualifiers(text);
+            if pointee {
+                match bare.strip_suffix('*') {
+                    Some(inner) => bare = strip_qualifiers(inner),
+                    None => return false,
+                }
+            }
+            bare.starts_with("union ")
+                || self
+                    .record_typedefs
+                    .get(bare)
+                    .is_some_and(|record| self.unions.contains(record))
+        })
+    }
+
+    /// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (gateway rule 12n, Q3): the
+    /// key of a function-pointer member expression for the callback closure,
+    /// by its **innermost named record**: `rk->rk_conf.dr_msg_cb` and
+    /// `conf->dr_msg_cb` are both `rd_kafka_conf_s.dr_msg_cb`. A member read
+    /// from a union object is keyed by the union with `*` (`T.u.*`, or
+    /// `U.*` for a union record), so the union's members share their stores.
+    /// `?.NAME` when the record is not read.
+    pub(crate) fn callback_key(&self, member: &Value) -> String {
+        let mut chain: Vec<(&str, &Value, bool)> = Vec::new();
+        let mut node = member;
+        loop {
+            let Some(name) = node["name"].as_str() else {
+                return "?.".to_owned();
+            };
+            let Some(base) = children(node).first() else {
+                return format!("?.{name}");
+            };
+            let base = strip(base);
+            let arrow = node["isArrow"].as_bool() == Some(true);
+            chain.push((name, base, arrow));
+            if !arrow && kind(base) == "MemberExpr" {
+                node = base;
+                continue;
+            }
+            break;
+        }
+        chain.reverse();
+        let (first, root, arrow) = chain[0];
+        let Some(mut tag) = self.record_of_node(root, arrow) else {
+            let last = chain.last().map_or(first, |(name, _, _)| name);
+            return format!("?.{last}");
+        };
+        if self.union_node(root, arrow) {
+            return format!("{tag}.*");
+        }
+        let mut path: Vec<&str> = Vec::new();
+        for (index, (name, base, _)) in chain.iter().enumerate() {
+            if index > 0 {
+                // `base` is the previous member's value: a record object.
+                if self.union_node(base, false) {
+                    path.push("*");
+                    return format!("{tag}.{}", path.join("."));
+                }
+                if let Some(record) = self.record_of_node(base, false) {
+                    tag = record;
+                    path.clear();
+                }
+            }
+            path.push(name);
+        }
+        format!("{tag}.{}", path.join("."))
     }
 
     /// The value of the enumerator declared with `id`, as Clang read the
@@ -575,7 +746,7 @@ impl MemberFacts {
                 };
                 let place = strip(left);
                 if kind(place) == "MemberExpr" && self.function_pointer(place) {
-                    let key = self.member_key(place);
+                    let key = self.callback_key(place);
                     let flows = self.flows(right, enclosing);
                     self.stores.entry(key).or_default().extend(flows);
                 } else if let Some(record) = self.record_of_node(place, false) {
@@ -598,7 +769,7 @@ impl MemberFacts {
                 if let Some(operand) = children(node).first() {
                     let operand = strip(operand);
                     if kind(operand) == "MemberExpr" && self.function_pointer(operand) {
-                        let key = self.member_key(operand);
+                        let key = self.callback_key(operand);
                         self.stores.entry(key).or_default().insert(Flow::Open {
                             why: "its address is taken".to_owned(),
                         });
@@ -795,14 +966,301 @@ fn last_segment(member: &str) -> &str {
     member.rsplit('.').next().unwrap_or(member)
 }
 
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (gateway rule 12n, Q3): the
+/// record tables of a set of units, every reading of each record tag (two
+/// units may define one tag differently; a unit that defined it differently
+/// twice gives no reading, so nothing is keyed through it).
+#[derive(Clone, Debug, Default)]
+pub struct Tables {
+    records: BTreeMap<String, Vec<RecordKeys>>,
+    ambiguous: BTreeSet<String>,
+}
+
+impl Tables {
+    /// The tables of `units`.
+    #[must_use]
+    pub fn of(units: &[&MemberFacts]) -> Self {
+        let mut tables = Self::default();
+        for facts in units {
+            for (tag, keys) in &facts.records {
+                match keys {
+                    Some(keys) => {
+                        let readings = tables.records.entry(tag.clone()).or_default();
+                        if !readings.contains(keys) {
+                            readings.push(keys.clone());
+                        }
+                    }
+                    None => {
+                        tables.ambiguous.insert(tag.clone());
+                    }
+                }
+            }
+        }
+        tables
+    }
+
+    fn walk(
+        &self,
+        tag: &str,
+        keys: &RecordKeys,
+        prefix: &mut Vec<String>,
+        rest: &[&str],
+        depth: usize,
+        out: &mut BTreeSet<String>,
+    ) -> Result<(), String> {
+        if depth > 64 {
+            return Err(format!("records nest too deeply below `{tag}`"));
+        }
+        let spell = |prefix: &[String], last: &str| {
+            let mut path = prefix.to_vec();
+            path.push(last.to_owned());
+            format!("{tag}.{}", path.join("."))
+        };
+        if keys.union {
+            out.insert(spell(prefix, "*"));
+            return Ok(());
+        }
+        let Some((segment, more)) = rest.split_first() else {
+            return Err(format!("no member path below `{tag}`"));
+        };
+        let Some(field) = keys.fields.get(*segment) else {
+            return Err(format!("`{segment}` is not a member of `{tag}`"));
+        };
+        if more.is_empty() {
+            return match field {
+                FieldKey::Function => {
+                    out.insert(spell(prefix, segment));
+                    Ok(())
+                }
+                _ => Err(format!("`{tag}.{segment}` is not a function pointer")),
+            };
+        }
+        match field {
+            FieldKey::Named { record } => {
+                self.walk_record(record, &mut Vec::new(), more, depth + 1, out)
+            }
+            FieldKey::Inline { keys } => {
+                prefix.push((*segment).to_owned());
+                let result = self.walk(tag, keys, prefix, more, depth + 1, out);
+                prefix.pop();
+                result
+            }
+            FieldKey::Function | FieldKey::Plain => {
+                Err(format!("`{tag}.{segment}` is not a record by value"))
+            }
+        }
+    }
+
+    fn walk_record(
+        &self,
+        tag: &str,
+        prefix: &mut Vec<String>,
+        rest: &[&str],
+        depth: usize,
+        out: &mut BTreeSet<String>,
+    ) -> Result<(), String> {
+        if self.ambiguous.contains(tag) {
+            return Err(format!("`{tag}` is defined differently within one unit"));
+        }
+        let readings = self
+            .records
+            .get(tag)
+            .ok_or_else(|| format!("no unit defines `{tag}`"))?;
+        for keys in readings {
+            self.walk(tag, keys, prefix, rest, depth, out)?;
+        }
+        Ok(())
+    }
+
+    /// The normal forms of a member key `TAG.PATH`: keyed by its innermost
+    /// named record, a union's members as `….*`; several where the units
+    /// define a record differently. `Err` when the path is not a
+    /// function-pointer member of records the units define.
+    ///
+    /// # Errors
+    /// Why the path is not such a member.
+    pub fn normalise(&self, key: &str) -> Result<BTreeSet<String>, String> {
+        let (tag, path) = key
+            .split_once('.')
+            .ok_or_else(|| format!("`{key}` names no member"))?;
+        let segments = path.split('.').collect::<Vec<_>>();
+        if segments.last() == Some(&"*") {
+            // Already a union's key.
+            return Ok(BTreeSet::from([key.to_owned()]));
+        }
+        let mut out = BTreeSet::new();
+        self.walk_record(tag, &mut Vec::new(), &segments, 0, &mut out)?;
+        Ok(out)
+    }
+
+    /// The record keys at a union's normal key (`T.p.*`), every reading.
+    fn union_at(&self, key: &str) -> Vec<RecordKeys> {
+        let Some((tag, path)) = key.split_once('.') else {
+            return Vec::new();
+        };
+        let segments = path.split('.').collect::<Vec<_>>();
+        let Some((&"*", inner)) = segments.split_last() else {
+            return Vec::new();
+        };
+        let mut out = Vec::new();
+        for keys in self.records.get(tag).into_iter().flatten() {
+            let mut at = Some(keys);
+            for segment in inner {
+                at = match at.and_then(|keys| keys.fields.get(*segment)) {
+                    Some(FieldKey::Inline { keys }) => Some(keys),
+                    _ => None,
+                };
+            }
+            if let Some(keys) = at {
+                out.push(keys.clone());
+            }
+        }
+        out
+    }
+
+    /// Every named record a record's fields hold by value, transitively.
+    fn embedded(&self, keys: &RecordKeys) -> BTreeSet<String> {
+        let mut out = BTreeSet::new();
+        let mut pending = vec![keys.clone()];
+        while let Some(keys) = pending.pop() {
+            for field in keys.fields.values() {
+                match field {
+                    FieldKey::Named { record } => {
+                        if out.insert(record.clone()) {
+                            pending.extend(self.records.get(record).into_iter().flatten().cloned());
+                        }
+                    }
+                    FieldKey::Inline { keys } => pending.push((**keys).clone()),
+                    FieldKey::Function | FieldKey::Plain => {}
+                }
+            }
+        }
+        out
+    }
+
+    /// Every record that holds `record` by value, transitively.
+    fn containers(&self, record: &str) -> BTreeSet<String> {
+        self.records
+            .iter()
+            .filter(|(_, readings)| {
+                readings
+                    .iter()
+                    .any(|keys| self.embedded(keys).contains(record))
+            })
+            .map(|(tag, _)| tag.clone())
+            .collect()
+    }
+
+    /// Every field name below a record's keys, through embedded records.
+    fn names(&self, keys: &RecordKeys) -> BTreeSet<String> {
+        let mut out = BTreeSet::new();
+        let mut pending = vec![keys.clone()];
+        let mut seen = BTreeSet::new();
+        while let Some(keys) = pending.pop() {
+            for (name, field) in &keys.fields {
+                out.insert(name.clone());
+                match field {
+                    FieldKey::Named { record } => {
+                        if seen.insert(record.clone()) {
+                            pending.extend(self.records.get(record).into_iter().flatten().cloned());
+                        }
+                    }
+                    FieldKey::Inline { keys } => pending.push((**keys).clone()),
+                    FieldKey::Function | FieldKey::Plain => {}
+                }
+            }
+        }
+        out
+    }
+
+    /// Whether a store keyed `store` may write the member keyed `member`
+    /// (both normal): the same key; a union's key whose members embed the
+    /// member's record; or the member is a union's and the store's record is
+    /// embedded in it.
+    fn aliases(&self, member: &str, store: &str) -> bool {
+        if member == store {
+            return true;
+        }
+        let embeds = |union: &str, record: &str| {
+            self.union_at(union)
+                .iter()
+                .any(|keys| self.embedded(keys).contains(record))
+        };
+        (store.ends_with(".*") && embeds(store, record_of_key(member)))
+            || (member.ends_with(".*") && embeds(member, record_of_key(store)))
+    }
+}
+
 /// A node's direct contributions: designators, dependencies, why it is open.
 type Contribution = (BTreeSet<String>, BTreeSet<Node>, BTreeSet<String>);
 
+/// The units' stores by normal key, with the tables, built once for many
+/// closures (the pre-pass's run).
+#[derive(Clone, Debug, Default)]
+pub struct Prepared {
+    pub tables: Tables,
+    /// `(unit, normal key, flows)`.
+    stores: Vec<(usize, String, BTreeSet<Flow>)>,
+}
+
+impl Prepared {
+    /// Index `units`.
+    #[must_use]
+    pub fn of(units: &[&MemberFacts]) -> Self {
+        let tables = Tables::of(units);
+        let mut stores = Vec::new();
+        for (unit, facts) in units.iter().enumerate() {
+            for (key, flows) in &facts.stores {
+                let normal = if key.starts_with("?.") {
+                    BTreeSet::from([key.clone()])
+                } else {
+                    tables
+                        .normalise(key)
+                        .unwrap_or_else(|_| BTreeSet::from([key.clone()]))
+                };
+                for normal in normal {
+                    stores.push((unit, normal, flows.clone()));
+                }
+            }
+        }
+        Self { tables, stores }
+    }
+}
+
 /// The closure of `member` (`TAG.PATH`) over `units`.
 pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
+    closure_prepared(units, &Prepared::of(units), member).0
+}
+
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB**: the tokens the closure of
+/// `member` over `units` reads (the record tags and member names of every
+/// member node and of the records that hold or alias it, and every function
+/// a formal node belongs to); the pre-pass reads every unit naming one.
+#[must_use]
+pub fn closure_tokens(units: &[&MemberFacts], member: &str) -> BTreeSet<String> {
+    closure_prepared(units, &Prepared::of(units), member).1
+}
+
+fn words(key: &str, tokens: &mut BTreeSet<String>) {
+    tokens.extend(
+        key.split('.')
+            .filter(|word| !word.is_empty() && *word != "*" && *word != "?")
+            .map(str::to_owned),
+    );
+}
+
+/// [`closure`] over an index built once, with the tokens it read.
+#[must_use]
+pub fn closure_prepared(
+    units: &[&MemberFacts],
+    prepared: &Prepared,
+    member: &str,
+) -> (Closure, BTreeSet<String>) {
+    let tables = &prepared.tables;
+    let mut tokens = BTreeSet::new();
     // The direct contributions of one node: designators, dependencies and
     // reasons it is open.
-    let direct = |node: &Node| -> Contribution {
+    let direct = |node: &Node, tokens: &mut BTreeSet<String>| -> Contribution {
         let mut names = BTreeSet::new();
         let mut dependencies = BTreeSet::new();
         let mut open = BTreeSet::new();
@@ -829,26 +1287,61 @@ pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
         };
         match node {
             Node::Member(member) => {
-                let record = record_of_key(member);
-                let unread = format!("?.{}", last_segment(member));
-                for (unit, facts) in units.iter().enumerate() {
-                    if let Some(why) = facts.opened.get(record) {
-                        notes.insert(format!("{why} writes a `struct {record}`"));
-                    }
-                    for key in [member.as_str(), unread.as_str()] {
-                        if let Some(flows) = facts.stores.get(key) {
-                            if key == unread {
-                                notes.insert(format!(
-                                    "a store into `{}` whose record is not read",
-                                    last_segment(member)
-                                ));
-                            }
-                            take(flows, unit);
+                words(member, tokens);
+                // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q3): every normal
+                // form, the records that hold it (a whole-object write of one
+                // writes it), and the names an unread record's store may use.
+                let targets = tables
+                    .normalise(member)
+                    .unwrap_or_else(|_| BTreeSet::from([member.clone()]));
+                let mut records = BTreeSet::new();
+                let mut unread_names = BTreeSet::new();
+                for target in &targets {
+                    words(target, tokens);
+                    let record = record_of_key(target).to_owned();
+                    records.extend(tables.containers(&record));
+                    records.insert(record);
+                    if target.ends_with(".*") {
+                        for keys in tables.union_at(target) {
+                            records.extend(tables.embedded(&keys));
+                            unread_names.extend(tables.names(&keys));
                         }
+                    } else {
+                        unread_names.insert(last_segment(target).to_owned());
+                    }
+                }
+                let aliased = |store: &str| targets.iter().any(|target| tables.aliases(target, store));
+                for (_, store, _) in &prepared.stores {
+                    if store.ends_with(".*") && aliased(store) {
+                        for keys in tables.union_at(store) {
+                            unread_names.extend(tables.names(&keys));
+                        }
+                    }
+                }
+                tokens.extend(records.iter().cloned());
+                tokens.extend(unread_names.iter().cloned());
+                for facts in units {
+                    for record in &records {
+                        if let Some(why) = facts.opened.get(record) {
+                            notes.insert(format!("{why} writes a `struct {record}`"));
+                        }
+                    }
+                }
+                for (unit, store, flows) in &prepared.stores {
+                    if let Some(name) = store.strip_prefix("?.") {
+                        if unread_names.contains(name) {
+                            notes.insert(format!(
+                                "a store into `{name}` whose record is not read"
+                            ));
+                            take(flows, *unit);
+                        }
+                    } else if aliased(store) {
+                        take(flows, *unit);
                     }
                 }
             }
             Node::Formal(scope, function, index) => {
+                tokens.insert(function.clone());
                 let reached = |unit: usize| match scope {
                     Some(own) => unit == *own,
                     None => !units[unit].internal.contains(function),
@@ -876,7 +1369,7 @@ pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
         if graph.contains_key(&node) {
             continue;
         }
-        let entry = direct(&node);
+        let entry = direct(&node, &mut tokens);
         pending.extend(entry.1.iter().cloned());
         graph.insert(node, entry);
     }
@@ -905,11 +1398,12 @@ pub fn closure(units: &[&MemberFacts], member: &str) -> Closure {
     let (names, open) = values
         .remove(&Node::Member(member.to_owned()))
         .unwrap_or_default();
-    if open.is_empty() {
+    let result = if open.is_empty() {
         Ok(names)
     } else {
         Err(open)
-    }
+    };
+    (result, tokens)
 }
 
 /// `CLOSURE_VECTORS` (`QCore.CallbackContracts.closureVectors`): two units'

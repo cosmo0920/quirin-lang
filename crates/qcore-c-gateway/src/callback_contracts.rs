@@ -194,6 +194,20 @@ pub enum Decision {
     Refused(&'static str, Option<String>),
 }
 
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n, user decision E1): a
+/// member invocation decided over the run's set (the pre-pass): an open set
+/// is refused; a closed, empty set invokes nothing, so the call is the
+/// identity; a closed non-empty set is decided as [`decide`] decides it
+/// (`QCore.AppRkCallbacks.runDecision`). Only the run's set reads an empty
+/// set so: a unit's own empty set is still refused by [`decide`].
+#[must_use]
+pub fn decide_run(candidates: Result<&[(String, CandidateClass)], ()>) -> Decision {
+    match candidates {
+        Ok([]) => Decision::Identity,
+        other => decide(other, false),
+    }
+}
+
 /// Decide an invocation: `candidates` is the resolution (`Err` an open set),
 /// each with its class. `elements` admits [`CandidateClass::ReleasesElement`]
 /// (a registry invocation over its elements).

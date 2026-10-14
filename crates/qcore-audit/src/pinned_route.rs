@@ -201,6 +201,27 @@ pub fn run(
     if planning_failure.is_none() {
         plans.extend(monkey_plan);
     }
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n; user decisions R1, F1):
+    // before any unit is analysed, read the member facts of every unit of the
+    // production compile database and of the Monkey units the run analyses,
+    // so each unit decides a member invocation over the run's set.
+    let prepass = {
+        let mut prepass_entries = entries.clone();
+        if let Some(plan) = plans.get(fluent_bit_libraries) {
+            prepass_entries.extend(plan.selected.iter().cloned());
+        }
+        let scope = crate::member_prepass::load_scope(profile.directory())?;
+        crate::member_prepass::run(&prepass_entries, &contracts, &scope, jobs)
+    };
+    if let Some(prepass) = &prepass {
+        println!(
+            "member facts pre-pass: {} unit(s), {} read, {} unread",
+            prepass.section["units"],
+            prepass.section["read"],
+            prepass.facts.unread.len()
+        );
+    }
+    let run_facts = prepass.as_ref().map(|prepass| prepass.facts.clone());
     // The steps in exactly the sequential order. Only `Prelude` and `Unit`
     // carry work that may run off this thread; the consumer below performs
     // every other step itself, at its sequential position.
@@ -259,16 +280,20 @@ pub fn run(
             let plan = &plans[index];
             let mut output = String::new();
             let result = match contexts[index].wait() {
-                Some(context) => audit_unit(
-                    plan,
-                    context,
-                    entry,
-                    &revision,
-                    contracts,
-                    &source_contracts,
-                    &provider,
-                    &mut output,
-                ),
+                // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the unit is
+                // analysed with the run's member facts installed.
+                Some(context) => qcore_c_gateway::member_run_facts::scoped(run_facts.clone(), || {
+                    audit_unit(
+                        plan,
+                        context,
+                        entry,
+                        &revision,
+                        contracts,
+                        &source_contracts,
+                        &provider,
+                        &mut output,
+                    )
+                }),
                 // Unreachable in the fold: the prelude's own failure is
                 // consumed first and stops it.
                 None => Err(format!("{}: library prelude failed", plan.library)),
@@ -447,6 +472,9 @@ pub fn run(
     // of every invoked member, folded over the rows before anything is
     // published; it only demotes. The per-library console lines above are the
     // analysis's own; the fold's demotions are tallied here.
+    if let Some(prepass) = prepass {
+        report.set_member_prepass(prepass.facts, prepass.section);
+    }
     let (members, _, _) = report.fold_callback_members(&contracts);
     if !members.is_null() {
         println!(

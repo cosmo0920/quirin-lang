@@ -210,9 +210,12 @@ impl Parser<'_> {
             ));
         }
         for member in &state.members {
-            let names = match member.value {
+            let names = match &member.value {
                 MemberValue::Absent => Some(BTreeSet::new()),
-                MemberValue::Callback { callback } => candidates(callback),
+                MemberValue::Callback { callback } => candidates(*callback),
+                // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1): a stated default
+                // registers exactly the named function.
+                MemberValue::Function { function } => Some(BTreeSet::from([function.clone()])),
             };
             if let Some(names) = names {
                 out.states.push((

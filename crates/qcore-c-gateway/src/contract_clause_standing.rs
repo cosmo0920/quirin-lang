@@ -530,9 +530,11 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
     }
     for member in &state.members {
         use qcore_schemas::constructed_state::{ABSENT, MemberValue};
-        let value = match member.value {
+        let value = match &member.value {
             MemberValue::Callback { callback } => format!("#{callback}"),
             MemberValue::Absent => ABSENT.to_owned(),
+            // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1): a stated default.
+            MemberValue::Function { function } => function.clone(),
         };
         clauses.push(Clause::new(
             ClauseKind::MemberState,
@@ -609,6 +611,16 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
                 format!("{object}, {}{}", member.spelling(), actuals(a)),
             )
         }
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, Q2): a setter's
+        // registration, a declared assumption.
+        CallbackClause::MemberRegistered {
+            object,
+            member,
+            callback,
+        } => (
+            ClauseKind::Callback,
+            format!("#{object}, {}, #{callback}", member.spelling()),
+        ),
     };
     Clause::new(kind, format!("{keyword}({arguments})"))
 }

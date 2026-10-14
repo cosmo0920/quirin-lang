@@ -48,13 +48,19 @@ pub struct DiscriminantSet {
 }
 
 /// What a constructor leaves in a function-pointer member of its result.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "value")]
 pub enum MemberValue {
     /// The callback parameter at this index (rule 13w's registration).
     Callback { callback: usize },
     /// `absent`: no callback (rule 14e).
     Absent,
+    /// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (user decision D1): the named
+    /// function, a stated default (`quant live #result: TAG.FIELD |-> f;`,
+    /// or `resource_callback_member_registered(result, TAG.FIELD, f)` with
+    /// `f` naming no parameter). It is a store of `f` into the member for
+    /// rule 12n's run closure.
+    Function { function: String },
 }
 
 /// One member's state on the result.

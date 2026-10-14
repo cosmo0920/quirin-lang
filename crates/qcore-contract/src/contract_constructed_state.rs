@@ -54,10 +54,15 @@ pub(super) enum Written {
     /// TAG.FIELD, F | absent)` or the shorthand's member part.
     Member {
         member: CallbackMember,
-        /// `None`: `absent`.
+        /// `None`: `absent`; otherwise a callback parameter (the lower level
+        /// only) or, naming no parameter, a function (card
+        /// OP-APP-RK-CALLBACKS-VIA-POLL-CB, D1).
         callback: Option<String>,
         /// The clause, for diagnostics.
         text: String,
+        /// Written as the `quant live` shorthand, whose value is `absent` or
+        /// a function, never a parameter.
+        shorthand: bool,
     },
 }
 
@@ -131,7 +136,12 @@ pub(super) fn ensures_clause(expression: &str) -> Result<Option<Written>, String
         let [object, field, value] = words.as_slice() else {
             return Err(malformed());
         };
-        if *object != RESULT || !is_identifier(value) {
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q2): a parameter holder is a
+        // setter's registration, read with the callback clauses.
+        if *object != RESULT {
+            return Ok(None);
+        }
+        if !is_identifier(value) {
             return Err(malformed());
         }
         let member = member(field).ok_or_else(malformed)?;
@@ -139,6 +149,7 @@ pub(super) fn ensures_clause(expression: &str) -> Result<Option<Written>, String
             member,
             callback: (*value != ABSENT).then(|| (*value).to_owned()),
             text: expression.trim().to_owned(),
+            shorthand: false,
         }));
     }
     Ok(None)
@@ -209,21 +220,27 @@ pub(super) fn quant_live_clause(source: &str) -> Result<Vec<Written>, String> {
     if !symbol(at, Symbol::MapsTo) {
         return Err(shape());
     }
-    match (word(at + 1), tokens.len() == at + 2) {
-        (Some(ABSENT), true) => {}
+    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER DECISION 2026-10-14, D1):
+    // the right of `|->` is `absent` or a function designator, one
+    // identifier; anything else rejects the module. Whether the designator
+    // names a parameter is checked with the declaration's names.
+    let callback = match (word(at + 1), tokens.len() == at + 2) {
+        (Some(ABSENT), true) => None,
+        (Some(name), true) if is_identifier(name) && name != RESULT => Some(name.to_owned()),
         (_, _) => {
             return Err(format!(
-                "quant-live-value: a member maps only to `{ABSENT}` (no callback); `quant live \
-                 {source};` names another value"
+                "quant-live-value: a member maps to `{ABSENT}` (no callback) or a function \
+                 designator; `quant live {source};` names another value"
             ));
         }
-    }
+    };
     Ok(vec![
         Written::Live,
         Written::Member {
             member,
-            callback: None,
+            callback,
             text: format!("quant live {source}"),
+            shorthand: true,
         },
     ])
 }
@@ -300,9 +317,22 @@ pub(super) fn declaration(
                 member,
                 callback,
                 text,
+                shorthand,
             } => {
                 let value = match callback {
                     None => MemberValue::Absent,
+                    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1): a name that
+                    // is no parameter is a function designator, the stated
+                    // default; the shorthand never names a parameter.
+                    Some(name) if !names.contains_key(name.as_str()) => MemberValue::Function {
+                        function: name.clone(),
+                    },
+                    Some(name) if *shorthand => {
+                        return Err(format!(
+                            "quant-live-value: `{text}`: a member maps to `{ABSENT}` or a function \
+                             designator, not the parameter `{name}`"
+                        ));
+                    }
                     Some(name) => {
                         let at = index(name)?;
                         if parameter_types[at] != "fnptr"

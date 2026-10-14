@@ -507,6 +507,19 @@ impl Parser<'_> {
     /// of `member` over this unit's stores, `Err` with why the unit does not
     /// close it.
     fn member_candidates(&self, member: &str) -> Result<BTreeSet<String>, String> {
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n; user decisions R1,
+        // E1): with the run's facts installed by the pre-pass, the unit
+        // decides over the run's set, and a closed empty set invokes nothing;
+        // a member that is not a function-pointer member of a record the run
+        // defines is never decided so.
+        if let Some(run) = crate::member_run_facts::installed() {
+            run.normalise(member).map_err(|why| {
+                format!("`{member}` is not a member the run's records define ({why})")
+            })?;
+            return run
+                .closure(member)
+                .map_err(|open| open.into_iter().take(3).collect::<Vec<_>>().join("; "));
+        }
         let closure = crate::typed_access_path::with_indirect_call_unit(|unit| {
             crate::callback_member_closure::closure(&[unit.member_facts()], member)
         })
@@ -774,6 +787,12 @@ impl Parser<'_> {
                         .uses
                         .push(RegistryUse::ReleaseIfConstructed { holder });
                 }
+                // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, Q2): a
+                // setter's registration changes nothing on the caller's
+                // state; its actual is a store into the member for the run's
+                // closure (read from the call's facts), and every invocation
+                // of the member is decided where it is made.
+                CallbackClause::MemberRegistered { .. } => {}
                 // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the
                 // candidates are the unit's closed set of stores into the
                 // member (the run's fold checks the unit saw them all), then
@@ -829,7 +848,15 @@ impl Parser<'_> {
                         }
                     };
                     let classes = self.classified(&candidates, actuals);
-                    if let Decision::Refused(reason, candidate) = decide(Ok(&classes), false) {
+                    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (E1): an empty set
+                    // reaches here only from the run's closed set (a unit's own
+                    // empty set is refused above), and invokes nothing.
+                    let decision = if crate::member_run_facts::installed().is_some() {
+                        crate::callback_contracts::decide_run(Ok(&classes))
+                    } else {
+                        decide(Ok(&classes), false)
+                    };
+                    if let Decision::Refused(reason, candidate) = decision {
                         let description = refusal(
                             function,
                             &invocation_detail(reason, candidate.as_deref(), &spelled),

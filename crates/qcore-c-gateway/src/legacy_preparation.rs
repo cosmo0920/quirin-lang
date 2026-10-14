@@ -275,6 +275,11 @@ fn validate_syntax(
     (result, metrics)
 }
 
+/// The plain preprocessing alone (card OP-APP-RK-CALLBACKS-VIA-POLL-CB).
+pub(super) fn preprocess_plain_only(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
+    preprocess_plain(unit).0
+}
+
 pub(super) fn validate_plain_and_syntax(
     unit: &C11TranslationUnit<'_>,
 ) -> Result<(String, u64, u64), LegacyCError> {

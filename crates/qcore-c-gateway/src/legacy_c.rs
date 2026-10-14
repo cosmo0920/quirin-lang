@@ -2710,6 +2710,16 @@ pub fn validate_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String
     preparation::validate_plain_and_syntax(unit).map(|(source, _, _)| source)
 }
 
+/// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n, F1): the unit's plain
+/// `-E -P` preprocessing alone, without the syntax check, for the
+/// member-facts pre-pass.
+///
+/// # Errors
+/// Clang's refusal or absence.
+pub fn preprocess_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
+    preparation::preprocess_plain_only(unit)
+}
+
 /// Independent structural check for an unrestricted-C `Safe` result.
 pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,

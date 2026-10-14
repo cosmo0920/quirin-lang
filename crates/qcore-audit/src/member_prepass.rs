@@ -328,7 +328,7 @@ pub fn run(
     let mut units = read.into_values().collect::<Vec<_>>();
     units.push(declarations);
     let read_count = units.len() - 1;
-    let facts = Arc::new(RunMemberFacts { units, unread });
+    let facts = Arc::new(RunMemberFacts::new(units, unread));
     let section = json!({
         "meaning": "the member-facts pre-pass (rule 12n, card OP-APP-RK-CALLBACKS-VIA-POLL-CB, user decisions R1 and F1): every unit of the production compile database was preprocessed; a unit naming a token of an invoked member's closure graph was read whole for its facts, and a unit that names one but could not be read opens every member; a unit naming none holds no store the closure reads",
         "units": entries.len(),

@@ -135,6 +135,17 @@ pub enum CallbackClause {
         member: CallbackMember,
         actuals: Vec<CallbackActual>,
     },
+    /// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n; user decision Q2):
+    /// after the call the object the parameter at `object` designates holds
+    /// the function pointer at `callback` in its `member`
+    /// (`resource_callback_member_registered(conf, TAG.FIELD, cb)`, a setter).
+    /// For the run's closure every call of the declaration is a store of its
+    /// `callback` actual into `member`; a declared assumption.
+    MemberRegistered {
+        object: usize,
+        member: CallbackMember,
+        callback: usize,
+    },
 }
 
 impl CallbackClause {
@@ -151,6 +162,7 @@ impl CallbackClause {
             Self::ElementsDropped { .. } => "resource_elements_dropped",
             Self::ReleasedIfConstructed { .. } => "resource_released_if_constructed",
             Self::MemberInvoked { .. } => "resource_callback_member_invoked",
+            Self::MemberRegistered { .. } => "resource_callback_member_registered",
         }
     }
 

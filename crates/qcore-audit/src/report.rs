@@ -150,7 +150,14 @@ pub struct AuditReport {
     /// when a declaration invokes a member; folded over the run by
     /// [`Self::fold_callback_members`] before anything is published.
     callback_members: Vec<crate::callback_member_fold::UnitFacts>,
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, R1): the run's member
+    /// facts the pinned route's pre-pass read, with its evidence section.
+    member_prepass: Option<(
+        std::sync::Arc<qcore_c_gateway::member_run_facts::RunMemberFacts>,
+        Value,
+    )>,
 }
+
 
 impl AuditReport {
     pub fn new(revision: &str) -> Self {
@@ -166,6 +173,7 @@ impl AuditReport {
             null: Vec::new(),
             null_evidence: Vec::new(),
             callback_members: Vec::new(),
+            member_prepass: None,
         }
     }
 
@@ -187,6 +195,16 @@ impl AuditReport {
             });
     }
 
+    /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, R1): the run's member
+    /// facts the pre-pass read, which the fold reads instead of the units'.
+    pub fn set_member_prepass(
+        &mut self,
+        facts: std::sync::Arc<qcore_c_gateway::member_run_facts::RunMemberFacts>,
+        section: Value,
+    ) {
+        self.member_prepass = Some((facts, section));
+    }
+
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): fold the run's
     /// member closure over the rows, demoting what it does not keep; the
     /// section, `Value::Null` when no declaration invokes a member, and how
@@ -200,12 +218,17 @@ impl AuditReport {
             .iter()
             .map(|row| row["status"].as_str().unwrap_or("").to_owned())
             .collect::<Vec<_>>();
-        let section = crate::callback_member_fold::fold(
+        let mut section = crate::callback_member_fold::fold_with(
             &mut self.units,
             &self.callback_members,
             contracts,
             &mut self.diagnostic_counts,
+            self.member_prepass.as_ref().map(|(facts, _)| facts.as_ref()),
         );
+        // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: the pre-pass's evidence.
+        if let (Some((_, prepass)), false) = (&self.member_prepass, section.is_null()) {
+            section["prepass"] = prepass.clone();
+        }
         // Card OP-CONSTRUCTOR-DECLARATIONS: a function the fold demoted is
         // demoted in the property rows' custody column too, and their
         // combined verdict recomputed, so no combined row reads a custody
@@ -416,6 +439,7 @@ impl AuditReport {
             null,
             null_evidence,
             callback_members,
+            member_prepass: _,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -810,6 +834,7 @@ impl AuditReport {
             null: Vec::new(),
             null_evidence: Vec::new(),
             callback_members: Vec::new(),
+            member_prepass: None,
         }
     }
 
