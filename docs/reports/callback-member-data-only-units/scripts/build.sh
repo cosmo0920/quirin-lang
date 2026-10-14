@@ -21,8 +21,20 @@ cd "$repo" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0
 git rev-parse HEAD > "$out/build-$name.head"
 git status --porcelain --untracked-files=no > "$out/build-$name.dirty"
+# CALLBACK-MEMBER-DATA-ONLY-UNITS: SRC=DIR builds an exported tree instead
+# (the BEFORE binary from `git archive` of the base into private/mdo/base-src,
+# so editing the worktree cannot reach it); its revision goes to the head file.
+if [ -n "${SRC:-}" ]; then
+  echo "${SRC_REVISION:-unknown} (exported to $SRC)" > "$out/build-$name.head"
+  : > "$out/build-$name.dirty"
+  cd "$SRC" || exit 2
+fi
 if [ -z "$features" ]; then
-  target="$out/target-rel"
+  # An exported tree gets its own target directory: cargo keys workspace
+  # packages by their workspace-relative path, so one target directory shared
+  # by the export and the worktree reads the other's crates as fresh (the
+  # first a1 build failed so, exit 101, and was discarded).
+  target="$out/target-rel${SRC:+-src}"
   flock "$lock" cargo build --release -p qcore-audit --bin quirin-audit \
     --target-dir "$target" > "$out/build-$name.log" 2>&1
 else
