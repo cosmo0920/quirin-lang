@@ -1,0 +1,232 @@
+//! Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (gateway rule 12n, amended in
+//! place; contract specification C04.19.3): the run's member facts, read by a
+//! pre-pass before any unit is analysed, so a unit decides a member invocation
+//! over the run's closed set instead of its own.
+//!
+//! USER DECISION 2026-10-14 ("Build the agent's recommended set"): **R1**, a
+//! facts pre-pass so a unit decides over the run's set, the fold staying
+//! demote-only; **F1**, member facts read from every Fluent Bit production
+//! unit; **E1**, a run-closed empty set decides "invokes nothing"; **Q2**,
+//! a declared setter's registration
+//! (`resource_callback_member_registered(conf, TAG.FIELD, cb)`) is a store of
+//! its actual at every call the run makes; **D1**, a constructor's stated
+//! default (`quant live #result: TAG.FIELD |-> f;`) is a store of `f`.
+//!
+//! The pre-pass itself is `qcore_audit::member_prepass`; this module holds
+//! what it read ([`RunMemberFacts`]) and installs it on the analysing thread
+//! ([`scoped`]) for [`crate::legacy_c`]'s callback route to read
+//! ([`installed`]). With nothing installed (every route but the pinned
+//! corpus route, and every checkpoint composer) a unit decides over its own
+//! facts as before and an empty set is refused.
+
+use std::cell::RefCell;
+use std::collections::{BTreeMap, BTreeSet};
+use std::sync::Arc;
+
+use crate::callback_member_closure::{Closure, Flow, MemberFacts, closure};
+
+/// What the pre-pass read: every read unit's facts, the declared
+/// registrations and stated defaults as one more unit, and the units it could
+/// not read although they may name a token of a member's closure.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct RunMemberFacts {
+    /// Every unit read for its facts, then the declarations' unit.
+    pub units: Vec<MemberFacts>,
+    /// A unit that may name a token of a member's closure but whose facts
+    /// were not read (a C++ or assembly unit, a failed preprocessing or
+    /// Clang run), with why. Any such unit opens every member.
+    pub unread: BTreeMap<String, String>,
+}
+
+impl RunMemberFacts {
+    /// The run's closure of `member`: open while any unit is unread.
+    #[must_use]
+    pub fn closure(&self, member: &str) -> Closure {
+        let views = self.units.iter().collect::<Vec<_>>();
+        let result = closure(&views, member);
+        if self.unread.is_empty() {
+            return result;
+        }
+        let reason = format!(
+            "{} unit(s) of the run may name it but were not read (first: {})",
+            self.unread.len(),
+            self.unread
+                .iter()
+                .next()
+                .map(|(unit, why)| format!("{unit}: {why}"))
+                .unwrap_or_default()
+        );
+        Err(match result {
+            Ok(_) => BTreeSet::from([reason]),
+            Err(mut open) => {
+                open.insert(reason);
+                open
+            }
+        })
+    }
+}
+
+/// A declared registration: `function`'s parameter `index` is stored into
+/// `member` at every call (`resource_callback_member_registered(P, TAG.FIELD,
+/// F)` with `P` a parameter), or `function`'s result holds `value` in
+/// `member` (a stated default, `quant live #result: TAG.FIELD |-> f;`).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum DeclaredStore {
+    /// A setter's parameter.
+    Parameter {
+        member: String,
+        function: String,
+        index: usize,
+    },
+    /// A constructor's stated function default.
+    Default { member: String, function: String },
+}
+
+/// The declarations' unit: each registration a store of the setter's formal
+/// (so the closure reads the setter's actuals at every call the run makes,
+/// opening on an address-taken setter), each stated default a store of the
+/// named function.
+#[must_use]
+pub fn declarations_unit(stores: &[DeclaredStore]) -> MemberFacts {
+    let mut facts = MemberFacts::default();
+    for store in stores {
+        let (member, flow) = match store {
+            DeclaredStore::Parameter {
+                member,
+                function,
+                index,
+            } => (
+                member,
+                Flow::Formal {
+                    function: function.clone(),
+                    index: *index,
+                },
+            ),
+            DeclaredStore::Default { member, function } => (
+                member,
+                Flow::Function {
+                    name: function.clone(),
+                },
+            ),
+        };
+        facts.stores.entry(member.clone()).or_default().insert(flow);
+    }
+    facts
+}
+
+thread_local! {
+    static INSTALLED: RefCell<Option<Arc<RunMemberFacts>>> = const { RefCell::new(None) };
+}
+
+/// Run `f` with `facts` installed on this thread (the pinned route wraps each
+/// unit's analysis), restoring what was installed before.
+pub fn scoped<T>(facts: Option<Arc<RunMemberFacts>>, f: impl FnOnce() -> T) -> T {
+    struct Restore(Option<Arc<RunMemberFacts>>);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            let previous = self.0.take();
+            INSTALLED.with(|cell| *cell.borrow_mut() = previous);
+        }
+    }
+    let previous = INSTALLED.with(|cell| std::mem::replace(&mut *cell.borrow_mut(), facts));
+    let _restore = Restore(previous);
+    f()
+}
+
+/// The run's facts installed on this thread, if any.
+#[must_use]
+pub fn installed() -> Option<Arc<RunMemberFacts>> {
+    INSTALLED.with(|cell| cell.borrow().clone())
+}
+
+/// `RUN_DECISION_VECTORS` (`QCore.AppRkCallbacks.runDecisionVectors`): a run
+/// closure (`None` open) and whether a member invocation over identity
+/// candidates is decided (E1: a closed empty set invokes nothing).
+#[cfg(test)]
+pub(crate) const RUN_DECISION_VECTORS: &[(Option<&[&str]>, bool)] = &[
+    (None, false),
+    (Some(&[]), true),
+    (Some(&["a"]), true),
+    (Some(&["a", "b"]), true),
+];
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_registration_reads_the_setters_actuals_at_every_call() {
+        // Unit 0 calls the setter with `h`; the declarations' unit stores the
+        // setter's formal 1 into `T.f`.
+        let mut caller = MemberFacts::default();
+        caller.calls.entry("set_f".into()).or_default().insert(
+            1,
+            BTreeSet::from([Flow::Function { name: "h".into() }]),
+        );
+        let run = RunMemberFacts {
+            units: vec![
+                caller,
+                declarations_unit(&[DeclaredStore::Parameter {
+                    member: "T.f".into(),
+                    function: "set_f".into(),
+                    index: 1,
+                }]),
+            ],
+            unread: BTreeMap::new(),
+        };
+        assert_eq!(run.closure("T.f"), Ok(BTreeSet::from(["h".to_owned()])));
+        // A stated default joins the set.
+        let mut with_default = run.clone();
+        with_default
+            .units
+            .push(declarations_unit(&[DeclaredStore::Default {
+                member: "T.f".into(),
+                function: "d".into(),
+            }]));
+        assert_eq!(
+            with_default.closure("T.f"),
+            Ok(BTreeSet::from(["d".to_owned(), "h".to_owned()]))
+        );
+        // An address-taken setter opens it.
+        let mut taken = run.clone();
+        taken.units[0].address_taken.insert("set_f".into());
+        assert!(taken.closure("T.f").is_err());
+        // An unread unit opens it.
+        let mut unread = run;
+        unread.unread.insert("x.cpp".into(), "a C++ unit".into());
+        assert!(unread.closure("T.f").is_err());
+    }
+
+    #[test]
+    fn a_scoped_installation_is_restored() {
+        assert!(installed().is_none());
+        let facts = Arc::new(RunMemberFacts::default());
+        scoped(Some(facts.clone()), || {
+            assert!(installed().is_some());
+            scoped(None, || assert!(installed().is_none()));
+            assert!(installed().is_some());
+        });
+        assert!(installed().is_none());
+    }
+
+    #[test]
+    fn run_decision_vectors_hold() {
+        use crate::callback_contracts::{Decision, decide_run};
+        for (closure, admitted) in RUN_DECISION_VECTORS {
+            let classes = closure.map(|names| {
+                names
+                    .iter()
+                    .map(|name| {
+                        (
+                            (*name).to_owned(),
+                            crate::callback_contracts::CandidateClass::Identity,
+                        )
+                    })
+                    .collect::<Vec<_>>()
+            });
+            let decision = decide_run(classes.as_deref().ok_or(()));
+            assert_eq!(decision == Decision::Identity, *admitted, "{closure:?}");
+        }
+        assert_eq!(RUN_DECISION_VECTORS.len(), 4);
+    }
+}
