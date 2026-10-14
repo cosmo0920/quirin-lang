@@ -1,9 +1,11 @@
 # PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE: one out-of-process writer for every executable test fixture
 
 Card of wave 48, base `b565f79ab`, prediction frozen at `35d43976d`
-([PREDICTION.md](PREDICTION.md)), implementation `b30c9d4e7`. Test
-infrastructure only: no production source, `Cargo.toml`, `Cargo.lock`,
-contract or Lean change.
+([PREDICTION.md](PREDICTION.md)), implementation `b30c9d4e7`. The card itself
+is test infrastructure only: no production source, `Cargo.toml`, `Cargo.lock`,
+contract or Lean change. At the integrator's request, a separate commit
+(`3f3de2a5e`, §6.1) also removes three borrows that the host's new Clippy
+1.99 rejects in production code; it does not change behaviour.
 
 ## 1. The defect
 
@@ -190,10 +192,43 @@ recorded. Wall time: corpus 462 s / 463 s, system 70 s / 69 s, slice 36 s /
 
 ## 6. Gate
 
+The card was gated twice:
+- **g1, the first run, did not pass.** The record is kept in §6.2.
+- **g2 ran after the integrator's follow-up.** It is the gate of record, and
+  it is the one the matrix carries.
+
+### 6.1 g2 (the gate of record)
+
+**Follow-up commit `3f3de2a5e`.** The integrator asked for the three Clippy
+1.99 sites to be fixed in their own commit. Each one now passes the closure
+by value instead of by reference:
+- `crates/qcore-verification/src/source_imports.rs:186`: `map_err(fail)`;
+- `crates/qcore-audit/src/unit_selection.rs:126`: `map_err(at)`;
+- `crates/quirin-source-analysis/src/condvar_join_census.rs:743`:
+  `map(release_site)`.
+
+The change is mechanical and does not change behaviour. `cargo clippy
+--locked --all-targets -- -D warnings` is clean under the host's stable
+1.99.0. 1.98.0 is no longer installed on the host and nothing was installed,
+so the fix was not rechecked under 1.98.0. This discharges
+`STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS`, which is retired (§8).
+
+**Arbiters at the new tip.** The commit changes product code, so the three
+routes and the null property were re-run with the new tip's release binary
+(`921e099b…`, built by 1.99.0), using
+[`scripts/arbiters2.sh`](scripts/arbiters2.sh). They were compared file for
+file against the same BEFORE as §5 (the base binary, built by 1.98.0).
+
+ARBITERS2-PENDING
+
+GATE2-PENDING
+
+### 6.2 g1 (the first run, kept as recorded)
+
 Every code step ran at `04e308303` (implementation `b30c9d4e7` plus the
 records), using [`scripts/gate.sh`](scripts/gate.sh) `g1 code`. Exits are in
-[gate/](gate/), logs in `private/pfw/gate-g1/`, and the summary in
-[gate.json](gate.json).
+[gate-g1/](gate-g1/), logs in `private/pfw/gate-g1/`, and the summary in
+[gate-g1.json](gate-g1.json).
 
 **The standing gate did not pass on its first run.** Two steps failed. Neither
 failure is in a file this card touched, and neither step was rerun to obtain a
@@ -209,7 +244,7 @@ pass.
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | **317** audits |
 | `python3 -m unittest discover -s scripts/tests` | 0 | **365** OK (and again after the matrix regeneration, 09b) |
-| `python3 scripts/build_docs_index.py --check` | 0 | (and after regeneration, 10b / 10c: 0 / 0); `build_matrix.py . --gate gate.json` 0 |
+| `python3 scripts/build_docs_index.py --check` | 0 | (and after regeneration, 10b / 10c: 0 / 0); `build_matrix.py . --gate gate-g1.json` (then named `gate.json`) 0 |
 | provider gate: `providers/package.py build` / `verify qcore.libevent` | 0 / 0 | |
 | provider gate: `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | **129 passed**, 0 failed, 1 ignored |
 | provider gate: `python3 -m unittest discover -s providers/tests` | 0 | 25 OK |
@@ -234,9 +269,9 @@ proxy took part, but what triggered the update is not established.
   crate and reports exactly those three warnings and nothing in a file this
   card touched.
 - **1.98.0 is not installed** and nothing was installed, so the gate could
-  not be rerun on main's toolchain. The card changes no production code, so
-  the three sites are registered as
-  `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS` rather than fixed here.
+  not be rerun on main's toolchain. The three sites were first registered as
+  `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS`, then fixed by the
+  integrator's follow-up (§6.1).
 
 **`std_socket_inet`.** The failing test was
 `the_declared_ipv4_example_runs_sanitized_twice_and_writes_the_reference_observation`:
@@ -267,8 +302,8 @@ This card adds no numbered line.
 | `standalone_host` base 0 (argued), tip 0 | held (0 of 70, 0 of 50) |
 | release binary byte-identical | held only with the base's commit string pinned: the build script embeds HEAD |
 | arbiters unchanged | held: byte-identical on all three routes and the null property |
-| ledger 764 → 764; rule 16 amended in place | 764 → 765: the toolchain follow-up was not foreseen; rule 16 amended in place |
-| standing gate passes on the first run | **did not**: clippy under the host's new stable (1.99.0) and the fixed-port `std_socket_inet` row (§6) |
+| ledger 764 → 764; rule 16 amended in place | held, through an intermediate 765: the toolchain follow-up was not foreseen, and it was registered at g1 and retired after the follow-up commit. Rule 16 amended in place |
+| standing gate passes on the first run | **did not** at g1: Clippy under the host's new stable (1.99.0), and the fixed-port `std_socket_inet` row (§6.2). G2-OUTCOME |
 
 ## 8. Follow-ups
 
@@ -280,9 +315,14 @@ This card adds no numbered line.
   `real_packages_preserve_unknown_and_reject_mutations` stays listed: its
   rewrites now use the writer, but its recorded `ExecutableFileBusy` was not
   reproduced here.
-- **Registered:**
-  - `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS` (§2, production);
-  - `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS` (§6).
+- **Registered:** `PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS` (§2,
+  production).
+- **Registered at g1, then retired:**
+  `STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS` (§6.2). Commit `3f3de2a5e`
+  removes the three borrows, and g2's Clippy passes under the host's stable
+  1.99.0 (§6.1). The repository still pins no toolchain; that policy was not
+  part of this entry's discharge.
+- **Ledger:** 764 → 764.
 
 Rule 16 ([providers](../../agents/providers.md#constraint-16)) is amended in
 place. No new rule id is needed.

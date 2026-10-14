@@ -19,8 +19,15 @@ mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0
 step() {
+  # HELD=1: the caller already holds the heavy lock for the whole gate
+  # (`flock <lock> bash gate.sh NAME all`, gate g2), so a step must not take it
+  # again (a second flock on the same file would wait for the caller forever).
   local label="$1"; shift
-  flock "$lock" "$@" > "$out/$label.log" 2>&1
+  if [ "${HELD:-0}" = 1 ]; then
+    "$@" > "$out/$label.log" 2>&1
+  else
+    flock "$lock" "$@" > "$out/$label.log" 2>&1
+  fi
   echo $? > "$out/$label.exit"
 }
 if [ "$part" != docs ]; then

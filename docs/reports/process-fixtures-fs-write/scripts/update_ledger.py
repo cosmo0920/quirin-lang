@@ -14,7 +14,11 @@ MATRIX = REPO / "docs/reviews/r0_3/acceptance_matrix.json"
 REPORT = "docs/reports/process-fixtures-fs-write/README.md"
 CARD = "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE"
 BASE = "b565f79ab"
-RETIRE = {CARD}
+# STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS was registered at gate g1 and
+# discharged by the integrator follow-up commit (the three borrows removed;
+# gate g2's clippy passes under the host's stable 1.99.0): kept below as the
+# record of what was registered, and retired.
+RETIRE = {CARD, "STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS"}
 AMEND = {
     "P02-FLAKE": (
         " AMENDED (" + CARD + ", 2026-10-14): the out-of-process fixture writer is now "
@@ -87,7 +91,7 @@ def main() -> None:
             entry["why"] += note
     known = {entry["id"] for entry in entries}
     for entry in REGISTER:
-        if entry["id"] not in known:
+        if entry["id"] not in known and entry["id"] not in RETIRE:
             entries.append(entry)
     matrix["dimensions"]["named_followups"] = len(entries)
     MATRIX.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + "\n")

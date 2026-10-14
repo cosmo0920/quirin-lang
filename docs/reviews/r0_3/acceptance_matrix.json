@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 765
+  "named_followups": 764
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -12392,13 +12392,6 @@
    "id": "PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS",
    "title": "quirin-provider-plugin's package::build writes the packaged executable with fs::write in the calling process",
    "why": "Recorded by PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE (base b565f79ab), found by its census, not observed failing. providers/quirin-provider-plugin/src/package.rs package::build writes the checker executable with fs::write and then sets 0o755. A multi-threaded caller whose other thread forks while that descriptor is open gives the forked child a duplicate until its exec, and an execve of the package in that window fails with ETXTBSY (the mechanism EXECUTION-QUOTA-LOAD-INDEPENDENCE measured). Its callers today cannot meet it: the quirin-plugin package CLI is single-threaded, and the one test caller (providers/quirin-provider-plugin/tests/sdk.rs) is the only spawning test of its binary and spawns after build returns. The card changed no production path. Size: one production function. DISCHARGE: package::build writes the executable without holding a write descriptor in the calling process (or a documented single-threaded contract on the function that its callers are checked against), or a recorded argument that no multi-threaded caller can exist.",
-   "source": "docs/reports/process-fixtures-fs-write/README.md",
-   "recorded_by": "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE"
-  },
-  {
-   "id": "STABLE-TOOLCHAIN-1-99-CLIPPY-NEEDLESS-BORROWS",
-   "title": "The host's stable Rust moved from 1.98.0 to 1.99.0 mid-wave, and the standing gate's clippy step fails on main under it",
-   "why": "Recorded by PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE (base b565f79ab), observed. The host's rustup stable toolchain was reinstalled as 1.99.0 (2026-09-28) at 2026-10-14 02:48 +0900, during this card's repeat runs; one w3_evidence_v2 run's nested cargo build printed rustup's channel sync and failed on a rust-src download rename, so a rustup proxy took part, but the trigger is not established. Every binary the card measured was built by 1.98.0 (88d9e12ae 2026-08-18), the toolchain main was gated with. Under 1.99.0, cargo clippy --all-targets -- -D warnings fails with clippy::needless_borrows_for_generic_args at three production sites unchanged since the base: crates/qcore-verification/src/source_imports.rs:186, crates/qcore-audit/src/unit_selection.rs:126 and crates/quirin-source-analysis/src/condvar_join_census.rs:743. The repository pins no toolchain, so every card gated after the update meets the same failure. Size: three one-token borrows, and the toolchain policy. DISCHARGE: the three sites are fixed (behaviour-neutral) and the standing gate's clippy passes under the host's stable, or the repository pins the toolchain its gate runs (rust-toolchain.toml) and records the choice.",
    "source": "docs/reports/process-fixtures-fs-write/README.md",
    "recorded_by": "PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE"
   }
