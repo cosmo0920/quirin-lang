@@ -173,7 +173,35 @@ the measured base).
   `rd_kafka_admin_fanout_worker`; 4 Unknown corpus rows name them, no Safe
   row).
 
-GATE_PLACEHOLDER
+## 7. Gate
+
+Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/mpuh/gate-g1/`): every code step at `8dc6581dd` (the tip on main
+`711287771`; later commits change records only), the standing gate under one
+exclusive flock on the shared heavy lock (2026-10-15 16:24:52Z–16:35:12Z;
+[`gate-run.sh`](scripts/gate-run.sh), [`gate-whole.sh`](scripts/gate-whole.sh),
+[`gate.sh`](scripts/gate.sh), then [`close-gate.sh`](scripts/close-gate.sh)
+→ [`write_gate_json.py`](scripts/write_gate_json.py) and
+[`finish-gate.sh`](scripts/finish-gate.sh)). No provider gate: nothing under
+`providers/` or `crates/qcore-schemas/` changes.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 499 units, 512 summaries, **8,106 passed, 0 failed, 15 ignored** (`private/mpuh/tests-g1/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **325** audits passed (Lean 4.35.0) |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (the committed matrix's Lean count, 324 → 325), as for every card adding an audit |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests OK), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+The bold rule-id duplicate check (`rg -o --no-filename '^[0-9]{1,2}[a-z]?\. \*\*'
+docs/agents/*.md | sort | uniq -d`) is empty; no rule id was added (rule 30
+amended in place). Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
 
 ## Files
 
