@@ -490,7 +490,7 @@ theorem run_vectors_hold :
 
 USER DECISIONS 2026-10-14: the four-operand `resource_discriminant_set`, the
 member registration `resource_callback_member_registered`, and the `quant`
-state clause `quant live #result: TAG.FIELD |-> absent;` with its two levels.
+state clause `quant live #result: TAG.FIELD |-> #absent;` with its two levels.
 A constructor states its result's discriminant and members; the calling
 body keeps the state per path; a later call reads it only while every store
 the run makes into the member is classified (the stability check). Values
@@ -623,7 +623,7 @@ theorem an_unclassified_store_voids_the_absent_state (stores : List Store)
     List.all_eq_false.mpr ⟨.other, h, by simp [Store.keeps]⟩
   simp [pathState, hs, invokedDecision]
 
-/-! ### The two levels of `quant live #result: TAG.FIELD |-> absent` (rule 14e)
+/-! ### The two levels of `quant live #result: TAG.FIELD |-> #absent` (rule 14e)
 
 The shorthand is the liveness part of `QCore.DerefDecomposition` (`quant live
 #result`: the identity has not been released) together with the member state
