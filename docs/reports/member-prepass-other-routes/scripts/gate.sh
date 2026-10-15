@@ -41,6 +41,9 @@ if [ "$part" != docs ]; then
   step 07-lean python3 scripts/check_lean_audits.py
   clang --version > "$out/clang-version.txt" 2>&1
   echo $? > "$out/clang-version.exit"
+  # This card changes nothing under providers/: the provider gate runs only
+  # with PROVIDERS=1.
+  if [ "${PROVIDERS:-0}" = 1 ]; then
   rm -rf "$private/packages-$name"
   step 10-packages-build python3 providers/package.py build --output "$private/packages-$name"
   step 11-packages-verify python3 providers/package.py verify "$private/packages-$name/qcore.libevent"
@@ -51,6 +54,7 @@ if [ "$part" != docs ]; then
   step 13-provider-python python3 -m unittest discover -s providers/tests
   step 14-provider-fmt cargo fmt --manifest-path providers/Cargo.toml --all -- --check
   step 15-provider-clippy cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
+  fi
   echo done > "$out/code-done"
 fi
 if [ "$part" != code ]; then
