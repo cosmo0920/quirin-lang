@@ -85,6 +85,12 @@ impl ResolvedSourceBundle {
         }
     }
 
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the mode the file at
+    /// `index` of the evidence declared (its header, blanked when staged).
+    pub(crate) fn file_mode(&self, index: usize) -> Option<SourceModuleMode> {
+        self.inventories.get(index).map(|inventory| inventory.mode)
+    }
+
     pub(crate) fn staged(&self) -> Vec<SourceFile> {
         self.evidence
             .sources

@@ -1403,6 +1403,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
         6,
     ),
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the two hand-off declarations
+    // (C04.19.5): `rd_kafka_poll_cb` (marker, premise, five modes, twelve
+    // member invocations, the result, the not-PASS hand-off) and the KEEP-only
+    // `rd_kafka_txn_op_send_offsets_to_transaction`.
+    ("librdkafka/client.qv", "rd_kafka_poll_cb", 21),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_txn_op_send_offsets_to_transaction",
+        7,
+    ),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

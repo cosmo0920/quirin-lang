@@ -804,9 +804,8 @@ fn tip_notices(
         let Some((module, digest, _)) = declared.get(&entry.function) else {
             continue;
         };
-        let found =
-            crate::c_identity::identity_sites(&sites, &entry.function, &target.c_names)
-                .unwrap_or_else(|_| sites.get(&entry.function).cloned().unwrap_or_default());
+        let found = crate::c_identity::identity_sites(&sites, &entry.function, &target.c_names)
+            .unwrap_or_else(|_| sites.get(&entry.function).cloned().unwrap_or_default());
         let standing = pin_standing(Some(lock), &entry.function, digest, &found, module, tips);
         if let Some(notice) = standing.notice(&entry.function) {
             lines.push(notice.line());

@@ -219,3 +219,41 @@ fn an_alias_outside_a_contract_module_is_a_parse_error() {
         error.message
     );
 }
+
+/// The alias a declaration spells is part of its pinned contract text: a
+/// changed alias target changes that declaration's digest (an alias never
+/// changes meaning under an unchanged pin), and no other declaration's. The
+/// declaration's `@` names, through the alias too, are the names `quirin-audit
+/// pin` adds the enumerations of.
+#[test]
+fn an_alias_is_part_of_the_digest_of_every_declaration_spelling_it() {
+    let module = |target: &str| {
+        BTreeMap::from([(
+            "handoff.qv".to_owned(),
+            format!(
+                "module contract;\nalias #PASS = @{target};\n{}{}",
+                op_cb("aliased", "!= #PASS"),
+                op_cb("named", "== @RD_KAFKA_OP_RES_KEEP")
+            ),
+        )])
+    };
+    let before =
+        qcore_contract::contract_revision::declaration_digests(&module("RD_KAFKA_OP_RES_PASS"))
+            .expect("digests");
+    let after =
+        qcore_contract::contract_revision::declaration_digests(&module("RD_KAFKA_OP_RES_HANDLED"))
+            .expect("digests");
+    assert_ne!(before["aliased"], after["aliased"]);
+    assert_eq!(before["named"], after["named"]);
+    let names =
+        qcore_contract::contract_revision::declaration_c_names(&module("RD_KAFKA_OP_RES_PASS"))
+            .expect("names");
+    assert_eq!(
+        names["aliased"].iter().collect::<Vec<_>>(),
+        vec!["RD_KAFKA_OP_RES_PASS"]
+    );
+    assert_eq!(
+        names["named"].iter().collect::<Vec<_>>(),
+        vec!["RD_KAFKA_OP_RES_KEEP"]
+    );
+}

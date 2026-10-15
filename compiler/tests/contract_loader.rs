@@ -1674,11 +1674,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
             selected += 1;
         }
         // Per declaration, so a marked declaration cannot smuggle an unmarked
-        // sibling through a module that happens to load.
+        // sibling through a module that happens to load. Card
+        // SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a declaration is read with its
+        // module's aliases (module-local context, never a declaration).
+        let aliases = parsed
+            .aliases()
+            .iter()
+            .map(|alias| format!("{}\n", &source[alias.span.start..alias.span.end]))
+            .collect::<String>();
         for declaration in &parsed.declarations {
             let text = &source[declaration.span.start..declaration.span.end];
-            let single =
-                BTreeMap::from([(relative.clone(), format!("module contract;\n{text}\n"))]);
+            let single = BTreeMap::from([(
+                relative.clone(),
+                format!("module contract;\n{aliases}{text}\n"),
+            )]);
             let outcome = load_resource_contract_sources(&single);
             assert_eq!(
                 outcome.is_ok(),
@@ -1950,9 +1959,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // librdkafka candidates (`rd_kafka_log_print`, five OAUTHBEARER
     // refreshers); in `fluent_bit/logging.qv` Fluent Bit's three registered
     // callbacks (plain declarations). Selection and rejected unchanged.
+    // 455 -> 457 by card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the two hand-off
+    // declarations `rd_kafka_poll_cb` and
+    // `rd_kafka_txn_op_send_offsets_to_transaction` in `librdkafka/client.qv`
+    // (withheld with the retaining declarations, 78 -> 80). Selection and
+    // rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 455, 314)
+        (61, 457, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1991,7 +2005,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // registrations), `rd_kafka_conf_new` (stated defaults) and three member
     // invokers (`rd_kafka_consume_cb`, `rd_kafka_background_queue_serve`,
     // `rd_kafka_oauthbearer_refresh_op`): 57 -> 78.
-    assert_eq!(loaded.retaining().len(), 78);
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the two hand-off declarations
+    // (C04.19.5): 78 -> 80.
+    assert_eq!(loaded.retaining().len(), 80);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

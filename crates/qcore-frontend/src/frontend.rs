@@ -832,7 +832,11 @@ impl<'a> SourceParser<'a> {
             // one, and a name is declared once.
             if self.word(cursor, "alias") && self.symbol(cursor + 1, Symbol::Hash) {
                 let start = cursor;
-                if mode != SourceModuleMode::Contract {
+                // An explicit executable or library header refuses here; a
+                // headerless file (the compiler's staged view of a contract
+                // module, whose header it blanks) is checked by its consumer
+                // against the file's own mode.
+                if mode != SourceModuleMode::Contract && mode_span.is_some() {
                     return Err(self.error(
                         cursor,
                         "an `alias` declaration belongs to a contract module",

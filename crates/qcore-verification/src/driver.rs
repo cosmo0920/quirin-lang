@@ -1417,6 +1417,23 @@ fn compile_files_with_registry_inner(
                 &ranges,
             )]
         })?;
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: an `alias` belongs to a
+        // contract module; the staged text has lost its header, so the
+        // file's own declared mode decides.
+        if let Some(alias) = parsed.aliases().first()
+            && bundle.file_mode(individual.len()) != Some(SourceModuleMode::Contract)
+        {
+            return Err(vec![map_raw_diagnostic(
+                "Q000",
+                SemanticPass::NameResolution,
+                Span {
+                    start: alias.span.start + range.start,
+                    end: alias.span.end + range.start,
+                },
+                "an `alias` declaration belongs to a contract module".into(),
+                &ranges,
+            )]);
+        }
         individual.push(parsed);
     }
     let externs = individual

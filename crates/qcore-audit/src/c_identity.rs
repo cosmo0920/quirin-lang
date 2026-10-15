@@ -102,10 +102,7 @@ pub fn identity_sites(
 ) -> Result<Vec<SourceSite>, String> {
     let mut sites = found.get(function).cloned().unwrap_or_default();
     for name in c_names.get(function).into_iter().flatten() {
-        let enumerations = found
-            .get(&format!("@{name}"))
-            .cloned()
-            .unwrap_or_default();
+        let enumerations = found.get(&format!("@{name}")).cloned().unwrap_or_default();
         if enumerations.is_empty() {
             return Err(format!(
                 "`@{name}` names no enumerator of the source tree (an unresolvable name)"
@@ -942,8 +939,7 @@ mod tests {
             super::identity_sites(&found, "f", &wanted).expect("resolves"),
             vec![sites[0].1.clone()]
         );
-        let unresolved =
-            std::collections::BTreeMap::from([("f".to_owned(), names(&["A_NONE"]))]);
+        let unresolved = std::collections::BTreeMap::from([("f".to_owned(), names(&["A_NONE"]))]);
         assert!(super::identity_sites(&found, "f", &unresolved).is_err());
         assert!(
             super::identity_names(&names(&["f"]), &wanted).contains("@A_KEEP"),
