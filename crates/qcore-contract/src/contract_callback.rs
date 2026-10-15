@@ -323,9 +323,14 @@ pub(super) fn declaration(
                              `{object}`"
                         ));
                     }
+                    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: or
+                    // `resource_owned` for the formal a hand-off hands, which
+                    // the loader checks once the hand-off is read.
                     if !matches!(
                         contract.parameters[at],
-                        ResourceParameterMode::Borrowed | ResourceParameterMode::Released { .. }
+                        ResourceParameterMode::Borrowed
+                            | ResourceParameterMode::Released { .. }
+                            | ResourceParameterMode::Owned { nullable: false }
                     ) {
                         return Err(format!(
                             "a member invocation's object is `resource_borrowed` or \

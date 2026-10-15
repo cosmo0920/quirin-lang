@@ -6,7 +6,7 @@
 //! ```text
 //! ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 0);
 //! ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, cb);
-//! quant live #result: rd_kafka_op_s.rko_op_cb |-> absent;
+//! quant live #result: rd_kafka_op_s.rko_op_cb |-> #absent;
 //! ```
 //!
 //! * `resource_discriminant_set(result, TAG.FIELD, P, FLAGS)`: the returned
@@ -16,7 +16,7 @@
 //! * `resource_callback_member_registered(result, TAG.FIELD, F)`: the returned
 //!   object's function-pointer member holds the callback `F` (rule 13w's
 //!   per-path registration, through a member).
-//! * `quant live #result: TAG.FIELD |-> absent;`: the result is live (exactly
+//! * `quant live #result: TAG.FIELD |-> #absent;`: the result is live (exactly
 //!   `quant live #result`) and its member maps to `absent`, no callback.
 //!   Its two levels elaborate to one canonical set (rule 14e):
 //!   [`ConstructedState::live`] and a [`MemberState`] whose value is
@@ -33,8 +33,14 @@ use crate::arm_release::{ArmClause, ArmEffect, ArmGuard, ArmJoin};
 use crate::callback::CallbackMember;
 
 /// The reserved right-hand side of a member state: no callback is stored
-/// (distinct from C's `NULL`, a value; `absent` is a state).
-pub const ABSENT: &str = "absent";
+/// (distinct from C's `NULL`, a value; `#absent` is a state). Card
+/// **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (USER DECISION 2026-10-15): a value
+/// keyword carries `#`, so `#absent` is its one accepted spelling and a bare
+/// `absent` rejects naming it.
+pub const ABSENT: &str = "#absent";
+
+/// The keyword's word without its `#` ([`ABSENT`]).
+pub const ABSENT_WORD: &str = "absent";
 
 /// `resource_discriminant_set(result, TAG.FIELD, P, FLAGS)`.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]

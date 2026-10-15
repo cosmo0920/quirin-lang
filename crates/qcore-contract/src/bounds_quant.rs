@@ -35,6 +35,7 @@ pub fn spell(token: &TokenKind) -> String {
             Symbol::Comma => ",",
             Symbol::Colon => ":",
             Symbol::Hash => "#",
+            Symbol::At => "@",
             Symbol::Plus => "+",
             Symbol::Minus => "-",
             Symbol::Less => "<",

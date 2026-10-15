@@ -332,6 +332,10 @@ mod arm_release;
 // Card OP-CONSTRUCTOR-DECLARATIONS: a constructor's result state (§C04.19.4).
 #[path = "contract_constructed_state.rs"]
 mod constructed_state;
+// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a formal the callback takes
+// depending on its return code, and the module's aliases (§C04.19.5).
+#[path = "contract_handoff.rs"]
+mod handoff;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -852,6 +856,9 @@ pub fn load_resource_contract_sources(
         {
             eprintln!("{warning}");
         }
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the module's aliases,
+        // module-local, each colliding with no keyword or binder.
+        let aliases = handoff::module_aliases(&parsed).map_err(|e| format!("{path}: {e}"))?;
         for declaration in parsed.declarations {
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
@@ -864,7 +871,7 @@ pub fn load_resource_contract_sources(
             {
                 return Err(format!("{context}: duplicate function contract"));
             }
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            let loaded = load_function_in(decl, &aliases).map_err(|e| format!("{context}: {e}"))?;
             if let Some(revision) = loaded.revision {
                 revisions.insert(decl.name.clone(), revision);
             }
@@ -950,10 +957,11 @@ fn read_module(path: &str, source: &str) -> Result<ModuleReading, String> {
     if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
         return Err(format!("{path}: expected a nonempty module contract"));
     }
+    let aliases = handoff::module_aliases(&parsed).map_err(|e| format!("{path}: {e}"))?;
     let mut declarations = Vec::new();
     for declaration in parsed.declarations {
         let decl = &declaration.value;
-        let loaded = load_function(decl);
+        let loaded = load_function_in(decl, &aliases);
         let failed = loaded.is_err();
         declarations.push(DeclarationReading {
             name: decl.name.clone(),
@@ -1568,6 +1576,16 @@ pub fn undeclarable_c_name(name: &str) -> Option<&'static str> {
 }
 
 fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> {
+    load_function_in(decl, &BTreeMap::new())
+}
+
+/// [`load_function`] with the module's aliases (card
+/// SUPPLIED-OWNED-RETURN-CODE-HANDOFF): a hand-off guard's `#NAME` resolves
+/// against them; without them (an inheritance comparison) it rejects.
+fn load_function_in(
+    decl: &SourceDeclaration,
+    aliases: &BTreeMap<String, String>,
+) -> Result<LoadedDeclaration, String> {
     if decl.kind != DeclarationKind::ExternFunction {
         return Err("resource modules accept only extern functions".into());
     }
@@ -1709,11 +1727,21 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card OP-CONSTRUCTOR-DECLARATIONS: the result-state clauses, as written,
     // in clause order (both levels of rule 14e's shorthand).
     let mut constructed_clauses: Vec<constructed_state::Written> = Vec::new();
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the hand-off clauses, as
+    // written, their constants canonical.
+    let mut handoff_clauses: Vec<handoff::Written> = Vec::new();
     for clause in clauses {
         if clause.value.kind == SourceContractClauseKind::QuantLive {
-            constructed_clauses.extend(constructed_state::quant_live_clause(
-                &clause.value.expression_source,
-            )?);
+            if handoff::binds_a_formal(&clause.value.expression_source) {
+                handoff_clauses.push(handoff::quant_live_clause(
+                    &clause.value.expression_source,
+                    aliases,
+                )?);
+            } else {
+                constructed_clauses.extend(constructed_state::quant_live_clause(
+                    &clause.value.expression_source,
+                )?);
+            }
             continue;
         }
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
@@ -2385,6 +2413,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         && discriminants.is_empty()
         && arm_clauses.is_empty()
         && constructed_clauses.is_empty()
+        && handoff_clauses.is_empty()
     {
         None
     } else {
@@ -2543,6 +2572,53 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             }
         }
         declared.constructed = constructed;
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (§C04.19.5): the hand-off
+        // stands where a callback clause may; a declaration carrying a `#`
+        // form rejects a parameter named like a reserved keyword (its binder
+        // would read as the keyword); a member invocation's object may be the
+        // handed formal (`resource_owned`), and no other owned formal.
+        let handed = handoff::declaration(
+            &handoff_clauses,
+            &contract,
+            &parameter_types,
+            &names,
+            return_type,
+        )?;
+        if handed.is_some()
+            && (!declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty())
+        {
+            return Err("a hand-off stands only beside retentions and plain predicates".into());
+        }
+        if (handed.is_some() || !declared.constructed.is_empty())
+            && let Some(name) = qcore_schemas::handoff::RESERVED_KEYWORDS
+                .iter()
+                .find(|name| names.contains_key(**name))
+        {
+            return Err(format!(
+                "`#{name}` is reserved in a `#` form: rename the parameter `{name}`"
+            ));
+        }
+        for clause in &declared.callbacks {
+            if let qcore_schemas::callback::CallbackClause::MemberInvoked {
+                object: qcore_schemas::callback::MemberObject::Parameter { index },
+                ..
+            } = clause
+                && matches!(
+                    contract.parameters[*index],
+                    ResourceParameterMode::Owned { .. }
+                )
+                && handed.as_ref().map(|handed| handed.parameter) != Some(*index)
+            {
+                return Err(
+                    "a member invocation's object is `resource_borrowed` or `resource_released`, \
+                     or the formal a hand-off hands"
+                        .into(),
+                );
+            }
+        }
+        declared.handoff = handed;
         Some(declared)
     };
     Ok(LoadedDeclaration {

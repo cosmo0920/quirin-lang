@@ -796,6 +796,7 @@ mod tests {
                 arms_withdrawn: false,
                 constructed: Default::default(),
                 constructed_withdrawn: false,
+                handoff: None,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

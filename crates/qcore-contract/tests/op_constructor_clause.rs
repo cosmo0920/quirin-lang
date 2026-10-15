@@ -3,7 +3,8 @@
 //! total-or-reject (grammar G05), in the spellings of the user's decisions of
 //! 2026-10-14: the four-operand `resource_discriminant_set`, the member
 //! registration `resource_callback_member_registered`, and the `quant` state
-//! clause `quant live #result: TAG.FIELD |-> absent;` with its two levels.
+//! clause `quant live #result: TAG.FIELD |-> #absent;` with its two levels
+//! (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: `#absent`, the value keyword).
 
 use std::collections::BTreeMap;
 
@@ -84,7 +85,7 @@ fn expected_new0() -> ConstructedState {
 #[test]
 fn the_clauses_load_withheld_with_their_state() {
     let shorthand = new0(&format!(
-        "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;"
+        "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent;"
     ));
     let contracts = load(&format!("{shorthand}{NEW_CB}")).expect("loads");
     assert!(contracts.contract("op_new0").is_none());
@@ -113,9 +114,9 @@ fn the_clauses_load_withheld_with_their_state() {
 /// both together (an agreeing overlap merges).
 #[test]
 fn both_levels_read_identically() {
-    let shorthand = format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;");
+    let shorthand = format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent;");
     let parts = "    quant live #result;
-    ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, absent);";
+    ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, #absent);";
     for state in [
         shorthand.clone(),
         parts.to_owned(),
@@ -141,21 +142,21 @@ fn every_misuse_rejects_the_module() {
     };
     // A bare `->` names the maps-to token.
     rejects(
-        "    quant live #result: rd_kafka_op_s.rko_op_cb -> absent;",
+        "    quant live #result: rd_kafka_op_s.rko_op_cb -> #absent;",
         "quant-live-maps-to",
     );
     rejects(
-        "    quant live #result: rd_kafka_op_s.rko_op_cb -> absent;",
+        "    quant live #result: rd_kafka_op_s.rko_op_cb -> #absent;",
         MAPS_TO,
     );
     // C member access on the left.
     rejects(
-        &format!("    quant live #result: result->rko_op_cb {MAPS_TO} absent;"),
+        &format!("    quant live #result: result->rko_op_cb {MAPS_TO} #absent;"),
         "quant-live-maps-to",
     );
     // An undotted member, another value, a parameter, a second value.
     rejects(
-        &format!("    quant live #result: rko_op_cb {MAPS_TO} absent;"),
+        &format!("    quant live #result: rko_op_cb {MAPS_TO} #absent;"),
         "quant-live-member",
     );
     rejects(
@@ -177,11 +178,21 @@ fn every_misuse_rejects_the_module() {
         .is_ok()
     );
     rejects("    quant live #source;", "quant-live-result-shape");
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the bare `absent` rejects at
+    // both levels, naming the keyword `#absent`.
+    rejects(
+        &format!("    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;"),
+        "#absent",
+    );
+    rejects(
+        "    ensures normal resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, absent);",
+        "#absent",
+    );
     // Two states of one member.
     let two = NEW_CB.replace(
         "    ensures normal resource_return_owned(nonnull);",
         &format!(
-            "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;
+            "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent;
     ensures normal resource_return_owned(nonnull);"
         ),
     );
@@ -214,7 +225,7 @@ fn every_misuse_rejects_the_module() {
     );
     // An unbacked result: a nullable owned result is not live.
     let nullable = new0(&format!(
-        "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent;"
+        "    quant live #result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent;"
     ))
     .replace(
         "resource_return_owned(nonnull)",

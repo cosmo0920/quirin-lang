@@ -243,6 +243,13 @@ pub struct RetainingContract {
     /// set by the loader; omitted when false.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub constructed_withdrawn: bool,
+    /// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (§C04.19.5, rule 12m): a
+    /// formal the callback takes depending on its return code (`quant live
+    /// #P: #owner |-> #callback when GUARD;`). Read only by rule 12m's
+    /// candidate decision; a direct call of the declaration refuses. Omitted
+    /// when absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub handoff: Option<crate::handoff::HandOff>,
 }
 
 impl RetainingContract {

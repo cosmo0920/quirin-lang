@@ -5,25 +5,28 @@
 //! ```text
 //! ensures normal resource_discriminant_set(result, TAG.FIELD, P, FLAGS);
 //! ensures normal resource_callback_member_registered(result, TAG.FIELD, F);
-//! quant live #result: TAG.FIELD |-> absent;     // two levels, rule 14e
+//! quant live #result: TAG.FIELD |-> #absent;    // two levels, rule 14e
 //! quant live #result;                           // the liveness part alone
-//! ensures normal resource_callback_member_registered(result, TAG.FIELD, absent);
+//! ensures normal resource_callback_member_registered(result, TAG.FIELD, #absent);
 //! ```
 //!
 //! USER DECISIONS 2026-10-14: A1 (the four-operand discriminant, `FLAGS` a
 //! canonical decimal OR-ed into the actual, exact), B1 (the member
 //! registration), C (the `quant` state clause in maps-to notation, `|->` the
 //! ASCII `↦`, [`qcore_frontend::lexer::MAPS_TO`]; `absent` reserved). The
-//! shorthand `quant live #result: TAG.FIELD |-> absent;` elaborates into the
-//! canonical parts `quant live #result;` and the member state `absent`; the
-//! two levels give the same [`ConstructedState`].
+//! shorthand `quant live #result: TAG.FIELD |-> #absent;` elaborates into the
+//! canonical parts `quant live #result;` and the member state `#absent`; the
+//! two levels give the same [`ConstructedState`]. Card
+//! **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (USER DECISION 2026-10-15): a value
+//! keyword carries `#`, so `#absent` is the one spelling at both levels and a
+//! bare `absent` rejects the module naming `#absent`.
 
 use std::collections::BTreeMap;
 
 use qcore_frontend::lexer::{MAPS_TO, Symbol, TokenKind, lex};
 use qcore_schemas::callback::CallbackMember;
 use qcore_schemas::constructed_state::{
-    ABSENT, ConstructedState, DiscriminantSet, MemberState, MemberValue,
+    ABSENT, ABSENT_WORD, ConstructedState, DiscriminantSet, MemberState, MemberValue,
 };
 use qcore_schemas::contract::{
     ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
@@ -141,7 +144,12 @@ pub(super) fn ensures_clause(expression: &str) -> Result<Option<Written>, String
         if *object != RESULT {
             return Ok(None);
         }
-        if !is_identifier(value) {
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the value keyword is
+        // `#absent`; the bare word rejects naming it.
+        if *value == ABSENT_WORD {
+            return Err(bare_absent(expression));
+        }
+        if *value != ABSENT && !is_identifier(value) {
             return Err(malformed());
         }
         let member = member(field).ok_or_else(malformed)?;
@@ -155,8 +163,16 @@ pub(super) fn ensures_clause(expression: &str) -> Result<Option<Written>, String
     Ok(None)
 }
 
+/// The rejection of a bare `absent` (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF).
+fn bare_absent(text: &str) -> String {
+    format!(
+        "quant-live-absent: `{text}`: `{ABSENT_WORD}` is the value keyword `{ABSENT}` (a value \
+         keyword carries `#`)"
+    )
+}
+
 /// Read the text after `quant live` in a resource v1 declaration: `#result`
-/// (the liveness part) or `#result: TAG.FIELD |-> absent` (the shorthand).
+/// (the liveness part) or `#result: TAG.FIELD |-> #absent` (the shorthand).
 /// Every other shape rejects the module.
 pub(super) fn quant_live_clause(source: &str) -> Result<Vec<Written>, String> {
     let shape = || {
@@ -221,12 +237,31 @@ pub(super) fn quant_live_clause(source: &str) -> Result<Vec<Written>, String> {
         return Err(shape());
     }
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER DECISION 2026-10-14, D1):
-    // the right of `|->` is `absent` or a function designator, one
+    // the right of `|->` is `#absent` or a function designator, one
     // identifier; anything else rejects the module. Whether the designator
-    // names a parameter is checked with the declaration's names.
+    // names a parameter is checked with the declaration's names. Card
+    // SUPPLIED-OWNED-RETURN-CODE-HANDOFF: `#absent`, the value keyword; the
+    // bare `absent` rejects naming it.
+    if symbol(at + 1, Symbol::Hash) {
+        return match (word(at + 2), tokens.len() == at + 3) {
+            (Some(ABSENT_WORD), true) => Ok(vec![
+                Written::Live,
+                Written::Member {
+                    member,
+                    callback: None,
+                    text: format!("quant live {source}"),
+                    shorthand: true,
+                },
+            ]),
+            _ => Err(format!(
+                "quant-live-value: a member maps to `{ABSENT}` (no callback) or a function \
+                 designator; `quant live {source};` names another value"
+            )),
+        };
+    }
     let callback = match (word(at + 1), tokens.len() == at + 2) {
-        (Some(ABSENT), true) => None,
-        // C's null pointer is a value, not a function: `absent` states it.
+        (Some(ABSENT_WORD), true) => return Err(bare_absent(&format!("quant live {source}"))),
+        // C's null pointer is a value, not a function: `#absent` states it.
         (Some(name), true)
             if is_identifier(name) && !matches!(name, RESULT | "NULL" | "nullptr") =>
         {
@@ -270,9 +305,14 @@ pub(super) fn declaration(
              `{RESULT}`"
         ));
     }
-    if names.contains_key(ABSENT) {
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: every reserved keyword (the
+    // loader also checks it for any declaration carrying a `#` form).
+    if let Some(name) = qcore_schemas::handoff::RESERVED_KEYWORDS
+        .iter()
+        .find(|name| names.contains_key(**name))
+    {
         return Err(format!(
-            "`{ABSENT}` is reserved in a result state: rename the parameter `{ABSENT}`"
+            "`#{name}` is reserved in a `#` form: rename the parameter `{name}`"
         ));
     }
     if contract.result != (ResourceReturnMode::Owned { nullable: false }) {
@@ -382,7 +422,7 @@ mod tests {
     #[test]
     fn the_shorthand_reads_as_its_two_parts() {
         let shorthand = quant_live_clause(&format!(
-            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent"
+            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent"
         ))
         .expect("reads");
         assert_eq!(shorthand.len(), 2);
@@ -399,14 +439,14 @@ mod tests {
 
     #[test]
     fn every_other_shape_rejects_with_a_named_diagnostic() {
-        let arrow = quant_live_clause("#result: rd_kafka_op_s.rko_op_cb -> absent")
+        let arrow = quant_live_clause("#result: rd_kafka_op_s.rko_op_cb -> #absent")
             .expect_err("a bare arrow rejects");
         assert!(arrow.starts_with("quant-live-maps-to:"), "{arrow}");
         assert!(arrow.contains(MAPS_TO), "{arrow}");
-        let c_style = quant_live_clause(&format!("#result: result->rko_op_cb {MAPS_TO} absent"))
+        let c_style = quant_live_clause(&format!("#result: result->rko_op_cb {MAPS_TO} #absent"))
             .expect_err("C member access rejects");
         assert!(c_style.starts_with("quant-live-maps-to:"), "{c_style}");
-        let undotted = quant_live_clause(&format!("#result: rko_op_cb {MAPS_TO} absent"))
+        let undotted = quant_live_clause(&format!("#result: rko_op_cb {MAPS_TO} #absent"))
             .expect_err("an undotted member rejects");
         assert!(undotted.starts_with("quant-live-member:"), "{undotted}");
         let value = quant_live_clause(&format!("#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} NULL"))
@@ -439,9 +479,35 @@ mod tests {
             "{parameter}"
         );
         let trailing = quant_live_clause(&format!(
-            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent absent"
+            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent #absent"
         ))
         .expect_err("one value");
         assert!(trailing.starts_with("quant-live-value:"), "{trailing}");
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the bare word rejects,
+        // naming the keyword; so does another `#` word.
+        let bare = quant_live_clause(&format!(
+            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} absent"
+        ))
+        .expect_err("a bare absent rejects");
+        assert!(
+            bare.starts_with("quant-live-absent:") && bare.contains("#absent"),
+            "{bare}"
+        );
+        let other = quant_live_clause(&format!(
+            "#result: rd_kafka_op_s.rko_op_cb {MAPS_TO} #owner"
+        ))
+        .expect_err("only #absent");
+        assert!(other.starts_with("quant-live-value:"), "{other}");
+        let lower = ensures_clause(
+            "resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, absent)",
+        )
+        .expect_err("a bare absent rejects at the lower level");
+        assert!(lower.contains("#absent"), "{lower}");
+        assert!(matches!(
+            ensures_clause(
+                "resource_callback_member_registered(result, rd_kafka_op_s.rko_op_cb, #absent)"
+            ),
+            Ok(Some(Written::Member { callback: None, .. }))
+        ));
     }
 }

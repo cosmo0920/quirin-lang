@@ -366,6 +366,7 @@ pub(super) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
                         arms_withdrawn: false,
                         constructed: Default::default(),
                         constructed_withdrawn: false,
+                        handoff: None,
                     },
                 )
             })
@@ -460,6 +461,7 @@ mod tests {
                 arms_withdrawn: false,
                 constructed: Default::default(),
                 constructed_withdrawn: false,
+                handoff: None,
             },
         );
         contracts.insert_retaining(
@@ -486,6 +488,7 @@ mod tests {
                 arms_withdrawn: false,
                 constructed: Default::default(),
                 constructed_withdrawn: false,
+                handoff: None,
             },
         );
         contracts

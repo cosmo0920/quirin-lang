@@ -308,5 +308,6 @@ pub(super) fn declaration(
         arms_withdrawn: false,
         constructed: Default::default(),
         constructed_withdrawn: false,
+        handoff: None,
     })
 }

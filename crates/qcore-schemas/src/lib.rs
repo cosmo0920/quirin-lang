@@ -17,6 +17,7 @@ pub mod contract_consultation;
 pub mod contract_refutation;
 pub mod contract_revision;
 pub mod digest;
+pub mod handoff;
 pub mod identity;
 pub mod mechanism;
 pub mod obligation;

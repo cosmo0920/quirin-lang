@@ -399,6 +399,9 @@ pub struct SourceProgram {
     pub mode_span: Option<Span>,
     imports: Vec<Located<String>>,
     library_bindings: Vec<Located<String>>,
+    /// Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`: every `alias #NAME =
+    /// @C_NAME;` of a contract module, in source order.
+    aliases: Vec<Located<SourceAlias>>,
     source: String,
     lexical_tokens: Vec<Token>,
     task_expressions: Vec<SourceTaskExpression>,
@@ -431,6 +434,15 @@ impl SourceProgram {
     /// declarations name resolution walks.
     pub fn library_bindings(&self) -> &[Located<String>] {
         &self.library_bindings
+    }
+
+    /// Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF` (USER DECISION 2026-10-15,
+    /// "aliases are allowed"): the module's `alias #NAME = @C_NAME;`
+    /// declarations, in source order, each name declared once. Module-local:
+    /// the contract loader resolves a clause's `#NAME` against this list
+    /// alone, so an alias never reaches another module.
+    pub fn aliases(&self) -> &[Located<SourceAlias>] {
+        &self.aliases
     }
 
     /// Whether `span` lies inside one of this file's `extern library NAME;`
@@ -552,6 +564,15 @@ impl fmt::Display for SourceProgram {
         }
         Ok(())
     }
+}
+
+/// Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF` (USER DECISION 2026-10-15): one
+/// `alias #NAME = @C_NAME;` of a contract module. `name` is the alias without
+/// its `#`, `target` the C name without its `@`; both are single words.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceAlias {
+    pub name: String,
+    pub target: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -731,6 +752,7 @@ impl<'a> SourceParser<'a> {
         let mut imports = Vec::new();
         let mut runtime_imports = Vec::new();
         let mut library_bindings = Vec::new();
+        let mut aliases: Vec<Located<SourceAlias>> = Vec::new();
         let (mode, mode_span, mut cursor) = self.module_header()?;
         while cursor < self.tokens.len() {
             let directive = self.symbol(cursor, Symbol::Hash) && self.word(cursor + 1, "import");
@@ -798,6 +820,48 @@ impl<'a> SourceParser<'a> {
             // name: it is a file-local trust act, like an import, and putting it
             // among the declarations would put a manifest identity into the
             // namespace name resolution walks.
+            // Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF` (USER DECISION
+            // 2026-10-15, "aliases are allowed"): `alias #NAME = @C_NAME;`, a
+            // module-local second spelling of one `@` name. **No new reserved
+            // word**: `alias` followed by `#` at declaration position was a
+            // parse error before the card ("expected a QCore declaration"),
+            // and the census found no `alias` and no `@` in code position in
+            // any tracked source file; `alias` stays an ordinary identifier
+            // everywhere else. Read here, like an import, because it declares
+            // nothing name resolution walks; only a contract module carries
+            // one, and a name is declared once.
+            if self.word(cursor, "alias") && self.symbol(cursor + 1, Symbol::Hash) {
+                let start = cursor;
+                if mode != SourceModuleMode::Contract {
+                    return Err(self.error(
+                        cursor,
+                        "an `alias` declaration belongs to a contract module",
+                    ));
+                }
+                let name = self.identifier(cursor + 2)?.to_owned();
+                if !self.symbol(cursor + 3, Symbol::Equal) {
+                    return Err(self.error(cursor + 3, "expected `=` in `alias #NAME = @C_NAME;`"));
+                }
+                if !self.symbol(cursor + 4, Symbol::At) {
+                    return Err(self.error(
+                        cursor + 4,
+                        "the right-hand side of an alias is an `@` name: `alias #NAME = @C_NAME;`",
+                    ));
+                }
+                let target = self.identifier(cursor + 5)?.to_owned();
+                if !self.symbol(cursor + 6, Symbol::Semicolon) {
+                    return Err(self.error(cursor + 6, "expected semicolon after alias"));
+                }
+                cursor += 7;
+                if aliases.iter().any(|alias| alias.value.name == name) {
+                    return Err(self.error(start + 2, "an alias is declared once per module"));
+                }
+                aliases.push(Located {
+                    span: self.range_span(start, cursor),
+                    value: SourceAlias { name, target },
+                });
+                continue;
+            }
             if self.words(cursor, &["extern", "library"]) {
                 let start = cursor;
                 cursor += 2;
@@ -899,6 +963,7 @@ impl<'a> SourceParser<'a> {
             SourceProgram {
                 imports,
                 library_bindings,
+                aliases,
                 task_expressions,
                 result_matches,
                 mode,

@@ -301,7 +301,8 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
             .map(|token| token.kind)
             .collect::<Vec<_>>()
     };
-    let maps = format!("rd_kafka_op_s.rko_op_cb {MAPS_TO} absent");
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the value keyword is `#absent`.
+    let maps = format!("rd_kafka_op_s.rko_op_cb {MAPS_TO} #absent");
     assert_eq!(
         kinds(&maps),
         vec![
@@ -309,6 +310,7 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
             TokenKind::Symbol(Symbol::Dot),
             TokenKind::Word("rko_op_cb".into()),
             TokenKind::Symbol(Symbol::MapsTo),
+            TokenKind::Symbol(Symbol::Hash),
             TokenKind::Word("absent".into()),
             TokenKind::Eof,
         ]
@@ -372,6 +374,44 @@ fn lexes_maps_to_apart_from_the_pipe_the_or_and_the_arrow() {
             TokenKind::Symbol(Symbol::Pipe),
             TokenKind::Symbol(Symbol::Minus),
             TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+}
+
+/// Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF` (USER DECISION 2026-10-15): `@`
+/// was an `unexpected character` lex error and is now the C-name marker, one
+/// byte apart from the name it marks; `#` stays the binder and keyword marker.
+#[test]
+fn lexes_the_c_name_marker_apart_from_its_name() {
+    let kinds = |source: &str| {
+        lex(source)
+            .unwrap()
+            .into_iter()
+            .map(|token| token.kind)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        kinds("#result != @RD_KAFKA_OP_RES_PASS"),
+        vec![
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word("result".into()),
+            TokenKind::Symbol(Symbol::NotEqual),
+            TokenKind::Symbol(Symbol::At),
+            TokenKind::Word("RD_KAFKA_OP_RES_PASS".into()),
+            TokenKind::Eof,
+        ]
+    );
+    assert_eq!(
+        kinds("alias #PASS = @PASS;"),
+        vec![
+            TokenKind::Word("alias".into()),
+            TokenKind::Symbol(Symbol::Hash),
+            TokenKind::Word("PASS".into()),
+            TokenKind::Symbol(Symbol::Equal),
+            TokenKind::Symbol(Symbol::At),
+            TokenKind::Word("PASS".into()),
+            TokenKind::Symbol(Symbol::Semicolon),
             TokenKind::Eof,
         ]
     );

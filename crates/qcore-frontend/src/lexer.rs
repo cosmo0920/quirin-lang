@@ -76,6 +76,17 @@ pub enum Symbol {
     /// premise — that a scoped owner name `c#0` can never collide with a name a
     /// program wrote — survives this token exactly as it stood.
     Hash,
+    /// `@`, the **C-name marker** of a contract clause (card
+    /// `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`, USER DECISION 2026-10-15):
+    /// `@RD_KAFKA_OP_RES_PASS` names a C enumerator that Clang resolves. A
+    /// bare `@` was a lexer error (`unexpected character '@'`) before the
+    /// card; the constraint-14 census found **zero** `@` characters in code
+    /// position across every `.qcore`/`.qc`/`.qr`/`.qv` file in the tree, so
+    /// the promotion moves the layer of a refusal and accepts nothing new.
+    /// It is read only by a resource v1 hand-off guard and a module's `alias`
+    /// declaration; every other reader refuses it as an unexpected symbol.
+    /// `@` is not an identifier character: the word rule is unchanged.
+    At,
     Question,
     Less,
     Greater,
@@ -381,6 +392,9 @@ impl Lexer<'_> {
             // moves — `[|`, `|]`, `|>`, `||`, `&&` and every one-byte member
             // lex exactly as they did.
             '#' => Ok(Symbol::Hash),
+            // Card `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`: the C-name marker.
+            // One byte, no two-byte spelling: no row above moves.
+            '@' => Ok(Symbol::At),
             '?' => Ok(Symbol::Question),
             '<' => Ok(Symbol::Less),
             '>' => Ok(Symbol::Greater),
