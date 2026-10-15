@@ -88,7 +88,10 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
     // ... and the input worker's exit signal's function-scope entry.
     (
         "flb_input_thread_instance_exit",
-        &["fluent_bit/lib_engine_thread.qv", "fluent_bit/null_deref.qv"],
+        &[
+            "fluent_bit/lib_engine_thread.qv",
+            "fluent_bit/null_deref.qv",
+        ],
     ),
     (
         "flb_malloc",
