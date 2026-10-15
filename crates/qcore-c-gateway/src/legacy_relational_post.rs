@@ -81,18 +81,36 @@ pub(super) fn tested_stored_returns(
     if relational.is_empty() {
         return None;
     }
-    stored_returns_with(tokens, &|name| relational.contains_key(name), &read_test)
+    stored_returns_with(
+        tokens,
+        &|name| relational.contains_key(name),
+        &read_test,
+        false,
+    )
 }
 
 /// [`tested_stored_returns`] for the callees `is_callee` names, the rewritten
 /// condition read by `read` (card HANDOFF-DIRECT-CALL-READING shares it for
 /// the direct calls of hand-off declarations, whose constants may be
-/// enumerators).
+/// enumerators). With `keep_line_order`, every token of the rewritten
+/// statement before the moved call takes the line of its first token (`NAME`)
+/// and the closing parenthesis added after it the line of the call's own, so
+/// the stream's lines stay non-decreasing (`typed_place::occurrence` declines
+/// every statement of a stream whose lines are not); rule 11r's rewrite keeps
+/// its lines as before (`RELATIONAL-REWRITE-LINE-ORDER`).
 pub(super) fn stored_returns_with(
     tokens: &[Token],
     is_callee: &dyn Fn(&str) -> bool,
     read: &dyn Fn(&[&str]) -> Option<crate::relational_post::CallTest>,
+    keep_line_order: bool,
 ) -> Option<Vec<Token>> {
+    let relined = |token: &Token, line: usize| {
+        if keep_line_order {
+            synthetic(&token.text, line)
+        } else {
+            token.clone()
+        }
+    };
     let mut out: Option<Vec<Token>> = None;
     let mut copied = 0usize;
     let mut index = 1usize;
@@ -126,11 +144,20 @@ pub(super) fn stored_returns_with(
                 return None;
             }
             let line = tokens[close + 2].line;
+            let (open_line, close_line) = if keep_line_order {
+                (tokens[index].line, tokens[close].line)
+            } else {
+                (line, line)
+            };
             let mut rewritten = Vec::with_capacity(condition.len() + close - index + 3);
-            rewritten.extend_from_slice(&condition[..at]);
-            rewritten.push(synthetic("(", line));
+            rewritten.extend(
+                condition[..at]
+                    .iter()
+                    .map(|token| relined(token, open_line)),
+            );
+            rewritten.push(synthetic("(", open_line));
             rewritten.extend_from_slice(&tokens[index..=close]);
-            rewritten.push(synthetic(")", line));
+            rewritten.push(synthetic(")", close_line));
             rewritten.extend_from_slice(&condition[at + 1..]);
             let texts = rewritten
                 .iter()
@@ -146,8 +173,9 @@ pub(super) fn stored_returns_with(
         };
         let target = out.get_or_insert_with(|| Vec::with_capacity(tokens.len()));
         target.extend_from_slice(&tokens[copied..index]);
-        target.push(tokens[close + 2].clone());
-        target.push(tokens[close + 3].clone());
+        let open_line = tokens[index].line;
+        target.push(relined(&tokens[close + 2], open_line));
+        target.push(relined(&tokens[close + 3], open_line));
         target.extend(condition);
         target.push(tokens[if_close].clone());
         copied = if_close + 1;
@@ -397,6 +425,33 @@ mod tests {
             texts(&rewritten),
             "{ if ( ( rc = take ( p ) ) ! = 0 ) free ( p ) ; }"
         );
+    }
+
+    /// Card HANDOFF-DIRECT-CALL-READING: with `keep_line_order` the
+    /// rewritten statement's lines stay non-decreasing; rule 11r's own
+    /// rewrite keeps the `if` line first, as before.
+    #[test]
+    fn a_line_ordered_rewrite_keeps_the_stream_sorted() {
+        let mut tokens = stream("{ rc = take ( p ) ; if ( rc != 0 ) free ( p ) ; }");
+        for (index, token) in tokens.iter_mut().enumerate() {
+            token.line = if index >= 8 { 2 } else { 1 };
+        }
+        let contracts = environment();
+        let relational = contracts.relational();
+        let ordered = stored_returns_with(
+            &tokens,
+            &|name| relational.contains_key(name),
+            &read_test,
+            true,
+        )
+        .expect("rewritten");
+        assert_eq!(
+            texts(&ordered),
+            "{ if ( ( rc = take ( p ) ) ! = 0 ) free ( p ) ; }"
+        );
+        assert!(ordered.windows(2).all(|pair| pair[0].line <= pair[1].line));
+        let plain = tested_stored_returns(&tokens, &contracts).expect("rewritten");
+        assert!(!plain.windows(2).all(|pair| pair[0].line <= pair[1].line));
     }
 
     #[test]

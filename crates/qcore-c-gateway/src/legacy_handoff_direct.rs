@@ -87,9 +87,12 @@ pub(super) fn stored_returns(
         return None;
     }
     let is_callee = |name: &str| handoff_of(contracts, name).is_some();
-    super::relational_route::stored_returns_with(tokens, &is_callee, &|texts| {
-        crate::handoff_direct::read_test(texts, &is_callee, &resolve_in_unit, None)
-    })
+    super::relational_route::stored_returns_with(
+        tokens,
+        &is_callee,
+        &|texts| crate::handoff_direct::read_test(texts, &is_callee, &resolve_in_unit, None),
+        true,
+    )
 }
 
 impl Parser<'_> {
