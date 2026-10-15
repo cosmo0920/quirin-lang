@@ -148,6 +148,7 @@ fn example() -> (UnitRecord, LegacyProgramSummary, ResourceContracts) {
                 found: spellings.iter().map(|name| (*name).to_owned()).collect(),
                 missed: BTreeSet::new(),
                 null_premises: BTreeSet::new(),
+                relied: BTreeSet::new(),
             },
         );
         record.bodies.insert(

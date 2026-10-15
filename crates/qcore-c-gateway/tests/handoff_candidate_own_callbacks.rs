@@ -398,3 +398,41 @@ fn an_inexact_copy_refuses() {
     let refused = admitted(cases[1]).expect_err("refused");
     assert!(refused.contains("no invocation"), "{refused}");
 }
+
+/// A row resting on a decided invocation lists every declaration the
+/// decision read: the invoking declaration, its candidates (not spelled in
+/// the body), and a composed candidate's inner candidates.
+#[test]
+fn a_row_resting_on_a_composed_candidate_lists_what_it_read() {
+    use qcore_c_gateway::contract_dependencies::{Recording, row_dependencies};
+    if !clang_available() {
+        return;
+    }
+    let contracts = contracts();
+    let text = format!("{RECORDS}{CALLER}");
+    let run = run_of(
+        "void reg(struct handle_s *h, struct op_s *o) {\n\
+           h->conf.refresh_cb = quiet_refresh; o->op_cb = refresh_op; }\n",
+    );
+    let recording = Recording::start();
+    let outcome = scoped(Some(run), || {
+        analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text,
+                ..Default::default()
+            },
+            "use",
+            &contracts,
+        )
+    })
+    .expect("analysed");
+    let record = recording.finish();
+    let UnrestrictedLegacyResult::Safe(certificate) = &outcome else {
+        panic!("not Safe");
+    };
+    let dependencies = row_dependencies(&record, &certificate.summary, &contracts);
+    let row = &dependencies["use"];
+    for name in ["op_new", "destroy", "refresh_op", "quiet_refresh"] {
+        assert!(row.declarations.contains(name), "{name}: {row:?}");
+    }
+}

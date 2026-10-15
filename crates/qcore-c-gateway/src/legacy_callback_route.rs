@@ -63,6 +63,9 @@ pub(super) struct Classified {
     pub composed: BTreeMap<String, ResourceFunctionContract>,
     /// Why a composed candidate refuses.
     pub refused: BTreeMap<String, String>,
+    /// Every declaration a composed candidate's own invocations read (their
+    /// candidates, transitively).
+    pub inner: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl Classified {
@@ -75,6 +78,27 @@ impl Classified {
             }
             _ => detail,
         }
+    }
+
+    /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: note, for the row, every
+    /// declaration a decided invocation over `candidates` read: each
+    /// candidate, and a composed candidate's inner candidates.
+    fn note_relied(&self, candidates: &BTreeSet<String>) {
+        for name in candidates {
+            qcore_schemas::contract_consultation::note_relied(name);
+            for inner in self.inner.get(name).into_iter().flatten() {
+                qcore_schemas::contract_consultation::note_relied(inner);
+            }
+        }
+    }
+
+    /// Every declaration a decided invocation over `candidates` read.
+    fn relied(&self, candidates: &BTreeSet<String>) -> BTreeSet<String> {
+        let mut out = candidates.clone();
+        for name in candidates {
+            out.extend(self.inner.get(name).into_iter().flatten().cloned());
+        }
+        out
     }
 }
 
@@ -549,6 +573,7 @@ impl Parser<'_> {
     ) -> Classified {
         let mut composed = BTreeMap::new();
         let mut refused = BTreeMap::new();
+        let mut inner = BTreeMap::new();
         let classes = candidates
             .iter()
             .map(|name| {
@@ -562,7 +587,8 @@ impl Parser<'_> {
                     && crate::candidate_composition::composable(declared)
                 {
                     let class = match self.composed(name, declared, actuals, stack) {
-                        Ok(effective) => {
+                        Ok((effective, read)) => {
+                            inner.insert(name.clone(), read);
                             let class = match &declared.handoff {
                                 Some(handoff) => {
                                     self.handed_with(name, &effective, handoff, actuals, at)
@@ -626,6 +652,7 @@ impl Parser<'_> {
             classes,
             composed,
             refused,
+            inner,
         }
     }
 
@@ -642,7 +669,7 @@ impl Parser<'_> {
         declared: &RetainingContract,
         outer: &[CallbackActual],
         stack: &mut Vec<String>,
-    ) -> Result<ResourceFunctionContract, String> {
+    ) -> Result<(ResourceFunctionContract, BTreeSet<String>), String> {
         if crate::member_run_facts::installed().is_none() {
             return Err(
                 "its own member invocations are decided only over the run's set, which this \
@@ -652,6 +679,7 @@ impl Parser<'_> {
         }
         crate::candidate_composition::with_stack(stack, name, |stack| {
             let mut effective = declared.contract.clone();
+            let mut read = BTreeSet::new();
             for clause in &declared.callbacks {
                 let CallbackClause::MemberInvoked {
                     object,
@@ -687,6 +715,7 @@ impl Parser<'_> {
                         inner.detail(reason, candidate.as_deref(), &spelled)
                     ));
                 }
+                read.extend(inner.relied(&candidates));
                 let mut owned = BTreeMap::new();
                 self.require(&candidates, actuals, &inner, &mut owned);
                 for (index, nullable) in owned {
@@ -713,7 +742,7 @@ impl Parser<'_> {
                     }
                 }
             }
-            Ok(effective)
+            Ok((effective, read))
         })
     }
 
@@ -1059,6 +1088,7 @@ impl Parser<'_> {
                         return Err(refusal(function, &detail, reason));
                     }
                     if let (Ok(candidates), Ok(classes)) = (&resolution, &classes) {
+                        classes.note_relied(candidates);
                         self.require(candidates, actuals, classes, &mut operands.owned);
                         operands
                             .member_paths
@@ -1097,6 +1127,7 @@ impl Parser<'_> {
                         return Err(refusal(function, &detail, reason));
                     }
                     if let (Ok(candidates), Ok(classes)) = (&resolution, &classes) {
+                        classes.note_relied(candidates);
                         self.require(candidates, actuals, classes, &mut operands.owned);
                     }
                 }
@@ -1284,6 +1315,7 @@ impl Parser<'_> {
                             None => return Err(description),
                         }
                     }
+                    classes.note_relied(&candidates);
                     self.require(&candidates, actuals, &classes, &mut operands.owned);
                     operands
                         .member_paths

@@ -30,6 +30,10 @@ pub struct Consulted {
     /// Card NULL-SAFETY-PROPERTY (gateway rule 14n): the named null premises
     /// (`null-deref:FUNCTION:LINE:VARIABLE`) the logged work relied on.
     pub null_premises: BTreeSet<String>,
+    /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: declarations a decided callback
+    /// invocation read (its candidates, and a composed candidate's own inner
+    /// candidates), which the body need not spell.
+    pub relied: BTreeSet<String>,
 }
 
 impl Consulted {
@@ -39,12 +43,16 @@ impl Consulted {
         self.missed.extend(other.missed.iter().cloned());
         self.null_premises
             .extend(other.null_premises.iter().cloned());
+        self.relied.extend(other.relied.iter().cloned());
     }
 
     /// Whether the log noted nothing.
     #[must_use]
     pub fn is_empty(&self) -> bool {
-        self.found.is_empty() && self.missed.is_empty() && self.null_premises.is_empty()
+        self.found.is_empty()
+            && self.missed.is_empty()
+            && self.null_premises.is_empty()
+            && self.relied.is_empty()
     }
 }
 
@@ -56,6 +64,19 @@ pub fn note_null_premise(name: &str) {
             && !current.null_premises.contains(name)
         {
             current.null_premises.insert(name.to_owned());
+        }
+    });
+}
+
+/// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: note that the current work relied
+/// on the declaration `name` through a decided callback invocation (the
+/// body need not spell it), when a log is open.
+pub fn note_relied(name: &str) {
+    LOG.with(|log| {
+        if let Some(current) = log.borrow_mut().as_mut()
+            && !current.relied.contains(name)
+        {
+            current.relied.insert(name.to_owned());
         }
     });
 }

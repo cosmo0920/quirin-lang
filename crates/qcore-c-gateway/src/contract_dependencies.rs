@@ -565,6 +565,9 @@ pub fn row_dependencies(
                     .filter(|spelling| spoken(spelling, body, environment))
                     .cloned(),
             );
+            // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: a decided callback
+            // invocation's candidates are the row's, spelled or not.
+            spellings.extend(consulted.relied.iter().cloned());
         }
         if let Some(row) = summary.functions.get(function) {
             spellings.extend(cfg_callees(&row.cfg));
