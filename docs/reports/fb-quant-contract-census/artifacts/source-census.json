@@ -1,0 +1,1101 @@
+{
+ "card": "FB-QUANT-CONTRACT-CENSUS",
+ "kind": "read-only source census; sites, not findings",
+ "system_source": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+ "slice_source": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+ "system_revision": "046accf6aded7906f66a1baf0202da349e521736 (prepare.json)",
+ "slice_revision": "90978ac6a59e96d19621108f63e115eb4cd1c576 export (tail-pause-selection.json)",
+ "system": {
+  "file_sha256": {
+   "plugins/in_storage_backlog/sb.c": "705012c176a27a34d0d101c40bc4b28eb7e5ef35595a40b20c2a3a2b8670cf04",
+   "src/flb_input_chunk.c": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+   "src/flb_storage.c": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+   "src/flb_task.c": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d",
+   "src/flb_engine.c": "2f70e703eb8f8bd853b436d50b51214c89402bc93b79b5e979024dd2ab578683",
+   "src/flb_engine_dispatch.c": "3fdae998c1ce17d8277881ca3151006fe939e0686d57760fdf999064cc740015",
+   "src/flb_scheduler.c": "5e2c36c2d741689e4a9a2e5b3bffdd40fee422e84c280a87129895091b242f49",
+   "src/flb_output.c": "2d31e29a14f432716732d40a7c0f0276fc86d8daef7a5d2a0831307c18ba8fed"
+  },
+  "sites": {
+   "P1-invoke": [
+    {
+     "site": "src/flb_output.c:162",
+     "text": "p->cb_pre_run(ins->context, config);"
+    },
+    {
+     "site": "src/flb_output.c:658",
+     "text": "ins->p->cb_worker_exit(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_output.c:669",
+     "text": "p->cb_exit(ins->context, config);"
+    },
+    {
+     "site": "src/flb_output.c:1890",
+     "text": "ret = p->cb_init(ins, config, ins->data);"
+    },
+    {
+     "site": "src/flb_output.c:1910",
+     "text": "ret = ins->p->cb_worker_init(ins->context, ins->config);"
+    }
+   ],
+   "P1-test": [
+    {
+     "site": "src/flb_output.c:161",
+     "text": "if (p->cb_pre_run) {"
+    },
+    {
+     "site": "src/flb_output.c:657",
+     "text": "if (ins->p->cb_worker_exit) {"
+    },
+    {
+     "site": "src/flb_output.c:668",
+     "text": "if (p->cb_exit) {"
+    },
+    {
+     "site": "src/flb_output.c:1909",
+     "text": "if (ins->p->cb_worker_init) {"
+    }
+   ],
+   "P2-output-return": [],
+   "P2-task-ret": [
+    {
+     "site": "src/flb_engine.c:590",
+     "text": "ret     = FLB_TASK_RET(key);"
+    },
+    {
+     "site": "src/flb_engine.c:602",
+     "text": "if (ret == FLB_OK) {"
+    },
+    {
+     "site": "src/flb_engine.c:605",
+     "text": "else if (ret == FLB_ERROR) {"
+    },
+    {
+     "site": "src/flb_engine.c:608",
+     "text": "else if (ret == FLB_RETRY) {"
+    },
+    {
+     "site": "src/flb_engine.c:635",
+     "text": "if (ret == FLB_OK || ret == FLB_RETRY || ret == FLB_ERROR) {"
+    },
+    {
+     "site": "src/flb_engine.c:641",
+     "text": "if (ret == FLB_OK) {"
+    },
+    {
+     "site": "src/flb_engine.c:705",
+     "text": "else if (ret == FLB_RETRY) {"
+    },
+    {
+     "site": "src/flb_engine.c:851",
+     "text": "else if (ret == FLB_ERROR) {"
+    }
+   ],
+   "P2-filter-ret": [],
+   "P3-destroy-call": [
+    {
+     "site": "src/flb_input_chunk.c:709",
+     "text": "flb_task_destroy(old_input_chunk->task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:718",
+     "text": "flb_input_chunk_destroy(old_input_chunk, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:2716",
+     "text": "int flb_input_chunk_destroy(struct flb_input_chunk *ic, int del)"
+    },
+    {
+     "site": "src/flb_input_chunk.c:2909",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:2926",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:2944",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:3219",
+     "text": "flb_task_destroy(ic->task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:3224",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:3511",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_input_chunk.c:3542",
+     "text": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_storage.c:634",
+     "text": "flb_input_chunk_destroy(ic, FLB_FALSE);"
+    },
+    {
+     "site": "src/flb_task.c:269",
+     "text": "void flb_task_retry_destroy(struct flb_task_retry *retry)"
+    },
+    {
+     "site": "src/flb_task.c:303",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_task.c:305",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_task.c:331",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_task.c:429",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_task.c:613",
+     "text": "flb_event_chunk_destroy(evc);"
+    },
+    {
+     "site": "src/flb_task.c:739",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_task.c:814",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_task.c:834",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_task.c:887",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_task.c:899",
+     "text": "void flb_task_destroy(struct flb_task *task, int del)"
+    },
+    {
+     "site": "src/flb_task.c:929",
+     "text": "flb_input_chunk_destroy(task->ic, del);"
+    },
+    {
+     "site": "src/flb_task.c:936",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_task.c:944",
+     "text": "flb_event_chunk_destroy(task->event_chunk);"
+    },
+    {
+     "site": "src/flb_engine.c:145",
+     "text": "flb_task_destroy(task, FLB_FALSE);"
+    },
+    {
+     "site": "src/flb_engine.c:817",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_engine_dispatch.c:151",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_engine_dispatch.c:188",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_engine_dispatch.c:462",
+     "text": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "site": "src/flb_scheduler.c:319",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:328",
+     "text": "int flb_sched_request_destroy(struct flb_sched_request *req)"
+    },
+    {
+     "site": "src/flb_scheduler.c:365",
+     "text": "flb_sched_request_destroy(request);"
+    },
+    {
+     "site": "src/flb_scheduler.c:382",
+     "text": "flb_sched_request_destroy(request);"
+    },
+    {
+     "site": "src/flb_scheduler.c:518",
+     "text": "flb_coro_destroy(instance->coro);"
+    },
+    {
+     "site": "src/flb_scheduler.c:603",
+     "text": "flb_sched_request_destroy(req);"
+    },
+    {
+     "site": "src/flb_scheduler.c:676",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:732",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:787",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:829",
+     "text": "flb_sched_request_destroy(request);"
+    },
+    {
+     "site": "src/flb_scheduler.c:836",
+     "text": "flb_sched_request_destroy(request);"
+    },
+    {
+     "site": "src/flb_scheduler.c:844",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:851",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:905",
+     "text": "int flb_sched_timer_destroy(struct flb_sched_timer *timer)"
+    },
+    {
+     "site": "src/flb_scheduler.c:926",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:969",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_scheduler.c:990",
+     "text": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "site": "src/flb_output.c:295",
+     "text": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "site": "src/flb_output.c:340",
+     "text": "flb_task_retry_destroy(queued_task->retry);"
+    },
+    {
+     "site": "src/flb_output.c:526",
+     "text": "flb_output_flush_destroy(out_flush);"
+    },
+    {
+     "site": "src/flb_output.c:544",
+     "text": "int flb_output_instance_destroy(struct flb_output_instance *ins)"
+    },
+    {
+     "site": "src/flb_output.c:671",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:744",
+     "text": "flb_output_flush_destroy(out_flush);"
+    },
+    {
+     "site": "src/flb_output.c:1311",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1350",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1552",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1696",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1742",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1761",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1771",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1781",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1832",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1841",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1851",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1869",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1876",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1884",
+     "text": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_output.c:1894",
+     "text": "flb_output_instance_destroy(ins);"
+    }
+   ],
+   "P4-calloc": [
+    {
+     "site": "plugins/in_storage_backlog/sb.c:120",
+     "text": "result = (struct sb_out_chunk *) flb_calloc(1, sizeof(struct sb_out_chunk));"
+    },
+    {
+     "site": "plugins/in_storage_backlog/sb.c:161",
+     "text": "flb_calloc(1, sizeof(struct sb_out_queue));"
+    },
+    {
+     "site": "plugins/in_storage_backlog/sb.c:736",
+     "text": "ctx = flb_calloc(1, sizeof(struct flb_sb));"
+    },
+    {
+     "site": "src/flb_input_chunk.c:1487",
+     "text": "ic = flb_calloc(1, sizeof(struct flb_input_chunk));"
+    },
+    {
+     "site": "src/flb_input_chunk.c:2566",
+     "text": "ic = flb_calloc(1, sizeof(struct flb_input_chunk));"
+    },
+    {
+     "site": "src/flb_input_chunk.c:3636",
+     "text": "cr = flb_calloc(1, sizeof(struct input_chunk_raw));"
+    },
+    {
+     "site": "src/flb_storage.c:371",
+     "text": "sm = flb_calloc(1, sizeof(struct flb_storage_metrics));"
+    },
+    {
+     "site": "src/flb_task.c:446",
+     "text": "task = (struct flb_task *) flb_calloc(1, sizeof(struct flb_task));"
+    },
+    {
+     "site": "src/flb_task.c:707",
+     "text": "route = flb_calloc(1, sizeof(struct flb_task_route));"
+    },
+    {
+     "site": "src/flb_task.c:806",
+     "text": "route = flb_calloc(1, sizeof(struct flb_task_route));"
+    },
+    {
+     "site": "src/flb_task.c:860",
+     "text": "route = flb_calloc(1, sizeof(struct flb_task_route));"
+    },
+    {
+     "site": "src/flb_scheduler.c:480",
+     "text": "stc = flb_calloc(1, sizeof(struct flb_sched_timer_coro));"
+    },
+    {
+     "site": "src/flb_scheduler.c:746",
+     "text": "sched = flb_calloc(1, sizeof(struct flb_sched));"
+    },
+    {
+     "site": "src/flb_scheduler.c:874",
+     "text": "timer = flb_calloc(1, sizeof(struct flb_sched_timer));"
+    },
+    {
+     "site": "src/flb_output.c:822",
+     "text": "instance = flb_calloc(1, sizeof(struct flb_output_instance));"
+    },
+    {
+     "site": "src/flb_output.c:828",
+     "text": "instance->http_server_config = flb_calloc(1, sizeof(struct flb_http_server_config));"
+    },
+    {
+     "site": "src/flb_output.c:874",
+     "text": "ctx = flb_calloc(1, sizeof(struct flb_plugin_proxy_context));"
+    }
+   ],
+   "P4-cb-store": [
+    {
+     "site": "src/flb_scheduler.c:660",
+     "text": "timer->cb   = cb;"
+    }
+   ],
+   "P5-collector": [
+    {
+     "site": "plugins/in_storage_backlog/sb.c:769",
+     "text": "ret = flb_input_set_collector_time(in, cb_queue_chunks, 1, 0, config);"
+    }
+   ],
+   "P5-mk-event": [
+    {
+     "site": "src/flb_engine.c:320",
+     "text": "mk_event_timeout_destroy(config->evl, event);"
+    },
+    {
+     "site": "src/flb_engine.c:325",
+     "text": "config->flush_fd = mk_event_timeout_create(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:337",
+     "text": "config->flush_fd = mk_event_timeout_create(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1168",
+     "text": "ret = mk_event_channel_create(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1237",
+     "text": "ret = mk_event_channel_create(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1246",
+     "text": "ret = mk_event_channel_create(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1498",
+     "text": "config->shutdown_fd = mk_event_timeout_create(evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1564",
+     "text": "mk_event_timeout_destroy(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1711",
+     "text": "mk_event_channel_destroy(config->evl,"
+    },
+    {
+     "site": "src/flb_engine.c:1718",
+     "text": "mk_event_channel_destroy(config->evl,"
+    },
+    {
+     "site": "src/flb_scheduler.c:133",
+     "text": "fd = mk_event_timeout_create(config->evl, seconds, 0, event);"
+    },
+    {
+     "site": "src/flb_scheduler.c:672",
+     "text": "fd = mk_event_timeout_create(sched->evl, sec, nsec, event);"
+    },
+    {
+     "site": "src/flb_scheduler.c:723",
+     "text": "mk_event_timeout_destroy(timer->sched->evl, &timer->event);"
+    },
+    {
+     "site": "src/flb_scheduler.c:783",
+     "text": "fd = mk_event_timeout_create(evl, FLB_SCHED_REQUEST_FRAME, 0,"
+    },
+    {
+     "site": "src/flb_scheduler.c:794",
+     "text": "ret = mk_event_channel_create(sched->evl,"
+    },
+    {
+     "site": "src/flb_scheduler.c:843",
+     "text": "mk_event_timeout_destroy(sched->evl, &timer->event);"
+    },
+    {
+     "site": "src/flb_scheduler.c:856",
+     "text": "mk_event_channel_destroy(sched->evl,"
+    },
+    {
+     "site": "src/flb_output.c:1545",
+     "text": "ret = mk_event_channel_create(config->evl,"
+    }
+   ]
+  },
+  "counts": {
+   "P1-invoke": 5,
+   "P1-test": 4,
+   "P2-output-return": 0,
+   "P2-task-ret": 8,
+   "P2-filter-ret": 0,
+   "P3-destroy-call": 68,
+   "P4-calloc": 17,
+   "P4-cb-store": 1,
+   "P5-collector": 1,
+   "P5-mk-event": 18
+  }
+ },
+ "slice": {
+  "file_sha256": {
+   "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+   "src/flb_input_thread.c": "ac3517f13136d96f7e490fed15dca9ff1b1b9fcc30469b6ad2925ca324d7a40c",
+   "src/flb_lib.c": "93113329f2a3e4b815d55c57a6d14b1a746adb6381b73b3f9fc6690fe0e37e89",
+   "plugins/in_tail/tail.c": "ccab8c6078d677ff7a552c01d463ef3cb8c57b07b74041576ae759e5a6abc0f7",
+   "plugins/in_tail/tail_config.c": "bb909f8f62b0ac3ae12997536447c773a79e2d7418d19c28409c5634f348c537",
+   "plugins/in_tail/tail_db.c": "5e3f4c4d4e277f115de26abcad396ae84cfa731117f8ac9490285edc8dc1771a",
+   "plugins/in_tail/tail_dockermode.c": "ce9a430fa6e2da519288d29761e2fa0d90eb511f3cc37b9f80d33f0834b21835",
+   "plugins/in_tail/tail_file.c": "fef252bfc26b2167080931f5c15549f8279f096251e5269df00f2c3e1bae4e4d",
+   "plugins/in_tail/tail_file_budget.c": "111d1a4bc5f25fb8d556247b83d4bc1ec25d741f017301b3b87f180000057cff",
+   "plugins/in_tail/tail_fs_inotify.c": "454a92bedfaec32ede331c08ee22942783fa05a337a7c5515e1885a17be0c597",
+   "plugins/in_tail/tail_fs_stat.c": "34ef0a018be7cb17d0a79bf18979232c08ec8d3c0ae49d2a39b09b8047540df4",
+   "plugins/in_tail/tail_multiline.c": "3e610631fce4873a3078091c51ade0a51b66d12b6892c5e4e1dc24568ba049ae",
+   "plugins/in_tail/tail_scan.c": "5c6b541e31f9a7c35f5c47f5155c3037ed7d03d605739798845347bc3dad2857"
+  },
+  "sites": {
+   "P1-invoke": [
+    {
+     "site": "src/flb_input.c:2019",
+     "text": "ret = p->cb_init(ins, config, ins->data);"
+    },
+    {
+     "site": "src/flb_input.c:2046",
+     "text": "ret = ins->p->cb_pre_run(ins, config, ins->context);"
+    },
+    {
+     "site": "src/flb_input.c:2141",
+     "text": "p->cb_exit(ins->context, config);"
+    },
+    {
+     "site": "src/flb_input.c:3041",
+     "text": "ret = ins->p->cb_pause_checked(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_input.c:3044",
+     "text": "ins->p->cb_pause(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_input.c:3061",
+     "text": "ret = ins->p->cb_resume_checked(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_input.c:3064",
+     "text": "ins->p->cb_resume(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_input_thread.c:369",
+     "text": "ret = p->cb_init(ins, ins->config, ins->data);"
+    },
+    {
+     "site": "src/flb_input_thread.c:409",
+     "text": "ret = p->cb_pre_run(ins, ins->config, ins->context);"
+    },
+    {
+     "site": "src/flb_input_thread.c:507",
+     "text": "ins->p->cb_exit(ins->context, ins->config);"
+    },
+    {
+     "site": "src/flb_input_thread.c:594",
+     "text": "ins->p->cb_pre_exit(ins->context, ins->config);"
+    }
+   ],
+   "P1-test": [
+    {
+     "site": "src/flb_input.c:1970",
+     "text": "if (p->cb_init) {"
+    },
+    {
+     "site": "src/flb_input.c:2045",
+     "text": "else if (ins->p->cb_pre_run) {"
+    },
+    {
+     "site": "src/flb_input.c:2139",
+     "text": "if (p->cb_exit && ins->context) {"
+    },
+    {
+     "site": "src/flb_input.c:3040",
+     "text": "if (ins->p->cb_pause_checked != NULL) {"
+    },
+    {
+     "site": "src/flb_input.c:3043",
+     "text": "else if (ins->p->cb_pause != NULL) {"
+    },
+    {
+     "site": "src/flb_input.c:3060",
+     "text": "if (ins->p->cb_resume_checked != NULL) {"
+    },
+    {
+     "site": "src/flb_input.c:3063",
+     "text": "else if (ins->p->cb_resume != NULL) {"
+    },
+    {
+     "site": "src/flb_input.c:3084",
+     "text": "if ((ins->p->cb_pause || ins->p->cb_pause_checked) && ins->context) {"
+    },
+    {
+     "site": "src/flb_input.c:3102",
+     "text": "if ((ins->p->cb_resume || ins->p->cb_resume_checked) && ins->context) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:78",
+     "text": "if ((ins->p->cb_pause || ins->p->cb_pause_checked) && ins->context) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:85",
+     "text": "if ((ins->p->cb_resume || ins->p->cb_resume_checked) && ins->context) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:408",
+     "text": "if (p->cb_pre_run) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:506",
+     "text": "if (ins->p->cb_exit && ins->context) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:593",
+     "text": "if (ins->p->cb_pre_exit && ins->context) {"
+    },
+    {
+     "site": "src/flb_input_thread.c:663",
+     "text": "if (ins->p->cb_pre_run) {"
+    }
+   ],
+   "P2-output-return": [],
+   "P2-task-ret": [
+    {
+     "site": "plugins/in_tail/tail_db.c:99",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:109",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:118",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:129",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:138",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:145",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:360",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:381",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:387",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:394",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:437",
+     "text": "if (ret != FLB_OK) {"
+    },
+    {
+     "site": "plugins/in_tail/tail_db.c:443",
+     "text": "if (ret != FLB_OK) {"
+    }
+   ],
+   "P2-filter-ret": [],
+   "P3-destroy-call": [
+    {
+     "site": "src/flb_input.c:723",
+     "text": "static void flb_input_coro_destroy(struct flb_input_coro *input_coro)"
+    },
+    {
+     "site": "src/flb_input.c:728",
+     "text": "flb_coro_destroy(input_coro->coro);"
+    },
+    {
+     "site": "src/flb_input.c:747",
+     "text": "flb_input_coro_destroy(input_coro);"
+    },
+    {
+     "site": "src/flb_input.c:1152",
+     "text": "void flb_input_instance_destroy(struct flb_input_instance *ins)"
+    },
+    {
+     "site": "src/flb_input.c:1331",
+     "text": "flb_input_collector_destroy(collector);"
+    },
+    {
+     "site": "src/flb_input.c:1413",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:1420",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:1485",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:1513",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:1545",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:2081",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:2090",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:2100",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:2160",
+     "text": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "site": "src/flb_input.c:3140",
+     "text": "int flb_input_collector_destroy(struct flb_input_collector *coll)"
+    }
+   ],
+   "P4-calloc": [
+    {
+     "site": "src/flb_input.c:394",
+     "text": "instance = flb_calloc(1, sizeof(struct flb_input_instance));"
+    },
+    {
+     "site": "src/flb_input.c:400",
+     "text": "instance->http_server_config = flb_calloc(1, sizeof(struct flb_http_server_config));"
+    },
+    {
+     "site": "src/flb_input.c:467",
+     "text": "ctx = flb_calloc(1, sizeof(struct flb_plugin_input_proxy_context));"
+    },
+    {
+     "site": "src/flb_input.c:2232",
+     "text": "coll = flb_calloc(1, sizeof(struct flb_input_collector));"
+    },
+    {
+     "site": "src/flb_input_thread.c:235",
+     "text": "thi = flb_calloc(1, sizeof(struct flb_input_thread_instance));"
+    },
+    {
+     "site": "src/flb_lib.c:199",
+     "text": "ctx->event_channel = flb_calloc(1, sizeof(struct mk_event));"
+    },
+    {
+     "site": "plugins/in_tail/tail_config.c:102",
+     "text": "ctx = flb_calloc(1, sizeof(struct flb_tail_config));"
+    },
+    {
+     "site": "plugins/in_tail/tail_file.c:1620",
+     "text": "file = flb_calloc(1, sizeof(struct flb_tail_file));"
+    }
+   ],
+   "P4-cb-store": [
+    {
+     "site": "src/flb_input.c:2245",
+     "text": "coll->cb_collect  = cb;"
+    }
+   ],
+   "P5-collector": [
+    {
+     "site": "src/flb_input.c:2273",
+     "text": "int flb_input_set_collector_time(struct flb_input_instance *ins,"
+    },
+    {
+     "site": "src/flb_input.c:2294",
+     "text": "int flb_input_set_collector_event(struct flb_input_instance *ins,"
+    },
+    {
+     "site": "src/flb_input.c:2313",
+     "text": "int flb_input_set_collector_socket(struct flb_input_instance *ins,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:410",
+     "text": "ret = flb_input_set_collector_event(in, in_tail_collect_static,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:419",
+     "text": "ret = flb_input_set_collector_time(in, flb_tail_scan_callback,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:430",
+     "text": "ret = flb_input_set_collector_time(in, in_tail_watcher_callback,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:440",
+     "text": "ret = flb_input_set_collector_time(in, flb_tail_file_purge,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:450",
+     "text": "ret = flb_input_set_collector_event(in, in_tail_collect_pending,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:467",
+     "text": "ret = flb_input_set_collector_time(in, flb_tail_dmode_pending_flush,"
+    },
+    {
+     "site": "plugins/in_tail/tail.c:481",
+     "text": "ret = flb_input_set_collector_time(in, flb_tail_mult_pending_flush,"
+    },
+    {
+     "site": "plugins/in_tail/tail_fs_inotify.c:432",
+     "text": "ret = flb_input_set_collector_event(in, tail_fs_event,"
+    },
+    {
+     "site": "plugins/in_tail/tail_fs_inotify.c:444",
+     "text": "ret = flb_input_set_collector_time(in, in_tail_progress_check_callback,"
+    },
+    {
+     "site": "plugins/in_tail/tail_fs_stat.c:206",
+     "text": "ret = flb_input_set_collector_time(in, tail_fs_event,"
+    },
+    {
+     "site": "plugins/in_tail/tail_fs_stat.c:214",
+     "text": "ret = flb_input_set_collector_time(in, tail_fs_check,"
+    }
+   ],
+   "P5-mk-event": [
+    {
+     "site": "src/flb_input.c:1380",
+     "text": "ret = mk_event_channel_create(evl,"
+    },
+    {
+     "site": "src/flb_input.c:2351",
+     "text": "fd = mk_event_timeout_create(coll->evl, coll->seconds,"
+    },
+    {
+     "site": "src/flb_input.c:2362",
+     "text": "ret = mk_event_add(coll->evl,"
+    },
+    {
+     "site": "src/flb_input.c:3146",
+     "text": "mk_event_timeout_destroy(config->evl, &coll->event);"
+    },
+    {
+     "site": "src/flb_input.c:3150",
+     "text": "mk_event_del(config->evl, &coll->event);"
+    },
+    {
+     "site": "src/flb_input.c:3182",
+     "text": "mk_event_timeout_destroy(coll->evl, &coll->event);"
+    },
+    {
+     "site": "src/flb_input.c:3185",
+     "text": "ret = mk_event_del(coll->evl, &coll->event);"
+    },
+    {
+     "site": "src/flb_input.c:3248",
+     "text": "fd = mk_event_timeout_create(coll->evl, coll->seconds,"
+    },
+    {
+     "site": "src/flb_input.c:3261",
+     "text": "ret = mk_event_add(coll->evl,"
+    },
+    {
+     "site": "src/flb_input_thread.c:197",
+     "text": "mk_event_channel_destroy(thi->evl,"
+    },
+    {
+     "site": "src/flb_input_thread.c:262",
+     "text": "ret = mk_event_channel_create(thi->evl,"
+    },
+    {
+     "site": "src/flb_input_thread.c:275",
+     "text": "ret = mk_event_channel_create(thi->evl,"
+    },
+    {
+     "site": "src/flb_input_thread.c:287",
+     "text": "ret = mk_event_channel_create(thi->evl,"
+    },
+    {
+     "site": "src/flb_lib.c:209",
+     "text": "ret = mk_event_channel_create(config->ch_evl,"
+    },
+    {
+     "site": "src/flb_lib.c:237",
+     "text": "mk_event_del(ctx->event_loop, ctx->event_channel);"
+    }
+   ]
+  },
+  "counts": {
+   "P1-invoke": 11,
+   "P1-test": 15,
+   "P2-output-return": 0,
+   "P2-task-ret": 12,
+   "P2-filter-ret": 0,
+   "P3-destroy-call": 15,
+   "P4-calloc": 8,
+   "P4-cb-store": 1,
+   "P5-collector": 14,
+   "P5-mk-event": 15
+  }
+ },
+ "tree_registrations": {
+  "revision": "system export (046accf6)",
+  "plugins_by_kind": {
+   "custom": 1,
+   "filter": 24,
+   "input": 56,
+   "output": 50,
+   "processor": 9
+  },
+  "designated_cb_members": {
+   "cb_init": 140,
+   "cb_exit": 140,
+   "cb_pre_run": 66,
+   "cb_flush_buf": 56,
+   "cb_collect": 53,
+   "cb_flush": 50,
+   "cb_resume": 32,
+   "cb_pause": 32,
+   "cb_filter": 24,
+   "cb_process_logs": 9,
+   "cb_process_metrics": 9,
+   "cb_process_traces": 9,
+   "cb_pause_checked": 5,
+   "cb_resume_checked": 5,
+   "cb_ingest": 5,
+   "cb_worker_init": 2,
+   "cb_worker_exit": 2,
+   "cb_notification": 1,
+   "cb_pre_exit": 1
+  },
+  "selected": [
+   {
+    "kind": "input",
+    "name": "in_storage_backlog_plugin",
+    "site": "plugins/in_storage_backlog/sb.c:811",
+    "members": {
+     "cb_init": {
+      "value": "cb_sb_init",
+      "site": "plugins/in_storage_backlog/sb.c:814"
+     },
+     "cb_pre_run": {
+      "value": "NULL",
+      "site": "plugins/in_storage_backlog/sb.c:815"
+     },
+     "cb_collect": {
+      "value": "NULL",
+      "site": "plugins/in_storage_backlog/sb.c:816"
+     },
+     "cb_ingest": {
+      "value": "NULL",
+      "site": "plugins/in_storage_backlog/sb.c:817"
+     },
+     "cb_flush_buf": {
+      "value": "NULL",
+      "site": "plugins/in_storage_backlog/sb.c:818"
+     },
+     "cb_pause": {
+      "value": "cb_sb_pause",
+      "site": "plugins/in_storage_backlog/sb.c:819"
+     },
+     "cb_resume": {
+      "value": "cb_sb_resume",
+      "site": "plugins/in_storage_backlog/sb.c:820"
+     },
+     "cb_exit": {
+      "value": "cb_sb_exit",
+      "site": "plugins/in_storage_backlog/sb.c:821"
+     }
+    }
+   }
+  ]
+ },
+ "slice_registrations": [
+  {
+   "kind": "input",
+   "name": "in_tail_plugin",
+   "site": "plugins/in_tail/tail.c:867",
+   "members": {
+    "cb_init": {
+     "value": "in_tail_init",
+     "site": "plugins/in_tail/tail.c:870"
+    },
+    "cb_pre_run": {
+     "value": "in_tail_pre_run",
+     "site": "plugins/in_tail/tail.c:871"
+    },
+    "cb_collect": {
+     "value": "NULL",
+     "site": "plugins/in_tail/tail.c:872"
+    },
+    "cb_flush_buf": {
+     "value": "NULL",
+     "site": "plugins/in_tail/tail.c:873"
+    },
+    "cb_pause": {
+     "value": "in_tail_pause",
+     "site": "plugins/in_tail/tail.c:874"
+    },
+    "cb_resume": {
+     "value": "in_tail_resume",
+     "site": "plugins/in_tail/tail.c:875"
+    },
+    "cb_exit": {
+     "value": "in_tail_exit",
+     "site": "plugins/in_tail/tail.c:876"
+    }
+   }
+  }
+ ],
+ "tree_output_returns": {
+  "revision": "system export (046accf6)",
+  "sites": 242,
+  "files": 51,
+  "by_argument": {
+   "FLB_RETRY": 117,
+   "FLB_ERROR": 50,
+   "FLB_OK": 42,
+   "ret": 18,
+   "out_ret": 6,
+   "ret_code": 3,
+   "result": 2,
+   "flush_status": 1,
+   "produce_otlp_json(ctx, event_chunk": 1,
+   "produce_otlp_proto(ctx, event_chunk": 1,
+   "flush_ret": 1
+  }
+ },
+ "tree_counts": {
+  "revision": "system export (046accf6), src/ and plugins/ .c files, definitions included",
+  "counts": {
+   "timer_callback_registrations": {
+    "sites": 22,
+    "files": 15
+   },
+   "collector_registrations": {
+    "sites": 102,
+    "files": 57
+   },
+   "mk_event_add_or_timeout_create": {
+    "sites": 37,
+    "files": 21
+   },
+   "plugin_member_invocations": {
+    "sites": 36,
+    "files": 9
+   }
+  }
+ }
+}

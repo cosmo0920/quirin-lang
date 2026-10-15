@@ -1,0 +1,642 @@
+{
+ "inventory": "docs/reports/w45-fb-system-selection/lifetime-inventory.json",
+ "slice_contracts": "docs/reports/w47-tail-pause-bindings/README.md section 5",
+ "system": {
+  "OB-1": {
+   "statement": "every wrapper allocated in sb_append_chunk_to_segregated_backlog is either linked into exactly one backlog->chunks list or not created (allocation failure returns before any link)",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:269-275",
+   "needs": [
+    "allocation result tracking",
+    "list membership"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog"
+   ],
+   "patterns": {}
+  },
+  "OB-2": {
+   "statement": "no chunk is closed while any backlog wrapper still references it (the partial-insertion-failure mutation named by the card): on a -3 return of sb_append_chunk_to_segregated_backlogs the wrappers linked in earlier loop iterations must be removed before the caller closes the chunk",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:341-352, 436-475",
+   "needs": [
+    "loop-carried list membership",
+    "per-arm caller path enumeration",
+    "summary: cio_chunk_close frees"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs",
+    "plugins/in_storage_backlog/sb.c::sb_segregate_chunks"
+   ],
+   "patterns": {}
+  },
+  "OB-3": {
+   "statement": "each queue holds at most one wrapper per chunk pointer, so first-match removal (break at sb.c:244) retires all of a chunk's wrappers in that queue",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:222-245, 341-352 (one visit per queue per chunk)",
+   "needs": [
+    "list membership uniqueness",
+    "a premise that sb_segregate_chunks runs once (E-BL-09 breaks it)"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlogs",
+    "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog"
+   ],
+   "patterns": {}
+  },
+  "OB-4": {
+   "statement": "after a successful flb_input_chunk_map in cb_queue_chunks, no live wrapper references the chunk and exactly one ic owns it",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:687-713; src/flb_input_chunk.c:1496, 1775",
+   "needs": [
+    "callee summary of flb_input_chunk_map success arm",
+    "cross-queue list membership"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::cb_queue_chunks",
+    "src/flb_input_chunk.c::flb_input_chunk_map"
+   ],
+   "patterns": {}
+  },
+  "OB-5": {
+   "statement": "on a NULL return of flb_input_chunk_map the chunk is closed exactly once and not dereferenced after close",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:690-703; src/flb_input_chunk.c:1512-1516 and the other NULL arms",
+   "needs": [
+    "per-arm callee summary distinguishing close vs no-close (the return value alone is insufficient)"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::cb_queue_chunks",
+    "src/flb_input_chunk.c::flb_input_chunk_map"
+   ],
+   "patterns": {}
+  },
+  "OB-6": {
+   "statement": "in every cb_queue_chunks error arm the chunk pointer is captured before wrapper removal and chunk_instance is not used after sb_remove_chunk_from_segregated_backlogs frees it",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:635-647, 663-671, 677-684, 691-703, 709-713",
+   "needs": [
+    "use-after-free of wrapper (free inside callee)",
+    "ordering of reads (692-693, 706-707) before removal"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::cb_queue_chunks"
+   ],
+   "patterns": {}
+  },
+  "OB-7": {
+   "statement": "eviction retires every wrapper of an evicted chunk across all queues before closing it, and the safe iterator of the current queue is not invalidated by that cross-queue removal",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:551-573, 249-260",
+   "needs": [
+    "list membership",
+    "OB-3 uniqueness",
+    "iterator next-pointer validity"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_release_output_queue_space",
+    "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs"
+   ],
+   "patterns": {}
+  },
+  "OB-8": {
+   "statement": "per output, fs_backlog_chunks_size equals the sum of size over its linked wrappers when no saturation or underflow reset occurred",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:277-287, 228-238",
+   "needs": [
+    "counter arithmetic tied to list membership",
+    "saturation flags"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_append_chunk_to_segregated_backlog",
+    "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog"
+   ],
+   "patterns": {}
+  },
+  "OB-9": {
+   "statement": "every chunk reached at sb.c:436 ends the pass in exactly one state: wrapped in >=1 queue and locked+down; closed; left open without a wrapper (CIO_CORRUPTED kept); or the pass aborts with -3",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:408-482",
+   "needs": [
+    "path enumeration",
+    "cio return-code summary"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_segregate_chunks"
+   ],
+   "patterns": {}
+  },
+  "OB-10": {
+   "statement": "teardown retires every wrapper and touches only live output instances",
+   "decidable_from": "plugins/in_storage_backlog/sb.c:136-147, 179-194, 228-237; src/flb_engine.c:1648-1650; src/flb_output.c:553-560",
+   "needs": [
+    "list membership after unlink",
+    "cross-function shutdown ordering premise"
+   ],
+   "functions": [
+    "plugins/in_storage_backlog/sb.c::sb_destroy_backlog",
+    "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs",
+    "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog",
+    "src/flb_engine.c::flb_engine_start",
+    "src/flb_output.c::flb_output_instance_destroy"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_output.c::flb_output_instance_destroy"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_engine.c::flb_engine_start"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    }
+   }
+  },
+  "OR-1": {
+   "statement": "task->users returns to its pre-call value on every failure return of flb_output_task_singleplex_enqueue",
+   "decidable_from": "src/flb_output.c:368-374, 288-295",
+   "needs": [
+    "counter arithmetic",
+    "callee failure summary"
+   ],
+   "functions": [
+    "src/flb_output.c::flb_output_task_queue_enqueue",
+    "src/flb_output.c::flb_output_task_singleplex_enqueue"
+   ],
+   "patterns": {}
+  },
+  "OR-2": {
+   "statement": "every timer allocated in flb_sched_request_create is either reachable from a linked request or destroyed before return",
+   "decidable_from": "src/flb_scheduler.c:276-322, 874-889",
+   "needs": [
+    "allocation tracking",
+    "list membership of sched->timers"
+   ],
+   "functions": [
+    "src/flb_scheduler.c::flb_sched_request_create",
+    "src/flb_scheduler.c::flb_sched_timer_create"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_scheduler.c::flb_sched_request_create"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_scheduler.c:319"
+     ]
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_scheduler.c::flb_sched_request_create",
+      "src/flb_scheduler.c::flb_sched_timer_create"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_scheduler.c:276",
+      "src/flb_scheduler.c:879"
+     ]
+    }
+   }
+  },
+  "OR-3": {
+   "statement": "in the FLB_RETRY arm the task-lifetime obligation moved from users (decrement without release) to task->retries is discharged on schedule failure by retry destroy followed by flb_task_users_release",
+   "decidable_from": "src/flb_engine.c:729-803; src/flb_task.c:350; include/fluent-bit/flb_task.h:171-176",
+   "needs": [
+    "counter arithmetic",
+    "list size",
+    "release-check summary"
+   ],
+   "functions": [
+    "src/flb_engine.c::handle_output_event",
+    "src/flb_task.c::flb_task_retry_create"
+   ],
+   "patterns": {
+    "P2-return-code-ownership": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    },
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event",
+      "src/flb_task.c::flb_task_retry_create"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine.c:739",
+      "src/flb_engine.c:790"
+     ]
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine.c:800"
+     ]
+    }
+   }
+  },
+  "OR-4": {
+   "statement": "every return of flb_engine_dispatch_retry leaves the retry either with exactly one live scheduler request, or held by a singleplex entry / in-flight flush with a task user, or retired with the task released or still owned",
+   "decidable_from": "src/flb_engine_dispatch.c:95-177; src/flb_scheduler.c:599-604",
+   "needs": [
+    "interprocedural summary of flb_output_task_flush including the threaded arm",
+    "handler destroy-on-zero"
+   ],
+   "functions": [
+    "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+    "src/flb_scheduler.c::flb_sched_event_handler"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+      "src/flb_scheduler.c::flb_sched_event_handler"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine_dispatch.c:151",
+      "src/flb_engine_dispatch.c:152",
+      "src/flb_scheduler.c:603"
+     ]
+    }
+   }
+  },
+  "OR-5": {
+   "statement": "each scheduler request is destroyed exactly once: by the handler on 0, or by invalidation inside retry destruction on -1",
+   "decidable_from": "src/flb_scheduler.c:593-605, 354-388; src/flb_task.c:273-283 and every -1 path of flb_engine_dispatch_retry",
+   "needs": [
+    "path enumeration across dispatch_retry callees",
+    "at most one request per retry at invalidation (E-RT-14)"
+   ],
+   "functions": [
+    "src/flb_scheduler.c::flb_sched_event_handler",
+    "src/flb_scheduler.c::flb_sched_request_invalidate",
+    "src/flb_task.c::flb_task_retry_destroy"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_scheduler.c::flb_sched_event_handler",
+      "src/flb_scheduler.c::flb_sched_request_invalidate",
+      "src/flb_task.c::flb_task_retry_destroy"
+     ],
+     "null_rows": [
+      "src/flb_task.c::flb_task_retry_destroy"
+     ],
+     "sites_in_cited_ranges": [
+      "src/flb_scheduler.c:365",
+      "src/flb_scheduler.c:382",
+      "src/flb_scheduler.c:603",
+      "src/flb_task.c:274"
+     ]
+    }
+   }
+  },
+  "OR-6": {
+   "statement": "flb_output_task_queue_flush_one does not access queued_task after flb_output_task_flush returns -1, and advances the queue once",
+   "decidable_from": "src/flb_output.c:321-341, 389-409, 449-460",
+   "needs": [
+    "list membership (in_progress head identity)",
+    "free tracking inside callee"
+   ],
+   "functions": [
+    "src/flb_output.c::flb_output_task_flush_error",
+    "src/flb_output.c::flb_output_task_queue_flush_one",
+    "src/flb_output.c::flb_output_task_singleplex_flush_next"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_output.c::flb_output_task_queue_flush_one"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_output.c:340"
+     ]
+    }
+   }
+  },
+  "OR-7": {
+   "statement": "flb_output_task_flush returns -1 exactly when it did not add a task user",
+   "decidable_from": "src/flb_output.c:415-464",
+   "needs": [
+    "return-value/counter correlation"
+   ],
+   "functions": [
+    "src/flb_output.c::flb_output_task_flush_error"
+   ],
+   "patterns": {}
+  },
+  "OR-8": {
+   "statement": "at most one retry exists per (task, output); both NULL arms of flb_task_retry_create leave none for that output and the caller releases the completing user",
+   "decidable_from": "src/flb_task.c:325-345; src/flb_engine.c:730-777",
+   "needs": [
+    "list search summary",
+    "counter arithmetic"
+   ],
+   "functions": [
+    "src/flb_engine.c::handle_output_event",
+    "src/flb_task.c::flb_task_retry_create"
+   ],
+   "patterns": {
+    "P2-return-code-ownership": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    },
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event",
+      "src/flb_task.c::flb_task_retry_create"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine.c:739",
+      "src/flb_task.c:331"
+     ]
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    }
+   }
+  },
+  "OR-9": {
+   "statement": "retry destruction invalidates its scheduler request before the retry is freed, and an invalidated timer is never dispatched nor freed before the current event batch ends",
+   "decidable_from": "src/flb_task.c:273-283; src/flb_scheduler.c:336-349, 589-591, 894-902, 916-934; src/flb_engine.c:1418-1611",
+   "needs": [
+    "list membership",
+    "event-loop round ordering premise"
+   ],
+   "functions": [
+    "src/flb_engine.c::flb_engine_start",
+    "src/flb_scheduler.c::flb_sched_event_handler",
+    "src/flb_scheduler.c::flb_sched_request_destroy",
+    "src/flb_scheduler.c::flb_sched_timer_cleanup",
+    "src/flb_scheduler.c::flb_sched_timer_invalidate",
+    "src/flb_task.c::flb_task_retry_destroy"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_scheduler.c::flb_sched_event_handler",
+      "src/flb_scheduler.c::flb_sched_timer_cleanup",
+      "src/flb_task.c::flb_task_retry_destroy"
+     ],
+     "null_rows": [
+      "src/flb_task.c::flb_task_retry_destroy"
+     ],
+     "sites_in_cited_ranges": [
+      "src/flb_scheduler.c:926",
+      "src/flb_task.c:274"
+     ]
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_engine.c::flb_engine_start"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine.c:1419",
+      "src/flb_engine.c:1453",
+      "src/flb_engine.c:1498",
+      "src/flb_engine.c:1564"
+     ]
+    }
+   }
+  },
+  "OR-10": {
+   "statement": "a completion discharges the user of the task generation that emitted it (stale/duplicate completion refused)",
+   "decidable_from": "src/flb_engine.c:579-615; include/fluent-bit/flb_task.h:47-51; src/flb_task.c:48-78",
+   "needs": [
+    "cross-thread premise that users>0 pins the slot until the completion is handled",
+    "a generation or an equivalent pinned-slot invariant, absent from the source"
+   ],
+   "functions": [
+    "src/flb_engine.c::handle_output_event",
+    "src/flb_task.c::map_free_task_id",
+    "src/flb_task.c::map_get_task_id",
+    "src/flb_task.c::map_set_task_id"
+   ],
+   "patterns": {
+    "P2-return-code-ownership": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    },
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_engine.c::handle_output_event"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": []
+    }
+   }
+  },
+  "OR-11": {
+   "statement": "flb_task_retry_reschedule failure retires the retry and destroys the task only when no users and no retries remain, and the caller then returns -1 so the handler does not destroy the already-invalidated request",
+   "decidable_from": "src/flb_task.c:291-315; src/flb_engine_dispatch.c:108-114, 145-151; src/flb_scheduler.c:602-604",
+   "needs": [
+    "interprocedural path enumeration"
+   ],
+   "functions": [
+    "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+    "src/flb_scheduler.c::flb_sched_event_handler",
+    "src/flb_task.c::flb_task_retry_reschedule"
+   ],
+   "patterns": {
+    "P3-teardown-member-state": {
+     "custody_rows": [
+      "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+      "src/flb_scheduler.c::flb_sched_event_handler",
+      "src/flb_task.c::flb_task_retry_reschedule"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_engine_dispatch.c:151",
+      "src/flb_scheduler.c:603",
+      "src/flb_task.c:303",
+      "src/flb_task.c:305"
+     ]
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_task.c::flb_task_retry_reschedule"
+     ],
+     "null_rows": [],
+     "sites_in_cited_ranges": [
+      "src/flb_task.c:297"
+     ]
+    }
+   }
+  }
+ },
+ "slice": {
+  "C1": {
+   "statement": "collector access follows the loop owner",
+   "functions": [
+    "collector_create",
+    "flb_input_collector_start",
+    "flb_input_collector_pause",
+    "flb_input_collector_resume",
+    "flb_input_collector_delete",
+    "flb_input_collector_running",
+    "flb_input_set_collector_time",
+    "flb_input_set_collector_event",
+    "flb_input_set_collector_socket",
+    "flb_input_collectors_start",
+    "collector_start"
+   ],
+   "patterns": {
+    "P1-plugin-callback-member": {
+     "custody_rows": [
+      "src/flb_input.c::collector_create"
+     ],
+     "null_rows": []
+    },
+    "P4-fresh-constructor-callback-members": {
+     "custody_rows": [
+      "src/flb_input.c::collector_create",
+      "src/flb_input.c::flb_input_set_collector_event",
+      "src/flb_input.c::flb_input_set_collector_socket",
+      "src/flb_input.c::flb_input_set_collector_time"
+     ],
+     "null_rows": []
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_input.c::collector_start",
+      "src/flb_input.c::flb_input_collector_delete",
+      "src/flb_input.c::flb_input_collector_pause",
+      "src/flb_input.c::flb_input_collector_resume"
+     ],
+     "null_rows": []
+    }
+   }
+  },
+  "C2": {
+   "statement": "two completion meanings (pause/resume enqueued vs completed)",
+   "functions": [
+    "flb_input_pause",
+    "flb_input_resume",
+    "flb_input_thread_instance_pause",
+    "flb_input_thread_instance_resume",
+    "input_thread_instance_set_status",
+    "input_thread_instance_get_status",
+    "flb_input_pause_all",
+    "flb_input_resume_all"
+   ],
+   "patterns": {
+    "P1-plugin-callback-member": {
+     "custody_rows": [
+      "src/flb_input.c::flb_input_pause",
+      "src/flb_input.c::flb_input_resume"
+     ],
+     "null_rows": [
+      "src/flb_input.c::flb_input_pause",
+      "src/flb_input.c::flb_input_resume"
+     ]
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_input.c::flb_input_pause_all"
+     ],
+     "null_rows": [
+      "src/flb_input.c::flb_input_pause_all"
+     ]
+    }
+   }
+  },
+  "C3": {
+   "statement": "paired backend collectors (in_tail pause/resume)",
+   "functions": [
+    "in_tail_pause",
+    "in_tail_resume",
+    "flb_tail_fs_inotify_pause",
+    "flb_tail_fs_inotify_resume",
+    "flb_tail_fs_stat_pause",
+    "flb_tail_fs_stat_resume",
+    "flb_tail_fs_pause",
+    "flb_tail_fs_resume"
+   ],
+   "patterns": {
+    "P5b-loop-owner-obligation": {
+     "custody_rows": [
+      "plugins/in_tail/tail.c::in_tail_pause",
+      "plugins/in_tail/tail.c::in_tail_resume",
+      "plugins/in_tail/tail_fs_inotify.c::flb_tail_fs_inotify_pause",
+      "plugins/in_tail/tail_fs_inotify.c::flb_tail_fs_inotify_resume",
+      "plugins/in_tail/tail_fs_stat.c::flb_tail_fs_stat_pause",
+      "plugins/in_tail/tail_fs_stat.c::flb_tail_fs_stat_resume"
+     ],
+     "null_rows": []
+    }
+   }
+  },
+  "C4": {
+   "statement": "condvar publication",
+   "functions": [
+    "input_thread_instance_set_status",
+    "input_thread_instance_get_status",
+    "input_thread"
+   ],
+   "patterns": {
+    "P1-plugin-callback-member": {
+     "custody_rows": [
+      "src/flb_input_thread.c::input_thread"
+     ],
+     "null_rows": [
+      "src/flb_input_thread.c::input_thread"
+     ]
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_input_thread.c::input_thread"
+     ],
+     "null_rows": []
+    }
+   }
+  },
+  "C5": {
+   "statement": "join before release",
+   "functions": [
+    "flb_stop",
+    "flb_destroy",
+    "flb_input_thread_destroy",
+    "flb_input_thread_instance_exit"
+   ],
+   "patterns": {
+    "P1-plugin-callback-member": {
+     "custody_rows": [
+      "src/flb_input_thread.c::flb_input_thread_instance_exit"
+     ],
+     "null_rows": [
+      "src/flb_input_thread.c::flb_input_thread_instance_exit"
+     ]
+    },
+    "P5a-event-loop-registration": {
+     "custody_rows": [
+      "src/flb_lib.c::flb_destroy"
+     ],
+     "null_rows": []
+    }
+   }
+  }
+ }
+}
