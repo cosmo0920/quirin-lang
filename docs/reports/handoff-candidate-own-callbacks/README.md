@@ -3,10 +3,9 @@
 Card HANDOFF-CANDIDATE-OWN-CALLBACKS (wave 48, card-high). Gateway rule
 **13u** amended in place (with **12m** and **12n**); no new rule id. Contract
 specification **C04.19.7** added, C04.19.5 and C04.18 amended; no grammar
-change. Lean `QCore.CandidateComposition`. Base: local `main` `d708641bc`,
-rebased onto `5b1ceecd5` (FB-QUANT-CONTRACT-CENSUS and LEAN-4-35-TOOLCHAIN:
-records, Lean and scripts only; no product input differs, so the
-measurements below stand). The census and the frozen
+change. Lean `QCore.CandidateComposition`. Base: local `main` `d708641bc`;
+rebased onto `5b1ceecd5`, `711287771`, `635669fdb` and finally **`a7e0c9a3d`**
+(section 7 re-measures against that main). The census and the frozen
 [prediction](PREDICTION.md) were committed (`2932c1cd0`) before any
 implementation code. No pause: no new surface syntax was needed and the
 corpus has no cycle among composed candidates.
@@ -176,7 +175,9 @@ consequence of the refusal that disappears with it.
 
 ## 5. Ledger
 
-[`scripts/update_ledger.py`](scripts/update_ledger.py), 783 → **784**.
+[`scripts/update_ledger.py`](scripts/update_ledger.py), applied to main's
+ledger at each rebase ([`resolve_records.py`](scripts/resolve_records.py));
+on `a7e0c9a3d`: 785 → **786** (equal to `dimensions.named_followups`).
 
 * **Retired:** `HANDOFF-CANDIDATE-OWN-CALLBACKS` (its DISCHARGE holds).
 * **Amended:** `MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED` (narrowed to registry
@@ -188,8 +189,11 @@ consequence of the refusal that disappears with it.
 
 ## 6. Gate
 
-Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
-`private/hcoc/gate-g1/`): every code step at `066c51b54` (rebased onto
+Gate **g1** below is the gate on `5b1ceecd5`, superseded by **g6** on the
+final base (section 7), whose exits and summary are now [gate/](gate/) and
+[gate.json](gate.json).
+
+Gate **g1** (logs `private/hcoc/gate-g1/`): every code step at `066c51b54` (rebased onto
 `5b1ceecd5`; later commits change records only), the standing gate and the
 provider gate (due: `crates/qcore-schemas` changed) under one exclusive flock
 on the shared heavy lock (13:30:57Z–13:50:54Z;
@@ -213,6 +217,91 @@ on the shared heavy lock (13:30:57Z–13:50:54Z;
 
 The bold rule-id duplicate check is empty. Clang:
 [`gate/clang-version.txt`](gate/clang-version.txt).
+
+## 7. After the rebases (main `a7e0c9a3d`)
+
+Main moved three times while the card waited to land:
+LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED (`rk_no_plugin_library` on 34
+`client.qv` declarations), MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS (rule 30's
+body check through the unit's helpers, overlapping `legacy_callback_route.rs`
+at the rule-30 hook, disjoint from this card's code) and
+MEMBER-PREPASS-OTHER-ROUTES (the pre-pass on the current and no-build routes,
+`member_run_facts.rs`). The code commits rebased without a conflict; the
+records conflicted and were resolved by
+[`resolve_records.py`](scripts/resolve_records.py) (this card's row with
+main's as its "before it", the ledger re-applied on main's).
+
+**Combined arbiter** ([`build-main.sh`](scripts/build-main.sh),
+[`arbiters-then-gate.sh`](scripts/arbiters-then-gate.sh)): main's binary
+`ma7e` (`09e9a337…`, built from an archive export of `a7e0c9a3d`, reading
+that export's contracts, its libevent submodule cloned at the pinned commit)
+against the rebased tip's `b4` (`b3cc96d5…`, built at `ff20c2665`, the tip's
+code), each `run.json` naming its binary, every route with the null property:
+
+| route | main `a7e0c9a3d` | tip | report sha256 | wall (s) |
+| --- | --- | --- | --- | --- |
+| corpus | 936 / 9 / 3,889 | **938 / 9 / 3,887** | `6ac98bff…` → `fc645e9b…` | 676.9 → 680.2 |
+| system | 93 / 4 / 351 | the same, byte-identical | `f5d96eeb…` | 192.1 → 190.2 |
+| slice | 52 / 1 / 347 / 4 Pending | the same, byte-identical | `5ad81992…` | 153.3 → 155.9 |
+| null | tallies 1,113 / 1,435 / 2,355 / 18; 84 / 125 / 245; 71 / 103 / 232 | identical; corpus: the two rows' `custody` and `combined` fields only ([compare](artifacts/null-compare-rebased.txt)) | | |
+
+The corpus moves exactly as in section 4: the same 88 rows, the same two
+`Unknown → Safe`, the same leaves lost and gained
+([compare](artifacts/compare-corpus-rebased.json)). The tip's corpus report
+is byte-identical to the one measured on `635669fdb` (`b3`). **System and
+slice:** no row moves ([system](artifacts/compare-system-rebased.json),
+[slice](artifacts/compare-slice-rebased.json)). With the pre-pass now on
+those routes the composition is reachable there, but no composed candidate's
+invocation is in their units. Their wall times include main's new pre-pass.
+
+**The two Safe rows' premises and standings**
+([premises](artifacts/safe-row-premises.json),
+[`premises.py`](scripts/premises.py)): each lists 34 declarations, and the
+sidecar publishes `rk_no_plugin_library` (`P-RK-NO-PLUGIN-LIBRARY`) on **all
+34**. Beside it, `share_ack_batches_nonempty`, `assignor_callback` and
+`broker_monitor_callback` appear on the declarations that state them. Body
+standings (26 declared assumptions, 8 partly validated) are main's readings
+exactly ([`deps.py`](scripts/deps.py) over both sidecars). Main's correction
+of `rd_kafka_admin_fanout_worker` (partly validated → declared assumption)
+and its two promotions (the query-leaders worker,
+`rd_kafka_DeleteRecords_leaders_queried_cb`) stand on the tip. The one
+declaration main does not consult, Fluent Bit's `oauthbearer_token_refresh_cb`,
+is a declared assumption. Roll-up: declarations consulted 428 → 431, declared
+assumptions 318 → 321, Safe rows resting on a declared assumption 382 → 384;
+the fold demotes nothing. **No other movement.**
+
+**Gate g6** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/hcoc/gate-g6/`), the full standing gate and the provider gate, run
+because main's rule-30 change overlaps `legacy_callback_route.rs`. Every code
+step ran at `34a2a4999` (the code of `ff20c2665`; later commits change
+records only). One exclusive flock on the shared heavy lock covered the
+whole gate (19:15:49Z–19:33:25Z), started only with at least 80 GB free. Lean
+4.35.0.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check`, submodule, `fmt --check`, `clippy --locked -D warnings` | 0, 0, 0, 0 | |
+| `run_test_binaries.py` | 0 | 501 units, 514 summaries, **8,129 passed, 0 failed, 15 ignored** (`private/hcoc/tests-g6/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **327** audits passed |
+| provider gate | 0 each | `package.py` build, verify both packages; `cargo check --locked`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (Lean 326 → 327) |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests), docs index (10b, 10c) | 0, 0, 0, 0 | |
+
+**Discarded attempts** (retained under `private/hcoc/`, not evidence):
+* `m711`: main `711287771`'s corpus run. Its export's libevent was not a git
+  checkout (`Pin(GitUnavailable)`).
+* gates `g2` and `g3`, and arbiter `m635`: the shared disk filled
+  (`No space left on device`).
+* `m635b` and gate `g5`: stopped when main moved again, or when the disk fell
+  to 1 GB free.
+
+On `711287771` the targeted check passed (gateway tests 2,950 passed,
+compiler contract tests 16 passed, 325 Lean audits, Python 374, docs index;
+`private/hcoc/targeted-r1/`), and the tip measured 938 / 9 / 3,887
+(`d46113c1…`). Both are superseded by the measurements above.
 
 ## Files
 
