@@ -860,7 +860,7 @@ contract {
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
 
-**The served-queue premise after the rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, amended in place). The premise on `rd_kafka_q_wait_result` stays as written. Of the callbacks that call may run, the application's rk_conf callbacks now close over the run's registrations under `P-RK-NO-PLUGIN-LIBRARY` (C04.19.3), each candidate declared the identity, and none receives the served queue; `rd_kafka_poll_cb`, an `rko_serve` candidate, touches the queue only through `rkq_ts_last_poll_end` and `rd_kafka_q_reenq`, which takes no reference (both read by hand). The premise still rests on what no declaration in force at the serves states: `rd_kafka_poll_cb` itself (its op custody splits by return code; since card SUPPLIED-OWNED-RETURN-CODE-HANDOFF it is declared with its not-PASS hand-off, C04.19.5, but its own callback clauses make it read uncontracted where it is a candidate), `rd_kafka_toppar_op_serve`, and `rd_kafka_op_s.rko_op_cb`, whose run set reads open once a union's members share their stores. Measured, the function's row is unchanged: it refuses first at the uncontracted `rd_kafka_q_pop`. The card's own premise `rk_no_plugin_library` names the configuration the closure rests on and is published with every row resting on a declaration that carries it, exactly as this clause states.
+**The served-queue premise after the rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, amended in place). The premise on `rd_kafka_q_wait_result` stays as written. Of the callbacks that call may run, the application's rk_conf callbacks now close over the run's registrations under `P-RK-NO-PLUGIN-LIBRARY` (C04.19.3), each candidate declared the identity, and none receives the served queue; `rd_kafka_poll_cb`, an `rko_serve` candidate, touches the queue only through `rkq_ts_last_poll_end` and `rd_kafka_q_reenq`, which takes no reference (both read by hand). The premise still rests on what no declaration in force at the serves states: `rd_kafka_poll_cb` itself (its op custody splits by return code; since card SUPPLIED-OWNED-RETURN-CODE-HANDOFF it is declared with its not-PASS hand-off, C04.19.5; since card HANDOFF-CANDIDATE-OWN-CALLBACKS it is composed where it is a candidate, C04.19.7, and refuses there at its own invocation of the run-open `rko_u.offset_commit.cb`), `rd_kafka_toppar_op_serve`, and `rd_kafka_op_s.rko_op_cb`, whose run set reads open once a union's members share their stores. Measured, the function's row is unchanged: it refuses first at the uncontracted `rd_kafka_q_pop`. The card's own premise `rk_no_plugin_library` names the configuration the closure rests on and is published with every row resting on a declaration that carries it, exactly as this clause states.
 
 ### C04.19. Callback contracts
 
@@ -1291,12 +1291,20 @@ function of the path must compare the result with the guard's own constant
 (`QCore.ReturnCodeHandOff.an_admitted_branch_never_touches_a_taken_object`,
 `an_unbranched_guard_never_admits`). A body not read, two different
 readings of one function, a callback formal that escapes, a member copied
-into a local before its call (`rd_kafka_op_handle`'s `rko_serve`) or an
-unread construct refuses. Admitted, the candidate is classified by its
+into a variable before its call other than exactly (below) or an unread
+construct refuses. **An exact copy** (card HANDOFF-CANDIDATE-OWN-CALLBACKS):
+a call through a variable (a formal, or an automatic local) that the body
+writes exactly once, `v = o->m` or `T v = o->m;` with no conversion but an
+lvalue read, whose address it never takes, `o` a formal the body never
+writes, is also a site of the member `m` of `o` (`rd_kafka_op_handle`'s
+`callback = rko->rko_serve`); a formal so copied holds there the member's
+value or the one it arrived with, and the site's handling is the same either
+way (`QCore.CandidateComposition.an_exact_copy_calls_a_member_value`). Admitted, the candidate is classified by its
 custody contract with the handed formal taken at a `supplied_owned`
 position and kept by the invoker at `_` or a parameter; refused, the call
 refuses `callback-handoff-unbranched`. A candidate whose declaration also
-carries callback clauses reads uncontracted (C04.19). A **direct call** of a
+carries callback clauses is the composition of C04.19.7 when they are all
+member invocations, and reads uncontracted (C04.19) otherwise. A **direct call** of a
 hand-off declaration refuses (`callback-handoff-direct`): the caller-side
 reading of the result's branch is not made. The check reads the path the
 user's decision names; that the invoker invokes the callback only there is
@@ -1415,6 +1423,52 @@ value and the reading saw a null store into the path, `#stale` / `#kept`
 read untouched. Otherwise the clause stays a declared assumption (rules
 13i–13k), never withdrawn. That the taken object was released or handed on
 stays a declared assumption, as for the arms.
+
+#### C04.19.7. A candidate with its own invocations
+
+Card HANDOFF-CANDIDATE-OWN-CALLBACKS (gateway rule 13u, amended in place;
+rules 12m and 12n). No new surface: the clauses are the ones a declaration
+already states.
+
+**Meaning.** A callback candidate whose declaration in force carries member
+invocations (C04.19.3) of its own, and nothing else beside its custody
+contract and a hand-off (C04.19.5), calls, at each invocation, the
+candidates of those members. Its contract at an invocation is the
+**composition of its own clauses**:
+
+* each own member invocation is decided exactly as rule 12n decides it in
+  the candidate's own body: over the **run's** closed set (the pre-pass),
+  each inner candidate classified with the candidate as the invoker (rule
+  12m's caller branch check from the candidate's body), an empty run set
+  invoking nothing;
+* its formals' modes are its custody contract, each borrowed formal an inner
+  candidate requires live (`resource_owned(n)` at a parameter actual)
+  strengthened to `resource_owned(n)`;
+* its hand-off is checked at the outer invoker after the composition
+  (C04.19.5);
+* an inner candidate's member-path state (C04.19.6) at a formal the outer
+  invocation hands a **parameter** of its caller is not composed and
+  refuses; at `_` or `supplied_owned` it changes nothing on the caller's
+  state. A declaration stating member-path states of its own is not
+  composed.
+
+**What a consumer MUST apply (rule 13u).** The candidate counts as
+contracted only when every own invocation decides; otherwise it refuses,
+naming the invocation and the inner refusal (`callback-own-invocation-refused`,
+`QCore.CandidateComposition.a_composed_candidate_is_contracted_iff_each_own_invocation_decides`).
+Only the run's set: the member fold checks the members of the declarations
+a row lists, and a row does not list a composed candidate, so a route
+without the pre-pass refuses the composition. **Least fixed point** (as rule
+15w): a candidate reached again while its own invocations are decided
+refuses, so a cycle, direct or through others, never supports itself
+(`a_cycle_never_supports_itself`); a coinductive reading is not adopted. A
+declaration whose own callback clauses include anything but member
+invocations (a formal invocation, a table, a registry, a setter) stays
+uncontracted as a candidate.
+
+**Not checked against bodies.** The composition rests on the candidate's
+declaration and the inner candidates' contracts in force; a member
+invocation stays a declared assumption (rule 13i).
 
 ## C05. Manifests and immutable assumptions
 

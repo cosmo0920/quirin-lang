@@ -23,7 +23,8 @@ EIGHT = [
     "rd_kafka_share_fetch_fanout_op",
     "rd_kafka_share_commit_sync_fanout_op",
 ]
-OTHER = ["rd_kafka_oauthbearer_refresh_op", "rd_kafka_poll_cb", "rd_kafka_toppar_op_serve"]
+OTHER = ["rd_kafka_oauthbearer_refresh_op", "rd_kafka_poll_cb", "rd_kafka_toppar_op_serve",
+         "rd_kafka_consume_cb", "rd_kafka_background_queue_serve"]
 INVOKERS = [
     "rd_kafka_op_destroy", "rd_kafka_q_serve0", "rd_kafka_q_serve",
     "rd_kafka_q_serve_maybe_consume", "rd_kafka_q_pop_serve0", "rd_kafka_q_pop_serve",

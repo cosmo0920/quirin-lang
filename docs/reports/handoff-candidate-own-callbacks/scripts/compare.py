@@ -20,13 +20,10 @@ import re
 import sys
 
 DECLARED = [
-    # OP-CALLBACK-MEMBER-PATH-RELEASE: the eight member-path declarations and
-    # the invoker whose leaves name them (a lost or gained leaf naming one).
-    "rd_kafka_admin_worker",
-    "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
-    "rd_kafka_admin_fanout_worker", "rd_kafka_DeleteRecords_leaders_queried_cb",
-    "rd_kafka_ListOffsets_leaders_queried_cb", "rd_kafka_share_commit_async_fanout_op",
-    "rd_kafka_share_fetch_fanout_op", "rd_kafka_share_commit_sync_fanout_op",
+    # HANDOFF-CANDIDATE-OWN-CALLBACKS: the composed candidates and the
+    # invokers whose leaves name them (a lost or gained leaf naming one).
+    "rd_kafka_oauthbearer_refresh_op", "rd_kafka_poll_cb", "rd_kafka_consume_cb",
+    "rd_kafka_background_queue_serve", "rd_kafka_toppar_op_serve",
     "rd_kafka_op_destroy",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")

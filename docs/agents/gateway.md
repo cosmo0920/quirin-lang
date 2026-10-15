@@ -5092,6 +5092,28 @@ own anchor here.
     `admission_composes_through_a_forwarder`, `owner_vectors_hold`,
     `branch_vectors_hold`); `tests/return_code_handoff.rs`;
     [report](../reports/supplied-owned-return-code-handoff/README.md).
+    **An exact copy of the member** (card HANDOFF-CANDIDATE-OWN-CALLBACKS,
+    C04.19.5 amended): a call through a variable the body writes exactly
+    once, `v = o->m` or `T v = o->m;` with no conversion but an lvalue read,
+    whose address it never takes, `o` a formal the body never writes, is
+    also a site of the member (`handoff_branch::exact_copy`,
+    `Site::copy`, followed by `search`); the variable may be a formal
+    (`rd_kafka_op_handle`'s `callback = rko->rko_serve`): it then holds the
+    member's value or the one it arrived with, and the site's handling is
+    the same either way. A written cast, a second write, another member, a
+    taken address or a written object is not followed (the member's
+    invocation through it is not read, which refuses as before).
+    `QCore.CandidateComposition` (`an_exact_copy_calls_a_member_value`,
+    `a_copied_local_calls_a_member_value`,
+    `an_exact_copy_stays_in_the_closed_set`,
+    `an_inexact_copy_may_call_another_value`, `copy_vectors_hold` bound to
+    `COPY_VECTORS`, `an_admitted_copy_is_the_only_write`). Measured
+    (`examples/handoff_census.rs`): `rd_kafka_poll_cb` at
+    `rd_kafka_q_serve0`'s `rko_serve` is now admitted; at the pop serves it
+    is refused as at their formal; at `rd_kafka_q_serve`,
+    `_serve_maybe_consume` and `rd_kafka_op_req0` the member's invocation is
+    still not read (the op is created below the invoker, and
+    `rd_kafka_op_req0` records no site).
 
 <a id="constraint-12n"></a>
 
@@ -5323,6 +5345,10 @@ own anchor here.
     `the_layout_takes_only_shared_stores`, `layout_vectors_hold`);
     `LAYOUT_VECTORS`; `tests/rko_union_layout.rs`;
     [report](../reports/rko-op-cb-union-closure/README.md).
+    **A candidate's own member invocations** (card
+    HANDOFF-CANDIDATE-OWN-CALLBACKS) are decided by this rule as in the
+    candidate's own body, over the run's set only, when the candidate is
+    composed at an invocation (rule 13u's amendment).
 
 <a id="constraint-12o"></a>
 
@@ -6559,7 +6585,38 @@ own anchor here.
     rule 30**: a candidate whose declaration states member-path states (and
     nothing else beside its custody contract and a hand-off) reads as that
     contract, its states composed with the invoker's arms at the paths the
-    caller linked below a parameter actual.
+    caller linked below a parameter actual. **A candidate with its own
+    member invocations** (card HANDOFF-CANDIDATE-OWN-CALLBACKS, contract
+    specification C04.19.7; amends 12m and 12n with it): a candidate whose
+    declaration in force carries `resource_callback_member_invoked` clauses
+    and nothing else beside its custody contract and a hand-off
+    (`candidate_composition::composable`) is the composition of its own
+    clauses at the invocation (`Parser::classified_in`, `Parser::composed`):
+    each own invocation decided as rule 12n decides it in the candidate's own
+    body, over the **run's** set only (no pre-pass: refused, since the fold
+    checks only the members of the declarations a row lists), each inner
+    candidate classified with the candidate as rule 12m's invoker, then
+    `decide_run`; its formals strengthened by every inner requirement
+    (`strengthen`: a borrowed formal an inner candidate requires live reads
+    `resource_owned(n)`); its hand-off checked at the outer invoker after
+    the composition (`handed_with`); an inner member-path state at a formal
+    the outer invocation hands a parameter of its caller refuses (two levels
+    of rule 30 are not composed). Contracted only when every own invocation
+    decides; otherwise `callback-own-invocation-refused`, naming the
+    invocation and its inner refusal (`Classified::detail`). **Least fixed
+    point** (as rule 15w): a candidate reached again while its own
+    invocations are decided refuses (`with_stack`, naming the cycle), so a
+    cycle never supports itself; a coinductive reading is not adopted. A
+    declaration with any other own callback clause stays uncontracted as a
+    candidate. **Do not** decide an own invocation over a unit's own set,
+    admit a candidate on its own support, or compose a member-path state
+    through two invocations. `QCore.CandidateComposition`
+    (`a_composed_candidate_is_contracted_iff_each_own_invocation_decides`,
+    `an_undecided_own_invocation_refuses`, `a_cycle_never_supports_itself`,
+    `a_self_cycle_never_stands`, `a_two_candidate_cycle_never_stands`,
+    `compose_vectors_hold` bound to `COMPOSE_VECTORS`);
+    `tests/handoff_candidate_own_callbacks.rs`;
+    [report](../reports/handoff-candidate-own-callbacks/README.md).
     `QCore.CallbackContracts`
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
