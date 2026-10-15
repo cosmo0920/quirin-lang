@@ -1,0 +1,11 @@
+lean exit 0; Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release); Passed 324 Lean audits
+lean exit 0; Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release); Passed 324 Lean audits
+lean exit 0; Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release); Passed 324 Lean audits
+base-434: lean exit 0, Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release), Passed 324 Lean audits, 146 s
+renamed-434: lean exit 0, Lean (version 4.34.0, x86_64-unknown-linux-gnu, commit 293d5d0c0c3f3dded4688b3ccd6a33939ac5102b, Release), Passed 324 Lean audits, 14 s
+renamed-435: lean exit 0, Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release), Passed 324 Lean audits, 136 s
+base-434 vs renamed-434 axiom-lines.txt: identical (8568 / 8568 lines)
+base-434 vs renamed-434 audit-passes.txt: identical (324 / 324 lines)
+renamed-434 vs renamed-435 axiom-lines.txt: DIFFERENT (8568 / 8568 lines)
+renamed-434 vs renamed-435 audit-passes.txt: identical (324 / 324 lines)
+exit 0

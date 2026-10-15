@@ -1,0 +1,36 @@
+1,2c1,4
+< @instBEqOfDecidableEq Int Int.instDecidableEq
+< 'bInt' does not depend on any axioms
+---
+> @Std.PreorderPackage.toBEq Int
+>   (@Std.LinearPreorderPackage.toPreorderPackage Int
+>     (@Std.LinearOrderPackage.toLinearPreorderPackage Int Int.instLinearOrderPackage))
+> 'bInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+6,9c8,11
+< 'bUInt8' does not depend on any axioms
+< 'bUInt64' does not depend on any axioms
+< 'bInt8' does not depend on any axioms
+< 'bInt64' does not depend on any axioms
+---
+> 'bUInt8' depends on axioms: [propext, Classical.choice, Quot.sound]
+> 'bUInt64' depends on axioms: [propext, Classical.choice, Quot.sound]
+> 'bInt8' depends on axioms: [propext, Classical.choice, Quot.sound]
+> 'bInt64' depends on axioms: [propext, Classical.choice, Quot.sound]
+11,12c13,14
+< 'bOptInt' does not depend on any axioms
+< 'bListInt' does not depend on any axioms
+---
+> 'bOptInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+> 'bListInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+14c16
+< 'bFin' does not depend on any axioms
+---
+> 'bFin' depends on axioms: [propext, Classical.choice, Quot.sound]
+16c18
+< 'bPairStrInt' does not depend on any axioms
+---
+> 'bPairStrInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+21c23
+< 'neInt' does not depend on any axioms
+---
+> 'neInt' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,5 @@
+reserved_names.lean:6:38: error: unexpected identifier; expected '_' or forbidden token
+reserved_names.lean:8:16: error: unexpected token 'recall'; expected '_' or identifier
+reserved_names.lean:8:22: error: unexpected token ':'; expected identifier
+reserved_names.lean:8:45: error: unexpected token 'def'; expected identifier
+reserved_names.lean:10:14: error: unexpected token 'monotonicity_by'; expected '_' or identifier

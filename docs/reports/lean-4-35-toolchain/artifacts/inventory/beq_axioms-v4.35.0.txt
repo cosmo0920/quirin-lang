@@ -1,0 +1,23 @@
+@Std.PreorderPackage.toBEq Int
+  (@Std.LinearPreorderPackage.toPreorderPackage Int
+    (@Std.LinearOrderPackage.toLinearPreorderPackage Int Int.instLinearOrderPackage))
+'bInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bNat' does not depend on any axioms
+'bString' does not depend on any axioms
+'bChar' does not depend on any axioms
+'bUInt8' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bUInt64' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bInt8' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bInt64' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bBool' does not depend on any axioms
+'bOptInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bListInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bListNat' does not depend on any axioms
+'bFin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bBitVec' does not depend on any axioms
+'bPairStrInt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ltInt' does not depend on any axioms
+'decInt' does not depend on any axioms
+'maxInt' does not depend on any axioms
+'cmpInt' does not depend on any axioms
+'neInt' depends on axioms: [propext, Classical.choice, Quot.sound]

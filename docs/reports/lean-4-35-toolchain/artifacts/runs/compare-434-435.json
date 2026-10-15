@@ -1,0 +1,1252 @@
+{
+ "audits": [
+  324,
+  324
+ ],
+ "audit_order_identical": true,
+ "declarations_printed": [
+  8565,
+  8565
+ ],
+ "declaration_order_identical": true,
+ "axioms_outside_allowed": [],
+ "axiom_set_changes": 88,
+ "axiom_set_change_shapes": [
+  [
+   "propext -> Classical.choice+Quot.sound+propext",
+   38
+  ],
+  [
+   "Quot.sound+propext -> Classical.choice+Quot.sound+propext",
+   27
+  ],
+  [
+   "none -> Classical.choice+Quot.sound+propext",
+   23
+  ]
+ ],
+ "axiom_set_change_audits": [
+  [
+   "AuditCycle19.lean",
+   18
+  ],
+  [
+   "AuditOpCallbacks.lean",
+   9
+  ],
+  [
+   "AuditNativePlatformMatrix.lean",
+   8
+  ],
+  [
+   "AuditRetentionGuard.lean",
+   8
+  ],
+  [
+   "AuditScalarLoopBounds.lean",
+   7
+  ],
+  [
+   "AuditTypedContractFacts.lean",
+   7
+  ],
+  [
+   "AuditReturnCodeHandOff.lean",
+   6
+  ],
+  [
+   "AuditCycle18CallbackObligations.lean",
+   4
+  ],
+  [
+   "AuditScalarPositions.lean",
+   4
+  ],
+  [
+   "AuditIeee754.lean",
+   3
+  ],
+  [
+   "AuditFloatTypes.lean",
+   2
+  ],
+  [
+   "AuditScalarBufferValues.lean",
+   2
+  ],
+  [
+   "AuditSr5Soundness.lean",
+   2
+  ],
+  [
+   "AuditIndexExtent.lean",
+   1
+  ],
+  [
+   "AuditMemberPathRelease.lean",
+   1
+  ],
+  [
+   "AuditScalarCalls.lean",
+   1
+  ],
+  [
+   "AuditScalarTasks.lean",
+   1
+  ],
+  [
+   "AuditScalarTypedErrors.lean",
+   1
+  ],
+  [
+   "AuditScalarTypes.lean",
+   1
+  ],
+  [
+   "AuditStdBuffer.lean",
+   1
+  ],
+  [
+   "AuditTypedSourceOperators.lean",
+   1
+  ]
+ ],
+ "axiom_set_change_namespaces": [
+  [
+   "QCore.ChunkSource",
+   11
+  ],
+  [
+   "QCore.OpCallbacks",
+   9
+  ],
+  [
+   "QCore.NativePlatformMatrix",
+   8
+  ],
+  [
+   "QCore.RetentionGuard",
+   8
+  ],
+  [
+   "QCore.ChunkSource.UnitResult",
+   7
+  ],
+  [
+   "QCore.ScalarLoopBounds",
+   7
+  ],
+  [
+   "QCore.TypedContractFacts",
+   7
+  ],
+  [
+   "QCore.ReturnCodeHandOff",
+   6
+  ],
+  [
+   "QCore.Cycle18CallbackObligations",
+   4
+  ],
+  [
+   "QCore.ScalarPositions",
+   4
+  ],
+  [
+   "QCore.FloatTypes",
+   2
+  ],
+  [
+   "QCore.ScalarBufferValues",
+   2
+  ],
+  [
+   "QCore.Sr5Soundness",
+   2
+  ],
+  [
+   "QCore.Ieee754",
+   1
+  ],
+  [
+   "QCore.Ieee754.Vectors32",
+   1
+  ],
+  [
+   "QCore.Ieee754.Vectors64",
+   1
+  ],
+  [
+   "QCore.IndexExtent",
+   1
+  ],
+  [
+   "QCore.MemberPathRelease",
+   1
+  ],
+  [
+   "QCore.ScalarCalls",
+   1
+  ],
+  [
+   "QCore.ScalarTasks",
+   1
+  ],
+  [
+   "QCore.ScalarTypedErrors",
+   1
+  ],
+  [
+   "QCore.ScalarTypes",
+   1
+  ],
+  [
+   "QCore.StdBuffer",
+   1
+  ],
+  [
+   "QCore.TypedSourceOperators",
+   1
+  ]
+ ],
+ "other_output_differences": [],
+ "changes": [
+  {
+   "audit": "AuditCycle18CallbackObligations.lean",
+   "declaration": "QCore.Cycle18CallbackObligations.refuted_failure_branch_is_never_taken",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle18CallbackObligations.lean",
+   "declaration": "QCore.Cycle18CallbackObligations.opaque_callee_path_does_not_refute",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle18CallbackObligations.lean",
+   "declaration": "QCore.Cycle18CallbackObligations.pinned_initialization_branch_is_refuted",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle18CallbackObligations.lean",
+   "declaration": "QCore.Cycle18CallbackObligations.satisfied_guard_does_not_refute",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.accepted_summary_covers_every_boolean_prestate",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.accepted_contract_holds_on_every_source_path",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.accepted_source_effect_witness_covers_every_boolean_prestate",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.release_busy_error_path_preserves_state",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.release_busy_success_path_clears_busy",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.frame_assignment_preserves_boolean_state",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.unlock_reset_error_path_retains_metadata_write",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.unlock_reset_success_path_clears_lock",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.admitted_frame_constant_is_prestate_independent",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.frame_program_retains_exact_ordered_writes",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.frame_program_preserves_boolean_and_control_state",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.accepted_summary_covers_both_prestates",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.accepted_contract_holds_on_every_prestate",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.void_fallthrough_preserves_state",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.return_stops_all_later_effects",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.invalid_boolean_store_rejects",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.metadata_write_preserves_selected_field",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditCycle19.lean",
+   "declaration": "QCore.ChunkSource.UnitResult.integer_fallthrough_is_still_rejected",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditFloatTypes.lean",
+   "declaration": "QCore.FloatTypes.rounding_vectors_hold",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditFloatTypes.lean",
+   "declaration": "QCore.FloatTypes.truncation_vectors_hold",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditIeee754.lean",
+   "declaration": "QCore.Ieee754.fle_iff",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditIeee754.lean",
+   "declaration": "QCore.Ieee754.Vectors32.toInt_hold",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditIeee754.lean",
+   "declaration": "QCore.Ieee754.Vectors64.toInt_hold",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditIndexExtent.lean",
+   "declaration": "QCore.IndexExtent.one_past_formed_never_accessed",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditMemberPathRelease.lean",
+   "declaration": "QCore.MemberPathRelease.the_complement_partitions_the_results",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.valid_matrix_has_exact_profiles",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.selected_matrix_is_valid",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.all_unknown_matrix_is_valid",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.profile_relabel_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.same_thread_refuses",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.compiler_substitution_refuses",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.artifact_substitution_refuses",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditNativePlatformMatrix.lean",
+   "declaration": "QCore.NativePlatformMatrix.transparency_claim_refuses",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.an_undeclared_arm_is_unknown",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.a_call_without_otherwise_is_refused",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.arm_join_vectors_hold",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.a_decided_discriminant_selects_exactly_its_arm",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.a_decided_value_with_no_arm_is_unknown",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.a_rewrite_within_one_arm_keeps_it",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.an_undecided_discriminant_gives_the_join",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.an_unstable_discriminant_gives_the_join",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditOpCallbacks.lean",
+   "declaration": "QCore.OpCallbacks.decided_join_vectors_hold",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.a_failure_is_a_decided_value_in_range_that_fails",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.an_undecided_actual_keeps_the_clause",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.every_reading_is_within_the_cautious_one",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.an_undecided_call_reads_the_cautious_union",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.the_cautious_reading_bounds_every_reading",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.an_undecided_guard_is_safe_only_where_the_cautious_reading_is",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.a_validated_body_keeps_nothing_when_the_guard_fails",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditRetentionGuard.lean",
+   "declaration": "QCore.RetentionGuard.decision_controls",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.owner_after_is_the_guard",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.owner_after_ne",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.the_caller_keeps_what_the_guard_leaves",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.an_unbranched_guard_never_admits",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.owner_vectors_hold",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditReturnCodeHandOff.lean",
+   "declaration": "QCore.ReturnCodeHandOff.branch_vectors_hold",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarBufferValues.lean",
+   "declaration": "QCore.ScalarBufferValues.unsigned_negation_only_at_zero",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarBufferValues.lean",
+   "declaration": "QCore.ScalarBufferValues.bufferAgreement_holds",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarCalls.lean",
+   "declaration": "QCore.ScalarCalls.agreement_holds",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.zero_in_range",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.every_index_is_a_value",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.the_step_never_faults",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.run_from",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.the_loop_runs_exactly_count_times",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.the_count_is_the_iteration_count",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarLoopBounds.lean",
+   "declaration": "QCore.ScalarLoopBounds.u8_reaches_its_maximum_without_fault",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarPositions.lean",
+   "declaration": "QCore.ScalarPositions.bool_values_fit",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarPositions.lean",
+   "declaration": "QCore.ScalarPositions.fieldValue_in_range",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarPositions.lean",
+   "declaration": "QCore.ScalarPositions.construct_well_typed",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarPositions.lean",
+   "declaration": "QCore.ScalarPositions.decideCompare_bool_is_bool",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarTasks.lean",
+   "declaration": "QCore.ScalarTasks.taskAgreement_holds",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarTypedErrors.lean",
+   "declaration": "QCore.ScalarTypedErrors.typed_agreement_holds",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditScalarTypes.lean",
+   "declaration": "QCore.ScalarTypes.agreement_holds",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditSr5Soundness.lean",
+   "declaration": "QCore.Sr5Soundness.a_skippable_or_opaque_event_holds_no_clause",
+   "before": [
+    "Quot.sound",
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditSr5Soundness.lean",
+   "declaration": "QCore.Sr5Soundness.the_measured_conditional_row_holds_no_clause",
+   "before": [],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditStdBuffer.lean",
+   "declaration": "QCore.StdBuffer.the_byte_range_is_exactly_a_byte",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.equal_text_is_decided",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.unequal_text_is_decided",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.mixed_equality_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.ordered_text_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.false_and_missing_still_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.true_or_missing_still_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedContractFacts.lean",
+   "declaration": "QCore.TypedContractFacts.i128_addition_overflow_refuses",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  },
+  {
+   "audit": "AuditTypedSourceOperators.lean",
+   "declaration": "QCore.TypedSourceOperators.kernel_vectors_hold",
+   "before": [
+    "propext"
+   ],
+   "after": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ]
+  }
+ ]
+}

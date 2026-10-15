@@ -1,0 +1,19 @@
+{
+ "audits": [
+  324,
+  324
+ ],
+ "audit_order_identical": true,
+ "declarations_printed": [
+  8565,
+  8565
+ ],
+ "declaration_order_identical": true,
+ "axioms_outside_allowed": [],
+ "axiom_set_changes": 0,
+ "axiom_set_change_shapes": [],
+ "axiom_set_change_audits": [],
+ "axiom_set_change_namespaces": [],
+ "other_output_differences": [],
+ "changes": []
+}

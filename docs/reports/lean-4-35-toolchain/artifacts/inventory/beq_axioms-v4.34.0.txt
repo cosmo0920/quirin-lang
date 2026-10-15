@@ -1,0 +1,21 @@
+@instBEqOfDecidableEq Int Int.instDecidableEq
+'bInt' does not depend on any axioms
+'bNat' does not depend on any axioms
+'bString' does not depend on any axioms
+'bChar' does not depend on any axioms
+'bUInt8' does not depend on any axioms
+'bUInt64' does not depend on any axioms
+'bInt8' does not depend on any axioms
+'bInt64' does not depend on any axioms
+'bBool' does not depend on any axioms
+'bOptInt' does not depend on any axioms
+'bListInt' does not depend on any axioms
+'bListNat' does not depend on any axioms
+'bFin' does not depend on any axioms
+'bBitVec' does not depend on any axioms
+'bPairStrInt' does not depend on any axioms
+'ltInt' does not depend on any axioms
+'decInt' does not depend on any axioms
+'maxInt' does not depend on any axioms
+'cmpInt' does not depend on any axioms
+'neInt' does not depend on any axioms

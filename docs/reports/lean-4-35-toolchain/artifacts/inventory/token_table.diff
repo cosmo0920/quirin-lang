@@ -1,0 +1,17 @@
+123c123
+< EPost⟨
+---
+> EStack⟨
+146a147
+> `(grind_mod|
+249c250
+< epost⟨
+---
+> estack⟨
+313a315
+> monotonicity_by
+340a343,344
+> recall
+> recall?
+498d501
+< ▸*
