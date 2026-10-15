@@ -63,6 +63,9 @@ def strip_null(row):
     row = json.loads(json.dumps(row))
     null = row.get("null", {})
     null.pop("premises", None)
+    # The bounds environment's digest (null_deref.qv's text changed) is a
+    # contract-source identity, compared apart.
+    row.get("identity", {}).pop("contracts_sha256", None)
     if "contract_dependencies" in null:
         null["contract_dependencies"] = [d for d in null["contract_dependencies"]
                                          if not d.startswith("premise:")]
@@ -83,7 +86,9 @@ def null_route(before, after, route):
         return None
     brows = keyed(json.loads(l) for l in bp.read_text().splitlines() if l.strip())
     arows = keyed(json.loads(l) for l in ap.read_text().splitlines() if l.strip())
-    differing = [list(k) for k in brows if k not in arows or strip_null(arows[k]) != brows[k]]
+    differing = [list(k) for k in brows if k not in arows or strip_null(arows[k]) != strip_null(brows[k])]
+    identity_changed = sum(1 for k in brows if k in arows and brows[k].get("identity", {}).get("contracts_sha256")
+                           != arows[k].get("identity", {}).get("contracts_sha256"))
     extra = [list(k) for k in arows if k not in brows]
     resting, wrongly, lacking, listed = [], [], [], 0
     by_verdict = collections.Counter()
@@ -112,6 +117,7 @@ def null_route(before, after, route):
         "rows_before": len(brows), "rows_after": len(arows),
         "rows_differing_beyond_the_premise": len(differing), "differing": differing[:25],
         "rows_only_after": len(extra),
+        "rows_whose_bounds_digest_changed": identity_changed,
         "rows_resting_on_a_premised_fact": len(resting),
         "resting_by_null_verdict": dict(sorted(by_verdict.items())),
         "resting_rows_lacking_the_premise": lacking,

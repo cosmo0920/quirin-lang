@@ -496,6 +496,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
+| [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
+
 | [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |
 
 | [loop-v1](loop-v1/README.md) | LOOP-V1 — the first checked source loop (wave 25) |

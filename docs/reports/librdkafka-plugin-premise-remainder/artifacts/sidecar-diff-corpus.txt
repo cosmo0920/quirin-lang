@@ -1,0 +1,15 @@
+35 differences
+21 $.contract_revision.pinned_in_force[].module_sha256
+2 $.contract_revision.pinned_in_force[].contract_sha256
+1 $.contract_dependencies.declarations.rd_kafka_crash.contract_sha256
+1 $.contract_dependencies.declarations.rd_kafka_crash.premises
+1 $.contract_dependencies.declarations.rd_kafka_dump0.contract_sha256
+1 $.contract_dependencies.declarations.rd_kafka_dump0.premises
+1 $.contract_inclusion.modules.qcore-provider-librdkafka:librdkafka/memory.qv.module.sha256
+1 $.contract_inclusion.modules.qcore-provider-librdkafka:librdkafka/memory.qv.source
+1 $.contract_revision.contracts.rd_kafka_crash.contract_sha256
+1 $.contract_revision.contracts.rd_kafka_dump0.contract_sha256
+1 $.contract_revision.locks./home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a239ba6992513cd7e/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock.sha256
+1 $.contract_revision.locks./home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a239ba6992513cd7e/providers/qcore-provider-librdkafka/contracts.lock.sha256
+1 $.sources./home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a239ba6992513cd7e/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv
+1 $.sources.qcore-provider-librdkafka:librdkafka/memory.qv
