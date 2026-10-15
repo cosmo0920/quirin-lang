@@ -4,7 +4,8 @@
 //!
 //! Over the Clang body:
 //!
-//! * the stated formal's pointee is `struct TAG` for every stated tag;
+//! * the stated formal's pointee (through the unit's typedefs) is `struct
+//!   TAG` for every stated tag; an unread pointee leaves an assumption;
 //! * every store of a pointer value into a member path of a stated formal is
 //!   a null pointer constant into a path stated `#released`, `#moved`, or a
 //!   set of one of them; a store of a record holding a stated path, any other
@@ -121,7 +122,11 @@ fn null_store(node: &Value, parameter: &str, path: &str) -> bool {
 ///
 /// # Errors
 /// A contradiction, naming it.
-pub fn validates(function: &Value, states: &[MemberPathState]) -> Result<bool, String> {
+pub fn validates(
+    function: &Value,
+    states: &[MemberPathState],
+    pointee: &dyn Fn(&Value) -> Option<String>,
+) -> Result<bool, String> {
     let parameters = children(function)
         .iter()
         .filter(|child| kind(child) == "ParmVarDecl")
@@ -149,21 +154,20 @@ pub fn validates(function: &Value, states: &[MemberPathState]) -> Result<bool, S
             .iter()
             .filter(|state| state.parameter == formal)
             .collect::<Vec<_>>();
-        let ty = &parameter["type"];
-        let spelled = format!(
-            "{} {}",
-            ty["qualType"].as_str().unwrap_or(""),
-            ty["desugaredQualType"].as_str().unwrap_or("")
-        );
-        for state in &stated {
-            if !spelled.contains(&format!("struct {} ", state.member.tag))
-                && !spelled.contains(&format!("struct {}*", state.member.tag))
-            {
-                return Err(format!(
-                    "parameter {formal}'s pointee is not `struct {}`",
-                    state.member.tag
-                ));
+        // The formal's pointee record, through the unit's typedefs (Clang's
+        // JSON gives no desugared spelling for a pointer to a typedef): a
+        // different record contradicts the stated tag; an unread one leaves
+        // the clause a declared assumption.
+        match pointee(parameter) {
+            Some(record) => {
+                if let Some(state) = stated.iter().find(|state| state.member.tag != record) {
+                    return Err(format!(
+                        "parameter {formal}'s pointee is `{record}`, not `{}`",
+                        state.member.tag
+                    ));
+                }
             }
+            None => validated = false,
         }
         let state_of = |path: &str| stated.iter().find(|state| state.member.path == path);
         let below_a_stated = |path: &str| {
@@ -288,6 +292,18 @@ mod tests {
         ]})
     }
 
+    /// The check with the pointee read from the spelled `struct TAG *`.
+    fn validates_spelled(function: &Value, states: &[MemberPathState]) -> Result<bool, String> {
+        validates(function, states, &|parameter| {
+            parameter["type"]["qualType"]
+                .as_str()?
+                .strip_prefix("struct ")?
+                .split_whitespace()
+                .next()
+                .map(str::to_owned)
+        })
+    }
+
     fn state(path: &str, fate: Fate, maybe: bool) -> MemberPathState {
         MemberPathState {
             parameter: 0,
@@ -307,7 +323,7 @@ mod tests {
             json!({"kind": "ReturnStmt"}),
         ]);
         assert_eq!(
-            validates(&body, &[state("u.a", Fate::Moved, false)]),
+            validates_spelled(&body, &[state("u.a", Fate::Moved, false)]),
             Ok(true)
         );
     }
@@ -319,15 +335,15 @@ mod tests {
             store(&["u", "a"], null()),
         ]);
         assert_eq!(
-            validates(&body, &[state("u.a", Fate::Released, false)]),
+            validates_spelled(&body, &[state("u.a", Fate::Released, false)]),
             Ok(false)
         );
         assert_eq!(
-            validates(&body, &[state("u.a", Fate::Released, true)]),
+            validates_spelled(&body, &[state("u.a", Fate::Released, true)]),
             Ok(true)
         );
         assert_eq!(
-            validates(&function(vec![]), &[state("u.a", Fate::Moved, true)]),
+            validates_spelled(&function(vec![]), &[state("u.a", Fate::Moved, true)]),
             Ok(false)
         );
     }
@@ -335,26 +351,26 @@ mod tests {
     #[test]
     fn contradictions_withdraw() {
         let other = function(vec![store(&["u", "b"], null())]);
-        assert!(validates(&other, &[state("u.a", Fate::Moved, false)]).is_err());
+        assert!(validates_spelled(&other, &[state("u.a", Fate::Moved, false)]).is_err());
         let value = function(vec![store(
             &["u", "a"],
             json!({"kind": "DeclRefExpr", "referencedDecl": {"id": "q"}}),
         )]);
-        assert!(validates(&value, &[state("u.a", Fate::Moved, false)]).is_err());
+        assert!(validates_spelled(&value, &[state("u.a", Fate::Moved, false)]).is_err());
         let stale = function(vec![store(&["u", "a"], null())]);
-        assert!(validates(&stale, &[state("u.a", Fate::Stale, false)]).is_err());
+        assert!(validates_spelled(&stale, &[state("u.a", Fate::Stale, false)]).is_err());
         let wrong_tag = json!({"kind": "FunctionDecl", "inner": [
             {"kind": "ParmVarDecl", "id": "p", "type": {"qualType": "struct other *"}},
             {"kind": "CompoundStmt", "inner": []},
         ]});
-        assert!(validates(&wrong_tag, &[state("u.a", Fate::Stale, false)]).is_err());
+        assert!(validates_spelled(&wrong_tag, &[state("u.a", Fate::Stale, false)]).is_err());
     }
 
     #[test]
     fn an_unstored_stale_path_validates() {
         let body = function(vec![json!({"kind": "ReturnStmt"})]);
         assert_eq!(
-            validates(&body, &[state("u.a", Fate::Stale, false)]),
+            validates_spelled(&body, &[state("u.a", Fate::Stale, false)]),
             Ok(true)
         );
     }

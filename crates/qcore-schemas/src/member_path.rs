@@ -286,6 +286,39 @@ mod tests {
         }
     }
 
+    /// The Lean vectors (`QCore.MemberPathRelease.composeVectors`) are these.
+    #[test]
+    fn compose_vectors_are_the_lean_vectors() {
+        let lean = include_str!("../../../proof/QCore/MemberPathRelease.lean");
+        let start = lean.find("def composeVectors").expect("the Lean vectors");
+        let body = &lean[start..];
+        let body = &body[..body.find("\n]").expect("the vector list ends")];
+        let rows = body
+            .lines()
+            .filter_map(|line| {
+                let line = line.trim().trim_end_matches(',');
+                let inner = line.strip_prefix('(')?.strip_suffix(')')?;
+                let parts = inner
+                    .split(',')
+                    .map(|part| part.trim().trim_matches('"').to_owned())
+                    .collect::<Vec<_>>();
+                Some(parts)
+            })
+            .collect::<Vec<_>>();
+        let rust = COMPOSE_VECTORS
+            .iter()
+            .map(|&(fate, maybe, arm, outcome)| {
+                vec![
+                    fate.to_owned(),
+                    maybe.to_string(),
+                    arm.to_owned(),
+                    outcome.to_owned(),
+                ]
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(rows, rust);
+    }
+
     #[test]
     fn candidates_that_disagree_refuse() {
         assert_eq!(

@@ -236,3 +236,4 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 27 | [concurrency](concurrency.md#constraint-27) | The mutex model supports initially-unlocked non-recursive mutexes only; condvars are lifted only for rule 10q's derived shapes (predicate-loop wait, locked signal, quiescent init/destroy).… |
 | 28 | [evidence](evidence.md#constraint-28) | Declared profiles, observations_trusted, GuardFootprintAuthority,… |
 | 29 | [validation](validation.md#constraint-29) | A test discovers repository inputs from tracked files only; ignored and untracked content never changes a result. |
+| 30 | [gateway](gateway.md#constraint-30) | A callback's member-path state composes with the release's arms before them; a stale path, a may-set at a path no arm releases, an unstated path and disagreeing candidates refuse. |

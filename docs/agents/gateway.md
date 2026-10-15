@@ -7664,3 +7664,64 @@ own anchor here.
     position's later lowerings is registered
     (`GAPO-UNCAST-ACTUALS-AFTER-LATER-LOWERINGS`). `QCore.ReturnCorrectness`
     (`uncast_at_least_as_strict`, `cast_actual_hid_a_released_place`).
+
+<a id="constraint-30"></a>
+
+30. **A callback's member-path state composes with the release's arms
+    before them: a linked object is decided only when every candidate's
+    every reading takes it out of the caller's custody exactly once, or
+    none does; a stale path, a may-set at a path no arm releases, an
+    unstated path and candidates that disagree refuse.** Card
+    OP-CALLBACK-MEMBER-PATH-RELEASE (contract specification C04.19.6,
+    grammar G05d), on the user's decision of 2026-10-15 ("B: state + set",
+    "Build it now"). Loader `crates/qcore-contract/src/contract_member_path.rs`
+    (`quant live #P: TAG.PATH |-> V [when GUARD];`, `V` one of `#released`,
+    `#moved`, `#stale`, `#kept` or exactly `{V', #kept}`; a guard only beside
+    a hand-off of the same formal, its complement), schema
+    `qcore_schemas::member_path` (`compose_fate`, `join`, `compose`,
+    `state_at`, `COMPOSE_VECTORS`), `RetainingContract::{member_paths,
+    member_paths_withdrawn}`; route G `legacy_member_path_route.rs`
+    (`operands`, `apply`), hooked in `legacy_callback_route.rs`
+    (`classified`: such a candidate reads as its custody contract, after rule
+    12m's branch check when it also hands its formal; `callback_operands`:
+    the states at each parameter position of a decided invocation, and a
+    direct call refuses `member-path-direct`; `apply`: the composition before
+    `apply_arms`), in `legacy_constructed_route.rs` (`decide_member`: a
+    decided registration's candidates, the same composition) and in
+    `legacy_retained_by.rs`. Only a tracked object the caller linked at a
+    member path of the object handed at a parameter position is affected
+    (`supplied_owned` and `_` hand an object that was never the caller's); a
+    path every candidate leaves `#kept` is left to the arms as before.
+    Otherwise each candidate's state there is composed with the arms' join at
+    the path (`every` / `some` / `none`; an arm on another object counts
+    `none`) by C04.19.6's table and joined over the candidates: `gone`
+    releases the linked object once and drops the link, `stays` keeps it,
+    and the refusals are `member-path-double-release` (a stale path an arm
+    releases), `member-path-stale` (a stale path no arm releases: an
+    invocation is zero or more times), `member-path-undecided` (a may-set at
+    a path no arm releases, candidates that disagree, a link that is not one
+    live object) and `member-path-unstated` (a path below a stated one; a
+    candidate with no declaration in force refuses
+    `callback-uncontracted`). Body check `crates/qcore-c-gateway/src/member_path_check.rs`
+    (evidence `30`, rule 13i's `ClauseKind::MemberState`): in a unit that
+    defines the declaration, a pointer store into a member path of the stated
+    formal other than a null constant into a `#released` / `#moved` path
+    (or set), a store of a record holding a stated path, a store into or the
+    address of a `#stale` or `#kept` path, and a pointee other than `struct
+    TAG` withdraw the states there (the candidate has no contract in force);
+    validated when every must path has a top-level null store before every
+    `return` (no `goto`), every set one null store, every stale path no
+    store; otherwise a declared assumption. Measured on the corpus: the
+    eight librdkafka candidates of shape (b) are declared
+    (`OP-CALLBACK-CANDIDATE-CONTRACTS`); `rd_kafka_op_destroy`'s 131 leaves
+    now name `rd_kafka_oauthbearer_refresh_op`, no status moves. **Do not**
+    read an unnamed member as released, a stale path as decided, a may-set
+    as taken where no arm releases the path, or a member-path declaration at
+    a direct call. `QCore.MemberPathRelease`
+    (`gone_leaves_exactly_once`, `stays_never_leaves`,
+    `a_stale_path_never_decides`, `an_unstated_member_never_decides`,
+    `a_refusal_refuses_the_join`, `a_gone_join_is_gone_for_every_candidate`,
+    `the_set_is_the_join_of_its_members`,
+    `the_complement_partitions_the_results`, `compose_vectors_hold`);
+    `tests/member_path_release.rs`;
+    [report](../reports/op-callback-member-path-release/README.md).

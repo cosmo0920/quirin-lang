@@ -1302,6 +1302,105 @@ reading of the result's branch is not made. The check reads the path the
 user's decision names; that the invoker invokes the callback only there is
 the declaration's own assumption.
 
+#### C04.19.6. A release or move-out at a member path
+
+Card OP-CALLBACK-MEMBER-PATH-RELEASE (gateway rule 30).
+
+> **USER DECISION 2026-10-15** (verbatim): "B: state + set" and "Build it
+> now".
+
+The integrator's instructions with it: alternative B exactly as proposed in
+the card's [prediction](reports/op-callback-member-path-release/PREDICTION.md):
+the value keywords `#released`, `#moved`, `#stale`, `#kept`; the set form
+`{V, #kept}`, one of the two on each path, only the two-member sets proposed
+(any other set rejects the module); the guard absent or the complement of
+the hand-off guard; paths not named are kept; the composition with the
+destroy arms follows the proposal's table exactly (a stale path an arm
+releases refuses as a double release, a stale path with no arm refuses, a
+maybe-taken path with no arm refuses, an unstated path refuses, two
+candidates that disagree at a linked path refuse); no move destination
+(named in a source comment only); the non-NULL empty-list producer of
+`rd_kafka_share_fetch_fanout_op` a named premise on its declaration.
+
+```qcore
+extern fn rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_owned(rko, nonnull);
+    ensures normal resource_return_none();
+    quant live #rko: #owner |-> #callback when #result == @RD_KAFKA_OP_RES_KEEP;
+    quant live #rko: rd_kafka_op_s.rko_u.leaders.eonce |-> #released when #result != @RD_KAFKA_OP_RES_KEEP;
+    quant live #rko: rd_kafka_op_s.rko_u.leaders.partitions |-> {#moved, #kept} when #result != @RD_KAFKA_OP_RES_KEEP;
+    quant live #rko: rd_kafka_op_s.rko_u.leaders.opaque |-> {#stale, #kept} when #result != @RD_KAFKA_OP_RES_KEEP;
+};
+```
+
+**Grammar** (G05, G05d; total-or-reject). `quant live #P: TAG.PATH |-> V
+[when #result OP C];` with `P` a depth-one pointer parameter stated
+`resource_borrowed` with no kind, or the formal the declaration's hand-off
+hands (`resource_owned(P, nonnull)`); `TAG.PATH` a dotted member path below
+`struct TAG`; `V` one of `#released`, `#moved`, `#stale`, `#kept`, or exactly
+`{V', #kept}` with `V'` one of the first three. A guard stands only beside a
+hand-off of the same formal and is its complement (the same constant, the
+other operator), so every result is in exactly one of the two classes. One
+state per path of a formal, never a path below another stated one. The
+clauses stand only beside a hand-off and plain predicates, and withhold the
+declaration from the function map. The four words join the reserved
+keywords of a `#` form.
+
+**Meaning.** After the call, in the class the guard admits (every return
+when unguarded): `#released` — the object the member held is released and
+the member reads cleared (`NULL`, or an emptied list); `#moved` — the object
+is handed to another holder, never the caller, and the member reads cleared;
+`#stale` — the object is taken (released or handed on) and the member still
+designates it; `#kept` — untouched, the state of every path not named;
+`{V, #kept}` — `V` on some paths, `#kept` on the others. No destination is
+stated: for the caller a moved object leaves its custody as
+`resource_consumed` does.
+
+**What a consumer MUST apply (rule 30).** At a callback invocation (C04.19,
+C04.19.3) whose actual at the stated formal's position is a parameter of the
+invoking declaration (the caller's own object; a `supplied_owned` or `_`
+position hands an object that was never the caller's, where a state changes
+nothing), the candidate reads as its custody contract (with a hand-off,
+after rule 12m's caller branch check), and, for each tracked object the
+caller linked at a member path of that object, each candidate's state there
+is composed with the join of the invoking declaration's arms at the path
+(C04.19.2; an arm on another object, or none, is `none`), before the arms:
+
+| candidate leaves the path | an arm releases it (`every`) | some arms do (`some`) | no arm does (`none`) |
+| --- | --- | --- | --- |
+| `#kept` (unnamed) | released by the arm | refused (`arm-undecided`, as before) | stays linked |
+| `#released`, `#moved` | gone: the arm reads it cleared | gone | gone |
+| `#stale` | refused, a double release | refused, a double release | refused: an invocation is zero or more times |
+| `{#released or #moved, #kept}` | gone on both readings | refused | refused (undecided) |
+| `{#stale, #kept}` | refused | refused | refused |
+| unstated (no declaration in force, a withdrawn one, a path below a stated one) | refused | refused | refused |
+
+The outcomes join over the candidates: equal outcomes stand, a refusal
+stands over anything, `gone` against `stays` refuses. A path every candidate
+leaves `#kept` is left to the arms exactly as before. `gone` releases the
+linked object once and drops the link (`QCore.MemberPathRelease.gone_leaves_exactly_once`,
+`a_gone_join_is_gone_for_every_candidate`); a decided registration
+(C04.19.4) narrows the candidates as it narrows the arms. A **direct call** of
+a declaration carrying member-path states refuses (`member-path-direct`).
+
+**Checked against the body (rule 30).** In a unit that defines the declared
+function: every store of a pointer value into a member path of the stated
+formal must be a null pointer constant into a path stated `#released`,
+`#moved` or a set of one of them, a store of a record holding a stated path
+and a store into (or the address of) a `#stale` or `#kept` path being
+contradictions, and the formal's pointee `struct TAG`; a contradiction
+withdraws the states in that unit (the candidate has no contract in force
+there). A path stated `#released` / `#moved` is validated by a null store
+into it that is a statement of the body's top-level block before every
+`return` (no `goto` or label), a set by one null store, `#stale` by the
+absence of stores; a body that leaves a stated reading to its callees keeps
+the clause a declared assumption (rules 13i–13k). That the taken object was
+released or handed on stays a declared assumption, as for the arms.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

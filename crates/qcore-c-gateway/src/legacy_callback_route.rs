@@ -2078,7 +2078,9 @@ pub(crate) fn settle(
         }
         let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
             unit.function(name).map(|function| {
-                crate::member_path_check::validates(function, &declaration.member_paths)
+                crate::member_path_check::validates(function, &declaration.member_paths, &|node| {
+                    unit.member_facts().record_of_node(node, true)
+                })
             })
         })
         .flatten();

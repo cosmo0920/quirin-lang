@@ -1,0 +1,1326 @@
+{
+ "statuses_before": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 93
+ },
+ "added": {
+  "call to `_`: callback `_` (from `_`) has no contract in force (callback-uncontracted)": 93
+ },
+ "moving_rows": 62,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23964: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23964: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23664: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23670: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23664: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23670: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23868: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23874: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23868: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23874: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_memberid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_poll_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "24325: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24358: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24412: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "24325: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24358: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24412: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23597: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23607: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23597: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "23607: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23383: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23383: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_queue_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20149: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20149: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21766: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21766: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "22841: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "22851: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "22841: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "22851: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "24345: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24469: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "24345: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "24469: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23742: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23742: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_group_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "24590: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "occurrence": 1,
+   "function": "rd_kafka_event_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19714: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19714: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_build_response_rko",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20908: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20908: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21264: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21267: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21264: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21267: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21140: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21140: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20807: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20827: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20807: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20827: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20259: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20268: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20259: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20268: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cluster_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "23390: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "23390: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_topic_set_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "22828: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "22828: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_message_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20564: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20564: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20069: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20069: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_err_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20233: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20233: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20241: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20241: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20195: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20195: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20359: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20359: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_reply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20184: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20184: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "22462: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "22462: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_filter",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19885: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19885: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_outdated_messages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20089: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20103: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20089: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20103: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_fix_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20480: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20480: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19800: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19800: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge_toppar_version",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19834: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19834: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20152: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20185: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20196: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20152: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20185: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20196: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_share_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20267: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20267: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_wait_result",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20434: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20434: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "22066: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "22066: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21246: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21270: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21246: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21270: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19762: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19762: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_rebalance_protocol",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19741: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "19745: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19741: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "19745: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_subscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19782: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19782: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21150: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21243: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21150: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "21243: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "21076: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "21076: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_op_req0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20445: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20445: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_cumulative",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20288: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20289: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20288: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20289: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_empty",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20226: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20226: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_gaps",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20216: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20216: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20251: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20251: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_multi_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20190: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20190: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "unittest_ack_mapping_single_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20158: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20158: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_op_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19644: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19644: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20392: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20400: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20418: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20428: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20436: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20392: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20400: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20410: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20418: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20428: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20436: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20307: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20314: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20321: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20307: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20314: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20321: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20257: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20257: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19861: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19861: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19927: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19927: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20112: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20119: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20127: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20112: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20119: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20127: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20181: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20188: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20196: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20203: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20181: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20188: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20196: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20203: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "20038: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20047: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20054: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "20038: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20047: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)",
+    "20054: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_DeleteRecords_leaders_queried_cb",
+    "callee:rd_kafka_op_destroy"
+   ],
+   "lost": [
+    "19985: call to `rd_kafka_op_destroy`: callback `rd_kafka_DeleteRecords_leaders_queried_cb` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ],
+   "gained": [
+    "19985: call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+   ]
+  }
+ ]
+}
