@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "HANDOFF-CANDIDATE-OWN-CALLBACKS card gate on base a7e0c9a3d (rebased from d708641bc), every code step at 34a2a4999, scripts docs/reports/handoff-candidate-own-callbacks/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/hcoc/gate-g6 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 501 units, 514 summaries, 8,129 passed, 0 failed, 15 ignored, exit 0 (private/hcoc/tests-g6), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 327 audits passed (326 -> 327 on main a7e0c9a3d: QCore.CandidateComposition); provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 8129,
+  "note": "LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER card gate on base 635669fdb (rebased from 711287771), every code step at aaa01a6e2, scripts docs/reports/librdkafka-plugin-premise-remainder/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/lppr/gate-g3 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 500 units, 513 summaries, 8,112 passed, 0 failed, 15 ignored, exit 0 (private/lppr/tests-g3), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 326 audits passed (326: 324, MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS's AuditMemberPathUnitHelpers and AuditNullMemberPremise); provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Rebased onto a7e0c9a3d (MEMBER-PREPASS-OTHER-ROUTES; its landed code is disjoint from this card's; records conflicted only): targeted check at f535907ac under the shared heavy lock (scripts targeted.sh, close_targeted.py; logs private/lppr/targeted-r2; exits in gate/targeted-r2/): cargo check --workspace --all-targets 0, fmt --check 0, clippy --locked 0; cargo test -p qcore-contract 211 passed, the gateway null tests 26 passed, qcore-audit --lib 117 passed, member_prepass_routes 6 passed, the compiler contract tests 26 passed, 0 failed; check_lean_audits.py 327 audits passed; the first matrix regeneration refused this file's earlier lean_audits against the tree's count (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT), so lean_audits records the targeted check's count and the matrix, the python suite and the docs index were run again (09a2, 09b2, 10b2, 10c2). Rebased onto b2fbde2c5 (HANDOFF-CANDIDATE-OWN-CALLBACKS, which also records dependencies; the spec C04.18 paragraph and the records conflicted): targeted check at 2a3346c3b under the shared heavy lock (scripts targeted.sh, close_targeted.py; logs private/lppr/targeted-r3; exits in gate/targeted-r3/): cargo check --workspace --all-targets 0, fmt --check 0, clippy --locked 0; cargo test -p qcore-contract 211 passed, the gateway tests (r2: its null tests; r3: cargo test -p qcore-c-gateway) 2961 passed, the audit tests (r2: --lib; r3: cargo test -p qcore-audit) 305 passed, the compiler contract corpus, loader, view and inheritance tests 26 passed, 0 failed; check_lean_audits.py 328 audits passed; lean_audits records the targeted check's count, and the matrix, the python suite and the docs index were run on it (09a2, 09b2, 10b2, 10c2).",
+  "workspace_tests": 8112,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 327,
+  "lean_audits": 328,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6943,6 +6943,7 @@
    "AuditNoBuildScope.lean",
    "AuditNullDeref.lean",
    "AuditNullDerefGrade.lean",
+   "AuditNullMemberPremise.lean",
    "AuditNullMemberScope.lean",
    "AuditNullTriage.lean",
    "AuditNullTriagePaths.lean",
@@ -7093,7 +7094,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe6a7912904b1cc/docs/reports/handoff-candidate-own-callbacks/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a239ba6992513cd7e/docs/reports/librdkafka-plugin-premise-remainder/gate.json)"
  },
  "named_followups": [
   {

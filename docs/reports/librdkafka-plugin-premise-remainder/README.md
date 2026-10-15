@@ -259,6 +259,19 @@ Clang: [`gate/clang-version.txt`](gate/clang-version.txt). The bold rule-id dupl
 * `check_lean_audits.py` passed **327** audits.
 * The first matrix regeneration refused `gate.json`'s 326 against the tree's 327, so `lean_audits` now records 327. The matrix, the Python suite (374 OK) and the docs index were rerun, all 0.
 
+**After the rebase onto `b2fbde2c5`** (HANDOFF-CANDIDATE-OWN-CALLBACKS; the spec C04.18 paragraph and the records conflicted), a second targeted check ran at `2a3346c3b` under the shared lock (logs `private/lppr/targeted-r3/`; exits in [gate/targeted-r3/](gate/targeted-r3/)):
+
+* `cargo check --workspace --all-targets`, `fmt --check` and `clippy --locked` were all 0.
+* Tests passed, with 0 failed throughout:
+  * `cargo test -p qcore-contract`: 211 passed;
+  * `cargo test -p qcore-c-gateway`: 2,961 passed, 9 ignored;
+  * `cargo test -p qcore-audit`: 305 passed;
+  * the compiler contract tests: 26 passed.
+* `check_lean_audits.py` passed **328** audits.
+* `gate.json`'s 327 was refused against the tree's 328 and now records 328. The matrix, the Python suite (374 OK) and the docs index were rerun, all 0.
+
+The combined arbiter is in section 5.
+
 Two earlier attempts are retained in `private/lppr/` and discarded:
 
 * **g1** (`0f2f8c8e3`, before the rebase). The host disk filled while the test binaries were building ("No space left on device", then a linker bus error), and later steps could not write their exits. Per the measurement-hygiene rule, a disk-exhausted run measures disk, not the program.
