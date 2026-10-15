@@ -6,9 +6,13 @@ exclusions are re-checked against the run's own sources. No verdict moves on
 any route.
 
 * **Card:** MEMBER-PREPASS-OTHER-ROUTES (card-high), wave 48 round 28.
-* **Base:** local `main` `d708641bc`; rebased onto `711287771` (after
-  FB-QUANT-CONTRACT-CENSUS, LEAN-4-35-TOOLCHAIN and
-  LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED).
+* **Base:** local `main` `d708641bc`.
+  * Rebased onto `711287771`, after FB-QUANT-CONTRACT-CENSUS,
+    LEAN-4-35-TOOLCHAIN and LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED; measured
+    again there.
+  * Then rebased onto `635669fdb`, after
+    MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS. Its code is disjoint and only
+    records conflicted, so a targeted check was run (§6).
 * **Authority:** the ledger entry `MEMBER-PREPASS-OTHER-ROUTES` and its
   DISCHARGE; rule 12n; user decisions R1 and F1 (2026-10-14); the
   integrator's concern about `member-facts-scope.json` (part 2 of the brief).
@@ -16,7 +20,8 @@ any route.
   implementation code (`e014a6cef`, `1db404d20` after the rebase).
 * **Rule:** 12n amended in place. No new rule id.
 * **Lean:** `QCore.MemberPrepassRoutes`, audited in
-  `proof/AuditMemberPrepassRoutes.lean` (Lean 324 → 325).
+  `proof/AuditMemberPrepassRoutes.lean`: 325 audits at `711287771`, 326 on
+  `635669fdb`.
 
 ## 1. What changed
 
@@ -233,3 +238,17 @@ lock. Scripts: [`scripts/gate-run.sh`](scripts/gate-run.sh),
 
 The provider gate was not run: nothing under `providers/` or
 `crates/qcore-schemas/` changed.
+
+**After the rebase onto `635669fdb`**, a targeted check was run under the
+lock ([`scripts/targeted.sh`](scripts/targeted.sh) and
+[`scripts/finish-targeted.py`](scripts/finish-targeted.py)), with logs in
+`private/mpor/targeted-r2/` and exits in
+[gate/targeted-r2/](gate/targeted-r2/):
+
+* `cargo check --workspace --all-targets`, `fmt --check` and clippy: 0.
+* The card's route tests (6), `checkpoint_cli` (8) and
+  `dump_checkpoint_cli` (2): passed.
+* `check_lean_audits.py`: **326** audits passed. The first attempt left an
+  empty exit and log; the rerun (`04b`) exited 0.
+* The matrix was regenerated with `gate.json` (Lean 326), then the Python
+  suite (374 OK) and the docs index, regenerated and checked: 0.

@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS card gate on base d708641bc, every code step at 8dc6581dd, scripts docs/reports/member-path-unit-helpers/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/mpuh/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 499 units, 512 summaries, 8,106 passed, 0 failed, 15 ignored, exit 0 (private/mpuh/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 325 audits passed (324 -> 325: QCore.MemberPathUnitHelpers); no provider gate (providers/ unchanged); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 8106,
+  "note": "MEMBER-PREPASS-OTHER-ROUTES card gate on base d708641bc (rebased onto 711287771), every code step at 4417f7a58, scripts docs/reports/member-prepass-other-routes/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/mpor/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 500 units, 513 summaries, 8,108 passed, 0 failed, 15 ignored, exit 0 (private/mpor/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 325 audits passed under Lean 4.35.0 (324 -> 325: QCore.MemberPrepassRoutes); provider gate not run: nothing under providers/ or crates/qcore-schemas/ changed; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Rebased onto 635669fdb (its landed code is disjoint from this card's; records conflicted only): targeted check at 1caad3bac under the shared heavy lock, logs private/mpor/targeted-r2, exits {'00-check.exit': '0', '01-fmt.exit': '0', '02-clippy.exit': '0', '03-tests.exit': '0', '04-lean.exit': '', '04b-lean.log.exit': '0', '05-clean.exit': '0'}: cargo check --workspace --all-targets, fmt --check, clippy --locked, the card's route tests and the checkpoint tests (8, 2, 6 passed, 0 failed), check_lean_audits.py 326 audits passed (the 04-lean attempt left an empty exit and log and was rerun as 04b); then build_matrix.py, the python suite and the docs index again (gate/targeted-NAME/09*).",
+  "workspace_tests": 8108,
   "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
   "python_evidence_validator_tests": 374,
-  "lean_audits": 325,
+  "lean_audits": 326,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6916,6 +6916,7 @@
    "AuditMemberAddressReader.lean",
    "AuditMemberPathRelease.lean",
    "AuditMemberPathUnitHelpers.lean",
+   "AuditMemberPrepassRoutes.lean",
    "AuditMemberRelease.lean",
    "AuditMemberReleaseCallee.lean",
    "AuditMemberSummaryOrder.lean",
@@ -7091,7 +7092,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a13526f5426f8adcb/docs/reports/member-path-unit-helpers/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a87970a1b9e2c1713/docs/reports/member-prepass-other-routes/gate.json)"
  },
  "named_followups": [
   {
