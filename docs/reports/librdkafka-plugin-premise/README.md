@@ -3,7 +3,7 @@
 Card LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED (wave 48, round 28, card-high).
 Contracts and records only: no rule, analyser or Lean change. Base: local
 `main` `d708641bc`. The census and the frozen [prediction](PREDICTION.md)
-were committed (`9197085f1`) before any contract changed.
+were committed (`9197085f1`, `24fa535a4` after the rebase) before any contract changed.
 
 ## 1. Authority
 
@@ -177,7 +177,7 @@ either decision.
 ## 5. Measurement
 
 BEFORE: binary `bin/before` (`8c8e7e39…`) from `d708641bc`, on the base
-contracts. AFTER: binary `a1` (`f79d9846…`) from `7cf9f2d5b` (the contracts
+contracts. AFTER: binary `a1` (`f79d9846…`) from `7cf9f2d5b` (`d3e48e60d` after the rebase; the contracts
 commit), on the card's contracts. Both read the contracts at run time. The runs were taken before the card was
 rebased onto `5b1ceecd5`. The two cards that landed in between
 (FB-QUANT-CONTRACT-CENSUS, LEAN-4-35-TOOLCHAIN) change records, Lean and
