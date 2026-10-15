@@ -1,0 +1,2 @@
+328 differences
+328 $.units[].contract_body_evidence.clauses.F.resource_premise(rk_no_plugin_library)

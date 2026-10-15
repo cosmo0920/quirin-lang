@@ -48,6 +48,8 @@ def main():
         a = row["66910c10"]
         site = ":".join(map(str, a["sites"][0][:2])).replace("lib/librdkafka-2.15.0/src/", "") if a.get("defined") else "—"
         give = "yes" if row["class"] in ("rk-conf", "indirect") else "no"
+        if give == "yes" and row["module"] == "queue_destructor.qv":
+            give = "no (section 4)"
         print(f"| `{row['module']}` | `{row['function']}` | `{site}` | {row['class']} | {give} | {ground(row)} |")
 
 

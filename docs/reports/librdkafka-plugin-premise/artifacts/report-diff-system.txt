@@ -1,0 +1,4 @@
+45 differences
+15 $.units[].compile_configuration.compile_task_identity.dependencies.resource_contract_sources
+15 $.units[].compile_configuration.dependencies.resource_contract_sources
+15 $.units[].compile_configuration.inventory_sha256
