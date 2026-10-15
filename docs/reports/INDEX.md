@@ -509,6 +509,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
 
+| [member-path-unit-helpers](member-path-unit-helpers/README.md) | MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: rule 30's body check through the unit's helpers |
+
 | [monkey-vhost-property-custody](monkey-vhost-property-custody/README.md) | MONKEY-VHOST-PROPERTY-CUSTODY: `mk_string_dup` and the carried publication |
 
 | [msvc-abi-reader](msvc-abi-reader/README.md) | MSVC default-C ABI declarations |

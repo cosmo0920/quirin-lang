@@ -1,0 +1,12 @@
+{
+ "projection_equal": true,
+ "projection_sha256": [
+  "0371ded6b6cdb853cb6a1041746b2987511209335ce7eb5d7b254d8169de02e1",
+  "0371ded6b6cdb853cb6a1041746b2987511209335ce7eb5d7b254d8169de02e1"
+ ],
+ "units_whose_body_evidence_differs": [
+  "rdkafka_admin.c",
+  "rdkafka_partition.c"
+ ],
+ "rows_whose_dependencies_differ": []
+}

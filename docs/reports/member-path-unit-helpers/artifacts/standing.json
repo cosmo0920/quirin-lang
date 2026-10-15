@@ -1,0 +1,368 @@
+{
+ "before2": {
+  "counts": {
+   "declarations_consulted": 428,
+   "declared_assumption": 319,
+   "held": 1,
+   "partly_validated": 45,
+   "rows_annotated": 4834,
+   "validated": 63
+  },
+  "eight": {
+   "rd_kafka_admin_worker": [
+    "declared-assumption",
+    null
+   ],
+   "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": [
+    "declared-assumption",
+    null
+   ],
+   "rd_kafka_admin_fanout_worker": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_DeleteRecords_leaders_queried_cb": [
+    "declared-assumption",
+    null
+   ],
+   "rd_kafka_ListOffsets_leaders_queried_cb": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_commit_async_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_fetch_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_premise(share_ack_batches_nonempty)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_commit_sync_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ]
+  },
+  "dependent_rows": {
+   "rdkafka.c:rd_kafka_share_commit_async": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_async_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_async_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_async_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_sync": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_sync_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_sync_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_sync_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_fetch_fanout": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_fetch_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_fetch_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_fetch_fanout_op"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_DeleteRecords": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_DeleteRecords_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_DeleteRecords_leaders_queried_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_DeleteRecords_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_ListOffsets": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_ListOffsets_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_ListOffsets_leaders_queried_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_ListOffsets_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_fanout_worker": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_fanout_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_request_op_new": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_result_new": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_fanout_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_worker": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_worker"
+    ]
+   },
+   "rdkafka_partition.c:rd_kafka_topic_partition_list_query_leaders_async": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+    ]
+   },
+   "rdkafka_partition.c:rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+    ]
+   }
+  }
+ },
+ "a2": {
+  "counts": {
+   "declarations_consulted": 428,
+   "declared_assumption": 318,
+   "held": 1,
+   "partly_validated": 46,
+   "rows_annotated": 4834,
+   "validated": 63
+  },
+  "eight": {
+   "rd_kafka_admin_worker": [
+    "declared-assumption",
+    null
+   ],
+   "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_owned(#2, nonnull)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_admin_fanout_worker": [
+    "declared-assumption",
+    null
+   ],
+   "rd_kafka_DeleteRecords_leaders_queried_cb": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_ListOffsets_leaders_queried_cb": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_commit_async_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_fetch_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_premise(share_ack_batches_nonempty)",
+     "resource_return_none()"
+    ]
+   ],
+   "rd_kafka_share_commit_sync_fanout_op": [
+    "partly-validated",
+    [
+     "resource_borrowed(#0)",
+     "resource_borrowed(#1)",
+     "resource_borrowed(#2)",
+     "resource_premise(rk_no_plugin_library)",
+     "resource_return_none()"
+    ]
+   ]
+  },
+  "dependent_rows": {
+   "rdkafka.c:rd_kafka_share_commit_async": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_async_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_async_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_async_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_sync": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_sync_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_commit_sync_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_commit_sync_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_fetch_fanout": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_fetch_fanout_op"
+    ]
+   },
+   "rdkafka.c:rd_kafka_share_fetch_fanout_op": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_share_fetch_fanout_op"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_DeleteRecords": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_DeleteRecords_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_DeleteRecords_leaders_queried_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_DeleteRecords_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_ListOffsets": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_ListOffsets_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_ListOffsets_leaders_queried_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_ListOffsets_leaders_queried_cb"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_fanout_worker": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_fanout_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_request_op_new": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_result_new": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_fanout_worker"
+    ]
+   },
+   "rdkafka_admin.c:rd_kafka_admin_worker": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_admin_worker"
+    ]
+   },
+   "rdkafka_partition.c:rd_kafka_topic_partition_list_query_leaders_async": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+    ]
+   },
+   "rdkafka_partition.c:rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+    "status": "Unknown",
+    "declarations": [
+     "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+    ]
+   }
+  }
+ },
+ "standing_changes": {
+  "rd_kafka_DeleteRecords_leaders_queried_cb": [
+   "declared-assumption",
+   "partly-validated"
+  ],
+  "rd_kafka_admin_fanout_worker": [
+   "partly-validated",
+   "declared-assumption"
+  ],
+  "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": [
+   "declared-assumption",
+   "partly-validated"
+  ]
+ }
+}
