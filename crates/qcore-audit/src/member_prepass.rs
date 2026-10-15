@@ -388,6 +388,44 @@ pub fn run(
     Some(Prepass { facts, section })
 }
 
+/// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (rule 13l): every hand-off's
+/// `@` name resolves, through the units the pre-pass read with Clang, to an
+/// enumerator of its candidate's own result type in every read unit that
+/// declares the candidate. A typo or a constant of another type rejects the
+/// run's contracts: the loader's module rejection, made where Clang has read
+/// the units (the loader itself runs no Clang). A candidate no read unit
+/// declares is decided nowhere through the run's facts and refuses at each
+/// use.
+///
+/// # Errors
+/// The rejection, naming the declaration.
+pub fn check_handoff_constants(
+    contracts: &ResourceContracts,
+    facts: &RunMemberFacts,
+) -> Result<(), String> {
+    let units = facts.units.iter().collect::<Vec<_>>();
+    for (name, declared) in contracts.retaining() {
+        let Some(handoff) = &declared.handoff else {
+            continue;
+        };
+        if !units
+            .iter()
+            .any(|unit| unit.result_types.contains_key(name))
+        {
+            continue;
+        }
+        qcore_c_gateway::handoff_branch::resolve(&units, name, &handoff.guard.constant).map_err(
+            |why| {
+                format!(
+                    "the hand-off of `{name}` is rejected (rule 13l: `@` names resolve through \
+                     Clang): {why}"
+                )
+            },
+        )?;
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

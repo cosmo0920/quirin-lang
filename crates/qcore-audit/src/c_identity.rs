@@ -64,6 +64,57 @@ pub struct SourceSite {
 pub enum SiteKind {
     Declaration,
     Definition,
+    /// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (rule 13l): the top-level
+    /// enumeration declaring an `@` name a declaration spells (keyed `@NAME`;
+    /// `declaration_sha256` covers the whole statement, `typedef enum {…} T;`
+    /// or `enum T {…};`), so the enumerator's value is part of the reviewed
+    /// identity.
+    Enumeration,
+}
+
+/// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (rule 13l): the names to scan
+/// for `functions`: each function and each `@` name its declaration spells
+/// (`c_names`, from `declaration_c_names`), the latter keyed `@NAME`.
+#[must_use]
+pub fn identity_names(
+    functions: &BTreeSet<String>,
+    c_names: &BTreeMap<String, BTreeSet<String>>,
+) -> BTreeSet<String> {
+    let mut names = functions.clone();
+    for function in functions {
+        for name in c_names.get(function).into_iter().flatten() {
+            names.insert(format!("@{name}"));
+        }
+    }
+    names
+}
+
+/// The identity of `function`: its own sites and the enumeration sites of
+/// every `@` name its declaration spells, sorted. `Err` names an `@` name
+/// with no enumeration site in the tree (unresolvable: the pin refuses it).
+///
+/// # Errors
+/// An `@` name the tree declares in no enumeration.
+pub fn identity_sites(
+    found: &BTreeMap<String, Vec<SourceSite>>,
+    function: &str,
+    c_names: &BTreeMap<String, BTreeSet<String>>,
+) -> Result<Vec<SourceSite>, String> {
+    let mut sites = found.get(function).cloned().unwrap_or_default();
+    for name in c_names.get(function).into_iter().flatten() {
+        let enumerations = found
+            .get(&format!("@{name}"))
+            .cloned()
+            .unwrap_or_default();
+        if enumerations.is_empty() {
+            return Err(format!(
+                "`@{name}` names no enumerator of the source tree (an unresolvable name)"
+            ));
+        }
+        sites.extend(enumerations);
+    }
+    sites.sort();
+    Ok(sites)
 }
 
 /// A source tree read for identities: every `.c` and `.h` file, with how it
@@ -639,15 +690,98 @@ fn digest(tokens: &[Token]) -> String {
     )
 }
 
-/// The top-level sites of `names` in one file.
+/// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the top-level
+/// enumeration statements of one file that declare a wanted `@` name.
+fn enumeration_sites(
+    path: &str,
+    tokens: &[Token],
+    structure: &Structure,
+    wanted: &BTreeSet<&str>,
+) -> Vec<(String, SourceSite)> {
+    let mut sites = Vec::new();
+    for (index, token) in tokens.iter().enumerate() {
+        if token.kind != Kind::Identifier || token.text != "enum" || structure.depth[index] != 0 {
+            continue;
+        }
+        // `enum {` or `enum TAG {`.
+        let open = match tokens.get(index + 1) {
+            Some(next) if next.text == "{" => index + 1,
+            Some(next)
+                if next.kind == Kind::Identifier
+                    && tokens.get(index + 2).is_some_and(|brace| brace.text == "{") =>
+            {
+                index + 2
+            }
+            _ => continue,
+        };
+        let Some(&close) = structure.closing.get(&open) else {
+            continue;
+        };
+        let declared = (open + 1..close)
+            .filter(|at| {
+                tokens[*at].kind == Kind::Identifier
+                    && matches!(tokens[at - 1].text.as_str(), "{" | ",")
+                    && tokens
+                        .get(at + 1)
+                        .is_some_and(|next| matches!(next.text.as_str(), "=" | "," | "}"))
+            })
+            .map(|at| tokens[at].text.as_str())
+            .filter(|name| wanted.contains(name))
+            .collect::<BTreeSet<_>>();
+        if declared.is_empty() {
+            continue;
+        }
+        let mut start = index;
+        while start > 0 {
+            let previous = &tokens[start - 1];
+            if previous.kind == Kind::Directive
+                || (structure.depth[start - 1] == 0
+                    && previous.kind == Kind::Punctuator
+                    && matches!(previous.text.as_str(), ";" | "}" | "{"))
+            {
+                break;
+            }
+            start -= 1;
+        }
+        let end = (close + 1..tokens.len())
+            .find(|at| structure.depth[*at] == 0 && tokens[*at].text == ";")
+            .unwrap_or(tokens.len() - 1);
+        let digest = digest(&tokens[start..=end]);
+        for name in declared {
+            sites.push((
+                format!("@{name}"),
+                SourceSite {
+                    path: path.to_owned(),
+                    kind: SiteKind::Enumeration,
+                    declaration_sha256: digest.clone(),
+                    body_sha256: None,
+                },
+            ));
+        }
+    }
+    sites
+}
+
+/// The top-level sites of `names` in one file (an `@NAME` its enumeration).
 fn file_sites(path: &str, text: &str, names: &BTreeSet<String>) -> Vec<(String, SourceSite)> {
     // Cheap rejection: a file that never spells a wanted name has no site.
-    if !names.iter().any(|name| text.contains(name.as_str())) {
+    if !names
+        .iter()
+        .any(|name| text.contains(name.trim_start_matches('@')))
+    {
         return Vec::new();
     }
     let tokens = tokens(text);
     let structure = structure(&tokens);
-    let mut sites = Vec::new();
+    let wanted = names
+        .iter()
+        .filter_map(|name| name.strip_prefix('@'))
+        .collect::<BTreeSet<_>>();
+    let mut sites = if wanted.is_empty() {
+        Vec::new()
+    } else {
+        enumeration_sites(path, &tokens, &structure, &wanted)
+    };
     let mut index = 0;
     while index < tokens.len() {
         let token = &tokens[index];
@@ -768,6 +902,53 @@ mod tests {
 
     fn names(list: &[&str]) -> BTreeSet<String> {
         list.iter().map(|name| (*name).to_owned()).collect()
+    }
+
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): an `@` name's
+    /// site is its whole top-level enumeration; a changed enumerator value
+    /// changes the digest, a use of the name is no site, and a name no
+    /// enumeration declares has none (the pin refuses it).
+    #[test]
+    fn an_enumerator_is_pinned_by_its_whole_enumeration() {
+        let text = "typedef enum {\n A_PASS, /* x */ A_HANDLED,\n A_KEEP = 7 } a_res_t;\n\
+                    enum other { A_OTHER };\nint f(void) { return A_KEEP; }\n";
+        let sites = file_sites("a.h", text, &names(&["@A_KEEP", "@A_OTHER", "@A_NONE"]));
+        let listed = sites
+            .iter()
+            .map(|(name, site)| (name.as_str(), site.kind))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            listed,
+            vec![
+                ("@A_KEEP", SiteKind::Enumeration),
+                ("@A_OTHER", SiteKind::Enumeration)
+            ]
+        );
+        let changed = file_sites(
+            "a.h",
+            &text.replace("A_KEEP = 7", "A_KEEP = 8"),
+            &names(&["@A_KEEP"]),
+        );
+        assert_ne!(
+            changed[0].1.declaration_sha256,
+            sites[0].1.declaration_sha256
+        );
+        let found = std::collections::BTreeMap::from([
+            ("f".to_owned(), Vec::new()),
+            ("@A_KEEP".to_owned(), vec![sites[0].1.clone()]),
+        ]);
+        let wanted = std::collections::BTreeMap::from([("f".to_owned(), names(&["A_KEEP"]))]);
+        assert_eq!(
+            super::identity_sites(&found, "f", &wanted).expect("resolves"),
+            vec![sites[0].1.clone()]
+        );
+        let unresolved =
+            std::collections::BTreeMap::from([("f".to_owned(), names(&["A_NONE"]))]);
+        assert!(super::identity_sites(&found, "f", &unresolved).is_err());
+        assert!(
+            super::identity_names(&names(&["f"]), &wanted).contains("@A_KEEP"),
+            "the scan asks for the enumeration"
+        );
     }
 
     #[test]

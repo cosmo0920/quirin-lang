@@ -769,6 +769,10 @@ pub fn apply_pins(
 ) -> Result<PinEvaluation, String> {
     let digests =
         qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())?;
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the `@` names whose
+    // enumerations join each declaration's identity.
+    let c_names =
+        qcore_contract::contract_revision::declaration_c_names(contracts.source_assumptions())?;
     let mut evaluation = PinEvaluation::default();
     // Card CONTRACT-PIN-TIP-MODE: a malformed repository variable refuses.
     let mut tips = TipResolver::from_environment()?;
@@ -818,14 +822,20 @@ pub fn apply_pins(
         .collect::<BTreeSet<_>>();
     // Card W45-AUDIT-CHECKPOINTS: the sites are read one file at a time, so
     // the evaluation never holds the whole checkout's source.
-    let scan = SourceTree::read_sites(source_root, &wanted)?;
+    let scan = SourceTree::read_sites(
+        source_root,
+        &crate::c_identity::identity_names(&wanted, &c_names),
+    )?;
     evaluation.source_kind = scan.kind.to_owned();
     evaluation.source_revision = scan.revision;
     let found = scan.sites;
     for (name, module, owner, lock_path, digest) in pending {
         let lock = lock_path.as_ref().and_then(|path| locks.get(path));
         let entry = lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name));
-        let sites = found.get(&name).cloned().unwrap_or_default();
+        // An unresolvable `@` name leaves the identity without its
+        // enumeration: a mismatch, never in force.
+        let sites = crate::c_identity::identity_sites(&found, &name, &c_names)
+            .unwrap_or_else(|_| found.get(&name).cloned().unwrap_or_default());
         let identities = entry.map(|e| e.identities.clone()).unwrap_or_default();
         let standing = pin_standing(lock, &name, &digest, &sites, &module, &mut tips);
         let notice = standing.notice(&name);

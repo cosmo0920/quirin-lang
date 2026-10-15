@@ -299,6 +299,54 @@ pub fn declaration_digests(
     Ok(digests)
 }
 
+/// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the C names each
+/// declaration spells, `@NAME` directly or through a module alias `#NAME`,
+/// keyed by function (a declaration spelling none is absent). `quirin-audit
+/// pin` adds each name's enumeration to the declaration's reviewed identity,
+/// so the value an `@` name resolves to is pinned with the declaration.
+///
+/// # Errors
+///
+/// Refuses a source that does not parse as a contract module.
+pub fn declaration_c_names(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, std::collections::BTreeSet<String>>, String> {
+    let mut names = BTreeMap::new();
+    for (key, source) in sources {
+        if !source.contains('@') {
+            continue;
+        }
+        let parsed = parse_source_program(source).map_err(|e| format!("{key}: {e}"))?;
+        let aliases = parsed
+            .aliases()
+            .iter()
+            .map(|alias| (alias.value.name.clone(), alias.value.target.clone()))
+            .collect::<BTreeMap<_, _>>();
+        for declaration in parsed.declarations {
+            let text = &source[declaration.span.start..declaration.span.end];
+            let kinds = lex(text)
+                .map_err(|e| format!("{key}: {e}"))?
+                .into_iter()
+                .map(|token| token.kind)
+                .collect::<Vec<_>>();
+            let spelled = kinds
+                .windows(2)
+                .filter_map(|pair| match pair {
+                    [TokenKind::Symbol(Symbol::At), TokenKind::Word(name)] => Some(name.clone()),
+                    [TokenKind::Symbol(Symbol::Hash), TokenKind::Word(name)] => {
+                        aliases.get(name).cloned()
+                    }
+                    _ => None,
+                })
+                .collect::<std::collections::BTreeSet<_>>();
+            if !spelled.is_empty() {
+                names.insert(declaration.value.name.clone(), spelled);
+            }
+        }
+    }
+    Ok(names)
+}
+
 /// The function map an environment had before any pin mismatch was withheld:
 /// its contracts in force plus every withheld pinned contract. The source
 /// recheck (`check_source_assumptions`) compares it with a fresh load of the

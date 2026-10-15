@@ -229,6 +229,10 @@ pub fn run(
             prepass.section["read"],
             prepass.facts.unread.len()
         );
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): a hand-off's
+        // `@` name that Clang does not resolve in its candidate's own result
+        // type rejects the contracts before any unit is analysed.
+        crate::member_prepass::check_handoff_constants(&contracts, &prepass.facts)?;
     }
     let run_facts = prepass.as_ref().map(|prepass| prepass.facts.clone());
     // The steps in exactly the sequential order. Only `Prelude` and `Unit`

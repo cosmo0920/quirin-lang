@@ -210,6 +210,10 @@ struct Target {
     lock: PathBuf,
     /// Function to (module name, contract digest, mode).
     declared: BTreeMap<String, (String, String, RevisionMode)>,
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): function to the
+    /// `@` names its declaration spells, whose enumerations join its
+    /// identity.
+    c_names: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl Target {
@@ -223,6 +227,9 @@ impl Target {
             owner,
             lock,
             declared: resource_declarations(contracts)?,
+            c_names: qcore_contract::contract_revision::declaration_c_names(
+                contracts.source_assumptions(),
+            )?,
         })
     }
 }
@@ -296,6 +303,7 @@ fn bounds_targets(
             owner: name.clone(),
             lock: root.join(crate::bounds_selection::BOUNDS_LOCK_FILE),
             declared,
+            c_names: BTreeMap::new(),
         });
     }
     Ok(targets)
@@ -492,7 +500,10 @@ fn update(
         .filter(|(name, (_, _, mode))| *mode == RevisionMode::Pinned && chosen(name))
         .map(|(name, _)| name.clone())
         .collect::<BTreeSet<_>>();
-    let sites = tree.sites(&pinned_names);
+    let sites = tree.sites(&crate::c_identity::identity_names(
+        &pinned_names,
+        &target.c_names,
+    ));
     let old = existing.cloned().unwrap_or_else(|| empty_lock(target));
     let mut lock = ContractLock {
         pinned: Vec::new(),
@@ -566,7 +577,12 @@ fn update(
                 let before = entry.identities.clone();
                 entry.module.clone_from(module);
                 entry.contract_sha256.clone_from(digest);
-                entry.record(&source, sites.get(name).cloned().unwrap_or_default());
+                // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): the
+                // enumerations of its `@` names join the identity; an `@`
+                // name the tree does not declare refuses the pin.
+                let identity = crate::c_identity::identity_sites(&sites, name, &target.c_names)
+                    .map_err(|why| format!("`{name}`: {why} at {}", source.label()))?;
+                entry.record(&source, identity);
                 if before != entry.identities && old_pinned(name).is_some() {
                     let joined = entry
                         .identities
@@ -782,13 +798,15 @@ fn tip_notices(
         .iter()
         .map(|e| e.function.clone())
         .collect::<BTreeSet<_>>();
-    let sites = tree.sites(&names);
+    let sites = tree.sites(&crate::c_identity::identity_names(&names, &target.c_names));
     let mut lines = Vec::new();
     for entry in &lock.tip {
         let Some((module, digest, _)) = declared.get(&entry.function) else {
             continue;
         };
-        let found = sites.get(&entry.function).cloned().unwrap_or_default();
+        let found =
+            crate::c_identity::identity_sites(&sites, &entry.function, &target.c_names)
+                .unwrap_or_else(|_| sites.get(&entry.function).cloned().unwrap_or_default());
         let standing = pin_standing(Some(lock), &entry.function, digest, &found, module, tips);
         if let Some(notice) = standing.notice(&entry.function) {
             lines.push(notice.line());
@@ -889,7 +907,10 @@ fn check(
         .filter(|(name, (_, _, mode))| *mode == RevisionMode::Pinned && chosen(name))
         .map(|(name, _)| name.clone())
         .collect::<BTreeSet<_>>();
-    let sites = tree.sites(&pinned_names);
+    let sites = tree.sites(&crate::c_identity::identity_names(
+        &pinned_names,
+        &target.c_names,
+    ));
     let mut tips = TipResolver::from_environment()?;
     let (mut recorded, mut via_other, mut via_tip, mut out, mut stale) = (0, 0, 0, 0, 0);
     let mut lines = Vec::new();
@@ -899,7 +920,10 @@ fn check(
         }
         match mode {
             RevisionMode::Pinned => {
-                let found = sites.get(name).cloned().unwrap_or_default();
+                // An unresolvable `@` name leaves the identity without its
+                // enumeration: a mismatch, never in force.
+                let found = crate::c_identity::identity_sites(&sites, name, &target.c_names)
+                    .unwrap_or_else(|_| sites.get(name).cloned().unwrap_or_default());
                 let standing = pin_standing(lock, name, digest, &found, module, &mut tips);
                 let notice = standing.notice(name);
                 match standing {
