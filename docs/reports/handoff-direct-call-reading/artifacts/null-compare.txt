@@ -1,0 +1,3 @@
+before-null -> a2-null: 4921 rows, 0 differ; tallies equal: True {'Safe (conditional on its preconditions)': 1435, 'Safe (unconditional)': 1113, 'Unknown': 2355, 'Unsafe': 18}
+before-system-null -> a2-system-null: 237 rows, 0 differ; tallies equal: True {'Safe (conditional on its preconditions)': 125, 'Safe (unconditional)': 84, 'Unknown': 245}
+before-slice-null -> a2-slice-null: 271 rows, 0 differ; tallies equal: True {'Safe (conditional on its preconditions)': 103, 'Safe (unconditional)': 71, 'Unknown': 232}

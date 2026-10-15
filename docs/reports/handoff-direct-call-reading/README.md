@@ -3,9 +3,11 @@
 Card HANDOFF-DIRECT-CALL-READING (wave 48, card-high). Gateway rule **12m**
 amended in place; no new rule id. Contract specification **C04.19.5**
 amended; no grammar change, no new surface syntax (so no pause). Lean
-`QCore.HandOffDirect`. Base: local `main` **`b2fbde2c5`**. The census and the
-frozen [prediction](PREDICTION.md) were committed (`e05676fd5`) before any
-implementation code.
+`QCore.HandOffDirect`. Base: local `main` `b2fbde2c5`, rebased onto
+**`4c0803f1f`** (LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER; section 7 measures
+main against the rebased tip). The census and the frozen
+[prediction](PREDICTION.md) were committed (`e05676fd5`, `acc0dc2e7` after
+the rebase) before any implementation code.
 
 ## 1. Defect and reading
 
@@ -84,7 +86,9 @@ The existing `return_code_handoff` direct-call test still refuses
 `an_unbranched_direct_call_never_decides`,
 `a_decided_call_never_touches_a_taken_object`,
 `a_decided_split_is_the_guard_on_every_value`, `direct_vectors_hold`
-(`DIRECT_VECTORS`). Lean 4.35.0 (the pin). Lean audits 327 → **328**.
+(`DIRECT_VECTORS`). Lean 4.35.0 (the pin). Lean audits 327 → 328 on
+`b2fbde2c5`; **328 → 329** on `4c0803f1f` (which added
+`QCore.NullMemberPremise`).
 
 ## 4. Measurement
 
@@ -150,8 +154,8 @@ through a conversion.
 **Prediction against outcome.** As predicted: no status move, the four
 leaves trade exactly as stated (the two agreeing rows to
 `callback-member-open` at `rko_u.offset_commit.cb`, the two others to
-`callback-handoff-unbranched`), system, slice and null unchanged, Lean
-327 → 328. **Not as predicted:** the first AFTER binary (`a1`, `2b5ad9d1…`,
+`callback-handoff-unbranched`), system, slice and null unchanged, one new
+Lean audit. **Not as predicted:** the first AFTER binary (`a1`, `2b5ad9d1…`,
 built at `9b24a5cb5`) also moved a fifth row, `rd_kafka_DescribeGroups_resp_cb`
 in the same unit (`rdkafka.c`), which lost 9 `unresolved resource identity
 __tmpstr` leaves with no status move. A second run of the BEFORE binary
@@ -164,8 +168,10 @@ unchanged (`RELATIONAL-REWRITE-LINE-ORDER`).
 
 ## 5. Ledger
 
-[`scripts/update_ledger.py`](scripts/update_ledger.py): 786 → **788**
-(equal to `dimensions.named_followups`).
+[`scripts/update_ledger.py`](scripts/update_ledger.py), re-applied on main's
+ledger after the rebase ([`resolve_records.py`](scripts/resolve_records.py)):
+on `4c0803f1f` 785 → **787** (equal to `dimensions.named_followups`; 786 →
+788 on `b2fbde2c5`).
 
 * **Retired:** `HANDOFF-DIRECT-CALL-READING` (its DISCHARGE holds: the split
   at the caller's own branch, the caller branch check in the calling body,
@@ -185,7 +191,67 @@ direct call only.
 
 ## 6. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+Gate **g2** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/hdcr/gate-g2/`): the full standing gate, with the provider gate run
+as well (not required: `providers/` and `qcore-schemas` are unchanged; run so
+the regenerated matrix carries a measured provider count). Every code step
+ran at **`bacd2d082`** on `4c0803f1f`; later commits change records only. One
+exclusive flock on the shared heavy lock covered the whole gate
+(22:33:21Z–22:49:57Z, [`gate-run.sh`](scripts/gate-run.sh),
+[`gate-whole.sh`](scripts/gate-whole.sh), [`gate.sh`](scripts/gate.sh),
+[`finish-gate.sh`](scripts/finish-gate.sh)). Lean 4.35.0.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets`, submodule, `fmt --check`, `clippy --locked -D warnings` | 0, 0, 0, 0 | |
+| `run_test_binaries.py` | 0 | 503 units, 516 summaries, **8,144 passed, 0 failed, 15 ignored** (`private/hdcr/tests-g2/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **329** audits passed |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (the committed matrix's Lean count, 328 → 329), as for every card adding an audit |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests), docs index (10b, 10c) | 0, 0, 0, 0 | |
+
+The bold rule-id duplicate check is empty. Clang:
+[`gate/clang-version.txt`](gate/clang-version.txt).
+
+**Discarded attempt:** gate **g1** at `7f3410092` (logs
+`private/hdcr/gate-g1/`) failed `clippy` (exit 101,
+`clippy::type_complexity` on `handoff_direct::read_test`'s `compared`
+parameter); `bacd2d082` names the type (`Compared`) and changes nothing
+else. Its other steps were 0 apart from the accounted Python step (8,144
+passed, 329 Lean audits).
+
+## 7. After the rebase (main `4c0803f1f`)
+
+LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER landed while the card waited (the
+premise-shape check, bounds v1 beside `nonnull_member_*`, null-row premise
+fields, librdkafka contracts and pins, rules 14x/14z/13h, C04.18), disjoint
+from this card's code. The code commits rebased without a conflict; the
+records conflicted and were re-applied on main's
+([`resolve_records.py`](scripts/resolve_records.py)). After the rebase,
+`cargo check --workspace --all-targets` 0 and no conflict marker.
+
+**Combined arbiter** ([`build-main.sh`](scripts/build-main.sh),
+[`rebased-chain.sh`](scripts/rebased-chain.sh)): main's binary `m4c`
+(`b272f50f…`, built from an archive export of `4c0803f1f`, reading that
+export's contracts, its libevent submodule cloned at the pinned commit)
+against the rebased tip's `b1` (`c5d986a4…`, built at `4c3dd0eba`, the code
+of `bacd2d082`), each `run.json` naming its binary, every route with the
+null property:
+
+| route | main `4c0803f1f` | tip | report sha256 | wall (s) |
+| --- | --- | --- | --- | --- |
+| corpus | 938 / 9 / 3,887 | **938 / 9 / 3,887** | `fc645e9b…` → `1e76a508…` | 679.4 → 708.9 |
+| system | 93 / 4 / 351 | the same, byte-identical | `27ad0099…` | 190.6 → 195.1 |
+| slice | 52 / 1 / 347 / 4 Pending | the same, byte-identical | `3e070be7…` | 153.9 → 153.0 |
+| null | 1,113 / 1,435 / 2,355 / 18; 84 / 125 / 245; 71 / 103 / 232 | rows and tallies identical ([compare](artifacts/null-compare-rebased.txt)) | | |
+
+The corpus moves exactly as in section 4 (the same four rows, the same
+leaves, [compare](artifacts/compare-corpus-rebased.json)); the tip's corpus
+report is byte-identical to `a2`'s. The system and slice digests differ from
+section 4's only by main's contract-source digests. **No other movement.**
 
 ## Files
 

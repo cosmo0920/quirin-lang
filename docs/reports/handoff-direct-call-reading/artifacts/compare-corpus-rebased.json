@@ -1,0 +1,101 @@
+{
+ "statuses_before": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to `_`: it hands its parameter 2 to the callback only when `_`, which a direct call does not read (callback-handoff-direct)": 4
+ },
+ "added": {
+  "call to `_`: the callbacks stored in `_` are not a closed set of functions (a `_`; a `_` into it writes a `_`; a whole-object assignment writes a `_`) (callback-member-open)": 2,
+  "call to `_`: it hands its parameter 2 to the callback only when `_`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)": 2
+ },
+ "moving_rows": 4,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_poll_cb"
+   ],
+   "lost": [
+    "23732: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ],
+   "gained": [
+    "23732: call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_op_s.rko_u.offset_commit.cb` are not a closed set of functions (a `CStyleCastExpr`; a `memmove` into it writes a `struct rd_kafka_group_member_s`; a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_poll_cb"
+   ],
+   "lost": [
+    "23871: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ],
+   "gained": [
+    "23871: call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_op_s.rko_u.offset_commit.cb` are not a closed set of functions (a `CStyleCastExpr`; a `memmove` into it writes a `struct rd_kafka_group_member_s`; a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`) (callback-member-open)"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_queue_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_poll_cb"
+   ],
+   "lost": [
+    "20145: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ],
+   "gained": [
+    "20145: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_poll_cb"
+   ],
+   "lost": [
+    "20159: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ],
+   "gained": [
+    "20159: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)"
+   ]
+  }
+ ]
+}
