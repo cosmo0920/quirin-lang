@@ -12,6 +12,10 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 mkdir -p "$repo/private/mpor" || exit 2
 echo "lock held from $(date -u +%FT%T.%NZ)" > "$repo/private/mpor/gate-$name-lock.txt"
+# The disk floor (40 GB free) is checked once the lock is held.
+free=$(df --output=avail -BG / | tail -1 | tr -dc 0-9)
+echo "free ${free}G at lock" >> "$repo/private/mpor/gate-$name-lock.txt"
+if [ "$free" -lt 40 ]; then echo "below the 40 GB floor" >> "$repo/private/mpor/gate-$name-lock.txt"; exit 3; fi
 HELD=1 bash "$here/gate.sh" "$name" all
 rc=$?
 echo "gate.sh exit $rc, lock released at $(date -u +%FT%T.%NZ)" >> "$repo/private/mpor/gate-$name-lock.txt"
