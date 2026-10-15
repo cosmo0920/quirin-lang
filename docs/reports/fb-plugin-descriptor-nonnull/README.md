@@ -167,6 +167,46 @@ New caller candidates in rows already Unknown (no verdict move): slice
   descriptor's 34 slice candidates are 38 removed of which 12 are re-added at
   callers; the three output functions it named do not move.
 
+### After the rebase onto `4c0803f1f`
+
+The card was rebased onto main `4c0803f1f` (after HANDOFF-CANDIDATE-OWN-CALLBACKS,
+MEMBER-PREPASS-OTHER-ROUTES, MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS,
+LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED and -REMAINDER). It was then measured again,
+main's binary `da1c5b4e…` on main's tree (worktree detached at `4c0803f1f`)
+against the rebased tip's `c881cdfb…` (`693d65682`), with each corpus
+`run.json` `binary_sha256` matching:
+
+* **Custody is byte-identical** on every route: corpus `fc645e9b…` 938 / 9 /
+  3,887, system `50963097…`, slice `ecd778b2…`. No custody column moved.
+* **The null movement is the first base's, row for row**
+  ([rebase-identity.json](artifacts/rebase-identity.json),
+  [compare-rebased-*.json](artifacts/compare-rebased-slice.json)): the same
+  moving rows, check-outcome changes and added caller candidates on every
+  route. Main's tallies equal the first base's BEFORE (corpus 1,113 / 1,435 /
+  2,355 / 18, system 84 / 125 / 245, slice 71 / 103 / 232); the tip's equal
+  the first AFTER. That covers the 20 slice gains, `flb_chunk_route_plugin_matches`
+  (corpus 1, system 2, combined Unknown → Safe), and the 4 named slice
+  corrections.
+* **No Fluent Bit row lists a premise.** LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER's
+  `premises` field appears on 339 corpus rows, all through
+  `stable:rd_kafka_broker_s.rkb_rk`, and on no row that rests on these
+  declarations. The declarations name no `resource_premise` (see the
+  reading below).
+
+**Premise reading.** Rule 14x checks the stores the analysed units make. In
+the tree, every store of `p` is a constructor's (or a test's), and no in-tree
+plugin under `plugins/` writes it. Fluent Bit can also load out-of-tree
+plugins: shared objects through `flb_plugin_load` (`src/flb_plugin.c`), and
+Go plugins through the proxy (`src/flb_plugin_proxy.c`). Those are code the
+audit never reads, and a C shared-object plugin's callbacks receive the
+`struct flb_*_instance *` itself. Its writing `ins->p` is the same kind of
+unanalysed store that `rk_no_plugin_library` names for librdkafka. The
+declarations here state no premise, as the integrator directed. Under "handle
+as safe as possible" a disclosed premise, for example "no out-of-tree
+(shared-object or Go proxy) plugin writes an instance's `p`", would list this
+on the affected rows without changing a verdict (`listing_changes_no_verdict`).
+It is recorded for the integrator's decision, not adopted here.
+
 ## 4. Gate
 
 At `973be939d` (every step's HEAD), each step under the heavy lock, exits to

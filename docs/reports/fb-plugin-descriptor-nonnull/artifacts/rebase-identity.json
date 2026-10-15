@@ -1,0 +1,63 @@
+{
+ "corpus": {
+  "custody_column_moves": 0,
+  "moves_rebased": {
+   "Unknown -> Safe (unconditional)": 1
+  },
+  "same_added_candidates": true,
+  "same_check_changes": true,
+  "same_moving_rows": true,
+  "verdicts_main": {
+   "Safe (conditional)": 1435,
+   "Safe (unconditional)": 1113,
+   "Unknown": 2355,
+   "Unsafe": 18
+  },
+  "verdicts_tip": {
+   "Safe (conditional)": 1435,
+   "Safe (unconditional)": 1114,
+   "Unknown": 2354,
+   "Unsafe": 18
+  }
+ },
+ "slice": {
+  "custody_column_moves": 0,
+  "moves_rebased": {
+   "Safe (conditional) -> Unknown": 2,
+   "Safe (unconditional) -> Unknown": 2,
+   "Unknown -> Safe (conditional)": 20
+  },
+  "same_added_candidates": true,
+  "same_check_changes": true,
+  "same_moving_rows": true,
+  "verdicts_main": {
+   "Safe (conditional)": 103,
+   "Safe (unconditional)": 71,
+   "Unknown": 232
+  },
+  "verdicts_tip": {
+   "Safe (conditional)": 121,
+   "Safe (unconditional)": 69,
+   "Unknown": 216
+  }
+ },
+ "system": {
+  "custody_column_moves": 0,
+  "moves_rebased": {
+   "Unknown -> Safe (unconditional)": 2
+  },
+  "same_added_candidates": true,
+  "same_check_changes": true,
+  "same_moving_rows": true,
+  "verdicts_main": {
+   "Safe (conditional)": 125,
+   "Safe (unconditional)": 84,
+   "Unknown": 245
+  },
+  "verdicts_tip": {
+   "Safe (conditional)": 125,
+   "Safe (unconditional)": 86,
+   "Unknown": 243
+  }
+ }
+}
