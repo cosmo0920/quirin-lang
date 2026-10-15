@@ -492,6 +492,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [lean-proof-integrity](lean-proof-integrity/README.md) | Lean proof integrity and Lean 4.34 warning cleanup |
 
+| [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
+
 | [loop-unroll-budget](loop-unroll-budget/README.md) | LOOP-UNROLL-BUDGET — the three-layer unrolling budget (wave 26) |
 
 | [loop-v1](loop-v1/README.md) | LOOP-V1 — the first checked source loop (wave 25) |

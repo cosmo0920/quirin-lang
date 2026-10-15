@@ -285,7 +285,33 @@ premises.
 
 ## 8. Gate
 
-GATE_SECTION
+Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/lpp/gate-g1/`). Every code step ran at `3416540ad` (the records
+commit on the rebased tip `5b1ceecd5`). The standing gate and the provider
+gate ran under one exclusive flock on the shared heavy lock
+(12:49:29Z–13:08:29Z; [`gate-run.sh`](scripts/gate-run.sh),
+[`gate.sh`](scripts/gate.sh), [`finish-gate.sh`](scripts/finish-gate.sh)).
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 499 units, 512 summaries, **8,098 passed, 0 failed, 15 ignored** (`private/lpp/tests-g1/`); no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **324** audits passed under Lean 4.35.0 |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked` in `providers/`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| `cargo clean --profile dev` | 0 | |
+| Python suite (08) | 0 | 374 tests |
+| docs index check (09) | **1** | the index had not yet been regenerated for this report's directory ("report index is stale"); regenerated as 10b and checked as 10c, both 0 |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+`qcore_contract_corpus` also ran on its own before the gate (4 passed,
+`private/lpp/corpus-test.log`). The bold rule-id duplicate check
+(`rg -o --no-filename '^[0-9]{1,2}[a-z]?\. \*\*' docs/agents/*.md | sort |
+uniq -d`) is empty; the card adds no rule. Clang:
+[`gate/clang-version.txt`](gate/clang-version.txt).
 
 ## Files
 

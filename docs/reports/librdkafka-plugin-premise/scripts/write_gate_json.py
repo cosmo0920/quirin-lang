@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/librdkafka-plugin-premise"
-BASE = "d708641bc"
+BASE = "5b1ceecd5 (rebased from d708641bc)"
 
 
 def main() -> int:
@@ -26,6 +26,11 @@ def main() -> int:
     accounted = {}
     if bad.get("08-python") == "1":
         accounted["08-python"] = "1 before the matrix regeneration; rerun as 09b"
+    if bad.get("09-index") == "1":
+        # LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the report index had not been
+        # regenerated for the new report directory before the gate;
+        # finish-gate.sh regenerates it (10b) and checks it again (10c).
+        accounted["09-index"] = "1: index stale before its regeneration; regenerated as 10b, checked as 10c"
     bad = {k: v for k, v in bad.items() if k not in accounted}
     if bad:
         print("nonzero exits:", bad)
