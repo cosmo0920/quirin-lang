@@ -545,6 +545,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [op-callback-candidate-contracts](op-callback-candidate-contracts/README.md) | OP-CALLBACK-CANDIDATE-CONTRACTS: contracts for the op-callback candidates |
 
+| [op-callback-member-path-release](op-callback-member-path-release/README.md) | OP-CALLBACK-MEMBER-PATH-RELEASE: a callback's release or move-out at a member path |
+
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
 
 | [owned-field-route-reach](owned-field-route-reach/README.md) | `OWNED-FIELD-ROUTE-REACH` (wave 41) — the reach of wave 39's owned-field rules, measured, then closed or named |
