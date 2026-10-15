@@ -716,11 +716,13 @@ pub fn run(
     // round (the records read refine a member's keys, which may drop a
     // member name the bootstrap round used); the read set only grows, so the
     // loop ends, and at its end every C unit naming a final token is read.
-    // Card MEMBER-PREPASS-OTHER-ROUTES: each round also re-checks every
-    // remaining exclusion against the round's tokens; a dropped exclusion is
-    // read like any other unit from the next round on, and never restored,
-    // so the loop still ends, and at its end every exclusion holds against
-    // the final tokens.
+    // Card MEMBER-PREPASS-OTHER-ROUTES: at each fixed point of the reading
+    // (no unread C unit names a token), every remaining exclusion is
+    // re-checked against the tokens of that fixed point (the bootstrap
+    // round's tokens, before the records refine the members' keys, are never
+    // used); a dropped exclusion is read like any other unit, the reading
+    // resumes, and an exclusion is never restored, so the loop still ends,
+    // and at its end every exclusion holds against the final tokens.
     loop {
         rounds += 1;
         let mut units = read.values().cloned().collect::<Vec<_>>();
@@ -735,38 +737,52 @@ pub fn run(
             .map(|token| hash(token))
             .collect::<BTreeSet<_>>();
         let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
-        let stale = readings
+        let selected = readings
             .iter()
             .enumerate()
-            .filter_map(|(index, reading)| {
-                let Reading::Outside(_) = reading else {
-                    return None;
-                };
-                let why = match &evidence[&index] {
-                    Err(why) => why.clone(),
-                    Ok(files) => {
-                        let named = files.iter().find_map(|file| match &file_ids[file] {
-                            Err(why) => Some(why.clone()),
-                            Ok(ids) if names(ids) => Some(format!(
-                                "{} names a token of the pre-pass ({})",
-                                file.display(),
-                                tokens
-                                    .iter()
-                                    .filter(|token| ids.binary_search(&hash(token)).is_ok())
-                                    .take(3)
-                                    .map(|token| format!("`{token}`"))
-                                    .collect::<Vec<_>>()
-                                    .join(", ")
-                            )),
-                            Ok(_) => None,
-                        });
-                        named?
-                    }
-                };
-                Some((index, why))
+            .filter(|(index, reading)| {
+                !read.contains_key(index) && matches!(reading, Reading::C(ids) if names(ids))
             })
+            .map(|(index, _)| index)
             .collect::<Vec<_>>();
-        if !stale.is_empty() {
+        if selected.is_empty() {
+            // The fixed point of the reading: re-check every remaining
+            // exclusion against these (final) tokens; a dropped one is read
+            // like any other unit and the reading resumes.
+            let stale = readings
+                .iter()
+                .enumerate()
+                .filter_map(|(index, reading)| {
+                    let Reading::Outside(_) = reading else {
+                        return None;
+                    };
+                    let why = match &evidence[&index] {
+                        Err(why) => why.clone(),
+                        Ok(files) => {
+                            let named = files.iter().find_map(|file| match &file_ids[file] {
+                                Err(why) => Some(why.clone()),
+                                Ok(ids) if names(ids) => Some(format!(
+                                    "{} names a token of the pre-pass ({})",
+                                    file.display(),
+                                    tokens
+                                        .iter()
+                                        .filter(|token| ids.binary_search(&hash(token)).is_ok())
+                                        .take(3)
+                                        .map(|token| format!("`{token}`"))
+                                        .collect::<Vec<_>>()
+                                        .join(", ")
+                                )),
+                                Ok(_) => None,
+                            });
+                            named?
+                        }
+                    };
+                    Some((index, why))
+                })
+                .collect::<Vec<_>>();
+            if stale.is_empty() {
+                break;
+            }
             let mut fresh = Vec::with_capacity(stale.len());
             let _ = crate::parallel::run_ordered(
                 stale,
@@ -783,17 +799,6 @@ pub fn run(
                 readings[index] = reading;
             }
             continue;
-        }
-        let selected = readings
-            .iter()
-            .enumerate()
-            .filter(|(index, reading)| {
-                !read.contains_key(index) && matches!(reading, Reading::C(ids) if names(ids))
-            })
-            .map(|(index, _)| index)
-            .collect::<Vec<_>>();
-        if selected.is_empty() {
-            break;
         }
         let mut results = Vec::with_capacity(selected.len());
         let _ = crate::parallel::run_ordered(
