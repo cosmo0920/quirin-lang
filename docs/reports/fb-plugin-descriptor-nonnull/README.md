@@ -167,9 +167,37 @@ New caller candidates in rows already Unknown (no verdict move): slice
   descriptor's 34 slice candidates are 38 removed of which 12 are re-added at
   callers; the three output functions it named do not move.
 
-## 4. Gates
+## 4. Gate
 
-See [gate section](#gate) below (filled at the gate).
+At `973be939d` (every step's HEAD), each step under the heavy lock, exits to
+files, nothing piped ([gate.sh](scripts/gate.sh),
+[gate-resume.sh](scripts/gate-resume.sh), [provider-gate.sh](scripts/provider-gate.sh)):
+
+| Step | Exit | Count |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update (`--init --recursive`) | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 499 units, 512 summaries; 8,098 passed, 0 failed, 15 ignored (313 s inside the lock) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 324 Lean audits (unchanged; no Lean change) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 374 tests OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider: `cargo check` / `test` / `fmt` / `clippy` (`providers/`, `--locked --offline`) | 0 / 0 / 0 / 0 | 133 passed, 0 failed, 1 ignored (43 summaries) |
+| provider: `contracts.py check`, `package.py build`, `verify` ×5 | 0, 0, 0 ×5 | |
+| provider: `python3 -m unittest discover -s providers/tests` | 0 | 25 tests OK |
+
+Steps 05–09 ran through `gate-resume.sh` at the same HEAD after `gate.sh g5`
+was stopped at step 05 when free space fell to 11 GB (other cards' builds);
+this worktree's dev profile (58.5 GiB) was cleaned first. Earlier attempts,
+each superseded and none counted: g1/pg1 stopped after a `cargo fmt` diff in
+the pin table; g2/pg2 failed `cargo check` on a full disk; g3's suite failed 4
+tests (an unregistered second `null_deref_beside` pair,
+`flb_input_thread_instance_exit` beside `lib_engine_thread.qv`, and the
+loader's rejected count), fixed in `b65d6c0bd`; g4 failed `cargo fmt`. The
+bold rule-id duplicate check is empty (no new id). Logs: `private/fbn/gate-g5/`,
+`private/fbn/tests-gate-g5/`, `private/fbn/provider-gate-pg3/`.
 
 ## Files
 
@@ -178,6 +206,7 @@ Scripts: [build.sh](scripts/build.sh), [measure.sh](scripts/measure.sh),
 [compare.py](scripts/compare.py), [gains.py](scripts/gains.py),
 [combined.py](scripts/combined.py), [totals.py](scripts/totals.py),
 [runs.py](scripts/runs.py), [update_ledger.py](scripts/update_ledger.py),
-[gate.sh](scripts/gate.sh), [provider-gate.sh](scripts/provider-gate.sh).
+[gate.sh](scripts/gate.sh), [gate-resume.sh](scripts/gate-resume.sh),
+[heavy.sh](scripts/heavy.sh), [provider-gate.sh](scripts/provider-gate.sh).
 Private outputs: `private/fbn/` (runs, null streams, pin logs, gate logs) and
 `/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/fbn-{before,stable,after}/`.
