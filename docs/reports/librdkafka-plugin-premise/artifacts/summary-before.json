@@ -1,0 +1,110 @@
+{
+ "corpus": {
+  "before": {
+   "totals": {
+    "Safe": 936,
+    "Unknown": 3889,
+    "Unsafe": 9
+   },
+   "sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+   "null_tally": {
+    "Safe (conditional on its preconditions)": 1435,
+    "Safe (unconditional)": 1113,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "null_rows_sha256": "5e854d2a5aa62c92ea9c1f92aa5a04be296c9ca9d8f7307bd1291b7c2032b338",
+   "dependency_counts": {
+    "declarations_consulted": 428,
+    "declared_assumption": 319,
+    "held": 1,
+    "partly_validated": 45,
+    "rows_annotated": 4834,
+    "validated": 63
+   },
+   "safe_rollup": {
+    "carrying_a_null_premise": 32,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "resting_on_a_declared_assumption": 382,
+    "resting_on_a_partly_validated_declaration": 25,
+    "resting_on_no_declaration": 397,
+    "resting_only_on_a_null_premise": 24,
+    "resting_only_on_validated_declarations": 108,
+    "safe_rows": 936
+   },
+   "seconds": 782.651
+  }
+ },
+ "system": {
+  "before": {
+   "totals": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "sha256": "2aac1fad2e0e813cdff41c58745bde1f0d8ffb45baca43bf8ef063f7a366d578",
+   "null_tally": {
+    "Safe (conditional on its preconditions)": 125,
+    "Safe (unconditional)": 84,
+    "Unknown": 245
+   },
+   "null_rows_sha256": "23316f8bc99f573017cacfa619ab8768e4684381e1abe70b57234637fa85e324",
+   "dependency_counts": {
+    "declarations_consulted": 102,
+    "declared_assumption": 83,
+    "held": 2,
+    "partly_validated": 8,
+    "rows_annotated": 448,
+    "validated": 9
+   },
+   "safe_rollup": {
+    "carrying_a_null_premise": 2,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "resting_on_a_declared_assumption": 36,
+    "resting_on_a_partly_validated_declaration": 6,
+    "resting_on_no_declaration": 49,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 93
+   },
+   "seconds": 95.362
+  }
+ },
+ "slice": {
+  "before": {
+   "totals": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "sha256": "e4b97054465f573dcdb74c791b17da187cecc98db3c7d82f167dc2c76116dc88",
+   "null_tally": {
+    "Safe (conditional on its preconditions)": 103,
+    "Safe (unconditional)": 71,
+    "Unknown": 232
+   },
+   "null_rows_sha256": "ed8de3d27ab013664b147e9139011231a9d6fa0e707282e7259c59676af72fcb",
+   "dependency_counts": {
+    "declarations_consulted": 85,
+    "declared_assumption": 69,
+    "held": 9,
+    "partly_validated": 2,
+    "rows_annotated": 404,
+    "validated": 5
+   },
+   "safe_rollup": {
+    "carrying_a_null_premise": 5,
+    "consulting_a_held_or_withdrawn_declaration": 0,
+    "resting_on_a_declared_assumption": 19,
+    "resting_on_a_partly_validated_declaration": 2,
+    "resting_on_no_declaration": 29,
+    "resting_only_on_a_null_premise": 0,
+    "resting_only_on_validated_declarations": 2,
+    "safe_rows": 52
+   },
+   "seconds": 49.401
+  }
+ },
+ "binary:before": "8c8e7e392c3c3e96f1d9ebaaff1b2bb8dc54d146fd20bf9fbdd293981cfad530"
+}

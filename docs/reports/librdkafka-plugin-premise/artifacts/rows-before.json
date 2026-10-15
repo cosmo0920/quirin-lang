@@ -1,0 +1,327 @@
+{
+ "corpus": {
+  "sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+  "rows_resting_on_the_34": 368,
+  "by_status_and_premise": {
+   "Safe lacks": 16,
+   "Safe lists": 1,
+   "Unknown lacks": 317,
+   "Unknown lists": 34
+  },
+  "carrying_premise_in_sidecar": [],
+  "body_standing": {
+   "rd_kafka_AlterConsumerGroupOffsets_destroy": "declared-assumption",
+   "rd_kafka_DeleteConsumerGroupOffsets_destroy": "declared-assumption",
+   "rd_kafka_ListConsumerGroupOffsets_destroy": "declared-assumption",
+   "rd_kafka_enq_once_trigger": "partly-validated",
+   "rd_kafka_err_action": "declared-assumption",
+   "rd_kafka_oauthbearer_set_token_failure": "declared-assumption",
+   "rd_kafka_op_destroy": "partly-validated",
+   "rd_kafka_op_req": "declared-assumption",
+   "rd_kafka_op_req0": "declared-assumption",
+   "rd_kafka_op_req2": "declared-assumption",
+   "rd_kafka_q_destroy0": "partly-validated",
+   "rd_kafka_q_destroy_owner": "partly-validated",
+   "rd_kafka_q_pop_serve": "declared-assumption",
+   "rd_kafka_q_pop_serve0": "declared-assumption",
+   "rd_kafka_q_pop_serve_maybe_consume": "declared-assumption",
+   "rd_kafka_q_purge0": "declared-assumption",
+   "rd_kafka_q_serve": "declared-assumption",
+   "rd_kafka_q_serve0": "declared-assumption",
+   "rd_kafka_q_serve_maybe_consume": "declared-assumption",
+   "rd_kafka_q_wait_result": "declared-assumption",
+   "rd_kafka_topic_destroy0": "partly-validated",
+   "rd_kafka_topic_partition_destroy0": "declared-assumption",
+   "rd_kafka_topic_partition_list_destroy": "declared-assumption",
+   "rd_kafka_topic_partition_result_destroy": "declared-assumption",
+   "rd_kafka_toppar_desired_add": "partly-validated",
+   "rd_kafka_toppar_destroy0": "partly-validated",
+   "rd_kafka_toppar_fetch_backoff": "declared-assumption",
+   "rd_kafka_toppar_get2": "partly-validated",
+   "rd_kafka_toppar_get_avail": "partly-validated",
+   "rd_kafka_toppar_new0": "partly-validated",
+   "rd_kafka_toppars_pause_resume": "declared-assumption",
+   "unit_test_telemetry": "partly-validated",
+   "ut_create_mock_toppar": "partly-validated",
+   "ut_destroy_mock_queue": "partly-validated"
+  },
+  "counts": {
+   "declarations_consulted": 428,
+   "declared_assumption": 319,
+   "held": 1,
+   "partly_validated": 45,
+   "rows_annotated": 4834,
+   "validated": 63
+  },
+  "safe_rollup": {
+   "carrying_a_null_premise": 32,
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 382,
+   "resting_on_a_partly_validated_declaration": 25,
+   "resting_on_no_declaration": 397,
+   "resting_only_on_a_null_premise": 24,
+   "resting_only_on_validated_declarations": 108,
+   "safe_rows": 936
+  },
+  "safe_or_pending_rows": [
+   {
+    "unit": "rdkafka_admin.c",
+    "occurrence": 1,
+    "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_AlterConsumerGroupOffsets_destroy"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_admin.c",
+    "occurrence": 1,
+    "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_DeleteConsumerGroupOffsets_destroy"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_admin.c",
+    "occurrence": 1,
+    "function": "rd_kafka_ListConsumerGroupOffsets_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_ListConsumerGroupOffsets_destroy"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_aux.c",
+    "occurrence": 1,
+    "function": "rd_kafka_topic_partition_result_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_topic_partition_result_destroy"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_partition.c",
+    "occurrence": 1,
+    "function": "rd_kafka_topic_partition_destroy",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_topic_partition_destroy0"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_partition.c",
+    "occurrence": 1,
+    "function": "rd_kafka_topic_partition_destroy_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_topic_partition_destroy0"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_partition.c",
+    "occurrence": 1,
+    "function": "rd_kafka_topic_partition_list_destroy_free",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_topic_partition_list_destroy"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_partition.c",
+    "occurrence": 1,
+    "function": "rd_kafka_toppar_purge_and_disable_queues",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_q_purge0"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_request.c",
+    "occurrence": 1,
+    "function": "rd_kafka_handle_OffsetCommit_error",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_err_action"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_request.c",
+    "occurrence": 1,
+    "function": "rd_kafka_handle_OffsetFetch_err_action",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_err_action"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_sasl.c",
+    "occurrence": 1,
+    "function": "rd_kafka_share_oauthbearer_set_token_failure",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_oauthbearer_set_token_failure"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+    "occurrence": 1,
+    "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_oauthbearer_set_token_failure"
+    ],
+    "declarations_carrying_the_premise": [
+     "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+    ],
+    "lists_premise": true
+   },
+   {
+    "unit": "rdkafka_subscription.c",
+    "occurrence": 1,
+    "function": "rd_kafka_pause_partitions",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_toppars_pause_resume"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_subscription.c",
+    "occurrence": 1,
+    "function": "rd_kafka_resume_partitions",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "rd_kafka_toppars_pause_resume"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_telemetry_decode.c",
+    "occurrence": 1,
+    "function": "unit_test_telemetry_gauge",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "unit_test_telemetry"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_telemetry_decode.c",
+    "occurrence": 1,
+    "function": "unit_test_telemetry_sum",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "unit_test_telemetry"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   },
+   {
+    "unit": "rdkafka_telemetry_decode.c",
+    "occurrence": 1,
+    "function": "unittest_telemetry_decode",
+    "row": 1,
+    "status": "Safe",
+    "declarations_of_the_34": [
+     "unit_test_telemetry"
+    ],
+    "declarations_carrying_the_premise": [],
+    "lists_premise": false
+   }
+  ]
+ },
+ "system": {
+  "sha256": "2aac1fad2e0e813cdff41c58745bde1f0d8ffb45baca43bf8ef063f7a366d578",
+  "rows_resting_on_the_34": 0,
+  "by_status_and_premise": {},
+  "carrying_premise_in_sidecar": [],
+  "body_standing": {},
+  "counts": {
+   "declarations_consulted": 102,
+   "declared_assumption": 83,
+   "held": 2,
+   "partly_validated": 8,
+   "rows_annotated": 448,
+   "validated": 9
+  },
+  "safe_rollup": {
+   "carrying_a_null_premise": 2,
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 36,
+   "resting_on_a_partly_validated_declaration": 6,
+   "resting_on_no_declaration": 49,
+   "resting_only_on_a_null_premise": 0,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 93
+  },
+  "safe_or_pending_rows": []
+ },
+ "slice": {
+  "sha256": "e4b97054465f573dcdb74c791b17da187cecc98db3c7d82f167dc2c76116dc88",
+  "rows_resting_on_the_34": 0,
+  "by_status_and_premise": {},
+  "carrying_premise_in_sidecar": [],
+  "body_standing": {},
+  "counts": {
+   "declarations_consulted": 85,
+   "declared_assumption": 69,
+   "held": 9,
+   "partly_validated": 2,
+   "rows_annotated": 404,
+   "validated": 5
+  },
+  "safe_rollup": {
+   "carrying_a_null_premise": 5,
+   "consulting_a_held_or_withdrawn_declaration": 0,
+   "resting_on_a_declared_assumption": 19,
+   "resting_on_a_partly_validated_declaration": 2,
+   "resting_on_no_declaration": 29,
+   "resting_only_on_a_null_premise": 0,
+   "resting_only_on_validated_declarations": 2,
+   "safe_rows": 52
+  },
+  "safe_or_pending_rows": []
+ }
+}
