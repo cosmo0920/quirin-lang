@@ -924,19 +924,15 @@ impl Parser<'_> {
     ) -> Result<Option<Operands>, String> {
         // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a declaration
         // that hands a formal to its callback depending on its return code
-        // is read only as a candidate of a callback clause; a direct call
-        // does not read the result's branch, so it refuses.
-        if let Some(handoff) = &declaration.handoff {
-            return Err(refusal(
-                function,
-                &format!(
-                    "it hands its parameter {} to the callback only when `{}`, which a direct \
-                     call does not read",
-                    handoff.parameter,
-                    handoff.guard.spelling()
-                ),
-                crate::handoff_branch::DIRECT,
-            ));
+        // is read as a candidate of a callback clause. Card
+        // HANDOFF-DIRECT-CALL-READING (rule 12m amended): a direct call is
+        // read only on an edge of the caller's own test of its result, where
+        // the calling body's reading admits it; every other direct call
+        // refuses.
+        if let Some(handoff) = &declaration.handoff
+            && !super::handoff_direct_route::edge_in_force(function)
+        {
+            return Err(self.handoff_direct_refusal(function, handoff));
         }
         // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
         // are read only at a callback invocation, composed with the

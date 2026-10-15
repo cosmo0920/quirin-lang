@@ -1,0 +1,41 @@
+module contract;
+
+// Card HANDOFF-DIRECT-CALL-READING (gateway rule 12m amended): synthetic
+// direct calls of hand-off declarations. Trusted test assumptions: a `Safe`
+// here is `Safe` over them and promotes nothing.
+
+alias #PASS = @D_PASS;
+
+extern fn d_new(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn d_free(op: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(op, nonnull);
+    ensures normal resource_return_none();
+};
+
+// Hands `op` to its callback on every result but PASS.
+extern fn d_poll(q: ptr<mut, u8>, op: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_owned(op, nonnull);
+    ensures normal resource_return_none();
+    quant live #op: #owner |-> #callback when #result != #PASS;
+};
+
+// Hands `op` to its callback on KEEP only.
+extern fn d_keep(q: ptr<mut, u8>, op: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_owned(op, nonnull);
+    ensures normal resource_return_none();
+    quant live #op: #owner |-> #callback when #result == @D_KEEP;
+};

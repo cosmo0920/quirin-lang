@@ -78,6 +78,9 @@ pub mod callback_member_closure;
 pub mod candidate_composition;
 pub mod constructed_state;
 pub mod handoff_branch;
+/// Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): a direct call of a
+/// hand-off declaration, split at the caller's own test of its result.
+pub mod handoff_direct;
 /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the body check of a
 /// declaration's member-path states.
 pub mod member_path_check;

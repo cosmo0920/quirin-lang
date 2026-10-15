@@ -369,6 +369,7 @@ import QCore.ReturnCodeHandOff
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers
 import QCore.CandidateComposition
+import QCore.HandOffDirect
 import QCore.NullDeref
 import QCore.NullDerefGrade
 import QCore.DerefDecomposition

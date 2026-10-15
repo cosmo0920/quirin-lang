@@ -133,6 +133,12 @@ pub struct Site {
     /// and the member path. The site then also invokes that member.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub copy: Option<(SiteActual, String)>,
+    /// Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): the site's
+    /// result is stored into a variable through a conversion (Clang wrote a
+    /// cast between the call and the store), so a test of that variable reads
+    /// a converted value, not the result.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub result_converted: bool,
 }
 
 /// One write of a called variable, as [`exact_copy`] reads it.
@@ -588,7 +594,10 @@ pub fn function_handling(
             continue;
         };
         site_ids.insert(id.to_owned());
-        let result = result_variable(body, id);
+        let (result, result_converted) = match result_variable(body, id) {
+            Some((result, converted)) => (Some(result), converted),
+            None => (None, false),
+        };
         let compared = compared_constants(body, id, result.as_deref(), enumerators);
         let mut handling = BTreeMap::new();
         for (position, actual) in actuals.iter().enumerate() {
@@ -626,6 +635,7 @@ pub fn function_handling(
             handling,
             compared,
             copy,
+            result_converted,
         });
     }
     if sites.is_empty() {
@@ -716,9 +726,21 @@ fn escaping_formals(
 }
 
 /// The local the site's result is assigned to (`r = CALL;` or `T r =
-/// CALL;`), if any.
-fn result_variable(body: &Value, site: &str) -> Option<String> {
+/// CALL;`), if any, and whether the store converts it (card
+/// HANDOFF-DIRECT-CALL-READING: a cast Clang wrote between the call and the
+/// store, below any parentheses).
+fn result_variable(body: &Value, site: &str) -> Option<(String, bool)> {
     let is_site = |node: &Value| strip(node)["id"].as_str() == Some(site);
+    let converted = |node: &Value| {
+        let mut node = node;
+        while kind(node) == "ParenExpr" {
+            match children(node).first() {
+                Some(inner) => node = inner,
+                None => break,
+            }
+        }
+        node["id"].as_str() != Some(site)
+    };
     let mut found = None;
     each(body, &mut |node| match kind(node) {
         "BinaryOperator" if node["opcode"] == "=" => {
@@ -726,7 +748,7 @@ fn result_variable(body: &Value, site: &str) -> Option<String> {
                 && is_site(value)
                 && let Some(("VarDecl", id)) = reference(target)
             {
-                found = Some(id.to_owned());
+                found = Some((id.to_owned(), converted(value)));
             }
         }
         "VarDecl" => {
@@ -734,7 +756,7 @@ fn result_variable(body: &Value, site: &str) -> Option<String> {
                 && is_site(init)
                 && let Some(id) = node["id"].as_str()
             {
-                found = Some(id.to_owned());
+                found = Some((id.to_owned(), converted(init)));
             }
         }
         _ => {}
@@ -1739,6 +1761,84 @@ pub fn admit(bodies: &dyn Bodies, query: &Query<'_>) -> Result<(), String> {
     Ok(())
 }
 
+/// Why a direct call's reading of the calling body does not admit it (card
+/// HANDOFF-DIRECT-CALL-READING, rule 12m amended).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DirectRefusal {
+    /// The reading is not made: no site, an unread construct, a handed
+    /// expression that is no variable, a converted store, or a body that
+    /// never compares the result with the guard's own constant.
+    NotRead(String),
+    /// The reading is made and disagrees: the body names the object again on
+    /// a result the guard gives the callback.
+    Disagrees(String),
+}
+
+/// Card **HANDOFF-DIRECT-CALL-READING** (rule 12m amended): the caller branch
+/// check applied inside the calling body, for a direct call of `callee`
+/// handing its parameter `position` under `guard` (resolved to `value`).
+/// Every direct site of `callee` in the body must be read: the handed actual
+/// a pointer variable whose handling the walk read, the result stored (if at
+/// all) without a conversion, no class the guard admits naming the object
+/// again before a rebinding or a noreturn call (rule 12m's `forward`), and
+/// the result compared with the guard's own constant. Where the result
+/// leads after the call (what the body returns) is not the object's custody
+/// and is not read here; the per-path custody state is split at the caller's
+/// test by the route.
+///
+/// # Errors
+/// Why the direct call is not admitted.
+pub fn direct_admission(
+    handling: &FunctionHandling,
+    callee: &str,
+    position: usize,
+    guard: &HandOffGuard,
+    value: i64,
+) -> Result<(), DirectRefusal> {
+    let values = match guard.op {
+        GuardOp::Eq => Values::Only(BTreeSet::from([value])),
+        GuardOp::Ne => Values::Except(BTreeSet::from([value])),
+    };
+    let sites = handling
+        .sites
+        .iter()
+        .filter(|site| site.callee == SiteCallee::Direct(callee.to_owned()))
+        .collect::<Vec<_>>();
+    if sites.is_empty() {
+        return Err(DirectRefusal::NotRead(format!(
+            "no direct call of `{callee}` is read in the calling body"
+        )));
+    }
+    for site in sites {
+        match site.handling.get(&position) {
+            None => {
+                return Err(DirectRefusal::NotRead(
+                    "the handed object is not a pointer variable the reading follows".into(),
+                ));
+            }
+            Some(None) => {
+                return Err(DirectRefusal::NotRead(
+                    "a construct the branch reading does not read".into(),
+                ));
+            }
+            Some(Some(_)) => {}
+        }
+        forward(site, position, &values).map_err(DirectRefusal::Disagrees)?;
+        if site.compared.get(&guard.constant) != Some(&value) {
+            return Err(DirectRefusal::NotRead(format!(
+                "the calling body does not compare the result with `{}`",
+                guard.constant
+            )));
+        }
+        if site.result_converted {
+            return Err(DirectRefusal::NotRead(
+                "the result is stored through a conversion".into(),
+            ));
+        }
+    }
+    Ok(())
+}
+
 #[allow(clippy::too_many_arguments)]
 fn search<'a>(
     bodies: &'a dyn Bodies,
@@ -2069,6 +2169,7 @@ mod tests {
                 handling: BTreeMap::from([(0, Some(handling))]),
                 compared: BTreeMap::new(),
                 copy: None,
+                result_converted: false,
             };
             let values = if *ne {
                 Values::Except(BTreeSet::from([*value]))
@@ -2115,6 +2216,7 @@ mod tests {
             )]),
             compared: BTreeMap::new(),
             copy: None,
+            result_converted: false,
         };
         assert_eq!(
             forward(&site, 0, &Values::Only(BTreeSet::from([2]))),

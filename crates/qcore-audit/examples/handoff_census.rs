@@ -4,6 +4,8 @@
 //! (`member_prepass::read_facts`), and runs rule 12m's caller branch check
 //! (`handoff_branch::admit`) for each hand-off the card's census predicts,
 //! printing the answer and, for each function on the paths, its reading.
+//! Card HANDOFF-DIRECT-CALL-READING adds the calling bodies' readings of the
+//! four direct calls of `rd_kafka_poll_cb` (`direct_admission`).
 //!
 //! usage: handoff_census DATABASE FILTER JOBS OUT.json
 
@@ -11,7 +13,9 @@ use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 use qcore_c_gateway::callback_member_closure::MemberFacts;
-use qcore_c_gateway::handoff_branch::{Handed, Invocation, Query, UnitBodies, admit, resolve};
+use qcore_c_gateway::handoff_branch::{
+    Handed, Invocation, Query, SiteCallee, UnitBodies, admit, direct_admission, resolve,
+};
 use qcore_schemas::handoff::{GuardOp, HandOffGuard};
 
 fn main() -> Result<(), String> {
@@ -233,6 +237,61 @@ fn main() -> Result<(), String> {
             }),
         );
     }
+    // Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): the calling
+    // body's reading of each direct call of `rd_kafka_poll_cb`
+    // (`handoff_branch::direct_admission`), in the unit that defines it.
+    let mut direct = serde_json::Map::new();
+    for caller in [
+        "rd_kafka_consume0",
+        "rd_kafka_consumer_close0",
+        "rd_kafka_q_serve_rkmessages",
+        "rd_kafka_background_queue_serve",
+    ] {
+        let found = read
+            .iter()
+            .filter_map(|(file, facts)| {
+                let facts = facts.as_ref().ok()?;
+                let handling = facts.handling.get(caller)?;
+                Some((file.clone(), facts, handling))
+            })
+            .collect::<Vec<_>>();
+        let answer = match found.as_slice() {
+            [(file, facts, handling)] => resolve(&[*facts], "rd_kafka_poll_cb", &not_pass.constant)
+                .map_err(|why| format!("not read: {why}"))
+                .and_then(|value| {
+                    direct_admission(handling, "rd_kafka_poll_cb", 2, &not_pass, value)
+                        .map_err(|refusal| format!("{refusal:?}"))
+                })
+                .map(|()| file.clone()),
+            [] => Err("no unit reads the caller".to_owned()),
+            _ => Err(format!("{} units read the caller", found.len())),
+        };
+        let sites = found
+            .first()
+            .map(|(_, _, handling)| {
+                handling
+                    .sites
+                    .iter()
+                    .filter(|site| site.callee == SiteCallee::Direct("rd_kafka_poll_cb".to_owned()))
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+        println!(
+            "direct rd_kafka_poll_cb at {caller}: {}",
+            match &answer {
+                Ok(file) => format!("admitted ({file})"),
+                Err(why) => format!("refused: {why}"),
+            }
+        );
+        direct.insert(
+            caller.to_owned(),
+            serde_json::json!({
+                "admitted": answer.is_ok(),
+                "why": answer.err(),
+                "sites": serde_json::to_value(&sites).map_err(|error| error.to_string())?,
+            }),
+        );
+    }
     let mut readings = serde_json::Map::new();
     for function in [
         "rd_kafka_q_serve",
@@ -265,6 +324,7 @@ fn main() -> Result<(), String> {
         out,
         serde_json::to_vec_pretty(&serde_json::json!({
             "answers": answers,
+            "direct": direct,
             "readings": readings,
         }))
         .map_err(|error| error.to_string())?,

@@ -116,6 +116,12 @@ fn close_of(texts: &[&str], open: usize) -> Option<usize> {
     None
 }
 
+/// The bracket closing the one opened at `open` (card
+/// HANDOFF-DIRECT-CALL-READING: the hand-off test reader's call span).
+pub(crate) fn close_paren(texts: &[&str], open: usize) -> Option<usize> {
+    close_of(texts, open)
+}
+
 /// Strip parentheses enclosing the whole span `[start, end)`.
 fn strip(texts: &[&str], mut start: usize, mut end: usize) -> (usize, usize) {
     while end > start + 1 && texts[start] == "(" && close_of(texts, start) == Some(end - 1) {

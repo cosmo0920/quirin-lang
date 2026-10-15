@@ -81,6 +81,18 @@ pub(super) fn tested_stored_returns(
     if relational.is_empty() {
         return None;
     }
+    stored_returns_with(tokens, &|name| relational.contains_key(name), &read_test)
+}
+
+/// [`tested_stored_returns`] for the callees `is_callee` names, the rewritten
+/// condition read by `read` (card HANDOFF-DIRECT-CALL-READING shares it for
+/// the direct calls of hand-off declarations, whose constants may be
+/// enumerators).
+pub(super) fn stored_returns_with(
+    tokens: &[Token],
+    is_callee: &dyn Fn(&str) -> bool,
+    read: &dyn Fn(&[&str]) -> Option<crate::relational_post::CallTest>,
+) -> Option<Vec<Token>> {
     let mut out: Option<Vec<Token>> = None;
     let mut copied = 0usize;
     let mut index = 1usize;
@@ -91,7 +103,7 @@ pub(super) fn tested_stored_returns(
                 || !is_identifier(name)
                 || tokens[index + 1].text != "="
                 || tokens[index + 2].text == "="
-                || !relational.contains_key(&tokens[index + 2].text)
+                || !is_callee(&tokens[index + 2].text)
                 || tokens[index + 3].text != "("
             {
                 return None;
@@ -124,7 +136,7 @@ pub(super) fn tested_stored_returns(
                 .iter()
                 .map(|token| token.text.as_str())
                 .collect::<Vec<_>>();
-            let test = read_test(&texts)?;
+            let test = read(&texts)?;
             (test.assigned.map(|a| texts[a]) == Some(name.as_str()))
                 .then_some((close, if_close, rewritten))
         })();

@@ -323,6 +323,11 @@ mod layout_extents_route;
 // plan and the untested refusal).
 #[path = "legacy_relational_post.rs"]
 mod relational_route;
+// Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): a direct call of a
+// hand-off declaration, split at the caller's own test of its result (the
+// stored-return rewrite, the `if` plan and the refusal of every other call).
+#[path = "legacy_handoff_direct.rs"]
+mod handoff_direct_route;
 // Card CALLEE-RETENTION-CLASS1 (rule 12t): retained pointers (the minted
 // custody environment, the call-site decision, the records the transfer
 // keeps, the release and exit refusals).
@@ -3492,6 +3497,11 @@ fn build_function_cfg_unscoped(
     // environment with no disposition.
     let stored_returns = relational_route::tested_stored_returns(tokens, contracts);
     let tokens = stored_returns.as_deref().unwrap_or(tokens);
+    // Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): the same rewrite
+    // for a direct call of a hand-off declaration (the identity on an
+    // environment without one).
+    let handoff_returns = handoff_direct_route::stored_returns(tokens, contracts);
+    let tokens = handoff_returns.as_deref().unwrap_or(tokens);
     let class_environment = relational_route::class_environment(tokens, contracts);
     let contracts = class_environment.as_ref().unwrap_or(contracts);
     // Card CALLEE-RETENTION-CLASS1 (rule 12t): the custody contract of every
@@ -4666,8 +4676,13 @@ impl Parser<'_> {
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a test of a
                 // call's returned value against a constant, for a callee with
                 // a return-code disposition, asked before every other route.
+                // Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): a test of
+                // a direct call of a hand-off declaration, asked next.
                 let relational_plan = (!condition_supported)
-                    .then(|| self.relational_condition_plan(&condition))
+                    .then(|| {
+                        self.relational_condition_plan(&condition)
+                            .or_else(|| self.handoff_condition_plan(&condition))
+                    })
                     .flatten();
                 let condition_call = (!condition_supported && relational_plan.is_none())
                     .then(|| self.condition_call_instruction(&condition))
