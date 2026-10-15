@@ -6,6 +6,38 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "flb_filter_new",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "220e69ee30090154a96e97e88aff43cbed12b72b8a4fc87854886261688770a3",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_filter.h",
+              "kind": "declaration",
+              "declaration_sha256": "eebcd47eaee9506eeca18fb1cd1a5f8fb1d8a5394bc8304af39cfd0e5004720b"
+            },
+            {
+              "path": "src/flb_filter.c",
+              "kind": "definition",
+              "declaration_sha256": "eebcd47eaee9506eeca18fb1cd1a5f8fb1d8a5394bc8304af39cfd0e5004720b",
+              "body_sha256": "f3362afb524ff16e77458ebc628c7e4aa10e3be90fc4a325b29d88f49b47833c"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input_chunk_get_name",
       "module": "fluent_bit/null_deref.qv",
       "contract_sha256": "6e4ae464f026dc4a4add762fcea60889bb39bbc6d9920d6c461fc1ea01f86d3b",
@@ -32,6 +64,75 @@
               "kind": "definition",
               "declaration_sha256": "aebdf37848c8efc12046b1d69efff3fcf5fc87885e4cc97296b56227f2aebb0b",
               "body_sha256": "42351aa85a3b0f1e4d0a813671c8fd7af500b3b6361b38459edd49b8dee4d02c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_new",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "6a54c58cf2da3ac5857f8ea0c4846d64cc2b8fb59b5c85e8e916c14337666584",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12",
+              "body_sha256": "31e616b0ec0e3df5ebcb98cc9b48fc3f280d987e22ec17e78211bcd8506f407b"
+            },
+            {
+              "path": "tests/runtime/custom_calyptia_input_test.c",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            },
+            {
+              "path": "tests/runtime/custom_calyptia_test.c",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12",
+              "body_sha256": "3459a11b5d0627404ffc774348b21d1b5580770c5b886f3610411887c7296f54"
+            },
+            {
+              "path": "tests/runtime/custom_calyptia_input_test.c",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            },
+            {
+              "path": "tests/runtime/custom_calyptia_test.c",
+              "kind": "declaration",
+              "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
             }
           ]
         }
@@ -101,6 +202,55 @@
               "kind": "definition",
               "declaration_sha256": "fa403d968fbb122180bb27d125e51a765300740f2f196db6733cce9b8be6c5f2",
               "body_sha256": "8d772b8ad9176272b085836581fb28861f4486bdb9660694ff27512f4577a926"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_output_new",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "edfd500b651ebd9d753584440585ac8f373ab5d9816ee86911604caa679c673e",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_output.h",
+              "kind": "declaration",
+              "declaration_sha256": "9c040299393082346695e6c04029e215ad753192ae5ac9d42e8b3cd8e8762a80"
+            },
+            {
+              "path": "src/flb_output.c",
+              "kind": "definition",
+              "declaration_sha256": "9c040299393082346695e6c04029e215ad753192ae5ac9d42e8b3cd8e8762a80",
+              "body_sha256": "711145306a3fe49e93b6d03d5df300c8ea811c8f4f16ecf4e9dff11d7b92ca95"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_output.h",
+              "kind": "declaration",
+              "declaration_sha256": "9c040299393082346695e6c04029e215ad753192ae5ac9d42e8b3cd8e8762a80"
+            },
+            {
+              "path": "src/flb_output.c",
+              "kind": "definition",
+              "declaration_sha256": "9c040299393082346695e6c04029e215ad753192ae5ac9d42e8b3cd8e8762a80",
+              "body_sha256": "7be9334fa5f3f11878fb34691fe7feab5440392533bb1a28cc11fb63013de3ef"
             }
           ]
         }
@@ -182,6 +332,38 @@
               "kind": "definition",
               "declaration_sha256": "c75d44aa281221144b613f7372a1f40cfcbdceec2681a2a17d1bcb767b9b2ed1",
               "body_sha256": "d45db33f6ea8ae45b3879c99d61985ff2876c08d314ca2d4040ad66eba802e29"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_processor_instance_create",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "41b99e67902e57bf2ad89745f1e818400ab071dde6c08b59d8078f63cbd0db0a",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_processor.h",
+              "kind": "declaration",
+              "declaration_sha256": "9d3b92da5ec98f0f134e9ab4618b8db1bf568786b1ead21f1e15c9a785a70366"
+            },
+            {
+              "path": "src/flb_processor.c",
+              "kind": "definition",
+              "declaration_sha256": "9d3b92da5ec98f0f134e9ab4618b8db1bf568786b1ead21f1e15c9a785a70366",
+              "body_sha256": "6586b2045d69a5493db4595f71f78571c8df99a69265fbc68e4379a491e43a91"
             }
           ]
         }

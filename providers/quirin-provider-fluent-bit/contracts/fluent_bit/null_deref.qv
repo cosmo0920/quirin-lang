@@ -50,3 +50,47 @@ contract {
     requires bounds_contract_v1;
     quant null-deref #ic;
 };
+
+// Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (contract specification C09.3
+// "Scoped member invariants", grammar G05f, gateway rules 14x-14z): the
+// plugin descriptor of a Fluent Bit instance, `instance->p`, is stable.
+// `requires nonnull_member_stable(TAG, p);` says p is never made NULL on an
+// existing instance. Every store of p the trees make was read at 66910c10 and
+// 046accf6 (and the tail-pause export of 90978ac6, byte-identical to 046accf6
+// for every function below): each constructor finds the plugin by name in
+// the config's registered list, dereferences it (`plugin->name`,
+// `plugin->flags`), then stores `instance->p = plugin` into the instance it
+// allocated with flb_calloc (flb_input.c:490, flb_output.c:779 at 66910c10 and
+// :857 at 046accf6, flb_filter.c:507, flb_processor.c:2188; flb_input_new and
+// flb_output_new differ between the revisions only by the tls_crl_file
+// initialisation). No other file under src/, include/ or plugins/ stores
+// p, and no file of the system or tail-pause selection writes a whole
+// instance (memset, memcpy, struct assignment). The calloc'd object's NULL p is not a store (rule 14x examines
+// assignments, struct assignments and typed fills); a fresh object starts
+// outside the stable state, and nothing reads p before :490 / :857. The test
+// sources (tests/internal/*.c) also store p, always a plugin's address or a
+// plugin pointer; they are in no audited selection. flb_custom_instance.p
+// (flb_custom.c:214) has no reader on any route and is not declared.
+extern fn flb_input_new(config: ptr<mut, u8>, input: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_stable(flb_input_instance, p);
+};
+
+extern fn flb_output_new(config: ptr<mut, u8>, output: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_stable(flb_output_instance, p);
+};
+
+extern fn flb_filter_new(config: ptr<mut, u8>, filter: ptr<const, u8>, data: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_stable(flb_filter_instance, p);
+};
+
+extern fn flb_processor_instance_create(config: ptr<mut, u8>, pu: ptr<mut, u8>, event_type: i32, name: ptr<const, u8>, data: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_stable(flb_processor_instance, p);
+};

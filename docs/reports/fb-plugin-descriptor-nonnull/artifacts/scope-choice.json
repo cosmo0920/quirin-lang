@@ -1,0 +1,709 @@
+[
+ {
+  "file": "plugins/in_tail/tail.c",
+  "function": "in_tail_init",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "in"
+  ],
+  "formals": {
+   "in": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": false,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; definition differs between 046accf6 and the export; address taken; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "plugins/in_tail/tail_config.c",
+  "function": "flb_tail_config_create",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": false,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; definition differs between 046accf6 and the export"
+ },
+ {
+  "file": "plugins/in_tail/tail_scan.c",
+  "function": "flb_tail_scan_callback",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": false,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; definition differs between 046accf6 and the export; address taken"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_http_server_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_instance_exit",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_instance_init",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_instance_pre_run",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_net_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_oauth2_jwt_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_pause",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_plugin_pause",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_plugin_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_plugin_resume",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_resume",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "flb_input_set_property",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input.c",
+  "function": "input_instance_channel_events_init",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": false,
+  "reason": "internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "append_to_ring_buffer",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_map",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "in"
+  ],
+  "formals": {
+   "in": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "input_chunk_append_raw",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "in"
+  ],
+  "formals": {
+   "in": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input_chunk.c",
+  "function": "input_chunk_get",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "in"
+  ],
+  "formals": {
+   "in": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_collectors_signal_wait",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_exit",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_init",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config",
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_pause",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_pre_run",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config",
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "flb_input_thread_instance_resume",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": true,
+  "tag": "flb_input_instance"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "handle_input_event",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_input_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "ins",
+  "chosen": false,
+  "reason": "internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_input_thread.c",
+  "function": "input_thread",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {},
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; address taken; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_filter_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "f_ins"
+  ],
+  "formals": {},
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "f_ins",
+  "chosen": false,
+  "reason": "`f_ins` is not an instance formal (a local or a member path)"
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_input_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "i_ins"
+  ],
+  "formals": {},
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "i_ins",
+  "chosen": false,
+  "reason": "`i_ins` is not an instance formal (a local or a member path)"
+ },
+ {
+  "file": "src/flb_lib.c",
+  "function": "flb_output_property_check",
+  "routes": [
+   "slice"
+  ],
+  "bases": [
+   "o_ins"
+  ],
+  "formals": {},
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": "o_ins",
+  "chosen": false,
+  "reason": "`o_ins` is not an instance formal (a local or a member path)"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_exit",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_http_server_property_check",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_output_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration; internal linkage (a declaration names a function run-wide; rule 14v exports nothing from a static definition)"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_init_all",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_net_property_check",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_output_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_oauth2_property_check",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_output_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_plugin_property_check",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_output_instance",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_pre_run",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_output.c",
+  "function": "flb_output_set_property",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "ins": "flb_output_instance"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_task.c",
+  "function": "flb_task_create",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "i_ins"
+  ],
+  "formals": {
+   "i_ins": "flb_input_instance",
+   "ic": "flb_input_chunk",
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ },
+ {
+  "file": "src/flb_task.c",
+  "function": "flb_task_running_print",
+  "routes": [
+   "system"
+  ],
+  "bases": [
+   "ins"
+  ],
+  "formals": {
+   "config": "flb_config"
+  },
+  "identical_at_046accf6_and_export": true,
+  "every_candidate_on_one_base": null,
+  "chosen": false,
+  "reason": "other candidates remain in every configuration"
+ }
+]

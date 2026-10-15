@@ -118,3 +118,46 @@ correction of a row already Unknown.
 **Totals predicted.** Slice null 71 / 103 / 232 → about 71 / 110 / 225 minus
 any caller correction; system 84 / 125 / 245 unchanged; corpus 1,113 / 1,435 /
 2,355 / 18 unchanged.
+
+## Addendum (after the BEFORE run and the stable-only reading, before any scope entry)
+
+Committed with the four stable declarations and before any scope entry is
+written. Two facts the frozen text did not have:
+
+* **The stable member alone moves rows.** On the stable-only reading
+  (`stable`, same binary as BEFORE), system 16 candidates go (6 proved, 10
+  moved), slice 18 (moved); no store fails (output's two stores examined on
+  the system route, input's two on the slice, both `partly-validated`; filter
+  and processor `declared-assumption`, no store analysed), nothing is
+  withdrawn, custody is unchanged, and `flb_chunk_route_plugin_matches`
+  (`flb_input_chunk.c`, both configurations) moves Unknown → Safe: it tests
+  `!o_ins->p` and re-reads `o_ins->p->name` after `strlen` calls, which the
+  stable reading keeps (rule 14y). The same function is in the corpus unit,
+  byte-identical at 66910c10, so **the corpus is predicted to gain it too**
+  (two configurations if the corpus analyses two), against section 3's
+  "corpus unchanged".
+* **The scope set is chosen mechanically**, as NULL-MEMBER-INVARIANT-SCOPE
+  chose its broker entries: `scripts/scope_candidates.py` over the
+  stable-only streams picks a function when, in some configuration, every
+  remaining candidate of its row is `memory-field:V->p` for one formal `V` of
+  an instance type, its definition is byte-identical at 046accf6 and the
+  export, its address is taken nowhere, and it has external linkage
+  (`artifacts/scope-choice.json`). It picks section 2's seven plus three:
+  `flb_input_thread_instance_pause`, `flb_input_thread_instance_resume`,
+  `flb_input_thread_instance_exit` (each reads `ins->p` through
+  `flb_plg_debug` before anything tests it). Their only callers are
+  `flb_input_pause`, `flb_input_resume` and `flb_input_instance_exit`, scope
+  functions themselves, so their caller checks are discharged by the entry
+  fact. Two static functions qualify on the rest and are left out
+  (`input_instance_channel_events_init`, `handle_input_event`). No output
+  function qualifies (every output reader keeps other candidates or reads a
+  list element, not a formal).
+
+Revised slice prediction: the seven plus the three thread functions Unknown →
+Safe conditional (up to 10 functions, each configuration); caller corrections
+as in section 3. Corpus: `flb_chunk_route_plugin_matches` Unknown → Safe, and
+up to 3 new caller candidates per configuration in `flb_input_chunk.c`
+(`flb_input_resume`, two `flb_input_pause`) in rows already Unknown. Two
+corrections to section 1's text: `flb_input_new` and `flb_output_new` differ
+between 66910c10 and 046accf6 only by the `tls_crl_file` initialisation (not
+the alias lookup), and `flb_input_pause` by its already-paused test.

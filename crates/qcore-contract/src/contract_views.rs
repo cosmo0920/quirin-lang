@@ -1302,6 +1302,17 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (rule 14x): the input
+    // constructor hosts the stable plugin descriptor beside its resource-v1
+    // declaration.
+    RegisteredRelation {
+        function: "flb_input_new",
+        detailed: "fluent_bit/null_deref.qv",
+        view: "fluent_bit/input_instance.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // Card NULL-CANDIDATE-TRIAGE (rule 14t): the toppar constructor hosts a
     // declared non-null member beside its resource-v1 declaration.
     RegisteredRelation {

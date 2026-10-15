@@ -667,6 +667,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/null_deref.qv", "flb_output_name", 2),
     ("fluent_bit/null_deref.qv", "flb_output_set_property", 2),
     ("fluent_bit/null_deref.qv", "flb_input_chunk_get_name", 2),
+    // Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (rules 14x-14z): the stable
+    // plugin descriptor on the four instance constructors (selector and one
+    // member clause each).
+    ("fluent_bit/null_deref.qv", "flb_input_new", 2),
+    ("fluent_bit/null_deref.qv", "flb_output_new", 2),
+    ("fluent_bit/null_deref.qv", "flb_filter_new", 2),
+    (
+        "fluent_bit/null_deref.qv",
+        "flb_processor_instance_create",
+        2,
+    ),
     (
         "fluent_bit/output_flush_id.qv",
         "flb_output_flush_id_get",

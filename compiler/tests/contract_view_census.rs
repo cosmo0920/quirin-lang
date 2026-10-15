@@ -79,6 +79,12 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "flb_input_chunk_get_name",
         &["fluent_bit/input_chunk_name.qv", "fluent_bit/null_deref.qv"],
     ),
+    // Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE: the stable plugin descriptor's
+    // host beside its resource-v1 declaration (`null_deref_beside`).
+    (
+        "flb_input_new",
+        &["fluent_bit/input_instance.qv", "fluent_bit/null_deref.qv"],
+    ),
     (
         "flb_malloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
