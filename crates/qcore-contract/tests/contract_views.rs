@@ -78,9 +78,11 @@ fn every_registered_relation_holds_on_the_corpus() {
     // NULL-MEMBER-INVARIANT-SCOPE +1 (a function-scope entry);
     // W45-CALLEE-CASCADE-RESIDUAL round 3 +1 (`cfl_list_size`'s resource-v1
     // declaration beside its result range); CG22-OP-CALLBACKS-AND-SERVED-QUEUES
-    // +1 (`rd_kafka_op_destroy`'s resource-v1 declaration beside its check).
-    assert_eq!(report.census.len(), 21);
-    assert_eq!(report.relations.len(), 23);
+    // +1 (`rd_kafka_op_destroy`'s resource-v1 declaration beside its check);
+    // FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE +2 (`flb_input_new`'s stable
+    // descriptor and `flb_input_thread_instance_exit`'s scope entry).
+    assert_eq!(report.census.len(), 23);
+    assert_eq!(report.relations.len(), 25);
     let kinds: BTreeMap<&str, usize> =
         report
             .relations
@@ -93,7 +95,7 @@ fn every_registered_relation_holds_on_the_corpus() {
         kinds,
         BTreeMap::from([
             ("lifecycle_profiles", 2),
-            ("null_deref_beside", 10),
+            ("null_deref_beside", 12),
             ("projection", 5),
             ("renamed_equivalent", 1),
             ("source_shape", 5),

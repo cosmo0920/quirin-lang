@@ -2011,9 +2011,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 63 -> 64 selected, 475 -> 489 by card FB-TEARDOWN-DESTROY-DECLARATIONS:
     // `fluent_bit/teardown_destroy.qv`, fourteen declarations (ten with
     // member-path states, withheld with the retaining declarations).
+    // 314 -> 328 rejected by card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE: the
+    // four stable plugin descriptors and ten function-scope entries in
+    // `fluent_bit/null_deref.qv`, likewise rejected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (64, 489, 314)
+        (64, 489, 328)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

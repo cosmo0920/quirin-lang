@@ -85,6 +85,11 @@ const EXPECTED_MULTI_MODULE: &[(&str, &[&str])] = &[
         "flb_input_new",
         &["fluent_bit/input_instance.qv", "fluent_bit/null_deref.qv"],
     ),
+    // ... and the input worker's exit signal's function-scope entry.
+    (
+        "flb_input_thread_instance_exit",
+        &["fluent_bit/lib_engine_thread.qv", "fluent_bit/null_deref.qv"],
+    ),
     (
         "flb_malloc",
         &["fluent_bit/memory.qv", "fluent_bit/resource_memory.qv"],
@@ -179,10 +184,13 @@ fn every_multi_module_declaration_is_a_registered_checked_relation() {
     // NULL-MEMBER-INVARIANT-SCOPE a function-scope entry;
     // W45-CALLEE-CASCADE-RESIDUAL round 3 `cfl_list_size`'s resource-v1
     // declaration beside its result range; CG22-OP-CALLBACKS-AND-SERVED-QUEUES
-    // `rd_kafka_op_destroy`: twenty-one functions, twenty-three pairs).
-    assert_eq!(census_pairs(&report.census).len(), 23);
-    assert_eq!(REGISTERED_RELATIONS.len(), 23);
-    assert_eq!(report.relations.len(), 23);
+    // `rd_kafka_op_destroy`: twenty-one functions, twenty-three pairs;
+    // FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE `flb_input_new`'s stable descriptor
+    // and `flb_input_thread_instance_exit`'s scope entry: twenty-three
+    // functions, twenty-five pairs).
+    assert_eq!(census_pairs(&report.census).len(), 25);
+    assert_eq!(REGISTERED_RELATIONS.len(), 25);
+    assert_eq!(report.relations.len(), 25);
 }
 
 /// The library's own corpus reader and this test's discovery agree module for

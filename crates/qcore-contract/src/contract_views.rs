@@ -1313,6 +1313,16 @@ pub const REGISTERED_RELATIONS: &[RegisteredRelation] = &[
         assumed_premises: &[],
         finding: None,
     },
+    // ... and the input worker's exit signal carries a function-scope entry
+    // (rule 14z) beside its held resource-v1 declaration.
+    RegisteredRelation {
+        function: "flb_input_thread_instance_exit",
+        detailed: "fluent_bit/null_deref.qv",
+        view: "fluent_bit/lib_engine_thread.qv",
+        check: RelationCheck::NullDerefBeside,
+        assumed_premises: &[],
+        finding: None,
+    },
     // Card NULL-CANDIDATE-TRIAGE (rule 14t): the toppar constructor hosts a
     // declared non-null member beside its resource-v1 declaration.
     RegisteredRelation {
