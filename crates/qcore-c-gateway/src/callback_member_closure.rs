@@ -52,6 +52,217 @@ use serde_json::Value;
 
 use crate::typed_c_ast::{children, kind};
 
+/// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n): the separator
+/// between a union's key and the arm path of a place inside it
+/// (`rd_kafka_op_s.rko_u.*@leaders.cb`). A union key without it (`U.*`) is
+/// the whole union, unplaced.
+pub const ARM: char = '@';
+
+/// A union key's two parts: the union (`T.path.*` or `U.*`) and the arm path
+/// when the key names a place inside it. `None` for a key that is not a
+/// union's.
+#[must_use]
+pub fn union_parts(key: &str) -> Option<(&str, Option<&str>)> {
+    match key.split_once(ARM) {
+        Some((union, arm)) if union.ends_with(".*") => Some((union, Some(arm))),
+        Some(_) => None,
+        None => key.ends_with(".*").then_some((key, None)),
+    }
+}
+
+fn is_union_key(key: &str) -> bool {
+    union_parts(key).is_some()
+}
+
+/// A byte range `(offset, size)` within a union.
+pub type Range = (u64, u64);
+
+fn overlaps(left: &BTreeSet<Range>, right: &BTreeSet<Range>) -> bool {
+    left.iter().any(|(a, n)| {
+        right
+            .iter()
+            .any(|(b, m)| *a < b.saturating_add(*m) && *b < a.saturating_add(*n))
+    })
+}
+
+/// Whether two places may share a byte: only two known, disjoint sets of
+/// ranges are apart.
+fn meet(left: Option<BTreeSet<Range>>, right: Option<BTreeSet<Range>>) -> bool {
+    match (left, right) {
+        (Some(left), Some(right)) => overlaps(&left, &right),
+        _ => true,
+    }
+}
+
+/// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (`QCore.UnionArmLayout`
+/// `placesAlias`): whether two places of one union alias: the same arm path,
+/// the whole union on either side, or bytes the layout does not keep apart.
+#[must_use]
+pub fn places_alias(
+    arm: Option<&str>,
+    other: Option<&str>,
+    ranges: Option<BTreeSet<Range>>,
+    other_ranges: Option<BTreeSet<Range>>,
+) -> bool {
+    match (arm, other) {
+        (Some(arm), Some(other)) => arm == other || meet(ranges, other_ranges),
+        _ => true,
+    }
+}
+
+/// `LAYOUT_VECTORS` (`QCore.UnionArmLayout.layoutVectors`): two places of a
+/// union (`None`: the whole union), their ranges (`None`: not given) and
+/// whether they alias.
+#[cfg(test)]
+#[allow(clippy::type_complexity)]
+pub(crate) const LAYOUT_VECTORS: &[(
+    Option<&str>,
+    Option<&str>,
+    Option<&[Range]>,
+    Option<&[Range]>,
+    bool,
+)] = &[
+    (Some("a.cb"), Some("a.cb"), None, None, true),
+    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(32, 8)]), false),
+    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(4, 8)]), true),
+    (Some("a.cb"), Some("b.cb"), None, Some(&[(32, 8)]), true),
+    (None, Some("b.cb"), Some(&[(0, 8)]), Some(&[(32, 8)]), true),
+    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(8, 8)]), false),
+    (Some("a"), Some("b"), Some(&[(0, 8), (40, 8)]), Some(&[(44, 4)]), true),
+];
+
+/// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n, layout route):
+/// Clang's layout of one union as one unit compiled it, read by
+/// [`MemberFacts::probe_layouts`]. Every range is relative to the union's
+/// first byte. An entry that is absent, or `None`, is unknown: it is never
+/// read as disjoint from anything.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct UnionLayout {
+    /// Each arm path the unit probed (every path its keys name, every
+    /// function-pointer member and every record held by value reached
+    /// through the union's anonymous members): its range.
+    pub paths: BTreeMap<String, Range>,
+    /// Each named record held by value inside the union (transitively): its
+    /// placements (`None` when one cannot be placed: an array of records, an
+    /// unnamed member on the way, a record the unit does not define).
+    pub records: BTreeMap<String, Option<BTreeSet<Range>>>,
+    /// Each function-pointer member of such a record, by its normal key
+    /// (`R.path`): where it lies in the union.
+    pub members: BTreeMap<String, Option<BTreeSet<Range>>>,
+}
+
+/// The expressions one layout probe asks Clang for.
+#[derive(Default)]
+struct LayoutProbe {
+    expressions: BTreeSet<String>,
+}
+
+impl LayoutProbe {
+    fn want(&mut self, expression: String) -> String {
+        self.expressions.insert(expression.clone());
+        expression
+    }
+}
+
+/// A record placement to probe: its offset, the field's size and the
+/// record's own size (`None` when the record cannot be spelled), all as
+/// expressions; `None` when an unnamed member lies on the way.
+type Placement = Option<(String, String, Option<String>)>;
+
+/// One union's probe: offsets are from the root record's first byte (the
+/// union's own offset is `base`).
+#[derive(Default)]
+struct UnionPlan {
+    base: String,
+    paths: BTreeMap<String, (String, String)>,
+    held: Vec<(String, Placement)>,
+    records: BTreeMap<String, Option<RecordPlan>>,
+}
+
+/// A record held by value: its function-pointer members (by the key a store
+/// into them has) and the records it holds, from its own first byte.
+#[derive(Clone, Default)]
+struct RecordPlan {
+    members: BTreeMap<String, Option<(String, String)>>,
+    held: Vec<(String, Placement)>,
+}
+
+/// Merge placements: an unknown placement stays unknown.
+fn add_ranges(
+    map: &mut BTreeMap<String, Option<BTreeSet<Range>>>,
+    key: &str,
+    ranges: Option<BTreeSet<Range>>,
+) {
+    match (map.get_mut(key), ranges) {
+        (None, ranges) => {
+            map.insert(key.to_owned(), ranges);
+        }
+        (Some(slot), None) => *slot = None,
+        (Some(Some(known)), Some(ranges)) => known.extend(ranges),
+        (Some(None), Some(_)) => {}
+    }
+}
+
+impl UnionPlan {
+    /// The layout Clang's values give; `None` when the union's own offset
+    /// is not given.
+    fn layout(&self, value: &dyn Fn(&str) -> Option<u64>) -> Option<UnionLayout> {
+        let base = value(&self.base)?;
+        let mut layout = UnionLayout::default();
+        for (arm, (offset, size)) in &self.paths {
+            if let (Some(offset), Some(size)) = (value(offset), value(size))
+                && let Some(offset) = offset.checked_sub(base)
+            {
+                layout.paths.insert(arm.clone(), (offset, size));
+            }
+        }
+        // A placement: the field's offset, when the field is exactly one
+        // record (an array of records is not placed).
+        let place = |placement: &Placement, from: u64| -> Option<(u64, u64)> {
+            let (offset, size, record_size) = placement.as_ref()?;
+            let (offset, size) = (value(offset)?, value(size)?);
+            (value(record_size.as_ref()?)? == size).then_some(())?;
+            Some((from.checked_add(offset)?, size))
+        };
+        let mut work: Vec<(String, Option<BTreeSet<Range>>, usize)> = Vec::new();
+        for (record, placement) in &self.held {
+            let ranges = place(placement, 0)
+                .and_then(|(offset, size)| Some(BTreeSet::from([(offset.checked_sub(base)?, size)])));
+            work.push((record.clone(), ranges, 0));
+        }
+        while let Some((record, ranges, depth)) = work.pop() {
+            add_ranges(&mut layout.records, &record, ranges.clone());
+            let Some(Some(plan)) = self.records.get(&record) else {
+                continue;
+            };
+            for (member, spec) in &plan.members {
+                let member_ranges = ranges.as_ref().and_then(|ranges| {
+                    let (offset, size) = spec.as_ref()?;
+                    let (offset, size) = (value(offset)?, value(size)?);
+                    ranges
+                        .iter()
+                        .map(|(at, _)| Some((at.checked_add(offset)?, size)))
+                        .collect::<Option<BTreeSet<_>>>()
+                });
+                add_ranges(&mut layout.members, member, member_ranges);
+            }
+            if depth > 16 {
+                continue;
+            }
+            for (held, placement) in &plan.held {
+                let held_ranges = ranges.as_ref().and_then(|ranges| {
+                    ranges
+                        .iter()
+                        .map(|(at, _)| place(placement, *at))
+                        .collect::<Option<BTreeSet<_>>>()
+                });
+                work.push((held.clone(), held_ranges, depth + 1));
+            }
+        }
+        Some(layout)
+    }
+}
+
 /// What a stored or handed value is.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "flow")]
@@ -106,6 +317,12 @@ pub struct MemberFacts {
     /// differently twice in the unit).
     #[serde(default)]
     pub records: BTreeMap<String, Option<RecordKeys>>,
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION (rule 12n, layout route):
+    /// Clang's layout of each union this unit's keys name, by the union's
+    /// key (`T.path.*` or `U.*`); read only by [`read_unit`] (the pre-pass
+    /// and data-only units). A union without one is unplaced.
+    #[serde(default)]
+    pub union_layouts: BTreeMap<String, UnionLayout>,
     /// The union tags the unit defines (build state).
     #[serde(skip)]
     unions: BTreeSet<String>,
@@ -182,6 +399,29 @@ fn spelled_record(text: &str) -> Option<String> {
     }
     None
 }
+
+/// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: whether a node's type is an
+/// anonymous record. Clang spells it `struct T::(unnamed at ...)` in its
+/// desugared form, which [`spelled_record`] reads as the holder `T`.
+fn anonymous_record(node: &Value) -> bool {
+    [type_text(node), qual_text(node)].iter().any(|text| {
+        let bare = strip_qualifiers(text);
+        (bare.starts_with("struct ") || bare.starts_with("union "))
+            && (bare.contains("(unnamed") || bare.contains("(anonymous"))
+    })
+}
+
+/// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: callees that fill their
+/// destination with one byte value (scalar data, never a function
+/// designator): an address handed to one is not a type-punned escape.
+const FILLERS: [&str; 6] = [
+    "memset",
+    "__builtin_memset",
+    "__builtin___memset_chk",
+    "bzero",
+    "explicit_bzero",
+    "__explicit_bzero_chk",
+];
 
 fn strip_qualifiers(text: &str) -> &str {
     let mut text = text.trim();
@@ -644,23 +884,43 @@ impl MemberFacts {
             let last = chain.last().map_or(first, |(name, _, _)| name);
             return format!("?.{last}");
         };
+        // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION (rule 12n): a member read
+        // through a union keeps its arm path beside the union's key
+        // (`U.*@arm.field`), so the run's layout can place it; without a
+        // layout the key aliases every member of the union, as before.
+        let arm = |from: usize| {
+            chain[from..]
+                .iter()
+                .map(|(name, _, _)| *name)
+                .collect::<Vec<_>>()
+                .join(".")
+        };
         if self.union_node(root, arrow) {
-            return format!("{tag}.*");
+            return format!("{tag}.*{ARM}{}", arm(0));
         }
         let mut path: Vec<&str> = Vec::new();
         for (index, (name, base, _)) in chain.iter().enumerate() {
             if index > 0 {
                 // `base` is the previous member's value: a record object.
+                // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: an anonymous
+                // record (Clang's `struct T::(unnamed at ...)`) names no
+                // record: it was read as its holder `T`, so an anonymous
+                // union was keyed `T.*` (the holder's whole record) and a
+                // place below an anonymous structure lost its path. It is
+                // now read under its path, as the tables normalise it.
+                let named = (!anonymous_record(base))
+                    .then(|| self.record_of_node(base, false))
+                    .flatten();
                 if self.union_node(base, false) {
                     // A named union is keyed by itself (`U.*`), as the
                     // tables normalise it; an anonymous one under its path.
-                    if let Some(record) = self.record_of_node(base, false) {
-                        return format!("{record}.*");
+                    if let Some(record) = named {
+                        return format!("{record}.*{ARM}{}", arm(index));
                     }
                     path.push("*");
-                    return format!("{tag}.{}", path.join("."));
+                    return format!("{tag}.{}{ARM}{}", path.join("."), arm(index));
                 }
-                if let Some(record) = self.record_of_node(base, false) {
+                if let Some(record) = named {
                     tag = record;
                     path.clear();
                 }
@@ -668,6 +928,331 @@ impl MemberFacts {
             path.push(name);
         }
         format!("{tag}.{}", path.join("."))
+    }
+
+    /// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n): the key of
+    /// a place that is a union object or lies inside one: `U.*@arm.path` for
+    /// a place inside a union, `U.*` (or `T.path.*`) for the union object
+    /// itself; `None` for a place no union holds, or one whose record is not
+    /// read.
+    fn union_place(&self, place: &Value) -> Option<String> {
+        let place = strip(place);
+        if kind(place) != "MemberExpr" {
+            return self
+                .union_node(place, false)
+                .then(|| self.record_of_node(place, false))
+                .flatten()
+                .map(|union| format!("{union}.*"));
+        }
+        let key = self.callback_key(place);
+        if key.starts_with("?.") {
+            return None;
+        }
+        if union_parts(&key).is_some() {
+            return Some(key);
+        }
+        if self.union_node(place, false) {
+            let named = (!anonymous_record(place))
+                .then(|| self.record_of_node(place, false))
+                .flatten();
+            return Some(match named {
+                Some(union) => format!("{union}.*"),
+                None => format!("{key}.*"),
+            });
+        }
+        None
+    }
+
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: the place an address
+    /// expression names (`&P`, or an array `P` decayed to a pointer).
+    fn addressed(node: &Value) -> Option<&Value> {
+        let mut node = node;
+        loop {
+            match kind(node) {
+                "ParenExpr" => node = children(node).first()?,
+                "ImplicitCastExpr" if node["castKind"].as_str() == Some("ArrayToPointerDecay") => {
+                    return children(node).first();
+                }
+                "ImplicitCastExpr" | "CStyleCastExpr" => node = children(node).first()?,
+                "UnaryOperator" if node["opcode"].as_str() == Some("&") => {
+                    return children(node).first();
+                }
+                _ => return None,
+            }
+        }
+    }
+
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: open a whole union, written
+    /// opaquely (unplaced: it aliases every member of the union).
+    fn open_union(&mut self, key: &str, why: &str) {
+        let union = union_parts(key).map_or(key, |(union, _)| union).to_owned();
+        self.stores.entry(union).or_default().insert(Flow::Open {
+            why: why.to_owned(),
+        });
+    }
+
+    /// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n, layout
+    /// route): read Clang's layout of every union this unit's keys name, in
+    /// one enumerator probe over the unit's own text
+    /// (`layout_extents::clang_constants`: `__builtin_offsetof` and `sizeof`
+    /// as Clang evaluates them for the unit's target). For each union: the
+    /// range of every arm path its keys name, of every function-pointer
+    /// member and record held by value reached through its anonymous
+    /// members, and, through every record so held (transitively), the
+    /// placements of that record and of its function-pointer members. A
+    /// probe that fails leaves the union without a layout (unplaced); a value
+    /// Clang does not give, an unnamed member, or a field whose size is not
+    /// its record's (an array) leaves that entry unknown.
+    pub fn probe_layouts(&mut self, source: &str, unit: &crate::legacy_c::C11TranslationUnit<'_>) {
+        // The probe's own names must not be ones the source could forge.
+        if source.contains("__qcore_cg17") {
+            return;
+        }
+        let mut unions: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        let mut note = |key: &str| {
+            if let Some((union, arm)) = union_parts(key) {
+                let arms = unions.entry(union.to_owned()).or_default();
+                if let Some(arm) = arm {
+                    arms.insert(arm.to_owned());
+                }
+            }
+        };
+        let member_flows = |flows: &BTreeSet<Flow>| {
+            flows
+                .iter()
+                .filter_map(|flow| match flow {
+                    Flow::Member { member } => Some(member.clone()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        for (key, flows) in &self.stores {
+            note(key);
+            for member in member_flows(flows) {
+                note(&member);
+            }
+        }
+        for positions in self.calls.values() {
+            for flows in positions.values() {
+                for member in member_flows(flows) {
+                    note(&member);
+                }
+            }
+        }
+        if unions.is_empty() {
+            return;
+        }
+        let mut probe = LayoutProbe::default();
+        let mut plans = Vec::new();
+        for (union, arms) in &unions {
+            if let Some(plan) = self.plan_union(union, arms, &mut probe) {
+                plans.push((union.clone(), plan));
+            }
+        }
+        if probe.expressions.is_empty() {
+            return;
+        }
+        let expressions = probe.expressions.iter().cloned().collect::<Vec<_>>();
+        let values = crate::layout_extents::clang_constants(source, unit, &expressions);
+        if values.is_empty() {
+            return;
+        }
+        let value = |expression: &str| -> Option<u64> {
+            values
+                .get(expression)
+                .and_then(|value| u64::try_from(*value).ok())
+        };
+        for (union, plan) in plans {
+            if let Some(layout) = plan.layout(&value) {
+                self.union_layouts.insert(union, layout);
+            }
+        }
+    }
+
+    /// The probe plan of one union key (`T.path.*` or `U.*`): `None` when
+    /// the unit does not define its record readably.
+    fn plan_union(
+        &self,
+        union: &str,
+        arms: &BTreeSet<String>,
+        probe: &mut LayoutProbe,
+    ) -> Option<UnionPlan> {
+        let stem = union.strip_suffix(".*")?;
+        let mut segments = stem.split('.');
+        let root = segments.next()?.to_owned();
+        let path = segments.map(str::to_owned).collect::<Vec<_>>();
+        let root_keys = self.records.get(&root)?.as_ref()?;
+        // The union's own keys: the root record itself, or an anonymous
+        // union reached through anonymous members.
+        let mut keys = root_keys;
+        for segment in &path {
+            keys = match keys.fields.get(segment) {
+                Some(FieldKey::Inline { keys }) => keys,
+                _ => return None,
+            };
+        }
+        if !keys.union || path.iter().any(String::is_empty) {
+            return None;
+        }
+        let ty = self.spelled_type(&root)?;
+        let prefix = path.join(".");
+        let full = |arm: &str| match (prefix.is_empty(), arm.is_empty()) {
+            (true, _) => arm.to_owned(),
+            (false, true) => prefix.clone(),
+            (false, false) => format!("{prefix}.{arm}"),
+        };
+        let offset = |arm: &str| {
+            let full = full(arm);
+            if full.is_empty() {
+                "0".to_owned()
+            } else {
+                format!("__builtin_offsetof({ty}, {full})")
+            }
+        };
+        let size = |arm: &str| {
+            let full = full(arm);
+            if full.is_empty() {
+                format!("sizeof({ty})")
+            } else {
+                format!("sizeof((({ty} *)0)->{full})")
+            }
+        };
+        let mut plan = UnionPlan {
+            base: probe.want(offset("")),
+            ..UnionPlan::default()
+        };
+        for arm in arms {
+            if arm.split('.').any(str::is_empty) {
+                continue;
+            }
+            plan.paths
+                .insert(arm.clone(), (probe.want(offset(arm)), probe.want(size(arm))));
+        }
+        // The union's function-pointer members and records held by value,
+        // through its anonymous members (an unnamed member cannot be spelled
+        // in a probe: what lies below it stays unknown).
+        let mut pending = vec![(String::new(), keys, false)];
+        while let Some((at, keys, unnamed)) = pending.pop() {
+            for (name, field) in &keys.fields {
+                let here = if at.is_empty() {
+                    name.clone()
+                } else {
+                    format!("{at}.{name}")
+                };
+                let unnamed = unnamed || name.is_empty();
+                match field {
+                    FieldKey::Function if !unnamed => {
+                        plan.paths.insert(
+                            here.clone(),
+                            (probe.want(offset(&here)), probe.want(size(&here))),
+                        );
+                    }
+                    FieldKey::Inline { keys } => pending.push((here, keys, unnamed)),
+                    FieldKey::Named { record } => {
+                        let placement = (!unnamed).then(|| {
+                            (
+                                probe.want(offset(&here)),
+                                probe.want(size(&here)),
+                                self.spelled_type(record)
+                                    .map(|ty| probe.want(format!("sizeof({ty})"))),
+                            )
+                        });
+                        plan.held.push((record.clone(), placement));
+                        self.plan_record(record, probe, &mut plan, 0);
+                    }
+                    FieldKey::Function | FieldKey::Plain => {}
+                }
+            }
+        }
+        Some(plan)
+    }
+
+    /// `struct TAG` or `union TAG` for a record the unit defines readably.
+    fn spelled_type(&self, tag: &str) -> Option<String> {
+        let keys = self.records.get(tag)?.as_ref()?;
+        Some(format!(
+            "{} {tag}",
+            if keys.union { "union" } else { "struct" }
+        ))
+    }
+
+    /// The probe plan of a record held by value: its function-pointer
+    /// members and the records it holds by value, relative to itself.
+    fn plan_record(&self, record: &str, probe: &mut LayoutProbe, plan: &mut UnionPlan, depth: usize) {
+        if depth > 16 || plan.records.contains_key(record) {
+            return;
+        }
+        let Some(ty) = self.spelled_type(record) else {
+            plan.records.insert(record.to_owned(), None);
+            return;
+        };
+        let keys = self.records.get(record).cloned().flatten().unwrap_or_default();
+        let mut inner = RecordPlan::default();
+        let mut nested = Vec::new();
+        // Each entry: the path from the record, the keys there, whether an
+        // unnamed member lies on the way, and the union key and the path
+        // where the first union on the way starts (a member below it is
+        // keyed `U.*@arm`, as `callback_key` keys a store into it).
+        let top_union = keys.union.then(|| (format!("{record}.*"), String::new()));
+        let mut pending = vec![(String::new(), keys, false, top_union)];
+        while let Some((at, keys, unnamed, union)) = pending.pop() {
+            for (name, field) in &keys.fields {
+                let here = if at.is_empty() {
+                    name.clone()
+                } else {
+                    format!("{at}.{name}")
+                };
+                let unnamed = unnamed || name.is_empty();
+                match field {
+                    FieldKey::Function if !unnamed => {
+                        let key = match &union {
+                            None => format!("{record}.{here}"),
+                            Some((key, start)) => {
+                                let arm = if start.is_empty() {
+                                    here.clone()
+                                } else {
+                                    here[start.len() + 1..].to_owned()
+                                };
+                                format!("{key}{ARM}{arm}")
+                            }
+                        };
+                        inner.members.insert(
+                            key,
+                            Some((
+                                probe.want(format!("__builtin_offsetof({ty}, {here})")),
+                                probe.want(format!("sizeof((({ty} *)0)->{here})")),
+                            )),
+                        );
+                    }
+                    FieldKey::Function => {}
+                    FieldKey::Inline { keys: inline } => {
+                        let union = union.clone().or_else(|| {
+                            inline
+                                .union
+                                .then(|| (format!("{record}.{here}.*"), here.clone()))
+                        });
+                        pending.push((here, (**inline).clone(), unnamed, union));
+                    }
+                    FieldKey::Named { record: held } => {
+                        let placement = (!unnamed).then(|| {
+                            (
+                                probe.want(format!("__builtin_offsetof({ty}, {here})")),
+                                probe.want(format!("sizeof((({ty} *)0)->{here})")),
+                                self.spelled_type(held)
+                                    .map(|ty| probe.want(format!("sizeof({ty})"))),
+                            )
+                        });
+                        inner.held.push((held.clone(), placement));
+                        nested.push(held.clone());
+                    }
+                    FieldKey::Plain => {}
+                }
+            }
+        }
+        plan.records.insert(record.to_owned(), Some(inner));
+        for held in nested {
+            self.plan_record(&held, probe, plan, depth + 1);
+        }
     }
 
     /// The value of the enumerator declared with `id`, as Clang read the
@@ -770,6 +1355,22 @@ impl MemberFacts {
                     let key = self.callback_key(place);
                     let flows = self.flows(right, enclosing);
                     self.stores.entry(key).or_default().extend(flows);
+                } else if anonymous_record(place)
+                    && let Some(key) = self.union_place(place)
+                {
+                    // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: an anonymous
+                    // record inside a union (an arm) assigned whole writes
+                    // exactly its own bytes. A copy of the same type keeps
+                    // every byte where it was (values already counted at
+                    // their positions); anything else writes those bytes
+                    // opaquely. (It was read as a write of the holder's
+                    // whole record.)
+                    let source = strip(right);
+                    if type_text(source) != type_text(place) || kind(source) == "CallExpr" {
+                        self.stores.entry(key).or_default().insert(Flow::Open {
+                            why: "a whole-object assignment into the union".to_owned(),
+                        });
+                    }
                 } else if let Some(record) = self.record_of_node(place, false) {
                     // A whole-object assignment copies members of the same
                     // record (values already counted); anything else writes
@@ -818,14 +1419,63 @@ impl MemberFacts {
                     {
                         self.open_opaquely(record, format!("a `{callee}` into it"));
                     }
+                    // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: a copy into
+                    // a place a union holds may write past the place: the
+                    // whole union is written opaquely.
+                    if COPIERS.contains(&callee)
+                        && let Some(place) = arguments.get(1).and_then(Self::addressed)
+                        && let Some(key) = self.union_place(place)
+                    {
+                        self.open_union(&key, &format!("a `{callee}` into the union"));
+                    }
                     // The callee designator is not an address taken.
-                    for argument in arguments.iter().skip(1) {
+                    for (index, argument) in arguments.iter().skip(1).enumerate() {
+                        // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: a
+                        // filler's destination converted to `void *` writes
+                        // one byte value only: no escape (its operand is
+                        // still read).
+                        if index == 0
+                            && FILLERS.contains(&callee)
+                            && kind(argument) == "ImplicitCastExpr"
+                            && argument["castKind"].as_str() == Some("BitCast")
+                        {
+                            for child in children(argument) {
+                                self.walk(child, enclosing);
+                            }
+                            continue;
+                        }
                         self.walk(argument, enclosing);
                     }
                 } else {
                     for child in arguments {
                         self.walk(child, enclosing);
                     }
+                }
+            }
+            // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: the address of a
+            // place a union holds converted to another pointer type may be
+            // written through as any type (type punning): the whole union is
+            // written opaquely.
+            "CStyleCastExpr" | "ImplicitCastExpr" if node["castKind"].as_str() == Some("BitCast") => {
+                let mut operand = children(node).first();
+                while let Some(inner) = operand
+                    && kind(inner) == "ParenExpr"
+                {
+                    operand = children(inner).first();
+                }
+                if let Some(inner) = operand
+                    && kind(inner) == "UnaryOperator"
+                    && inner["opcode"].as_str() == Some("&")
+                    && let Some(place) = children(inner).first()
+                    && let Some(key) = self.union_place(place)
+                {
+                    self.open_union(
+                        &key,
+                        "an address into the union converted to another pointer type",
+                    );
+                }
+                for child in children(node) {
+                    self.walk(child, enclosing);
                 }
             }
             "DeclRefExpr" => {
@@ -884,10 +1534,14 @@ pub fn read_unit(
     source: &str,
     unit: &crate::legacy_c::C11TranslationUnit<'_>,
 ) -> Result<MemberFacts, String> {
-    crate::typed_c_ast::translation_unit_ast_with(source, unit, |bytes| {
+    let mut facts = crate::typed_c_ast::translation_unit_ast_with(source, unit, |bytes| {
         crate::deep_unit_ast::from_slice::<FactsRoot>(bytes)
     })
-    .map(|FactsRoot(facts)| facts)
+    .map(|FactsRoot(facts)| facts)?;
+    // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: Clang's layout of the
+    // unions the unit's keys name (a failed probe leaves them unplaced).
+    facts.probe_layouts(source, unit);
+    Ok(facts)
 }
 
 /// The translation unit, read for its member facts alone.
@@ -991,6 +1645,42 @@ fn last_segment(member: &str) -> &str {
 pub struct Tables {
     records: BTreeMap<String, Vec<RecordKeys>>,
     ambiguous: BTreeSet<String>,
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: each union's layout over
+    /// the units, `None` where two units disagree on a range (the union is
+    /// then unplaced).
+    layouts: BTreeMap<String, Option<UnionLayout>>,
+}
+
+/// Merge one unit's layout of a union into the run's: a range two units give
+/// differently leaves the union unplaced; an unknown entry stays unknown.
+fn merge_layout(run: &mut Option<UnionLayout>, unit: &UnionLayout) {
+    fn merged(layout: &mut UnionLayout, unit: &UnionLayout) -> bool {
+        for (arm, range) in &unit.paths {
+            if layout.paths.get(arm).is_some_and(|known| known != range) {
+                return false;
+            }
+            layout.paths.insert(arm.clone(), *range);
+        }
+        for (target, source) in [
+            (&mut layout.records, &unit.records),
+            (&mut layout.members, &unit.members),
+        ] {
+            for (key, ranges) in source {
+                if let (Some(Some(known)), Some(ranges)) = (target.get(key), ranges)
+                    && known != ranges
+                {
+                    return false;
+                }
+                add_ranges(target, key, ranges.clone());
+            }
+        }
+        true
+    }
+    if let Some(layout) = run
+        && !merged(layout, unit)
+    {
+        *run = None;
+    }
 }
 
 impl Tables {
@@ -999,6 +1689,14 @@ impl Tables {
     pub fn of(units: &[&MemberFacts]) -> Self {
         let mut tables = Self::default();
         for facts in units {
+            for (union, layout) in &facts.union_layouts {
+                match tables.layouts.get_mut(union) {
+                    None => {
+                        tables.layouts.insert(union.clone(), Some(layout.clone()));
+                    }
+                    Some(run) => merge_layout(run, layout),
+                }
+            }
             for (tag, keys) in &facts.records {
                 match keys {
                     Some(keys) => {
@@ -1097,6 +1795,10 @@ impl Tables {
     /// # Errors
     /// Why the path is not such a member.
     pub fn normalise(&self, key: &str) -> Result<BTreeSet<String>, String> {
+        if is_union_key(key) {
+            // Already a union's key (with or without its arm path).
+            return Ok(BTreeSet::from([key.to_owned()]));
+        }
         let (tag, path) = key
             .split_once('.')
             .ok_or_else(|| format!("`{key}` names no member"))?;
@@ -1112,6 +1814,7 @@ impl Tables {
 
     /// The record keys at a union's normal key (`T.p.*`), every reading.
     fn union_at(&self, key: &str) -> Vec<RecordKeys> {
+        let key = union_parts(key).map_or(key, |(union, _)| union);
         let Some((tag, path)) = key.split_once('.') else {
             return Vec::new();
         };
@@ -1208,17 +1911,77 @@ impl Tables {
     /// (both normal): the same key; a union's key whose members embed the
     /// member's record; or the member is a union's and the store's record is
     /// embedded in it.
+    ///
+    /// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (layout route): two
+    /// places of one union alias when they are the same arm path, when
+    /// either is the whole union or not placed, or when Clang's layout puts
+    /// them on overlapping bytes; a union's place and a record the union
+    /// holds alias unless the layout puts every placement of the record's
+    /// member off the place's bytes. Anything the layout does not give is
+    /// read as overlapping.
     fn aliases(&self, member: &str, store: &str) -> bool {
         if member == store {
             return true;
+        }
+        let (in_member, in_store) = (union_parts(member), union_parts(store));
+        if let (Some((union, arm)), Some((other, other_arm))) = (in_member, in_store)
+            && union == other
+        {
+            return places_alias(
+                arm,
+                other_arm,
+                arm.and_then(|arm| self.arm_ranges(union, arm)),
+                other_arm.and_then(|arm| self.arm_ranges(union, arm)),
+            );
         }
         let embeds = |union: &str, record: &str| {
             self.union_at(union)
                 .iter()
                 .any(|keys| self.embedded(keys).contains(record))
         };
-        (store.ends_with(".*") && embeds(store, record_of_key(member)))
-            || (member.ends_with(".*") && embeds(member, record_of_key(store)))
+        (in_store.is_some()
+            && embeds(store, record_of_key(member))
+            && self.meets_held(store, member))
+            || (in_member.is_some()
+                && embeds(member, record_of_key(store))
+                && self.meets_held(member, store))
+    }
+
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: the bytes of a union's arm
+    /// path, when the run's layout gives them.
+    fn arm_ranges(&self, union: &str, arm: &str) -> Option<BTreeSet<Range>> {
+        let range = self.layouts.get(union)?.as_ref()?.paths.get(arm)?;
+        Some(BTreeSet::from([*range]))
+    }
+
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: whether a union's place
+    /// (`key`) may meet a function-pointer member (`held`, its normal key) of
+    /// a record the union holds.
+    fn meets_held(&self, key: &str, held: &str) -> bool {
+        let Some((union, Some(arm))) = union_parts(key) else {
+            return true;
+        };
+        let ranges = self
+            .layouts
+            .get(union)
+            .and_then(Option::as_ref)
+            .and_then(|layout| layout.members.get(held).cloned().flatten());
+        meet(self.arm_ranges(union, arm), ranges)
+    }
+
+    /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: whether a union's place
+    /// (`key`) may meet a record the union holds by value (an opaque write
+    /// of that record writes its bytes).
+    fn meets_record(&self, key: &str, record: &str) -> bool {
+        let Some((union, Some(arm))) = union_parts(key) else {
+            return true;
+        };
+        let ranges = self
+            .layouts
+            .get(union)
+            .and_then(Option::as_ref)
+            .and_then(|layout| layout.records.get(record).cloned().flatten());
+        meet(self.arm_ranges(union, arm), ranges)
     }
 }
 
@@ -1328,14 +2091,24 @@ pub fn closure_prepared(
                 // already reads, so it does not open the member.
                 let mut containers = BTreeSet::new();
                 let mut unread_names = BTreeSet::new();
+                // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: the records
+                // whose opaque writes may write the member's bytes (a record
+                // a union holds only where the layout lets it meet them).
+                let mut noted = BTreeSet::new();
                 for target in &targets {
                     tokens.insert(record_of_key(target).to_owned());
                     let record = record_of_key(target).to_owned();
                     containers.extend(tables.containers(&record));
+                    noted.insert(record.clone());
                     records.insert(record);
-                    if target.ends_with(".*") {
+                    if is_union_key(target) {
                         for keys in tables.union_at(target) {
-                            records.extend(tables.embedded(&keys));
+                            for held in tables.embedded(&keys) {
+                                if tables.meets_record(target, &held) {
+                                    noted.insert(held.clone());
+                                }
+                                records.insert(held);
+                            }
                             unread_names.extend(tables.names(&keys));
                         }
                     } else {
@@ -1345,7 +2118,7 @@ pub fn closure_prepared(
                 let aliased =
                     |store: &str| targets.iter().any(|target| tables.aliases(target, store));
                 for (_, store, _) in &prepared.stores {
-                    if store.ends_with(".*") && aliased(store) {
+                    if is_union_key(store) && aliased(store) {
                         for keys in tables.union_at(store) {
                             unread_names.extend(tables.names(&keys));
                         }
@@ -1370,12 +2143,12 @@ pub fn closure_prepared(
                     tokens.extend(unread_names.iter().cloned());
                 }
                 for facts in units {
-                    for record in &records {
+                    for record in &noted {
                         if let Some(why) = facts.opened.get(record) {
                             notes.insert(format!("{why} writes a `struct {record}`"));
                         }
                     }
-                    for record in containers.difference(&records) {
+                    for record in containers.difference(&noted) {
                         if let Some(why) = facts
                             .opened
                             .get(record)
@@ -1695,6 +2468,31 @@ mod tests {
             );
         }
         assert_eq!(KEY_VECTORS.len(), 4);
+    }
+
+    #[test]
+    fn layout_vectors_hold() {
+        for (arm, other, ranges, other_ranges, expected) in LAYOUT_VECTORS {
+            let set = |ranges: &Option<&[Range]>| ranges.map(|ranges| ranges.iter().copied().collect());
+            assert_eq!(
+                places_alias(*arm, *other, set(ranges), set(other_ranges)),
+                *expected,
+                "{arm:?} {other:?} {ranges:?} {other_ranges:?}"
+            );
+            // Symmetric.
+            assert_eq!(
+                places_alias(*other, *arm, set(other_ranges), set(ranges)),
+                *expected
+            );
+        }
+        assert_eq!(LAYOUT_VECTORS.len(), 7);
+        assert_eq!(
+            union_parts("op_s.u.*@late.cb"),
+            Some(("op_s.u.*", Some("late.cb")))
+        );
+        assert_eq!(union_parts("slot_u.*"), Some(("slot_u.*", None)));
+        assert_eq!(union_parts("conf_s.log_cb"), None);
+        assert_eq!(union_parts("odd@key"), None);
     }
 
     #[test]
