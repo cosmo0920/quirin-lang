@@ -226,7 +226,7 @@ fn dialect_of(entry: &CompileEntry) -> qcore_c_gateway::legacy_c::CCompilerDiale
 /// A unit's facts: read through the gateway's own preprocessing where its
 /// compile command is one the gateway reads (the analysis's input), and
 /// otherwise from the text its recorded command preprocesses (`-E -P`).
-fn read_facts(entry: &CompileEntry) -> Result<MemberFacts, String> {
+pub fn read_facts(entry: &CompileEntry) -> Result<MemberFacts, String> {
     let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
     if let Ok(unit) = c_unit(entry, &source)
         && let Ok(preprocessed) = qcore_c_gateway::legacy_c::preprocess_unrestricted_c11(&unit)
