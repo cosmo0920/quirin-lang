@@ -7712,10 +7712,46 @@ own anchor here.
     formal other than a null constant into a `#released` / `#moved` path
     (or set), a store of a record holding a stated path, a store into or the
     address of a `#stale` or `#kept` path, and a pointee other than `struct
-    TAG` withdraw the states there (the candidate has no contract in force);
-    validated when every must path has a top-level null store before every
-    `return` (no `goto`), every set one null store, every stale path no
-    store; otherwise a declared assumption. Measured on the corpus: the
+    TAG` withdraw the states there (the candidate has no contract in force).
+    **Amended by card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS**: validation
+    is the bounded path reading of `crates/qcore-c-gateway/src/member_path_reading.rs`
+    (`Reader`, `validated_exits`; `member_path_check::validates` now takes
+    the unit's `callee` lookup and returns `Standing`): the body as a
+    control-flow graph (`goto`/labels, `switch`, loops) read to a fixpoint
+    over each stated path's value set (`ORIG`, `ORIG_NULL`, `NULL`,
+    `OTHER`), a null test refining each branch; a direct call to a `static`
+    function of the unit (a header `static inline` included) receiving the
+    formal or the address of a member path related to a stated one is
+    followed with its parameters bound (depth 8, never recursively, a budget
+    of 50,000 nodes), and `return f(…)` keeps the callee's outcome per
+    returned value; any other call receiving such a view leaves what it
+    reaches `OTHER` (the frame of a call is its arguments: a member's value
+    reaches nothing of the formal, a pointer to the formal stored in memory
+    is not followed); a view copied into a variable, effects touching the
+    formal in two unsequenced operands, an unmodelled construct and a
+    pointer store into an unstated path inside a followed helper end the
+    reading. Validated when every exit where a state's guard may hold (an
+    exit returning exactly a `!=` guard's enumerator is exempt) reads null
+    for a must path, no `OTHER` for a set (with a null store read), untouched
+    for a stale or kept path; otherwise a declared assumption, never a
+    withdrawal. Measured (corpus): `…query_leaders_async_worker_op_cb` and
+    `rd_kafka_DeleteRecords_leaders_queried_cb` become partly validated;
+    `rd_kafka_admin_fanout_worker` becomes a declared assumption (a
+    correction: the formal is passed to the indirect
+    `cbs->partial_response` after its null store, which the base check did
+    not read); `rd_kafka_admin_worker` stays one (`rd_list_move`, external,
+    and the indirect `parse` / `request` reach its stated paths); no verdict
+    moves. **Do not** follow a non-`static` or indirect callee, read a
+    member's value as the formal, or exempt an exit whose returned value is
+    not the guard's own enumerator. `QCore.MemberPathUnitHelpers`
+    (`aexec_sound`, `a_validated_must_path_reads_null`,
+    `a_validated_set_path_is_kept_or_null`,
+    `a_validated_stale_path_is_untouched`, `a_call_summary_is_inlining`,
+    `a_call_runs_its_body`, `a_path_not_followed_never_validates`,
+    `the_depth_bound_never_validates`, `an_exempt_exit_falsifies_its_guard`,
+    `an_unnamed_return_is_never_exempt`, `an_eq_guard_is_never_exempt`);
+    [report](../reports/member-path-unit-helpers/README.md). Measured by
+    OP-CALLBACK-MEMBER-PATH-RELEASE on the corpus: the
     eight librdkafka candidates of shape (b) are declared
     (`OP-CALLBACK-CANDIDATE-CONTRACTS`); `rd_kafka_op_destroy`'s 131 leaves
     now name `rd_kafka_oauthbearer_refresh_op`, no status moves. **Do not**

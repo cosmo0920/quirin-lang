@@ -1394,12 +1394,27 @@ formal must be a null pointer constant into a path stated `#released`,
 and a store into (or the address of) a `#stale` or `#kept` path being
 contradictions, and the formal's pointee `struct TAG`; a contradiction
 withdraws the states in that unit (the candidate has no contract in force
-there). A path stated `#released` / `#moved` is validated by a null store
-into it that is a statement of the body's top-level block before every
-`return` (no `goto` or label), a set by one null store, `#stale` by the
-absence of stores; a body that leaves a stated reading to its callees keeps
-the clause a declared assumption (rules 13i–13k). That the taken object was
-released or handed on stays a declared assumption, as for the arms.
+there). Validation (card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS) is a
+bounded path reading of the body as a control-flow graph (`goto` and labels
+included), to a fixpoint over what each stated path may read: untouched,
+untouched and tested null, null (stored or tested), or anything. A null
+test of the path refines each branch. A direct call to a function the unit
+defines with storage class `static` (a header `static inline` included)
+that receives the formal or the address of a member path at, above or below
+a stated path is followed with its parameters bound to that view, within a
+frame depth and never recursively; `return f(…)` keeps the callee's outcome
+per returned value. Every other call receiving such a view leaves what it
+reaches unknown; a member's value passed to a call reaches nothing of the
+formal (the frame of a call is its arguments). A copy of a view into a
+variable, effects in two unsequenced operands touching the formal, a
+construct the reading does not model, and a pointer store into an unstated
+path inside a followed helper end the reading. At every exit where a
+state's guard may hold (an exit returning exactly the enumerator of a `!=`
+guard is exempt): `#released` / `#moved` read null, a set reads no unknown
+value and the reading saw a null store into the path, `#stale` / `#kept`
+read untouched. Otherwise the clause stays a declared assumption (rules
+13i–13k), never withdrawn. That the taken object was released or handed on
+stays a declared assumption, as for the arms.
 
 ## C05. Manifests and immutable assumptions
 
