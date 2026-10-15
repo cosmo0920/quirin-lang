@@ -66,9 +66,14 @@ contract {
 // reads `(action, error)` integer pairs from its trailing arguments until a
 // zero action, maps `err` to an action mask and logs through the broker; it
 // allocates, frees and keeps nothing. Every trailing argument is an `int`.
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_err_action` may run an rk_conf
+// callback (rd_kafka_err_action -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_err_action(rkb: ptr<mut, u8>, err: i32, request: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkb);
     ensures normal resource_borrowed(err);
     ensures normal resource_borrowed(request);
@@ -82,9 +87,15 @@ contract {
 // (`rd_strdup`) into the handle it owns and enqueues an error op formatted
 // from it; or returns `RD_KAFKA_RESP_ERR__NOT_IMPLEMENTED` without SASL
 // OAUTHBEARER. `errstr` is read, never kept.
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_oauthbearer_set_token_failure`
+// may run an rk_conf callback (rd_kafka_oauthbearer_set_token_failure ->
+// rd_kafka_oauthbearer_set_token_failure0 -> rd_kafka_log0 -> rd_kafka_log_buf
+// -> conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_oauthbearer_set_token_failure(rk: ptr<mut, u8>, errstr: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(errstr);
     ensures normal resource_return_none();
@@ -95,9 +106,15 @@ contract {
 // queue when synchronous, looks up and releases a reference to each
 // partition's toppar, and writes each element's `err`. It keeps no pointer
 // the caller passed.
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppars_pause_resume` may run
+// an rk_conf callback (rd_kafka_toppars_pause_resume -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_broker_state_change, on_conf_destroy, on_conf_set, on_response_received),
+// so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppars_pause_resume(rk: ptr<mut, u8>, pause: u8, async_mode: u32, flag: i32, partitions: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(pause);
     ensures normal resource_borrowed(async_mode);
@@ -404,9 +421,15 @@ contract {
 // `rd_kafka_toppar_destroy_final(rktp)`. The `rd_kafka_toppar_destroy` macro
 // (`:540-544`) copies its argument into a block-scope `_RKTP` first.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_destroy0` may run an
+// rk_conf callback (rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final
+// -> rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_conf_destroy, on_response_received), so it names
+// `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_destroy0(func: ptr<const, u8>, line: i32, rktp: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(func);
     ensures normal resource_borrowed(line);
     ensures normal resource_borrowed(rktp);
@@ -419,18 +442,31 @@ contract {
 // and `rd_kafka_q_destroy_final(rkq)` when it reached zero.
 // `rd_kafka_q_destroy_owner` (`:253-255`) is `rd_kafka_q_destroy0(rkq, 1)`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_destroy0` may run an rk_conf
+// callback (rd_kafka_q_destroy0 -> rd_kafka_q_purge0 -> rd_kafka_op_destroy ->
+// rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final -> rd_kafka_log0
+// -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_destroy0(rkq: ptr<mut, u8>, disable: i32) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(disable);
     ensures normal resource_reference_dropped(rkq);
     ensures normal resource_return_none();
 };
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_destroy_owner` may run an
+// rk_conf callback (rd_kafka_q_destroy_owner -> rd_kafka_q_destroy0 ->
+// rd_kafka_q_purge0 -> rd_kafka_op_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_destroy_owner(rkq: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_reference_dropped(rkq);
     ensures normal resource_return_none();
@@ -441,9 +477,15 @@ contract {
 // `rd_refcnt_sub(&rkt->rkt_refcnt)` and `rd_kafka_topic_destroy_final(rkt)` at
 // zero.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_topic_destroy0` may run an
+// rk_conf callback (rd_kafka_topic_destroy0 -> rd_kafka_topic_destroy_final ->
+// rd_kafka_anyconf_destroy -> rd_kafka_interceptors_on_conf_destroy ->
+// on_conf_destroy; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_topic_destroy0(rkt: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_reference_dropped(rkt);
     ensures normal resource_return_none();
@@ -456,9 +498,16 @@ contract {
 // the caller's balance changes only by the dropped reference. `err` is
 // `rd_kafka_resp_err_t`, `i32` (rule 12u, see the head of this module).
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_enq_once_trigger` may run an
+// rk_conf callback (rd_kafka_enq_once_trigger -> rd_kafka_replyq_destroy ->
+// rd_kafka_q_destroy0 -> rd_kafka_q_purge0 -> rd_kafka_op_destroy ->
+// rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final -> rd_kafka_log0
+// -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_enq_once_trigger(eonce: ptr<mut, u8>, err: i32, srcdesc: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(eonce);
     ensures normal resource_borrowed(err);
     ensures normal resource_borrowed(srcdesc);
@@ -503,9 +552,17 @@ contract {
 // `_private` holds), frees `elems`, frees the list. It dereferences
 // `rktparlist` unconditionally: `nonnull`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_topic_partition_list_destroy`
+// may run an rk_conf callback (rd_kafka_topic_partition_list_destroy ->
+// rd_kafka_topic_partition_destroy0 ->
+// rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_topic_partition_list_destroy(rktparlist: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_released(rktparlist, nonnull);
     ensures normal resource_return_none();
 };
@@ -523,9 +580,16 @@ contract {
 // body drops the reference `_private` holds through a member read, which no
 // rule infers (`REFCOUNT-MEMBER-REFERENCE-DROP`).
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_topic_partition_destroy0` may
+// run an rk_conf callback (rd_kafka_topic_partition_destroy0 ->
+// rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_topic_partition_destroy0(rktpar: ptr<mut, u8>, do_free: i32) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_literal_argument(do_free, 1);
     ensures normal resource_released(rktpar, nonnull);
     ensures normal resource_borrowed(do_free);
@@ -538,23 +602,50 @@ contract {
 // `rd_kafka_ListConsumerGroupOffsets_destroy` (`:7047-7054`): the same, the
 // list only when non-NULL. Each dereferences its argument: `nonnull`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED:
+// `rd_kafka_AlterConsumerGroupOffsets_destroy` may run an rk_conf callback
+// (rd_kafka_AlterConsumerGroupOffsets_destroy ->
+// rd_kafka_topic_partition_list_destroy -> rd_kafka_topic_partition_destroy0
+// -> rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_AlterConsumerGroupOffsets_destroy(alter_grpoffsets: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_released(alter_grpoffsets, nonnull);
     ensures normal resource_return_none();
 };
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED:
+// `rd_kafka_DeleteConsumerGroupOffsets_destroy` may run an rk_conf callback
+// (rd_kafka_DeleteConsumerGroupOffsets_destroy ->
+// rd_kafka_topic_partition_list_destroy -> rd_kafka_topic_partition_destroy0
+// -> rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_DeleteConsumerGroupOffsets_destroy(del_grpoffsets: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_released(del_grpoffsets, nonnull);
     ensures normal resource_return_none();
 };
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED:
+// `rd_kafka_ListConsumerGroupOffsets_destroy` may run an rk_conf callback
+// (rd_kafka_ListConsumerGroupOffsets_destroy ->
+// rd_kafka_topic_partition_list_destroy -> rd_kafka_topic_partition_destroy0
+// -> rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_ListConsumerGroupOffsets_destroy(list_grpoffsets: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_released(list_grpoffsets, nonnull);
     ensures normal resource_return_none();
 };
@@ -563,9 +654,18 @@ contract {
 // result's partition (`rd_kafka_topic_partition_destroy`), its error
 // (`rd_kafka_error_destroy`), then the result: `nonnull`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED:
+// `rd_kafka_topic_partition_result_destroy` may run an rk_conf callback
+// (rd_kafka_topic_partition_result_destroy -> rd_kafka_topic_partition_destroy
+// -> rd_kafka_topic_partition_destroy0 ->
+// rd_kafka_topic_partition_private_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_topic_partition_result_destroy(partition_result: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_released(partition_result, nonnull);
     ensures normal resource_return_none();
 };
@@ -630,9 +730,14 @@ contract {
 // the one reference. Non-null (`rd_calloc`). The `rd_kafka_toppar_new` macro
 // (`rdkafka_partition.h:579-580`) passes `__FUNCTION__` and `__LINE__`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_new0` may run an
+// rk_conf callback (rd_kafka_toppar_new0 -> rd_kafka_log0 -> rd_kafka_log_buf
+// -> conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<const, u8>, line: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_premise(asserted_allocation, "the result is non-null because it is allocated with rd_calloc (rd.h:139-143), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_borrowed(partition);
@@ -648,9 +753,15 @@ contract {
 // and marked desired, and returned ("Callers refcount"). Non-null: the last
 // source is non-null and `rd_kafka_toppar_lock(rktp)` dereferences it.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_desired_add` may run an
+// rk_conf callback (rd_kafka_toppar_desired_add ->
+// rd_kafka_toppar_desired_add0 -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_desired_add(rkt: ptr<mut, u8>, partition: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_premise(asserted_allocation, "the result is non-null because its last source is rd_kafka_toppar_new0's reference, allocated with rd_calloc (rd.h:139-143), which asserts its result, and the audited compile commands define no NDEBUG, so it never returns NULL in the audited build");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_borrowed(partition);
@@ -663,9 +774,15 @@ contract {
 // returning), then returns `rd_kafka_toppar_desired_add`'s reference, or NULL
 // when the topic is neither found nor created.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_get2` may run an
+// rk_conf callback (rd_kafka_toppar_get2 -> rd_kafka_log0 -> rd_kafka_log_buf
+// -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_broker_state_change, on_conf_destroy, on_conf_set, on_response_received),
+// so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_get2(rk: ptr<mut, u8>, topic: ptr<const, u8>, partition: i32, ua_on_miss: i32, create_on_miss: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(topic);
     ensures normal resource_borrowed(partition);
@@ -680,9 +797,18 @@ contract {
 // partition; otherwise `rd_kafka_toppar_get`'s reference, or NULL. `errp`
 // (`rd_kafka_resp_err_t *`) is written, never kept.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_get_avail` may run an
+// rk_conf callback (only through rd_kafka_crash's dump of a non-null rk)
+// (rd_kafka_toppar_get_avail -> rd_kafka_crash -> rd_kafka_dump0 ->
+// rd_kafka_q_len -> rd_kafka_q_destroy0 -> rd_kafka_q_purge0 ->
+// rd_kafka_op_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_get_avail(rkt: ptr<const, u8>, partition: i32, ua_on_miss: i32, errp: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkt);
     ensures normal resource_borrowed(partition);
     ensures normal resource_borrowed(ua_on_miss);
@@ -723,9 +849,15 @@ contract {
 // partition)`'s reference. (The topic reference it takes is not dropped here;
 // it is not this declaration's result.)
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `ut_create_mock_toppar` may run an
+// rk_conf callback (ut_create_mock_toppar -> rd_kafka_toppar_new0 ->
+// rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_broker_state_change, on_conf_destroy, on_conf_set,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn ut_create_mock_toppar(rk: ptr<mut, u8>, topic: ptr<const, u8>, partition: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(topic);
     ensures normal resource_borrowed(partition);
@@ -753,9 +885,16 @@ contract {
 // takes over the caller's reference: the transfer the ledger asked about is a
 // drop (C04.17).
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `ut_destroy_mock_queue` may run an
+// rk_conf callback (ut_destroy_mock_queue -> rd_kafka_q_destroy_owner ->
+// rd_kafka_q_destroy0 -> rd_kafka_q_purge0 -> rd_kafka_op_destroy ->
+// rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final -> rd_kafka_log0
+// -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn ut_destroy_mock_queue(rkq: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_reference_dropped(rkq);
     ensures normal resource_return_none();
@@ -820,9 +959,15 @@ contract {
 // nothing: `rkq` is borrowed. The result is `rd_kafka_resp_err_t`, `i32`
 // (rule 12u, see the head of this module).
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_wait_result` may run an
+// rk_conf callback (rd_kafka_q_wait_result -> rd_kafka_op_destroy ->
+// rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final -> rd_kafka_log0
+// -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_wait_result(rkq: ptr<mut, u8>, timeout_ms: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_premise(served_queue, "an op callback the call may run (rd_kafka_op_handle, rd_kafka_op_call, rd_kafka_op_destroy) takes over no reference the caller holds on the served queue");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_ms);
@@ -839,9 +984,15 @@ contract {
 // held, not the caller's). `rkq` itself is never kept, dropped or stored:
 // borrowed. The result is the number of ops purged.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_purge0` may run an rk_conf
+// callback (rd_kafka_q_purge0 -> rd_kafka_op_destroy ->
+// rd_kafka_toppar_destroy0 -> rd_kafka_toppar_destroy_final -> rd_kafka_log0
+// -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_purge0(rkq: ptr<mut, u8>, do_lock: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_premise(served_queue, "an op callback the call may run (rd_kafka_op_handle, rd_kafka_op_call, rd_kafka_op_destroy) takes over no reference the caller holds on the served queue");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(do_lock);
@@ -872,9 +1023,14 @@ contract {
 // `rd_kafka_err2str(err)`, a static string) and returns the absolute backoff
 // time (`rd_ts_t`, `int64_t`). `err` is `rd_kafka_resp_err_t`, `i32`.
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_toppar_fetch_backoff` may run
+// an rk_conf callback (rd_kafka_toppar_fetch_backoff -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_toppar_fetch_backoff(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, err: i32) -> i64
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkb);
     ensures normal resource_borrowed(rktp);
     ensures normal resource_borrowed(err);
@@ -1110,9 +1266,15 @@ contract {
 // enumerator (`rdkafka.h:209-212`, `rdkafka_telemetry_encode.h:53-70`):
 // `u32` (C04.1); `rd_bool_t` is `uint8_t` (`rdtypes.h:49`).
 
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `unit_test_telemetry` may run an rk_conf
+// callback (unit_test_telemetry -> rd_kafka_telemetry_encode_metrics ->
+// rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_conf_destroy, on_conf_set, on_response_received), so
+// it names `rk_no_plugin_library`.
 extern fn unit_test_telemetry(rk_type: u32, metric_name: u32, expected_name: ptr<const, u8>, expected_description: ptr<const, u8>, expected_type: u32, is_double: u8, is_per_broker: u8, set_metric_value: fnptr, expected_value_int: i64, expected_value_double: f64) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rk_type);
     ensures normal resource_borrowed(metric_name);
     ensures normal resource_borrowed(expected_name);
@@ -1168,9 +1330,15 @@ contract {
 
 
 // `rd_kafka_q_serve0` (`rdkafka_queue.c:558-649`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_serve0` may run an rk_conf
+// callback (rd_kafka_q_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_serve0(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>, is_consume_call: u8) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_ms);
     ensures normal resource_borrowed(max_cnt);
@@ -1185,9 +1353,15 @@ contract {
 };
 
 // `rd_kafka_q_serve` (`rdkafka_queue.c:652-660`, `rd_kafka_q_serve0(…, rd_false)`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_serve` may run an rk_conf
+// callback (rd_kafka_q_serve -> rd_kafka_q_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_serve(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_ms);
     ensures normal resource_borrowed(max_cnt);
@@ -1201,9 +1375,16 @@ contract {
 };
 
 // `rd_kafka_q_serve_maybe_consume` (`rdkafka_queue.c:667-677`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_serve_maybe_consume` may run
+// an rk_conf callback (rd_kafka_q_serve_maybe_consume -> rd_kafka_q_serve0 ->
+// rd_kafka_app_polled -> rd_kafka_cgrp_consumer_expedite_next_heartbeat ->
+// rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_conf_destroy, on_response_received), so it names
+// `rk_no_plugin_library`.
 extern fn rd_kafka_q_serve_maybe_consume(rkq: ptr<mut, u8>, timeout_ms: i32, max_cnt: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_ms);
     ensures normal resource_borrowed(max_cnt);
@@ -1217,9 +1398,15 @@ contract {
 };
 
 // `rd_kafka_q_pop_serve0` (`rdkafka_queue.c:398-505`, static).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_pop_serve0` may run an
+// rk_conf callback (rd_kafka_q_pop_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_pop_serve0(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>, is_consume_call: u8) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_us);
     ensures normal resource_borrowed(version);
@@ -1234,9 +1421,16 @@ contract {
 };
 
 // `rd_kafka_q_pop_serve` (`rdkafka_queue.c:507-515`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_pop_serve` may run an
+// rk_conf callback (rd_kafka_q_pop_serve -> rd_kafka_q_pop_serve0 ->
+// rd_kafka_app_polled -> rd_kafka_cgrp_consumer_expedite_next_heartbeat ->
+// rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_conf_destroy, on_response_received), so it names
+// `rk_no_plugin_library`.
 extern fn rd_kafka_q_pop_serve(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_us);
     ensures normal resource_borrowed(version);
@@ -1250,9 +1444,16 @@ contract {
 };
 
 // `rd_kafka_q_pop_serve_maybe_consume` (`rdkafka_queue.c:522-533`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_q_pop_serve_maybe_consume` may
+// run an rk_conf callback (rd_kafka_q_pop_serve_maybe_consume ->
+// rd_kafka_q_pop_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_q_pop_serve_maybe_consume(rkq: ptr<mut, u8>, timeout_us: i64, version: i32, cb_type: u32, callback: fnptr, opaque: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_us);
     ensures normal resource_borrowed(version);
@@ -1280,9 +1481,15 @@ contract {
 // rule 12o's check reads them (`scripts/op_destroy_arms.py`); that each call
 // releases its member stays a declared assumption. `rko` is read first
 // (`rko->rko_type`): `resource_released(rko, nonnull)`.
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_op_destroy` may run an rk_conf
+// callback (rd_kafka_op_destroy -> rd_kafka_toppar_destroy0 ->
+// rd_kafka_toppar_destroy_final -> rd_kafka_log0 -> rd_kafka_log_buf ->
+// conf->log_cb; reached: log_cb, on_acknowledgement, on_conf_destroy,
+// on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_op_destroy(rko: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires resource_discriminant(rko, rko_type, 1610612736);
     ensures normal resource_released(rko, nonnull);
     ensures normal resource_callback_member_invoked(rko, rd_kafka_op_s.rko_op_cb, _, _, rko);
@@ -1601,9 +1808,16 @@ contract {
 // dropped with `rd_kafka_q_destroy_owner`; `rd_kafka_op_req2(destq, type)` is
 // `req` over `rd_kafka_op_new(type)` with `RD_POLL_INFINITE`.
 // `rd_kafka_op_req0` (`rdkafka_op.c:850-866`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_op_req0` may run an rk_conf
+// callback (rd_kafka_op_req0 -> rd_kafka_q_pop -> rd_kafka_q_pop_serve ->
+// rd_kafka_q_pop_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_op_req0(destq: ptr<mut, u8>, recvq: ptr<mut, u8>, rko: ptr<mut, u8>, timeout_ms: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(destq);
     ensures normal resource_borrowed(recvq);
     ensures normal resource_consumed(rko, nonnull);
@@ -1614,9 +1828,16 @@ contract {
 };
 
 // `rd_kafka_op_req` (`rdkafka_op.c:874-886`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_op_req` may run an rk_conf
+// callback (rd_kafka_op_req -> rd_kafka_op_req0 -> rd_kafka_q_pop ->
+// rd_kafka_q_pop_serve -> rd_kafka_q_pop_serve0 -> rd_kafka_app_polled ->
+// rd_kafka_cgrp_consumer_expedite_next_heartbeat -> rd_kafka_log0 ->
+// rd_kafka_log_buf -> conf->log_cb; reached: log_cb, on_acknowledgement,
+// on_conf_destroy, on_response_received), so it names `rk_no_plugin_library`.
 extern fn rd_kafka_op_req(destq: ptr<mut, u8>, rko: ptr<mut, u8>, timeout_ms: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(destq);
     ensures normal resource_consumed(rko, nonnull);
     ensures normal resource_borrowed(timeout_ms);
@@ -1626,9 +1847,17 @@ contract {
 };
 
 // `rd_kafka_op_req2` (`rdkafka_op.c:892-897`).
+// LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_op_req2` may run an rk_conf
+// callback (rd_kafka_op_req2 -> rd_kafka_op_req -> rd_kafka_op_req0 ->
+// rd_kafka_q_pop -> rd_kafka_q_pop_serve -> rd_kafka_q_pop_serve0 ->
+// rd_kafka_app_polled -> rd_kafka_cgrp_consumer_expedite_next_heartbeat ->
+// rd_kafka_log0 -> rd_kafka_log_buf -> conf->log_cb; reached: log_cb,
+// on_acknowledgement, on_conf_destroy, on_response_received), so it names
+// `rk_no_plugin_library`.
 extern fn rd_kafka_op_req2(destq: ptr<mut, u8>, type: u32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(destq);
     ensures normal resource_borrowed(type);
     ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, _, _);

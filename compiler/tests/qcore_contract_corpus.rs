@@ -1098,13 +1098,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // ones, two retentions (`resource_retained_by`), the result mode.
     ("librdkafka/client.qv", "rd_kafka_error_new_v", 5),
     ("librdkafka/client.qv", "rd_kafka_error_new", 5),
-    ("librdkafka/client.qv", "rd_kafka_err_action", 6),
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: +1 on each of the 34 client.qv declarations
+    // whose body may reach rk_conf.log_cb (`rk_no_plugin_library`, user decision U2).
+    ("librdkafka/client.qv", "rd_kafka_err_action", 7),
     (
         "librdkafka/client.qv",
         "rd_kafka_oauthbearer_set_token_failure",
-        4,
+        5,
     ),
-    ("librdkafka/client.qv", "rd_kafka_toppars_pause_resume", 7),
+    ("librdkafka/client.qv", "rd_kafka_toppars_pause_resume", 8),
     ("librdkafka/client.qv", "rd_kafka_AclBinding_new0", 11),
     (
         "librdkafka/client.qv",
@@ -1147,43 +1149,43 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "rd_kafka_q_keep", 4),
     ("librdkafka/client.qv", "rd_kafka_q_keep_nolock", 4),
     ("librdkafka/client.qv", "rd_kafka_topic_keep", 4),
-    ("librdkafka/client.qv", "rd_kafka_toppar_destroy0", 6),
-    ("librdkafka/client.qv", "rd_kafka_q_destroy0", 5),
-    ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 4),
-    ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 4),
-    ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 6),
+    ("librdkafka/client.qv", "rd_kafka_toppar_destroy0", 7),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy0", 6),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 5),
+    ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 5),
+    ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 7),
     // 4 -> 5 by card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: the handle
     // retains `rk` by its result (C04.14.2, rule 13e).
     ("librdkafka/client.qv", "rd_kafka_queue_new0", 5),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_list_destroy",
-        3,
+        4,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_destroy0",
-        5,
+        6,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_AlterConsumerGroupOffsets_destroy",
-        3,
+        4,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_DeleteConsumerGroupOffsets_destroy",
-        3,
+        4,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_ListConsumerGroupOffsets_destroy",
-        3,
+        4,
     ),
     (
         "librdkafka/client.qv",
         "rd_kafka_topic_partition_result_destroy",
-        3,
+        4,
     ),
     // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (C04.17, C04.14.2, rules
     // 13d and 13e): nine returned references (marker, borrowed formals, the
@@ -1195,23 +1197,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`rd_kafka_toppar_new0`, `rd_kafka_toppar_desired_add`, `rd_kafka_q_new0`,
     // `ut_create_mock_queue`) state `requires resource_premise(asserted_allocation,
     // ...)` (contract spec C04.18), one clause each: 7 -> 8, 5 -> 6, 9 -> 10, 3 -> 4.
-    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 8),
-    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 6),
-    ("librdkafka/client.qv", "rd_kafka_toppar_get2", 8),
-    ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 7),
+    ("librdkafka/client.qv", "rd_kafka_toppar_new0", 9),
+    ("librdkafka/client.qv", "rd_kafka_toppar_desired_add", 7),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get2", 9),
+    ("librdkafka/client.qv", "rd_kafka_toppar_get_avail", 8),
     ("librdkafka/client.qv", "rd_kafka_q_new0", 10),
-    ("librdkafka/client.qv", "ut_create_mock_toppar", 6),
+    ("librdkafka/client.qv", "ut_create_mock_toppar", 7),
     ("librdkafka/client.qv", "ut_create_mock_queue", 4),
-    ("librdkafka/client.qv", "ut_destroy_mock_queue", 4),
+    ("librdkafka/client.qv", "ut_destroy_mock_queue", 5),
     // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: four plain declarations between a
     // reference's acquisition and its drop (marker, borrowed formals, `none`).
     // Card VERDICT-CONTRACT-DEPENDENCIES: the first two also state the
     // served-queue premise (`requires resource_premise(served_queue, ...)`,
     // contract spec C04.18), one clause each: 4 -> 5.
-    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 5),
-    ("librdkafka/client.qv", "rd_kafka_q_purge0", 5),
+    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 6),
+    ("librdkafka/client.qv", "rd_kafka_q_purge0", 6),
     ("librdkafka/client.qv", "rd_kafka_toppar_needs_query", 4),
-    ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 5),
+    ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 6),
     // CG22-CALLBACK-REGISTRY-CONTRACT: lists with a free callback and
     // nanopb's output stream.
     ("librdkafka/client.qv", "rd_list_init", 6),
@@ -1233,30 +1235,30 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_UserScramCredentialAlteration_destroy",
         3,
     ),
-    ("librdkafka/client.qv", "unit_test_telemetry", 13),
+    ("librdkafka/client.qv", "unit_test_telemetry", 14),
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES: the queue serving family
     // (marker, every formal borrowed, the callback invocation, the two op
     // member invocations, the result) and `rd_kafka_op_destroy` (marker, the
     // discriminant, the release, the op callback, 170 arm clauses, `none`).
-    ("librdkafka/client.qv", "rd_kafka_q_serve0", 12),
-    ("librdkafka/client.qv", "rd_kafka_q_serve", 11),
-    ("librdkafka/client.qv", "rd_kafka_q_serve_maybe_consume", 11),
-    ("librdkafka/client.qv", "rd_kafka_q_pop_serve0", 12),
-    ("librdkafka/client.qv", "rd_kafka_q_pop_serve", 11),
+    ("librdkafka/client.qv", "rd_kafka_q_serve0", 13),
+    ("librdkafka/client.qv", "rd_kafka_q_serve", 12),
+    ("librdkafka/client.qv", "rd_kafka_q_serve_maybe_consume", 12),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve0", 13),
+    ("librdkafka/client.qv", "rd_kafka_q_pop_serve", 12),
     (
         "librdkafka/client.qv",
         "rd_kafka_q_pop_serve_maybe_consume",
-        11,
+        12,
     ),
-    ("librdkafka/client.qv", "rd_kafka_op_destroy", 175),
+    ("librdkafka/client.qv", "rd_kafka_op_destroy", 176),
     // Card OP-CONSTRUCTOR-DECLARATIONS: the op constructors (a result state,
     // C04.19.4; `rd_kafka_op_new0`'s `quant live #result` state clause is one
     // clause) and the request family.
     ("librdkafka/client.qv", "rd_kafka_op_new0", 7),
     ("librdkafka/client.qv", "rd_kafka_op_new_cb", 9),
-    ("librdkafka/client.qv", "rd_kafka_op_req0", 8),
-    ("librdkafka/client.qv", "rd_kafka_op_req", 7),
-    ("librdkafka/client.qv", "rd_kafka_op_req2", 6),
+    ("librdkafka/client.qv", "rd_kafka_op_req0", 9),
+    ("librdkafka/client.qv", "rd_kafka_op_req", 8),
+    ("librdkafka/client.qv", "rd_kafka_op_req2", 7),
     // Card OP-CALLBACK-CANDIDATE-CONTRACTS: the declared op-callback
     // candidates. An `rko_op_cb` candidate: marker, the `rk_log_callback`
     // premise, three borrowed formals, `none` (6), plus one more premise for
