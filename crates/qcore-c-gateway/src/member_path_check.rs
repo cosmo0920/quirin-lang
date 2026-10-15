@@ -11,21 +11,26 @@
 //!   set of one of them; a store of a record holding a stated path, any other
 //!   pointer store, and a store into or the address of a path stated `#stale`
 //!   or `#kept` are **contradictions** (the declaration is withdrawn in that
-//!   unit);
-//! * a path stated `#released` / `#moved` is **validated** when a null store
-//!   into it is a statement of the body's top-level block before every
-//!   `return`, in a body with no `goto` or label; a set needs one null store;
-//!   a `#stale` path is validated by the absence of stores.
+//!   unit).
 //!
-//! Anything the body leaves to its callees (a static helper that clears the
-//! member) is neither: the clause stays a declared assumption (rules
-//! 13i–13k). The check establishes the member's reading after the call; that
-//! the object it held was released or handed on stays a declared assumption,
-//! as for the arms (rule 12o).
+//! Card **MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS** (rule 30, amended):
+//! validation is the bounded path reading of
+//! [`crate::member_path_reading`]: `goto`/labels and the other statements
+//! are read as a control-flow graph, a static helper of the unit (a header
+//! `static inline` included) that receives the formal or a member path's
+//! address is followed with its parameters bound (a wrapper's `return f(…)`
+//! keeps the callee's outcome per returned value), and every exit where a
+//! state's guard may hold must establish it. A call that is not followed
+//! leaves what it reaches unknown, so the clause stays a declared assumption
+//! (rules 13i–13k); a contradiction found in the declaration's own body
+//! still withdraws it. The check establishes the member's reading after the
+//! call; that the object it held was released or handed on stays a declared
+//! assumption, as for the arms (rule 12o).
 
 use qcore_schemas::member_path::{Fate, MemberPathState};
 use serde_json::Value;
 
+use crate::member_path_reading::{ORIG, Reader, validated_exits};
 use crate::typed_c_ast::{children, kind};
 
 fn strip(mut node: &Value) -> &Value {
@@ -38,23 +43,6 @@ fn strip(mut node: &Value) -> &Value {
             },
             _ => return node,
         }
-    }
-}
-
-fn null_constant(node: &Value) -> bool {
-    match kind(node) {
-        "ImplicitValueInitExpr" | "GNUNullExpr" => true,
-        "IntegerLiteral" => node["value"].as_str() == Some("0"),
-        "ParenExpr" | "ConstantExpr" => children(node).first().is_some_and(null_constant),
-        "ImplicitCastExpr" | "CStyleCastExpr"
-            if matches!(
-                node["castKind"].as_str(),
-                Some("NullToPointer" | "IntegralToPointer" | "NoOp" | "BitCast")
-            ) =>
-        {
-            children(node).first().is_some_and(null_constant)
-        }
-        _ => false,
     }
 }
 
@@ -98,35 +86,28 @@ fn walk<'a>(node: &'a Value, out: &mut Vec<&'a Value>) {
     }
 }
 
-fn contains(node: &Value, wanted: &[&str]) -> bool {
-    let mut all = Vec::new();
-    walk(node, &mut all);
-    all.iter().any(|node| wanted.contains(&kind(node)))
+/// What rule 30's body check establishes for a declaration's member-path
+/// states in a unit that defines it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Standing {
+    /// Every exit where a state's guard may hold establishes it.
+    Validated,
+    /// A declared assumption, with the reading's reason.
+    Assumption(String),
 }
 
-/// Whether `node` (a top-level statement) is a null store into `path` below
-/// `parameter`.
-fn null_store(node: &Value, parameter: &str, path: &str) -> bool {
-    let node = strip(node);
-    if kind(node) != "BinaryOperator" || node["opcode"].as_str() != Some("=") {
-        return false;
-    }
-    let [left, right] = children(node) else {
-        return false;
-    };
-    path_of(left, parameter).as_deref() == Some(path) && null_constant(right)
-}
-
-/// Rule 30's body check: `Ok(true)` validated, `Ok(false)` a declared
-/// assumption, `Err` a contradiction.
+/// Rule 30's body check: `Ok(Standing::Validated)`, `Ok(Standing::Assumption)`
+/// with the reading's reason, `Err` a contradiction. `callee` gives the unit's
+/// unique body for a function name (the helpers the reading may follow).
 ///
 /// # Errors
 /// A contradiction, naming it.
-pub fn validates(
-    function: &Value,
+pub fn validates<'a>(
+    function: &'a Value,
     states: &[MemberPathState],
     pointee: &dyn Fn(&Value) -> Option<String>,
-) -> Result<bool, String> {
+    callee: &dyn Fn(&str) -> Option<&'a Value>,
+) -> Result<Standing, String> {
     let parameters = children(function)
         .iter()
         .filter(|child| kind(child) == "ParmVarDecl")
@@ -138,7 +119,7 @@ pub fn validates(
         .ok_or("the body is not read")?;
     let mut nodes = Vec::new();
     walk(body, &mut nodes);
-    let mut validated = !contains(body, &["GotoStmt", "LabelStmt", "IndirectGotoStmt"]);
+    let mut assumption: Option<String> = None;
     let formals = states
         .iter()
         .map(|state| state.parameter)
@@ -167,7 +148,9 @@ pub fn validates(
                     ));
                 }
             }
-            None => validated = false,
+            None => {
+                assumption.get_or_insert(format!("parameter {formal}'s pointee is not read"));
+            }
         }
         let state_of = |path: &str| stated.iter().find(|state| state.member.path == path);
         let below_a_stated = |path: &str| {
@@ -175,7 +158,6 @@ pub fn validates(
                 .iter()
                 .any(|state| state.member.path.starts_with(&format!("{path}.")))
         };
-        let mut stored = std::collections::BTreeSet::new();
         for node in &nodes {
             match kind(node) {
                 "BinaryOperator" if node["opcode"].as_str() == Some("=") => {
@@ -196,10 +178,7 @@ pub fn validates(
                     match state_of(&path) {
                         Some(state)
                             if matches!(state.state.fate, Fate::Released | Fate::Moved)
-                                && null_constant(right) =>
-                        {
-                            stored.insert(path);
-                        }
+                                && crate::member_path_reading::null_constant(right) => {}
                         Some(state) => {
                             return Err(format!(
                                 "a store into `{path}`, stated `{}`, that is not a null pointer \
@@ -229,36 +208,45 @@ pub fn validates(
                 _ => {}
             }
         }
-        for state in &stated {
-            let path = state.member.path.as_str();
-            let holds = match (state.state.fate, state.state.maybe) {
-                (Fate::Stale | Fate::Kept, _) => true,
-                (Fate::Released | Fate::Moved, true) => stored.contains(path),
-                (Fate::Released | Fate::Moved, false) => {
-                    let mut before_return = true;
-                    let mut found = false;
-                    for statement in children(body) {
-                        if before_return && null_store(statement, id, path) {
-                            found = true;
-                            break;
-                        }
-                        if contains(statement, &["ReturnStmt"]) {
-                            before_return = false;
-                        }
-                    }
-                    found
-                }
-            };
-            validated &= holds;
+        if assumption.is_some() {
+            continue;
+        }
+        // Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: the path reading.
+        let paths = stated
+            .iter()
+            .map(|state| state.member.path.clone())
+            .collect::<Vec<_>>();
+        let mut reader = Reader::new(paths.clone(), callee);
+        let name = function["name"].as_str().unwrap_or("the declaration");
+        let views = std::collections::BTreeMap::from([(formal, None)]);
+        let outcomes = reader.read(name, function, &views, vec![ORIG; paths.len()]);
+        let verdict = match outcomes {
+            None => Err(reader
+                .failure
+                .clone()
+                .unwrap_or_else(|| "the reading failed".into())),
+            Some(outcomes) => validated_exits(&stated, &paths, &outcomes, &reader.stored),
+        };
+        if let Err(why) = verdict {
+            let calls = reader.not_followed.iter().cloned().collect::<Vec<_>>();
+            assumption = Some(if calls.is_empty() {
+                why
+            } else {
+                format!("{why}; not followed: {}", calls.join("; "))
+            });
         }
     }
-    Ok(validated)
+    Ok(match assumption {
+        None => Standing::Validated,
+        Some(why) => Standing::Assumption(why),
+    })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use qcore_schemas::callback::CallbackMember;
+    use qcore_schemas::handoff::{GuardOp, HandOffGuard};
     use qcore_schemas::member_path::PathState;
     use serde_json::json;
 
@@ -276,8 +264,12 @@ mod tests {
         node
     }
 
+    fn store_into(base: &str, path: &[&str], value: Value) -> Value {
+        json!({"kind": "BinaryOperator", "opcode": "=", "inner": [member(base, path), value]})
+    }
+
     fn store(path: &[&str], value: Value) -> Value {
-        json!({"kind": "BinaryOperator", "opcode": "=", "inner": [member("p", path), value]})
+        store_into("p", path, value)
     }
 
     fn null() -> Value {
@@ -285,23 +277,92 @@ mod tests {
                "inner": [{"kind": "IntegerLiteral", "value": "0"}]})
     }
 
-    fn function(statements: Vec<Value>) -> Value {
-        json!({"kind": "FunctionDecl", "inner": [
-            {"kind": "ParmVarDecl", "id": "p", "type": {"qualType": "struct op_s *"}},
-            {"kind": "CompoundStmt", "inner": statements},
-        ]})
+    fn reference(id: &str) -> Value {
+        json!({"kind": "ImplicitCastExpr", "castKind": "LValueToRValue",
+               "inner": [{"kind": "DeclRefExpr", "referencedDecl": {"id": id, "kind": "ParmVarDecl"}}]})
     }
 
-    /// The check with the pointee read from the spelled `struct TAG *`.
+    fn enumerator(name: &str) -> Value {
+        json!({"kind": "DeclRefExpr", "referencedDecl": {"kind": "EnumConstantDecl", "name": name}})
+    }
+
+    fn returning(value: Option<Value>) -> Value {
+        match value {
+            Some(value) => json!({"kind": "ReturnStmt", "inner": [value]}),
+            None => json!({"kind": "ReturnStmt"}),
+        }
+    }
+
+    fn call(name: &str, arguments: Vec<Value>) -> Value {
+        let mut inner = vec![
+            json!({"kind": "ImplicitCastExpr", "castKind": "FunctionToPointerDecay",
+            "inner": [{"kind": "DeclRefExpr", "referencedDecl": {"kind": "FunctionDecl", "name": name}}]}),
+        ];
+        inner.extend(arguments);
+        json!({"kind": "CallExpr", "type": {"qualType": "int"}, "inner": inner})
+    }
+
+    fn branch(condition: Value, then: Value, otherwise: Option<Value>) -> Value {
+        let mut inner = vec![condition, then];
+        inner.extend(otherwise);
+        json!({"kind": "IfStmt", "inner": inner})
+    }
+
+    fn opaque() -> Value {
+        json!({"kind": "DeclRefExpr", "referencedDecl": {"id": "flag", "kind": "VarDecl"}})
+    }
+
+    fn compound(statements: Vec<Value>) -> Value {
+        json!({"kind": "CompoundStmt", "inner": statements})
+    }
+
+    fn defined(
+        name: &str,
+        parameter: &str,
+        storage: Option<&str>,
+        statements: Vec<Value>,
+    ) -> Value {
+        let mut function = json!({"kind": "FunctionDecl", "name": name, "inner": [
+            {"kind": "ParmVarDecl", "id": parameter, "type": {"qualType": "struct op_s *"}},
+            compound(statements),
+        ]});
+        if let Some(storage) = storage {
+            function["storageClass"] = json!(storage);
+        }
+        function
+    }
+
+    fn function(statements: Vec<Value>) -> Value {
+        defined("callback", "p", None, statements)
+    }
+
+    /// The check with the pointee read from the spelled `struct TAG *` and
+    /// the helpers in `unit`.
+    fn check(
+        function: &Value,
+        states: &[MemberPathState],
+        unit: &[Value],
+    ) -> Result<Standing, String> {
+        validates(
+            function,
+            states,
+            &|parameter| {
+                parameter["type"]["qualType"]
+                    .as_str()?
+                    .strip_prefix("struct ")?
+                    .split_whitespace()
+                    .next()
+                    .map(str::to_owned)
+            },
+            &|name| {
+                unit.iter()
+                    .find(|helper| helper["name"].as_str() == Some(name))
+            },
+        )
+    }
+
     fn validates_spelled(function: &Value, states: &[MemberPathState]) -> Result<bool, String> {
-        validates(function, states, &|parameter| {
-            parameter["type"]["qualType"]
-                .as_str()?
-                .strip_prefix("struct ")?
-                .split_whitespace()
-                .next()
-                .map(str::to_owned)
-        })
+        check(function, states, &[]).map(|standing| standing == Standing::Validated)
     }
 
     fn state(path: &str, fate: Fate, maybe: bool) -> MemberPathState {
@@ -316,12 +377,17 @@ mod tests {
         }
     }
 
+    fn guarded(mut state: MemberPathState) -> MemberPathState {
+        state.guard = Some(HandOffGuard {
+            op: GuardOp::Ne,
+            constant: "KEEP".into(),
+        });
+        state
+    }
+
     #[test]
     fn a_top_level_null_store_before_every_return_validates() {
-        let body = function(vec![
-            store(&["u", "a"], null()),
-            json!({"kind": "ReturnStmt"}),
-        ]);
+        let body = function(vec![store(&["u", "a"], null()), returning(None)]);
         assert_eq!(
             validates_spelled(&body, &[state("u.a", Fate::Moved, false)]),
             Ok(true)
@@ -329,9 +395,9 @@ mod tests {
     }
 
     #[test]
-    fn a_store_after_a_return_is_an_assumption_and_a_set_needs_one_store() {
+    fn a_return_before_the_store_is_an_assumption_and_a_set_needs_one_store() {
         let body = function(vec![
-            json!({"kind": "IfStmt", "inner": [{"kind": "ReturnStmt"}]}),
+            branch(opaque(), returning(None), None),
             store(&["u", "a"], null()),
         ]);
         assert_eq!(
@@ -368,10 +434,245 @@ mod tests {
 
     #[test]
     fn an_unstored_stale_path_validates() {
-        let body = function(vec![json!({"kind": "ReturnStmt"})]);
+        let body = function(vec![returning(None)]);
         assert_eq!(
             validates_spelled(&body, &[state("u.a", Fate::Stale, false)]),
             Ok(true)
         );
+    }
+
+    // Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS.
+
+    #[test]
+    fn a_static_helper_that_clears_the_member_validates() {
+        let helper = defined(
+            "clear",
+            "o",
+            Some("static"),
+            vec![store_into("o", &["u", "a"], null())],
+        );
+        let body = function(vec![call("clear", vec![reference("p")]), returning(None)]);
+        assert_eq!(
+            check(
+                &body,
+                &[state("u.a", Fate::Released, false)],
+                &[helper.clone()]
+            ),
+            Ok(Standing::Validated)
+        );
+        // The same helper with external linkage is not followed.
+        let external = defined(
+            "clear",
+            "o",
+            None,
+            vec![store_into("o", &["u", "a"], null())],
+        );
+        assert!(matches!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[external]),
+            Ok(Standing::Assumption(_))
+        ));
+        // A helper reached through the address of a member path above the
+        // stated one, as `rd_kafka_replyq_enq(&rko->…replyq, …)`.
+        let enq = defined(
+            "enq",
+            "r",
+            Some("static"),
+            vec![
+                store_into("r", &["q"], null()),
+                call("external", vec![reference("r")]),
+            ],
+        );
+        let through_address = function(vec![
+            call(
+                "enq",
+                vec![json!({"kind": "UnaryOperator", "opcode": "&",
+                            "inner": [member("p", &["u", "replyq"])]})],
+            ),
+            returning(None),
+        ]);
+        // `enq` then hands its whole view to an external call: unknown.
+        assert!(matches!(
+            check(
+                &through_address,
+                &[state("u.replyq.q", Fate::Released, false)],
+                &[enq]
+            ),
+            Ok(Standing::Assumption(_))
+        ));
+        let enq = defined(
+            "enq",
+            "r",
+            Some("static"),
+            vec![store_into("r", &["q"], null())],
+        );
+        assert_eq!(
+            check(
+                &through_address,
+                &[state("u.replyq.q", Fate::Released, false)],
+                &[enq]
+            ),
+            Ok(Standing::Validated)
+        );
+    }
+
+    #[test]
+    fn a_helper_on_only_some_paths_does_not_validate() {
+        let helper = defined(
+            "clear",
+            "o",
+            Some("static"),
+            vec![store_into("o", &["u", "a"], null())],
+        );
+        let body = function(vec![
+            branch(opaque(), call("clear", vec![reference("p")]), None),
+            returning(None),
+        ]);
+        assert!(matches!(
+            check(
+                &body,
+                &[state("u.a", Fate::Released, false)],
+                &[helper.clone()]
+            ),
+            Ok(Standing::Assumption(_))
+        ));
+        // A null test of the path on the other branch closes it.
+        let tested = function(vec![
+            branch(
+                json!({"kind": "ImplicitCastExpr", "castKind": "LValueToRValue",
+                       "inner": [member("p", &["u", "a"])]}),
+                call("clear", vec![reference("p")]),
+                None,
+            ),
+            returning(None),
+        ]);
+        assert_eq!(
+            check(&tested, &[state("u.a", Fate::Released, false)], &[helper]),
+            Ok(Standing::Validated)
+        );
+    }
+
+    #[test]
+    fn a_goto_to_a_shared_exit_that_clears_validates() {
+        let body = function(vec![
+            branch(
+                opaque(),
+                json!({"kind": "GotoStmt", "targetLabelDeclId": "out"}),
+                None,
+            ),
+            json!({"kind": "LabelStmt", "declId": "out", "name": "out",
+                   "inner": [store(&["u", "a"], null())]}),
+            returning(None),
+        ]);
+        assert_eq!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[]),
+            Ok(Standing::Validated)
+        );
+    }
+
+    #[test]
+    fn a_goto_that_skips_the_clear_does_not_validate() {
+        let body = function(vec![
+            branch(
+                opaque(),
+                json!({"kind": "GotoStmt", "targetLabelDeclId": "out"}),
+                None,
+            ),
+            store(&["u", "a"], null()),
+            json!({"kind": "LabelStmt", "declId": "out", "name": "out",
+                   "inner": [returning(None)]}),
+        ]);
+        assert!(matches!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[]),
+            Ok(Standing::Assumption(_))
+        ));
+    }
+
+    #[test]
+    fn recursion_does_not_validate() {
+        // `clear` clears the member, then calls itself with the formal: the
+        // recursive call is not followed and leaves the member unknown.
+        let helper = defined(
+            "clear",
+            "o",
+            Some("static"),
+            vec![
+                store_into("o", &["u", "a"], null()),
+                call("clear", vec![reference("o")]),
+            ],
+        );
+        let body = function(vec![call("clear", vec![reference("p")]), returning(None)]);
+        assert!(matches!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[helper]),
+            Ok(Standing::Assumption(_))
+        ));
+    }
+
+    #[test]
+    fn a_wrapper_keeps_its_workers_outcomes_and_the_guard_exempts_its_constant() {
+        // The worker returns KEEP without clearing, HANDLED after clearing.
+        let worker = defined(
+            "worker",
+            "o",
+            Some("static"),
+            vec![
+                branch(opaque(), returning(Some(enumerator("KEEP"))), None),
+                store_into("o", &["u", "a"], null()),
+                returning(Some(enumerator("HANDLED"))),
+            ],
+        );
+        let wrapper = function(vec![returning(Some(call("worker", vec![reference("p")])))]);
+        let stated = [guarded(state("u.a", Fate::Released, false))];
+        assert_eq!(
+            check(&wrapper, &stated, &[worker.clone()]),
+            Ok(Standing::Validated)
+        );
+        // Unguarded, the KEEP exit must establish it too.
+        assert!(matches!(
+            check(&wrapper, &[state("u.a", Fate::Released, false)], &[worker]),
+            Ok(Standing::Assumption(_))
+        ));
+    }
+
+    #[test]
+    fn a_call_that_is_not_followed_after_the_store_does_not_validate() {
+        let body = function(vec![
+            store(&["u", "a"], null()),
+            call("external", vec![reference("p")]),
+            returning(None),
+        ]);
+        assert!(matches!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[]),
+            Ok(Standing::Assumption(_))
+        ));
+        // A member's value passed on reaches nothing of the formal.
+        let value = function(vec![
+            store(&["u", "a"], null()),
+            call(
+                "external",
+                vec![
+                    json!({"kind": "ImplicitCastExpr", "castKind": "LValueToRValue",
+                            "inner": [member("p", &["u", "b"])]}),
+                ],
+            ),
+            returning(None),
+        ]);
+        assert_eq!(
+            check(&value, &[state("u.a", Fate::Released, false)], &[]),
+            Ok(Standing::Validated)
+        );
+    }
+
+    #[test]
+    fn a_copy_of_the_formal_into_a_local_does_not_validate() {
+        let body = function(vec![
+            json!({"kind": "DeclStmt", "inner": [{"kind": "VarDecl", "name": "alias",
+                   "inner": [reference("p")]}]}),
+            store(&["u", "a"], null()),
+            returning(None),
+        ]);
+        assert!(matches!(
+            check(&body, &[state("u.a", Fate::Released, false)], &[]),
+            Ok(Standing::Assumption(_))
+        ));
     }
 }

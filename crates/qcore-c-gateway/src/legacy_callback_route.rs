@@ -2076,20 +2076,27 @@ pub(crate) fn settle(
         {
             continue;
         }
+        // Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS: the reading follows
+        // the unit's static helpers (`unit.function`).
         let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
             unit.function(name).map(|function| {
-                crate::member_path_check::validates(function, &declaration.member_paths, &|node| {
-                    unit.member_facts().record_of_node(node, true)
-                })
+                crate::member_path_check::validates(
+                    function,
+                    &declaration.member_paths,
+                    &|node| unit.member_facts().record_of_node(node, true),
+                    &|callee| unit.function(callee),
+                )
             })
         })
         .flatten();
         match checked {
-            Some(Ok(true)) => crate::contract_dependencies::validated(name, "30"),
+            Some(Ok(crate::member_path_check::Standing::Validated)) => {
+                crate::contract_dependencies::validated(name, "30");
+            }
             Some(Err(_)) => member_paths_withdrawn.push(name.clone()),
-            // A body the check does not read, or that leaves a stated reading
-            // to its callees: a declared assumption.
-            Some(Ok(false)) | None => {}
+            // A body the check does not read, or whose reading leaves a
+            // stated path to a call it does not follow: a declared assumption.
+            Some(Ok(crate::member_path_check::Standing::Assumption(_))) | None => {}
         }
     }
     if withdrawn.is_empty()

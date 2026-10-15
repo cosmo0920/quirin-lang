@@ -78,6 +78,9 @@ pub mod handoff_branch;
 /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the body check of a
 /// declaration's member-path states.
 pub mod member_path_check;
+/// Card MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS (rule 30, amended): the
+/// bounded path reading behind it, through the unit's static helpers.
+pub mod member_path_reading;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n): the run's member facts.
 pub mod member_run_facts;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure
