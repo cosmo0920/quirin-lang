@@ -2,8 +2,8 @@
 # targeted.sh NAME -- LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the targeted check
 # after a rebase whose conflicts were records only (landing-race policy):
 # cargo check, fmt, clippy, this card's tests and the crates it touches
-# (qcore-contract, the gateway's null tests, qcore-audit's library and
-# member-prepass route tests, the compiler's contract corpus, loader, view and
+# (qcore-contract, qcore-c-gateway and qcore-audit whole since round r3, the
+# compiler's contract corpus, loader, view and
 # inheritance tests), the Lean audits, the matrix regenerated with gate.json,
 # the Python suite and the docs index, under one exclusive flock on the shared
 # heavy lock; then the dev profile is cleaned. Exits to
@@ -30,9 +30,10 @@ step 00-check cargo check --workspace --all-targets
 step 02-fmt cargo fmt --all -- --check
 step 03-clippy cargo clippy --locked --all-targets -- -D warnings
 step 04a-contract cargo test -p qcore-contract
-step 04b-gateway cargo test -p qcore-c-gateway --test null_member_premise --test null_member_invariant_scope --test null_candidate_triage
-step 04c-audit cargo test -p qcore-audit --lib
-step 04d-audit-routes cargo test -p qcore-audit --test member_prepass_routes
+# Round r3 (after HANDOFF-CANDIDATE-OWN-CALLBACKS, which also records
+# dependencies): the gateway's and the audit's whole test suites.
+step 04b-gateway cargo test -p qcore-c-gateway --no-fail-fast
+step 04c-audit cargo test -p qcore-audit --no-fail-fast
 step 04e-compiler cargo test -p qcore-compiler --test qcore_contract_corpus --test contract_loader --test contract_view_census --test contract_inherit_parity --test contract_inherit_qcore_provider
 step 07-lean python3 scripts/check_lean_audits.py
 step 09a-matrix python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/librdkafka-plugin-premise-remainder/gate.json

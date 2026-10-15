@@ -2,7 +2,7 @@
 
 Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (wave 48, round 28, card-high).
 Base: local `main` `711287771`. The member census and the frozen
-[prediction](PREDICTION.md) were committed (`7472690aa`; `6e7d517a2` on the tip rebased onto `a7e0c9a3d`) before any analyser,
+[prediction](PREDICTION.md) were committed (`7472690aa`, carried through three rebases) before any analyser,
 loader, contract or Lean change.
 
 ## 1. Authority
@@ -113,7 +113,7 @@ Anything else rejects the module. This is the model-contract extension (total-or
 
 ## 4. Lean
 
-`QCore.NullMemberPremise` is audited in `proof/AuditNullMemberPremise.lean`; Lean audits go 324 → 325 on the base; on the final tip there are 327 (with MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS's and MEMBER-PREPASS-OTHER-ROUTES's modules). Its theorems:
+`QCore.NullMemberPremise` is audited in `proof/AuditNullMemberPremise.lean`; Lean audits go 324 → 325 on the base; on the final tip, rebased onto `b2fbde2c5`, there are 328 (with the modules of MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS, MEMBER-PREPASS-OTHER-ROUTES and HANDOFF-CANDIDATE-OWN-CALLBACKS). Its theorems:
 
 * `a_resting_row_lists_the_premise`;
 * `a_listed_premise_is_a_dependency`;
@@ -187,9 +187,26 @@ The card was rebased again onto `a7e0c9a3d`, where MEMBER-PREPASS-OTHER-ROUTES l
 
 **Prediction against outcome.** As frozen: verdicts identical, and only the premise and dependency fields, the fold records, the two sidecar records and the contract-source and pin digests moved. The corpus custody report did not move at all; the prediction allowed contract-source digests there.
 
+### Combined arbiter after the rebase onto `b2fbde2c5`
+
+HANDOFF-CANDIDATE-OWN-CALLBACKS landed next. It also records dependencies, and this card's contracts are input to its two new Safe rows. So, at the coordinator's request, main `b2fbde2c5` (binary `bin/main`, `e5b380a3…`, built from an exported tree that reads main's own contracts) was measured against the rebased tip (binary `bin/a2`, `86fbe6af…`). Both ran on every route with the null property, under the shared lock ([`combined.sh`](scripts/combined.sh); [summary](artifacts/summary-combined.json), [rows](artifacts/rows-combined.json)).
+
+| Route | Custody main → tip | Report | Null property |
+| --- | --- | --- | --- |
+| corpus | **938 / 9 / 3,887** → same | `fc645e9b…` → `fc645e9b…`, **byte-identical** | 1,113 / 1,435 / 2,355 / 18 Unsafe → same |
+| system | 93 / 4 / 351 → same | contract-source identities only ([diff](artifacts/combined-diff-system.txt)) | 84 / 125 / 245 → same |
+| slice | 52 / 1 / 347 / 4 Pending → same | contract-source identities only ([diff](artifacts/combined-diff-slice.txt)) | 71 / 103 / 232 → same |
+
+* **No verdict changed.**
+* **Null rows** are identical apart from the premise fields and the bounds digest. 339 corpus rows rest on a premised fact, and all list `rk_no_plugin_library`; no other row does.
+* **Crash path:** all 69 custody rows list the premise; 2 Safe and 43 Unknown gain it.
+* **The two new Safe rows,** `rd_kafka_event_destroy` and `ut_op_destroy_free`, stay Safe. Each rests on the same 34 declarations, which list the same premises on main and on the tip: `assignor_callback`, `broker_monitor_callback`, `rk_no_plugin_library` and `share_ack_batches_nonempty` ([`named_rows.py`](scripts/named_rows.py), [rows](artifacts/combined-named-rows.txt)).
+* **Corpus sidecar** differs as before, only in the two re-pinned declarations and the module and lock digests ([diff](artifacts/combined-sidecar-diff-corpus.txt)).
+* Row dependency fields, counts and the Safe roll-up are identical.
+
 ## 6. Ledger
 
-[`update_ledger.py`](scripts/update_ledger.py): 784 → **783** on the base; on the final tip 785 → **784** (MEMBER-PREPASS-OTHER-ROUTES landed with 785).
+[`update_ledger.py`](scripts/update_ledger.py): 784 → **783** on the base; on the final tip, rebased onto `b2fbde2c5`, 786 → **785** (`dimensions.named_followups` equal).
 
 * **Retired: `LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED`.** The user decided:
   * the null views are independent of the callback;

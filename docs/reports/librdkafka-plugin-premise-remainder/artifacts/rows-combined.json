@@ -1,0 +1,5124 @@
+{
+ "corpus": {
+  "null": {
+   "rows_before": 4921,
+   "rows_after": 4921,
+   "rows_differing_beyond_the_premise": 0,
+   "differing": [],
+   "rows_only_after": 0,
+   "rows_whose_bounds_digest_changed": 4921,
+   "rows_resting_on_a_premised_fact": 339,
+   "resting_by_null_verdict": {
+    "Safe": 75,
+    "Unknown": 262,
+    "Unsafe": 2
+   },
+   "resting_rows_lacking_the_premise": [],
+   "rows_listing_it_without_resting": [],
+   "rows_listing_the_premise": 339,
+   "summary_identical_beyond_premises": true,
+   "summary_before_sha256": "631db04687c8540ad48e87596a843b9b27fc9805739877431fec70db35414879",
+   "fold_records_listing_the_premise": 67,
+   "jsonl_sha256": {
+    "before": "daf875c4e0379e1162c48fd4633d8b431cdcd62d4547cf9327f3611cce0dcc26",
+    "after": "adf6810962a611d9e0ede22ac990329c6c771325948b1334485ba53e37c9ec64"
+   },
+   "resting_rows": [
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_get_offsets_for_times_resp_cb",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_query_wmark_offsets_resp_cb",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_fanout_op",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op",
+     "occurrence": 1,
+     "verdict": "Unsafe",
+     "combined": "Unsafe",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_select_broker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_thread_main",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConfigsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterUserScramCredentialsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "rd_kafka_ssl_hmac",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_CreateAclsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_CreatePartitionsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_CreateTopicsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteAclsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteGroupsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteRecordsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteTopicsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DescribeAclsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DescribeConfigsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DescribeUserScramCredentialsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ElectLeadersResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_OffsetDeleteResponse_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_admin_worker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_apply_offsets",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_handle_OffsetFetch",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_serve_pending",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_all_brokers_wakeup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_active_toppar_add",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_active_toppar_del",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_del",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_sasl_broker_init",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_sasl_broker_init",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_buf_enq0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_buf_enq1",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_buf_enq2",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_buf_enq_replyq",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_buf_retry",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_retry",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_bufq_timeout_scan",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_bufq_timeout_scan"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_conn_closed",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_connect",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_resolve",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "rd_kafka_transport_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_connect_auth",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_auth",
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_connect_done",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_auth",
+      "rd_kafka_broker_connect_done",
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_feature_enable",
+      "rd_kafka_broker_features_set",
+      "rd_kafka_broker_set_api_versions",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_features_check",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_connect_up",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_consumer_serve",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_fetch_toppars",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_destroy_final",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_fail",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_feature_disable"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_feature_enable"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_features_set"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_ApiVersion",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_auth",
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_features_set",
+      "rd_kafka_broker_set_api_versions",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_features_check",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_SaslHandshake",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_auth",
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_idle_check",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_internal_serve",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_broker_toppar_msgq_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_monitor_del",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Safe",
+     "through": [
+      "rd_kafka_broker_needs_connection",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_op_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_io_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_produce_toppars",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_produce_toppars",
+      "rd_kafka_broker_toppar_msgq_scan",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_producer_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_produce_toppars",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_broker_toppar_msgq_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_random0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_resolve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_resolve",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_retry_bufs_move",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_consumer_serve",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_fetch_toppars",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_idle_check",
+      "rd_kafka_broker_internal_serve",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_produce_toppars",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_serve",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_broker_toppar_msgq_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_features_set",
+      "rd_kafka_broker_set_api_versions",
+      "rd_kafka_features_check",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_set_nodename",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_set_state",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_share_consumer_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_share_session_toppar_add",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_share_session_toppar_add",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_thread_main",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_broker_buf_enq0",
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_connect",
+      "rd_kafka_broker_connect_auth",
+      "rd_kafka_broker_connect_up",
+      "rd_kafka_broker_consumer_serve",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_fetch_toppars",
+      "rd_kafka_broker_handle_purge_queues",
+      "rd_kafka_broker_idle_check",
+      "rd_kafka_broker_internal_serve",
+      "rd_kafka_broker_needs_connection",
+      "rd_kafka_broker_produce_toppars",
+      "rd_kafka_broker_resolve",
+      "rd_kafka_broker_retry_bufs_move",
+      "rd_kafka_broker_serve",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_broker_share_session_toppar_add",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_broker_toppar_msgq_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "rd_kafka_transport_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_bufq_timeout_scan",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_broker_timeout_scan",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_toppar_msgq_scan",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_toppar_msgq_scan",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_toppars_timeout_scan",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_toppar_msgq_scan",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_init",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_wakeup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_weighted",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_init",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_init",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_connect_any",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_connect_any_timer_cb",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_dr_implicit_ack",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_dr_implicit_ack",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_find_or_add_broker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_sasl_broker_init",
+      "rd_kafka_sasl_broker_term",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_recv",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_conn_closed",
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_recv",
+      "rd_kafka_req_response",
+      "rd_kafka_sasl_broker_term",
+      "rd_kafka_waitresp_find",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_req_response",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_req_response",
+      "rd_kafka_waitresp_find",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_feature_disable",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_bufq_connection_reset",
+      "rd_kafka_bufq_dump",
+      "rd_kafka_bufq_purge",
+      "rd_kafka_sasl_broker_term",
+      "rd_kafka_send",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_toppar_producer_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_toppar_msgq_scan",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_waitresp_find",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_destroy_final",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_handle_op",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_new_request0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_buf_retry",
+      "rd_kafka_buf_retry",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_bufq_connection_reset",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_dump",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_bufq_dump",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_bufq_purge",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_clear_broker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_dead",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_query",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_set_broker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_set_nodename"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_FindCoordinator",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_Heartbeat",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_JoinGroup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_group_MemberMetadata_consumer_read",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_LeaveGroup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_SyncGroup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_op_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_terminated",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_group_MemberMetadata_consumer_read",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_group_MemberMetadata_consumer_read",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_cgrp.c",
+     "function": "unittest_member_metadata_serdes",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_group_MemberMetadata_consumer_read",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_add",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_entry_destroy",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_expire",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_destroy",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fsm",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_handle_FindCoordinator",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_rkb_monitor_cb",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_feature.c",
+     "function": "rd_kafka_features_check",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_features_check",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_feature.c",
+     "function": "rd_ut_features_check",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_features_check"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_ShareAcknowledgeRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ShareAcknowledgeRequest",
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_ShareFetchRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_reply",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_fetch_backoff",
+      "rd_kafka_fetch_reply_handle_partition_error",
+      "rd_kafka_op_throttle_time",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_toppars",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_fetch_toppars",
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_reset",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_reset"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "rd_kafka_broker_session_update_epoch",
+      "rd_kafka_broker_session_update_partitions",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_update_epoch"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "rd_kafka_broker_session_update_partitions",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_toppars_in_session",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_toppars_list",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_acknowledge_reply",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "rd_kafka_broker_session_reset",
+      "rd_kafka_broker_session_update_epoch",
+      "rd_kafka_broker_session_update_partitions",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_op_throttle_time",
+      "rd_kafkap_share_leader_changes_apply",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_fetch_reply",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+      "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+      "rd_kafka_broker_session_reset",
+      "rd_kafka_broker_session_update_epoch",
+      "rd_kafka_broker_session_update_partitions",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_fetch_session_clear",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_share_fetch_session_clear",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_fetch_session_leave",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ShareAcknowledgeRequest",
+      "rd_kafka_broker_share_fetch_session_clear",
+      "rd_kafka_broker_share_fetch_session_leave",
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_rpc",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ShareAcknowledgeRequest",
+      "rd_kafka_broker_share_rpc",
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_preferred_replica_handle",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_fetch_reply_handle_partition_error",
+      "rd_kafka_op_throttle_time",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle_partition",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_fetch_reply_handle_partition_error",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle_partition_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_fetch_reply_handle_partition_error",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_share_acknowledge_reply_handle",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "rd_kafkap_share_leader_changes_apply"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_share_fetch_reply_handle",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_share_fetch_reply_handle_partition",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_toppar_fetch_backoff",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_toppar_fetch_decide",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_active_toppar_add",
+      "rd_kafka_broker_active_toppar_del",
+      "rd_kafka_toppar_fetch_backoff",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_pid_fsm",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_pid_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_idemp_request_pid_failed"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_idemp_request_pid_failed"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_all",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_topic_ids",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_topics",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_request",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_update_op",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "rd_kafka_parse_Metadata_update_topic",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "rd_kafka_parse_Metadata_update_topic",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "rd_kafka_parse_Metadata_update_topic",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_parse_Metadata_update_topic",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_create_ProduceRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_alloc_buf",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_init",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_toppar_handle_OffsetForLeaderEpoch",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_op.c",
+     "function": "rd_kafka_op_destroy",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_op.c",
+     "function": "rd_kafka_op_throttle_time",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_share_toppar_enq_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Safe",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Safe",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_clear",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_del_by_idx",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_get_leaders",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_get_topics",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_delegate",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_leave_for_remove",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_migrate",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_destroy_final",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_enq_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_handle_Offset",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_wakeup",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_lag_handle_Offset",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_commit_result",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_request",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_serve",
+     "occurrence": 1,
+     "verdict": "Unsafe",
+     "combined": "Unsafe",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_pause_resume",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_set_fetch_state",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_wakeup"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppars_pause_resume",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_AddOffsetsToTxnRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_AddPartitionsToTxnRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_AlterConfigsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ApiVersionRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ConsumerGroupDescribeRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_CreateAclsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_CreatePartitionsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_CreateTopicsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DeleteAclsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DeleteGroupsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DeleteRecordsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DeleteTopicsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DescribeAclsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DescribeConfigsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_DescribeGroupsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ElectLeadersRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_EndTxnRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_FindCoordinatorRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_GetTelemetrySubscriptionsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_HeartbeatRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_IncrementalAlterConfigsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_InitProducerIdRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_JoinGroupRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_LeaveGroupRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ListGroupsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ListOffsetRequest_buf_new",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ListOffsetsRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ListOffsetsRequest_admin",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_OffsetCommitRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_OffsetDeleteRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_OffsetFetchRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_OffsetForLeaderEpochRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_PushTelemetryRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_SaslAuthenticateRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_SaslHandshakeRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ShareGroupHeartbeatRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_SyncGroupRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_ApiVersion",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_GetTelemetrySubscriptions",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_InitProducerId",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_idemp_request_pid_failed",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_LeaveGroup",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_ListOffsets",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Metadata",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetForLeaderEpoch",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_dr_implicit_ack",
+      "rd_kafka_handle_Produce_metadata_update",
+      "rd_kafka_msgbatch_handle_Produce_result",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce_metadata_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_handle_Produce_metadata_update",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce_parse",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_handle_Produce_metadata_update",
+      "rd_kafka_op_throttle_time",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_PushTelemetry",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_idempotent_Produce_error",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_idempotent_Produce_success",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_dr_implicit_ack"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_msgbatch_handle_Produce_result",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_dr_implicit_ack",
+      "rd_kafka_msgbatch_handle_Produce_result",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_parse_ListOffsets",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafkap_share_leader_changes_apply",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafkap_share_leader_changes_apply",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "unittest_handle_GetTelemetrySubscriptions",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_request.c",
+     "function": "unittest_idempotent_producer",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_dr_implicit_ack",
+      "rd_kafka_msgbatch_handle_Produce_result",
+      "rd_kafka_sasl_broker_init",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_auth_done",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_up"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_broker_init",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_sasl_broker_init"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_broker_term",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_sasl_broker_term"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_Hi",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_build_client_final_message",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_fsm",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_handle_server_first_message",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_share_acknowledgement.c",
+     "function": "rd_kafka_share_ack_batch_resolve_leader_or_fail_acks",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_share_acknowledgement.c",
+     "function": "rd_kafka_share_segregate_acks_by_leader",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_share_acknowledgement.c",
+     "function": "rd_kafka_share_segregate_sync_acks_by_leader",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_ssl_hmac",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_ssl_hmac",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_transport_ssl_connect"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_clear",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_metadata_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_metadata_update2",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_new0",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_new_with_id",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_partition_available",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_delegate_to_leader",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_forget_leader",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_leader_update",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_topic.c",
+     "function": "rd_ut_kafka_topic_set_topic_exists",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_transport_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect_done",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_done"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connected",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_connect_done",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_transport_ssl_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_io_event",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_conn_closed",
+      "rd_kafka_broker_connect_done",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_recv",
+      "rd_kafka_send",
+      "rd_kafka_transport_ssl_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_io_serve",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_conn_closed",
+      "rd_kafka_broker_connect_done",
+      "rd_kafka_broker_set_state",
+      "rd_kafka_recv",
+      "rd_kafka_send",
+      "rd_kafka_transport_ssl_connect",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_new",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_query",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_set",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "occurrence": 1,
+     "verdict": "Safe",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_EndTxn",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "rd_kafka_buf_retry",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_FindCoordinator",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final",
+      "rd_kafka_broker_set_nodename",
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_op_throttle_time"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_send_TxnOffsetCommitRequest",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_buf_new_request0",
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txns_term",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "rd_kafka_broker_destroy_final"
+     ]
+    },
+    {
+     "library": "librdkafka",
+     "file": "rdkafka_zstd.c",
+     "function": "rd_kafka_zstd_decompress",
+     "occurrence": 1,
+     "verdict": "Unknown",
+     "combined": "Unknown",
+     "through": [
+      "stable:rd_kafka_broker_s.rkb_rk"
+     ]
+    }
+   ]
+  },
+  "custody": {
+   "report_sha256": {
+    "before": "fc645e9b7bee350bbcc733c25c71913702ccd428c35a973619d9bfdbb0fb535a",
+    "after": "fc645e9b7bee350bbcc733c25c71913702ccd428c35a973619d9bfdbb0fb535a"
+   },
+   "stripped_identical": true,
+   "row_dependency_fields_identical": true,
+   "counts_identical": true,
+   "safe_rollup_identical": true,
+   "crash_records_premises_after": {
+    "rd_kafka_crash": [
+     {
+      "name": "rk_no_plugin_library",
+      "origin": "declared",
+      "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+     }
+    ],
+    "rd_kafka_dump0": [
+     {
+      "name": "rk_no_plugin_library",
+      "origin": "declared",
+      "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+     }
+    ]
+   },
+   "rows_resting_on_crash_or_dump": {
+    "before": {
+     "Safe lacks": 2,
+     "Unknown lacks": 43,
+     "Unknown lists": 24
+    },
+    "after": {
+     "Safe lists": 2,
+     "Unknown lists": 67
+    }
+   },
+   "safe_or_pending_rows_lacking_after": [],
+   "gaining": [
+    {
+     "unit": "rdkafka.c",
+     "occurrence": 1,
+     "function": "rd_kafka_crash",
+     "row": 1,
+     "status": "Safe",
+     "rests_on": [
+      "rd_kafka_crash",
+      "rd_kafka_dump0"
+     ],
+     "premise_through": [
+      "rd_kafka_crash",
+      "rd_kafka_dump0"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka.c",
+     "occurrence": 1,
+     "function": "rd_kafka_destroy_app",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka.c",
+     "occurrence": 1,
+     "function": "rd_kafka_dump",
+     "row": 1,
+     "status": "Safe",
+     "rests_on": [
+      "rd_kafka_dump0"
+     ],
+     "premise_through": [
+      "rd_kafka_dump0"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka.c",
+     "occurrence": 1,
+     "function": "rd_kafka_dump0",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_dump0"
+     ],
+     "premise_through": [
+      "rd_kafka_dump0"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka.c",
+     "occurrence": 1,
+     "function": "rd_kafka_global_cnt_decr",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_active_toppar_del",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_buf_enq0",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_connect",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_consumer_serve",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_fail",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_producer_serve",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_send",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_share_consumer_serve",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_timeout_scan",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_req_response",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_send",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_broker.c",
+     "occurrence": 1,
+     "function": "rd_kafka_waitresp_find",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_buf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_buf_callback",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_buf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_buf_destroy_final",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_buf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_bufq_connection_reset",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_buf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_bufq_deq",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_buf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_bufq_purge",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_cgrp.c",
+     "occurrence": 1,
+     "function": "rd_kafka_cgrp_offsets_commit",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_cgrp.c",
+     "occurrence": 1,
+     "function": "rd_kafka_cgrp_terminate",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_conf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_anyconf_set_prop",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_conf.c",
+     "occurrence": 1,
+     "function": "rd_kafka_anyconf_set_prop0",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_feature.c",
+     "occurrence": 1,
+     "function": "rd_kafka_get_legacy_ApiVersions",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_fetcher.c",
+     "occurrence": 1,
+     "function": "rd_kafka_broker_fetch_reply",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_lz4.c",
+     "occurrence": 1,
+     "function": "rd_kafka_lz4_decompress",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_metadata.c",
+     "occurrence": 1,
+     "function": "rd_kafka_metadata_copy_internal",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_metadata_cache.c",
+     "occurrence": 1,
+     "function": "rd_kafka_metadata_cache_delete",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msg.c",
+     "occurrence": 1,
+     "function": "rd_kafka_message_get",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_gzip_compress",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_msgset_writer_alloc_buf",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_msgset_writer_compress",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_msgset_writer_finalize_MessageSet_v2_header",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_msgset_writer_write_MessageSet_v2_header",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_msgset_writer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_msgset_writer_write_msgq",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_partition.c",
+     "occurrence": 1,
+     "function": "rd_kafka_topic_partition_list_add0",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_partition.c",
+     "occurrence": 1,
+     "function": "rd_kafka_toppar_fetch_start",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_partition.c",
+     "occurrence": 1,
+     "function": "rd_kafka_toppar_fetch_stop",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_request.c",
+     "occurrence": 1,
+     "function": "rd_kafka_OffsetCommitRequest",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_timer.c",
+     "occurrence": 1,
+     "function": "rd_kafka_timers_destroy",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_topic.c",
+     "occurrence": 1,
+     "function": "rd_kafka_topic_destroy_final",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    },
+    {
+     "unit": "rdkafka_transport.c",
+     "occurrence": 1,
+     "function": "rd_kafka_transport_io_event",
+     "row": 1,
+     "status": "Unknown",
+     "rests_on": [
+      "rd_kafka_crash"
+     ],
+     "premise_through": [
+      "rd_kafka_crash"
+     ],
+     "lists_premise": true
+    }
+   ]
+  }
+ },
+ "system": {
+  "null": {
+   "rows_before": 454,
+   "rows_after": 454,
+   "rows_differing_beyond_the_premise": 0,
+   "differing": [],
+   "rows_only_after": 0,
+   "rows_whose_bounds_digest_changed": 454,
+   "rows_resting_on_a_premised_fact": 0,
+   "resting_by_null_verdict": {},
+   "resting_rows_lacking_the_premise": [],
+   "rows_listing_it_without_resting": [],
+   "rows_listing_the_premise": 0,
+   "summary_identical_beyond_premises": true,
+   "summary_before_sha256": "cb57b7ccc4eab71b66f3c99d02cff4306f3de212683065537ff3a54a967cad6a",
+   "fold_records_listing_the_premise": 67,
+   "jsonl_sha256": {
+    "before": "23316f8bc99f573017cacfa619ab8768e4684381e1abe70b57234637fa85e324",
+    "after": "f610d8aff7d8f16fba06d8d0010209adc18b4c07558b00fa0473d1d52195ecb0"
+   },
+   "resting_rows": []
+  },
+  "custody": {
+   "report_sha256": {
+    "before": "8cfa06ae7b9ba6239bd5c7d647676deeda692ea79b46e0d037ce1ed74c304d24",
+    "after": "f67a8069f4212c6aa3c7548a4213e1f1cf805d85bcee98faeabb07a393263150"
+   },
+   "stripped_identical": false,
+   "row_dependency_fields_identical": true,
+   "counts_identical": true,
+   "safe_rollup_identical": true,
+   "crash_records_premises_after": {
+    "rd_kafka_crash": null,
+    "rd_kafka_dump0": null
+   },
+   "rows_resting_on_crash_or_dump": {
+    "before": {},
+    "after": {}
+   },
+   "safe_or_pending_rows_lacking_after": [],
+   "gaining": []
+  }
+ },
+ "slice": {
+  "null": {
+   "rows_before": 406,
+   "rows_after": 406,
+   "rows_differing_beyond_the_premise": 0,
+   "differing": [],
+   "rows_only_after": 0,
+   "rows_whose_bounds_digest_changed": 406,
+   "rows_resting_on_a_premised_fact": 0,
+   "resting_by_null_verdict": {},
+   "resting_rows_lacking_the_premise": [],
+   "rows_listing_it_without_resting": [],
+   "rows_listing_the_premise": 0,
+   "summary_identical_beyond_premises": true,
+   "summary_before_sha256": "075ef209eb45b3a605884fcd6f61b6e69c6776469340da16c97212034b7b2557",
+   "fold_records_listing_the_premise": 67,
+   "jsonl_sha256": {
+    "before": "ed8de3d27ab013664b147e9139011231a9d6fa0e707282e7259c59676af72fcb",
+    "after": "2134bac53d936fb7d290c510af00062526841d312eeee4d10268a53b499501de"
+   },
+   "resting_rows": []
+  },
+  "custody": {
+   "report_sha256": {
+    "before": "1fcd31912468f2f60311ef8679bf7ac9dc2d99608eda48ecebeb091154a2b0af",
+    "after": "5170f458726a327f3cb112d7ea091c142654f4fc9086d22b49ddcfe21ff51035"
+   },
+   "stripped_identical": false,
+   "row_dependency_fields_identical": true,
+   "counts_identical": true,
+   "safe_rollup_identical": true,
+   "crash_records_premises_after": {
+    "rd_kafka_crash": null,
+    "rd_kafka_dump0": null
+   },
+   "rows_resting_on_crash_or_dump": {
+    "before": {},
+    "after": {}
+   },
+   "safe_or_pending_rows_lacking_after": [],
+   "gaining": []
+  }
+ }
+}

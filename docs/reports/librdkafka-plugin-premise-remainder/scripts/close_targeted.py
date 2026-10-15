@@ -27,26 +27,34 @@ def tests(label):
 
 
 lean = int(re.search(r"Passed (\d+) Lean audits", (logs / "07-lean.log").read_text()).group(1))
-counts = {k: tests(k) for k in ("04a-contract", "04b-gateway", "04c-audit", "04d-audit-routes", "04e-compiler")}
+counts = {k: tests(k) for k in ("04a-contract", "04b-gateway", "04c-audit", "04d-audit-routes", "04e-compiler") if (logs / f"{k}.log").exists()}
 exits = {p.stem: p.read_text().strip() for p in sorted(logs.glob("*.exit"))}
 gate_path = REPORT / "gate.json"
 gate = json.loads(gate_path.read_text())
 gate["lean_audits"] = lean
 marker = f"targeted check at {head[:9]}"
+LABELS = {
+    "04a-contract": "cargo test -p qcore-contract",
+    "04b-gateway": "the gateway tests (r2: its null tests; r3: cargo test -p qcore-c-gateway)",
+    "04c-audit": "the audit tests (r2: --lib; r3: cargo test -p qcore-audit)",
+    "04d-audit-routes": "member_prepass_routes",
+    "04e-compiler": "the compiler contract corpus, loader, view and inheritance tests",
+}
+REBASES = {
+    "r2": "a7e0c9a3d (MEMBER-PREPASS-OTHER-ROUTES; its landed code is disjoint from this card's; records conflicted only)",
+    "r3": ("b2fbde2c5 (HANDOFF-CANDIDATE-OWN-CALLBACKS, which also records dependencies; the spec C04.18 "
+           "paragraph and the records conflicted)"),
+}
 if marker not in gate["note"]:
+    tests_text = ", ".join(f"{LABELS[k]} {p} passed" for k, (p, _) in counts.items())
     gate["note"] += (
-        " Rebased onto a7e0c9a3d (MEMBER-PREPASS-OTHER-ROUTES; its landed code is disjoint from this "
-        "card's; records conflicted only): " + marker + " under the shared heavy lock (scripts "
+        f" Rebased onto {REBASES[name]}: " + marker + " under the shared heavy lock (scripts "
         f"targeted.sh, close_targeted.py; logs private/lppr/targeted-{name}; exits in gate/targeted-{name}/): "
         f"cargo check --workspace --all-targets {exits['00-check']}, fmt --check {exits['02-fmt']}, "
-        f"clippy --locked {exits['03-clippy']}; cargo test -p qcore-contract {counts['04a-contract'][0]} "
-        f"passed, the gateway null tests {counts['04b-gateway'][0]} passed, qcore-audit --lib "
-        f"{counts['04c-audit'][0]} passed, member_prepass_routes {counts['04d-audit-routes'][0]} passed, the "
-        f"compiler contract tests {counts['04e-compiler'][0]} passed, "
-        f"{sum(f for _, f in counts.values())} failed; check_lean_audits.py {lean} audits passed; the "
-        "first matrix regeneration refused this file's earlier lean_audits against the tree's count "
-        "(GATE-ROW-FIGURE-ATTRIBUTION-DRIFT), so lean_audits records the targeted check's count and the "
-        "matrix, the python suite and the docs index were run again (09a2, 09b2, 10b2, 10c2)."
+        f"clippy --locked {exits['03-clippy']}; {tests_text}, "
+        f"{sum(f for _, f in counts.values())} failed; check_lean_audits.py {lean} audits passed; "
+        "lean_audits records the targeted check's count, and the matrix, the python suite and the docs "
+        "index were run on it (09a2, 09b2, 10b2, 10c2)."
     )
 gate_path.write_text(json.dumps(gate, indent=2, ensure_ascii=False) + "\n")
 dest = REPORT / "gate" / f"targeted-{name}"

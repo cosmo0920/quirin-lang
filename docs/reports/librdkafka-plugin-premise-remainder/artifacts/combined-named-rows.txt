@@ -1,0 +1,4 @@
+m1 rdkafka_event.c rd_kafka_event_destroy Safe declarations=34 premises=['assignor_callback', 'broker_monitor_callback', 'rk_no_plugin_library', 'share_ack_batches_nonempty']
+a2 rdkafka_event.c rd_kafka_event_destroy Safe declarations=34 premises=['assignor_callback', 'broker_monitor_callback', 'rk_no_plugin_library', 'share_ack_batches_nonempty']
+m1 rdunittest_fetcher.c ut_op_destroy_free Safe declarations=34 premises=['assignor_callback', 'broker_monitor_callback', 'rk_no_plugin_library', 'share_ack_batches_nonempty']
+a2 rdunittest_fetcher.c ut_op_destroy_free Safe declarations=34 premises=['assignor_callback', 'broker_monitor_callback', 'rk_no_plugin_library', 'share_ack_batches_nonempty']

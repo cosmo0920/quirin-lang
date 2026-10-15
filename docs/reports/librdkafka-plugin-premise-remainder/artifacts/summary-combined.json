@@ -1,0 +1,126 @@
+{
+ "m1": {
+  "corpus": {
+   "custody": {
+    "Safe": 938,
+    "Unknown": 3887,
+    "Unsafe": 9
+   },
+   "report_sha256": "fc645e9b7bee350bbcc733c25c71913702ccd428c35a973619d9bfdbb0fb535a",
+   "null_rows_sha256": "daf875c4e0379e1162c48fd4633d8b431cdcd62d4547cf9327f3611cce0dcc26",
+   "null_summary": {
+    "functions": 4921,
+    "null": {
+     "Safe (conditional on its preconditions)": 1435,
+     "Safe (unconditional)": 1113,
+     "Unknown": 2355,
+     "Unsafe": 18
+    }
+   },
+   "seconds": 679.794,
+   "exit": 0,
+   "run_binary_sha256": "e5b380a30db8ff595de5f707e884357d3d17bba6aaedc6ad69f576f5eac8c4a8"
+  },
+  "system": {
+   "custody": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "report_sha256": "8cfa06ae7b9ba6239bd5c7d647676deeda692ea79b46e0d037ce1ed74c304d24",
+   "null_rows_sha256": "23316f8bc99f573017cacfa619ab8768e4684381e1abe70b57234637fa85e324",
+   "null_summary": {
+    "functions": 454,
+    "null": {
+     "Safe (conditional on its preconditions)": 125,
+     "Safe (unconditional)": 84,
+     "Unknown": 245
+    }
+   },
+   "seconds": 191.101,
+   "exit": 0
+  },
+  "slice": {
+   "custody": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "report_sha256": "1fcd31912468f2f60311ef8679bf7ac9dc2d99608eda48ecebeb091154a2b0af",
+   "null_rows_sha256": "ed8de3d27ab013664b147e9139011231a9d6fa0e707282e7259c59676af72fcb",
+   "null_summary": {
+    "functions": 406,
+    "null": {
+     "Safe (conditional on its preconditions)": 103,
+     "Safe (unconditional)": 71,
+     "Unknown": 232
+    }
+   },
+   "seconds": 151.579,
+   "exit": 0
+  }
+ },
+ "a2": {
+  "corpus": {
+   "custody": {
+    "Safe": 938,
+    "Unknown": 3887,
+    "Unsafe": 9
+   },
+   "report_sha256": "fc645e9b7bee350bbcc733c25c71913702ccd428c35a973619d9bfdbb0fb535a",
+   "null_rows_sha256": "adf6810962a611d9e0ede22ac990329c6c771325948b1334485ba53e37c9ec64",
+   "null_summary": {
+    "functions": 4921,
+    "null": {
+     "Safe (conditional on its preconditions)": 1435,
+     "Safe (unconditional)": 1113,
+     "Unknown": 2355,
+     "Unsafe": 18
+    }
+   },
+   "seconds": 680.68,
+   "exit": 0,
+   "run_binary_sha256": "86fbe6af1d3229300666cd9aab2143143ef4d972850660c7793bde7425dfd909"
+  },
+  "system": {
+   "custody": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "report_sha256": "f67a8069f4212c6aa3c7548a4213e1f1cf805d85bcee98faeabb07a393263150",
+   "null_rows_sha256": "f610d8aff7d8f16fba06d8d0010209adc18b4c07558b00fa0473d1d52195ecb0",
+   "null_summary": {
+    "functions": 454,
+    "null": {
+     "Safe (conditional on its preconditions)": 125,
+     "Safe (unconditional)": 84,
+     "Unknown": 245
+    }
+   },
+   "seconds": 191.128,
+   "exit": 0
+  },
+  "slice": {
+   "custody": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "report_sha256": "5170f458726a327f3cb112d7ea091c142654f4fc9086d22b49ddcfe21ff51035",
+   "null_rows_sha256": "2134bac53d936fb7d290c510af00062526841d312eeee4d10268a53b499501de",
+   "null_summary": {
+    "functions": 406,
+    "null": {
+     "Safe (conditional on its preconditions)": 103,
+     "Safe (unconditional)": 71,
+     "Unknown": 232
+    }
+   },
+   "seconds": 161.592,
+   "exit": 0
+  }
+ }
+}
