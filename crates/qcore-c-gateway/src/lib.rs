@@ -73,6 +73,9 @@ pub mod retained_by;
 pub mod arm_release_check;
 pub mod callback_contracts;
 pub mod callback_member_closure;
+/// Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 13u amended): a candidate's own
+/// member invocations, composed at the invocation.
+pub mod candidate_composition;
 pub mod constructed_state;
 pub mod handoff_branch;
 /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the body check of a

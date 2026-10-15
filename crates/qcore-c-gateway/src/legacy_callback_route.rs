@@ -53,6 +53,31 @@ pub(super) struct HandOffAt<'a> {
     pub invocation: crate::handoff_branch::Invocation,
 }
 
+/// The classes of one invocation's candidates, with what the composition of
+/// a candidate's own invocations (card HANDOFF-CANDIDATE-OWN-CALLBACKS, rule
+/// 13u amended) read.
+pub(super) struct Classified {
+    pub classes: Vec<(String, CandidateClass)>,
+    /// A composed candidate's contract: its custody contract with every
+    /// requirement its own invocations put on its formals.
+    pub composed: BTreeMap<String, ResourceFunctionContract>,
+    /// Why a composed candidate refuses.
+    pub refused: BTreeMap<String, String>,
+}
+
+impl Classified {
+    /// The refusal detail of a decision over these classes.
+    fn detail(&self, reason: &str, candidate: Option<&str>, actual: &str) -> String {
+        let detail = invocation_detail(reason, candidate, actual);
+        match candidate.and_then(|name| self.refused.get(name)) {
+            Some(why) if reason == crate::candidate_composition::OWN_REFUSED => {
+                format!("{detail}: {why}")
+            }
+            _ => detail,
+        }
+    }
+}
+
 /// One registry effect of a call, in clause order.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RegistryUse {
@@ -509,11 +534,51 @@ impl Parser<'_> {
         candidates: &BTreeSet<String>,
         actuals: &[CallbackActual],
         at: Option<&HandOffAt<'_>>,
-    ) -> Vec<(String, CandidateClass)> {
-        candidates
+    ) -> Classified {
+        self.classified_in(candidates, actuals, at, &mut Vec::new())
+    }
+
+    /// [`Self::classified`] under the composition's decision stack (the
+    /// candidates whose own invocations are being decided).
+    fn classified_in(
+        &self,
+        candidates: &BTreeSet<String>,
+        actuals: &[CallbackActual],
+        at: Option<&HandOffAt<'_>>,
+        stack: &mut Vec<String>,
+    ) -> Classified {
+        let mut composed = BTreeMap::new();
+        let mut refused = BTreeMap::new();
+        let classes = candidates
             .iter()
             .map(|name| {
                 let contract = self.contracts.contract(name);
+                // Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 13u amended): a
+                // candidate whose declaration carries its own member
+                // invocations is the composition of its own clauses, decided
+                // here; contracted only when each own invocation decides.
+                if contract.is_none()
+                    && let Some(declared) = self.contracts.retaining_contract(name)
+                    && crate::candidate_composition::composable(declared)
+                {
+                    let class = match self.composed(name, declared, actuals, stack) {
+                        Ok(effective) => {
+                            let class = match &declared.handoff {
+                                Some(handoff) => {
+                                    self.handed_with(name, &effective, handoff, actuals, at)
+                                }
+                                None => classify(Some(&effective), actuals),
+                            };
+                            composed.insert(name.clone(), effective);
+                            class
+                        }
+                        Err(why) => {
+                            refused.insert(name.clone(), why);
+                            CandidateClass::OwnInvocationRefused
+                        }
+                    };
+                    return (name.clone(), class);
+                }
                 // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a
                 // candidate whose declaration hands a formal depending on its
                 // return code (withheld from the function map).
@@ -556,7 +621,100 @@ impl Parser<'_> {
                 };
                 (name.clone(), class)
             })
-            .collect()
+            .collect();
+        Classified {
+            classes,
+            composed,
+            refused,
+        }
+    }
+
+    /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 13u amended): decide each
+    /// of `name`'s own member invocations as its own body would face it (the
+    /// run's set, `name` the invoker), under the decision stack; `Ok` with
+    /// its contract strengthened by every requirement they put on its
+    /// formals, `Err` naming the first that does not decide. `outer` is the
+    /// invocation's actuals: an inner member-path state at a formal it hands
+    /// a parameter of the caller is not composed.
+    fn composed(
+        &self,
+        name: &str,
+        declared: &RetainingContract,
+        outer: &[CallbackActual],
+        stack: &mut Vec<String>,
+    ) -> Result<ResourceFunctionContract, String> {
+        if crate::member_run_facts::installed().is_none() {
+            return Err(
+                "its own member invocations are decided only over the run's set, which this \
+                 route does not read (no pre-pass)"
+                    .to_owned(),
+            );
+        }
+        crate::candidate_composition::with_stack(stack, name, |stack| {
+            let mut effective = declared.contract.clone();
+            for clause in &declared.callbacks {
+                let CallbackClause::MemberInvoked {
+                    object,
+                    member,
+                    actuals,
+                } = clause
+                else {
+                    return Err("an own callback clause that is not a member invocation".into());
+                };
+                let spelled = member.spelling();
+                let candidates = self.member_candidates(&spelled).map_err(|why| {
+                    format!(
+                        "its own invocation of `{spelled}` does not decide: the callbacks stored \
+                         there are not a closed set of functions ({why}) ({MEMBER_OPEN})"
+                    )
+                })?;
+                let at = HandOffAt {
+                    invoker: name,
+                    invocation: crate::handoff_branch::Invocation::Member {
+                        object: match object {
+                            MemberObject::Parameter { index } => Some(*index),
+                            MemberObject::SuppliedOwned => None,
+                        },
+                        path: member.path.clone(),
+                    },
+                };
+                let inner = self.classified_in(&candidates, actuals, Some(&at), stack);
+                if let Decision::Refused(reason, candidate) =
+                    crate::callback_contracts::decide_run(Ok(&inner.classes))
+                {
+                    return Err(format!(
+                        "its own invocation of `{spelled}` does not decide: {} ({reason})",
+                        inner.detail(reason, candidate.as_deref(), &spelled)
+                    ));
+                }
+                let mut owned = BTreeMap::new();
+                self.require(&candidates, actuals, &inner, &mut owned);
+                for (index, nullable) in owned {
+                    crate::candidate_composition::strengthen(&mut effective, index, nullable);
+                }
+                let stated = super::member_path_route::operands(
+                    self.contracts,
+                    &candidates,
+                    actuals,
+                    &|_| None,
+                    &spelled,
+                );
+                for operands in stated {
+                    let Some(CallbackActual::Parameter { index }) = actuals.get(operands.position)
+                    else {
+                        continue;
+                    };
+                    if matches!(outer.get(*index), Some(CallbackActual::Parameter { .. })) {
+                        return Err(format!(
+                            "its own invocation of `{spelled}` states member-path states at its \
+                             parameter {index}, which this invocation hands a parameter of the \
+                             caller (two levels of rule 30 are not composed)"
+                        ));
+                    }
+                }
+            }
+            Ok(effective)
+        })
     }
 
     /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a candidate whose
@@ -591,9 +749,23 @@ impl Parser<'_> {
         if !plain || declared.member_paths_withdrawn {
             return CandidateClass::Missing;
         }
+        self.handed_with(name, &declared.contract, handoff, actuals, at)
+    }
+
+    /// The caller branch check of a hand-off candidate whose contract (its
+    /// declared one, or a composed one) is `contract`: admitted, classified
+    /// with the handed formal taken at a `supplied_owned` position.
+    fn handed_with(
+        &self,
+        name: &str,
+        contract: &ResourceFunctionContract,
+        handoff: &qcore_schemas::handoff::HandOff,
+        actuals: &[CallbackActual],
+        at: Option<&HandOffAt<'_>>,
+    ) -> CandidateClass {
         match self.handoff_admission(name, handoff, actuals, at) {
             Ok(()) => {
-                let mut contract = declared.contract.clone();
+                let mut contract = contract.clone();
                 if actuals.get(handoff.parameter) == Some(&CallbackActual::SuppliedOwned) {
                     contract.parameters[handoff.parameter] =
                         qcore_schemas::contract::ResourceParameterMode::Consumed {
@@ -682,19 +854,25 @@ impl Parser<'_> {
         &self,
         candidates: &BTreeSet<String>,
         actuals: &[CallbackActual],
+        classified: &Classified,
         owned: &mut BTreeMap<usize, bool>,
     ) {
         for name in candidates {
-            // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a hand-off candidate's
+            // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: a composed candidate's
+            // requirements are its composed contract's. Card
+            // SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a hand-off candidate's
             // requirements are its custody contract's.
-            let contract = self.contracts.contract(name).or_else(|| {
-                self.contracts
-                    .retaining_contract(name)
-                    .filter(|declared| {
-                        declared.handoff.is_some() || !declared.member_paths.is_empty()
-                    })
-                    .map(|declared| &declared.contract)
-            });
+            let contract = classified.composed.get(name);
+            let contract = contract
+                .or_else(|| self.contracts.contract(name))
+                .or_else(|| {
+                    self.contracts
+                        .retaining_contract(name)
+                        .filter(|declared| {
+                            declared.handoff.is_some() || !declared.member_paths.is_empty()
+                        })
+                        .map(|declared| &declared.contract)
+                });
             for (index, nullable) in crate::callback_contracts::requirements(contract, actuals) {
                 owned
                     .entry(index)
@@ -860,20 +1038,28 @@ impl Parser<'_> {
                     let classes = resolution
                         .as_ref()
                         .map(|candidates| self.classified(candidates, actuals, Some(&at)));
-                    let decision =
-                        decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
+                    let decision = decide(
+                        classes
+                            .as_ref()
+                            .map(|classes| classes.classes.as_slice())
+                            .map_err(|_| ()),
+                        false,
+                    );
                     if let Decision::Refused(reason, candidate) = decision {
-                        let detail = match (&resolution, reason) {
-                            (Err(why), UNDECIDED) => format!(
+                        let detail = match (&resolution, &classes) {
+                            (Err(why), _) if reason == UNDECIDED => format!(
                                 "the callback `{}` is not a closed set of functions ({why})",
                                 text(*callback)
                             ),
+                            (_, Ok(classes)) => {
+                                classes.detail(reason, candidate.as_deref(), &text(*callback))
+                            }
                             _ => invocation_detail(reason, candidate.as_deref(), &text(*callback)),
                         };
                         return Err(refusal(function, &detail, reason));
                     }
-                    if let Ok(candidates) = &resolution {
-                        self.require(candidates, actuals, &mut operands.owned);
+                    if let (Ok(candidates), Ok(classes)) = (&resolution, &classes) {
+                        self.require(candidates, actuals, classes, &mut operands.owned);
                         operands
                             .member_paths
                             .extend(super::member_path_route::operands(
@@ -890,20 +1076,28 @@ impl Parser<'_> {
                     let classes = resolution
                         .as_ref()
                         .map(|candidates| self.classified(candidates, actuals, None));
-                    let decision =
-                        decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
+                    let decision = decide(
+                        classes
+                            .as_ref()
+                            .map(|classes| classes.classes.as_slice())
+                            .map_err(|_| ()),
+                        false,
+                    );
                     if let Decision::Refused(reason, candidate) = decision {
-                        let detail = match (&resolution, reason) {
-                            (Err(why), UNDECIDED) => format!(
+                        let detail = match (&resolution, &classes) {
+                            (Err(why), _) if reason == UNDECIDED => format!(
                                 "the handlers of `{}` are not a closed set of functions ({why})",
                                 text(*table)
                             ),
+                            (_, Ok(classes)) => {
+                                classes.detail(reason, candidate.as_deref(), &text(*table))
+                            }
                             _ => invocation_detail(reason, candidate.as_deref(), &text(*table)),
                         };
                         return Err(refusal(function, &detail, reason));
                     }
-                    if let Ok(candidates) = &resolution {
-                        self.require(candidates, actuals, &mut operands.owned);
+                    if let (Ok(candidates), Ok(classes)) = (&resolution, &classes) {
+                        self.require(candidates, actuals, classes, &mut operands.owned);
                     }
                 }
                 CallbackClause::Registered {
@@ -1072,14 +1266,14 @@ impl Parser<'_> {
                     // reaches here only from the run's closed set (a unit's own
                     // empty set is refused above), and invokes nothing.
                     let decision = if crate::member_run_facts::installed().is_some() {
-                        crate::callback_contracts::decide_run(Ok(&classes))
+                        crate::callback_contracts::decide_run(Ok(&classes.classes))
                     } else {
-                        decide(Ok(&classes), false)
+                        decide(Ok(&classes.classes), false)
                     };
                     if let Decision::Refused(reason, candidate) = decision {
                         let description = refusal(
                             function,
-                            &invocation_detail(reason, candidate.as_deref(), &spelled),
+                            &classes.detail(reason, candidate.as_deref(), &spelled),
                             reason,
                         );
                         match deferred(description.clone()) {
@@ -1090,7 +1284,7 @@ impl Parser<'_> {
                             None => return Err(description),
                         }
                     }
-                    self.require(&candidates, actuals, &mut operands.owned);
+                    self.require(&candidates, actuals, &classes, &mut operands.owned);
                     operands
                         .member_paths
                         .extend(super::member_path_route::operands(

@@ -106,6 +106,13 @@ pub enum CandidateClass {
     /// custody contract with the handed formal read as taken (a
     /// `supplied_owned` position) or kept by the invoker (`_`, a parameter).
     HandOffUnbranched,
+    /// Card **HANDOFF-CANDIDATE-OWN-CALLBACKS** (rule 13u amended): a
+    /// candidate whose declaration carries its own member invocations, one
+    /// of which does not decide over the run's set (or that is reached again
+    /// while its own invocations are decided): no contract in force at this
+    /// invocation, with the reason named
+    /// ([`crate::candidate_composition::OWN_REFUSED`]).
+    OwnInvocationRefused,
 }
 
 /// Whether a contract states no custody effect besides its modes.
@@ -232,6 +239,17 @@ pub fn decide(candidates: Result<&[(String, CandidateClass)], ()>, elements: boo
     {
         return Decision::Refused(UNCONTRACTED, Some(name.clone()));
     }
+    // Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 13u amended): a composed
+    // candidate one of whose own invocations does not decide.
+    if let Some((name, _)) = candidates
+        .iter()
+        .find(|(_, class)| *class == CandidateClass::OwnInvocationRefused)
+    {
+        return Decision::Refused(
+            crate::candidate_composition::OWN_REFUSED,
+            Some(name.clone()),
+        );
+    }
     // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a guarded hand-off
     // the invoker's branch does not admit keeps today's refusal.
     if let Some((name, _)) = candidates
@@ -329,6 +347,9 @@ pub fn invocation_detail(reason: &str, candidate: Option<&str>, actual: &str) ->
             "callback `{name}` (from `{actual}`) does not take, on every return, the object the \
              callee supplies it"
         ),
+        (crate::candidate_composition::OWN_REFUSED, Some(name)) => {
+            format!("callback `{name}` (from `{actual}`) does not decide its own invocations")
+        }
         (crate::handoff_branch::UNBRANCHED, Some(name)) => format!(
             "callback `{name}` (from `{actual}`) takes the object it is handed only on some \
              return codes, and the invoker's branch on its result does not admit that"
@@ -582,6 +603,9 @@ mod tests {
             // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: modelled by
             // `QCore.ReturnCodeHandOff`, in no vector of this module.
             CandidateClass::HandOffUnbranched => ".handOffUnbranched",
+            // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: modelled by
+            // `QCore.CandidateComposition`, in no vector of this module.
+            CandidateClass::OwnInvocationRefused => ".ownInvocationRefused",
         }
     }
 

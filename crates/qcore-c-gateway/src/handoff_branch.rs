@@ -128,6 +128,187 @@ pub struct Site {
     pub handling: BTreeMap<usize, Option<Handling>>,
     /// The constants the function compares the site's result with.
     pub compared: BTreeMap<String, i64>,
+    /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 12m amended): the member
+    /// the called variable is an exact copy of ([`exact_copy`]): the object
+    /// and the member path. The site then also invokes that member.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub copy: Option<(SiteActual, String)>,
+}
+
+/// One write of a called variable, as [`exact_copy`] reads it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CopyWrite {
+    /// `v = o->m` (or the declaration's initializer), `o` a pointer variable
+    /// of the function the body never writes, with no conversion but an
+    /// lvalue read.
+    FromMember,
+    /// Any other write: another expression, a compound assignment, an
+    /// increment or decrement.
+    Other,
+}
+
+/// Whether the writes make an exact copy: exactly one, from the member, and
+/// the variable's address never taken (`QCore.CandidateComposition.exactCopy`).
+#[must_use]
+pub fn exact_copy_class(writes: &[CopyWrite], address_taken: bool) -> bool {
+    !address_taken && writes == [CopyWrite::FromMember]
+}
+
+/// `COPY_VECTORS`, shared with `QCore.CandidateComposition.copyVectors`:
+/// (writes, address taken, exact).
+pub const COPY_VECTORS: &[(&[CopyWrite], bool, bool)] = &[
+    (&[CopyWrite::FromMember], false, true),
+    (&[CopyWrite::FromMember], true, false),
+    (
+        &[CopyWrite::FromMember, CopyWrite::FromMember],
+        false,
+        false,
+    ),
+    (&[CopyWrite::FromMember, CopyWrite::Other], false, false),
+    (&[CopyWrite::Other], false, false),
+    (&[], false, false),
+];
+
+/// Peel the conversions an lvalue read adds (`LValueToRValue`, `NoOp`) and
+/// parentheses, never a written cast.
+fn peel_read(mut node: &Value) -> &Value {
+    loop {
+        match kind(node) {
+            "ParenExpr" => match children(node).first() {
+                Some(child) => node = child,
+                None => return node,
+            },
+            "ImplicitCastExpr"
+                if matches!(node["castKind"].as_str(), Some("LValueToRValue" | "NoOp")) =>
+            {
+                match children(node).first() {
+                    Some(child) => node = child,
+                    None => return node,
+                }
+            }
+            _ => return node,
+        }
+    }
+}
+
+/// `o->a.b` read exactly (no cast), `o` a variable: the path and `o`'s
+/// declaration kind and id.
+fn exact_member(node: &Value) -> Option<(String, &str, &str)> {
+    let mut node = peel_read(node);
+    let mut segments = Vec::new();
+    loop {
+        if kind(node) != "MemberExpr" {
+            return None;
+        }
+        segments.push(node["name"].as_str()?.to_owned());
+        let arrow = node["isArrow"].as_bool().unwrap_or(false);
+        node = peel_read(children(node).first()?);
+        if arrow {
+            break;
+        }
+    }
+    if kind(node) != "DeclRefExpr" {
+        return None;
+    }
+    let declared = node["referencedDecl"]["kind"].as_str()?;
+    if !matches!(declared, "ParmVarDecl" | "VarDecl") {
+        return None;
+    }
+    segments.reverse();
+    Some((
+        segments.join("."),
+        declared,
+        node["referencedDecl"]["id"].as_str()?,
+    ))
+}
+
+/// Whether `node` names the variable `id` (through parentheses and lvalue
+/// conversions only).
+fn names_variable(node: &Value, id: &str) -> bool {
+    let node = peel_read(node);
+    kind(node) == "DeclRefExpr" && node["referencedDecl"]["id"].as_str() == Some(id)
+}
+
+/// The writes of the variable `id` in `body` (its declaration's initializer
+/// included), each classified, and whether its address is taken; with the
+/// member every exact write reads (`None` when two exact writes read
+/// different members).
+fn variable_writes(
+    body: &Value,
+    id: &str,
+) -> (Vec<CopyWrite>, bool, Option<(String, String, String)>) {
+    let mut writes = Vec::new();
+    let mut taken = false;
+    let mut sources = BTreeSet::new();
+    let mut classify = |value: &Value, writes: &mut Vec<CopyWrite>| match exact_member(value) {
+        Some((path, declared, object)) => {
+            sources.insert((path, declared.to_owned(), object.to_owned()));
+            writes.push(CopyWrite::FromMember);
+        }
+        None => writes.push(CopyWrite::Other),
+    };
+    each(body, &mut |node| match kind(node) {
+        "VarDecl" if node["id"].as_str() == Some(id) => {
+            if let Some(init) = children(node).first() {
+                classify(init, &mut writes);
+            }
+        }
+        "BinaryOperator" if node["opcode"] == "=" => {
+            if let [target, value] = children(node)
+                && names_variable(target, id)
+            {
+                classify(value, &mut writes);
+            }
+        }
+        "CompoundAssignOperator" => {
+            if children(node)
+                .first()
+                .is_some_and(|target| names_variable(target, id))
+            {
+                writes.push(CopyWrite::Other);
+            }
+        }
+        "UnaryOperator"
+            if children(node)
+                .first()
+                .is_some_and(|operand| names_variable(operand, id)) =>
+        {
+            match node["opcode"].as_str() {
+                Some("&") => taken = true,
+                Some("++" | "--") => writes.push(CopyWrite::Other),
+                _ => {}
+            }
+        }
+        _ => {}
+    });
+    let source = (sources.len() == 1)
+        .then(|| sources.into_iter().next())
+        .flatten();
+    (writes, taken, source)
+}
+
+/// Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 12m amended): the member the
+/// variable `id` (a formal, or an automatic local) is an exact copy of: the
+/// body writes it exactly once, `v = o->m` (or `T v = o->m;`) with no
+/// conversion but an lvalue read, never takes its address, and never writes
+/// `o` (a formal or an automatic local pointer). A formal so copied holds,
+/// where it is called, the member's value or the value it arrived with
+/// (`QCore.CandidateComposition.an_exact_copy_calls_a_member_value`); the
+/// site invokes the member on the paths that copied it. Anything else is
+/// `None`, and the member's invocation through the variable is not read.
+fn exact_copy(body: &Value, id: &str) -> Option<(String, String, String)> {
+    let (writes, taken, source) = variable_writes(body, id);
+    if !exact_copy_class(&writes, taken) {
+        return None;
+    }
+    let (path, declared, object) = source?;
+    // The object is a formal the body never writes (a local object, whose
+    // write could follow the copy, is not followed).
+    if declared != "ParmVarDecl" {
+        return None;
+    }
+    let (object_writes, object_taken, _) = variable_writes(body, &object);
+    (object_writes.is_empty() && !object_taken).then_some((path, declared, object))
 }
 
 /// A function's sites and the function-pointer formals that escape.
@@ -249,6 +430,18 @@ fn local_pointer(function: &Value, id: &str) -> bool {
     })
 }
 
+/// Whether the local `id` is an automatic variable of `function` (a call
+/// through it reads it as a function pointer).
+fn local_function_pointer(function: &Value, id: &str) -> bool {
+    let mut automatic = false;
+    each(function, &mut |node| {
+        if kind(node) == "VarDecl" && node["id"].as_str() == Some(id) {
+            automatic = node["storageClass"].is_null();
+        }
+    });
+    automatic
+}
+
 fn each<'a>(node: &'a Value, visit: &mut dyn FnMut(&'a Value)) {
     visit(node);
     for child in children(node) {
@@ -363,6 +556,18 @@ pub fn function_handling(
                 None => SiteCallee::Other,
             },
         };
+        // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: a call through a formal or an
+        // automatic local that is an exact copy of a member.
+        let copy = match reference(callee) {
+            Some(("ParmVarDecl", id)) if params.index(id).is_some() => exact_copy(body, id),
+            Some(("VarDecl", id)) if local_function_pointer(function, id) => exact_copy(body, id),
+            _ => None,
+        }
+        .and_then(|(path, _, object)| {
+            params
+                .index(&object)
+                .map(|index| (SiteActual::Param(index), path))
+        });
         let actuals = children(call)[1..]
             .iter()
             .map(|actual| params.actual(actual))
@@ -420,6 +625,7 @@ pub fn function_handling(
             actuals: actuals.into_iter().map(normal).collect(),
             handling,
             compared,
+            copy,
         });
     }
     if sites.is_empty() {
@@ -1571,6 +1777,24 @@ fn search<'a>(
             name: name.to_owned(),
             site,
         });
+        // Card HANDOFF-CANDIDATE-OWN-CALLBACKS (rule 12m amended): a call
+        // through an exact copy of the member invokes the member.
+        if let (
+            Some((object, member)),
+            Invocation::Member {
+                object: owner,
+                path: wanted,
+            },
+        ) = (&site.copy, invocation)
+            && member == wanted
+            && match owner {
+                Some(index) => *object == SiteActual::Param(*index),
+                None => true,
+            }
+        {
+            paths.push(step_path);
+            continue;
+        }
         match (&site.callee, invocation) {
             (SiteCallee::Formal(index), Invocation::Formal(formal)) if index == formal => {
                 paths.push(step_path);
@@ -1844,6 +2068,7 @@ mod tests {
                 actuals: vec![SiteActual::Param(0)],
                 handling: BTreeMap::from([(0, Some(handling))]),
                 compared: BTreeMap::new(),
+                copy: None,
             };
             let values = if *ne {
                 Values::Except(BTreeSet::from([*value]))
@@ -1889,11 +2114,54 @@ mod tests {
                 }),
             )]),
             compared: BTreeMap::new(),
+            copy: None,
         };
         assert_eq!(
             forward(&site, 0, &Values::Only(BTreeSet::from([2]))),
             Ok(Values::Only(BTreeSet::from([2, 3])))
         );
         assert!(forward(&site, 0, &Values::Except(BTreeSet::from([0]))).is_err());
+    }
+
+    /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: the classifier's vectors hold,
+    /// and are `QCore.CandidateComposition.copyVectors` entry for entry.
+    #[test]
+    fn copy_vectors_hold() {
+        let lean = include_str!("../../../proof/QCore/CandidateComposition.lean");
+        let start = lean.find("def copyVectors").expect("the Lean vectors");
+        let end = start + lean[start..].find("theorem").expect("the vectors end");
+        let entries = lean[start..end]
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with("[ ([") || line.starts_with("(["))
+            .map(|line| {
+                line.trim_start_matches("[ ")
+                    .trim_end_matches(" ]")
+                    .trim_end_matches(',')
+                    .to_owned()
+            })
+            .collect::<Vec<_>>();
+        let rendered = COPY_VECTORS
+            .iter()
+            .map(|(writes, taken, exact)| {
+                assert_eq!(
+                    exact_copy_class(writes, *taken),
+                    *exact,
+                    "{writes:?} {taken}"
+                );
+                format!(
+                    "([{}], {taken}, {exact})",
+                    writes
+                        .iter()
+                        .map(|write| match write {
+                            CopyWrite::FromMember => ".fromMember",
+                            CopyWrite::Other => ".other",
+                        })
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(entries, rendered);
     }
 }

@@ -137,6 +137,67 @@ fn main() -> Result<(), String> {
             Handed::Parameter(0),
             &keep,
         ),
+        // Card HANDOFF-CANDIDATE-OWN-CALLBACKS: the `rko_serve` invocation
+        // through `rd_kafka_op_handle`'s exact copy, at every declared
+        // invoker of the member; the two other `== KEEP` hand-offs at
+        // `rd_kafka_op_destroy`; and the three as `rd_kafka_poll_cb`'s own
+        // `rko_op_cb` invocation (the composition's inner check).
+        (
+            "rd_kafka_poll_cb",
+            "rd_kafka_q_serve",
+            member(None, "rko_serve"),
+            Handed::Own,
+            &not_pass,
+        ),
+        (
+            "rd_kafka_poll_cb",
+            "rd_kafka_q_serve_maybe_consume",
+            member(None, "rko_serve"),
+            Handed::Own,
+            &not_pass,
+        ),
+        (
+            "rd_kafka_poll_cb",
+            "rd_kafka_q_pop_serve0",
+            member(None, "rko_serve"),
+            Handed::Own,
+            &not_pass,
+        ),
+        (
+            "rd_kafka_poll_cb",
+            "rd_kafka_op_req0",
+            member(None, "rko_serve"),
+            Handed::Own,
+            &not_pass,
+        ),
+        (
+            "rd_kafka_admin_worker",
+            "rd_kafka_op_destroy",
+            member(Some(0), "rko_op_cb"),
+            Handed::Parameter(0),
+            &keep,
+        ),
+        (
+            "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+            "rd_kafka_op_destroy",
+            member(Some(0), "rko_op_cb"),
+            Handed::Parameter(0),
+            &keep,
+        ),
+        (
+            "rd_kafka_txn_op_send_offsets_to_transaction",
+            "rd_kafka_poll_cb",
+            member(Some(2), "rko_op_cb"),
+            Handed::Parameter(2),
+            &keep,
+        ),
+        (
+            "rd_kafka_admin_worker",
+            "rd_kafka_poll_cb",
+            member(Some(2), "rko_op_cb"),
+            Handed::Parameter(2),
+            &keep,
+        ),
     ];
     let mut answers = serde_json::Map::new();
     for (candidate, invoker, invocation, handed, guard) in queries {
