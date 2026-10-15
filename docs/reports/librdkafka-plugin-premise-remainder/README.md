@@ -2,7 +2,7 @@
 
 Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (wave 48, round 28, card-high).
 Base: local `main` `711287771`. The member census and the frozen
-[prediction](PREDICTION.md) were committed (`7472690aa`) before any analyser,
+[prediction](PREDICTION.md) were committed (`7472690aa`, `5f75f69c0` after the rebase onto `635669fdb`) before any analyser,
 loader, contract or Lean change.
 
 ## 1. Authority
@@ -128,7 +128,7 @@ Anything else rejects the module. This is the model-contract extension (total-or
 
 **BEFORE.** Binary `bin/before` (`352276f2…`), built from an exported copy of `711287771` (`private/lppr/base-src`, [`before.sh`](scripts/before.sh)). Its contracts, profile and scripts are the base's (`REPO` set to that tree on every route).
 
-**AFTER.** Binary `a1` (`b11509e5…`), built from `459fb3083` (the contracts commit).
+**AFTER.** Binary `a1` (`b11509e5…`), built from `459fb3083` (the contracts commit; `530c8d18a` after the rebase).
 
 Wall times were measured inside the shared lock and are not a performance claim.
 

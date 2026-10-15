@@ -34,7 +34,7 @@ FOLLOWUPS = ("| Registered follow-ups | **783** (wave 48: " + TAG + " retires "
              "`LIBRDKAFKA-NONNULL-MEMBER-PREMISE-UNADMITTED`); before it ")
 
 PARAGRAPH = (
-    f"**`{TAG}` (2026-10-16, base `711287771`, rebased onto `635669fdb`; census and prediction `7472690aa`, committed before any "
+    f"**`{TAG}` (2026-10-16, base `711287771`, rebased onto `635669fdb`; census and prediction `7472690aa` (`5f75f69c0` after the rebase), committed before any "
     "analyser, loader, contract or Lean change).** The user's decisions of 2026-10-15 (\"Only "
     "nonnull_member* need it\", \"Yes, list it\", \"Add premise support\") close the plugin premise's "
     "remainder with the existing `resource_premise(NAME, \"TEXT\")` spelling and no new word. The premise "

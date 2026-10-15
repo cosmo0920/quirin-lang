@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/librdkafka-plugin-premise-remainder"
-BASE = "711287771"
+BASE = "635669fdb (rebased from 711287771)"
 
 
 def main() -> int:
