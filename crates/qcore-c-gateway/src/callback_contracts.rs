@@ -99,6 +99,13 @@ pub enum CandidateClass {
     /// (`resource_borrowed` or `resource_owned` there), or takes it only on
     /// some return codes (a return-code disposition).
     KeepsSupplied,
+    /// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (rule 12m): a candidate
+    /// that takes the object it is handed only where its result meets a
+    /// guard, and whose invoker's branch on that result does not admit it
+    /// (`crate::handoff_branch::admit`). An admitted one is classified by its
+    /// custody contract with the handed formal read as taken (a
+    /// `supplied_owned` position) or kept by the invoker (`_`, a parameter).
+    HandOffUnbranched,
 }
 
 /// Whether a contract states no custody effect besides its modes.
@@ -225,6 +232,14 @@ pub fn decide(candidates: Result<&[(String, CandidateClass)], ()>, elements: boo
     {
         return Decision::Refused(UNCONTRACTED, Some(name.clone()));
     }
+    // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a guarded hand-off
+    // the invoker's branch does not admit keeps today's refusal.
+    if let Some((name, _)) = candidates
+        .iter()
+        .find(|(_, class)| *class == CandidateClass::HandOffUnbranched)
+    {
+        return Decision::Refused(crate::handoff_branch::UNBRANCHED, Some(name.clone()));
+    }
     if let Some((name, _)) = candidates.iter().find(|(_, class)| {
         *class == CandidateClass::Effectful
             || (!elements && *class == CandidateClass::ReleasesElement)
@@ -313,6 +328,10 @@ pub fn invocation_detail(reason: &str, candidate: Option<&str>, actual: &str) ->
         (SUPPLIED_KEPT, Some(name)) => format!(
             "callback `{name}` (from `{actual}`) does not take, on every return, the object the \
              callee supplies it"
+        ),
+        (crate::handoff_branch::UNBRANCHED, Some(name)) => format!(
+            "callback `{name}` (from `{actual}`) takes the object it is handed only on some \
+             return codes, and the invoker's branch on its result does not admit that"
         ),
         _ => format!("the callback `{actual}` is not a closed set of functions"),
     }

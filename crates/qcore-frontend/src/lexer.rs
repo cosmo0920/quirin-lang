@@ -130,7 +130,7 @@ pub enum Symbol {
     Arrow,
     /// [`MAPS_TO`], the ASCII maps-to `↦` of a contract state clause (card
     /// `OP-CONSTRUCTOR-DECLARATIONS`, USER DECISION 2026-10-14: `quant live
-    /// #result: TAG.FIELD |-> absent;`). Three bytes, matched before every
+    /// #result: TAG.FIELD |-> #absent;`). Three bytes, matched before every
     /// two-byte spelling, so `|>` stays [`Self::PipeInto`] and `||` stays
     /// [`Self::PipePipe`]. Before the card the same bytes were a [`Self::Pipe`]
     /// followed by an [`Self::Arrow`], which no reader admitted; only a

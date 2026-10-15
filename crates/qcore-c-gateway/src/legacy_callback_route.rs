@@ -45,6 +45,14 @@ pub enum RegistryHolder {
     Result,
 }
 
+/// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): the invocation a
+/// candidate is classified at, for the caller branch check.
+pub(super) struct HandOffAt<'a> {
+    /// The declared invoker (the called declaration).
+    pub invoker: &'a str,
+    pub invocation: crate::handoff_branch::Invocation,
+}
+
 /// One registry effect of a call, in clause order.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RegistryUse {
@@ -481,11 +489,24 @@ impl Parser<'_> {
         &self,
         candidates: &BTreeSet<String>,
         actuals: &[CallbackActual],
+        at: Option<&HandOffAt<'_>>,
     ) -> Vec<(String, CandidateClass)> {
         candidates
             .iter()
             .map(|name| {
                 let contract = self.contracts.contract(name);
+                // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a
+                // candidate whose declaration hands a formal depending on its
+                // return code (withheld from the function map).
+                if contract.is_none()
+                    && let Some(declared) = self.contracts.retaining_contract(name)
+                    && let Some(handoff) = &declared.handoff
+                {
+                    return (
+                        name.clone(),
+                        self.handed_class(name, declared, handoff, actuals, at),
+                    );
+                }
                 // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): a
                 // candidate that takes the supplied object only on some
                 // return codes (a disposition, never in the function map)
@@ -501,6 +522,90 @@ impl Parser<'_> {
                 (name.clone(), class)
             })
             .collect()
+    }
+
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a candidate whose
+    /// declaration hands its formal `handoff.parameter` to the callback
+    /// depending on its return code. A declaration that carries any other
+    /// side clause still reads uncontracted (rule 13u: a retaining
+    /// declaration is not in the function map). Otherwise the invoker's
+    /// branch is checked ([`crate::handoff_branch::admit`]); admitted, the
+    /// candidate is classified by its custody contract with the handed formal
+    /// taken at a `supplied_owned` position and kept by the invoker at `_` or
+    /// a parameter (whose every admitted path ends inside the invoker).
+    fn handed_class(
+        &self,
+        name: &str,
+        declared: &RetainingContract,
+        handoff: &qcore_schemas::handoff::HandOff,
+        actuals: &[CallbackActual],
+        at: Option<&HandOffAt<'_>>,
+    ) -> CandidateClass {
+        let plain = declared.retentions.is_empty()
+            && declared.resets.is_empty()
+            && declared.slot_moves.is_empty()
+            && declared.derived_outs.is_empty()
+            && declared.references.is_empty()
+            && declared.callbacks.is_empty()
+            && declared.discriminant.is_none()
+            && declared.arms.is_empty()
+            && declared.constructed.is_empty();
+        if !plain {
+            return CandidateClass::Missing;
+        }
+        match self.handoff_admission(name, handoff, actuals, at) {
+            Ok(()) => {
+                let mut contract = declared.contract.clone();
+                if actuals.get(handoff.parameter) == Some(&CallbackActual::SuppliedOwned) {
+                    contract.parameters[handoff.parameter] =
+                        qcore_schemas::contract::ResourceParameterMode::Consumed {
+                            nullable: false,
+                        };
+                }
+                classify(Some(&contract), actuals)
+            }
+            Err(_) => CandidateClass::HandOffUnbranched,
+        }
+    }
+
+    /// Why the invoker's branch does not admit `name`'s hand-off (`Ok` when
+    /// it does).
+    fn handoff_admission(
+        &self,
+        name: &str,
+        handoff: &qcore_schemas::handoff::HandOff,
+        actuals: &[CallbackActual],
+        at: Option<&HandOffAt<'_>>,
+    ) -> Result<(), String> {
+        use crate::handoff_branch::{Handed, Query, UnitBodies, admit, resolve};
+        let at = at.ok_or("a table dispatch reads no invoker's branch")?;
+        let handed = match actuals.get(handoff.parameter) {
+            Some(CallbackActual::SuppliedOwned | CallbackActual::Supplied) => Handed::Own,
+            Some(CallbackActual::Parameter { index }) => Handed::Parameter(*index),
+            _ => return Err("the handed formal has no handed actual".into()),
+        };
+        let check = |units: &[&crate::callback_member_closure::MemberFacts]| {
+            let value = resolve(units, name, &handoff.guard.constant)?;
+            admit(
+                &UnitBodies(units.to_vec()),
+                &Query {
+                    invoker: at.invoker,
+                    invocation: at.invocation.clone(),
+                    position: handoff.parameter,
+                    handed,
+                    guard: &handoff.guard,
+                    value,
+                },
+            )
+        };
+        // The run's facts (the pre-pass) where installed; otherwise the
+        // analysing unit's own.
+        if let Some(run) = crate::member_run_facts::installed() {
+            let units = run.units.iter().collect::<Vec<_>>();
+            return check(&units);
+        }
+        crate::typed_access_path::with_indirect_call_unit(|unit| check(&[unit.member_facts()]))
+            .unwrap_or_else(|| Err("the unit's AST is not read".into()))
     }
 
     /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the candidates
@@ -542,9 +647,15 @@ impl Parser<'_> {
         owned: &mut BTreeMap<usize, bool>,
     ) {
         for name in candidates {
-            for (index, nullable) in
-                crate::callback_contracts::requirements(self.contracts.contract(name), actuals)
-            {
+            // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a hand-off candidate's
+            // requirements are its custody contract's.
+            let contract = self.contracts.contract(name).or_else(|| {
+                self.contracts
+                    .retaining_contract(name)
+                    .filter(|declared| declared.handoff.is_some())
+                    .map(|declared| &declared.contract)
+            });
+            for (index, nullable) in crate::callback_contracts::requirements(contract, actuals) {
                 owned
                     .entry(index)
                     .and_modify(|all| *all &= nullable)
@@ -564,6 +675,22 @@ impl Parser<'_> {
         actual: &dyn Fn(usize) -> Option<Vec<String>>,
         frame_holder: &dyn Fn(&str) -> bool,
     ) -> Result<Option<Operands>, String> {
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): a declaration
+        // that hands a formal to its callback depending on its return code
+        // is read only as a candidate of a callback clause; a direct call
+        // does not read the result's branch, so it refuses.
+        if let Some(handoff) = &declaration.handoff {
+            return Err(refusal(
+                function,
+                &format!(
+                    "it hands its parameter {} to the callback only when `{}`, which a direct \
+                     call does not read",
+                    handoff.parameter,
+                    handoff.guard.spelling()
+                ),
+                crate::handoff_branch::DIRECT,
+            ));
+        }
         if declaration.callbacks_withdrawn {
             return Err(refusal(
                 function,
@@ -674,9 +801,13 @@ impl Parser<'_> {
                         continue;
                     }
                     let resolution = self.callback_candidates(function, line, *callback, false);
+                    let at = HandOffAt {
+                        invoker: function,
+                        invocation: crate::handoff_branch::Invocation::Formal(*callback),
+                    };
                     let classes = resolution
                         .as_ref()
-                        .map(|candidates| self.classified(candidates, actuals));
+                        .map(|candidates| self.classified(candidates, actuals, Some(&at)));
                     let decision =
                         decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
                     if let Decision::Refused(reason, candidate) = decision {
@@ -697,7 +828,7 @@ impl Parser<'_> {
                     let resolution = self.table_candidates(function, line, *table);
                     let classes = resolution
                         .as_ref()
-                        .map(|candidates| self.classified(candidates, actuals));
+                        .map(|candidates| self.classified(candidates, actuals, None));
                     let decision =
                         decide(classes.as_ref().map(Vec::as_slice).map_err(|_| ()), false);
                     if let Decision::Refused(reason, candidate) = decision {
@@ -847,7 +978,17 @@ impl Parser<'_> {
                             }
                         }
                     };
-                    let classes = self.classified(&candidates, actuals);
+                    let at = HandOffAt {
+                        invoker: function,
+                        invocation: crate::handoff_branch::Invocation::Member {
+                            object: match object {
+                                MemberObject::Parameter { index } => Some(*index),
+                                MemberObject::SuppliedOwned => None,
+                            },
+                            path: member.path.clone(),
+                        },
+                    };
+                    let classes = self.classified(&candidates, actuals, Some(&at));
                     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (E1): an empty set
                     // reaches here only from the run's closed set (a unit's own
                     // empty set is refused above), and invokes nothing.

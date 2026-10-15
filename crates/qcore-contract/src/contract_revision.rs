@@ -249,15 +249,44 @@ pub fn declaration_digests(
         if parsed.mode != SourceModuleMode::Contract {
             return Err(format!("{key}: expected a module contract"));
         }
+        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: an alias a declaration
+        // spells is part of its contract text, so a changed `alias #NAME =
+        // @C_NAME;` changes the digest of every declaration spelling `#NAME`
+        // (an alias never changes meaning under an unchanged pin).
+        let normalise = |text: &str| -> Result<(String, Vec<TokenKind>), String> {
+            let tokens = lex(text).map_err(|e| format!("{key}: {e}"))?;
+            let kinds = tokens.iter().map(|token| token.kind.clone()).collect();
+            Ok((
+                tokens
+                    .iter()
+                    .filter(|token| token.kind != TokenKind::Eof)
+                    .map(|token| &text[token.span.start..token.span.end])
+                    .collect::<Vec<_>>()
+                    .join(" "),
+                kinds,
+            ))
+        };
+        let aliases = parsed
+            .aliases()
+            .iter()
+            .map(|alias| {
+                normalise(&source[alias.span.start..alias.span.end])
+                    .map(|(text, _)| (alias.value.name.clone(), text))
+            })
+            .collect::<Result<BTreeMap<_, _>, _>>()?;
         for declaration in parsed.declarations {
             let text = &source[declaration.span.start..declaration.span.end];
-            let tokens = lex(text).map_err(|e| format!("{key}: {e}"))?;
-            let normalised = tokens
-                .iter()
-                .filter(|token| token.kind != TokenKind::Eof)
-                .map(|token| &text[token.span.start..token.span.end])
-                .collect::<Vec<_>>()
-                .join(" ");
+            let (mut normalised, kinds) = normalise(text)?;
+            for (name, alias) in &aliases {
+                let spelled = kinds.windows(2).any(|pair| {
+                    pair[0] == TokenKind::Symbol(qcore_frontend::lexer::Symbol::Hash)
+                        && pair[1] == TokenKind::Word(name.clone())
+                });
+                if spelled {
+                    normalised.push(' ');
+                    normalised.push_str(alias);
+                }
+            }
             digests.insert(
                 declaration.value.name.clone(),
                 (

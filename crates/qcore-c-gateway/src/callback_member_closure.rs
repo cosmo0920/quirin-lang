@@ -351,6 +351,26 @@ pub struct MemberFacts {
     /// The union tags the unit defines (build state).
     #[serde(skip)]
     unions: BTreeSet<String>,
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 12m): each function
+    /// definition's caller-branch reading
+    /// ([`crate::handoff_branch::function_handling`]).
+    #[serde(default)]
+    pub handling: BTreeMap<String, crate::handoff_branch::FunctionHandling>,
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): each declared
+    /// function's result type as Clang spells it.
+    #[serde(default)]
+    pub result_types: BTreeMap<String, String>,
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): each enumerator,
+    /// by the spelling of every type that names its enumeration (`enum TAG`,
+    /// a typedef name), with its value as Clang read the unit.
+    #[serde(default)]
+    pub typed_constants: BTreeMap<String, BTreeMap<String, i64>>,
+    /// The typedef declarations that name an enumeration (build state).
+    #[serde(skip)]
+    enum_typedefs: BTreeSet<String>,
+    /// Each enumeration's enumerators, by its declaration id (build state).
+    #[serde(skip)]
+    enum_members: BTreeMap<String, Vec<(String, i64)>>,
 }
 
 /// Card **OP-APP-RK-CALLBACKS-VIA-POLL-CB** (rule 12n, Q3): a record's
@@ -1306,6 +1326,85 @@ impl MemberFacts {
         &self.enumerators
     }
 
+    /// Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rules 12m, 13l): the
+    /// enumerations by the types that name them, every function's result
+    /// type, and every definition's caller-branch reading.
+    fn collect_handoff(&mut self, node: &Value) {
+        fn enum_type(node: &Value) -> Option<&str> {
+            if kind(node) == "EnumType" {
+                return node["decl"]["id"].as_str();
+            }
+            children(node).iter().find_map(enum_type)
+        }
+        match kind(node) {
+            "EnumDecl" => {
+                let members = children(node)
+                    .iter()
+                    .filter(|constant| kind(constant) == "EnumConstantDecl")
+                    .filter_map(|constant| {
+                        let value = self.enumerators.get(constant["id"].as_str()?)?;
+                        Some((constant["name"].as_str()?.to_owned(), *value))
+                    })
+                    .collect::<Vec<_>>();
+                if let Some(tag) = node["name"].as_str().filter(|tag| !tag.is_empty()) {
+                    for (name, value) in &members {
+                        self.typed_constants
+                            .entry(name.clone())
+                            .or_default()
+                            .insert(format!("enum {tag}"), *value);
+                    }
+                }
+                if let Some(id) = node["id"].as_str() {
+                    self.enum_members.insert(id.to_owned(), members);
+                }
+            }
+            "TypedefDecl" => {
+                for child in children(node) {
+                    if kind(child) == "EnumDecl" {
+                        self.collect_handoff(child);
+                    }
+                }
+                if let (Some(name), Some(id), Some(target)) =
+                    (node["name"].as_str(), node["id"].as_str(), enum_type(node))
+                    && let Some(members) = self.enum_members.get(target).cloned()
+                {
+                    self.enum_typedefs.insert(id.to_owned());
+                    for (constant, value) in members {
+                        self.typed_constants
+                            .entry(constant)
+                            .or_default()
+                            .insert(name.to_owned(), value);
+                    }
+                }
+            }
+            "FunctionDecl" => {
+                let Some(name) = node["name"].as_str() else {
+                    return;
+                };
+                if let Some(result) = node["type"]["qualType"]
+                    .as_str()
+                    .and_then(|text| text.split_once(" ("))
+                    .map(|(result, _)| result.trim())
+                {
+                    self.result_types
+                        .entry(name.to_owned())
+                        .or_insert_with(|| result.to_owned());
+                }
+                if !self.handling.contains_key(name)
+                    && let Some(handling) = crate::handoff_branch::function_handling(
+                        node,
+                        &self.enumerators,
+                        &self.enum_typedefs,
+                        &|parameter| self.function_pointer(parameter),
+                    )
+                {
+                    self.handling.insert(name.to_owned(), handling);
+                }
+            }
+            _ => {}
+        }
+    }
+
     fn collect_enumerators(&mut self, node: &Value) {
         if kind(node) == "EnumDecl" {
             let mut next = Some(0i64);
@@ -1334,6 +1433,7 @@ impl MemberFacts {
     pub fn collect(&mut self, node: &Value) {
         self.collect_enumerators(node);
         self.collect_records(node);
+        self.collect_handoff(node);
         match kind(node) {
             "TypedefDecl" => {
                 let Some(name) = node["name"].as_str() else {

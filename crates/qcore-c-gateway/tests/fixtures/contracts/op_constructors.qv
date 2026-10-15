@@ -24,7 +24,7 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(type);
     ensures normal resource_discriminant_set(result, op.type, type, 0);
-    quant live #result: op.op_cb |-> absent;
+    quant live #result: op.op_cb |-> #absent;
     ensures normal resource_return_owned(nonnull);
 };
 
