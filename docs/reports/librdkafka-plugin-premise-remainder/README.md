@@ -2,7 +2,7 @@
 
 Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (wave 48, round 28, card-high).
 Base: local `main` `711287771`. The member census and the frozen
-[prediction](PREDICTION.md) were committed (`7472690aa`, `5f75f69c0` after the rebase onto `635669fdb`) before any analyser,
+[prediction](PREDICTION.md) were committed (`7472690aa`; `6e7d517a2` on the tip rebased onto `a7e0c9a3d`) before any analyser,
 loader, contract or Lean change.
 
 ## 1. Authority
@@ -113,7 +113,7 @@ Anything else rejects the module. This is the model-contract extension (total-or
 
 ## 4. Lean
 
-`QCore.NullMemberPremise` is audited in `proof/AuditNullMemberPremise.lean`; Lean audits go 324 → 325 on the base, 325 → 326 on the rebased tip (after MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS). Its theorems:
+`QCore.NullMemberPremise` is audited in `proof/AuditNullMemberPremise.lean`; Lean audits go 324 → 325 on the base; on the final tip there are 327 (with MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS's and MEMBER-PREPASS-OTHER-ROUTES's modules). Its theorems:
 
 * `a_resting_row_lists_the_premise`;
 * `a_listed_premise_is_a_dependency`;
@@ -181,13 +181,15 @@ Summary: [summary.json](artifacts/summary.json).
 
 **Parity streams.** The typed-path parity streams are equal as multisets on all three routes once Clang's AST node addresses (`0x…`, which change between any two runs) and BEFORE's tree root are normalised: corpus 684,906 lines, system 142,456, slice 51,389.
 
-**Rebase.** The runs were taken on `711287771`. The card was then rebased onto `635669fdb`, where MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS landed. That card changes rule 30's member-path body check in `member_path_check.rs` and `member_path_reading.rs`, and its own measurement moved only two units' body evidence. It touches no null-property, contract-format, bounds or librdkafka contract file, so the runs stand for the rebased tip. The gate below ran on the rebased tip.
+**Rebase.** The runs were taken on `711287771`. The card was then rebased onto `635669fdb`, where MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS landed. That card changes rule 30's member-path body check in `member_path_check.rs` and `member_path_reading.rs`, and its own measurement moved only two units' body evidence. It touches no null-property, contract-format, bounds or librdkafka contract file, so the runs stand for the rebased tip. The gate below ran on that tip.
+
+The card was rebased again onto `a7e0c9a3d`, where MEMBER-PREPASS-OTHER-ROUTES landed. That card runs the member-facts pre-pass on the current and no-build routes (`member_prepass.rs`, `current.rs`, `no_build.rs`, `compose.rs`, `checkpoint_run.rs`, a `report.rs` accessor, `member_run_facts.rs`). It may move system and slice custody rows through rule 12n's closure; its report owns that. It touches none of this card's files, and only the records conflicted, so a targeted check replaces a third full gate (landing-race policy, section 8). This card's BEFORE → AFTER identity is a statement about its own change on `711287771`.
 
 **Prediction against outcome.** As frozen: verdicts identical, and only the premise and dependency fields, the fold records, the two sidecar records and the contract-source and pin digests moved. The corpus custody report did not move at all; the prediction allowed contract-source digests there.
 
 ## 6. Ledger
 
-[`update_ledger.py`](scripts/update_ledger.py): 784 → **783**.
+[`update_ledger.py`](scripts/update_ledger.py): 784 → **783** on the base; on the final tip 785 → **784** (MEMBER-PREPASS-OTHER-ROUTES landed with 785).
 
 * **Retired: `LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED`.** The user decided:
   * the null views are independent of the callback;
@@ -227,6 +229,8 @@ Gate **g3** ([gate.json](gate.json), exits in [gate/](gate/), logs `private/lppr
 | `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests OK), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
 
 Clang: [`gate/clang-version.txt`](gate/clang-version.txt). The bold rule-id duplicate check is empty.
+
+**After the rebase onto `a7e0c9a3d`** (records-only conflicts): a targeted check, logs `private/lppr/targeted-r2/` (section below).
 
 Two earlier attempts are retained in `private/lppr/` and discarded:
 
