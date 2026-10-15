@@ -21,7 +21,8 @@ def status(match):
     main, mine = match.group(1).splitlines(), match.group(2).splitlines()
     if main[0].startswith("| Projected functions"):
         prefix = mine[0][: mine[0].index("before it: ") + len("before it: ")]
-        return prefix + main[0][len("| Projected functions | "):] + "\n" + "\n".join(main[1:]) + "\n"
+        rows = "".join(line + "\n" for line in main[1:] if line)
+        return prefix + main[0][len("| Projected functions | "):] + "\n" + rows
     if main[0].startswith("| Registered follow-ups"):
         count = int(COUNT.match(main[0]).group(1))
         mine_count = int(COUNT.match(mine[0]).group(1))
