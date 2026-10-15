@@ -83,6 +83,10 @@ pub fn split(guard: &HandOffGuard, value: i64, when_true: ReturnRelation) -> Opt
     ])
 }
 
+/// The constants Clang reads the calling body comparing a callee's result
+/// with, by callee ([`read_test`]).
+pub(crate) type Compared<'a> = &'a dyn Fn(&str) -> Vec<i64>;
+
 /// Read `texts` as one call of a hand-off callee tested against a constant
 /// ([`crate::relational_post::read_test`]), where an identifier the
 /// condition compares may be an enumerator: `resolve(callee, name)` gives its
@@ -97,7 +101,7 @@ pub(crate) fn read_test(
     texts: &[&str],
     is_callee: &dyn Fn(&str) -> bool,
     resolve: &dyn Fn(&str, &str) -> Option<i64>,
-    compared: Option<&dyn Fn(&str) -> Vec<i64>>,
+    compared: Option<Compared<'_>>,
 ) -> Option<CallTest> {
     // The callee: the one hand-off callee the condition calls.
     let mut calls = texts
