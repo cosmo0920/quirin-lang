@@ -213,7 +213,22 @@ The bold rule-id duplicate check is empty.
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/). Two earlier attempts are retained in `private/lppr/` and discarded:
+Gate **g3** ([gate.json](gate.json), exits in [gate/](gate/), logs `private/lppr/gate-g3/`). Every code step ran at `aaa01a6e2` on the rebased tip. The standing gate and the provider gate ran under one exclusive flock on the shared heavy lock (18:52:36Z–19:09:25Z). `gate.sh` cleans the dev profile between clippy and the test build (`03z-clean`), the same commands, for the shared disk.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets`, submodule, `cargo fmt --check`, `clippy --locked --all-targets -D warnings` | 0, 0, 0, 0 | |
+| `run_test_binaries.py` | 0 | 500 units, 513 summaries, **8,112 passed, 0 failed, 15 ignored** (`private/lppr/tests-g3/`); no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **326** audits under Lean 4.35.0 |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked` in `providers/`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| Python suite (08) | 1 | before the matrix regeneration (`test_the_derived_facts_are_recomputed_rather_than_carried`); rerun as 09b |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests OK), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+Clang: [`gate/clang-version.txt`](gate/clang-version.txt). The bold rule-id duplicate check is empty.
+
+Two earlier attempts are retained in `private/lppr/` and discarded:
 
 * **g1** (`0f2f8c8e3`, before the rebase). The host disk filled while the test binaries were building ("No space left on device", then a linker bus error), and later steps could not write their exits. Per the measurement-hygiene rule, a disk-exhausted run measures disk, not the program.
 * **g2** (same commit, disk recovered). One unit failed: `contract_inherit_qcore_provider`'s `converted_wrappers_elaborate_to_the_hand_written_contracts`. Its hand-written parity fixture `compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv` restates `memory.qv` token for token, and `rd_kafka_crash` had gained the premise. The fixture now carries the same clause (`936c664b5`); the test passes alone (8 passed). Every other g2 step was 0, except the Python suite before the matrix regeneration, which is expected. Its totals were 500 units, 8,103 passed, 1 failed, 15 ignored.
