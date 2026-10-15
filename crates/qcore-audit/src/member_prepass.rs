@@ -24,11 +24,23 @@
 //!
 //! Token matching uses 32-bit hashes of the unit's identifiers: a collision
 //! only reads one more unit, never skips one.
+//!
+//! Card **MEMBER-PREPASS-OTHER-ROUTES** (rule 12n, amended in place): the
+//! current and no-build routes run the same pre-pass over their own compile
+//! databases, and the scope file's exclusions are re-checked at run time. The
+//! scope file names the revision its evidence was taken at, and every entry a
+//! typed evidence ([`Evidence`]) the pre-pass re-verifies against the run's
+//! own sources inside the token fixed point, against the final tokens. An
+//! exclusion whose evidence does not hold, or cannot be checked, is dropped:
+//! the unit is preprocessed and read like any other, and a unit that then
+//! cannot be read opens every member
+//! (`QCore.MemberPrepassRoutes.a_stale_exclusion_never_closes_a_member`).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::hash::{Hash, Hasher};
-use std::path::Path;
+use std::io::Write as _;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::Arc;
 
@@ -43,40 +55,150 @@ use crate::compile_db::{CompileEntry, compiler_options, shell_words};
 /// The profile file naming units outside the program.
 pub const SCOPE_FILE: &str = "member-facts-scope.json";
 
-/// One unit the profile names outside the program: a path fragment and the
-/// recorded evidence.
+/// The scope file's schema: 2 names the evidence revision and each entry's
+/// typed evidence (card MEMBER-PREPASS-OTHER-ROUTES).
+pub const SCOPE_SCHEMA: u64 = 2;
+
+/// How an exclusion is re-verified at run time.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Evidence {
+    /// The unit's raw text (when it exists), every file Clang resolves for it
+    /// under its own command (`-M -MG`), and the named generator `sources`
+    /// (files, read with the files Clang resolves for their preprocessor
+    /// directives under the unit's command, or directories, every file under
+    /// them) name no token of the pre-pass; every include Clang leaves
+    /// unresolved is one of `generated`, generated at build time from the
+    /// sources. A unit absent from the inputs needs at least one source.
+    TokensAbsent {
+        sources: Vec<String>,
+        generated: BTreeSet<String>,
+    },
+    /// The program's link lines (`links`, relative to the CMake build root
+    /// holding `CMakeCache.txt` above the unit's compile directory) name
+    /// `linked` and never `unlinked`: the unit's target is not linked into the
+    /// audited program.
+    NotLinked {
+        links: Vec<String>,
+        linked: String,
+        unlinked: String,
+    },
+}
+
+/// One unit the profile names outside the program: a path fragment, the
+/// recorded evidence and how it is re-verified.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Outside {
     pub fragment: String,
     pub why: String,
+    pub evidence: Evidence,
 }
 
-/// Read the profile's scope file (`[]` when absent).
-pub fn load_scope(directory: &Path) -> Result<Vec<Outside>, String> {
+/// The profile's scope file: the revision its evidence was taken at, and its
+/// entries.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Scope {
+    pub evidence_revision: Option<String>,
+    pub outside: Vec<Outside>,
+}
+
+fn text_list(entry: &Value, key: &str, path: &Path) -> Result<Vec<String>, String> {
+    match &entry[key] {
+        Value::Null => Ok(Vec::new()),
+        Value::Array(items) => items
+            .iter()
+            .map(|item| {
+                item.as_str()
+                    .filter(|text| !text.is_empty())
+                    .map(str::to_owned)
+                    .ok_or_else(|| format!("{}: `{key}` holds a non-text item", path.display()))
+            })
+            .collect(),
+        _ => Err(format!("{}: `{key}` is not a list", path.display())),
+    }
+}
+
+/// Read the profile's scope file (empty when absent). A file of another
+/// schema, without its evidence revision, or with an entry whose evidence is
+/// missing or unknown is refused: an exclusion that cannot be re-verified is
+/// never taken.
+pub fn load_scope(directory: &Path) -> Result<Scope, String> {
     let path = directory.join(SCOPE_FILE);
     let Ok(text) = fs::read_to_string(&path) else {
-        return Ok(Vec::new());
+        return Ok(Scope::default());
     };
     let value: Value =
         serde_json::from_str(&text).map_err(|error| format!("{}: {error}", path.display()))?;
-    value["outside_program"]
+    if value["schema_version"].as_u64() != Some(SCOPE_SCHEMA) {
+        return Err(format!(
+            "{}: schema_version must be {SCOPE_SCHEMA} (the evidence revision and each \
+             entry's re-checked evidence)",
+            path.display()
+        ));
+    }
+    let evidence_revision = value["evidence_revision"]
+        .as_str()
+        .filter(|text| !text.is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| {
+            format!(
+                "{}: no `evidence_revision` (the revision its evidence was taken at)",
+                path.display()
+            )
+        })?;
+    let outside = value["outside_program"]
         .as_array()
         .ok_or_else(|| format!("{}: no `outside_program` list", path.display()))?
         .iter()
         .map(|entry| {
-            let text = |key: &str| {
-                entry[key]
+            let text = |value: &Value, key: &str| {
+                value[key]
                     .as_str()
                     .filter(|text| !text.is_empty())
                     .map(str::to_owned)
                     .ok_or_else(|| format!("{}: an entry has no `{key}`", path.display()))
             };
+            let fragment = text(entry, "fragment")?;
+            let evidence = &entry["evidence"];
+            let evidence = match evidence["kind"].as_str() {
+                Some("tokens-absent") => Evidence::TokensAbsent {
+                    sources: text_list(evidence, "sources", &path)?,
+                    generated: text_list(evidence, "generated", &path)?
+                        .into_iter()
+                        .collect(),
+                },
+                Some("not-linked") => {
+                    let links = text_list(evidence, "links", &path)?;
+                    if links.is_empty() {
+                        return Err(format!(
+                            "{}: `{fragment}`: a not-linked evidence names no link line",
+                            path.display()
+                        ));
+                    }
+                    Evidence::NotLinked {
+                        links,
+                        linked: text(evidence, "linked")?,
+                        unlinked: text(evidence, "unlinked")?,
+                    }
+                }
+                other => {
+                    return Err(format!(
+                        "{}: `{fragment}`: evidence kind {other:?} is not `tokens-absent` or \
+                         `not-linked`",
+                        path.display()
+                    ));
+                }
+            };
             Ok(Outside {
-                fragment: text("fragment")?,
-                why: text("why")?,
+                why: text(entry, "why")?,
+                fragment,
+                evidence,
             })
         })
-        .collect()
+        .collect::<Result<Vec<_>, String>>()?;
+    Ok(Scope {
+        evidence_revision: Some(evidence_revision),
+        outside,
+    })
 }
 
 fn hash(word: &str) -> u32 {
@@ -122,8 +244,8 @@ enum Reading {
     Other(Vec<u32>, String),
     /// Preprocessing failed: why.
     Failed(String),
-    /// The profile names it outside the program: why.
-    Outside(String),
+    /// The profile names it outside the program: the scope entry's index.
+    Outside(usize),
 }
 
 fn c_unit<'a>(entry: &CompileEntry, source: &'a str) -> Result<C11TranslationUnit<'a>, String> {
@@ -143,12 +265,23 @@ fn is_c(entry: &CompileEntry) -> bool {
     entry.file.extension().and_then(|ext| ext.to_str()) == Some("c")
 }
 
-/// Preprocess a unit with its own recorded command: `-c` and `-o FILE`
-/// dropped, `extra` added, run from its directory. The command the build
-/// compiled the unit with, so what it includes is what the program includes.
-fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String> {
+/// A unit's own recorded command as a program and its arguments: `-c` and
+/// `-o FILE` dropped and, with `drop_input`, the unit's own input as well
+/// (card MEMBER-PREPASS-OTHER-ROUTES: and every dependency-file flag, so a
+/// dependency listing prints to standard output and writes nothing beside
+/// the build).
+fn own_arguments(entry: &CompileEntry, drop_input: bool) -> Result<(String, Vec<String>), String> {
     let words = shell_words(&entry.command)?;
     let (program, rest) = words.split_first().ok_or("empty command")?;
+    let input = |word: &str| {
+        let path = Path::new(word);
+        let path = if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            entry.directory.join(path)
+        };
+        path == entry.file
+    };
     let mut args = Vec::new();
     let mut skip = false;
     for word in rest {
@@ -157,20 +290,46 @@ fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String
             continue;
         }
         match word.as_str() {
-            "-c" => {}
-            "-o" => skip = true,
+            "-c" | "-MD" | "-MMD" | "-MP" | "-M" | "-MM" | "-MG" => {}
+            "-o" | "-MF" | "-MT" | "-MQ" => skip = true,
             _ if word.starts_with("-o") && word.len() > 2 => {}
+            _ if ["-MF", "-MT", "-MQ"]
+                .iter()
+                .any(|flag| word.starts_with(flag) && word.len() > 3) => {}
+            _ if drop_input && input(word) => {}
             _ => args.push(word.clone()),
         }
     }
-    args.extend(extra.iter().map(|word| (*word).to_owned()));
-    let output = Command::new(program)
-        .args(&args)
+    Ok((program.clone(), args))
+}
+
+/// Run `program args` from the unit's directory, `stdin` fed when given;
+/// standard output, or the first line of standard error.
+fn run_own(
+    entry: &CompileEntry,
+    program: &str,
+    args: &[String],
+    stdin: Option<&str>,
+) -> Result<String, String> {
+    let mut child = Command::new(program)
+        .args(args)
         .current_dir(&entry.directory)
-        .stdin(Stdio::null())
+        .stdin(if stdin.is_some() {
+            Stdio::piped()
+        } else {
+            Stdio::null()
+        })
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .output()
+        .spawn()
+        .map_err(|error| error.to_string())?;
+    if let Some(text) = stdin {
+        let mut pipe = child.stdin.take().ok_or("no standard input")?;
+        pipe.write_all(text.as_bytes())
+            .map_err(|error| error.to_string())?;
+    }
+    let output = child
+        .wait_with_output()
         .map_err(|error| error.to_string())?;
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr)
@@ -182,13 +341,227 @@ fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
+/// Preprocess a unit with its own recorded command: `-c` and `-o FILE`
+/// dropped, `extra` added, run from its directory. The command the build
+/// compiled the unit with, so what it includes is what the program includes.
+fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String> {
+    let (program, mut args) = own_arguments(entry, false)?;
+    args.extend(extra.iter().map(|word| (*word).to_owned()));
+    run_own(entry, &program, &args, None)
+}
+
+/// The files of a Make dependency rule (`-M` output), target dropped.
+fn dependency_files(rule: &str) -> Vec<String> {
+    let joined = rule.replace("\\\r\n", " ").replace("\\\n", " ");
+    let mut out = Vec::new();
+    for line in joined.lines() {
+        // The target ends at the first `:` followed by whitespace or the end.
+        let bytes = line.as_bytes();
+        let Some(colon) = (0..bytes.len())
+            .find(|&at| bytes[at] == b':' && bytes.get(at + 1).is_none_or(u8::is_ascii_whitespace))
+        else {
+            continue;
+        };
+        let mut word = String::new();
+        let mut chars = line[colon + 1..].chars().peekable();
+        while let Some(ch) = chars.next() {
+            match ch {
+                '\\' if chars.peek() == Some(&' ') => {
+                    word.push(' ');
+                    chars.next();
+                }
+                ch if ch.is_whitespace() => {
+                    if !word.is_empty() {
+                        out.push(std::mem::take(&mut word));
+                    }
+                }
+                ch => word.push(ch),
+            }
+        }
+        if !word.is_empty() {
+            out.push(word);
+        }
+    }
+    out
+}
+
+/// Split a dependency listing into the files Clang resolved (from the unit's
+/// directory) and the names it left unresolved (`-MG`).
+fn resolve_dependencies(entry: &CompileEntry, rule: &str) -> (Vec<PathBuf>, BTreeSet<String>) {
+    let mut found = Vec::new();
+    let mut missing = BTreeSet::new();
+    for name in dependency_files(rule) {
+        let path = Path::new(&name);
+        let path = if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            entry.directory.join(path)
+        };
+        if path.is_file() {
+            found.push(path);
+        } else if name != "-" {
+            missing.insert(name);
+        }
+    }
+    (found, missing)
+}
+
+/// The preprocessor directive lines of a generator source (a grammar, a
+/// header template), continuation lines kept: what its generated C includes.
+fn directive_lines(text: &str) -> String {
+    let mut out = String::new();
+    let mut continued = false;
+    for line in text.lines() {
+        if continued || line.trim_start().starts_with('#') {
+            out.push_str(line);
+            out.push('\n');
+            continued = line.ends_with('\\');
+        }
+    }
+    out
+}
+
+/// Every regular file under `directory`, sorted, without following links.
+fn files_under(directory: &Path, out: &mut Vec<PathBuf>) -> Result<(), String> {
+    let mut entries = fs::read_dir(directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?
+        .map(|entry| entry.map(|entry| entry.path()))
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
+    entries.sort();
+    for path in entries {
+        let kind = fs::symlink_metadata(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?
+            .file_type();
+        if kind.is_dir() {
+            files_under(&path, out)?;
+        } else if kind.is_file() {
+            out.push(path);
+        }
+    }
+    Ok(())
+}
+
+/// The CMake build root above a unit's compile directory: the nearest
+/// ancestor holding `CMakeCache.txt`.
+fn cmake_root(directory: &Path) -> Option<&Path> {
+    directory
+        .ancestors()
+        .find(|dir| dir.join("CMakeCache.txt").is_file())
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: re-verify one excluded unit's evidence
+/// against the run's sources, up to the token test: the files whose text
+/// must name no token (none for a linkage evidence), or why the evidence
+/// cannot hold whatever the tokens.
+fn exclusion_files(
+    entry: &CompileEntry,
+    outside: &Outside,
+    source_root: Option<&Path>,
+) -> Result<Vec<PathBuf>, String> {
+    match &outside.evidence {
+        Evidence::NotLinked {
+            links,
+            linked,
+            unlinked,
+        } => {
+            let root = cmake_root(&entry.directory).ok_or_else(|| {
+                format!(
+                    "no CMakeCache.txt above {} to read the link lines from",
+                    entry.directory.display()
+                )
+            })?;
+            for link in links {
+                let path = root.join(link);
+                let text = fs::read_to_string(&path)
+                    .map_err(|error| format!("link line {}: {error}", path.display()))?;
+                if !text.contains(linked.as_str()) {
+                    return Err(format!(
+                        "link line {} does not name `{linked}`",
+                        path.display()
+                    ));
+                }
+                if text.contains(unlinked.as_str()) {
+                    return Err(format!("link line {} names `{unlinked}`", path.display()));
+                }
+            }
+            Ok(Vec::new())
+        }
+        Evidence::TokensAbsent { sources, generated } => {
+            let mut files = Vec::new();
+            let mut missing = BTreeSet::new();
+            if entry.file.is_file() {
+                let rule = preprocess_own(entry, &["-M", "-MG"])
+                    .map_err(|why| format!("its includes could not be listed: {why}"))?;
+                let (found, unresolved) = resolve_dependencies(entry, &rule);
+                files.push(entry.file.clone());
+                files.extend(found);
+                missing.extend(unresolved);
+            } else if sources.is_empty() {
+                return Err(
+                    "the unit is absent and the scope names no source it is generated from".into(),
+                );
+            }
+            if !sources.is_empty() {
+                let root = source_root
+                    .ok_or("the scope names generator sources but the route has no source root")?;
+                let (program, mut base) = own_arguments(entry, true)?;
+                base.extend(["-M", "-MG"].map(str::to_owned));
+                for source in sources {
+                    let path = root.join(source);
+                    if path.is_dir() {
+                        files_under(&path, &mut files)?;
+                        continue;
+                    }
+                    let text = fs::read(&path)
+                        .map_err(|error| format!("source {}: {error}", path.display()))?;
+                    files.push(path.clone());
+                    let directives = directive_lines(&String::from_utf8_lossy(&text));
+                    if directives.is_empty() {
+                        continue;
+                    }
+                    let mut args = base.clone();
+                    if let Some(parent) = path.parent() {
+                        args.push("-iquote".into());
+                        args.push(parent.display().to_string());
+                    }
+                    args.extend(["-x", "c", "-"].map(str::to_owned));
+                    let rule =
+                        run_own(entry, &program, &args, Some(&directives)).map_err(|why| {
+                            format!(
+                                "the includes of source {} could not be listed: {why}",
+                                path.display()
+                            )
+                        })?;
+                    let (found, unresolved) = resolve_dependencies(entry, &rule);
+                    files.extend(found);
+                    missing.extend(unresolved);
+                }
+            }
+            if let Some(name) = missing.iter().find(|name| !generated.contains(*name)) {
+                return Err(format!(
+                    "`{name}` is not resolved and the scope does not name it as generated"
+                ));
+            }
+            if let (Some(name), true) = (missing.iter().next(), sources.is_empty()) {
+                return Err(format!(
+                    "`{name}` is generated but the scope names no source it is generated from"
+                ));
+            }
+            files.sort();
+            files.dedup();
+            Ok(files)
+        }
+    }
+}
+
 fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
     let path = entry.file.to_string_lossy();
-    if let Some(outside) = scope
+    if let Some(index) = scope
         .iter()
-        .find(|outside| path.contains(&outside.fragment))
+        .position(|outside| path.contains(&outside.fragment))
     {
-        return Reading::Outside(outside.why.clone());
+        return Reading::Outside(index);
     }
     match preprocess_own(entry, &["-E"]) {
         Ok(text) if is_c(entry) => Reading::C(identifiers(&text)),
@@ -251,11 +624,13 @@ pub struct Prepass {
 }
 
 /// Run the pre-pass over `entries` for the members `contracts` invoke;
-/// `None` when no declaration invokes a member.
+/// `None` when no declaration invokes a member. `source_root` resolves the
+/// scope's generator sources (card MEMBER-PREPASS-OTHER-ROUTES).
 pub fn run(
     entries: &[CompileEntry],
     contracts: &ResourceContracts,
-    scope: &[Outside],
+    scope: &Scope,
+    source_root: Option<&Path>,
     jobs: usize,
 ) -> Option<Prepass> {
     let members = crate::callback_member_fold::member_declarations(contracts)
@@ -274,12 +649,62 @@ pub fn run(
         entries.iter().collect::<Vec<_>>(),
         jobs,
         None,
-        |entry| read_identifiers(entry, scope),
+        |entry| read_identifiers(entry, &scope.outside),
         |reading| {
             readings.push(reading);
             Ok::<(), ()>(())
         },
     );
+    // Card MEMBER-PREPASS-OTHER-ROUTES: every excluded unit's evidence,
+    // re-verified against the run's sources up to the token test, and the
+    // identifiers of every file the test reads (once each).
+    let excluded = readings
+        .iter()
+        .enumerate()
+        .filter_map(|(index, reading)| match reading {
+            Reading::Outside(entry) => Some((index, *entry)),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    let mut evidence: BTreeMap<usize, Result<Vec<PathBuf>, String>> = BTreeMap::new();
+    let _ = crate::parallel::run_ordered(
+        excluded,
+        jobs,
+        None,
+        |(index, outside)| {
+            (
+                index,
+                exclusion_files(&entries[index], &scope.outside[outside], source_root),
+            )
+        },
+        |(index, files)| {
+            evidence.insert(index, files);
+            Ok::<(), ()>(())
+        },
+    );
+    let paths = evidence
+        .values()
+        .filter_map(|files| files.as_ref().ok())
+        .flatten()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut file_ids: BTreeMap<PathBuf, Result<Vec<u32>, String>> = BTreeMap::new();
+    let _ = crate::parallel::run_ordered(
+        paths.into_iter().collect::<Vec<_>>(),
+        jobs,
+        None,
+        |path| {
+            let ids = fs::read(&path)
+                .map(|bytes| identifiers(&String::from_utf8_lossy(&bytes)))
+                .map_err(|error| format!("{}: {error}", path.display()));
+            (path, ids)
+        },
+        |(path, ids)| {
+            file_ids.insert(path, ids);
+            Ok::<(), ()>(())
+        },
+    );
+    let mut dropped: BTreeMap<String, String> = BTreeMap::new();
     let mut read: BTreeMap<usize, MemberFacts> = BTreeMap::new();
     let mut unread: BTreeMap<String, String> = BTreeMap::new();
     let mut outside = BTreeMap::new();
@@ -291,6 +716,11 @@ pub fn run(
     // round (the records read refine a member's keys, which may drop a
     // member name the bootstrap round used); the read set only grows, so the
     // loop ends, and at its end every C unit naming a final token is read.
+    // Card MEMBER-PREPASS-OTHER-ROUTES: each round also re-checks every
+    // remaining exclusion against the round's tokens; a dropped exclusion is
+    // read like any other unit from the next round on, and never restored,
+    // so the loop still ends, and at its end every exclusion holds against
+    // the final tokens.
     loop {
         rounds += 1;
         let mut units = read.values().cloned().collect::<Vec<_>>();
@@ -305,6 +735,55 @@ pub fn run(
             .map(|token| hash(token))
             .collect::<BTreeSet<_>>();
         let names = |ids: &[u32]| hashes.iter().any(|token| ids.binary_search(token).is_ok());
+        let stale = readings
+            .iter()
+            .enumerate()
+            .filter_map(|(index, reading)| {
+                let Reading::Outside(_) = reading else {
+                    return None;
+                };
+                let why = match &evidence[&index] {
+                    Err(why) => why.clone(),
+                    Ok(files) => {
+                        let named = files.iter().find_map(|file| match &file_ids[file] {
+                            Err(why) => Some(why.clone()),
+                            Ok(ids) if names(ids) => Some(format!(
+                                "{} names a token of the pre-pass ({})",
+                                file.display(),
+                                tokens
+                                    .iter()
+                                    .filter(|token| ids.binary_search(&hash(token)).is_ok())
+                                    .take(3)
+                                    .map(|token| format!("`{token}`"))
+                                    .collect::<Vec<_>>()
+                                    .join(", ")
+                            )),
+                            Ok(_) => None,
+                        });
+                        named?
+                    }
+                };
+                Some((index, why))
+            })
+            .collect::<Vec<_>>();
+        if !stale.is_empty() {
+            let mut fresh = Vec::with_capacity(stale.len());
+            let _ = crate::parallel::run_ordered(
+                stale,
+                jobs,
+                None,
+                |(index, why)| (index, why, read_identifiers(&entries[index], &[])),
+                |result| {
+                    fresh.push(result);
+                    Ok::<(), ()>(())
+                },
+            );
+            for (index, why, reading) in fresh {
+                dropped.insert(label(&entries[index]), why);
+                readings[index] = reading;
+            }
+            continue;
+        }
         let selected = readings
             .iter()
             .enumerate()
@@ -357,8 +836,8 @@ pub fn run(
             Reading::Failed(why) => {
                 unread.insert(key, why.clone());
             }
-            Reading::Outside(why) => {
-                outside.insert(key, why.clone());
+            Reading::Outside(entry) => {
+                outside.insert(key, scope.outside[*entry].why.clone());
             }
             _ => {}
         }
@@ -384,8 +863,57 @@ pub fn run(
             counts
         }),
         "outside_program": outside,
+        // Card MEMBER-PREPASS-OTHER-ROUTES: the scope file's exclusions, each
+        // re-verified against this run's sources and the final tokens.
+        "scope": {
+            "meaning": "every exclusion of the profile's member-facts-scope.json, re-verified against this run's own sources (rule 12n): a tokens-absent exclusion holds when the unit's raw text, every file Clang resolves for it under its own command and the generator sources the entry names name no final token and every unresolved include is one the entry names as generated; a not-linked exclusion holds when the named link lines link the archive and not the wrapper. A dropped exclusion's unit is preprocessed and read like any other unit, and opens every member when it cannot be read",
+            "evidence_revision": scope.evidence_revision,
+            "entries": scope.outside.len(),
+            "held": outside.len(),
+            "dropped": dropped,
+        },
     });
     Some(Prepass { facts, section })
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: SHA-256 of the run's member facts (every
+/// read unit's facts, the declarations' unit and the unread units), the
+/// identity a checkpoint records for them.
+///
+/// # Errors
+/// A serialisation failure.
+pub fn facts_sha256(facts: &RunMemberFacts) -> Result<String, String> {
+    let bytes = serde_json::to_vec(&json!({"units": facts.units, "unread": facts.unread}))
+        .map_err(|error| error.to_string())?;
+    Ok(qcore_contract::profile_loader::sha256_hex(&bytes))
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: what every route does with a pre-pass
+/// once it is read, before any unit is analysed: the evidence section to
+/// `QCORE_MEMBER_PREPASS_SECTION` when that names a file, the console line,
+/// and the hand-off constants' resolution (rule 13l).
+///
+/// Returns the console line, already printed.
+///
+/// # Errors
+/// A file write, or a hand-off rejection.
+pub fn announce(prepass: &Prepass, contracts: &ResourceContracts) -> Result<String, String> {
+    if let Some(path) = std::env::var_os("QCORE_MEMBER_PREPASS_SECTION") {
+        fs::write(
+            &path,
+            serde_json::to_vec_pretty(&prepass.section).map_err(|error| error.to_string())?,
+        )
+        .map_err(|error| format!("{}: {error}", Path::new(&path).display()))?;
+    }
+    let line = format!(
+        "member facts pre-pass: {} unit(s), {} read, {} unread",
+        prepass.section["units"],
+        prepass.section["read"],
+        prepass.facts.unread.len()
+    );
+    println!("{line}");
+    check_handoff_constants(contracts, &prepass.facts)?;
+    Ok(line)
 }
 
 /// Card **SUPPLIED-OWNED-RETURN-CODE-HANDOFF** (rule 13l): every hand-off's
@@ -429,6 +957,131 @@ pub fn check_handoff_constants(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_dependency_rule_lists_its_files_without_the_target() {
+        let rule = "out.o: /a/b.c /a/c.h \\\n  d.h with\\ space.h \\\n  /usr/include/stdio.h\n";
+        assert_eq!(
+            dependency_files(rule),
+            [
+                "/a/b.c",
+                "/a/c.h",
+                "d.h",
+                "with space.h",
+                "/usr/include/stdio.h"
+            ]
+        );
+        assert_eq!(dependency_files("-: x.h\n"), ["x.h"]);
+    }
+
+    #[test]
+    fn a_generator_sources_directives_are_kept_with_their_continuations() {
+        let text =
+            "%{\n#include <stdio.h>\n  #define X(a) \\\n   (a)\nint y;\n%}\n%%\nrule: 'x';\n";
+        assert_eq!(
+            directive_lines(text),
+            "#include <stdio.h>\n  #define X(a) \\\n   (a)\n"
+        );
+    }
+
+    #[test]
+    fn a_scope_file_must_name_its_evidence_revision_and_each_evidence() {
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-member-scope-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        fs::create_dir_all(&directory).unwrap();
+        let write = |value: Value| {
+            fs::write(directory.join(SCOPE_FILE), value.to_string()).unwrap();
+            load_scope(&directory)
+        };
+        let entry = json!({"fragment": "/x.c", "why": "w", "evidence": {"kind": "tokens-absent"}});
+        // Schema 1 and a file with no evidence revision are refused.
+        assert!(write(json!({"schema_version": 1, "outside_program": [entry]})).is_err());
+        assert!(write(json!({"schema_version": 2, "outside_program": [entry]})).is_err());
+        // An entry with no or an unknown evidence kind is refused.
+        for evidence in [json!(null), json!({"kind": "trusted"})] {
+            let bad = json!({"fragment": "/x.c", "why": "w", "evidence": evidence});
+            assert!(
+                write(
+                    json!({"schema_version": 2, "evidence_revision": "r", "outside_program": [bad]})
+                )
+                .is_err()
+            );
+        }
+        // A not-linked evidence names its link lines.
+        let unlinked = json!({"fragment": "/x.cpp", "why": "w", "evidence": {
+            "kind": "not-linked", "links": [], "linked": "a.a", "unlinked": "b"}});
+        assert!(
+            write(
+                json!({"schema_version": 2, "evidence_revision": "r", "outside_program": [unlinked]})
+            )
+            .is_err()
+        );
+        let scope = write(json!({"schema_version": 2, "evidence_revision": "r", "outside_program": [
+            entry,
+            {"fragment": "/y.cpp", "why": "v", "evidence": {
+                "kind": "not-linked", "links": ["bin/link.txt"], "linked": "a.a", "unlinked": "b"}},
+        ]}))
+        .unwrap();
+        assert_eq!(scope.evidence_revision.as_deref(), Some("r"));
+        assert_eq!(
+            scope.outside[0].evidence,
+            Evidence::TokensAbsent {
+                sources: Vec::new(),
+                generated: BTreeSet::new()
+            }
+        );
+        assert!(matches!(
+            &scope.outside[1].evidence,
+            Evidence::NotLinked { links, .. } if links == &["bin/link.txt"]
+        ));
+        // No file: nothing excluded.
+        fs::remove_file(directory.join(SCOPE_FILE)).unwrap();
+        assert_eq!(load_scope(&directory).unwrap(), Scope::default());
+        fs::remove_dir_all(&directory).unwrap();
+    }
+
+    #[test]
+    fn a_not_linked_exclusion_holds_only_while_its_link_lines_say_so() {
+        let root = std::env::temp_dir().join(format!(
+            "qcore-member-link-{}-{:?}",
+            std::process::id(),
+            std::thread::current().id()
+        ));
+        let unit = root.join("lib/cpp");
+        fs::create_dir_all(&unit).unwrap();
+        fs::create_dir_all(root.join("bin")).unwrap();
+        let entry = CompileEntry {
+            directory: unit.clone(),
+            command: "c++ -c w.cpp".into(),
+            file: unit.join("w.cpp"),
+        };
+        let outside = Outside {
+            fragment: "/cpp/".into(),
+            why: "w".into(),
+            evidence: Evidence::NotLinked {
+                links: vec!["bin/link.txt".into()],
+                linked: "libk.a".into(),
+                unlinked: "k++".into(),
+            },
+        };
+        // No CMakeCache.txt above the unit: cannot hold.
+        assert!(exclusion_files(&entry, &outside, None).is_err());
+        fs::write(root.join("CMakeCache.txt"), "").unwrap();
+        fs::write(root.join("bin/link.txt"), "cc main.o libk.a -o bin\n").unwrap();
+        assert_eq!(exclusion_files(&entry, &outside, None), Ok(Vec::new()));
+        fs::write(
+            root.join("bin/link.txt"),
+            "cc main.o libk.a libk++.a -o bin\n",
+        )
+        .unwrap();
+        assert!(exclusion_files(&entry, &outside, None).is_err());
+        fs::write(root.join("bin/link.txt"), "cc main.o -o bin\n").unwrap();
+        assert!(exclusion_files(&entry, &outside, None).is_err());
+        fs::remove_dir_all(&root).unwrap();
+    }
 
     #[test]
     fn identifiers_are_every_word_hashed_once() {

@@ -211,28 +211,15 @@ pub fn run(
             prepass_entries.extend(plan.selected.iter().cloned());
         }
         let scope = crate::member_prepass::load_scope(profile.directory())?;
-        crate::member_prepass::run(&prepass_entries, &contracts, &scope, jobs)
+        crate::member_prepass::run(&prepass_entries, &contracts, &scope, Some(&root), jobs)
     };
     if let Some(prepass) = &prepass {
         // Evidence only: the pre-pass section, written as soon as it is read
-        // when `QCORE_MEMBER_PREPASS_SECTION` names a file.
-        if let Some(path) = std::env::var_os("QCORE_MEMBER_PREPASS_SECTION") {
-            fs::write(
-                &path,
-                serde_json::to_vec_pretty(&prepass.section).map_err(|error| error.to_string())?,
-            )
-            .map_err(|error| format!("{}: {error}", Path::new(&path).display()))?;
-        }
-        println!(
-            "member facts pre-pass: {} unit(s), {} read, {} unread",
-            prepass.section["units"],
-            prepass.section["read"],
-            prepass.facts.unread.len()
-        );
-        // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): a hand-off's
-        // `@` name that Clang does not resolve in its candidate's own result
-        // type rejects the contracts before any unit is analysed.
-        crate::member_prepass::check_handoff_constants(&contracts, &prepass.facts)?;
+        // when `QCORE_MEMBER_PREPASS_SECTION` names a file. Card
+        // SUPPLIED-OWNED-RETURN-CODE-HANDOFF (rule 13l): a hand-off's `@`
+        // name that Clang does not resolve in its candidate's own result type
+        // rejects the contracts before any unit is analysed.
+        let _ = crate::member_prepass::announce(prepass, &contracts)?;
     }
     let run_facts = prepass.as_ref().map(|prepass| prepass.facts.clone());
     // The steps in exactly the sequential order. Only `Prelude` and `Unit`

@@ -614,6 +614,10 @@ pub struct NoBuildAudit {
     counts: AuditCounts,
     reasons: BTreeMap<String, usize>,
     files: Vec<Value>,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n, R1): the run's member
+    /// facts the pre-pass read over the selected units, installed on every
+    /// analysing thread, with its evidence section.
+    member_prepass: Option<crate::member_prepass::Prepass>,
 }
 
 /// One unit's console lines and, unless it failed, its products.
@@ -770,7 +774,36 @@ impl NoBuildAudit {
             counts: AuditCounts::default(),
             reasons: BTreeMap::new(),
             files: Vec::new(),
+            member_prepass: None,
         })
+    }
+
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n; user decisions R1, F1):
+    /// read the member facts of every selected unit, under the compile
+    /// record it is analysed as, before any unit is analysed, so each unit
+    /// decides a member invocation over the run's set. The run is the
+    /// selection: no build names another unit, and the route has no profile,
+    /// so no unit is excluded. Nothing runs when no declaration invokes a
+    /// member.
+    ///
+    /// # Errors
+    /// A unit whose compile record cannot be formed, or a hand-off rejection.
+    pub fn run_member_prepass(&mut self, units: &[Unit], jobs: usize) -> Result<(), String> {
+        let entries = units
+            .iter()
+            .map(|unit| self.entry(unit))
+            .collect::<Result<Vec<_>, _>>()?;
+        if let Some(prepass) = crate::member_prepass::run(
+            &entries,
+            &self.contracts,
+            &crate::member_prepass::Scope::default(),
+            Some(&self.root),
+            jobs,
+        ) {
+            crate::member_prepass::announce(&prepass, &self.contracts)?;
+            self.member_prepass = Some(prepass);
+        }
+        Ok(())
     }
 
     /// The compile record this unit is analysed as: the host Clang, the
@@ -831,7 +864,15 @@ impl NoBuildAudit {
     #[must_use]
     pub fn evaluate(&self, unit: &Unit) -> UnitOutcome {
         let mut output = String::new();
-        let result = self.evaluate_into(unit, &mut output);
+        // Card MEMBER-PREPASS-OTHER-ROUTES (R1): analysed with the run's
+        // member facts installed, when the pre-pass ran.
+        let facts = self
+            .member_prepass
+            .as_ref()
+            .map(|prepass| prepass.facts.clone());
+        let result = qcore_c_gateway::member_run_facts::scoped(facts, || {
+            self.evaluate_into(unit, &mut output)
+        });
         UnitOutcome { output, result }
     }
 
@@ -1000,7 +1041,12 @@ impl NoBuildAudit {
     pub fn finish(mut self, path: Option<&Path>) -> Result<AuditCounts, String> {
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's
         // closure of every invoked member, folded over the rows before
-        // anything is published; it only demotes.
+        // anything is published; it only demotes. Card
+        // MEMBER-PREPASS-OTHER-ROUTES: over the pre-pass's facts, when it ran.
+        if let Some(prepass) = self.member_prepass.take() {
+            self.report
+                .set_member_prepass(prepass.facts, prepass.section);
+        }
         let (members, from_safe, from_pending) = self.report.fold_callback_members(&self.contracts);
         self.counts.safe_units -= from_safe;
         self.counts.pending_units -= from_pending;
@@ -1296,6 +1342,7 @@ pub fn run_units(
         audit.assumed.include_dirs.len(),
         audit.assumed.defines.len()
     );
+    audit.run_member_prepass(units, jobs)?;
     let dispatch = crate::parallel::heaviest_first(
         &units
             .iter()

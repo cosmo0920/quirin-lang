@@ -35,12 +35,12 @@ each, each separately digested:
 |---|---|---|
 | 0 | `identity` | every input of the unit result (see [Identity](#identity-and-resume)) |
 | 1 | `plan` | this unit's position and every unit checkpoint of the run with its key |
-| 2 | `global` | run-wide publication inputs: console preamble, revision and report key, the report's evidence record, the `.contracts.json` assumptions, the pending-review markers, the `contract_revision` section template, the historical reference revision |
+| 2 | `global` | run-wide publication inputs: console preamble, revision and report key, the report's evidence record, the `.contracts.json` assumptions, the pending-review markers, the `contract_revision` section template, the historical reference revision, and (schema 5) the member fold's inputs: its environment and, when the member-facts pre-pass ran, the run's closure of each invoked member with the pre-pass's evidence section |
 | 3 | `preparation` | per unit: `library`, `file`, `compile_configuration` (with the compile-task identity, raw and preprocessed digests and reason codes), `enumeration`, `origin_coordinates` |
 | 4 | `lowering` | per unit: `reason`, `reason_code`, `source_functions`, `not_projected` (the projection or refusal outcome) |
 | 5 | `verdicts` | per unit: `status`, `functions` (each function's summary: verdict, diagnostics, counted-user clauses), `diagnostic_counts`, and any row member no other step names |
 | 6 | `certificates` | per unit: whether a published `Safe` rests on a certificate bound to the unit's compile-task identity, or the binding was refused (derived from the rows) |
-| 7 | `contracts` | the contract set in force (manifest and source digests, per-module digests, provider selection, mode, lock digests, pending-review counts) and what the run-final sections read of this unit: held calls per callee (`awaiting-human-review` and `contract-pin-mismatch`) and the analysed function names |
+| 7 | `contracts` | the contract set in force (manifest and source digests, per-module digests, provider selection, mode, lock digests, pending-review counts) and what the run-final sections read of this unit: held calls per callee (`awaiting-human-review` and `contract-pin-mismatch`), the analysed function names and (schema 5) the member and state facts the unit recorded for the member fold |
 | 8 | `result` | the library header line (empty after its first unit), each unit's console lines, its tallies (without timings, with the `Pending` count), its per-category diagnostic counts, the checkout sources its units stand for, and the unit's **verdict** |
 | 9 | `provenance` | wall time, sampled peak and process high-water RSS, the job count, the three preparation timings: measurements, outside identity and outside every composed verdict |
 
@@ -65,7 +65,7 @@ whole-run report bytes without storing pretty JSON in the `.qo`.
 | 44+*H* | Σ lengths | the sections, concatenated in manifest order; the file ends exactly after the last |
 
 Every section is its schema type encoded with [postcard](https://postcard.jamesmunns.com/wire-format)
-1.x and must decode with no bytes left over. Schema **4** has exactly the ten
+1.x and must decode with no bytes left over. Schema **5** has exactly the ten
 sections above. Postcard encodes unsigned integers and enum discriminants as
 base-128 varints, signed integers as zigzag varints, Booleans as one byte,
 strings as a varint byte length followed by UTF-8, and arrays/maps as a
@@ -77,7 +77,9 @@ keys are refused on read.
 
 The recursive `BinaryValue` tags are stable since schema 3 (schema 4, card
 W47-REVIEW-HOLD-CONCRETE-REASON, adds only each pending-review marker's
-`category` to the `global` section):
+`category` to the `global` section; schema 5, card MEMBER-PREPASS-OTHER-ROUTES,
+adds only the run's member facts: `member_facts_sha256` to the run identity,
+`member_fold` to `global` and `callback_members` to `contracts`):
 
 | Code | Payload |
 |---:|---|
@@ -95,9 +97,10 @@ W47-REVIEW-HOLD-CONCRETE-REASON, adds only each pending-review marker's
 `CertificateRecord.outcome` uses 0 PublishedSafe, 1 BindingRefused,
 2 NotPublished. Unknown codes are refused. Schema 2 files, which held pretty
 JSON strings and group-level checkpoints, and schema 3 files, whose markers
-carry no category, are deliberately refused by this reader; `--resume`
-recomputes their units as schema 4 files and leaves the old files untouched.
-Schema 1 was already refused.
+carry no category, and schema 4 files, which carry no member facts, are
+deliberately refused by this reader; `--resume` recomputes their units as
+schema 5 files and leaves the old files untouched. Schema 1 was already
+refused.
 
 The **content digest** of a checkpoint is the SHA-256 of the postcard encoding
 of `(schema_version, manifest entries except provenance)`. Every section but
@@ -135,7 +138,12 @@ unit of one run:
   analysed under (card W45-REFUTED-CONTRACT-WITHDRAWAL, contract spec C06.4:
   the empty table's digest in a first phase);
 - the Clang identity (program, version, target);
-- every `QCORE_*` environment variable except `QCORE_AUDIT_JOBS`.
+- every `QCORE_*` environment variable except `QCORE_AUDIT_JOBS`;
+- (schema 5, card MEMBER-PREPASS-OTHER-ROUTES) the SHA-256 of the run's member
+  facts when the member-facts pre-pass ran (gateway rule 12n): every unit
+  decided its member invocations over them, so a change anywhere in the
+  compile database that changes them recomputes every unit, and checkpoints
+  of two run sets never compose (`member facts differs`).
 
 Its **group** part is the unique unit label, inherited library refusal, and a
 **fingerprint**: the row's `file`, the SHA-256 of the unit's compile
@@ -190,6 +198,20 @@ merged facts, `source_file_count` and `configuration_count`), and the explicit
 Unknown sidecars, and prints the whole run's console transcript (with the
 checker-plugin tally when a checker ran). It reports the run's verdict on
 standard error and in `checkpoint-run.json`.
+
+**The member fold (gateway rule 12n; card MEMBER-PREPASS-OTHER-ROUTES).**
+When the contracts invoke a callback member or state a constructor's result
+state, the whole run folds every unit's member and state facts before
+publishing (`callback_member_fold`). The composer folds the same inputs from
+the checkpoints: the environment and the run's closures in `global`, each
+unit's facts in its `contracts` section and the rows' `library`, `file`,
+`status` and `functions`. It writes the fold's `callback_members` section
+into the sidecar (with the pre-pass's evidence as `prepass`) and prints the
+`callback members:` line where the whole run prints it. It does not rewrite
+rows, so a fold that would demote a row is refused (with the run's facts
+installed every unit decided over the carried closures and the member part
+demotes nothing, `QCore.MemberPrepassRoutes`). A run whose contracts invoke a
+member and whose checkpoints carry no run closures is refused, as before.
 
 **Unit verdicts.** A row's status maps to the four-value verdict of
 §L21.2: `Safe`, `Pending`, `Unknown` and `Unsafe` are themselves; a

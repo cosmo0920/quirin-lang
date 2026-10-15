@@ -120,8 +120,25 @@ pub(crate) fn run(
         ))
         .map_err(|error| error.to_string())?,
     )?;
-    let run_identity = run_identity(route, audit, &revision_template)?;
-    let global = global_section(route, audit, plan.preamble, revision_template)?;
+    // Card MEMBER-PREPASS-OTHER-ROUTES: the run's member facts, digested once
+    // for every unit's identity.
+    let member_facts_sha256 = audit
+        .member_prepass()
+        .map(|prepass| crate::member_prepass::facts_sha256(&prepass.facts))
+        .transpose()?;
+    let run_identity = run_identity(
+        route,
+        audit,
+        &revision_template,
+        member_facts_sha256.clone(),
+    )?;
+    let global = global_section(
+        route,
+        audit,
+        plan.preamble,
+        revision_template,
+        member_facts_sha256,
+    )?;
     let planned = planned_groups(audit, &groups)?;
     warn_stale(&options.directory, &groups);
     let mut paths = Vec::with_capacity(groups.len());
@@ -400,6 +417,7 @@ fn run_identity(
     route: &CurrentRoute<'_>,
     audit: &CurrentAudit,
     revision_template: &str,
+    member_facts_sha256: Option<String>,
 ) -> Result<RunIdentity, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
     let binary = fs::read(&executable).map_err(|error| {
@@ -479,6 +497,7 @@ fn run_identity(
             target: audit.compiler().target().to_owned(),
         },
         environment,
+        member_facts_sha256,
     })
 }
 
@@ -497,8 +516,29 @@ fn global_section(
     audit: &CurrentAudit,
     preamble: Vec<String>,
     revision_template_json: String,
+    member_facts_sha256: Option<String>,
 ) -> Result<GlobalSection, String> {
     let markers = crate::pending_review::markers(audit.contracts());
+    // Card MEMBER-PREPASS-OTHER-ROUTES: what the run's fold reads beyond the
+    // units' own facts, so the composer folds as the run does.
+    let environment = crate::callback_member_fold::FoldEnvironment::of(audit.contracts());
+    let member_fold = (!environment.is_empty())
+        .then(|| {
+            let run = audit.member_prepass().map(|prepass| {
+                json!({
+                    "facts_sha256": member_facts_sha256,
+                    "closures": crate::callback_member_fold::closures_value(
+                        &environment.run_closures(&prepass.facts),
+                    ),
+                    "section": prepass.section,
+                })
+            });
+            BinaryValue::from_json(&json!({
+                "environment": environment,
+                "run": run,
+            }))
+        })
+        .transpose()?;
     Ok(GlobalSection {
         console_preamble: preamble,
         source_revision: audit.revision().to_owned(),
@@ -527,6 +567,7 @@ fn global_section(
             &serde_json::from_str(&revision_template_json).map_err(|error| error.to_string())?,
         )?,
         historical_reference_revision: route.historical_reference_revision.to_owned(),
+        member_fold,
     })
 }
 
@@ -615,6 +656,8 @@ fn run_difference(recorded: &RunIdentity, now: &RunIdentity) -> Option<&'static 
         Some("compiler")
     } else if recorded.environment != now.environment {
         Some("environment")
+    } else if recorded.member_facts_sha256 != now.member_facts_sha256 {
+        Some("member facts")
     } else {
         None
     }
@@ -808,6 +851,7 @@ fn compute_group(
         certificates,
         held,
         facts,
+        callback_members,
         unit_verdicts,
         diagnostic_counts,
         counts,
@@ -891,6 +935,7 @@ fn compute_group(
                 .iter()
                 .map(|(callee, (sites, rows))| held_record(callee, *sites, rows))
                 .collect(),
+            callback_members,
         },
         result: ResultSection {
             header,
@@ -947,6 +992,9 @@ struct GroupBuilder {
     certificates: Vec<CertificateRecord>,
     held: HeldCalls,
     facts: crate::contract_revision::ReportFacts,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES: the member and state facts the
+    /// units recorded, in unit order.
+    callback_members: Vec<BinaryValue>,
     diagnostic_counts: BTreeMap<String, usize>,
     counts: AuditCounts,
     sources: BTreeSet<String>,
@@ -1028,6 +1076,11 @@ impl GroupBuilder {
             .absorb(crate::contract_revision::ReportFacts::of_rows(
                 fragment.unit_rows(),
             ));
+        for unit in fragment.callback_member_facts() {
+            self.callback_members.push(BinaryValue::from_json(
+                &serde_json::to_value(unit).map_err(|error| error.to_string())?,
+            )?);
+        }
         for (category, count) in fragment.diagnostic_count_map() {
             *self.diagnostic_counts.entry(category.clone()).or_default() += count;
         }

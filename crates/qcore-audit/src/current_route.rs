@@ -203,6 +203,32 @@ pub fn run_current_route_with_checkpoints(
             Ok::<_, String>((source_root, selected, unresolved))
         })
         .transpose()?;
+    // Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n; user decisions R1, F1):
+    // before any unit is analysed, read the member facts of every unit of the
+    // route's compile database and of the Monkey units it analyses, so each
+    // unit decides a member invocation over the run's set, as the pinned
+    // route does. A selection chooses the units analysed, not the program:
+    // the pre-pass reads the whole database.
+    let mut prepass_entries = entries.clone();
+    if let Some((_, monkey_entries, _)) = &monkey {
+        prepass_entries.extend(monkey_entries.iter().cloned());
+    }
+    let scope = crate::member_prepass::load_scope(profile.directory())?;
+    if let Some(prepass) = crate::member_prepass::run(
+        &prepass_entries,
+        audit.contracts(),
+        &scope,
+        Some(&root),
+        route.jobs,
+    ) {
+        // The line joins the preamble a checkpoint composer prints.
+        preamble.push(crate::member_prepass::announce(
+            &prepass,
+            audit.contracts(),
+        )?);
+        audit.set_member_prepass(prepass);
+    }
+    drop(prepass_entries);
     // Card W44-AUDIT-PARALLEL-UNITS: every selected configuration is one task,
     // in exactly the order the sequential loops visited them. Tasks may be
     // analysed concurrently; their console lines, report rows and tallies are

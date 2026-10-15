@@ -90,6 +90,10 @@ pub struct CurrentAudit {
     report: AuditReport,
     sources: BTreeSet<PathBuf>,
     counts: AuditCounts,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n, R1): the run's member
+    /// facts the pre-pass read over the route's compile database, installed
+    /// on every analysing thread, with its evidence section.
+    member_prepass: Option<crate::member_prepass::Prepass>,
 }
 
 /// One configuration's console lines and, unless it failed, its products.
@@ -207,7 +211,8 @@ impl CurrentAudit {
             crate::contract_dependencies::premises(&contracts)?;
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the declarations
         // whose member closure the run folds, recorded before any unit so a
-        // checkpoint composer, which cannot fold it, refuses the run.
+        // checkpoint composer refuses the run unless its checkpoints carry
+        // the run's facts (card MEMBER-PREPASS-OTHER-ROUTES).
         let invoking = crate::callback_member_fold::member_declarations(&contracts);
         if !invoking.is_empty() {
             assumptions[crate::callback_member_fold::DECLARATIONS_KEY] =
@@ -245,7 +250,21 @@ impl CurrentAudit {
             assumptions,
             sources: BTreeSet::new(),
             counts: AuditCounts::default(),
+            member_prepass: None,
         })
+    }
+
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n, R1): every later unit is
+    /// analysed with the run's member facts installed, and the fold reads
+    /// them. Set before any unit is analysed.
+    pub fn set_member_prepass(&mut self, prepass: crate::member_prepass::Prepass) {
+        self.member_prepass = Some(prepass);
+    }
+
+    /// The run's member facts, when the pre-pass ran.
+    #[must_use]
+    pub fn member_prepass(&self) -> Option<&crate::member_prepass::Prepass> {
+        self.member_prepass.as_ref()
     }
 
     pub fn revision(&self) -> &str {
@@ -308,8 +327,14 @@ impl CurrentAudit {
             counts: AuditCounts::default(),
             preparation: Default::default(),
         };
-        let result = self
-            .evaluate_entry_into(
+        // Card MEMBER-PREPASS-OTHER-ROUTES (R1): the unit is analysed with
+        // the run's member facts installed, when the pre-pass ran.
+        let facts = self
+            .member_prepass
+            .as_ref()
+            .map(|prepass| prepass.facts.clone());
+        let result = qcore_c_gateway::member_run_facts::scoped(facts, || {
+            self.evaluate_entry_into(
                 library,
                 expected_source,
                 entry,
@@ -317,7 +342,8 @@ impl CurrentAudit {
                 &mut products,
                 &mut output,
             )
-            .map(|()| products);
+        })
+        .map(|()| products);
         EntryOutcome { output, result }
     }
 
@@ -528,7 +554,12 @@ impl CurrentAudit {
         }
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's
         // closure of every invoked member, folded over the rows before
-        // anything is published; it only demotes.
+        // anything is published; it only demotes. Card
+        // MEMBER-PREPASS-OTHER-ROUTES: over the pre-pass's facts, when it ran.
+        if let Some(prepass) = self.member_prepass.take() {
+            self.report
+                .set_member_prepass(prepass.facts, prepass.section);
+        }
         let (members, from_safe, from_pending) = self.report.fold_callback_members(&self.contracts);
         self.counts.safe_units -= from_safe;
         self.counts.pending_units -= from_pending;

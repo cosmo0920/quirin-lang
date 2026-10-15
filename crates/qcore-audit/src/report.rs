@@ -194,6 +194,14 @@ impl AuditReport {
             });
     }
 
+    /// Card MEMBER-PREPASS-OTHER-ROUTES: the member and state facts every
+    /// unit recorded so far, in unit order (what a checkpoint carries per
+    /// unit).
+    #[must_use]
+    pub fn callback_member_facts(&self) -> &[crate::callback_member_fold::UnitFacts] {
+        &self.callback_members
+    }
+
     /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, R1): the run's member
     /// facts the pre-pass read, which the fold reads instead of the units'.
     pub fn set_member_prepass(

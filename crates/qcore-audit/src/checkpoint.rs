@@ -48,7 +48,11 @@ pub const FORMAT_VERSION: u16 = 1;
 // table's digest to the contract set of every unit's identity.
 // Card W47-REVIEW-HOLD-CONCRETE-REASON: schema 4 adds each pending-review
 // marker's category to the global section.
-pub const SCHEMA_VERSION: u32 = 4;
+// Card MEMBER-PREPASS-OTHER-ROUTES: schema 5 carries the run's member facts
+// (rule 12n): their digest in the run identity, the fold's environment and the
+// run's closure of each invoked member in the global section, and each unit's
+// recorded member and state facts in its contracts section.
+pub const SCHEMA_VERSION: u32 = 5;
 /// The sections of a schema-1 file, in file order.
 pub const SECTIONS: [&str; 10] = [
     "identity",
@@ -151,6 +155,11 @@ pub struct RunIdentity {
     /// Every `QCORE_*` variable set for the run except the job count, sorted
     /// by name; an unset variable is absent.
     pub environment: Vec<EnvironmentValue>,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (schema 5): SHA-256 of the run's
+    /// member facts the pre-pass read (rule 12n), when it ran. Every unit
+    /// decided its member invocations over them, so a changed run set
+    /// recomputes every unit and never composes with another.
+    pub member_facts_sha256: Option<String>,
 }
 
 /// The analyzer build.
@@ -436,6 +445,13 @@ pub struct GlobalSection {
     pub revision_template: BinaryValue,
     /// The historical reference revision the Unknown sidecars name.
     pub historical_reference_revision: String,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (schema 5): what the run's member
+    /// fold (rule 12n) reads beyond the units' own facts, typed binary: the
+    /// fold's environment (`callback_member_fold::FoldEnvironment`) and, when
+    /// the pre-pass ran, the run's closure of each invoked member with the
+    /// pre-pass's evidence section. `None` when no declaration invokes a
+    /// member or states a result state.
+    pub member_fold: Option<BinaryValue>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -521,6 +537,10 @@ pub struct ContractsSection {
     pub analysed_functions: Vec<String>,
     /// The group's `contract-pin-mismatch` held calls, per callee.
     pub pin_held_calls: Vec<HeldCallRecord>,
+    /// Card MEMBER-PREPASS-OTHER-ROUTES (schema 5): the member and state
+    /// facts the group's unit recorded for the run's fold
+    /// (`callback_member_fold::UnitFacts`), typed binary, in unit order.
+    pub callback_members: Vec<BinaryValue>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -1332,6 +1352,7 @@ mod tests {
                         name: "QCORE_CLANG".into(),
                         value: "/usr/bin/clang".into(),
                     }],
+                    member_facts_sha256: None,
                 },
                 group: GroupIdentity {
                     label: "lib".into(),
@@ -1384,6 +1405,7 @@ mod tests {
                 }],
                 revision_template: BinaryValue::from_json(&json!({"pinned":[]})).unwrap(),
                 historical_reference_revision: "h".into(),
+                member_fold: None,
             },
             preparation: RowStepSection {
                 units: vec![preparation],
@@ -1425,6 +1447,7 @@ mod tests {
                         function: "g".into(),
                     }],
                 }],
+                callback_members: Vec::new(),
             },
             result: ResultSection {
                 header: "lib: 1 selected compilation configuration(s)".into(),

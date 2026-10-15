@@ -15,9 +15,11 @@
 //! The pre-pass itself is `qcore_audit::member_prepass`; this module holds
 //! what it read ([`RunMemberFacts`]) and installs it on the analysing thread
 //! ([`scoped`]) for [`crate::legacy_c`]'s callback route to read
-//! ([`installed`]). With nothing installed (every route but the pinned
-//! corpus route, and every checkpoint composer) a unit decides over its own
-//! facts as before and an empty set is refused.
+//! ([`installed`]). Card MEMBER-PREPASS-OTHER-ROUTES: the pinned, current
+//! and no-build routes all install it when a declaration invokes a member,
+//! and a checkpoint carries the run's closures for its composer. With
+//! nothing installed (an analysis outside those routes) a unit decides over
+//! its own facts as before and an empty set is refused.
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};

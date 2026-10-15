@@ -91,6 +91,8 @@ fn disagreement(left: &RunIdentity, right: &RunIdentity) -> Option<&'static str>
         Some("compiler")
     } else if left.environment != right.environment {
         Some("environment")
+    } else if left.member_facts_sha256 != right.member_facts_sha256 {
+        Some("member facts")
     } else {
         None
     }
@@ -105,20 +107,13 @@ pub fn compose(
     let mut members = open_members(files)?;
     let global = members[0].global.clone();
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's member
-    // closure is folded over every unit's facts, which a checkpoint does not
-    // carry; a run whose contracts invoke a member is refused here rather
-    // than composed without the fold (fail-closed).
-    if global.assumptions.to_json()?[crate::callback_member_fold::DECLARATIONS_KEY]
-        .as_array()
-        .is_some_and(|names| !names.is_empty())
-    {
-        return Err(
-            "a checkpointed run whose contracts invoke a callback member cannot be composed: \
-             the member closure (rule 12n) is folded over the whole run; run it without \
-             checkpoints"
-                .into(),
-        );
-    }
+    // closure is folded over the whole run. Card MEMBER-PREPASS-OTHER-ROUTES:
+    // a checkpoint carries the run's facts when the pre-pass read them (their
+    // closures, the fold's environment and each unit's own facts), and the
+    // composer folds them as the run does; a run whose contracts invoke a
+    // member and whose checkpoints carry no run facts is refused, as before
+    // (fail-closed).
+    let member_fold = member_fold_section(&global, &mut members)?;
     let groups = members[0].plan.groups.clone();
     // Merge the small per-unit results; print group lines in plan order.
     if console == Console::Full {
@@ -185,6 +180,13 @@ pub fn compose(
             .map_err(|error| error.to_string())?;
     let revision = crate::contract_revision::render(&template, &totals.revision);
     let counts = &totals.counts;
+    // Card MEMBER-PREPASS-OTHER-ROUTES: printed where the whole run prints it.
+    if let Some(section) = &member_fold {
+        println!(
+            "callback members: {} demoted",
+            section["demoted"].as_array().map_or(0, Vec::len)
+        );
+    }
     println!(
         "current revision: {} source file(s), {} configuration(s): {} Safe / {} Pending / {} provisional Unsafe / {} Unknown / {} data-only / {} gateway failures",
         totals.sources.len(),
@@ -254,6 +256,9 @@ pub fn compose(
         assumptions["contract_revision"] = revision;
         assumptions[crate::refuted_contracts::APPLIED_KEY] = refuted;
         assumptions[crate::contract_dependencies::SECTION_KEY] = dependencies;
+        if let Some(section) = member_fold {
+            assumptions[crate::callback_member_fold::SECTION_KEY] = section;
+        }
         assumptions["source_file_count"] = json!(totals.sources.len());
         assumptions["configuration_count"] = json!(counts["units"]);
         fs::write(
@@ -278,6 +283,114 @@ pub fn compose(
         gateway_failures: counts["gateway_failures"],
         refutations: refuted_rows.published().clone(),
     })
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES (rule 12n): the run's member fold over
+/// what the checkpoints carry, `None` when no declaration invokes a member or
+/// states a result state. Every unit's rows (only what the fold reads) and
+/// its recorded facts are folded with the carried environment and run
+/// closures, exactly as the run's `finish` folds them. The composer writes
+/// the rows as the checkpoints hold them, so a fold that would demote any row
+/// refuses the composition; the run itself demoted them before publishing
+/// (with the run's facts installed every unit decided over the carried set,
+/// so the member part demotes nothing,
+/// `QCore.MemberPrepassRoutes.the_composed_decision_is_the_runs`).
+fn member_fold_section(
+    global: &GlobalSection,
+    members: &mut [Member],
+) -> Result<Option<Value>, String> {
+    let invokes = global.assumptions.to_json()?[crate::callback_member_fold::DECLARATIONS_KEY]
+        .as_array()
+        .is_some_and(|names| !names.is_empty());
+    let carried = global
+        .member_fold
+        .as_ref()
+        .map(crate::checkpoint::BinaryValue::to_json)
+        .transpose()?;
+    let run = carried.as_ref().map(|carried| &carried["run"]);
+    if invokes && run.is_none_or(Value::is_null) {
+        return Err(
+            "a checkpointed run whose contracts invoke a callback member cannot be composed \
+             without the run's member facts: the member closure (rule 12n) is folded over the \
+             whole run and these checkpoints carry no pre-pass; run it without checkpoints"
+                .into(),
+        );
+    }
+    let Some(carried) = carried else {
+        return Ok(None);
+    };
+    let environment: crate::callback_member_fold::FoldEnvironment =
+        serde_json::from_value(carried["environment"].clone())
+            .map_err(|error| format!("the carried fold environment: {error}"))?;
+    let closures = match &carried["run"] {
+        Value::Null => None,
+        run => Some(crate::callback_member_fold::closures_from_value(
+            &run["closures"],
+        )?),
+    };
+    let mut rows = Vec::new();
+    let mut facts = Vec::new();
+    for member in members.iter_mut() {
+        let steps = ["preparation", "lowering", "verdicts"]
+            .map(|name| member.reader.section::<RowStepSection>(name));
+        let [preparation, lowering, verdicts] = steps;
+        let (preparation, lowering, verdicts) = (preparation?, lowering?, verdicts?);
+        for ((preparation, lowering), verdicts) in preparation
+            .units
+            .iter()
+            .zip(&lowering.units)
+            .zip(&verdicts.units)
+        {
+            let mut unit = serde_json::Map::new();
+            for member in preparation
+                .members
+                .iter()
+                .chain(&lowering.members)
+                .chain(&verdicts.members)
+            {
+                if matches!(
+                    member.key.as_str(),
+                    "library" | "file" | "status" | "functions"
+                ) {
+                    unit.insert(member.key.clone(), member.value.to_json()?);
+                }
+            }
+            rows.push(Value::Object(unit));
+        }
+        let contracts = member.reader.section::<ContractsSection>("contracts")?;
+        for unit in &contracts.callback_members {
+            facts.push(
+                serde_json::from_value::<crate::callback_member_fold::UnitFacts>(unit.to_json()?)
+                    .map_err(|error| {
+                    format!("{}: carried unit facts: {error}", member.path.display())
+                })?,
+            );
+        }
+    }
+    let mut scratch = BTreeMap::new();
+    let mut section = crate::callback_member_fold::fold_in(
+        &environment,
+        &mut rows,
+        &facts,
+        &mut scratch,
+        closures.as_ref(),
+    );
+    if section.is_null() {
+        return Ok(None);
+    }
+    let demoted = crate::callback_member_fold::demoted_functions(&section);
+    if let Some((library, file, function)) = demoted.iter().next() {
+        return Err(format!(
+            "the run's member fold (rule 12n) demotes {} row(s) these checkpoints hold as Safe \
+             or Pending (first: {library}/{file}: {function}); a composer does not rewrite rows: \
+             run it without checkpoints",
+            demoted.len()
+        ));
+    }
+    if let Value::Object(_) = &carried["run"]["section"] {
+        section["prepass"] = carried["run"]["section"].clone();
+    }
+    Ok(Some(section))
 }
 
 /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the rows' held calls and own

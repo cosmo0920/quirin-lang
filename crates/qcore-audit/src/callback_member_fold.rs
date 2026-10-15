@@ -27,7 +27,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_c_gateway::callback_member_closure::{MemberFacts, closure};
+use qcore_c_gateway::callback_member_closure::{Closure, MemberFacts, closure};
 use qcore_c_gateway::constructed_state::{StateFacts, stability, stated_keys};
 use qcore_schemas::callback::CallbackClause;
 use qcore_schemas::contract::ResourceContracts;
@@ -37,7 +37,8 @@ use serde_json::{Value, json};
 pub const SECTION_KEY: &str = "callback_members";
 
 /// The assumptions key naming the member-invoking declarations, recorded
-/// before any unit (a checkpoint composer refuses a run that has any).
+/// before any unit (a checkpoint composer refuses a run that has any unless
+/// its checkpoints carry the run's facts, card MEMBER-PREPASS-OTHER-ROUTES).
 pub const DECLARATIONS_KEY: &str = "callback_member_declarations";
 
 /// What the section means, carried in it.
@@ -241,8 +242,9 @@ pub fn demote_property_rows(
     }
 }
 
-/// One unit's recorded facts.
-#[derive(Clone, Debug, PartialEq, Eq)]
+/// One unit's recorded facts (card MEMBER-PREPASS-OTHER-ROUTES: carried by
+/// a checkpoint, so serialisable).
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct UnitFacts {
     pub library: String,
     pub file: String,
@@ -257,6 +259,125 @@ fn closure_value(result: &Result<BTreeSet<String>, BTreeSet<String>>) -> Value {
         Ok(names) => json!({"closed": true, "candidates": names}),
         Err(open) => json!({"closed": false, "open": open}),
     }
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: the inverse of [`closure_value`], for a
+/// closure a checkpoint carries.
+///
+/// # Errors
+/// A value [`closure_value`] does not write.
+pub fn closure_from_value(value: &Value) -> Result<Closure, String> {
+    let names = |key: &str| {
+        value[key]
+            .as_array()
+            .ok_or_else(|| format!("a carried closure has no `{key}` list"))?
+            .iter()
+            .map(|name| {
+                name.as_str()
+                    .map(str::to_owned)
+                    .ok_or_else(|| "a carried closure names a non-text entry".to_owned())
+            })
+            .collect::<Result<BTreeSet<_>, _>>()
+    };
+    match value["closed"].as_bool() {
+        Some(true) => Ok(Ok(names("candidates")?)),
+        Some(false) => Ok(Err(names("open")?)),
+        None => Err("a carried closure has no `closed` flag".into()),
+    }
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: everything the fold reads of the
+/// contracts, so a checkpoint composer (which loads none) folds as the run
+/// does: the member-invoking declarations with their members, the
+/// declarations stating a result state with their members, and the
+/// functions whose declared result is owned.
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct FoldEnvironment {
+    pub declarations: BTreeMap<String, BTreeSet<String>>,
+    pub constructed: BTreeMap<String, BTreeMap<String, bool>>,
+    pub owned: BTreeSet<String>,
+}
+
+impl FoldEnvironment {
+    /// The environment of `contracts`.
+    #[must_use]
+    pub fn of(contracts: &ResourceContracts) -> Self {
+        let owned = |result: qcore_schemas::contract::ResourceReturnMode| {
+            matches!(
+                result,
+                qcore_schemas::contract::ResourceReturnMode::Owned { .. }
+            )
+        };
+        Self {
+            declarations: member_declarations(contracts),
+            constructed: constructed_declarations(contracts),
+            owned: contracts
+                .functions()
+                .iter()
+                .filter(|(_, contract)| owned(contract.result))
+                .map(|(name, _)| name.clone())
+                .chain(
+                    contracts
+                        .retaining()
+                        .iter()
+                        .filter(|(_, declared)| owned(declared.contract.result))
+                        .map(|(name, _)| name.clone()),
+                )
+                .collect(),
+        }
+    }
+
+    /// Whether the fold has nothing to do.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.declarations.is_empty() && self.constructed.is_empty()
+    }
+
+    /// Every invoked member.
+    #[must_use]
+    pub fn members(&self) -> BTreeSet<String> {
+        self.declarations.values().flatten().cloned().collect()
+    }
+
+    /// The run's closure of every invoked member, read from the pre-pass:
+    /// what the run's decisions and its fold read of the run's facts.
+    #[must_use]
+    pub fn run_closures(
+        &self,
+        prepass: &qcore_c_gateway::member_run_facts::RunMemberFacts,
+    ) -> BTreeMap<String, Closure> {
+        self.members()
+            .into_iter()
+            .map(|member| {
+                let closure = prepass.closure(&member);
+                (member, closure)
+            })
+            .collect()
+    }
+}
+
+/// The run closures as a checkpoint carries them.
+#[must_use]
+pub fn closures_value(closures: &BTreeMap<String, Closure>) -> Value {
+    json!(
+        closures
+            .iter()
+            .map(|(member, closure)| (member.clone(), closure_value(closure)))
+            .collect::<BTreeMap<_, _>>()
+    )
+}
+
+/// The inverse of [`closures_value`].
+///
+/// # Errors
+/// A value [`closures_value`] does not write.
+pub fn closures_from_value(value: &Value) -> Result<BTreeMap<String, Closure>, String> {
+    value
+        .as_object()
+        .ok_or("the carried closures are not an object")?
+        .iter()
+        .map(|(member, closure)| Ok((member.clone(), closure_from_value(closure)?)))
+        .collect()
 }
 
 /// Fold the run: demote rows of `units` (the report's unit rows, in the
@@ -282,11 +403,37 @@ pub fn fold_with(
     diagnostic_counts: &mut BTreeMap<String, usize>,
     prepass: Option<&qcore_c_gateway::member_run_facts::RunMemberFacts>,
 ) -> Value {
-    let declarations = member_declarations(contracts);
-    let constructed = constructed_declarations(contracts);
+    let environment = FoldEnvironment::of(contracts);
+    let run = prepass.map(|prepass| environment.run_closures(prepass));
+    fold_in(&environment, units, facts, diagnostic_counts, run.as_ref())
+}
+
+/// Card MEMBER-PREPASS-OTHER-ROUTES: [`fold_with`] over what it reads of the
+/// contracts ([`FoldEnvironment`]) and of the pre-pass (the run's closure of
+/// each invoked member), so a checkpoint composer folds exactly as the run
+/// does from what the checkpoints carry. A member the carried closures do not
+/// name reads open.
+pub fn fold_in(
+    environment: &FoldEnvironment,
+    units: &mut [Value],
+    facts: &[UnitFacts],
+    diagnostic_counts: &mut BTreeMap<String, usize>,
+    run_closures: Option<&BTreeMap<String, Closure>>,
+) -> Value {
+    let declarations = &environment.declarations;
+    let constructed = &environment.constructed;
     if declarations.is_empty() && constructed.is_empty() {
         return Value::Null;
     }
+    let carried = |member: &str| -> Closure {
+        run_closures
+            .and_then(|closures| closures.get(member).cloned())
+            .unwrap_or_else(|| {
+                Err(BTreeSet::from([
+                    "the run's facts carry no closure of it".to_owned()
+                ]))
+            })
+    };
     let members = declarations
         .values()
         .flatten()
@@ -319,20 +466,7 @@ pub fn fold_with(
     // Card OP-CONSTRUCTOR-DECLARATIONS: the run's stability of every stated
     // member, over every unit row (a row with no recorded state facts opens
     // it).
-    let owned = |name: &str| {
-        let owned = |result: qcore_schemas::contract::ResourceReturnMode| {
-            matches!(
-                result,
-                qcore_schemas::contract::ResourceReturnMode::Owned { .. }
-            )
-        };
-        contracts
-            .contract(name)
-            .is_some_and(|contract| owned(contract.result))
-            || contracts
-                .retaining_contract(name)
-                .is_some_and(|declared| owned(declared.contract.result))
-    };
+    let owned = |name: &str| environment.owned.contains(name);
     let state_units = paired
         .iter()
         .map(|unit| unit.and_then(|unit| unit.state.as_ref()))
@@ -368,8 +502,8 @@ pub fn fold_with(
         .map(|member| {
             // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the pre-pass's set,
             // which every unit decided over.
-            if let Some(prepass) = prepass {
-                return (member.clone(), prepass.closure(member));
+            if run_closures.is_some() {
+                return (member.clone(), carried(member));
             }
             let mut result = closure(&recorded, member);
             if missing > 0 {
@@ -459,8 +593,8 @@ pub fn fold_with(
                 for member in members {
                     // With the pre-pass, the unit decided over the run's set
                     // itself: kept exactly when that set is closed.
-                    let own = match prepass {
-                        Some(prepass) => Some(prepass.closure(member)),
+                    let own = match run_closures {
+                        Some(_) => Some(carried(member)),
                         None => own_facts.map(|facts| closure(&[facts], member)),
                     };
                     let kept = matches!(
