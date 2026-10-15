@@ -164,7 +164,34 @@ canonicalisation is identity on meaning (`an_alias_means_its_name`,
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (written by the gate).
+Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/sorch/gate-g1/`): every code step at `0f6f7bca3` (after it, records
+only), the standing gate and the provider gate under one exclusive flock on
+the shared heavy lock ([`gate-run.sh`](scripts/gate-run.sh),
+[`gate.sh`](scripts/gate.sh), [`finish-gate.sh`](scripts/finish-gate.sh)).
+The measured binary was built at `781dad65a`; the later code commit
+(`0f6f7bca3`, clippy) changes no behaviour.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 498 units, 511 summaries, **8,079 passed, 0 failed, 15 ignored** (`private/sorch/tests-g1/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **323** audits passed |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked` in `providers/`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (the committed matrix's Lean count, 322 → 323), as for every card adding an audit |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 365 tests), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+Pins ([`pin.sh`](scripts/pin.sh), logs `private/sorch/pin-a0/`): the
+librdkafka crate's pin at both revisions 0, its check at both 0, the
+whole-tree check 1 at both only for the libevent crate's tip-mode
+`mk_vhost_set` (by design), `--verify-contracts` 0; `providers/contracts.py
+sync` and `check` 0. Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
 
 ## Files
 

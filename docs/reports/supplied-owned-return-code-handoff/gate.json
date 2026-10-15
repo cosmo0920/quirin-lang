@@ -1,0 +1,13 @@
+{
+  "note": "SUPPLIED-OWNED-RETURN-CODE-HANDOFF card gate on base 10eb7692d, every code step at 0f6f7bca3, scripts docs/reports/supplied-owned-return-code-handoff/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/sorch/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 498 units, 511 summaries, 8,079 passed, 0 failed, 15 ignored, exit 0 (private/sorch/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 323 audits passed (322 -> 323: QCore.ReturnCodeHandOff); provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8079,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 323,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
