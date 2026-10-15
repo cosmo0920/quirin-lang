@@ -5069,7 +5069,8 @@ own anchor here.
     with the handed formal taken at `supplied_owned` and kept by the
     invoker at `_` or a parameter (its requirement on the call kept);
     refused, `callback-handoff-unbranched`. A direct call of a hand-off
-    declaration refuses (`callback-handoff-direct`). Measured on the corpus
+    declaration is read only as below (otherwise `callback-handoff-direct`).
+    Measured on the corpus
     (`examples/handoff_census.rs` over the 94 librdkafka units, as the
     pre-pass reads them): `rd_kafka_poll_cb`'s `!= PASS` is admitted at
     `rd_kafka_q_serve0`, `_serve` and `_serve_maybe_consume` (the serve loop
@@ -5085,7 +5086,7 @@ own anchor here.
     the invoker invokes the callback only there is the declaration's
     assumption. **Do not** admit a hand-off on a path not read, a guard no
     function on the path compares, a callback formal that escapes, or at a
-    direct call. `QCore.ReturnCodeHandOff`
+    direct call outside the reading below. `QCore.ReturnCodeHandOff`
     (`owner_after_is_the_guard`,
     `an_admitted_branch_never_touches_a_taken_object`,
     `an_unbranched_guard_never_admits`,
@@ -5114,6 +5115,41 @@ own anchor here.
     `_serve_maybe_consume` and `rd_kafka_op_req0` the member's invocation is
     still not read (the op is created below the invoker, and
     `rd_kafka_op_req0` records no site).
+    **A direct call** (card HANDOFF-DIRECT-CALL-READING, C04.19.5 amended):
+    the caller's state for the handed object forks at the call, **taken**
+    (the actual `resource_consumed(P, nonnull)`) where the guard holds and
+    **kept** (the declared `resource_owned(P, nonnull)`) where it fails, and
+    the two join only at the caller's own test of the call's result, read as
+    rule 11r reads a return-code disposition: the call tested where it
+    stands, or stored by `NAME = f(…);` and tested by the next statement,
+    against a non-negative integer constant or an enumerator of the callee's
+    own result type (rule 13l's resolution in the analysing unit) that Clang
+    reads the body comparing the result with
+    (`handoff_direct::read_test`, the rewrite and the `if` plan in
+    `legacy_handoff_direct.rs`); each edge takes the owner every class it
+    reaches agrees on (`handoff_direct::edge_owner`, over the classes `eq K`
+    and `ne K`). First the calling body's own reading must admit the call
+    (`handoff_branch::direct_admission`, the analysing unit's Clang AST):
+    every direct site of the callee read, the handed actual a pointer
+    variable the walk follows, no class the guard admits naming the object
+    again before a rebinding or a noreturn call, the result compared with
+    the guard's own constant, and the result not stored through a conversion
+    (`Site::result_converted`). A body that names the object on a value the
+    guard gives the callback refuses `callback-handoff-unbranched`, never a
+    finding; a reading not made (no site, an unread construct, an
+    unbranched or ignored result, a test not where the result stands or the
+    next statement, an edge reaching both classes, a narrowing store)
+    refuses `callback-handoff-direct`. **Do not** split on anything but the
+    result value, carry the split past a statement the rewrite does not
+    read, or admit a direct call whose body disagrees with the guard.
+    `QCore.HandOffDirect` (`a_class_owner_is_the_guard`,
+    `the_split_state_is_sound_per_class`,
+    `a_caller_that_disagrees_never_decides`,
+    `an_unbranched_direct_call_never_decides`,
+    `a_decided_call_never_touches_a_taken_object`,
+    `a_decided_split_is_the_guard_on_every_value`, `direct_vectors_hold`
+    bound to `DIRECT_VECTORS`); `tests/handoff_direct_call.rs`;
+    [report](../reports/handoff-direct-call-reading/README.md).
 
 <a id="constraint-12n"></a>
 

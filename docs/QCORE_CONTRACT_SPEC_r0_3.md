@@ -1312,11 +1312,29 @@ custody contract with the handed formal taken at a `supplied_owned`
 position and kept by the invoker at `_` or a parameter; refused, the call
 refuses `callback-handoff-unbranched`. A candidate whose declaration also
 carries callback clauses is the composition of C04.19.7 when they are all
-member invocations, and reads uncontracted (C04.19) otherwise. A **direct call** of a
-hand-off declaration refuses (`callback-handoff-direct`): the caller-side
-reading of the result's branch is not made. The check reads the path the
-user's decision names; that the invoker invokes the callback only there is
-the declaration's own assumption.
+member invocations, and reads uncontracted (C04.19) otherwise. The check
+reads the path the user's decision names; that the invoker invokes the
+callback only there is the declaration's own assumption.
+
+**A direct call** (card HANDOFF-DIRECT-CALL-READING). A consumer that honours
+a hand-off at a direct call MUST split the caller's state for the handed
+object at the caller's own test of the call's result: **taken** where the
+guard holds of the result (the actual consumed: the caller never names it
+again), **kept** where it fails (`resource_owned(P, nonnull)`: the caller
+keeps or disposes of it). The test is read as C04.13's: the call tested
+where it stands, or stored by the statement immediately before, against a
+constant; the constant may be an enumerator of the callee's own result type,
+resolved as the guard's `@C` is, and must be non-negative (so its comparison
+with an unsigned or enumeration result is the integer comparison). Each edge
+takes the owner every class (`eq C`, `ne C`) it can reach agrees on; an edge
+reaching both refuses. The split is applied only where the caller branch
+check, applied in the calling body, admits the call: no class the guard
+admits names the object again before a rebinding or a noreturn call, the
+body compares the result with the guard's own constant, and the result is
+not stored through a conversion. A body that names the object on a value the
+guard gives the callback refuses (`callback-handoff-unbranched`), never a
+finding; every other direct call refuses (`callback-handoff-direct`). The
+Lean model is `QCore.HandOffDirect`.
 
 #### C04.19.6. A release or move-out at a member path
 
