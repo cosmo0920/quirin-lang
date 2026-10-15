@@ -61,9 +61,12 @@ reads a list element) are left out. All fourteen are pinned with
 `quirin-audit pin --bounds` at 66910c10 and 046accf6 (`bounds-contracts.lock`
 5 → 19 pinned; `pin --check` 0 at both, `pin --verify-contracts` 0); the pins
 are in force on the slice because the export's sites equal 046accf6's.
-`flb_input_new` is also declared in `input_instance.qv` (resource v1), so it is
-a registered `null_deref_beside` relation (`contract_views.rs`,
-`contract_view_census.rs`); `qcore_contract_corpus.rs` pins the fourteen.
+`flb_input_new` (`input_instance.qv`) and `flb_input_thread_instance_exit`
+(`lib_engine_thread.qv`, held) also have resource-v1 declarations, so each is
+a registered `null_deref_beside` relation (`contract_views.rs`; relations 23 →
+25, `contract_view_census.rs`, `contract_views.rs` tests);
+`qcore_contract_corpus.rs` pins the fourteen and `contract_loader.rs` counts
+them among the bounds declarations resource v1 rejects (314 → 328).
 
 ## 3. Measurement
 
