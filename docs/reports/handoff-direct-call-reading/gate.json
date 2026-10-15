@@ -1,0 +1,13 @@
+{
+  "note": "HANDOFF-DIRECT-CALL-READING card gate on base 4c0803f1f (rebased from b2fbde2c5), every code step at bacd2d082, scripts docs/reports/handoff-direct-call-reading/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/hdcr/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 503 units, 516 summaries, 8,144 passed, 0 failed, 15 ignored, exit 0 (private/hdcr/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 329 audits passed (328 on main 4c0803f1f -> 329: QCore.HandOffDirect); provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8144,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 329,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

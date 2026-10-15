@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/handoff-direct-call-reading"
-BASE = "b2fbde2c5"
+BASE = "4c0803f1f (rebased from b2fbde2c5)"
 
 
 def main() -> int:
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/hdcr/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (327 -> 328: QCore.HandOffDirect); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (328 on main 4c0803f1f -> 329: QCore.HandOffDirect); "
         "provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
