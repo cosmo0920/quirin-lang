@@ -5,7 +5,8 @@
 # or `docs` (08-09, after the records) or `all` (default). Step 04's suite run
 # writes its logs to private/fbn/tests-SUITE_NAME/ (default gate-NAME) and its wall time (inside the lock) to
 # private/fbn/tests-SUITE_NAME.seconds.
-# Each step runs under the shared heavy lock.
+# Each step runs under the shared heavy lock; 07z cleans the dev profile
+# (the disk rule) once nothing else needs it.
 set -u
 name="$1"
 part="${2:-all}"
@@ -39,6 +40,7 @@ if [ "$part" != docs ]; then
   step 05-probe cargo run -p qcore-compiler --example reevaluation_probe
   step 06-followup cargo run -p qcore-compiler --example reevaluation_followup
   step 07-lean python3 scripts/check_lean_audits.py
+  step 07z-clean cargo clean --profile dev
   clang --version > "$out/clang-version.txt" 2>&1
   echo $? > "$out/clang-version.exit"
   echo done > "$out/code-done"
