@@ -178,7 +178,11 @@ either decision.
 
 BEFORE: binary `bin/before` (`8c8e7e39…`) from `d708641bc`, on the base
 contracts. AFTER: binary `a1` (`f79d9846…`) from `7cf9f2d5b` (the contracts
-commit), on the card's contracts. Both read the contracts at run time.
+commit), on the card's contracts. Both read the contracts at run time. The runs were taken before the card was
+rebased onto `5b1ceecd5`. The two cards that landed in between
+(FB-QUANT-CONTRACT-CENSUS, LEAN-4-35-TOOLCHAIN) change records, Lean and
+the Lean audit script only, and touch no contract or analyser code, so the
+runs stand for the rebased tip.
 Scripts: [`before.sh`](scripts/before.sh), [`after.sh`](scripts/after.sh),
 [`measure.sh`](scripts/measure.sh). The null property ran on every route.
 Summaries: [before](artifacts/summary-before.json),
@@ -265,7 +269,7 @@ premises.
 
 ## 7. Ledger
 
-[`scripts/update_ledger.py`](scripts/update_ledger.py): 780 → **781**.
+[`scripts/update_ledger.py`](scripts/update_ledger.py): 783 → **784** (main moved from 780 to 783 with FB-QUANT-CONTRACT-CENSUS).
 
 * **Amended, not retired: `LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED`.** Its
   DISCHARGE does not hold in full, because of the two decisions in section 4.
