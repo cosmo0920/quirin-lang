@@ -171,7 +171,33 @@ as before this card (no corpus leaf).
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/mpr/gate-g1/`): every code step at `a49391665` (after it, records
+only: rule 13u's amendment note at `c30a51c79`, the docs steps' head), the
+standing gate and the provider gate under one exclusive flock on the shared
+heavy lock (08:09:45Z–08:33:50Z; [`gate-run.sh`](scripts/gate-run.sh),
+[`gate.sh`](scripts/gate.sh), [`finish-gate.sh`](scripts/finish-gate.sh)).
+The measured binary `a2` was built at `9d008180c`; the later commits change
+records only.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 499 units, 512 summaries, **8,098 passed, 0 failed, 15 ignored** (`private/mpr/tests-g1/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **324** audits passed |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked` in `providers/`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (the committed matrix's Lean count, 323 → 324), as for every card adding an audit |
+| docs index check (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 365 tests), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+Pins: [`pin.sh`](scripts/pin.sh) (section 4). The bold rule-id duplicate
+check (`rg -o --no-filename '^[0-9]{1,2}[a-z]?\. \*\*' docs/agents/*.md |
+sort | uniq -d`) is empty. Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
 
 ## Files
 
