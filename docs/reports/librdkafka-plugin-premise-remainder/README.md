@@ -179,6 +179,10 @@ Summary: [summary.json](artifacts/summary.json).
 
 **Model contract.** No verdict consults `queue_destructor.qv`. Its premise is read by `module_premises` and pinned by the corpus tests.
 
+**Parity streams.** The typed-path parity streams are equal as multisets on all three routes once Clang's AST node addresses (`0x…`, which change between any two runs) and BEFORE's tree root are normalised: corpus 684,906 lines, system 142,456, slice 51,389.
+
+**Rebase.** The runs were taken on `711287771`. The card was then rebased onto `635669fdb`, where MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS landed. That card changes rule 30's member-path body check in `member_path_check.rs` and `member_path_reading.rs`, and its own measurement moved only two units' body evidence. It touches no null-property, contract-format, bounds or librdkafka contract file, so the runs stand for the rebased tip. The gate below ran on the rebased tip.
+
 **Prediction against outcome.** As frozen: verdicts identical, and only the premise and dependency fields, the fold records, the two sidecar records and the contract-source and pin digests moved. The corpus custody report did not move at all; the prediction allowed contract-source digests there.
 
 ## 6. Ledger
@@ -209,7 +213,10 @@ The bold rule-id duplicate check is empty.
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+See [gate.json](gate.json) and [gate/](gate/). Two earlier attempts are retained in `private/lppr/` and discarded:
+
+* **g1** (`0f2f8c8e3`, before the rebase). The host disk filled while the test binaries were building ("No space left on device", then a linker bus error), and later steps could not write their exits. Per the measurement-hygiene rule, a disk-exhausted run measures disk, not the program.
+* **g2** (same commit, disk recovered). One unit failed: `contract_inherit_qcore_provider`'s `converted_wrappers_elaborate_to_the_hand_written_contracts`. Its hand-written parity fixture `compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv` restates `memory.qv` token for token, and `rd_kafka_crash` had gained the premise. The fixture now carries the same clause (`936c664b5`); the test passes alone (8 passed). Every other g2 step was 0, except the Python suite before the matrix regeneration, which is expected. Its totals were 500 units, 8,103 passed, 1 failed, 15 ignored.
 
 ## Files
 
@@ -223,4 +230,5 @@ See [gate.json](gate.json) and [gate/](gate/).
 * **Contracts:**
   * `providers/qcore-provider-librdkafka/contracts/librdkafka/{null_deref,memory,kafka_mem,queue_destructor}.qv`;
   * `contracts.lock`, `bounds-contracts.lock`, `contracts.json`;
-  * pins in `compiler/tests/qcore_contract_corpus.rs`.
+  * pins in `compiler/tests/qcore_contract_corpus.rs`;
+  * the parity fixture `compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv`.
