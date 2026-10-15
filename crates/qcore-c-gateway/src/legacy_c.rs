@@ -328,6 +328,10 @@ mod relational_route;
 // stored-return rewrite, the `if` plan and the refusal of every other call).
 #[path = "legacy_handoff_direct.rs"]
 mod handoff_direct_route;
+// Card RELATIONAL-REWRITE-LINE-ORDER (rule 11r amended): the line order of
+// the stream the parser reads.
+#[path = "legacy_stream_line_order.rs"]
+mod stream_line_order;
 // Card CALLEE-RETENTION-CLASS1 (rule 12t): retained pointers (the minted
 // custody environment, the call-site decision, the records the transfer
 // keeps, the release and exit refusals).
@@ -3472,11 +3476,23 @@ fn build_function_cfg_unscoped(
     // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the contract in force for
     // this function's own body, which its declaration decides when it has one.
     let own_contract = contracts.contract(function).or(own);
+    // Card RELATIONAL-REWRITE-LINE-ORDER: parity runs only.
+    let census_stage = |stage: &str, before: &[Token], after: Option<&Vec<Token>>| {
+        if let Some(after) = after {
+            stream_line_order::record_stage(function, stage, before, after);
+        }
+    };
+    if crate::typed_access_path::parity_enabled()
+        && stream_line_order::first_disorder(tokens).is_some()
+    {
+        stream_line_order::record_stage(function, "input", tokens, tokens);
+    }
     // Card W44-C11-GENERIC-SELECTION: lower every selection-invariant
     // `_Generic` in this body to its common expression first, so every reader
     // below (the literal premises included) sees the call C evaluates. Only
     // this body's tokens change; a refused selection is untouched.
     let resolved = generic_selection::resolve_in_body(tokens, function);
+    census_stage("generic-selection", tokens, resolved.as_ref());
     let tokens = resolved.as_deref().unwrap_or(tokens);
     // Card HASH-CONTRACTS. A declared literal-argument premise restricts a
     // contract to the call sites whose named argument is the named literal;
@@ -3489,6 +3505,7 @@ fn build_function_cfg_unscoped(
     // hold exactly that text, reproduce this rewrite identically.
     let premises = literal_premise::LiteralPremises::read(contracts);
     let restricted = literal_premise::restrict_to_declared_literals(tokens, contracts, &premises);
+    census_stage("literal-premise", tokens, restricted.as_ref());
     let tokens = restricted.as_deref().unwrap_or(tokens);
     // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a stored return value
     // tested by the next statement is the same C as the test of the
@@ -3496,11 +3513,13 @@ fn build_function_cfg_unscoped(
     // disposition under its minted name. Both are the identity on an
     // environment with no disposition.
     let stored_returns = relational_route::tested_stored_returns(tokens, contracts);
+    census_stage("relational-11r", tokens, stored_returns.as_ref());
     let tokens = stored_returns.as_deref().unwrap_or(tokens);
     // Card HANDOFF-DIRECT-CALL-READING (rule 12m amended): the same rewrite
     // for a direct call of a hand-off declaration (the identity on an
     // environment without one).
     let handoff_returns = handoff_direct_route::stored_returns(tokens, contracts);
+    census_stage("handoff-direct", tokens, handoff_returns.as_ref());
     let tokens = handoff_returns.as_deref().unwrap_or(tokens);
     let class_environment = relational_route::class_environment(tokens, contracts);
     let contracts = class_environment.as_ref().unwrap_or(contracts);
@@ -3510,6 +3529,7 @@ fn build_function_cfg_unscoped(
     let retaining_environment = retained_by_route::retaining_environment(tokens, contracts);
     let contracts = retaining_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
+    census_stage("out-alias", tokens, normalized.as_ref());
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;

@@ -112,6 +112,8 @@ pub(super) fn stored_returns_with(
         }
     };
     let mut out: Option<Vec<Token>> = None;
+    // Card RELATIONAL-REWRITE-LINE-ORDER: the census's sites.
+    let mut sites = Vec::new();
     let mut copied = 0usize;
     let mut index = 1usize;
     while index + 4 < tokens.len() {
@@ -171,6 +173,7 @@ pub(super) fn stored_returns_with(
             index += 1;
             continue;
         };
+        sites.push(tokens[index].line);
         let target = out.get_or_insert_with(|| Vec::with_capacity(tokens.len()));
         target.extend_from_slice(&tokens[copied..index]);
         let open_line = tokens[index].line;
@@ -183,6 +186,15 @@ pub(super) fn stored_returns_with(
     }
     let mut out = out?;
     out.extend_from_slice(&tokens[copied..]);
+    super::stream_line_order::record_rewrite(
+        if keep_line_order {
+            "handoff-direct"
+        } else {
+            "relational-11r"
+        },
+        &sites,
+        &out,
+    );
     Some(out)
 }
 
