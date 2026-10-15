@@ -678,6 +678,18 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_processor_instance_create",
         2,
     ),
+    // ... and ten function-scope entries `nonnull_member_scope(flb_input_instance,
+    // p, ins)` (selector and one entry each).
+    ("fluent_bit/null_deref.qv", "flb_input_plugin_pause", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_plugin_resume", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_pause", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_resume", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_instance_pre_run", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_instance_exit", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_thread_instance_pre_run", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_thread_instance_pause", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_thread_instance_resume", 2),
+    ("fluent_bit/null_deref.qv", "flb_input_thread_instance_exit", 2),
     (
         "fluent_bit/output_flush_id.qv",
         "flb_output_flush_id_get",

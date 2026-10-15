@@ -23,7 +23,7 @@ step() {
   echo "$name $(cat "$logs/$name.exit")"
 }
 [ -n "${PINS_FILE:-}" ] && PINS="$(cat "$PINS_FILE")"
-pins="${PINS:-quirin-provider-fluent-bit:flb_input_new quirin-provider-fluent-bit:flb_output_new quirin-provider-fluent-bit:flb_filter_new quirin-provider-fluent-bit:flb_processor_instance_create quirin-provider-fluent-bit:flb_input_plugin_pause quirin-provider-fluent-bit:flb_input_plugin_resume quirin-provider-fluent-bit:flb_input_pause quirin-provider-fluent-bit:flb_input_resume quirin-provider-fluent-bit:flb_input_instance_pre_run quirin-provider-fluent-bit:flb_input_instance_exit quirin-provider-fluent-bit:flb_input_thread_instance_pre_run}"
+pins="${PINS:-quirin-provider-fluent-bit:flb_input_new quirin-provider-fluent-bit:flb_output_new quirin-provider-fluent-bit:flb_filter_new quirin-provider-fluent-bit:flb_processor_instance_create quirin-provider-fluent-bit:flb_input_plugin_pause quirin-provider-fluent-bit:flb_input_plugin_resume quirin-provider-fluent-bit:flb_input_pause quirin-provider-fluent-bit:flb_input_resume quirin-provider-fluent-bit:flb_input_instance_pre_run quirin-provider-fluent-bit:flb_input_instance_exit quirin-provider-fluent-bit:flb_input_thread_instance_pre_run quirin-provider-fluent-bit:flb_input_thread_instance_pause quirin-provider-fluent-bit:flb_input_thread_instance_resume quirin-provider-fluent-bit:flb_input_thread_instance_exit}"
 crates=$(for pin in $pins; do echo "${pin%%:*}"; done | sort -u | tr '\n' ' ')
 if [ "$mode" = pin ]; then
   for root in "$old" "$new"; do

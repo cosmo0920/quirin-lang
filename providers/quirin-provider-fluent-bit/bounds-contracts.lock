@@ -70,6 +70,65 @@
       ]
     },
     {
+      "function": "flb_input_instance_exit",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "f6ea281d4937b6e3251672aa19ae1a1ca40b58e21f0217e00b6ca3b304c9eed1",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "944a409857781a1f7d3d59aca9f402e7d313dc258e99d1b51ab4cdaeb8613219"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "944a409857781a1f7d3d59aca9f402e7d313dc258e99d1b51ab4cdaeb8613219",
+              "body_sha256": "2ec067288922ac6dcdfd87fd5d88720f6513691125e8b33be9ca6e4a50194df5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_instance_pre_run",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "18fdebeeab001f434b209699cfeb657d04a685a9197e0e842d60b902cae048c0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "2b4f0a526ff5a1fd0e79186794fed9e063b772e4e9b3ad05e759548c2303113f",
+              "body_sha256": "b47b0683ed76d019343cdb2ec73658ae72aa30121f68ae2b238f7e07ed2d1e3d"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input_new",
       "module": "fluent_bit/null_deref.qv",
       "contract_sha256": "6a54c58cf2da3ac5857f8ea0c4846d64cc2b8fb59b5c85e8e916c14337666584",
@@ -133,6 +192,279 @@
               "path": "tests/runtime/custom_calyptia_test.c",
               "kind": "declaration",
               "declaration_sha256": "12ecb541bab23956bea2712a5337216b211a6760b5c088897e26bfa82a64ab12"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_pause",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "2bde205fb61787202166eb0f79314c3d40a27c6d6da503e9f998bd29a905dd31",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "39622d13c4e1dc59f7eb24f94fce3acc3616d7053feb6ff9a470f61ddd253ea2"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "39622d13c4e1dc59f7eb24f94fce3acc3616d7053feb6ff9a470f61ddd253ea2",
+              "body_sha256": "defe7249fd942156cf7b9b67ffe2a3f8f6173665e34588a6a0bc101ed35ec3e2"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "39622d13c4e1dc59f7eb24f94fce3acc3616d7053feb6ff9a470f61ddd253ea2"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "39622d13c4e1dc59f7eb24f94fce3acc3616d7053feb6ff9a470f61ddd253ea2",
+              "body_sha256": "8d9e1f51cbaa48d85e0e0888fb9b3d7a616373134c6df76ebdf0830eccc65571"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_plugin_pause",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "a2edd2ae8834d04b170b961b5f311b9423060cbbea3ca29c6e6a020376fe3340",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "7a968e997487a4234c3de3a05ceb6023b4ccb5164f91cf25a9577dd3a29fe738"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "7a968e997487a4234c3de3a05ceb6023b4ccb5164f91cf25a9577dd3a29fe738",
+              "body_sha256": "62c62bdbad1c44eec9272c265279a901f13e084170b205950375e1732c5332c0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_plugin_resume",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "639d2ae99d2c93dff2a3dae5a2c6f198f3d75ddd7d6f98718f847d1d6e0a306a",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "5e6fbacac7243b6701d55925b50467446f79f21623e9c838dfb5f748061fa525"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "5e6fbacac7243b6701d55925b50467446f79f21623e9c838dfb5f748061fa525",
+              "body_sha256": "89ff435b2c617a837db9e8e66a0db522a98ffdca4d786d8477ca60df9f9900b5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_resume",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "03cff80cc91614aa7df499c80c7cce535c11acc7a518f6cff046510601c80682",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "de9c38334ecb49e3873316d1f73cc59b54ac58a3297a2befd42b877499cb480d"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "de9c38334ecb49e3873316d1f73cc59b54ac58a3297a2befd42b877499cb480d",
+              "body_sha256": "d065e1426e6b163885ee47652e1a752ceedcfd27296f341de36979139586d51b"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_thread_instance_exit",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "631ceac8b1153066275bd25eefaba93238ecb836b3803ca7ee29aeeab564d04f",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "a1960ae84e425669a86466d734d1dba6822faae7e8bbb11fd5edc3f4a2c746ad"
+            },
+            {
+              "path": "src/flb_input_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "a1960ae84e425669a86466d734d1dba6822faae7e8bbb11fd5edc3f4a2c746ad",
+              "body_sha256": "32969b65b01127c7f9521382b37e6c3cc9b8d54bb5efe34e7e8a53338ad765b4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_thread_instance_pause",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "0d0f68b9a9a729433f1bd4fdb6e78ca9948c8589acaaef936187e6d80c1319a4",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "c302f914633bd1f962756b55c8ed7642743c1d249438f36bd82ca3ba217386e3"
+            },
+            {
+              "path": "src/flb_input_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "c302f914633bd1f962756b55c8ed7642743c1d249438f36bd82ca3ba217386e3",
+              "body_sha256": "30f30fb71057d163c8bc698b2c69d578ff5b6545d549a7a99fcd8f62b7c6d3f0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_thread_instance_pre_run",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "4ba5cb5267cc48462e80490f815ae706e3b43fb74037e6b793e8f7aa350d7dc1",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "c7727fa5c0913654879c854571bc803fb4ad4e947cc15e10d5629f0e4132f415"
+            },
+            {
+              "path": "src/flb_input_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "c7727fa5c0913654879c854571bc803fb4ad4e947cc15e10d5629f0e4132f415",
+              "body_sha256": "2bdfac6789ce857ef04f1d41607a9c03b9df039f5d24ca3817910720948c480d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_thread_instance_resume",
+      "module": "fluent_bit/null_deref.qv",
+      "contract_sha256": "9aa18242f05f2b9ad25581fb58169110eea8823cf9517973900c225a474d2275",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_thread.h",
+              "kind": "declaration",
+              "declaration_sha256": "bb9929f41ab4e9c93fc40601b540c92da2aaf772e7563c3eb298b0e1371b0518"
+            },
+            {
+              "path": "src/flb_input_thread.c",
+              "kind": "definition",
+              "declaration_sha256": "bb9929f41ab4e9c93fc40601b540c92da2aaf772e7563c3eb298b0e1371b0518",
+              "body_sha256": "67f9fc4e1fbd9916d84c4fb550ae26fb77f1ddd909a9bc25c59ed24d85a30199"
             }
           ]
         }

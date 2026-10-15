@@ -94,3 +94,87 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member_stable(flb_processor_instance, p);
 };
+
+// Function-scope entries (rule 14z): `requires nonnull_member_scope(
+// flb_input_instance, p, ins);` says the instance `ins` names has a non-null
+// plugin on entry; every direct caller's actual is a checked obligation, and
+// with p stable (above) the entry fact lasts the whole body. Chosen by
+// docs/reports/fb-plugin-descriptor-nonnull/scripts/scope_candidates.py from
+// the stable-only reading's slice and system runs: every function whose own
+// row kept only candidates on `ins->p` for its instance formal `ins`, with
+// external linkage and its address taken nowhere in the trees (an indirect
+// caller is never checked). Each reads `ins->p` (or a copy of it) without a
+// NULL test; each definition is byte-identical at 046accf6 and the
+// tail-pause export (flb_input_pause differs at 66910c10 only in its
+// already-paused test, which 046accf6 also lets through during a shutdown
+// flush; both read ins->p the same way).
+
+// flb_input.c: `if (ins->p->cb_pause_checked != NULL)`, then `ins->p->cb_pause`.
+extern fn flb_input_plugin_pause(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input.c: `if (ins->p->cb_resume_checked != NULL)`, then `ins->p->cb_resume`.
+extern fn flb_input_plugin_resume(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input.c: `flb_input_buf_paused(ins)`, then `ins->p->cb_pause || ins->p->cb_pause_checked`, and `flb_input_plugin_pause(ins)`.
+extern fn flb_input_pause(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input.c: `ins->p->cb_resume || ins->p->cb_resume_checked`, and `flb_input_plugin_resume(ins)`.
+extern fn flb_input_resume(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input.c: `flb_input_is_threaded(ins)` (then `flb_input_thread_instance_pre_run(config, ins)`), else `ins->p->cb_pre_run`.
+extern fn flb_input_instance_pre_run(ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input.c: `flb_input_is_threaded(ins)`, then `p = ins->p; if (p->cb_exit && ins->context)`.
+extern fn flb_input_instance_exit(ins: ptr<mut, u8>, config: ptr<mut, u8>) -> unit
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input_thread.c: `if (ins->p->cb_pre_run)`.
+extern fn flb_input_thread_instance_pre_run(config: ptr<mut, u8>, ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input_thread.c: `flb_plg_debug(ins, "thread pause instance")` reads `ins->p->name` (flb_input_plugin.h:50-54).
+extern fn flb_input_thread_instance_pause(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input_thread.c: `flb_plg_debug(ins, "thread resume instance")` reads `ins->p->name`.
+extern fn flb_input_thread_instance_resume(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
+
+// flb_input_thread.c: `flb_plg_debug(ins, "thread exit instance")` reads `ins->p->name`.
+extern fn flb_input_thread_instance_exit(ins: ptr<mut, u8>) -> i32
+contract {
+    requires bounds_contract_v1;
+    requires nonnull_member_scope(flb_input_instance, p, ins);
+};
