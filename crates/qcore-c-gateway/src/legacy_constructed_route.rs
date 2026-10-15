@@ -66,6 +66,17 @@ pub struct MemberUse {
     pub actuals: Vec<CallbackActual>,
     /// The closure's refusal, kept when no path state decides.
     pub refusal: String,
+    /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): every declaration in
+    /// force stating member-path states and nothing else beside its custody
+    /// contract (no hand-off), by name: a registered candidate so declared
+    /// reads as that contract, its states composed with the arms.
+    pub member_paths: BTreeMap<
+        String,
+        (
+            qcore_schemas::contract::ResourceFunctionContract,
+            Vec<qcore_schemas::member_path::MemberPathState>,
+        ),
+    >,
 }
 
 /// The decided-arm reading of a type-switched release: the arms, the mask
@@ -268,14 +279,32 @@ pub(super) enum MemberRefusal {
 /// Hook 4 (rules 13w, 14e): a member invocation on an object whose path
 /// state is decided: `Ok` when every registered candidate (none for
 /// `absent`) is the identity there.
-pub(super) fn decide_member(state: &AbstractState, use_: &MemberUse) -> Result<(), MemberRefusal> {
+pub(super) fn decide_member(
+    state: &AbstractState,
+    use_: &MemberUse,
+) -> Result<DecidedCandidates, MemberRefusal> {
     let Some(ObjectState::Member(Registration::InForce { candidates, .. })) =
         site_of(state, &use_.object)
             .and_then(|site| state.constructed.get(&(site, use_.key.clone())))
     else {
         return Err(MemberRefusal::Undecided);
     };
-    if candidates.iter().any(|(_, contract)| {
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): a registered candidate
+    // whose declaration states member paths reads as its custody contract.
+    let candidates = candidates
+        .iter()
+        .map(|(name, contract)| {
+            let declared = use_.member_paths.get(name);
+            let contract = contract
+                .clone()
+                .or_else(|| declared.map(|(contract, _)| contract.clone()));
+            let states = declared
+                .map(|(_, states)| states.clone())
+                .unwrap_or_default();
+            (name.clone(), contract, states)
+        })
+        .collect::<Vec<_>>();
+    if candidates.iter().any(|(_, contract, _)| {
         !crate::callback_contracts::requirements(contract.as_ref(), &use_.actuals).is_empty()
     }) {
         // A candidate that requires the caller's actual live is not decided
@@ -287,16 +316,24 @@ pub(super) fn decide_member(state: &AbstractState, use_: &MemberUse) -> Result<(
     }
     let classes = candidates
         .iter()
-        .map(|(name, contract)| (name.clone(), classify(contract.as_ref(), &use_.actuals)))
+        .map(|(name, contract, _)| (name.clone(), classify(contract.as_ref(), &use_.actuals)))
         .collect::<Vec<_>>();
+    let decided = candidates
+        .into_iter()
+        .map(|(name, _, states)| (name, states))
+        .collect();
     if classes.is_empty() {
-        return Ok(());
+        return Ok(decided);
     }
     match decide(Ok(classes.as_slice()), false) {
         Decision::Refused(reason, candidate) => Err(MemberRefusal::Decided(reason, candidate)),
-        _ => Ok(()),
+        _ => Ok(decided),
     }
 }
+
+/// The candidates a decided registration invokes, each with its stated
+/// member paths (card OP-CALLBACK-MEMBER-PATH-RELEASE, rule 30).
+pub(super) type DecidedCandidates = Vec<(String, Vec<qcore_schemas::member_path::MemberPathState>)>;
 
 /// Hook 4 (rule 12o): the decided join at `path` of the release of the
 /// object `object` names: `None` when the object's discriminant is not

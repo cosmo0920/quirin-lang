@@ -356,6 +356,10 @@ pub(crate) mod callback_forward;
 // stated result state on route G.
 #[path = "legacy_constructed_route.rs"]
 pub(crate) mod constructed_route;
+// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): a callback candidate's
+// stated member-path states, composed with the arms at an invocation.
+#[path = "legacy_member_path_route.rs"]
+pub(crate) mod member_path_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before

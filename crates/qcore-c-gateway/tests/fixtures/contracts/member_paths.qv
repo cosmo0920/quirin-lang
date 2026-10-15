@@ -1,0 +1,102 @@
+module contract;
+
+// Card OP-CALLBACK-MEMBER-PATH-RELEASE (gateway rule 30, contract spec
+// C04.19.6): synthetic `c_*` callees. Trusted test assumptions, not facts
+// about any library.
+
+extern fn c_item_new(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+// A constructor registering `cb` in the result's `op_cb`.
+extern fn c_op_new_cb(type: i32, cb: fnptr) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(type);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_discriminant_set(result, op.type, type, 0);
+    ensures normal resource_callback_member_registered(result, op.op_cb, cb);
+    ensures normal resource_return_owned(nonnull);
+};
+
+// The op's own callback runs, then the release chosen by `type`: type 1
+// frees the payload, every other type frees nothing of it.
+extern fn c_op_destroy(rko: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_discriminant(rko, type, 0);
+    ensures normal resource_released(rko, nonnull);
+    ensures normal resource_callback_member_invoked(rko, op.op_cb, _, _, rko);
+    ensures normal resource_arm_released(rko, payload) when type == 1;
+    ensures normal resource_arm_empty(rko) otherwise;
+    ensures normal resource_return_none();
+};
+
+// Releases the payload and clears the member.
+extern fn c_cb_releases(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.payload |-> #released;
+};
+
+// Hands the payload to another holder and clears the member.
+extern fn c_cb_moves(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.payload |-> #moved;
+};
+
+// Takes the payload and leaves the member designating it.
+extern fn c_cb_stale(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.payload |-> #stale;
+};
+
+// Hands the payload on along some paths and keeps it along others.
+extern fn c_cb_maybe(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.payload |-> {#moved, #kept};
+};
+
+// States a path below the payload, never the payload itself.
+extern fn c_cb_deep(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.payload.x |-> #released;
+};
+
+// States another path only: the payload is kept.
+extern fn c_cb_other(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_return_none();
+    quant live #rko: op.aux |-> #released;
+};

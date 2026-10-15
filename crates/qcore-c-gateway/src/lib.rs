@@ -75,6 +75,9 @@ pub mod callback_contracts;
 pub mod callback_member_closure;
 pub mod constructed_state;
 pub mod handoff_branch;
+/// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the body check of a
+/// declaration's member-path states.
+pub mod member_path_check;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n): the run's member facts.
 pub mod member_run_facts;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure

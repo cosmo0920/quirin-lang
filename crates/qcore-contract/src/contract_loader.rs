@@ -336,6 +336,8 @@ mod constructed_state;
 // depending on its return code, and the module's aliases (§C04.19.5).
 #[path = "contract_handoff.rs"]
 mod handoff;
+#[path = "contract_member_path.rs"]
+mod member_path;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1730,9 +1732,17 @@ fn load_function_in(
     // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the hand-off clauses, as
     // written, their constants canonical.
     let mut handoff_clauses: Vec<handoff::Written> = Vec::new();
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the member-path states, as
+    // written, their guards' constants canonical.
+    let mut member_path_clauses: Vec<member_path::Written> = Vec::new();
     for clause in clauses {
         if clause.value.kind == SourceContractClauseKind::QuantLive {
-            if handoff::binds_a_formal(&clause.value.expression_source) {
+            if member_path::is_member_path(&clause.value.expression_source) {
+                member_path_clauses.push(member_path::quant_live_clause(
+                    &clause.value.expression_source,
+                    aliases,
+                )?);
+            } else if handoff::binds_a_formal(&clause.value.expression_source) {
                 handoff_clauses.push(handoff::quant_live_clause(
                     &clause.value.expression_source,
                     aliases,
@@ -2414,6 +2424,7 @@ fn load_function_in(
         && arm_clauses.is_empty()
         && constructed_clauses.is_empty()
         && handoff_clauses.is_empty()
+        && member_path_clauses.is_empty()
     {
         None
     } else {
@@ -2591,7 +2602,31 @@ fn load_function_in(
         {
             return Err("a hand-off stands only beside retentions and plain predicates".into());
         }
-        if (handed.is_some() || !declared.constructed.is_empty())
+        // Card OP-CALLBACK-MEMBER-PATH-RELEASE (§C04.19.6): the member-path
+        // states stand where a hand-off may, beside it or alone.
+        let member_paths = member_path::declaration(
+            &member_path_clauses,
+            &contract,
+            &parameter_types,
+            &names,
+            handed.as_ref(),
+        )?;
+        if !member_paths.is_empty()
+            && (!declared.slot_moves.is_empty()
+                || !declared.derived_outs.is_empty()
+                || !declared.references.is_empty()
+                || !declared.callbacks.is_empty()
+                || declared.discriminant.is_some()
+                || !declared.arms.is_empty()
+                || !declared.constructed.is_empty()
+                || !declared.retentions.is_empty()
+                || !declared.resets.is_empty())
+        {
+            return Err(
+                "a member-path state stands only beside a hand-off and plain predicates".into(),
+            );
+        }
+        if (handed.is_some() || !declared.constructed.is_empty() || !member_paths.is_empty())
             && let Some(name) = qcore_schemas::handoff::RESERVED_KEYWORDS
                 .iter()
                 .find(|name| names.contains_key(**name))
@@ -2619,6 +2654,7 @@ fn load_function_in(
             }
         }
         declared.handoff = handed;
+        declared.member_paths = member_paths;
         Some(declared)
     };
     Ok(LoadedDeclaration {

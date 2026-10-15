@@ -281,6 +281,7 @@ impl Parser<'_> {
             || declaration.arms_withdrawn
             || !declaration.constructed.is_empty()
             || declaration.handoff.is_some()
+            || !declaration.member_paths.is_empty()
         {
             let owned = |index: usize| -> Option<Vec<String>> {
                 actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())

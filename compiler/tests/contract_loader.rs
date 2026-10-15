@@ -1964,9 +1964,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `rd_kafka_txn_op_send_offsets_to_transaction` in `librdkafka/client.qv`
     // (withheld with the retaining declarations, 78 -> 80). Selection and
     // rejected unchanged.
+    // 457 -> 465 by card OP-CALLBACK-MEMBER-PATH-RELEASE: the eight
+    // op-callback candidates of shape (b) in `librdkafka/client.qv`, each
+    // stating its member-path states (two beside a KEEP hand-off), withheld
+    // with the retaining declarations. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 457, 314)
+        (61, 465, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2007,7 +2011,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `rd_kafka_oauthbearer_refresh_op`): 57 -> 78.
     // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the two hand-off declarations
     // (C04.19.5): 78 -> 80.
-    assert_eq!(loaded.retaining().len(), 80);
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the eight member-path
+    // declarations (C04.19.6): 80 -> 88.
+    assert_eq!(loaded.retaining().len(), 88);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

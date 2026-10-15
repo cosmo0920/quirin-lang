@@ -1413,6 +1413,41 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafka_txn_op_send_offsets_to_transaction",
         7,
     ),
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the eight op-callback candidates
+    // of shape (b) (C04.19.6), each the marker, the `rk_no_plugin_library`
+    // premise, three modes, the result and its member-path states:
+    // `rd_kafka_admin_worker` and the leaders worker beside a KEEP hand-off
+    // (four states each), `rd_kafka_share_fetch_fanout_op` with its
+    // `share_ack_batches_nonempty` premise, `rd_kafka_share_commit_sync_fanout_op`
+    // with three states.
+    ("librdkafka/client.qv", "rd_kafka_admin_worker", 11),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+        11,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_admin_fanout_worker", 7),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_DeleteRecords_leaders_queried_cb",
+        7,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_ListOffsets_leaders_queried_cb",
+        7,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_share_commit_async_fanout_op",
+        7,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_share_fetch_fanout_op", 8),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_share_commit_sync_fanout_op",
+        9,
+    ),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

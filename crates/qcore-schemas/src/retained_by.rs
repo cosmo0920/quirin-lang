@@ -250,6 +250,19 @@ pub struct RetainingContract {
     /// when absent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub handoff: Option<crate::handoff::HandOff>,
+    /// Card **OP-CALLBACK-MEMBER-PATH-RELEASE** (§C04.19.6, rule 30): the
+    /// state the call leaves at member paths of a formal's object (`quant
+    /// live #P: TAG.PATH |-> STATE [when GUARD];`), in clause order, one per
+    /// path. Read only by rule 30's composition at a callback invocation; a
+    /// direct call of the declaration refuses. Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub member_paths: Vec<crate::member_path::MemberPathState>,
+    /// Card **OP-CALLBACK-MEMBER-PATH-RELEASE** (rule 30): set only in a
+    /// translation unit whose own body of the declaration contradicts a
+    /// stated member path. The candidate then has no contract in force
+    /// there; never set by the loader; omitted when false.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub member_paths_withdrawn: bool,
 }
 
 impl RetainingContract {

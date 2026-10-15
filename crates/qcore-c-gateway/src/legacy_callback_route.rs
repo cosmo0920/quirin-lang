@@ -99,6 +99,10 @@ pub struct Operands {
     /// Card OP-CONSTRUCTOR-DECLARATIONS (rules 13w, 14e): member invocations
     /// the unit's closure refuses, read against the object's path state.
     pub member_uses: Vec<super::constructed_route::MemberUse>,
+    /// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the candidates'
+    /// member-path states at each parameter position of a decided
+    /// invocation, composed with the arms before them.
+    pub member_paths: Vec<super::member_path_route::MemberPathOperands>,
 }
 
 /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the arms of a
@@ -156,6 +160,21 @@ pub(super) fn join(
         };
         mine.insert(key, agreed);
     }
+}
+
+/// Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): whether a declaration
+/// carries nothing beside its custody contract, its hand-off and its
+/// member-path states (the loader admits nothing else beside them).
+fn member_path_plain(declared: &RetainingContract) -> bool {
+    declared.retentions.is_empty()
+        && declared.resets.is_empty()
+        && declared.slot_moves.is_empty()
+        && declared.derived_outs.is_empty()
+        && declared.references.is_empty()
+        && declared.callbacks.is_empty()
+        && declared.discriminant.is_none()
+        && declared.arms.is_empty()
+        && declared.constructed.is_empty()
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -507,6 +526,22 @@ impl Parser<'_> {
                         self.handed_class(name, declared, handoff, actuals, at),
                     );
                 }
+                // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): a candidate
+                // stating member-path states and nothing else beside its
+                // custody contract reads as that contract; its states are
+                // composed at the invocation (`member_path_route`). Withdrawn
+                // in this unit, it has no contract in force here.
+                if contract.is_none()
+                    && let Some(declared) = self.contracts.retaining_contract(name)
+                    && !declared.member_paths.is_empty()
+                {
+                    let class = if declared.member_paths_withdrawn || !member_path_plain(declared) {
+                        CandidateClass::Missing
+                    } else {
+                        classify(Some(&declared.contract), actuals)
+                    };
+                    return (name.clone(), class);
+                }
                 // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12m): a
                 // candidate that takes the supplied object only on some
                 // return codes (a disposition, never in the function map)
@@ -550,7 +585,10 @@ impl Parser<'_> {
             && declared.discriminant.is_none()
             && declared.arms.is_empty()
             && declared.constructed.is_empty();
-        if !plain {
+        // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
+        // beside the hand-off are read at the invocation; withdrawn in this
+        // unit, the candidate has no contract in force here.
+        if !plain || declared.member_paths_withdrawn {
             return CandidateClass::Missing;
         }
         match self.handoff_admission(name, handoff, actuals, at) {
@@ -652,7 +690,9 @@ impl Parser<'_> {
             let contract = self.contracts.contract(name).or_else(|| {
                 self.contracts
                     .retaining_contract(name)
-                    .filter(|declared| declared.handoff.is_some())
+                    .filter(|declared| {
+                        declared.handoff.is_some() || !declared.member_paths.is_empty()
+                    })
                     .map(|declared| &declared.contract)
             });
             for (index, nullable) in crate::callback_contracts::requirements(contract, actuals) {
@@ -689,6 +729,17 @@ impl Parser<'_> {
                     handoff.guard.spelling()
                 ),
                 crate::handoff_branch::DIRECT,
+            ));
+        }
+        // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
+        // are read only at a callback invocation, composed with the
+        // invoker's arms; a direct call does not compose them.
+        if !declaration.member_paths.is_empty() {
+            return Err(refusal(
+                function,
+                "it states what it leaves at member paths of a formal's object, which only a \
+                 callback invocation composes",
+                super::member_path_route::DIRECT,
             ));
         }
         if declaration.callbacks_withdrawn {
@@ -739,6 +790,7 @@ impl Parser<'_> {
             arms: None,
             constructed: None,
             member_uses: Vec::new(),
+            member_paths: Vec::new(),
         };
         // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a
         // constructor's stated result state, unless its body in this unit
@@ -822,6 +874,15 @@ impl Parser<'_> {
                     }
                     if let Ok(candidates) = &resolution {
                         self.require(candidates, actuals, &mut operands.owned);
+                        operands
+                            .member_paths
+                            .extend(super::member_path_route::operands(
+                                self.contracts,
+                                candidates,
+                                actuals,
+                                actual,
+                                &text(*callback),
+                            ));
                     }
                 }
                 CallbackClause::Table { table, actuals } => {
@@ -956,6 +1017,24 @@ impl Parser<'_> {
                             key: spelled.clone(),
                             actuals: actuals.clone(),
                             refusal: description,
+                            member_paths: self
+                                .contracts
+                                .retaining()
+                                .iter()
+                                .filter(|(name, declared)| {
+                                    !declared.member_paths.is_empty()
+                                        && !declared.member_paths_withdrawn
+                                        && declared.handoff.is_none()
+                                        && member_path_plain(declared)
+                                        && self.contracts.contract(name).is_none()
+                                })
+                                .map(|(name, declared)| {
+                                    (
+                                        name.clone(),
+                                        (declared.contract.clone(), declared.member_paths.clone()),
+                                    )
+                                })
+                                .collect(),
                         })
                     };
                     let candidates = match self.member_candidates(&spelled) {
@@ -1012,6 +1091,15 @@ impl Parser<'_> {
                         }
                     }
                     self.require(&candidates, actuals, &mut operands.owned);
+                    operands
+                        .member_paths
+                        .extend(super::member_path_route::operands(
+                            self.contracts,
+                            &candidates,
+                            actuals,
+                            actual,
+                            &spelled,
+                        ));
                 }
             }
         }
@@ -1019,7 +1107,8 @@ impl Parser<'_> {
             || !operands.owned.is_empty()
             || operands.arms.is_some()
             || operands.constructed.is_some()
-            || !operands.member_uses.is_empty())
+            || !operands.member_uses.is_empty()
+            || !operands.member_paths.is_empty())
         .then_some(operands))
     }
 
@@ -1108,7 +1197,45 @@ pub(super) fn apply(
     // own effects.
     for use_ in &operands.member_uses {
         match super::constructed_route::decide_member(state, use_) {
-            Ok(()) => {}
+            Ok(decided) => {
+                // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the decided
+                // candidates' member-path states, composed with the arms.
+                for (position, handed) in use_.actuals.iter().enumerate() {
+                    let CallbackActual::Parameter { .. } = handed else {
+                        continue;
+                    };
+                    let candidates = decided
+                        .iter()
+                        .map(|(name, states)| {
+                            (
+                                name.clone(),
+                                states
+                                    .iter()
+                                    .filter(|state| state.parameter == position)
+                                    .cloned()
+                                    .collect::<Vec<_>>(),
+                            )
+                        })
+                        .collect::<Vec<_>>();
+                    if candidates.iter().all(|(_, states)| states.is_empty()) {
+                        continue;
+                    }
+                    super::member_path_route::apply(
+                        function,
+                        line,
+                        callee,
+                        &super::member_path_route::MemberPathOperands {
+                            object: vec![use_.object.clone()],
+                            position,
+                            candidates,
+                            member: use_.key.clone(),
+                        },
+                        operands.arms.as_ref(),
+                        state,
+                        diagnostics,
+                    );
+                }
+            }
             Err(super::constructed_route::MemberRefusal::Undecided) => {
                 refuse(function, line, use_.refusal.clone(), state, diagnostics);
             }
@@ -1124,6 +1251,21 @@ pub(super) fn apply(
                 diagnostics,
             ),
         }
+    }
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): the callbacks run
+    // before the release's arms; a linked path some candidate states is
+    // decided by their composition with the arms, every other path by the
+    // arms as before.
+    for member_paths in &operands.member_paths {
+        super::member_path_route::apply(
+            function,
+            line,
+            callee,
+            member_paths,
+            operands.arms.as_ref(),
+            state,
+            diagnostics,
+        );
     }
     if let Some(arms) = &operands.arms {
         apply_arms(function, line, callee, arms, state, diagnostics);
@@ -1922,7 +2064,37 @@ pub(crate) fn settle(
         // no body evidence is recorded for it, so the declaration stays a
         // declared assumption (rule 13i).
     }
-    if withdrawn.is_empty() && arms_withdrawn.is_empty() && constructed_withdrawn.is_empty() {
+    // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
+    // stand in a unit that defines the body unless its Clang body contradicts
+    // them (withdrawn there); validated where the body itself establishes
+    // every stated reading, a declared assumption otherwise.
+    let mut member_paths_withdrawn = Vec::new();
+    for (name, declaration) in contracts.retaining() {
+        if declaration.member_paths.is_empty()
+            || declaration.member_paths_withdrawn
+            || super::slot_move_route::defined_body(tokens, name).is_none()
+        {
+            continue;
+        }
+        let checked = crate::typed_access_path::with_indirect_call_unit(|unit| {
+            unit.function(name).map(|function| {
+                crate::member_path_check::validates(function, &declaration.member_paths)
+            })
+        })
+        .flatten();
+        match checked {
+            Some(Ok(true)) => crate::contract_dependencies::validated(name, "30"),
+            Some(Err(_)) => member_paths_withdrawn.push(name.clone()),
+            // A body the check does not read, or that leaves a stated reading
+            // to its callees: a declared assumption.
+            Some(Ok(false)) | None => {}
+        }
+    }
+    if withdrawn.is_empty()
+        && arms_withdrawn.is_empty()
+        && constructed_withdrawn.is_empty()
+        && member_paths_withdrawn.is_empty()
+    {
         return None;
     }
     let mut settled = contracts.clone();
@@ -1947,6 +2119,15 @@ pub(crate) fn settle(
             .cloned()
             .expect("a retaining declaration");
         declaration.constructed_withdrawn = true;
+        settled.insert_retaining(name, declaration);
+    }
+    for name in member_paths_withdrawn {
+        crate::contract_dependencies::withdrawn(&name, "30", true);
+        let mut declaration = settled
+            .retaining_contract(&name)
+            .cloned()
+            .expect("a retaining declaration");
+        declaration.member_paths_withdrawn = true;
         settled.insert_retaining(name, declaration);
     }
     Some(settled)

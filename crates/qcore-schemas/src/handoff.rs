@@ -28,7 +28,12 @@ use serde::{Deserialize, Serialize};
 /// The value keywords and the result binder a `#` form reserves: a
 /// declaration carrying a `#` form rejects a parameter so named, and an
 /// alias may not take one of these names.
-pub const RESERVED_KEYWORDS: [&str; 4] = ["absent", "owner", "callback", "result"];
+///
+/// Card **OP-CALLBACK-MEMBER-PATH-RELEASE** adds the member-path states
+/// `released`, `moved`, `stale` and `kept` (`crate::member_path`).
+pub const RESERVED_KEYWORDS: [&str; 8] = [
+    "absent", "owner", "callback", "result", "released", "moved", "stale", "kept",
+];
 
 /// How a guard compares the call's result with its constant.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]

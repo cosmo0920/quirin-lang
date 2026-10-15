@@ -309,5 +309,7 @@ pub(super) fn declaration(
         constructed: Default::default(),
         constructed_withdrawn: false,
         handoff: None,
+        member_paths: Vec::new(),
+        member_paths_withdrawn: false,
     })
 }
