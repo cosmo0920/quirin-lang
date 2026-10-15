@@ -1,0 +1,62 @@
+[
+ {
+  "function": "flb_chunk_route_plugin_matches",
+  "configuration": 0,
+  "move": "Unknown -> Safe (unconditional)",
+  "null_verdict": "Safe",
+  "null_scope": "unconditional",
+  "outcomes": {
+   "proved": 15
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "result:stable:flb_output_instance.p": 2
+  },
+  "fields": {
+   "assumptions": [
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "stable:flb_output_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "stable:flb_output_instance.p"
+   ],
+   "function": "flb_chunk_route_plugin_matches",
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Safe",
+  "combined": "Safe"
+ },
+ {
+  "function": "flb_chunk_route_plugin_matches",
+  "configuration": 1,
+  "move": "Unknown -> Safe (unconditional)",
+  "null_verdict": "Safe",
+  "null_scope": "unconditional",
+  "outcomes": {
+   "proved": 15
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "result:stable:flb_output_instance.p": 2
+  },
+  "fields": {
+   "assumptions": [
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "stable:flb_output_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "stable:flb_output_instance.p"
+   ],
+   "function": "flb_chunk_route_plugin_matches",
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Safe",
+  "combined": "Safe"
+ }
+]

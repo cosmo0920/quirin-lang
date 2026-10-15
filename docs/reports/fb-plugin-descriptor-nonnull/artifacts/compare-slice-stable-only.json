@@ -1,0 +1,52 @@
+{
+ "check_changes": {
+  "removed candidate": 18,
+  "added moved": 18
+ },
+ "rows_before": 406,
+ "rows_after": 406,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Safe (unconditional)": 71,
+  "Unknown": 232,
+  "Safe (conditional)": 103
+ },
+ "verdicts_after": {
+  "Safe (unconditional)": 71,
+  "Unknown": 232,
+  "Safe (conditional)": 103
+ },
+ "moves": {},
+ "moves_by_cause": {},
+ "candidates_by_kind_before": {
+  "formal": 120,
+  "memory-field": 1153,
+  "uncontracted-result": 4,
+  "null-literal": 2
+ },
+ "candidates_by_kind_after": {
+  "formal": 120,
+  "memory-field": 1135,
+  "uncontracted-result": 4,
+  "null-literal": 2
+ },
+ "safe_to_non_safe": 0,
+ "moving": [],
+ "added_candidates": [],
+ "removed_candidates_by_function": {
+  "flb_input_http_server_property_check#0": 1,
+  "flb_input_http_server_property_check#1": 1,
+  "flb_input_net_property_check#0": 2,
+  "flb_input_net_property_check#1": 2,
+  "flb_input_oauth2_jwt_property_check#0": 1,
+  "flb_input_oauth2_jwt_property_check#1": 1,
+  "flb_input_plugin_property_check#0": 1,
+  "flb_input_plugin_property_check#1": 1,
+  "flb_input_set_property#0": 1,
+  "flb_input_set_property#1": 1,
+  "flb_input_thread_instance_exit#0": 1,
+  "flb_input_thread_instance_exit#1": 1,
+  "handle_input_event#0": 2,
+  "handle_input_event#1": 2
+ }
+}

@@ -1,0 +1,333 @@
+{
+ "after/corpus": {
+  "binary_sha256": "91e1d5740ab93f032e2ca638ebf743295dcd3f3cac8bf76794bb63b2c06cafa4",
+  "checks_by_outcome": {
+   "candidate": 12644,
+   "excluded": 137,
+   "finding": 29,
+   "moved": 16886,
+   "proved": 61923
+  },
+  "custody": {
+   "Safe": 936,
+   "Unknown": 3889,
+   "Unsafe": 9,
+   "absent": 87
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {
+   "flb_filter_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_input_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_output_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_processor_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   }
+  },
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 1435,
+   "Safe (unconditional)": 1114,
+   "Unknown": 2354,
+   "Unsafe": 18
+  },
+  "report_sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+  "run_json_binary_sha256": "91e1d5740ab93f032e2ca638ebf743295dcd3f3cac8bf76794bb63b2c06cafa4",
+  "seconds_inside_lock": "611.511"
+ },
+ "after/slice": {
+  "binary_sha256": "91e1d5740ab93f032e2ca638ebf743295dcd3f3cac8bf76794bb63b2c06cafa4",
+  "checks_by_outcome": {
+   "candidate": 1253,
+   "moved": 924,
+   "proved": 3932
+  },
+  "custody": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1,
+   "absent": 2
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {
+   "flb_filter_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_input_instance.p": {
+    "standing": "partly-validated",
+    "stores_examined": 2,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_output_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_processor_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   }
+  },
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 121,
+   "Safe (unconditional)": 69,
+   "Unknown": 216
+  },
+  "report_sha256": "ba0e19706e697c04855869c61e6ca6eea2466648db49aa3b4d5831f91d1a7370",
+  "seconds_inside_lock": "36.878"
+ },
+ "after/system": {
+  "binary_sha256": "91e1d5740ab93f032e2ca638ebf743295dcd3f3cac8bf76794bb63b2c06cafa4",
+  "checks_by_outcome": {
+   "candidate": 995,
+   "excluded": 4,
+   "moved": 1502,
+   "proved": 3345
+  },
+  "custody": {
+   "Safe": 93,
+   "Unknown": 351,
+   "Unsafe": 4,
+   "absent": 6
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {
+   "flb_filter_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_input_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_output_instance.p": {
+    "standing": "partly-validated",
+    "stores_examined": 2,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_processor_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   }
+  },
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 125,
+   "Safe (unconditional)": 86,
+   "Unknown": 243
+  },
+  "report_sha256": "c85f64ba1d4acdff00fe116cfed35c4fee7d9c5e720a5ddff0dcdd68c7afb692",
+  "seconds_inside_lock": "71.146"
+ },
+ "before/corpus": {
+  "binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "checks_by_outcome": {
+   "candidate": 12643,
+   "excluded": 137,
+   "finding": 29,
+   "moved": 16886,
+   "proved": 61921
+  },
+  "custody": {
+   "Safe": 936,
+   "Unknown": 3889,
+   "Unsafe": 9,
+   "absent": 87
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {},
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 1435,
+   "Safe (unconditional)": 1113,
+   "Unknown": 2355,
+   "Unsafe": 18
+  },
+  "report_sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+  "run_json_binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "seconds_inside_lock": "661.629"
+ },
+ "before/slice": {
+  "binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "checks_by_outcome": {
+   "candidate": 1279,
+   "moved": 924,
+   "proved": 3876
+  },
+  "custody": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1,
+   "absent": 2
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {},
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 103,
+   "Safe (unconditional)": 71,
+   "Unknown": 232
+  },
+  "report_sha256": "ba0e19706e697c04855869c61e6ca6eea2466648db49aa3b4d5831f91d1a7370",
+  "seconds_inside_lock": "37.274"
+ },
+ "before/system": {
+  "binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "checks_by_outcome": {
+   "candidate": 1005,
+   "excluded": 4,
+   "moved": 1492,
+   "proved": 3339
+  },
+  "custody": {
+   "Safe": 93,
+   "Unknown": 351,
+   "Unsafe": 4,
+   "absent": 6
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {},
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 125,
+   "Safe (unconditional)": 84,
+   "Unknown": 245
+  },
+  "report_sha256": "c85f64ba1d4acdff00fe116cfed35c4fee7d9c5e720a5ddff0dcdd68c7afb692",
+  "seconds_inside_lock": "73.067"
+ },
+ "stable/slice": {
+  "binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "checks_by_outcome": {
+   "candidate": 1261,
+   "moved": 942,
+   "proved": 3876
+  },
+  "custody": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1,
+   "absent": 2
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {
+   "flb_filter_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_input_instance.p": {
+    "standing": "partly-validated",
+    "stores_examined": 2,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_output_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_processor_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   }
+  },
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 103,
+   "Safe (unconditional)": 71,
+   "Unknown": 232
+  },
+  "report_sha256": "ba0e19706e697c04855869c61e6ca6eea2466648db49aa3b4d5831f91d1a7370",
+  "seconds_inside_lock": "36.690"
+ },
+ "stable/system": {
+  "binary_sha256": "f8c75e26717d33bf76d38ed213478fa683f40e7280bd449a2ea5199fb8ac7c42",
+  "checks_by_outcome": {
+   "candidate": 989,
+   "excluded": 4,
+   "moved": 1502,
+   "proved": 3345
+  },
+  "custody": {
+   "Safe": 93,
+   "Unknown": 351,
+   "Unsafe": 4,
+   "absent": 6
+  },
+  "exit": "0",
+  "fluent_bit_stable_declarations": {
+   "flb_filter_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_input_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_output_instance.p": {
+    "standing": "partly-validated",
+    "stores_examined": 2,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   },
+   "flb_processor_instance.p": {
+    "standing": "declared-assumption",
+    "stores_examined": 0,
+    "stores_not_proved": 0,
+    "whole_object_stores": 0
+   }
+  },
+  "fold_withdrawn": [],
+  "null": {
+   "Safe (conditional on its preconditions)": 125,
+   "Safe (unconditional)": 86,
+   "Unknown": 243
+  },
+  "report_sha256": "c85f64ba1d4acdff00fe116cfed35c4fee7d9c5e720a5ddff0dcdd68c7afb692",
+  "seconds_inside_lock": "72.309"
+ }
+}

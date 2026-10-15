@@ -7606,7 +7606,15 @@ own anchor here.
     pointer is the premise `whole-object`. A member with an exit store
     (NULL stored into an existing object: `rd_kafka_buf_s.rkbuf_rkb`'s
     reset in `rd_kafka_recv`, `mk_list_del`, `cfl_list_del`) has no stable
-    reading and is not declared. **Do not** exempt a store to an existing
+    reading and is not declared. An allocator's zeroed object (`calloc`,
+    `flb_calloc`) is no store at all: a fresh object starts outside the
+    stable state, so its NULL member is never read non-null, and only a
+    non-null fact the walk sees persists (card
+    FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE: Fluent Bit's plugin descriptors
+    `flb_{input,output,filter,processor}_instance.p`, hosted on the four
+    constructors, each `flb_calloc`ed and stored once with a plugin the
+    constructor dereferenced; every examined store proved on the routes
+    that analyse it). **Do not** exempt a store to an existing
     object, count a store proved only by a withdrawn declaration as
     proved, or label a stable declaration `validated`.
     **Premised facts** (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER, USER
@@ -7679,6 +7687,15 @@ own anchor here.
     is withdrawn (`Unknown`). A call through a function pointer is not
     checked (the registered indirect-call residual), so an address-taken
     scope function's row stays conditional, as for `quant null-deref`.
+    A check is discharged only by a fact on the actual's own path: a copy
+    tested before the call (`p = ins->p; if (!p) continue;`) leaves
+    `ins->p` a candidate at the call. Entries are chosen from a stable
+    reading's run, never to hide a caller's question: a function whose
+    remaining candidates are all `V->FIELD` of one formal, with external
+    linkage and its address taken nowhere (card
+    FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE: ten `nonnull_member_scope(
+    flb_input_instance, p, ins)` entries; their unproved caller checks are
+    named corrections).
     **Do not** read an entry fact the declaration does not state, or drop
     a caller's check because the callee's member is stable. A scope
     declaration may name a premise (rule 14x's premised facts): the

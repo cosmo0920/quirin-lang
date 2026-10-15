@@ -1,0 +1,101 @@
+{
+ "check_changes": {
+  "removed candidate": 2,
+  "added proved": 2,
+  "added candidate": 3
+ },
+ "rows_before": 4921,
+ "rows_after": 4921,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Unknown": 2355,
+  "Safe (unconditional)": 1113,
+  "Safe (conditional)": 1435,
+  "Unsafe": 18
+ },
+ "verdicts_after": {
+  "Unknown": 2354,
+  "Safe (unconditional)": 1114,
+  "Safe (conditional)": 1435,
+  "Unsafe": 18
+ },
+ "moves": {
+  "Unknown -> Safe (unconditional)": 1
+ },
+ "moves_by_cause": {
+  "Unknown -> Safe (unconditional)": {
+   "stable-member": 1
+  }
+ },
+ "candidates_by_kind_before": {
+  "memory-field": 9450,
+  "formal": 2467,
+  "null-literal": 119,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 4,
+  "global": 1,
+  "allocation": 16,
+  "lookup": 1
+ },
+ "candidates_by_kind_after": {
+  "memory-field": 9451,
+  "formal": 2467,
+  "null-literal": 119,
+  "other": 108,
+  "uncontracted-result": 477,
+  "uninitialized": 4,
+  "global": 1,
+  "allocation": 16,
+  "lookup": 1
+ },
+ "safe_to_non_safe": 0,
+ "moving": [
+  {
+   "library": "fluent-bit-chunk",
+   "file": "flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "configuration": 0,
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "stable-member"
+   ],
+   "safe_to_non_safe": false
+  }
+ ],
+ "added_candidates": [
+  {
+   "function": "flb_input_chunk_protect",
+   "file": "flb_input_chunk.c",
+   "configuration": 0,
+   "line": 19931,
+   "subject": "i->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+   "count": 1,
+   "verdict_before": "Unknown",
+   "verdict_after": "Unknown"
+  },
+  {
+   "function": "flb_input_chunk_protect",
+   "file": "flb_input_chunk.c",
+   "configuration": 0,
+   "line": 19946,
+   "subject": "i->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+   "count": 1,
+   "verdict_before": "Unknown",
+   "verdict_after": "Unknown"
+  },
+  {
+   "function": "flb_input_chunk_set_limits",
+   "file": "flb_input_chunk.c",
+   "configuration": 0,
+   "line": 19916,
+   "subject": "in->p at `flb_input_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+   "count": 1,
+   "verdict_before": "Unknown",
+   "verdict_after": "Unknown"
+  }
+ ],
+ "removed_candidates_by_function": {
+  "flb_chunk_route_plugin_matches#0": 2
+ }
+}

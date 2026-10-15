@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # measure.sh NAME BINARY [ROUTES] -- FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (from FB-QUANT-CONTRACT-CENSUS, adapted from
 # NULL-TRIAGE-UNRESOLVED-PATHS's scripts/measure.sh and measure-binary.sh):
-# one BEFORE run per route with main's binary and the null property
+# one run per route with BINARY and the null property
 # (QCORE_NULL_PROPERTY), no parity stream. ROUTES is a comma list of
 # corpus,system,slice (default all). Each route runs under the shared heavy
 # lock with its wall time measured inside the lock into NAME[-route].seconds.

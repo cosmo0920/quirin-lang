@@ -1,0 +1,972 @@
+[
+ {
+  "function": "flb_input_instance_exit",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_instance_exit` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_instance_exit` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_instance_exit",
+    "flb_input_thread_instance_exit",
+    "inferred:flb_input_is_threaded",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_instance_exit",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_instance_exit",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_instance_exit` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_instance_exit` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_instance_exit",
+    "flb_input_thread_instance_exit",
+    "inferred:flb_input_is_threaded",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_instance_exit",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_instance_pre_run",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_instance_pre_run` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_instance_pre_run` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_instance_pre_run",
+    "flb_input_thread_instance_pre_run",
+    "inferred:flb_input_is_threaded",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_instance_pre_run",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_instance_pre_run",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_instance_pre_run` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_instance_pre_run` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_instance_pre_run",
+    "flb_input_thread_instance_pre_run",
+    "inferred:flb_input_is_threaded",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_instance_pre_run",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_pause",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 16
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 11,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4,
+   "result:stable:flb_input_instance.p": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_pause` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_thread_instance_pause",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_plugin_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_pause",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_pause",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 16
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 11,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4,
+   "result:stable:flb_input_instance.p": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_pause` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_thread_instance_pause",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_plugin_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_pause",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_plugin_pause",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_plugin_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 13
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_plugin_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_plugin_pause` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_pause",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_name"
+   ],
+   "function": "flb_input_plugin_pause",
+   "indirect_calls": 2,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_plugin_pause",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_plugin_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 13
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_plugin_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_plugin_pause` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_pause",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_name"
+   ],
+   "function": "flb_input_plugin_pause",
+   "indirect_calls": 2,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_plugin_resume",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_plugin_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 13
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_plugin_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_plugin_resume` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_resume",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_name"
+   ],
+   "function": "flb_input_plugin_resume",
+   "indirect_calls": 2,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_plugin_resume",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_plugin_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 13
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_plugin_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_plugin_resume` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_resume",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_name"
+   ],
+   "function": "flb_input_plugin_resume",
+   "indirect_calls": 2,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_rate_gate_protect",
+  "configuration": 0,
+  "move": "Safe (unconditional) -> Unknown",
+  "null_verdict": "Unknown",
+  "null_scope": "unconditional",
+  "outcomes": {
+   "proved": 15,
+   "candidate": 1
+  },
+  "candidates": [
+   "ins->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)"
+  ],
+  "declaration_proofs": {},
+  "fields": {
+   "assumptions": [],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_thread_instance_pause",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_pause",
+    "inferred:flb_input_plugin_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_rate_gate_protect",
+   "property": "c.null.deref.v1",
+   "reasons": [
+    "null-deref-candidate"
+   ],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_rate_gate_protect",
+  "configuration": 1,
+  "move": "Safe (unconditional) -> Unknown",
+  "null_verdict": "Unknown",
+  "null_scope": "unconditional",
+  "outcomes": {
+   "proved": 15,
+   "candidate": 1
+  },
+  "candidates": [
+   "ins->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)"
+  ],
+  "declaration_proofs": {},
+  "fields": {
+   "assumptions": [],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_thread_instance_pause",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_pause",
+    "inferred:flb_input_plugin_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_rate_gate_protect",
+   "property": "c.null.deref.v1",
+   "reasons": [
+    "null-deref-candidate"
+   ],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_resume",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 11
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 7,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4,
+   "result:stable:flb_input_instance.p": 2
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_resume",
+    "flb_input_resume",
+    "flb_input_thread_instance_resume",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_plugin_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_resume",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 11
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 7,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 4,
+   "result:stable:flb_input_instance.p": 2
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_plugin_resume",
+    "flb_input_resume",
+    "flb_input_thread_instance_resume",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_plugin_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_test_pause_resume",
+  "configuration": 0,
+  "move": "Safe (conditional) -> Unknown",
+  "null_verdict": "Unknown",
+  "null_scope": "conditional on `flb_input_test_pause_resume`'s null-deref preconditions: inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 2,
+   "candidate": 1,
+   "moved": 1
+  },
+  "candidates": [
+   "ins->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)"
+  ],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 2,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "inferred: `flb_input_test_pause_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_plugin_resume",
+    "flb_input_resume",
+    "flb_input_thread_instance_pause",
+    "flb_input_thread_instance_resume",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_pause",
+    "inferred:flb_input_plugin_pause",
+    "inferred:flb_input_plugin_resume",
+    "inferred:flb_input_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_test_pause_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [
+    "null-deref-candidate"
+   ],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_test_pause_resume",
+  "configuration": 1,
+  "move": "Safe (conditional) -> Unknown",
+  "null_verdict": "Unknown",
+  "null_scope": "conditional on `flb_input_test_pause_resume`'s null-deref preconditions: inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 2,
+   "candidate": 1,
+   "moved": 1
+  },
+  "candidates": [
+   "ins->p at `flb_input_pause` nonnull_member_scope(flb_input_instance, p, ins)"
+  ],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 2,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "inferred: `flb_input_test_pause_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_pause",
+    "flb_input_plugin_pause",
+    "flb_input_plugin_resume",
+    "flb_input_resume",
+    "flb_input_thread_instance_pause",
+    "flb_input_thread_instance_resume",
+    "inferred:flb_input_buf_paused",
+    "inferred:flb_input_ingestion_paused",
+    "inferred:flb_input_ingestion_resumed",
+    "inferred:flb_input_is_threaded",
+    "inferred:flb_input_name",
+    "inferred:flb_input_pause",
+    "inferred:flb_input_plugin_pause",
+    "inferred:flb_input_plugin_resume",
+    "inferred:flb_input_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_test_pause_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [
+    "null-deref-candidate"
+   ],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_exit",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 15
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_exit` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_thread_instance_exit` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_exit",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_exit",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_exit",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 15
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 9,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 3,
+   "result:stable:flb_input_instance.p": 3
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_exit` nonnull_member_scope(flb_input_instance, p, ins)",
+    "effective-type: a non-character scalar store does not modify a pointer object (C11 6.5p7)",
+    "inferred: `flb_input_thread_instance_exit` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_exit",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_exit",
+   "indirect_calls": 1,
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_pause",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_pause` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_pause",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_pause",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_pause` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_pause` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_pause",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_pause",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_pre_run",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 3
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 2,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_pre_run` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_pre_run` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_pre_run",
+    "inferred:input_thread_instance_get_status"
+   ],
+   "function": "flb_input_thread_instance_pre_run",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_pre_run",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 3
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 2,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_pre_run` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_pre_run` quant null-deref #ins"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_pre_run",
+    "inferred:input_thread_instance_get_status"
+   ],
+   "function": "flb_input_thread_instance_pre_run",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_resume",
+  "configuration": 0,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ },
+ {
+  "function": "flb_input_thread_instance_resume",
+  "configuration": 1,
+  "move": "Unknown -> Safe (conditional)",
+  "null_verdict": "Safe",
+  "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+  "outcomes": {
+   "proved": 7
+  },
+  "candidates": [],
+  "declaration_proofs": {
+   "precondition:inferred: quant null-deref #ins": 4,
+   "precondition:declared: nonnull_member_scope(flb_input_instance, p, ins)": 1,
+   "result:stable:flb_input_instance.p": 1
+  },
+  "fields": {
+   "assumptions": [
+    "declared: `flb_input_thread_instance_resume` nonnull_member_scope(flb_input_instance, p, ins)",
+    "inferred: `flb_input_thread_instance_resume` quant null-deref #ins",
+    "stable:flb_input_instance.p: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"
+   ],
+   "contract_dependencies": [
+    "flb_input_thread_instance_resume",
+    "stable:flb_input_instance.p"
+   ],
+   "function": "flb_input_thread_instance_resume",
+   "inferred_preconditions": [
+    "#ins"
+   ],
+   "property": "c.null.deref.v1",
+   "reasons": [],
+   "returns_non_null": false,
+   "triage": null
+  },
+  "custody": "Unknown",
+  "combined": "Unknown"
+ }
+]

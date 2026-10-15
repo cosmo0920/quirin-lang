@@ -1,0 +1,82 @@
+{
+ "check_changes": {
+  "removed candidate": 16,
+  "added proved": 6,
+  "added moved": 10
+ },
+ "rows_before": 454,
+ "rows_after": 454,
+ "custody_column_moves": 0,
+ "verdicts_before": {
+  "Unknown": 245,
+  "Safe (conditional)": 125,
+  "Safe (unconditional)": 84
+ },
+ "verdicts_after": {
+  "Unknown": 243,
+  "Safe (conditional)": 125,
+  "Safe (unconditional)": 86
+ },
+ "moves": {
+  "Unknown -> Safe (unconditional)": 2
+ },
+ "moves_by_cause": {
+  "Unknown -> Safe (unconditional)": {
+   "stable-member": 2
+  }
+ },
+ "candidates_by_kind_before": {
+  "memory-field": 865,
+  "formal": 126,
+  "other": 4,
+  "uncontracted-result": 10
+ },
+ "candidates_by_kind_after": {
+  "memory-field": 849,
+  "formal": 126,
+  "other": 4,
+  "uncontracted-result": 10
+ },
+ "safe_to_non_safe": 0,
+ "moving": [
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "configuration": 0,
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "stable-member"
+   ],
+   "safe_to_non_safe": false
+  },
+  {
+   "library": "fluent-bit-system",
+   "file": "src/flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "configuration": 1,
+   "move": "Unknown -> Safe (unconditional)",
+   "causes": [
+    "stable-member"
+   ],
+   "safe_to_non_safe": false
+  }
+ ],
+ "added_candidates": [],
+ "removed_candidates_by_function": {
+  "flb_chunk_route_plugin_matches#0": 2,
+  "flb_chunk_route_plugin_matches#1": 2,
+  "flb_output_http_server_property_check#0": 1,
+  "flb_output_http_server_property_check#1": 1,
+  "flb_output_net_property_check#0": 1,
+  "flb_output_net_property_check#1": 1,
+  "flb_output_new#0": 1,
+  "flb_output_new#1": 1,
+  "flb_output_oauth2_property_check#0": 1,
+  "flb_output_oauth2_property_check#1": 1,
+  "flb_output_plugin_property_check#0": 1,
+  "flb_output_plugin_property_check#1": 1,
+  "flb_output_set_property#0": 1,
+  "flb_output_set_property#1": 1
+ }
+}
