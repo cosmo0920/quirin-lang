@@ -77,7 +77,7 @@ mod walk;
 mod witness;
 
 use ast::kids;
-pub use scope::StableStore;
+pub use scope::{NullPremise, PREMISE_DEPENDENCY, StableStore, member_fact_premises, premises_of};
 use walk::{Declared, Entry, Env, MemberDecl, ResultDecl, Summary, Walker};
 pub use walk::{ExternalCall, MemberStore};
 pub use witness::{PathStep, Witness};
@@ -194,6 +194,36 @@ pub struct NullFunctionRow {
     /// candidate's path search.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub triage: Vec<TriageRecord>,
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises of the
+    /// member facts the row rests on (a stable member or a scope entry whose
+    /// declaration states `resource_premise`), each also listed in
+    /// `contract_dependencies` as `premise:NAME`. Read by no decision.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub premises: Vec<NullPremise>,
+}
+
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: list on `row` the premises of
+/// every premised member fact its dependency set names (`premises` from
+/// [`member_fact_premises`]), and name each in its dependencies. Changes no
+/// verdict, check or reason.
+pub fn attach_premises(
+    row: &mut NullFunctionRow,
+    premises: &BTreeMap<String, Vec<(String, String)>>,
+) {
+    let listed = premises_of(
+        row.contract_dependencies.iter().map(String::as_str),
+        premises,
+    );
+    if listed.is_empty() {
+        return;
+    }
+    for premise in &listed {
+        row.contract_dependencies
+            .push(format!("{PREMISE_DEPENDENCY}{}", premise.name));
+    }
+    row.contract_dependencies.sort();
+    row.contract_dependencies.dedup();
+    row.premises = listed;
 }
 
 fn is_zero(count: &usize) -> bool {
@@ -623,6 +653,7 @@ fn analyze_function(env: &Env<'_>, name: &str, definition: &Value) -> Analysed {
         contract_dependencies: dependencies,
         indirect_calls: walked.indirect_calls,
         triage,
+        premises: Vec::new(),
     };
     Analysed {
         row,
@@ -719,6 +750,8 @@ fn analyze_on_stack(
     let declared = declared_clauses(bounds);
     let (members, results) = declared_members_and_results(bounds);
     let (stable, scopes) = scope::declared_stable_and_scopes(bounds);
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the member facts' premises.
+    let premises = member_fact_premises(bounds);
     // Card NULL-TRIAGE-UNRESOLVED-PATHS (rule 15q): declared result ranges,
     // each checked against this unit's own body of the function (a refuting
     // body takes it out of force here; the run's fold withdraws it), and this
@@ -793,7 +826,12 @@ fn analyze_on_stack(
                 contract_dependencies: Vec::new(),
                 indirect_calls: 0,
                 triage: Vec::new(),
+                premises: Vec::new(),
             })
+        })
+        .map(|mut row| {
+            attach_premises(&mut row, &premises);
+            row
         })
         .collect();
     Ok(NullUnitReport {

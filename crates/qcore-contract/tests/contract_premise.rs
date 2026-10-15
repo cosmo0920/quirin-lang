@@ -123,3 +123,74 @@ fn an_environment_without_sources_declares_no_premise() {
     )]);
     assert!(declared_premises(&contracts).unwrap().is_empty());
 }
+
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Add
+/// premise support"): a Quirin model contract (a `resource type` module no
+/// resource view selects) states a named premise in the contract format
+/// itself; `module_premises` reads it, and a malformed, repeated or
+/// postcondition premise rejects the module at parse, in any vocabulary.
+const MODEL: &str = "module contract;
+
+resource type Owner {
+    repr: ptr<mut, u8>;
+    footprint: { queues = 1 };
+    destructor: owner_destroy noexcept;
+    copy: forbidden;
+    move: allowed;
+}
+
+extern fn owner_destroy(
+    queue: own<Owner> use one
+) -> unit
+contract {
+    requires resource_premise(no_plugin, \"no library outside the run registers a callback\");
+    requires queue_is_live;
+    ensures normal queue_is_discharged;
+    quant normal live_queues == old(live_queues) - 1;
+};
+";
+
+#[test]
+fn a_model_contract_states_a_premise_total_or_reject() {
+    use qcore_contract::contract_loader::module_premises;
+    let premises = module_premises(MODEL).expect("the model contract reads");
+    assert_eq!(
+        premises,
+        BTreeMap::from([(
+            "owner_destroy".to_owned(),
+            vec![DeclaredPremise {
+                name: "no_plugin".into(),
+                statement: "no library outside the run registers a callback".into(),
+                origin: PremiseOrigin::Declared,
+            }]
+        )])
+    );
+    // The model module stays outside the resource vocabulary.
+    assert!(load_resource_contract_sources(&sources(MODEL)).is_err());
+    let good = "requires resource_premise(no_plugin, \"no library outside the run registers a callback\");";
+    // Without the premise, nothing is read.
+    let plain = MODEL.replace(&format!("    {good}\n"), "");
+    assert_ne!(plain, MODEL);
+    assert!(module_premises(&plain).expect("reads").is_empty());
+    for bad in [
+        "requires resource_premise(No_plugin, \"x\");",
+        "requires resource_premise(no_plugin, x);",
+        "requires resource_premise(no_plugin, \"  \");",
+        "requires resource_premise(no_plugin);",
+        "requires resource_premise(no_plugin, \"x\", \"y\");",
+        "ensures normal resource_premise(no_plugin, \"x\");",
+        "quant normal resource_premise(no_plugin, \"x\");",
+        "requires resource_premise(no_plugin, \"x\"); requires resource_premise(no_plugin, \"y\");",
+    ] {
+        let text = MODEL.replace(good, bad);
+        assert_ne!(text, MODEL);
+        assert!(
+            module_premises(&text).is_err(),
+            "{bad} must reject the module"
+        );
+        assert!(
+            qcore_frontend::frontend::parse_source_program(&text).is_err(),
+            "{bad}: the contract format itself rejects it"
+        );
+    }
+}

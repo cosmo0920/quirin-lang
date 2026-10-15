@@ -1465,7 +1465,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         6,
     ),
     ("librdkafka/kafka_mem.qv", "rd_kafka_anyconf_desensitize", 4),
-    ("librdkafka/kafka_mem.qv", "rd_kafka_dump0", 5),
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1, the dump names `rk_no_plugin_library`.
+    ("librdkafka/kafka_mem.qv", "rd_kafka_dump0", 6),
     (
         "librdkafka/kafka_mem.qv",
         "rd_kafka_metadata_copy_internal",
@@ -1520,7 +1521,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_assert`'s failure call
     // (`src/rdkafka.c:6640-6649`): marker, five borrowed arguments, `none`
     // and the no-return exit.
-    ("librdkafka/memory.qv", "rd_kafka_crash", 8),
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1, the crash path names `rk_no_plugin_library`.
+    ("librdkafka/memory.qv", "rd_kafka_crash", 9),
     // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: custody-neutral scalar
     // helpers (`src/rdatomic.h`, `src/tinycthread_extra.c:92-129`,
     // `src/rdhdrhistogram.c:391-407`): marker, borrowed formals, `none`.
@@ -1562,239 +1564,243 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/null_deref.qv", "rd_kafka_topic_name", 2),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a stable member, hosted
     // on the broker's constructor (the selector and one stable clause).
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 2),
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1 on each of the 67 premised
+    // nonnull_member_stable / nonnull_member_scope declarations (`rk_no_plugin_library`).
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 3),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): sixty-six function-scope
     // entries of the registered broker (the selector and one scope clause).
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_ShareAcknowledgeRequest",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_active_toppar_add",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_active_toppar_del",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_enq0", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_retry", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_enq0", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_buf_retry", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_bufq_timeout_scan",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_conn_closed", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_conn_closed", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_connect_auth",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_connect_done",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect_up", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_connect_up", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_consumer_serve",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_destroy_final",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_feature_disable",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_feature_enable",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_features_set",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_fetch_backoff",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_fetch_toppars",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_handle_purge_queues",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_idle_check", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_idle_check", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_internal_serve",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_needs_connection",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_produce_toppars",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_resolve", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_resolve", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_retry_bufs_move",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_serve", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_serve", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_add_partition_to_toppars_in_session",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_reset",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_update_epoch",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_session_update_partitions",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_set_api_versions",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_set_nodename",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_set_state", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_set_state", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_fetch_session_clear",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_fetch_session_leave",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_share_rpc", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_share_rpc", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_share_session_toppar_add",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_timeout_scan",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_broker_toppar_msgq_scan",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_broker_wakeup", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_buf_new_request0", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_buf_retry", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_broker_wakeup", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_buf_new_request0", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_buf_retry", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_bufq_connection_reset",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_bufq_dump", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_bufq_purge", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_dr_implicit_ack", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_features_check", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_bufq_dump", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_bufq_purge", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_dr_implicit_ack", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_features_check", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_fetch_reply_handle_partition_error",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_group_MemberMetadata_consumer_read",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_handle_Produce_metadata_update",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_idemp_request_pid_failed",
-        2,
+        3,
     ),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_msgbatch_handle_Produce_result",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_op_throttle_time", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_op_throttle_time", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_parse_Metadata_update_topic",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_recv", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_req_response", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_init", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_term", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_send", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_ssl_hmac", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_recv", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_req_response", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_init", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_sasl_broker_term", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_send", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_ssl_hmac", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_toppar_fetch_backoff",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_transport_connect", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_transport_connect", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafka_transport_ssl_connect",
-        2,
+        3,
     ),
-    ("librdkafka/null_deref.qv", "rd_kafka_waitresp_find", 2),
+    ("librdkafka/null_deref.qv", "rd_kafka_waitresp_find", 3),
     (
         "librdkafka/null_deref.qv",
         "rd_kafkap_share_leader_changes_apply",
-        2,
+        3,
     ),
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
+    // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",
-        6,
+        7,
     ),
     ("librdkafka/refcount.qv", "rd_refcnt_add0", 4),
     ("librdkafka/refcount.qv", "rd_refcnt_sub0", 4),
@@ -2391,6 +2397,53 @@ fn contract_surface_is_pinned_as_structured_clauses() {
             "missing pinned contract predicate `{required}`"
         );
     }
+}
+
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Add
+/// premise support"): every corpus module's named premises read through the
+/// contract format, whatever its vocabulary, and the Quirin model contract
+/// `rd_kafka_q_destroy_final` (outside every resource view, in no lock) names
+/// P-RK-NO-PLUGIN-LIBRARY.
+#[test]
+fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premise() {
+    let mut premised = std::collections::BTreeMap::new();
+    for (logical, path) in contract_corpus::sources() {
+        let source = contract_corpus::text(&logical, &path);
+        let premises = qcore_contract::contract_loader::module_premises(&source)
+            .unwrap_or_else(|error| panic!("{logical}: {error}"));
+        for (function, list) in premises {
+            premised.insert((logical.clone(), function), list);
+        }
+    }
+    let model = &premised[&(
+        "librdkafka/queue_destructor.qv".to_owned(),
+        "rd_kafka_q_destroy_final".to_owned(),
+    )];
+    assert_eq!(
+        model.iter().map(|p| p.name.as_str()).collect::<Vec<_>>(),
+        ["rk_no_plugin_library"]
+    );
+    for function in ["rd_kafka_crash", "rd_kafka_dump0"] {
+        let module = if function == "rd_kafka_crash" {
+            "librdkafka/memory.qv"
+        } else {
+            "librdkafka/kafka_mem.qv"
+        };
+        assert!(
+            premised[&(module.to_owned(), function.to_owned())]
+                .iter()
+                .any(|p| p.name == "rk_no_plugin_library"),
+            "{function}"
+        );
+    }
+    // The 67 premised member declarations of the null view.
+    assert_eq!(
+        premised
+            .keys()
+            .filter(|(module, _)| module == "librdkafka/null_deref.qv")
+            .count(),
+        67
+    );
 }
 
 /// Card O03-U5. `evutil_closesocket` is `close(sock)` on every non-Windows

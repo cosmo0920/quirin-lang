@@ -284,6 +284,18 @@ pub enum BoundsClause {
         lo: i128,
         hi: i128,
     },
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
+    /// C09.3, USER DECISION 2026-10-15, "Only nonnull_member* need it"):
+    /// `requires resource_premise(NAME, "STATEMENT");` beside a
+    /// `nonnull_member_stable` or `nonnull_member_scope` clause of the same
+    /// declaration -- the member facts that declaration states are in force
+    /// only under the named premise, and every null row resting on one lists
+    /// it. Admitted beside no other bounds or null clause. Changes no mode;
+    /// read by the null property only.
+    Premise {
+        name: String,
+        statement: String,
+    },
 }
 
 impl BoundsClause {
@@ -298,6 +310,7 @@ impl BoundsClause {
                 | Self::NonnullMemberStable { .. }
                 | Self::NonnullMemberScope { .. }
                 | Self::NonnullResultRange { .. }
+                | Self::Premise { .. }
         )
     }
 }
@@ -440,6 +453,21 @@ impl BoundsFunctionContract {
             }
         }
         any.then_some(modes)
+    }
+
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises the
+    /// declaration's member facts rest on (`NAME`, `STATEMENT`), in clause
+    /// order.
+    pub fn premises(&self) -> Vec<(&str, &str)> {
+        self.clauses
+            .iter()
+            .filter_map(|entry| match &entry.clause {
+                BoundsClause::Premise { name, statement } => {
+                    Some((name.as_str(), statement.as_str()))
+                }
+                _ => None,
+            })
+            .collect()
     }
 
     /// Card CG24: the parameters a `bounds_return_derived` names, in order.
@@ -1129,6 +1157,24 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             });
             continue;
         }
+        // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premise, read
+        // by the resource loader's own reader (the format's check already
+        // refused any other shape); admitted only beside a scoped member
+        // form, checked after the loop.
+        if let Some(premise) = crate::contract_loader::premise_clause(&clause.expression_source)? {
+            if !requires {
+                return Err("a named premise is a `requires` clause".into());
+            }
+            clauses.push(BoundsClauseEntry {
+                clause: BoundsClause::Premise {
+                    name: premise.name,
+                    statement: premise.statement,
+                },
+                text: render(&tokens),
+                review: None,
+            });
+            continue;
+        }
         let parsed = reader.clause(requires, &tokens)?;
         clauses.push(BoundsClauseEntry {
             clause: parsed,
@@ -1166,6 +1212,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 parameter,
             } => format!("nonnull-member-scope {parameter} {tag}.{field}"),
             BoundsClause::NonnullResultRange { .. } => "nonnull-result-range".into(),
+            BoundsClause::Premise { name, .. } => format!("premise {name}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));
@@ -1186,6 +1233,24 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
                 "quant-check-with-extent: `{parameter}` states both a bounds_extent and a quant check"
             ));
         }
+    }
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15):
+    // a premise names what a scoped member fact rests on, so it stands only
+    // beside `nonnull_member_stable` or `nonnull_member_scope`.
+    if clauses
+        .iter()
+        .any(|entry| matches!(entry.clause, BoundsClause::Premise { .. }))
+        && !clauses.iter().any(|entry| {
+            matches!(
+                entry.clause,
+                BoundsClause::NonnullMemberStable { .. } | BoundsClause::NonnullMemberScope { .. }
+            )
+        })
+    {
+        return Err(
+            "premise-beside-member: a bounds declaration admits `requires resource_premise(NAME, \"STATEMENT\");` only beside `nonnull_member_stable` or `nonnull_member_scope`"
+                .into(),
+        );
     }
     frame_conditions(&parameters, &clauses)?;
     let canonical_sha256 =

@@ -3224,7 +3224,7 @@ pub struct DeclaredPremise {
 /// is not this clause; one that names it and is malformed rejects the module:
 /// the name is a lowercase identifier (`[a-z][a-z0-9_]*`) and the statement one
 /// plain, non-blank string literal with no escape and no control character.
-fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, String> {
+pub(crate) fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, String> {
     let tokens = token_kinds(source)?;
     let Some(TokenKind::Word(head)) = tokens.first() else {
         return Ok(None);
@@ -3290,6 +3290,45 @@ pub fn declaration_premises(
         Ok(())
     })?;
     Ok(premises)
+}
+
+/// Card **LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER** (USER DECISION 2026-10-15,
+/// "Add premise support"): the named premises a contract module states, by
+/// function, in any vocabulary, read from the contract format alone
+/// (`requires resource_premise(NAME, "STATEMENT");`). This is how a Quirin
+/// model contract outside every resource view (a `resource type` module such
+/// as librdkafka's `queue_destructor.qv`) states and publishes a premise.
+/// Total-or-reject: a module that does not parse in contract mode, or a
+/// malformed or repeated premise (the parser's check), rejects the whole
+/// module. Read by no verdict.
+pub fn module_premises(source: &str) -> Result<BTreeMap<String, Vec<DeclaredPremise>>, String> {
+    let parsed = parse_source_program(source).map_err(|e| e.to_string())?;
+    if parsed.mode != SourceModuleMode::Contract {
+        return Err("a premise is read only from a `module contract;` module".into());
+    }
+    let mut out: BTreeMap<String, Vec<DeclaredPremise>> = BTreeMap::new();
+    for declaration in &parsed.declarations {
+        let Some(contract) = declaration.value.function_contract.as_ref() else {
+            continue;
+        };
+        let mut premises = Vec::new();
+        for clause in &contract.clauses {
+            if let Some(premise) = premise_clause(&clause.value.expression_source)? {
+                premises.push(premise);
+            }
+        }
+        if !premises.is_empty()
+            && out
+                .insert(declaration.value.name.clone(), premises)
+                .is_some()
+        {
+            return Err(format!(
+                "{}: duplicate function contract",
+                declaration.value.name
+            ));
+        }
+    }
+    Ok(out)
 }
 
 /// The premises of an environment, rederived from its retained trusted

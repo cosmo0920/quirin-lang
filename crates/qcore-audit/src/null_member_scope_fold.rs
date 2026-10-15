@@ -31,12 +31,19 @@ pub struct Declarations {
     pub stable: BTreeMap<String, (String, bool)>,
     /// function -> (entries as written, held).
     pub scopes: BTreeMap<String, (Vec<String>, bool)>,
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises of each
+    /// premised member fact, by its row dependency (`stable:TAG.FIELD`, or a
+    /// scope declaration's function name).
+    pub premises: BTreeMap<String, Vec<(String, String)>>,
 }
 
 /// The environment's member, stable and scope declarations.
 #[must_use]
 pub fn declarations(environment: &BoundsContracts) -> Declarations {
-    let mut out = Declarations::default();
+    let mut out = Declarations {
+        premises: qcore_c_gateway::null_deref::member_fact_premises(environment),
+        ..Declarations::default()
+    };
     for (name, contract) in environment.null_declarations() {
         for entry in &contract.clauses {
             match &entry.clause {
@@ -172,6 +179,20 @@ pub fn withdrawals(
     }
 }
 
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a declaration record's named
+/// premises (`premises`, absent when it states none, so an unpremised
+/// record keeps its bytes).
+fn premise_list(record: &mut Value, premises: Option<&Vec<(String, String)>>) {
+    if let Some(premises) = premises.filter(|p| !p.is_empty()) {
+        record["premises"] = json!(
+            premises
+                .iter()
+                .map(|(name, statement)| json!({"name": name, "statement": statement}))
+                .collect::<Vec<_>>()
+        );
+    }
+}
+
 /// The fold's `stable_declarations` and `scope_declarations` sections.
 #[must_use]
 pub fn sections(
@@ -188,33 +209,34 @@ pub fn sections(
         } else {
             stable_standing(t.examined, t.failed)
         };
-        stable_section.insert(
-            member.clone(),
-            json!({
-                "host": host,
-                "standing": standing,
-                "clauses": {
-                    "stores": if *held { "held" } else if t.failed > 0 { "withdrawn" } else if t.examined == 0 { "unexamined" } else { "validated" },
-                    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
-                    "whole-object": "declared-assumption",
-                },
-                "stores_examined": t.examined,
-                "stores_not_proved": t.failed,
-                "fresh_object_stores": t.fresh,
-                "whole_object_stores": t.whole_object,
-                "failures": t.failures,
-            }),
+        let mut record = json!({
+            "host": host,
+            "standing": standing,
+            "clauses": {
+                "stores": if *held { "held" } else if t.failed > 0 { "withdrawn" } else if t.examined == 0 { "unexamined" } else { "validated" },
+                "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+                "whole-object": "declared-assumption",
+            },
+            "stores_examined": t.examined,
+            "stores_not_proved": t.failed,
+            "fresh_object_stores": t.fresh,
+            "whole_object_stores": t.whole_object,
+            "failures": t.failures,
+        });
+        premise_list(
+            &mut record,
+            declarations.premises.get(&format!("stable:{member}")),
         );
+        stable_section.insert(member.clone(), record);
     }
     let mut scope_section = serde_json::Map::new();
     for (function, (entries, held)) in &declarations.scopes {
-        scope_section.insert(
-            function.clone(),
-            json!({
-                "entries": entries,
-                "standing": if *held { "held" } else { "in-force: every caller's actual is a call-precondition check" },
-            }),
-        );
+        let mut record = json!({
+            "entries": entries,
+            "standing": if *held { "held" } else { "in-force: every caller's actual is a call-precondition check" },
+        });
+        premise_list(&mut record, declarations.premises.get(function));
+        scope_section.insert(function.clone(), record);
     }
     (Value::Object(stable_section), Value::Object(scope_section))
 }
@@ -287,6 +309,58 @@ mod tests {
         assert_eq!(
             section["member_declarations"]["T.owner"]["standing"],
             "withdrawn"
+        );
+    }
+
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a premised stable member's
+    /// record lists its premise, a row whose dependencies travel adds to
+    /// lists it as the analysis would, and the premise changes no verdict.
+    #[test]
+    fn a_premised_member_fact_is_listed_on_the_record_and_on_a_travelled_row() {
+        let premised = load_bounds_contract_sources(&BTreeMap::from([(
+            "m.qv".to_owned(),
+            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member_stable(S, next);\n    requires resource_premise(no_plugin, \"no code outside the run stores S.next\");\n};\n".to_owned(),
+        )]))
+        .expect("loads");
+        let caller = json!({"library": "l", "file": "a.c", "member_stores": [], "stable_stores": [],
+            "external_calls": [], "definitions": []});
+        let home = json!({"library": "l", "file": "b.c", "member_stores": [], "stable_stores": [],
+            "external_calls": [], "definitions": [{"function": "mk", "external": true, "parameters": 0,
+                "inferred": [], "returns_non_null": true, "returns_null_on_a_path": false,
+                "dependencies": ["stable:S.next"]}]});
+        let travelled = || {
+            vec![row(
+                json!([{"id": 0, "line": 4, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:mk"]}]),
+                json!([]),
+            )]
+        };
+        let mut rows = travelled();
+        let section = crate::null_fold::fold(&mut rows, &[caller.clone(), home.clone()], &premised);
+        assert_eq!(rows[0]["null"]["checks"][0]["outcome"], "proved");
+        assert_eq!(rows[0]["null"]["premises"][0]["name"], "no_plugin");
+        assert_eq!(
+            rows[0]["null"]["premises"][0]["through"],
+            json!(["stable:S.next"])
+        );
+        assert!(
+            rows[0]["null"]["contract_dependencies"]
+                .as_array()
+                .unwrap()
+                .contains(&json!("premise:no_plugin"))
+        );
+        assert_eq!(
+            section["stable_declarations"]["S.next"]["premises"][0]["name"],
+            "no_plugin"
+        );
+        // Without the premise: the same verdict, no premise listed.
+        let mut plain = travelled();
+        let plain_section = crate::null_fold::fold(&mut plain, &[caller, home], &environment());
+        assert_eq!(plain[0]["null"]["verdict"], rows[0]["null"]["verdict"]);
+        assert!(plain[0]["null"].get("premises").is_none());
+        assert!(
+            plain_section["stable_declarations"]["S.next"]
+                .get("premises")
+                .is_none()
         );
     }
 }

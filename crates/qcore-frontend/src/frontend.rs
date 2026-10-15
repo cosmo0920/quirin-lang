@@ -29,6 +29,11 @@ use std::fmt;
 use crate::lexer::{LexError, Span, Symbol, Token, TokenKind, lex};
 use qcore_core::usage::Usage;
 
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the head word of a named
+/// premise clause (`requires resource_premise(NAME, "STATEMENT");`, contract
+/// specification C04.18), checked by the contract format in every module.
+pub const PREMISE_CLAUSE_WORD: &str = "resource_premise";
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Located<T> {
     pub span: Span,
@@ -1224,6 +1229,7 @@ impl<'a> SourceParser<'a> {
         close: usize,
     ) -> Result<SourceFunctionContract, SourceParseError> {
         let mut clauses = Vec::new();
+        let mut premise_names = BTreeSet::new();
         let mut cursor = open + 1;
         while cursor < close {
             let clause_start = cursor;
@@ -1274,6 +1280,12 @@ impl<'a> SourceParser<'a> {
             if expression_start == semicolon {
                 return Err(self.error(expression_start, "contract clause expression is empty"));
             }
+            // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a named premise is
+            // read by the contract format itself, total-or-reject in every
+            // vocabulary (resource v1, bounds v1, a model contract).
+            if self.word(expression_start, PREMISE_CLAUSE_WORD) {
+                self.premise_clause(&kind, expression_start, semicolon, &mut premise_names)?;
+            }
             let expression_span = self.range_span(expression_start, semicolon);
             clauses.push(Located {
                 span: self.range_span(clause_start, semicolon + 1),
@@ -1291,6 +1303,75 @@ impl<'a> SourceParser<'a> {
             span: self.range_span(contract_start, close + 1),
             clauses,
         })
+    }
+
+    /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
+    /// C04.18, USER DECISION 2026-10-15 "Add premise support"): the named
+    /// premise is part of the contract format every module parses through,
+    /// a resource view's, a bounds view's and a Quirin model contract's
+    /// alike. A clause headed `resource_premise` is exactly `requires
+    /// resource_premise(NAME, "STATEMENT")`: `NAME` a lowercase identifier
+    /// (`[a-z][a-z0-9_]*`), the statement one plain, non-blank string with
+    /// no escape and no control character, each name at most once per
+    /// declaration. Anything else rejects the module. Where a vocabulary
+    /// admits the clause is its loader's (resource v1 anywhere; bounds v1
+    /// only beside `nonnull_member_stable` / `nonnull_member_scope`).
+    fn premise_clause(
+        &self,
+        kind: &SourceContractClauseKind,
+        start: usize,
+        semicolon: usize,
+        names: &mut BTreeSet<String>,
+    ) -> Result<(), SourceParseError> {
+        let malformed = || {
+            self.error(
+                start,
+                "malformed premise: write `requires resource_premise(NAME, \"STATEMENT\");` \
+                 with a lowercase identifier and one plain string",
+            )
+        };
+        if *kind != SourceContractClauseKind::Requires {
+            return Err(self.error(
+                start,
+                "a named premise is a `requires` clause: `requires resource_premise(NAME, \"STATEMENT\");`",
+            ));
+        }
+        let kinds = self.tokens[start..semicolon]
+            .iter()
+            .map(|token| &token.kind)
+            .collect::<Vec<_>>();
+        let [
+            _,
+            TokenKind::Symbol(Symbol::LeftParen),
+            TokenKind::Word(name),
+            TokenKind::Symbol(Symbol::Comma),
+            TokenKind::StringLiteral(statement),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] = kinds.as_slice()
+        else {
+            return Err(malformed());
+        };
+        let identifier = name
+            .chars()
+            .next()
+            .is_some_and(|first| first.is_ascii_lowercase())
+            && name
+                .chars()
+                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
+        if !identifier
+            || statement.trim().is_empty()
+            || statement.contains('\\')
+            || statement.chars().any(char::is_control)
+        {
+            return Err(malformed());
+        }
+        if !names.insert(name.clone()) {
+            return Err(self.error(
+                start,
+                format!("duplicate premise `{name}`: a declaration names each premise once"),
+            ));
+        }
+        Ok(())
     }
 
     fn contract_exit_selector(

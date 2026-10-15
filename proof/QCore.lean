@@ -374,6 +374,7 @@ import QCore.NullDerefGrade
 import QCore.DerefDecomposition
 import QCore.NullTriage
 import QCore.NullMemberScope
+import QCore.NullMemberPremise
 import QCore.NullTriagePaths
 import QCore.PrintRouteSelection
 import QCore.RouteSelection

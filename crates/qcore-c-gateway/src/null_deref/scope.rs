@@ -98,6 +98,85 @@ pub(super) fn declared_stable_and_scopes(
     (stable, scopes)
 }
 
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Only
+/// nonnull_member* need it"): one named premise a null row rests on, through
+/// the member facts that state it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
+pub struct NullPremise {
+    pub name: String,
+    pub statement: String,
+    /// The row dependencies that carry it: `stable:TAG.FIELD` (a stable
+    /// member's fact) or a function name (its scope entries).
+    pub through: Vec<String>,
+}
+
+/// The dependency prefix a row lists a premise under.
+pub const PREMISE_DEPENDENCY: &str = "premise:";
+
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises of the member
+/// facts, keyed by the row dependency each fact is listed under: a stable
+/// member's `stable:TAG.FIELD` (its host declaration's premises) and a scope
+/// declaration's function name (the declaration's premises). A held
+/// declaration keeps its premises: a row naming it lists them too.
+#[must_use]
+pub fn member_fact_premises(
+    contracts: &BoundsContracts,
+) -> BTreeMap<String, Vec<(String, String)>> {
+    let mut out: BTreeMap<String, Vec<(String, String)>> = BTreeMap::new();
+    for (name, contract) in contracts.null_declarations() {
+        let premises = contract
+            .premises()
+            .into_iter()
+            .map(|(n, s)| (n.to_owned(), s.to_owned()))
+            .collect::<Vec<_>>();
+        if premises.is_empty() {
+            continue;
+        }
+        for entry in &contract.clauses {
+            let key = match &entry.clause {
+                BoundsClause::NonnullMemberStable { tag, field } => format!("stable:{tag}.{field}"),
+                BoundsClause::NonnullMemberScope { .. } => name.clone(),
+                _ => continue,
+            };
+            let listed = out.entry(key).or_default();
+            for premise in &premises {
+                if !listed.contains(premise) {
+                    listed.push(premise.clone());
+                }
+            }
+        }
+    }
+    out
+}
+
+/// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the premises a row whose
+/// dependency set is `dependencies` rests on, by name, each with the
+/// dependencies that carry it.
+#[must_use]
+pub fn premises_of<'a>(
+    dependencies: impl IntoIterator<Item = &'a str>,
+    premises: &BTreeMap<String, Vec<(String, String)>>,
+) -> Vec<NullPremise> {
+    let mut by_name: BTreeMap<String, NullPremise> = BTreeMap::new();
+    for dependency in dependencies {
+        for (name, statement) in premises.get(dependency).into_iter().flatten() {
+            let premise = by_name.entry(name.clone()).or_insert_with(|| NullPremise {
+                name: name.clone(),
+                statement: statement.clone(),
+                through: Vec::new(),
+            });
+            if !premise.through.iter().any(|d| d == dependency) {
+                premise.through.push(dependency.to_owned());
+            }
+        }
+    }
+    let mut out = by_name.into_values().collect::<Vec<_>>();
+    for premise in &mut out {
+        premise.through.sort();
+    }
+    out
+}
+
 /// One store to a stable member (rule 14x's evidence).
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct StableStore {

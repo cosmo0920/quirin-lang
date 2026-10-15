@@ -3676,7 +3676,7 @@ The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C0
 
 The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
 
-The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check.
+The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a scoped member form only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
 
 The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
 
@@ -4116,6 +4116,21 @@ declaration of the same function is a registered `null_deref_beside` relation.
 `nonnull_member_stable` is a type-level declaration hosted, like G05e's member
 declaration, on the record's constructor; `nonnull_member_scope` belongs to the
 function it is written on.
+
+Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification C04.18
+"Every vocabulary", C09.3 "Premised member facts"): G05's named premise is a
+bounds precondition only beside these two forms (`BoundsClause::Premise`):
+
+```ebnf
+bounds_pre = … | named_premise ;   (* only in a declaration that also states
+                                      nonnull_member_stable or nonnull_member_scope *)
+```
+
+A declaration with a premise and neither form rejects the module
+(`premise-beside-member`). The same applies beside `quant null-deref`, rule
+14t's `nonnull_member` or any bounds clause. A premise under `ensures`, a
+malformed one and a repeated name reject it at parse, in every vocabulary.
+No reserved spelling is added: `resource_premise` is G05's.
 
 ## G06. Observation predicate grammar
 

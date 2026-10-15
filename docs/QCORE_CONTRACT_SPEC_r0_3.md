@@ -860,6 +860,14 @@ contract {
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
 
+**Every vocabulary** (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER; USER DECISIONS 2026-10-15, verbatim: "Only nonnull_member* need it", "Add premise support"). The clause belongs to the contract format, which checks its shape in every module as it parses it: a clause headed `resource_premise` that is not exactly a `requires` of `resource_premise(NAME, "STATEMENT")` under the loading rules above, or that repeats a name in one declaration, rejects the module whatever its vocabulary. Where it may stand is each vocabulary's rule:
+
+* **Resource contract v1:** beside the selector, as above.
+* **Bounds contract v1** (C09.3): only beside `nonnull_member_stable` or `nonnull_member_scope` in the same declaration. It is then a premise of those member facts, listed by every null row resting on one. Beside no other bounds or null clause, a `quant null-deref` and rule 14t's `nonnull_member` included, it rejects the module. The bounds consumer never reads it.
+* **A Quirin model contract** (a `resource type` module that no resource view selects, such as librdkafka's `queue_destructor.qv`) may state it on any `extern fn`. `module_premises` reads it from the format alone. No verdict consults a model contract, so it is published with the module and pinned by the module's clause count and digest.
+
+The premise `rk_no_plugin_library` is named by `rd_kafka_crash` (`memory.qv`), `rd_kafka_dump0` (`kafka_mem.qv`) and the model contract `rd_kafka_q_destroy_final` too. With a non-null `rk`, the assertion-failure dump drops queue references that may run an interceptor or `rk_conf.log_cb`. The destructor's purge cascade reaches the log callback.
+
 **The served-queue premise after the rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, amended in place). The premise on `rd_kafka_q_wait_result` stays as written. Of the callbacks that call may run, the application's rk_conf callbacks now close over the run's registrations under `P-RK-NO-PLUGIN-LIBRARY` (C04.19.3), each candidate declared the identity, and none receives the served queue; `rd_kafka_poll_cb`, an `rko_serve` candidate, touches the queue only through `rkq_ts_last_poll_end` and `rd_kafka_q_reenq`, which takes no reference (both read by hand). The premise still rests on what no declaration in force at the serves states: `rd_kafka_poll_cb` itself (its op custody splits by return code; since card SUPPLIED-OWNED-RETURN-CODE-HANDOFF it is declared with its not-PASS hand-off, C04.19.5; since card HANDOFF-CANDIDATE-OWN-CALLBACKS it is composed where it is a candidate, C04.19.7, and refuses there at its own invocation of the run-open `rko_u.offset_commit.cb`), `rd_kafka_toppar_op_serve`, and `rd_kafka_op_s.rko_op_cb`, whose run set reads open once a union's members share their stores. Measured, the function's row is unchanged: it refuses first at the uncontracted `rd_kafka_q_pop`. The card's own premise `rk_no_plugin_library` names the configuration the closure rests on and is published with every row resting on a declaration that carries it, exactly as this clause states.
 
 ### C04.19. Callback contracts
@@ -2533,6 +2541,26 @@ are admitted, each checked, neither a "trust me" scope:
   decide (`an_exit_store_breaks_persistence`): `rd_kafka_buf_s.rkbuf_rkb`
   (reset in `rd_kafka_recv`), `mk_list.next` and `cfl_list.next` (set to NULL
   by `mk_list_del`, `cfl_list_del`) are not declared.
+* *Premised member facts* (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER, USER
+  DECISION 2026-10-15, verbatim: "Only nonnull_member* need it"). Both
+  scoped forms are checked against every store the **analysed** units make,
+  so a store made by code outside the run could falsify them unchecked. A
+  callback a plugin library registers is such code. A declaration stating
+  either form may therefore name the premises its facts rest on, `requires
+  resource_premise(NAME, "STATEMENT");` (C04.18). The facts are then in
+  force only under them. Every null row whose dependency set names a premised
+  fact (`stable:TAG.FIELD`, or the scope declaration's function, as the
+  fold's travel leaves the set too) lists each premise in `premises`, with
+  the dependencies that carry it, and as the dependency `premise:NAME`. The
+  fold's `stable_declarations` / `scope_declarations` records list them.
+  Nothing decides on it: verdicts, checks and reasons are those without it.
+  A `quant null-deref` fact (a function dereferences its formal) does not
+  depend on which callback runs and takes no premise. librdkafka's 67
+  `rd_kafka_broker_s.rkb_rk` declarations name `rk_no_plugin_library`
+  (census and rule:
+  `docs/reports/librdkafka-plugin-premise-remainder/`). Lean:
+  `QCore.NullMemberPremise` (`a_resting_row_lists_the_premise`,
+  `listed_premises_put_every_fact_in_force`, `listing_changes_no_verdict`).
 
 Lean: `QCore.NullMemberScope` (`stable_fact_persists`,
 `a_scoped_use_sees_non_null`, `a_fresh_store_does_not_reach`,

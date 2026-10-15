@@ -6189,7 +6189,11 @@ own anchor here.
     BEFORE; their only other differences are the contract-source digests the
     current route's `compile_configuration` names), and the system run
     before the premise (`a3`) byte-identical in full; parity multisets
-    identical on all three. `QCore.ContractDependencies`
+    identical on all three. Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the
+    clause's shape is the contract format's, refused at parse in every
+    module. Bounds v1 admits it only beside a scoped member form (rule 14x).
+    A Quirin model contract may state it (`contract_loader::module_premises`).
+    `QCore.ContractDependencies`
     (`publishing_the_set_changes_no_verdict`,
     `two_sets_publish_the_same_verdict_row`).
 
@@ -7432,6 +7436,26 @@ own anchor here.
     reading and is not declared. **Do not** exempt a store to an existing
     object, count a store proved only by a withdrawn declaration as
     proved, or label a stable declaration `validated`.
+    **Premised facts** (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER, USER
+    DECISION 2026-10-15 "Only nonnull_member* need it"; contract
+    specification C04.18, C09.3). The check covers the analysed units' stores
+    only. A declaration stating this form (or rule 14z's) may therefore name
+    `requires resource_premise(NAME, "STATEMENT");`; in bounds v1 nowhere
+    else (`premise-beside-member`). The facts are then in force only under
+    it. Every null row whose dependency set names `stable:TAG.FIELD` (or a
+    premised scope function), including a set the fold's travel grows
+    (`null_fold::add_dependencies`), lists it in `premises` and as
+    `premise:NAME`. The fold's records list it. No decision reads it. A
+    `quant null-deref` fact takes none. librdkafka's 67
+    `rd_kafka_broker_s.rkb_rk` declarations name `rk_no_plugin_library`:
+    a store to the member is reachable from a function a plugin's callback
+    may call (`docs/reports/librdkafka-plugin-premise-remainder/`).
+    **Do not** list a premise on a row that rests on no premised fact, or
+    let one change a verdict. `QCore.NullMemberPremise`
+    (`a_resting_row_lists_the_premise`,
+    `a_listed_premise_comes_from_a_named_fact`,
+    `listed_premises_put_every_fact_in_force`, `listing_changes_no_verdict`,
+    `more_dependencies_never_drop_a_premise`).
     `QCore.NullMemberScope` (`stable_fact_persists`,
     `a_fresh_store_does_not_reach`, `an_exit_store_breaks_persistence`,
     `a_stable_declaration_is_never_validated`, `a_failed_store_withdraws_it`,
@@ -7483,8 +7507,11 @@ own anchor here.
     checked (the registered indirect-call residual), so an address-taken
     scope function's row stays conditional, as for `quant null-deref`.
     **Do not** read an entry fact the declaration does not state, or drop
-    a caller's check because the callee's member is stable.
-    `QCore.NullMemberScope` (`a_scoped_use_sees_non_null`).
+    a caller's check because the callee's member is stable. A scope
+    declaration may name a premise (rule 14x's premised facts): the
+    function's own row and every caller's row that depends on it list it.
+    `QCore.NullMemberScope` (`a_scoped_use_sees_non_null`);
+    `QCore.NullMemberPremise`.
 <a id="constraint-15q"></a>
 
 15q. **A call's integer result is bounded, never free.** Card

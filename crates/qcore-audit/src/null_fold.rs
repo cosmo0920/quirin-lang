@@ -225,6 +225,9 @@ fn restand_premises(row: &mut Value) {
 pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContracts) -> Value {
     // ---- declarations
     let declarations = crate::null_member_scope_fold::declarations(environment);
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the member facts' premises,
+    // relisted on a row whose dependencies travel adds to.
+    let premises = declarations.premises.clone();
     let mut results: BTreeMap<String, bool> = BTreeMap::new();
     let mut ranges: BTreeMap<String, bool> = BTreeMap::new();
     for (name, contract) in environment.null_declarations() {
@@ -465,7 +468,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             touched = true;
         }
         if touched {
-            add_dependencies(row, &added_dependencies);
+            add_dependencies(row, &added_dependencies, &premises);
             changed.insert(index);
             result_rows.insert(index);
         }
@@ -532,6 +535,7 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
             add_dependencies(
                 row,
                 &BTreeSet::from([format!("cross-unit-inferred:{callee}")]),
+                &premises,
             );
             *travelled_checks.entry(outcome).or_default() += 1;
             travelled_rows.insert(row_at);
@@ -651,7 +655,11 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
     section
 }
 
-fn add_dependencies(row: &mut Value, added: &BTreeSet<String>) {
+fn add_dependencies(
+    row: &mut Value,
+    added: &BTreeSet<String>,
+    premises: &BTreeMap<String, Vec<(String, String)>>,
+) {
     let mut all = row["null"]["contract_dependencies"]
         .as_array()
         .into_iter()
@@ -660,7 +668,21 @@ fn add_dependencies(row: &mut Value, added: &BTreeSet<String>) {
         .map(str::to_owned)
         .collect::<BTreeSet<_>>();
     all.extend(added.iter().cloned());
+    // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a dependency travel added
+    // may name a premised member fact; the row lists its premise as the
+    // analysis would have (`null_deref::attach_premises`).
+    let listed = qcore_c_gateway::null_deref::premises_of(all.iter().map(String::as_str), premises);
+    for premise in &listed {
+        all.insert(format!(
+            "{}{}",
+            qcore_c_gateway::null_deref::PREMISE_DEPENDENCY,
+            premise.name
+        ));
+    }
     row["null"]["contract_dependencies"] = json!(all);
+    if !listed.is_empty() {
+        row["null"]["premises"] = json!(listed);
+    }
 }
 
 #[cfg(test)]

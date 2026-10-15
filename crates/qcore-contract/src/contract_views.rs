@@ -895,6 +895,11 @@ fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
                 // Card NULL-TRIAGE-UNRESOLVED-PATHS: the result range (G05e).
                 || (clause.kind == "normal"
                     && clause.expression.starts_with("nonnull_result_range("))
+                // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a scoped member
+                // fact's named premise (its placement beside a stable or
+                // scope clause is the bounds loader's check).
+                || (clause.kind == "requires"
+                    && clause.expression.starts_with("resource_premise("))
         });
     if only {
         Ok(())
