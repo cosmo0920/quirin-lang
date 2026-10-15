@@ -2268,7 +2268,7 @@
     {
       "function": "rd_kafka_crash",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "d51674dfca49981978d1c34e8781c552c75e305e81dde82fa32c3413a7354787",
+      "contract_sha256": "f8965057436e32434272c29d38bba1eeec02c443ca57171ba46f0d1e3240d1a3",
       "identities": [
         {
           "reviewed_at": [
@@ -2300,7 +2300,7 @@
     {
       "function": "rd_kafka_dump0",
       "module": "librdkafka/kafka_mem.qv",
-      "contract_sha256": "b362081e082b1551fcbba373fba7d176f6d13168d809cf7b077f4622a62d288a",
+      "contract_sha256": "30c42fafe0841d3c5d714cb6ad78e62a54eba812b9c9281a3bf8c8c7f77de9e7",
       "identities": [
         {
           "reviewed_at": [

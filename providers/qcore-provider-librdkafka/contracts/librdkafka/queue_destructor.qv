@@ -11,10 +11,18 @@ resource type KafkaQueueOwner {
     move: allowed;
 }
 
+// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Add
+// premise support"): a Quirin model contract states a named premise in the
+// contract format every module parses through (`requires
+// resource_premise(NAME, "STATEMENT");`, total-or-reject at parse; read by
+// `qcore_contract::contract_loader::module_premises`). The cascade
+// rd_kafka_q_purge0 -> rd_kafka_op_destroy -> ... -> rd_kafka_log_buf may run
+// rk_conf.log_cb, so the destructor names P-RK-NO-PLUGIN-LIBRARY.
 extern fn rd_kafka_q_destroy_final(
     queue: own<KafkaQueueOwner> use one
 ) -> unit
 contract {
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     requires queue_is_live;
     ensures normal every_member_reference_is_released;
     ensures normal queue_mutex_is_destroyed;

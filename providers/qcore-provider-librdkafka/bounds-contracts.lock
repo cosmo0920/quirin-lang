@@ -8,7 +8,7 @@
     {
       "function": "rd_kafka_ShareAcknowledgeRequest",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "a47de54106aab87ca009d53ff2402b15cca6a96f0f34412f9fd8c8392efbfcf3",
+      "contract_sha256": "28cab4d1618b0304d8c68b2a4cd0c5736f9a332cb0fcd139221e95c38fcd51ed",
       "identities": [
         {
           "reviewed_at": [
@@ -35,7 +35,7 @@
     {
       "function": "rd_kafka_broker_active_toppar_add",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "4ffcdb841123af089e1761107213768115f98ea5b801721358d476980f8a7755",
+      "contract_sha256": "929d0dc3b0299d08d23debf293170023ae0a29bc2dd3e6f0e3bd94a6f66173b3",
       "identities": [
         {
           "reviewed_at": [
@@ -67,7 +67,7 @@
     {
       "function": "rd_kafka_broker_active_toppar_del",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "c417aa2d3c83c262430cd00b051be7bdf85b690c91b54b214b31c7f707f68378",
+      "contract_sha256": "12eb9f97f50503e866539f076f9da8cb2e14b78a4e174f7749fbf9f7bc22c150",
       "identities": [
         {
           "reviewed_at": [
@@ -99,7 +99,7 @@
     {
       "function": "rd_kafka_broker_add",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "a61e1695dba411ee85a651e23ec2dedbebe63276ba9a87f212ddc1b315e76729",
+      "contract_sha256": "b263252ede893e0ff16ebc33c6348b537efb8d286ab8f2fd1074cff1bc300ed9",
       "identities": [
         {
           "reviewed_at": [
@@ -131,7 +131,7 @@
     {
       "function": "rd_kafka_broker_buf_enq0",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "e857064b1e73477da0b0ed0d294729cb74abf89726301626a4687b3d57349bd4",
+      "contract_sha256": "91fe242116d908f680a019e51abc00cb935d722ba12cd884be28e32e218940e7",
       "identities": [
         {
           "reviewed_at": [
@@ -158,7 +158,7 @@
     {
       "function": "rd_kafka_broker_buf_retry",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "0837ec54acbc4d40d67f86918f7d1826635f9cb68b8e7e11bff42e829147bc03",
+      "contract_sha256": "f71aef839a37fce9d81c21a6260d8ac240cd7c49e868b905bfb3654a25851c80",
       "identities": [
         {
           "reviewed_at": [
@@ -190,7 +190,7 @@
     {
       "function": "rd_kafka_broker_bufq_timeout_scan",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "5dfa8d18f91c41ff97e9c154494788b90d2cabf95cec99b74b77c23886c92a71",
+      "contract_sha256": "85a9fa24ce9bb686cd8764c1b7406d26bb947565610d15b0b936f4d443192da7",
       "identities": [
         {
           "reviewed_at": [
@@ -217,7 +217,7 @@
     {
       "function": "rd_kafka_broker_conn_closed",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "d656bea881801957bc0858c8def9b0bd6cd129234ff5100f324f6cc4187cef34",
+      "contract_sha256": "509e62114c77bb10fd7011159ea98eb589cdac7705e8110a441bd876f1fc70a0",
       "identities": [
         {
           "reviewed_at": [
@@ -249,7 +249,7 @@
     {
       "function": "rd_kafka_broker_connect",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "d73b85922b840d5f2b9d768d79ac86832f6eeb5ebd68a27719d034dd7d5a29a0",
+      "contract_sha256": "c9fd2ab0dbe807009a1eaaa6dffd0dbec3a565580982d3b583f2d88f77ba4de3",
       "identities": [
         {
           "reviewed_at": [
@@ -276,7 +276,7 @@
     {
       "function": "rd_kafka_broker_connect_auth",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "7351c884379f816e6b39a772b9619192bb6d568197adbf6a8680f81f3f6dbcb2",
+      "contract_sha256": "65aca8cfef83c254671778ba3e0b8a09eee3691ca81c2b27632657282543d47a",
       "identities": [
         {
           "reviewed_at": [
@@ -308,7 +308,7 @@
     {
       "function": "rd_kafka_broker_connect_done",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "32fdbb85528a1a9fa595e98d3c8cd490a363466a6f86828907b3d57526e55c9e",
+      "contract_sha256": "b233340dd604fa82365126196a4cfd75549538c8f506a97951cc6a5cf06724a1",
       "identities": [
         {
           "reviewed_at": [
@@ -340,7 +340,7 @@
     {
       "function": "rd_kafka_broker_connect_up",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "337e9382039e7ca0e7bb0e83e8bfe3fce33b6f646c58538802bad6ffb7b0ae24",
+      "contract_sha256": "f771371008cf91d1b3d515bf21473c07e60c39602a08ed71efbfa3db5fb4c846",
       "identities": [
         {
           "reviewed_at": [
@@ -372,7 +372,7 @@
     {
       "function": "rd_kafka_broker_consumer_serve",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "fce104eefa789fdb3f65da70a36d46da83db3e235415b17a7011b9edeb76f9c7",
+      "contract_sha256": "8364424dce71996e7ea920c679994d41caabf4de9f8a33e02e48660218b2d4f7",
       "identities": [
         {
           "reviewed_at": [
@@ -399,7 +399,7 @@
     {
       "function": "rd_kafka_broker_destroy_final",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "3b76739cea056a06f765669d1332a718476fd3b26a8644e9f9eedd5e8444b9c5",
+      "contract_sha256": "49df075a88ab1d3c86e8b2f49d37e6b720ff21faa0928eeccd36bdd362dd765c",
       "identities": [
         {
           "reviewed_at": [
@@ -431,7 +431,7 @@
     {
       "function": "rd_kafka_broker_feature_disable",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "40ec4bfcfd5cfbc135bbed7a5953192705d51a5d81f71c5c78d483ca8f722bf9",
+      "contract_sha256": "ae881b3b081a017308a9ccab50592f4d2b511225ec9c351084263b3e56b92392",
       "identities": [
         {
           "reviewed_at": [
@@ -458,7 +458,7 @@
     {
       "function": "rd_kafka_broker_feature_enable",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "101aa0de0233368354e7a6885f9008bc41635e66a3ff22ee7b43fa092eb04bd3",
+      "contract_sha256": "46c8c5861c4217c2b9ff8e8c9944678d182c6579d35543809ab2e8760186b829",
       "identities": [
         {
           "reviewed_at": [
@@ -485,7 +485,7 @@
     {
       "function": "rd_kafka_broker_features_set",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "b97368c764271ea89cbbb9fa8b2ee8bdd9ea2081f5578bb661f49ab487b9e671",
+      "contract_sha256": "197154056fd95d99ffbb89130dee791e300a0ad1a616c1ddca96f57ad6fe3937",
       "identities": [
         {
           "reviewed_at": [
@@ -512,7 +512,7 @@
     {
       "function": "rd_kafka_broker_fetch_backoff",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "5b62d5aee3eebfad40cc3c49c7fdb9c29188d97b315cf78a3fd931f88444183f",
+      "contract_sha256": "3571c0a4f8176e8eba18382adf0d3a32f3e9cfe591016783dc69d365350c19fc",
       "identities": [
         {
           "reviewed_at": [
@@ -539,7 +539,7 @@
     {
       "function": "rd_kafka_broker_fetch_toppars",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "bbcf6f02b30656ffdb0ebba67ccee5397fb140ef2c1b4dc4dbc7d1de059fa526",
+      "contract_sha256": "0b9d28046877ef7ee5749af459bcb179a431eb672f50d56dd592a50e34e1d919",
       "identities": [
         {
           "reviewed_at": [
@@ -571,7 +571,7 @@
     {
       "function": "rd_kafka_broker_handle_purge_queues",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "ce6891c4defab55a70ae7bef248cb020ff6be32b63b15f70d68faaa1f7b349d2",
+      "contract_sha256": "80b9e0bda5b84d21c0a037912b167fec76c699ce6a4e79b56ee69efa111f117d",
       "identities": [
         {
           "reviewed_at": [
@@ -603,7 +603,7 @@
     {
       "function": "rd_kafka_broker_idle_check",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "cd1cd11ad80a82b385f1259d094f5e430bbaebe1bde74e7efee105482514db36",
+      "contract_sha256": "de04b8beba004e73d6de6900d821dc3ae63e7d3a7ed4b40080694723f61fcc46",
       "identities": [
         {
           "reviewed_at": [
@@ -630,7 +630,7 @@
     {
       "function": "rd_kafka_broker_internal_serve",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "e97be71e193c41bc63d01d67d80342531a26c5e71a9513413110ceb31ff7bf27",
+      "contract_sha256": "c0d3179668329335db2673759c4e5f7f947cdd441ac61324639853e6ee849294",
       "identities": [
         {
           "reviewed_at": [
@@ -657,7 +657,7 @@
     {
       "function": "rd_kafka_broker_needs_connection",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "c05cc6340f104845d611df627c8ccb3963fee17b860fa737b4a6f258bc7f68c0",
+      "contract_sha256": "2a2f0e98d9bc9b25030209c250f1e515373f287885ee38abc0b01bc85e15475a",
       "identities": [
         {
           "reviewed_at": [
@@ -684,7 +684,7 @@
     {
       "function": "rd_kafka_broker_produce_toppars",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "92f2e2f82d52bd187ad53cb098952d6d94d00b22231cdfb5f155f6f32e06787f",
+      "contract_sha256": "e4bb1f07b870342d03be0bd5cb610059e0cdb1bd1b7d199a1d97a01084ac6368",
       "identities": [
         {
           "reviewed_at": [
@@ -711,7 +711,7 @@
     {
       "function": "rd_kafka_broker_resolve",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "21cf7c87c07aa5d0c82ce22893f6cfe1515e099707bbf2089991c86bad273f04",
+      "contract_sha256": "1c4840ce35ca096d98be79f9c223ce7af26f9e4c016e846c60f08ec95c87837a",
       "identities": [
         {
           "reviewed_at": [
@@ -738,7 +738,7 @@
     {
       "function": "rd_kafka_broker_retry_bufs_move",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "7fa1fbf9c75f4baebdd83db74ce4ecb6c4bca3dfc6457a33097220a3e03f3dc4",
+      "contract_sha256": "37a0c3ab3d2620646cbb1d4e29499453b1a55662264e68eeee40d7451007ca09",
       "identities": [
         {
           "reviewed_at": [
@@ -765,7 +765,7 @@
     {
       "function": "rd_kafka_broker_serve",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "f002bef9fcf7906cc3c3638dab04c62dc59792d6d18d2ac2ce69f40878ae9788",
+      "contract_sha256": "5a92ad40fd54b186c7a6e6e2535f4e2447df61d2176aaa4a55cb0bf538cbbb11",
       "identities": [
         {
           "reviewed_at": [
@@ -792,7 +792,7 @@
     {
       "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "80203bd5e18f01f7f80ea68429f9c7119b97525adca06155ce9df888a8655cf2",
+      "contract_sha256": "d4e60d25b6d8e81fc0b576646f1f38ee18e8915a77e3c7578211a9dc160ec064",
       "identities": [
         {
           "reviewed_at": [
@@ -819,7 +819,7 @@
     {
       "function": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "2dd62c975ca8744aa9e64f00066b5add11e17fa68ee01d39c308402413a30b84",
+      "contract_sha256": "4f340281abf1488dad967f01d3310466493b6fe8352f49ec2a8ebf1317171ff4",
       "identities": [
         {
           "reviewed_at": [
@@ -851,7 +851,7 @@
     {
       "function": "rd_kafka_broker_session_reset",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "933594c5c58b031a7797c4046f1a6be317207066c9f3cc53ab3e9a23ae89b118",
+      "contract_sha256": "266008fbcd438ef0eddb4464d90fef88b02babee96f246278e886fc76d67fb8c",
       "identities": [
         {
           "reviewed_at": [
@@ -878,7 +878,7 @@
     {
       "function": "rd_kafka_broker_session_update_epoch",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "6c7c8ccbd8cef650b8b3f14bc1f34e82338de1fee913780a83009a69921bd0ef",
+      "contract_sha256": "926e232b0cd234bd903049a28dd5a8762d6170b493eddfd609e39617f8630129",
       "identities": [
         {
           "reviewed_at": [
@@ -905,7 +905,7 @@
     {
       "function": "rd_kafka_broker_session_update_partitions",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "efb1719829e225b777f971bdbd0cb9d94ea20a764c8dec4a9627fa5670c27d38",
+      "contract_sha256": "9c15e17a3cc72579c2c0ed8a9754acd52df690a6405ecb0e965e87365710462e",
       "identities": [
         {
           "reviewed_at": [
@@ -932,7 +932,7 @@
     {
       "function": "rd_kafka_broker_set_api_versions",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "90cd057e7f714e700f49ed3f2497fd1a4addeb2363323feb2dd75a15c6fcc96b",
+      "contract_sha256": "e97de1052783b929eaf992e09de7a8f76bafce0454e1f3574f021f5b71d9163c",
       "identities": [
         {
           "reviewed_at": [
@@ -959,7 +959,7 @@
     {
       "function": "rd_kafka_broker_set_nodename",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "edf95517f987c0f4bbc3c8ee5174e50454d2d61f51706656114be3a25c71b1f1",
+      "contract_sha256": "5bc315a641cff9091b58201c47a98f0e53456028ea733b6b8ac6abe6998e38ad",
       "identities": [
         {
           "reviewed_at": [
@@ -991,7 +991,7 @@
     {
       "function": "rd_kafka_broker_set_state",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "11e82a1d42cc6ca651c58836b86703d88e00db327ef28a1f5dc1a841ed0b1ee0",
+      "contract_sha256": "cb48958ee62e0c35de6202255056fcfefb31dcc223e01bd37d99fbc9ee57f1e3",
       "identities": [
         {
           "reviewed_at": [
@@ -1023,7 +1023,7 @@
     {
       "function": "rd_kafka_broker_share_fetch_session_clear",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "b172712f397221a09721da2e822574b21ea2b98b705673b3e5e80689e89738c8",
+      "contract_sha256": "79a5c495cc7071e44a70c99d47b884642071be1a583779f17249b3267e48f7ba",
       "identities": [
         {
           "reviewed_at": [
@@ -1055,7 +1055,7 @@
     {
       "function": "rd_kafka_broker_share_fetch_session_leave",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "4c82bb535f22ee5100224d46eb9e6d9d61695dbda6abec906f0c31d349de0e19",
+      "contract_sha256": "0925f5055c646aca047f64c8c57a57f68ba26e677faa75fc517fe3d98a6f54de",
       "identities": [
         {
           "reviewed_at": [
@@ -1087,7 +1087,7 @@
     {
       "function": "rd_kafka_broker_share_rpc",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "3013b4eb8f950974c4b9ed7a47a7e79bad4de563036cb6bb8583399c15859ccf",
+      "contract_sha256": "e69b90bf8012bd78a8250b03138f7a66ef1496e29a22500d73ba675de3beca65",
       "identities": [
         {
           "reviewed_at": [
@@ -1119,7 +1119,7 @@
     {
       "function": "rd_kafka_broker_share_session_toppar_add",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "ed57c7d346084f59ae125d640718296189894e65351e59c38fbdb5bb3d4b9b69",
+      "contract_sha256": "e2a13c560b8144dd031c57b7ae071ab155918a6fc4b05f76df65d177580f614b",
       "identities": [
         {
           "reviewed_at": [
@@ -1146,7 +1146,7 @@
     {
       "function": "rd_kafka_broker_timeout_scan",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "287f6a6238d8834df70aedd17f34ac16abd08831104d8c8a50a37dfd4933d4db",
+      "contract_sha256": "0c7434b838c0d9d88b3bae595018db4e7e4fc5b60d56a5b5460425422cda9360",
       "identities": [
         {
           "reviewed_at": [
@@ -1173,7 +1173,7 @@
     {
       "function": "rd_kafka_broker_toppar_msgq_scan",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "f6555de9f1dca8f2324218f7b588c9d9fab8860fee505e46e4ab2f982dfc6ff6",
+      "contract_sha256": "b56b2833a62a7681f7480e8ad6d2d55cb1a2f724c8cafd097a7a97209e0e5c39",
       "identities": [
         {
           "reviewed_at": [
@@ -1200,7 +1200,7 @@
     {
       "function": "rd_kafka_broker_wakeup",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "7488d1f1967c50ef03a6e4827ebf283cc2a999b7286ae139056466db2735f953",
+      "contract_sha256": "7da1bdd741dc6b5729b01aa1e5e2b29415c13d7d76f6255da465be724fb32c7c",
       "identities": [
         {
           "reviewed_at": [
@@ -1232,7 +1232,7 @@
     {
       "function": "rd_kafka_buf_new_request0",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "59e1600672ff03c98d0801ff2cd8eff2869b60ee85726a02f9c3b0372f248004",
+      "contract_sha256": "f698770f865b1de7e9e2baa334c1fcc9b4c2c4e6a1c98ad1ae7f76ec79181e77",
       "identities": [
         {
           "reviewed_at": [
@@ -1264,7 +1264,7 @@
     {
       "function": "rd_kafka_buf_retry",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "95456daea332d2a167515a246be7c0ac7aadfa3f1d30e46ed22d92269623d665",
+      "contract_sha256": "3398537026d5e8929ef72b4dba0e55560a27cb3d7b58e169d2cb8aa25e45bc84",
       "identities": [
         {
           "reviewed_at": [
@@ -1296,7 +1296,7 @@
     {
       "function": "rd_kafka_bufq_connection_reset",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "0a42ec12f987ce5653906676a29b915c1ca752243b1ba517bef8c2da44607dd3",
+      "contract_sha256": "fcccecfda9901fd1ba81f8e837c0ef3b9800d8e8d79d6e7c9dc26a6749fa5c25",
       "identities": [
         {
           "reviewed_at": [
@@ -1328,7 +1328,7 @@
     {
       "function": "rd_kafka_bufq_dump",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "c0974476235a244737d04b3f45355ec520bf04e0350b1dd2d0b4b28916b56054",
+      "contract_sha256": "54e36cd266bf2cbf9dadcb21c0e6612b99724955f61797d77da3b3e234555a1e",
       "identities": [
         {
           "reviewed_at": [
@@ -1360,7 +1360,7 @@
     {
       "function": "rd_kafka_bufq_purge",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "63c6e5a2af22d93fa00ba57f20c43148021974cfbc44b6f30fda5dc2432e9325",
+      "contract_sha256": "81b2681e195552995ec78ea192b515da7fbc4985fca3d8318ea20b2733da0cc8",
       "identities": [
         {
           "reviewed_at": [
@@ -1456,7 +1456,7 @@
     {
       "function": "rd_kafka_dr_implicit_ack",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "ebf231a3138241a07c9a94f4b95d28f28039e126bed3a1d9a832f78bb734e6e9",
+      "contract_sha256": "e8ad4b603d296b98f30c2b3d4de331eb31445462cc347026e49354dfe9918c43",
       "identities": [
         {
           "reviewed_at": [
@@ -1520,7 +1520,7 @@
     {
       "function": "rd_kafka_features_check",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "a6d631e6f8cfada2315efa76716ecbd86acea1e480b46e8abd401b2089dad1c0",
+      "contract_sha256": "77f69701e5e2a5d4a55147c81e821ff05fe53946768027b04e8ca36b032c3251",
       "identities": [
         {
           "reviewed_at": [
@@ -1552,7 +1552,7 @@
     {
       "function": "rd_kafka_fetch_reply_handle_partition_error",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "26a2eaa4fdcf5d9e59471d7f7037a295cf43aa757513b1f210fb283e6d517340",
+      "contract_sha256": "13abcac6ba16a7681387c34cb2f7f95377e0c169a63988d8b001f2154f56ce89",
       "identities": [
         {
           "reviewed_at": [
@@ -1611,7 +1611,7 @@
     {
       "function": "rd_kafka_group_MemberMetadata_consumer_read",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "896ed7cf0116886294cfc4642c73cb7013d84d771ee622998650bddb3b29169b",
+      "contract_sha256": "8fe6521a762cf2c925f20bdd0c5d3e830332ce51379ea29e148769910087e9c3",
       "identities": [
         {
           "reviewed_at": [
@@ -1638,7 +1638,7 @@
     {
       "function": "rd_kafka_handle_Produce_metadata_update",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "b3f58a1da4d548c765b46ba1d0c2f27c27d8d2c46fec4a97c48d6c0b9ee332ea",
+      "contract_sha256": "7677c201dab9490fbabd0872ee7122bd9434624f52ba910e2c489e524e6796d7",
       "identities": [
         {
           "reviewed_at": [
@@ -1665,7 +1665,7 @@
     {
       "function": "rd_kafka_idemp_request_pid_failed",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "5d80c141ce52026b30186a1385ec9d87546637d96205d88ba3fa1a7b8c943fba",
+      "contract_sha256": "07c2c508260f99cf77bff519a7af46b20ae17cc1a476278553477661ef2a4670",
       "identities": [
         {
           "reviewed_at": [
@@ -1761,7 +1761,7 @@
     {
       "function": "rd_kafka_msgbatch_handle_Produce_result",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "9652f16ea854c3eabdf40aa4b208adaade14d0783a6a76b680030ba82a819dfb",
+      "contract_sha256": "abebecdbb8282debb565dbb43f50156949b5146107442dd5fcf4ff1f3cc6b515",
       "identities": [
         {
           "reviewed_at": [
@@ -1820,7 +1820,7 @@
     {
       "function": "rd_kafka_op_throttle_time",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "d943e2219b09f1ecf3879c02e92c2658b187929db8b562521bfd7b5ad90c6fa4",
+      "contract_sha256": "7ff060976b49236f700fdbf69c5fa013866b339f84b5822ee254d2d04c94c25a",
       "identities": [
         {
           "reviewed_at": [
@@ -1884,7 +1884,7 @@
     {
       "function": "rd_kafka_parse_Metadata_update_topic",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "24980d474030b714ae137b657c324a3d778509cea7c62158791407136c7e96fe",
+      "contract_sha256": "80f6b5c5505ecad2d5e72c6cdf49f1b09da8baade0cf0c47fc764d2392de430d",
       "identities": [
         {
           "reviewed_at": [
@@ -1975,7 +1975,7 @@
     {
       "function": "rd_kafka_recv",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "b89330da29f46a8f17354e67826f9cc2956eb7cb37fe9a05bca92d420a884d6b",
+      "contract_sha256": "6b55b111488bb0a362bf4682d914feaf3c006d7d5bec6acf681dedc1ddb6f398",
       "identities": [
         {
           "reviewed_at": [
@@ -2007,7 +2007,7 @@
     {
       "function": "rd_kafka_req_response",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "68c2f860d38bb3134af7cd2e2dd6dc13e15e857118fa649e9778c88f3350f627",
+      "contract_sha256": "c99d79b92fbb341bd1b267c0a31494fe941e662bff561a01862de039205d9300",
       "identities": [
         {
           "reviewed_at": [
@@ -2034,7 +2034,7 @@
     {
       "function": "rd_kafka_sasl_broker_init",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "537797cca713d3be6fdb725c734a50aa7bb89fb65c3b595577dfb3f3874adc06",
+      "contract_sha256": "2d4154a4f74b207cf984cbe5b23b2236996e3814b79eb1b05fd2fcf5f5ec40f0",
       "identities": [
         {
           "reviewed_at": [
@@ -2066,7 +2066,7 @@
     {
       "function": "rd_kafka_sasl_broker_term",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "a84825eb64707b4e7b373f00a22e95d9a68e6547b72960bfbb796e5126e5ab07",
+      "contract_sha256": "ac24c09bd4633b313a09e1eae1d630a158ec38b05f5cda335ee10dc6e753734d",
       "identities": [
         {
           "reviewed_at": [
@@ -2098,7 +2098,7 @@
     {
       "function": "rd_kafka_send",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "9685083777e102baf450dc40e6ecd7fe17babb5c988ad3a1c8847d1c6b16225a",
+      "contract_sha256": "39ca126ece5a55d191c1becc5816a07248a2d04ae3adb86b57db097a47011c0c",
       "identities": [
         {
           "reviewed_at": [
@@ -2130,7 +2130,7 @@
     {
       "function": "rd_kafka_ssl_hmac",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "b09a92d20a5f38f56b803d3c0db0edf8e322c1786eb588b998026b7ae82b6412",
+      "contract_sha256": "a1d3974a606aa1bda89c56ebb997d2f3652ed5afa006adab223713db51ae8c3a",
       "identities": [
         {
           "reviewed_at": [
@@ -2322,7 +2322,7 @@
     {
       "function": "rd_kafka_toppar_fetch_backoff",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "1b94429e4d50aa8b6e69e6f85affe7e3488245b6fb6bd7d15772f7fb4eaa5f53",
+      "contract_sha256": "b1c535159a07e7d9a72f52602a3f5913461bdca3736ed98447d4add41c04351c",
       "identities": [
         {
           "reviewed_at": [
@@ -2381,7 +2381,7 @@
     {
       "function": "rd_kafka_transport_connect",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "499620ce65a692c6ce6c74366adc6b27f763e2cbf1442ddb0c6fbf16e524932c",
+      "contract_sha256": "97a267d29823d5024c082e5db41b660754aa4684a6fe8ef7b007cc6068e5dfce",
       "identities": [
         {
           "reviewed_at": [
@@ -2445,7 +2445,7 @@
     {
       "function": "rd_kafka_transport_ssl_connect",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "77775552f858dd84e50d709458686a3e8e4b7957c4aa153af8444d2d90ca0657",
+      "contract_sha256": "612c139d258acd30cb76d67607a6513797261530b90cb383f37e0df78fa3a1d0",
       "identities": [
         {
           "reviewed_at": [
@@ -2477,7 +2477,7 @@
     {
       "function": "rd_kafka_waitresp_find",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "f8fcbc4982d29d84ad050b9f9c83d2561ab572c7b96c31826cc02dc0812c972c",
+      "contract_sha256": "c6c2e2389188ed2efb477186cce1f72b1f3f76ec6f839f681d70dd9a77594bfd",
       "identities": [
         {
           "reviewed_at": [
@@ -2504,7 +2504,7 @@
     {
       "function": "rd_kafkap_share_leader_changes_apply",
       "module": "librdkafka/null_deref.qv",
-      "contract_sha256": "aafc85c929b3b3ba3cc91399d0aba344bffab83eaefd640cd16a42570858d2e4",
+      "contract_sha256": "c95232b090b3d4c402b627b12e388ac1f0aa4179153862c83647d3a8c36a85c5",
       "identities": [
         {
           "reviewed_at": [

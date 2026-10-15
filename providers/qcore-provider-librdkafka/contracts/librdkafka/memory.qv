@@ -263,9 +263,15 @@ contract {
 // may be changing, or anything about the asserted condition.
 
 // --- rd_kafka_assert's failure call: prints, dumps and aborts ---
+// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Yes,
+// list it"): with a non-null rk the assertion-failure dump (rd_kafka_dump0)
+// drops queue references that may run an interceptor or rk_conf.log_cb, so the
+// declaration names P-RK-NO-PLUGIN-LIBRARY (re-pinned at 66910c10 and
+// 046accf6).
 extern fn rd_kafka_crash(file: ptr<const, u8>, line: i32, function: ptr<const, u8>, rk: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(line);
     ensures normal resource_borrowed(function);
