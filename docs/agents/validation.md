@@ -91,7 +91,18 @@ while successful logs are replayed in audit order, and every pending or
 running worker is collected before return.
 `AuditAll.lean` checks the compiled QCore axiom closure, allowing only
 `propext`, `Classical.choice` and `Quot.sound`; stale audit names and warnings
-fail the gate, including library-build warnings under the pinned Lean 4.34.0.
+fail the gate, including library-build warnings under the pinned Lean 4.35.0.
+Before any build or audit the runner compares `lake env lean --version`, run
+inside `proof`, with `proof/lean-toolchain` and fails naming both versions when
+they differ, so an elan override (`ELAN_TOOLCHAIN`, `+toolchain`), a non-elan
+`lake` or a moved `stable` default never checks the proofs under another
+parser. A pin move builds and audits under both versions and diffs the audit
+lists. Since 4.35, `given`, `requires` and `ensures` are forbidden in the
+binders and type of every `optDeclSig` signature (`def`, `abbrev`, `example`,
+`inductive`/`structure` headers, constructors, structure fields: the def
+contract clauses), and `recall` and `monotonicity_by` are keywords everywhere;
+use none of the five as a name anywhere
+(`docs/reports/lean-4-35-toolchain/`).
 The same audit rejects self-equality and exact assumed conclusions in public,
 non-internal theorem statements. This narrow check is not a semantic
 non-vacuity proof; do not weaken its generated-name boundary or substitute it
