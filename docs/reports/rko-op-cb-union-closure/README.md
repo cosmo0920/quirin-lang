@@ -184,8 +184,28 @@ discriminant theorems. Lean audits 321 → **322**.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (logs `private/rkou/gate-g1/`).
-No provider gate: `providers/` is unchanged.
+Gate **g1** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/rkou/gate-g1/`): every code step at `bce6d9a03` (later commits change
+records only), each part under one exclusive flock on the shared heavy lock
+([`gate-run.sh`](scripts/gate-run.sh), [`gate.sh`](scripts/gate.sh),
+[`finish-gate.sh`](scripts/finish-gate.sh)). No provider gate: `providers/`
+is unchanged.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 496 units, 509 summaries, **8,058 passed, 0 failed, 15 ignored** (`private/rkou/tests-g1/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **322** audits passed |
+| `cargo clean --profile dev` | 0 | |
+| Python suite before the matrix regeneration (08) | **1** | fails only `test_the_derived_facts_are_recomputed_rather_than_carried` (the committed matrix's Lean count, 321 → 322), as for every card adding an audit |
+| docs index check (09, after regenerating `INDEX.md`) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 365 tests), docs index (10b) and its check (10c) | 0, 0, 0, 0 | |
+
+Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
 
 ## Files
 

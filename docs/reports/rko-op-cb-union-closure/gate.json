@@ -1,0 +1,13 @@
+{
+  "note": "RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION card gate on base e8158562d, every code step at bce6d9a03, scripts docs/reports/rko-op-cb-union-closure/scripts/gate-run.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for each part, logs private/rkou/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 496 units, 509 summaries, 8,058 passed, 0 failed, 15 ignored, exit 0 (private/rkou/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 322 audits passed (321 -> 322: QCore.UnionArmLayout); no provider gate (providers/ unchanged); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8058,
+  "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 322,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
