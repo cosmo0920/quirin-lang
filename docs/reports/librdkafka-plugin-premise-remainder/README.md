@@ -230,7 +230,17 @@ Gate **g3** ([gate.json](gate.json), exits in [gate/](gate/), logs `private/lppr
 
 Clang: [`gate/clang-version.txt`](gate/clang-version.txt). The bold rule-id duplicate check is empty.
 
-**After the rebase onto `a7e0c9a3d`** (records-only conflicts): a targeted check, logs `private/lppr/targeted-r2/` (section below).
+**After the rebase onto `a7e0c9a3d`** (records-only conflicts), a targeted check ran at `f535907ac` under the shared lock ([`targeted.sh`](scripts/targeted.sh), [`close_targeted.py`](scripts/close_targeted.py); logs `private/lppr/targeted-r2/`; exits in [gate/targeted-r2/](gate/targeted-r2/)):
+
+* `cargo check --workspace --all-targets`, `fmt --check` and `clippy --locked` were all 0.
+* Tests passed, with 0 failed throughout:
+  * `cargo test -p qcore-contract`: 211 passed;
+  * the gateway's `null_member_premise`, `null_member_invariant_scope` and `null_candidate_triage`: 26 passed;
+  * `qcore-audit --lib`: 117 passed;
+  * `member_prepass_routes`: 6 passed;
+  * the compiler's contract corpus, loader, view and inheritance tests: 26 passed.
+* `check_lean_audits.py` passed **327** audits.
+* The first matrix regeneration refused `gate.json`'s 326 against the tree's 327, so `lean_audits` now records 327. The matrix, the Python suite (374 OK) and the docs index were rerun, all 0.
 
 Two earlier attempts are retained in `private/lppr/` and discarded:
 
