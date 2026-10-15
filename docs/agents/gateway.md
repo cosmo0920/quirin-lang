@@ -6516,7 +6516,11 @@ own anchor here.
     Clang calls disagree. **Amended by rule 15w**: an actual that is the
     calling function's own callback formal, handed on exactly as that
     function's declaration in force states its invocation, is that declared
-    invocation (decided at its own callers), not an open set.
+    invocation (decided at its own callers), not an open set. **Amended by
+    rule 30**: a candidate whose declaration states member-path states (and
+    nothing else beside its custody contract and a hand-off) reads as that
+    contract, its states composed with the invoker's arms at the paths the
+    caller linked below a parameter actual.
     `QCore.CallbackContracts`
     (`invocations_of_identities_are_identity`,
     `an_identity_decision_is_the_custody_reading`, `decide_refuses_*`,
