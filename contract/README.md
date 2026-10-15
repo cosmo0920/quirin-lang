@@ -236,6 +236,7 @@ quietly returning a weaker table.
 | integer/Boolean ghost predicates — `result == 0`, `field_NAME`, `busy`, `lock`, `allocations`, `releases`, `old(...)` arithmetic | `contract_observation` and the ChunkIO/source interpreters |
 | named atomic lifecycle propositions — `chunk_is_live`, `arena_is_discharged`, `descriptor_custody_is_discharged_once`, … | the mechanism/lifecycle interpreters |
 | `own<T>` / `borrow<'a, _, T>` parameters, `use` annotations, `effects { .. }` rows, `quant` clauses, `ensures any`, `ensures error(E)`, `result<T, E>` returns, and `resource type` / `error` / `axis` declarations | the QCore language front end and checker |
+| the named premise `requires resource_premise(NAME, "STATEMENT")`, in every vocabulary (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER): its shape and one name per declaration | the front end's contract format, at parse; placement is each loader's (resource v1 anywhere, bounds v1 beside `nonnull_member_stable` / `nonnull_member_scope` only); a model contract's premises are read by `contract_loader::module_premises` |
 
 A resource projection of a lifecycle module is written as its own v1 module —
 `fluent_bit/resource_memory.qv` projects `fluent_bit/memory.qv`, and

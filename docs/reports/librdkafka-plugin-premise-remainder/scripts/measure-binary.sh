@@ -13,6 +13,6 @@ lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-qui
 case ",$routes," in *,corpus,*)
   mkdir -p "$repo/target/release" || exit 2
   flock "$lock" /usr/bin/env bash -c 'cat "$1" > "$2" && chmod +x "$2" && sha256sum "$2" > "$3"' _ \
-    "$binary" "$repo/target/release/quirin-audit" "$repo/private/lppr/$name.corpus-binary.sha256" || exit 3;;
+    "$binary" "$repo/target/release/quirin-audit" "${OUT:-$repo/private/lppr}/$name.corpus-binary.sha256" || exit 3;;
 esac
 BINARY="$binary" "$here/measure.sh" "$name" "$routes"

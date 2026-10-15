@@ -15,7 +15,9 @@ name="$1"
 routes="${2:-corpus,system,slice}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="${REPO:-$(cd "$here/../../../.." && pwd)}"
-out="$repo/private/lppr"
+# OUT: where the runs go (default private/lppr); REPO: the tree whose
+# scripts, profile and provider contracts the routes read.
+out="${OUT:-$repo/private/lppr}"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
