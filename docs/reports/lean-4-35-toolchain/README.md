@@ -168,7 +168,29 @@ real pin.
 
 ## Gate
 
-Pending (filled from `gate.json`).
+The standing gate ran on the final code and records tree `b1d371dd7` (clean,
+pin 4.35.0, active Lean 4.35.0) through `scripts/gate-whole.sh` under one hold
+of the shared heavy lock (11:57:37–12:06:20 UTC), every step's output and exit
+in `private/lean-4-35-toolchain/gate-g1/`, nothing piped, no rerun
+([gate.json](gate.json), exits in `gate/`):
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 499 units, 512 summaries; 8,098 passed, 0 failed, 15 ignored (`private/lean-4-35-toolchain/tests-g1/`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | `Lean 4.35.0 matches proof/lean-toolchain`; 324 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 374 tests (365 + 9 new) |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+
+Then `scripts/finish-gate.sh`: `build_matrix.py . --gate gate.json` 0 (the
+matrix's validation block takes this gate), the Python suite 0 (374), the docs
+index 0 and its check 0. `providers/` is unchanged, so the provider gate is not
+due. The heavier build evidence is the three runs above (cold builds under each
+version); the gate's Lean step was incremental on the 4.35 build.
 
 ## Follow-ups
 

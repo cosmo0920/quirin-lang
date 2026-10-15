@@ -14,7 +14,8 @@ cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/lean-toolchain.txt" "$logs/lean-version.txt" "$report/gate/"
 cp "$logs/clang-version.txt" "$report/gate/clang-version.txt"
-python3 docs/reports/remaining-d02/build_matrix.py . --gate "$report/gate.json" > "$logs/09a-matrix.log" 2>&1
+# A repository-relative --gate path: the matrix records it as its provenance.
+python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/lean-4-35-toolchain/gate.json > "$logs/09a-matrix.log" 2>&1
 echo $? > "$report/gate/09a-matrix.exit"
 python3 -m unittest discover -s scripts/tests > "$logs/09b-python.log" 2>&1
 echo $? > "$report/gate/09b-python.exit"
