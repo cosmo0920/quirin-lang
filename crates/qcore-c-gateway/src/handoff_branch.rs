@@ -589,21 +589,20 @@ fn compared_constants(
                 }
             }
         }
-        "SwitchStmt" => {
+        "SwitchStmt"
             if children(node)
                 .iter()
                 .rev()
                 .nth(1)
-                .is_some_and(|condition| is_result(condition, site, result))
-            {
-                each(node, &mut |inner| {
-                    if kind(inner) == "CaseStmt"
-                        && let Some(label) = children(inner).first()
-                    {
-                        note(label);
-                    }
-                });
-            }
+                .is_some_and(|condition| is_result(condition, site, result)) =>
+        {
+            each(node, &mut |inner| {
+                if kind(inner) == "CaseStmt"
+                    && let Some(label) = children(inner).first()
+                {
+                    note(label);
+                }
+            });
         }
         _ => {}
     });
@@ -1277,7 +1276,7 @@ impl Walk<'_> {
                                 .and_then(|label| {
                                     crate::arm_release_check::fold_with(label, enumerators)
                                 })
-                                .map_or(Err(()), Ok),
+                                .ok_or(()),
                         );
                     }
                     "DefaultStmt" => labels.push(Ok(i64::MIN)),
@@ -1514,7 +1513,6 @@ pub fn admit(bodies: &dyn Bodies, query: &Query<'_>) -> Result<(), String> {
     let mut seen = BTreeSet::new();
     search(
         bodies,
-        query,
         query.invoker,
         invoker,
         &query.invocation,
@@ -1538,7 +1536,6 @@ pub fn admit(bodies: &dyn Bodies, query: &Query<'_>) -> Result<(), String> {
 #[allow(clippy::too_many_arguments)]
 fn search<'a>(
     bodies: &'a dyn Bodies,
-    query: &Query<'_>,
     name: &str,
     function: &'a FunctionHandling,
     invocation: &Invocation,
@@ -1629,7 +1626,6 @@ fn search<'a>(
                 for next in &next {
                     search(
                         bodies,
-                        query,
                         callee,
                         callee_body,
                         next,
@@ -1794,11 +1790,14 @@ pub fn resolve(
     }
 }
 
+/// One row of [`BRANCH_VECTORS`].
+pub type BranchVector = (bool, i64, &'static [(i64, bool)], bool, bool);
+
 /// `BRANCH_VECTORS`: (guard is `!=`, guard value, the site's compared values
 /// with whether each touches, whether the rest touches, admitted), shared
 /// with `QCore.ReturnCodeHandOff.branchVectors`: a site is admitted exactly
 /// when no value the guard admits touches the object.
-pub const BRANCH_VECTORS: &[(bool, i64, &[(i64, bool)], bool, bool)] = &[
+pub const BRANCH_VECTORS: &[BranchVector] = &[
     // `!= PASS` at the serve loop: PASS crashes (no touch recorded), every
     // other value leaves the op alone.
     (true, 0, &[(0, false)], false, true),

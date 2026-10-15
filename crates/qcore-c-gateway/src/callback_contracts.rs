@@ -579,6 +579,9 @@ mod tests {
             CandidateClass::Effectful => ".effectful",
             CandidateClass::TakesSupplied => ".takesSupplied",
             CandidateClass::KeepsSupplied => ".keepsSupplied",
+            // Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: modelled by
+            // `QCore.ReturnCodeHandOff`, in no vector of this module.
+            CandidateClass::HandOffUnbranched => ".handOffUnbranched",
         }
     }
 
