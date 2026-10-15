@@ -35,6 +35,10 @@ if [ "$part" != docs ]; then
   step 01-submodule git submodule update --init --recursive
   step 02-fmt cargo fmt --all -- --check
   step 03-clippy cargo clippy --locked --all-targets -- -D warnings
+  # LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the host disk is shared and was
+  # exhausted during gate g1; drop the check and clippy artifacts before the
+  # test build so the gate's peak is the test build alone (same commands).
+  step 03z-clean cargo clean --profile dev
   step 04-tests python3 scripts/run_test_binaries.py --log-dir "$private/tests-$name"
   step 05-probe cargo run -p qcore-compiler --example reevaluation_probe
   step 06-followup cargo run -p qcore-compiler --example reevaluation_followup
