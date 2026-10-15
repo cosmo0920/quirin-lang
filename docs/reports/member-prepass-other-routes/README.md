@@ -209,4 +209,27 @@ This is the added wall time on the system and slice routes: about 98 and
 
 ## 6. Gate
 
-GATE_RESULTS
+The standing gate ran at `4417f7a58` (the records commit on the rebased
+tip) under one exclusive hold of the shared heavy lock, 58 GB free at the
+lock. Scripts: [`scripts/gate-run.sh`](scripts/gate-run.sh),
+[`gate-whole.sh`](scripts/gate-whole.sh), [`gate.sh`](scripts/gate.sh) and
+[`finish-gate.sh`](scripts/finish-gate.sh). Logs are in
+`private/mpor/gate-g1/`; exits are in [gate/](gate/) and the summary in
+[gate.json](gate.json).
+
+| Step | Exit | Count |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --check` | 0 | |
+| `cargo clippy --locked --all-targets -D warnings` | 0 | |
+| `run_test_binaries.py` | 0 | 500 units, 513 summaries, **8,108 passed**, 0 failed, 15 ignored, no rerun (`private/mpor/tests-g1/`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` (Lean 4.35.0) | 0 | **325** audits (324 → 325: `QCore.MemberPrepassRoutes`) |
+| Python suite before the matrix regeneration | 1 | expected: it reads the committed matrix's Lean count (324) |
+| `build_matrix.py . --gate gate.json` (09a) | 0 | |
+| Python suite (09b) | 0 | 374 tests OK |
+| docs index check / regeneration / check | 0 / 0 / 0 | |
+
+The provider gate was not run: nothing under `providers/` or
+`crates/qcore-schemas/` changed.

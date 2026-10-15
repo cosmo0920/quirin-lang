@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/member-prepass-other-routes"
-BASE = "39287f12e"
+BASE = "d708641bc (rebased onto 711287771)"
 
 
 def main() -> int:
@@ -40,12 +40,6 @@ def main() -> int:
         if (logs / "08-python.log").exists()
         else None
     )
-    provider = re.findall(
-        r"test result: ok\. (\d+) passed; (\d+) failed", (logs / "12-provider-tests.log").read_text()
-    )
-    provider_passed = sum(int(p) for p, _ in provider)
-    provider_failed = sum(int(f) for _, f in provider)
-    provider_python = re.search(r"Ran (\d+) tests", (logs / "13-provider-python.log").read_text())
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
@@ -58,17 +52,15 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/mpor/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (323 -> 324: QCore.MemberPathRelease); "
-        "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
-        f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
-        f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
+        f"check_lean_audits.py {lean.group(1)} audits passed under Lean 4.35.0 (324 -> 325: QCore.MemberPrepassRoutes); "
+        "provider gate not run: nothing under providers/ or crates/qcore-schemas/ changed; python suite and docs index check per "
         "gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) "
         "and the docs index (10b, 10c)."
     )
     gate = {
         "note": note,
         "workspace_tests": int(totals.group(3)),
-        "provider_tests": provider_passed,
+        "provider_tests": "not run: this card changes nothing under providers/ or crates/qcore-schemas/, so the provider gate is not due. Stated rather than silently omitted.",
         "python_evidence_validator_tests": int(python.group(1)) if python else None,
         "reevaluation_probe_exit": int(exits["05-probe"]),
         "reevaluation_followup_exit": int(exits["06-followup"]),
