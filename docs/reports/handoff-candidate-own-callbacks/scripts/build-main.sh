@@ -25,6 +25,9 @@ git clone -q --no-checkout "$(git -C "$repo/third_party/libevent" rev-parse --ab
   "$src/third_party/libevent" || exit 3
 git -C "$src/third_party/libevent" checkout -q "$(git -C "$repo/third_party/libevent" rev-parse HEAD)" || exit 3
 echo "$rev $(git rev-parse "$rev")" > "$out/build-$name.head"
+# EXPORT_ONLY=1: recreate the export a saved binary reads (its contracts and
+# libevent pin), without building.
+if [ "${EXPORT_ONLY:-0}" = 1 ]; then exit 0; fi
 cd "$src" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0
 flock "$lock" cargo build --release -p qcore-audit --bin quirin-audit \
