@@ -22,7 +22,7 @@ and [status page](../../STATUS.md); each card's report owns its evidence.
 
 ## Adding a record
 
-Current record file: [wave-48-part7.md](wave-48-part7.md). Prepend one paragraph per
+Current record file: [wave-48-part8.md](wave-48-part8.md). Prepend one paragraph per
 new increment below the checkpoint notice — and, in a record file that carries
 a `<!-- migrated-section -->` block, above that block; the current file need not
 have one. Keep that increment's evidence and boundaries together. Start the next wave's
@@ -38,7 +38,7 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
-| 48 | [Wave 48, seventh record](wave-48-part7.md) · [Wave 48, sixth record](wave-48-part6.md) · [Wave 48, fifth record](wave-48-part5.md) · [Wave 48, fourth record](wave-48-part4.md) · [Wave 48, third record](wave-48-part3.md) · [Wave 48 continuation](wave-48-continuation.md) · [Earlier wave 48 records](wave-48.md) |
+| 48 | [Wave 48, eighth record](wave-48-part8.md) · [Wave 48, seventh record](wave-48-part7.md) · [Wave 48, sixth record](wave-48-part6.md) · [Wave 48, fifth record](wave-48-part5.md) · [Wave 48, fourth record](wave-48-part4.md) · [Wave 48, third record](wave-48-part3.md) · [Wave 48 continuation](wave-48-continuation.md) · [Earlier wave 48 records](wave-48.md) |
 | 47 | [Wave 47](wave-47.md) |
 | 46 | [Wave 46](wave-46.md) |
 | 45 | [Wave 45 continuation](wave-45-continuation.md) · [Earlier wave 45 records](wave-45.md) · [Earliest wave 45 records](wave-45-history.md) · compaction checkpoints: [rules](wave-45-compaction-checkpoints.md), status [part 1](wave-45-compaction-status.md) and [part 2](wave-45-compaction-status-prose.md) |

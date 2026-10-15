@@ -1,0 +1,100 @@
+{
+ "statuses_before": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3889,
+  "Safe": 936,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 4
+ },
+ "added": {
+  "call to `_`: it hands its parameter 2 to the callback only when `_`, which a direct call does not read (callback-handoff-direct)": 4
+ },
+ "moving_rows": 4,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23732: call to uncontracted function `rd_kafka_poll_cb`"
+   ],
+   "gained": [
+    "23732: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23871: call to uncontracted function `rd_kafka_poll_cb`"
+   ],
+   "gained": [
+    "23871: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ]
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_queue_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20145: call to uncontracted function `rd_kafka_poll_cb`"
+   ],
+   "gained": [
+    "20145: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20159: call to uncontracted function `rd_kafka_poll_cb`"
+   ],
+   "gained": [
+    "20159: call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+   ]
+  }
+ ]
+}

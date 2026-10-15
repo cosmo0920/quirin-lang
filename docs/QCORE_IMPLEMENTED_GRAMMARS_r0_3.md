@@ -3502,7 +3502,10 @@ extern fn hold(q: quant[|n where n := 5|] use one) -> unit;
 ## G05. Resource loader v1
 
 ```ebnf
-resource_module = "module", "contract", ";", resource_fn, {resource_fn} ;
+resource_module = "module", "contract", ";", {alias_declaration}, resource_fn,
+                  {resource_fn | alias_declaration} ;
+  (* card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5 *)
+alias_declaration = "alias", "#", IDENT, "=", "@", IDENT, ";" ;
 resource_fn = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
               "->", result_abi, "contract", "{", resource_clause,
               {resource_clause}, "}", ";" ;
@@ -3626,12 +3629,17 @@ result_state_predicate =
     "resource_discriminant_set", "(", "result", ",", IDENT, ".", member_path, ",",
         IDENT, ",", integer_literal, ")"                    (* TAG.FIELD, P, FLAGS *)
   | "resource_callback_member_registered", "(", "result", ",", IDENT, ".", member_path, ",",
-        (IDENT | "absent"), ")" ;                           (* TAG.FIELD, F or a function *)
+        (IDENT | "#", "absent"), ")" ;                      (* TAG.FIELD, F or a function *)
 result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, ("absent" | IDENT) ], ";" ;   (* G05d *)
+    [ ":", IDENT, ".", member_path, MAPS_TO, ("#", "absent" | IDENT) ], ";" ;   (* G05d *)
+(* card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5 *)
+handoff_clause = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
+    "when", "#", "result", ("==" | "!="), ("@", IDENT | "#", IDENT), ";" ;   (* G05d *)
 ```
 
-The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result` or `absent` rejects the module; the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the word `absent`, or (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, USER DECISION 2026-10-14, D1) is an identifier naming no parameter, a function designator, the stated default; the same word with a parameter in place of `result` (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, Q2) is a setter's registration, read with the callback predicates: the holder names a depth-one pointer parameter, `resource_borrowed`, with no kind, `F` a `fnptr` parameter no other clause names, one registration per holder and member, and `result` there is the result state above; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` is the only `quant` form resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
+The hand-off and its surface (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, contract specification C04.19.5; USER DECISIONS 2026-10-15) carry static conditions of their own. `#` marks binders and value keywords (`#absent`, `#owner`, `#callback`), `@IDENT` a C enumerator; the lexer reads `@` as one symbol (`Symbol::At`; before the card a lexer error, and the census found no `@` and no `alias` in code position in any tracked source file). An `alias_declaration` stands only in a contract module (an explicit executable or library header is a parse error; a headerless staged view is checked against the file's own mode), once per name, its name no reserved keyword (`absent`, `owner`, `callback`, `result`) and no parameter of any declaration in the module (`alias-collision`); it is part of the digest of every declaration spelling `#NAME`. A `handoff_clause`'s binder names a depth-one pointer parameter that the declaration states `resource_owned(P, nonnull)` (`quant-live-unbacked` otherwise), its constant an `@` name or a module alias (`quant-live-handoff-alias` for an undeclared one; a number, a bare word, an ordering and any other shape: `quant-live-handoff-constant`, `-guard`, `-owner`, `-binder`, `-shape`); the result is an integer or enumeration type with `resource_return_none()` (`quant-live-handoff-result`); one per declaration. A declaration carrying any `#` form (a hand-off or a result state) rejects a parameter named like a reserved keyword. A member invocation's object may be the handed formal (`resource_owned`), never another owned formal. The clause stands where a callback predicate may and withholds the declaration from the function map. `#absent` is the one spelling of the result state's value at both levels; a bare `absent` rejects naming `#absent` (`quant-live-absent`). An `@` name's resolution (an enumerator of the candidate's own result type) is Clang's, per unit and after the pinned route's pre-pass, never the loader's (C04.19.5). Every violation rejects the whole module.
+
+The result-state predicates of card OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4; USER DECISIONS 2026-10-14, A1, B1 and C) carry static conditions of their own: the object is the word `result`, which requires `resource_return_owned(nonnull)` (`quant-live-unbacked`); a parameter named `result`, `absent`, `owner` or `callback` rejects the module (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the reserved keywords of a `#` form); the member is a dotted `TAG.FIELD`; `resource_discriminant_set`'s `P` names an integer parameter and its `FLAGS` is a canonical non-negative decimal, at most one per declaration; `resource_callback_member_registered`'s `F` names a `fnptr` parameter whose mode is `resource_borrowed` and which no other clause of the declaration invokes or registers, or is the value keyword `#absent` (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF; a bare `absent` rejects), or (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, USER DECISION 2026-10-14, D1) is an identifier naming no parameter, a function designator, the stated default; the same word with a parameter in place of `result` (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, Q2) is a setter's registration, read with the callback predicates: the holder names a depth-one pointer parameter, `resource_borrowed`, with no kind, `F` a `fnptr` parameter no other clause names, one registration per holder and member, and `result` there is the result state above; a member carries one state (an agreeing overlap merges, a different second state rejects). `result_state_clause` and (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF) `handoff_clause` are the only `quant` forms resource v1 admits (G05d, "Result states"). They stand where a callback predicate may and withhold the declaration from the function map. Every violation rejects the whole module.
 
 The callback predicates (card CG22-CALLBACK-REGISTRY-CONTRACT, contract specification C04.19) carry static conditions of their own: the first `IDENT` of `resource_callback_invoked` and `resource_callback_registered` names a `fnptr` parameter (whose only mode is `resource_borrowed`), and one callback is named by at most one invocation or registration; a table, a holder and an element name depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; a `callback_actual` `IDENT` names a parameter of the declaration other than the invoked callback, `_` a value the callee supplies, and `element` (a registry invocation only) each element the holder holds; a declaration with a parameter named `_` or `element` rejects every callback predicate, and one with a parameter named `result` rejects a `result` holder, which further requires `resource_return_owned(nonnull)`; an element is not its own holder and is never also a retained pointer; a declaration carries at most one predicate of each keyword per position, and never both a registration in a parameter holder and a registry predicate on the same holder; and a callback predicate stands where a retention predicate may, beside retention predicates, but never beside a slot or a reference predicate. Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 
@@ -3956,7 +3964,9 @@ in maps-to notation:
 
 ```ebnf
 result_state_clause = "quant", "live", "#", "result",
-    [ ":", IDENT, ".", member_path, MAPS_TO, ("absent" | IDENT) ], ";" ;
+    [ ":", IDENT, ".", member_path, MAPS_TO, ("#", "absent" | IDENT) ], ";" ;
+handoff_clause = "quant", "live", "#", IDENT, ":", "#", "owner", MAPS_TO, "#", "callback",
+    "when", "#", "result", ("==" | "!="), ("@", IDENT | "#", IDENT), ";" ;
 MAPS_TO = "|->" ;   (* one lexer token, qcore_frontend::lexer::MAPS_TO *)
 ```
 
@@ -3967,12 +3977,15 @@ because Z and set-theory notation read it as `↣`, an injective function;
 token (`Symbol::MapsTo`), matched before every two-byte spelling, so `|>`
 stays the pipe and `||` the logical or (and `||->` is `||` then `->`); before
 the card the same bytes lexed as `|` then `->`, which no reader admitted.
-`absent` is a reserved word, distinct from C's `NULL`. Static conditions,
+`absent` is a reserved word, distinct from C's `NULL`; since card
+SUPPLIED-OWNED-RETURN-CODE-HANDOFF (USER DECISION 2026-10-15) it is the value
+keyword `#absent`, its one spelling, and a bare `absent` rejects the module
+naming `#absent` (`quant-live-absent`). Static conditions,
 each rejecting the whole module with a named diagnostic: the binder is
 `#result` (`quant-live-result-shape`; a formal is a bounds-module liveness
 part, never a resource v1 one); the left of `|->` is a dotted `TAG.FIELD`
 (`quant-live-member`; `result->rko_op_cb` and a bare `->` reject with
-`quant-live-maps-to`, which names `|->`); the right is `absent` or, since card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER
+`quant-live-maps-to`, which names `|->`); the right is `#absent` or, since card OP-APP-RK-CALLBACKS-VIA-POLL-CB (USER
 DECISION 2026-10-14, D1: "the right-hand side is either `absent` or a function
 designator. Anything else rejects the module"), one identifier naming a
 function: never a parameter of the declaration, `result`, C's `NULL` or
@@ -3981,15 +3994,28 @@ is the member's stated default (`quant live #result: rd_kafka_conf_s.log_cb
 |-> rd_kafka_log_print;`), and its lower level is
 `resource_callback_member_registered(result, TAG.FIELD, f)`. **Two levels:** the clause is the shorthand of `quant
 live #result;` (the liveness part, restating `resource_return_owned(nonnull)`)
-and the member's state (`absent` or the function), written alone as
-`resource_callback_member_registered(result, TAG.FIELD, absent)` (or `…, f)`;
+and the member's state (`#absent` or the function), written alone as
+`resource_callback_member_registered(result, TAG.FIELD, #absent)` (or `…, f)`;
 `QCore.AppRkCallbacks.the_function_shorthand_and_its_parts_mean_the_same`); the loader
 elaborates every spelling into these canonical parts
 (`crates/qcore-contract/src/contract_constructed_state.rs`), so the shorthand,
 its decomposition and both together give one `ConstructedState`
 (`crates/qcore-contract/tests/op_constructor_clause.rs`). The pinned digest
 covers the text as written. Every other `quant` form still rejects in
-resource v1.
+resource v1, but for the hand-off below.
+
+**Hand-offs in resource v1** (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF,
+contract specification [C04.19.5](QCORE_CONTRACT_SPEC_r0_3.md#c04195-a-hand-off-by-return-code),
+gateway rules [12m](agents/gateway.md#constraint-12m) and
+[13l](agents/gateway.md#constraint-13l); USER DECISIONS 2026-10-15). A
+formal's binder in a `quant live` clause states a hand-off by return code
+(`handoff_clause`, G05): `quant live #rko: #owner |-> #callback when #result
+!= @RD_KAFKA_OP_RES_PASS;`. It elaborates into the formal's liveness part
+(`quant live #rko;`, backed by `resource_owned(rko, nonnull)`) and the
+guarded transfer; the alias and the `@` name read identically. `quant live
+#P;` alone with a formal stays the result-state reader's rejection
+(`quant-live-result-shape`: a formal's liveness part belongs to a bounds
+module). The static conditions are G05's.
 ## G05e. Null-property member and result declarations
 
 Card NULL-CANDIDATE-TRIAGE, contract specification

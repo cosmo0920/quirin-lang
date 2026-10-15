@@ -911,6 +911,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [sup07-refused-test-accusation](sup07-refused-test-accusation/README.md) | SUP07-REFUSED-TEST-ACCUSATION: a leak claim does not rest on a refused test |
 
+| [supplied-owned-return-code-handoff](supplied-owned-return-code-handoff/README.md) | SUPPLIED-OWNED-RETURN-CODE-HANDOFF: a hand-off by return code |
+
 | [sweep-blind-spots](sweep-blind-spots/README.md) | `SWEEP-BLIND-SPOTS` — the reconciliation sweep's measured blind spots, and wave 32 retro-swept |
 
 ## T

@@ -5043,6 +5043,56 @@ own anchor here.
     `suppliedClassifyVectors`, `suppliedDecisionVectors`);
     `tests/cg22_op_callbacks.rs`.
 
+    **Return-code hand-offs** (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF,
+    contract specification C04.19.5; USER DECISIONS 2026-10-15, "a callback
+    that takes the object only under conditions the caller does not branch
+    on is refused"). A candidate whose declaration states `quant live #P:
+    #owner |-> #callback when #result OP @C;` (withheld from the function
+    map, `RetainingContract::handoff`) is classified, at an invocation
+    clause's `supplied_owned`, `_` or parameter position, by
+    `legacy_callback_route::handed_class`: a declaration that also carries
+    any other side clause reads uncontracted; otherwise the **caller branch
+    check** (`crates/qcore-c-gateway/src/handoff_branch.rs`, `admit`) reads,
+    over the run's facts (the pre-pass) or the analysing unit's own, the
+    path from the invoker along which the callback formal (`Formal`) or
+    the handed object (`Member`) flows through direct calls to its
+    invocation sites; per site the result is split into the constants the
+    body compares it with and the rest (`function_handling`, a structured
+    walk over Clang's AST: `if`, loops, `switch`, `goto`, `?:`, `&&`/`||`,
+    statement expressions, noreturn calls), and a class the guard admits
+    must not name the object again before a rebinding or a noreturn call;
+    what the function returns there (the result, a constant, anything) is
+    checked at its caller's site; the path ends at a local (the object was
+    created there), and at the invoker a handed parameter is never returned
+    on an admitted path; some function on the path compares the result
+    with the guard's own constant. Admitted, the custody contract decides
+    with the handed formal taken at `supplied_owned` and kept by the
+    invoker at `_` or a parameter (its requirement on the call kept);
+    refused, `callback-handoff-unbranched`. A direct call of a hand-off
+    declaration refuses (`callback-handoff-direct`). Measured on the corpus
+    (`examples/handoff_census.rs` over the 94 librdkafka units, as the
+    pre-pass reads them): `rd_kafka_poll_cb`'s `!= PASS` is admitted at
+    `rd_kafka_q_serve0`, `_serve` and `_serve_maybe_consume` (the serve loop
+    asserts `res != PASS` and never names the op otherwise) and refused at
+    the three pop serves (`rd_kafka_q_pop_serve0` returns the op for every
+    value outside HANDLED, KEEP and YIELD) and at `rko_serve` (its call
+    goes through a local copy of the member); the KEEP-only
+    `rd_kafka_txn_op_send_offsets_to_transaction` is admitted at both serve
+    loops' `rko_op_cb` (through `rd_kafka_op_handle`, `_handle_std` and
+    `rd_kafka_op_call`) and at `rd_kafka_op_destroy` (`rd_assert(res !=
+    KEEP)`, glibc `assert` with no `NDEBUG`). Scope (stated, not proved):
+    the check reads the invoker's own path, as the decision names it; that
+    the invoker invokes the callback only there is the declaration's
+    assumption. **Do not** admit a hand-off on a path not read, a guard no
+    function on the path compares, a callback formal that escapes, or at a
+    direct call. `QCore.ReturnCodeHandOff`
+    (`owner_after_is_the_guard`,
+    `an_admitted_branch_never_touches_a_taken_object`,
+    `an_unbranched_guard_never_admits`,
+    `admission_composes_through_a_forwarder`, `owner_vectors_hold`,
+    `branch_vectors_hold`); `tests/return_code_handoff.rs`;
+    [report](../reports/supplied-owned-return-code-handoff/README.md).
+
 <a id="constraint-12n"></a>
 
 12n. **A member invocation (`resource_callback_member_invoked(OBJ,
@@ -6169,6 +6219,48 @@ own anchor here.
     `validated_implies_previously_validated`);
     [report](../reports/verdict-body-standing-clause-scope/README.md).
 
+<a id="constraint-13l"></a>
+
+13l. **A `#` form's keywords are reserved and an `@` name is a C
+    enumerator: Clang resolves it in the guarded result's own enumeration,
+    the pin covers that enumeration, and an alias is one module's second
+    spelling of one `@` name.** Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF
+    (contract specification C04.19.5, grammar G05 and G05d), on the user's
+    decisions of 2026-10-15. `#` marks binders (`#result`, `#rko`) and value
+    keywords (`#absent`, `#owner`, `#callback`); the clause-kind word after
+    `quant` stays bare. The lexer reads `@` as `Symbol::At` (a lexer error
+    before; the census found no `@` and no `alias` in code position). `alias
+    #NAME = @C_NAME;` (`SourceProgram::aliases`) stands only in a contract
+    module, once per name, its name no reserved keyword and no parameter of
+    any declaration of the module (`contract_handoff::module_aliases`,
+    `alias-collision`); it is part of the contract digest of every
+    declaration spelling `#NAME` (`declaration_digests`), so an alias never
+    changes meaning under an unchanged pin. A declaration carrying a `#`
+    form rejects a parameter named `absent`, `owner`, `callback` or
+    `result` (its binder would read as the keyword); a declaration with no
+    `#` form keeps such a name (13 parameters in the tree, none beside a `#`
+    form). **Resolution.** Per unit, `@C` resolves to an enumerator of the
+    candidate's own result type through Clang's AST
+    (`MemberFacts::{result_types, typed_constants}`,
+    `handoff_branch::resolve`; units in scope must agree), otherwise the
+    hand-off is refused there; on the pinned route, after the pre-pass, a
+    hand-off whose candidate a read unit declares and whose `@C` does not
+    resolve rejects the run's contracts
+    (`member_prepass::check_handoff_constants`): the loader runs no Clang.
+    **Pinning.** `quirin-audit pin` adds the top-level enumeration declaring
+    each `@` name a declaration spells, directly or through an alias
+    (`declaration_c_names`), to its reviewed identity (`c_identity`, site
+    kind `enumeration`, the whole statement's digest; `identity_sites` at
+    pin, check and audit), and refuses a name no enumeration declares; the
+    enumerator's value is so pinned at both revisions. **Do not** resolve an
+    `@` name by its spelling alone, accept a bare `absent`, read an alias
+    across modules, or keep a declaration in force whose enumeration
+    changed. `QCore.ReturnCodeHandOff` (`an_alias_means_its_name`,
+    `an_undeclared_alias_rejects`, `the_migration_preserves_absent`,
+    `a_bare_absent_rejects`, `a_function_designator_is_unchanged`);
+    `crates/qcore-contract/tests/return_code_handoff_clause.rs`,
+    `c_identity`'s `an_enumerator_is_pinned_by_its_whole_enumeration`.
+
 <a id="constraint-13m"></a>
 
 13m. **A W4 conflict that only refines a declaration is a body failure
@@ -6689,10 +6781,10 @@ own anchor here.
 <a id="constraint-14e"></a>
 
 14e. **A constructor's stated result state (`quant live #result: TAG.FIELD
-    |-> absent;`, `resource_discriminant_set`,
+    |-> #absent;`, `resource_discriminant_set`,
     `resource_callback_member_registered`) is read at a later call only
     while every store the run makes into the member is classified; the
-    `absent` state stands in a unit that defines the constructor only where
+    `#absent` state stands in a unit that defines the constructor only where
     its body zero-allocates the result and never writes the member.** Card
     OP-CONSTRUCTOR-DECLARATIONS (contract specification C04.19.4, grammar
     G05 and G05d), on the user's decisions of 2026-10-14 (A1, B1, C; the
@@ -6700,7 +6792,9 @@ own anchor here.
     `qcore_schemas::constructed_state` (`ConstructedState`, the canonical
     parts of both levels), the loader `contract_constructed_state.rs` (the
     shorthand elaborates into `quant live #result;` and the member's
-    `absent`, and the two levels give one state; a bare `->` there rejects
+    `#absent` (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the value keyword,
+    its one spelling; a bare `absent` rejects the module naming `#absent`,
+    `quant-live-absent`), and the two levels give one state; a bare `->` there rejects
     the module naming `|->`), `crates/qcore-c-gateway/src/constructed_state.rs`
     (`StateStore`, `collect`, `stability`, `result_state_validates`), route
     G's `legacy_constructed_route.rs`, the run fold in
@@ -6726,12 +6820,12 @@ own anchor here.
     `14e`, rule 13i's `ClauseKind::MemberState`): one local returned on
     every `return`, assigned once from `calloc` or `rd_calloc`, used only as
     a member store's base, the return and inside `sizeof`, no store reaching
-    an `absent` member, a stated discriminant stored once from its
+    a `#absent` member, a stated discriminant stored once from its
     parameter with its flags; otherwise the state is withdrawn in that unit
     (the result is tracked, the state undecided) and stays a declared
     assumption elsewhere (rules 13i-13k). **Do not** read a state across an
     unclassified store, a whole-object write, a non-null rebinding, or a
-    store the calling function makes itself; validate `absent` on a body
+    store the calling function makes itself; validate `#absent` on a body
     that does not zero the object; or promote a row in the fold.
     `QCore.OpCallbacks` (`the_shorthand_and_its_parts_mean_the_same`,
     `the_shorthand_is_live_and_absent`, `the_shorthand_entails_quant_live`,

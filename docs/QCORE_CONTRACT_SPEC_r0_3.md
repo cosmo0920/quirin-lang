@@ -860,7 +860,7 @@ contract {
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
 
-**The served-queue premise after the rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, amended in place). The premise on `rd_kafka_q_wait_result` stays as written. Of the callbacks that call may run, the application's rk_conf callbacks now close over the run's registrations under `P-RK-NO-PLUGIN-LIBRARY` (C04.19.3), each candidate declared the identity, and none receives the served queue; `rd_kafka_poll_cb`, an `rko_serve` candidate, touches the queue only through `rkq_ts_last_poll_end` and `rd_kafka_q_reenq`, which takes no reference (both read by hand). The premise still rests on what no declaration states: `rd_kafka_poll_cb` itself (its op custody splits by return code, which no clause states beside its callback clauses; user decision S1), `rd_kafka_toppar_op_serve`, and `rd_kafka_op_s.rko_op_cb`, whose run set reads open once a union's members share their stores. Measured, the function's row is unchanged: it refuses first at the uncontracted `rd_kafka_q_pop`. The card's own premise `rk_no_plugin_library` names the configuration the closure rests on and is published with every row resting on a declaration that carries it, exactly as this clause states.
+**The served-queue premise after the rk_conf callbacks** (card OP-APP-RK-CALLBACKS-VIA-POLL-CB, amended in place). The premise on `rd_kafka_q_wait_result` stays as written. Of the callbacks that call may run, the application's rk_conf callbacks now close over the run's registrations under `P-RK-NO-PLUGIN-LIBRARY` (C04.19.3), each candidate declared the identity, and none receives the served queue; `rd_kafka_poll_cb`, an `rko_serve` candidate, touches the queue only through `rkq_ts_last_poll_end` and `rd_kafka_q_reenq`, which takes no reference (both read by hand). The premise still rests on what no declaration in force at the serves states: `rd_kafka_poll_cb` itself (its op custody splits by return code; since card SUPPLIED-OWNED-RETURN-CODE-HANDOFF it is declared with its not-PASS hand-off, C04.19.5, but its own callback clauses make it read uncontracted where it is a candidate), `rd_kafka_toppar_op_serve`, and `rd_kafka_op_s.rko_op_cb`, whose run set reads open once a union's members share their stores. Measured, the function's row is unchanged: it refuses first at the uncontracted `rd_kafka_q_pop`. The card's own premise `rk_no_plugin_library` names the configuration the closure rests on and is published with every row resting on a declaration that carries it, exactly as this clause states.
 
 ### C04.19. Callback contracts
 
@@ -956,7 +956,7 @@ contract {
 
 **The actual word.** `supplied_owned` in the actual list of `resource_callback_invoked` or `resource_callback_member_invoked` (C04.19.3) is a live object the callee supplies and owns, whose custody it hands the callback at each invocation (an op `rd_kafka_q_serve0` dequeued). At most one per list; never in a table or registry invocation; a declaration with a parameter named `supplied_owned` rejects every callback clause.
 
-**What a consumer MUST apply.** The handed object was never the caller's, so the call is still the identity on the caller's state; but the callee's declaration says it gives the object away, so a candidate is admitted only when its contract in force takes it at that position, unconditionally: `resource_consumed(p, n)` or `resource_released(p, n)`. A candidate that borrows or requires it there, or takes it on some return codes only (a return-code disposition, C04.13, never in the function map), leaves it with the callee and is refused (`callback-supplied-kept`). Every other position is decided as C04.19's loop-safe composition decides it.
+**What a consumer MUST apply.** The handed object was never the caller's, so the call is still the identity on the caller's state; but the callee's declaration says it gives the object away, so a candidate is admitted only when its contract in force takes it at that position, unconditionally: `resource_consumed(p, n)` or `resource_released(p, n)`. A candidate that borrows or requires it there, or takes it on some return codes only (a return-code disposition, C04.13, never in the function map), leaves it with the callee and is refused (`callback-supplied-kept`); since card SUPPLIED-OWNED-RETURN-CODE-HANDOFF, a candidate whose declaration states a guarded hand-off (C04.19.5) is admitted where the invoker's branch on its result admits the guard (the caller branch check) and refused `callback-handoff-unbranched` otherwise. Every other position is decided as C04.19's loop-safe composition decides it.
 
 #### C04.19.2. A release chosen by a discriminant
 
@@ -1067,7 +1067,7 @@ contract {
     ensures normal resource_borrowed(source);
     ensures normal resource_borrowed(type);
     ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 0);
-    quant live #result: rd_kafka_op_s.rko_op_cb |-> absent;
+    quant live #result: rd_kafka_op_s.rko_op_cb |-> #absent;
     ensures normal resource_return_owned(nonnull);
 };
 
@@ -1088,7 +1088,8 @@ contract {
 returned object with the word `result`, which requires
 `resource_return_owned(nonnull)` (the caller owns the live object the state
 describes; otherwise `quant-live-unbacked`); a parameter named `result` or
-`absent` rejects the module; the member is a dotted `TAG.FIELD` (`struct
+`absent` rejects the module (card SUPPLIED-OWNED-RETURN-CODE-HANDOFF: so does
+any reserved keyword, `owner` and `callback` included); the member is a dotted `TAG.FIELD` (`struct
 TAG`'s member path).
 
 * `resource_discriminant_set(result, TAG.FIELD, P, FLAGS)`: `P` an integer
@@ -1096,14 +1097,17 @@ TAG`'s member path).
   per declaration (an identical repetition merges).
 * `resource_callback_member_registered(result, TAG.FIELD, F)`: `F` a `fnptr`
   parameter whose mode is `resource_borrowed`, registered or invoked by no
-  other clause of the declaration; or the word `absent`; or (card
+  other clause of the declaration; or the value keyword `#absent` (card
+  SUPPLIED-OWNED-RETURN-CODE-HANDOFF: the one spelling; a bare `absent`
+  rejects the module naming `#absent`); or (card
   OP-APP-RK-CALLBACKS-VIA-POLL-CB, D1) an identifier naming no parameter, a
   function designator: the member's stated default.
-* `quant live #result: TAG.FIELD |-> absent;` (the maps-to token `|->`, the
+* `quant live #result: TAG.FIELD |-> #absent;` (the maps-to token `|->`, the
   ASCII `↦`) and `quant live #result;`: the only `quant` forms resource v1
   admits. The left of `|->` is a dotted `TAG.FIELD` (anything else,
   `result->rko_op_cb` included, rejects: `quant-live-member`, or, for a bare
-  `->`, `quant-live-maps-to` naming `|->`); the right is `absent` or, since
+  `->`, `quant-live-maps-to` naming `|->`); the right is `#absent` (a bare
+  `absent` rejects, `quant-live-absent`) or, since
   card OP-APP-RK-CALLBACKS-VIA-POLL-CB (D1), a function designator: one
   identifier that names no parameter and is not `result`, `NULL` or
   `nullptr` (anything else: `quant-live-value`).
@@ -1129,12 +1133,12 @@ TAG`'s member path).
   different state rejects). The clauses stand where a callback clause may
   and withhold the declaration from the function map.
 
-**Two levels.** `quant live #result: TAG.FIELD |-> absent;` is the shorthand
+**Two levels.** `quant live #result: TAG.FIELD |-> #absent;` is the shorthand
 of its two canonical parts: `quant live #result;` (the result is live, the
 liveness part of C09.3's decomposition, restating
-`resource_return_owned(nonnull)`) and the member's `absent` state, written
+`resource_return_owned(nonnull)`) and the member's `#absent` state, written
 on its own as `resource_callback_member_registered(result, TAG.FIELD,
-absent)`. The loader elaborates every spelling into the canonical parts, so
+#absent)`. The loader elaborates every spelling into the canonical parts, so
 the shorthand, its decomposition, and both together read identically
 (`QCore.OpCallbacks`: `the_shorthand_and_its_parts_mean_the_same`,
 `the_shorthand_is_live_and_absent`, `the_shorthand_entails_quant_live`,
@@ -1145,11 +1149,11 @@ the shorthand, its decomposition, and both together read identically
 result, per path: the discriminant's value `actual | FLAGS` when the actual
 folds to a constant (a formal or computed actual decides nothing), and each
 member's state (the registered callback's candidates by rule 11p, or none for
-`absent`). A path join keeps a state only when every arriving path holds it.
+`#absent`). A path join keeps a state only when every arriving path holds it.
 A later type-switched release (C04.19.2) of that object reads the arms its
 reachable values select, each under the release's own mask, instead of the
 cautious join; a later member invocation (C04.19.3) the unit's closure
-refuses reads the member's state instead (`absent` invokes nothing). Any
+refuses reads the member's state instead (`#absent` invokes nothing). Any
 other object, and any object whose state is not decided, reads C04.19.2's
 cautious join and C04.19.3's closure as before.
 
@@ -1173,14 +1177,130 @@ keep (`constructed-state-open`), and the demoted function's property rows
 read `Unknown` custody.
 
 **Checked against the body (rule 14e).** In a unit that defines a
-constructor stating `absent`, the state stands only when its Clang body
+constructor stating `#absent`, the state stands only when its Clang body
 returns one local on every `return`, assigns it once from a zeroing
 allocator (`calloc`, `rd_calloc`), uses it only as a member store's base, in
-the return and inside `sizeof`, never stores into an `absent` member, and
+the return and inside `sizeof`, never stores into a `#absent` member, and
 stores a stated discriminant exactly once from its parameter (with its
 flags); otherwise the state is withdrawn in that unit and the clause stays a
 declared assumption (rules 13i–13k). `resource_discriminant_set` and a
 callback registration are otherwise declared assumptions.
+
+#### C04.19.5. A hand-off by return code
+
+Card SUPPLIED-OWNED-RETURN-CODE-HANDOFF (gateway rules 12m and 13l).
+
+> **USER DECISION 2026-10-15** (as relayed by the integrator, verbatim). The
+> user wants a hand-off of a supplied object that depends on the callback's
+> return code. Sigils: `#` marks **binders** (`#result`, `#rko`, `#i`) and
+> **value keywords** (`#absent`, `#owner`, `#callback`). The clause-kind word
+> after `quant` stays bare (`live`, `deref`, `checks`, `null-deref`).
+> `@NAME` is a C name that Clang resolves, e.g. `@RD_KAFKA_OP_RES_PASS`. The
+> loader resolves it through Clang. It must be an enumerator of the guarded
+> value's own enum type, and its value is pinned at both revisions. A typo,
+> a wrong-type constant or an unresolvable name rejects the module.
+> **Aliases are allowed** (user's choice): `alias #PASS =
+> @RD_KAFKA_OP_RES_PASS;` Module-local, and declared once per module. The
+> right-hand side must be an `@` name. The alias name must not collide with
+> a reserved keyword, a binder, or a parameter of any declaration in the
+> module. Both spellings load to one canonical value, and a test shows they
+> read identically. **The clause:** `quant live #rko: #owner |-> #callback
+> when #result != @RD_KAFKA_OP_RES_PASS;` (or `… != #PASS` with the alias).
+> Meaning: the supplied object `#rko` is owned by the callback whenever the
+> result is not PASS; on PASS it stays with the caller. Unsigned and enum
+> results (`rd_kafka_op_res_t` is `u32`) must be admitted for the guard.
+> **Migration (same card, one spelling):** `|-> absent` on main becomes
+> `|-> #absent` in the spec, the grammar, the loader, the contracts
+> (`write_contracts.py`) and the tests. A bare `absent` then rejects, with a
+> diagnostic naming `#absent`. A C parameter whose name matches a reserved
+> keyword rejects. There are never two accepted spellings, except the
+> declared aliases above. Earlier user decisions still hold: rule 12m. A
+> callback that takes the object only under conditions the caller does
+> **not** branch on is refused. **Soundness requirement:** a conditional
+> hand-off is admitted only when the **caller's body** branches on that same
+> result, with the same constant, and treats ownership consistently: it
+> keeps or disposes of the op on PASS; it does not touch the op otherwise.
+> This is checked against the bodies of `rd_kafka_op_handle` and the serve
+> loops. Any mismatch keeps today's refusal.
+
+```qcore
+alias #PASS = @RD_KAFKA_OP_RES_PASS;
+
+extern fn rd_kafka_txn_op_send_offsets_to_transaction(rk: ptr<mut, u8>, rkq: ptr<mut, u8>, rko: ptr<mut, u8>) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_owned(rko, nonnull);
+    ensures normal resource_return_none();
+    quant live #rko: #owner |-> #callback when #result == @RD_KAFKA_OP_RES_KEEP;
+};
+```
+
+**Grammar** (G05, G05d; total-or-reject). `alias #NAME = @C_NAME;` stands at
+module level in a contract module only (an explicit executable or library
+header is a parse error; the compiler's staged view checks the file's own
+mode), once per name; its name is no reserved keyword (`absent`, `owner`,
+`callback`, `result`) and no parameter (binder) of any declaration in the
+module (`alias-collision`). The clause is `quant live #P: #owner |->
+#callback when #result OP C;` with `OP` `==` or `!=` and `C` an `@` name or
+a module alias (an undeclared alias, a number, a bare word, an ordering
+reject: `quant-live-handoff-*`); `P` names a depth-one pointer parameter the
+declaration states `resource_owned(P, nonnull)` (the clause's liveness part,
+`quant-live-unbacked` otherwise); the result is an integer or enumeration
+code (signed, unsigned or a C02 enum projection) with
+`resource_return_none()`; one hand-off per declaration; it stands where a
+callback clause may and withholds the declaration from the function map. A
+declaration carrying a `#` form rejects a parameter named like a reserved
+keyword (its binder would read as the keyword); a declaration with no `#`
+form keeps such a name (the serve family's `callback`). A member invocation
+may read the handed formal (`resource_owned`), no other owned formal.
+
+**Resolution and pinning (rule 13l).** Per unit, `@C` resolves through
+Clang to an enumerator of the candidate's own result type (Clang's value;
+the units in scope that declare the candidate must agree); a name that does
+not is refused at every use. On the pinned route, after the member
+pre-pass, a hand-off whose candidate a read unit declares and whose `@C`
+does not resolve there rejects the run's contracts (the loader's module
+rejection, made where Clang has read the units). `quirin-audit pin` adds
+the top-level enumeration declaring each `@` name a declaration spells
+(directly or through an alias) to its reviewed identity (site kind
+`enumeration`, the whole statement's digest), so the value is pinned at
+both revisions, and refuses a name no enumeration declares. An alias a
+declaration spells is part of its contract digest.
+
+**Meaning.** After a call, the object the formal `P` designates is the
+callback's exactly when the guard holds of the call's result, and stays
+the caller's otherwise (`QCore.ReturnCodeHandOff.owner_after_is_the_guard`).
+
+**What a consumer MUST apply (rule 12m).** A hand-off declaration is read
+only as a candidate of a callback clause (C04.19, C04.19.1, C04.19.3). At a
+`supplied_owned` or `_` position (an object the invoker owns) or a
+parameter position, the candidate is admitted only where the **caller
+branch check** passes on the invoker's body: from the invoker, the path
+along which the callback formal (an invocation of a parameter) or the
+handed object (an invocation of a member) flows is followed through direct
+calls to the sites that invoke it; at each site the result is split into
+the constants the body compares it with and the rest, each class is
+followed from the call to every exit, and a class the guard admits must not
+name the object again before a rebinding or a noreturn call; what the
+function returns there is followed into its caller's site; the path ends
+where the object is a local (it was created there), and at the invoker a
+handed parameter must never be returned on a path the guard admits; some
+function of the path must compare the result with the guard's own constant
+(`QCore.ReturnCodeHandOff.an_admitted_branch_never_touches_a_taken_object`,
+`an_unbranched_guard_never_admits`). A body not read, two different
+readings of one function, a callback formal that escapes, a member copied
+into a local before its call (`rd_kafka_op_handle`'s `rko_serve`) or an
+unread construct refuses. Admitted, the candidate is classified by its
+custody contract with the handed formal taken at a `supplied_owned`
+position and kept by the invoker at `_` or a parameter; refused, the call
+refuses `callback-handoff-unbranched`. A candidate whose declaration also
+carries callback clauses reads uncontracted (C04.19). A **direct call** of a
+hand-off declaration refuses (`callback-handoff-direct`): the caller-side
+reading of the result's branch is not made. The check reads the path the
+user's decision names; that the invoker invokes the callback only there is
+the declaration's own assumption.
 
 ## C05. Manifests and immutable assumptions
 
