@@ -12,12 +12,17 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/mpor"
 mkdir -p "$out/bin" || exit 2
-rm -rf "$out/base-src"
-mkdir -p "$out/base-src" || exit 2
-git -C "$repo" archive --format=tar --output="$out/base-src.tar" "$base" || exit 2
-tar -xf "$out/base-src.tar" -C "$out/base-src" || exit 2
-rm -f "$out/base-src.tar"
-echo "$base" > "$out/base-src.revision"
+if [ "$(cat "$out/base-src.revision" 2>/dev/null)" != "$base" ]; then
+  # A base tree of another revision (or none): archive it afresh. One of
+  # this revision is reused with its build (the first attempt's build
+  # finished, but this script's own file was rewritten while bash read it).
+  rm -rf "$out/base-src"
+  mkdir -p "$out/base-src" || exit 2
+  git -C "$repo" archive --format=tar --output="$out/base-src.tar" "$base" || exit 2
+  tar -xf "$out/base-src.tar" -C "$out/base-src" || exit 2
+  rm -f "$out/base-src.tar"
+  echo "$base" > "$out/base-src.revision"
+fi
 REPO="$out/base-src" "$here/build.sh" before > "$out/before-build.out" 2>&1
 echo $? > "$out/before-build.step.exit"
 [ "$(cat "$out/before-build.step.exit")" = 0 ] || exit 1

@@ -47,7 +47,7 @@ theorem a_named_token_drops_the_exclusion {ok : Bool} {fs : List Bool} (h : true
   | false => rfl
   | true =>
     simp only [Bool.true_and, List.all_eq_false]
-    exact ⟨true, h, rfl⟩
+    exact ⟨true, h, by decide⟩
 
 /-- Evidence that cannot be checked drops the exclusion, whatever the
 tokens. -/
@@ -139,18 +139,19 @@ run's fold of the rows. -/
 theorem the_composed_decision_is_the_runs {invokes : Bool} {c : Closure}
     {kept out : List Bool} (h : compose invokes (some c) kept = some out) :
     out = runFold c kept := by
-  unfold compose at h
-  split at h
-  · cases h
-  · rename_i hany
-    cases h
+  simp only [compose] at h
+  by_cases hany : kept.any (fun k => k && !foldKeeps c c) = true
+  · simp [hany] at h
+  · simp [hany] at h
+    have hall := List.any_eq_false.mp (Bool.eq_false_iff.mpr hany)
+    have hmap : kept.map (fun k => k && foldKeeps c c) = kept.map id := by
+      apply List.map_congr_left
+      intro k hk
+      have := hall k hk
+      cases k <;> cases hc : foldKeeps c c <;> simp_all
+    rw [← h]
     unfold runFold
-    rw [Bool.not_eq_true, List.any_eq_false] at hany
-    conv => lhs; rw [← List.map_id kept]
-    apply List.map_congr_left
-    intro k hk
-    have := hany k hk
-    cases k <;> cases hc : foldKeeps c c <;> simp_all
+    rw [hmap, List.map_id]
 
 /-- A run whose units decided over the carried closure (a kept row needs it
 closed: an open run member never decides) always composes, with its rows
@@ -158,7 +159,7 @@ unchanged. -/
 theorem a_run_decided_over_its_facts_composes {invokes : Bool} {c : Closure}
     {kept : List Bool} (h : ∀ k ∈ kept, k = true → ∃ ns, c = .closed ns) :
     compose invokes (some c) kept = some kept := by
-  unfold compose
+  simp only [compose]
   have : kept.any (fun k => k && !foldKeeps c c) = false := by
     rw [List.any_eq_false]
     intro k hk

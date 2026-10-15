@@ -50,6 +50,7 @@ const CONTRACTS: &str = "module contract;
 extern fn serve_err(rk: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
+    requires resource_revision(flexible);
     ensures normal resource_borrowed(rk);
     ensures normal resource_callback_member_invoked(rk, handle_s.conf.err_cb, rk);
     ensures normal resource_return_none();

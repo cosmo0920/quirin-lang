@@ -350,7 +350,8 @@ fn per_configuration_checkpoints_match_whole_and_resume_independently() {
     let summary = fixture.dump(&[sample_path]);
     succeeded(&summary);
     let summary: serde_json::Value = serde_json::from_slice(&summary.stdout).unwrap();
-    assert_eq!(summary["schema_version"], 4);
+    // Card MEMBER-PREPASS-OTHER-ROUTES: schema 5 carries the run's member facts.
+    assert_eq!(summary["schema_version"], 5);
     assert_eq!(summary["units"].as_array().unwrap().len(), 1);
     let full = fixture.dump(&["--full", sample_path]);
     succeeded(&full);

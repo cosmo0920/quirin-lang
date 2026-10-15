@@ -5135,8 +5135,9 @@ own anchor here.
     entry count that differs, another field's entry that is a record or array
     copy or a function), a whole-object assignment or a `memcpy`-family call
     may write open it; a checkpoint
-    composer refuses a run whose contracts invoke a member (it carries no
-    facts). A member invocation is a declared assumption (rule 13i). **The
+    composer refuses a run whose contracts invoke a member unless its
+    checkpoints carry the run's facts (card MEMBER-PREPASS-OTHER-ROUTES,
+    below). A member invocation is a declared assumption (rule 13i). **The
     unit's closed set orders the W4 derivation** (card
     RETAINED-RELEASE-OF-A-FORMAL-READ-UNKNOWN):
     `callback_route::callback_edges` gives a body that calls a
@@ -5208,7 +5209,34 @@ own anchor here.
     evidence (the unlinked `rdkafka++` wrapper; generated units and units
     whose generated headers are absent from the pinned inputs, their raw
     texts checked); the fold compares the run's set with itself and stays
-    demote-only. Every route without the pre-pass keeps the unit's own set.
+    demote-only. **Every route reads the run's set** (card
+    MEMBER-PREPASS-OTHER-ROUTES, amending this rule in place; the ledger
+    entry's DISCHARGE): the current route runs the same pre-pass over its
+    whole `--compile-database` (a selection chooses the units analysed, not
+    the program) plus the Monkey units it analyses, and the no-build route
+    over its selected units under their assumed compile records (no profile,
+    so nothing is excluded); both install the facts per unit
+    (`CurrentAudit`/`NoBuildAudit::set_member_prepass`) and fold over them. A
+    checkpoint (schema 5) carries the run's facts: their digest in the run
+    identity (a changed run set recomputes every unit and never composes with
+    another), the fold's inputs (`callback_member_fold::FoldEnvironment`)
+    and the run's closure of each invoked member in `global`, each unit's
+    member and state facts in `contracts`; the composer folds them as the run
+    does (`fold_in`) and refuses a composition the fold would demote, since
+    it never rewrites rows; checkpoints without the run's facts refuse a
+    member-invoking run as before. **The scope file is re-checked at run
+    time:** `member-facts-scope.json` (schema 2) names its
+    `evidence_revision` and each entry's typed evidence, which the pre-pass
+    re-verifies against the run's own sources inside the token fixed point,
+    against the final tokens: `tokens-absent` (the unit's raw text, every
+    file Clang resolves for it under its own command with `-M -MG`, and the
+    named generator sources, a file with the files its directives resolve
+    or a directory with every file under it, name no token, and every
+    unresolved include is named as generated) or `not-linked` (the named
+    link lines above the unit's `CMakeCache.txt` name the archive and not
+    the wrapper). An exclusion that does not hold or cannot be checked is
+    dropped, recorded in the section's `scope.dropped`, and its unit read
+    like any other (an unreadable one opens every member).
     Measured (corpus `66910c10` on main `b7facc899`): 936 / 9 / 3,889 → 936
     / 9 / 3,889, 97 Unknown rows trade leaves; the pre-pass reads 845 of
     1,444 units, none unread; the rk_conf members close (`dr_msg_cb`
@@ -5218,7 +5246,9 @@ own anchor here.
     union-keyed `rko_u` dependency).
     [Report](../reports/op-app-rk-callbacks/README.md). **Do
     not** decide a member over the unit's set alone where the run's facts
-    are installed, promote a row in the
+    are installed, exclude a unit whose evidence the run has not
+    re-verified, compose a member-invoking run from checkpoints without the
+    run's facts, promote a row in the
     fold, follow an address-taken function's formal, read a value the
     facts do not name as no candidate, treat a unit whose AST was not read
     (or a unit absent from the run) as closed, or derive a member-invoking
@@ -5250,6 +5280,15 @@ own anchor here.
     `key_vectors_hold`, `run_decision_vectors_hold`);
     `callback_member_closure`'s `KEY_VECTORS`; `member_run_facts`'s
     `RUN_DECISION_VECTORS`; `tests/app_rk_callbacks.rs`.
+    `QCore.MemberPrepassRoutes`
+    (`a_named_token_drops_the_exclusion`,
+    `a_stale_exclusion_never_closes_a_member`,
+    `held_exclusions_keep_the_run_set`,
+    `a_checkpoint_without_facts_refuses`,
+    `the_composed_decision_is_the_runs`,
+    `a_run_decided_over_its_facts_composes`);
+    `crates/qcore-audit/tests/member_prepass_routes.rs`;
+    [report](../reports/member-prepass-other-routes/README.md).
     **A union's places by layout** (card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION,
     C04.19.3 amended; the brief's second evidence, Clang's record layout, as
     the discriminant route needs a stated arm map and an op-type analysis
