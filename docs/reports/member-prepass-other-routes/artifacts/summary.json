@@ -1,0 +1,609 @@
+{
+ "corpus": {
+  "before": {
+   "name": "before2",
+   "totals": {
+    "Unknown": 3889,
+    "Safe": 936,
+    "Unsafe": 9
+   },
+   "sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+   "seconds": "673.332"
+  },
+  "after": {
+   "name": "a2",
+   "totals": {
+    "Unknown": 3889,
+    "Safe": 936,
+    "Unsafe": 9
+   },
+   "sha256": "71387bd38b8552a6f86805c59f9cccb416f295ab43a4e6d4aec1f6938f0e45da",
+   "seconds": "673.083"
+  },
+  "report_identical": true,
+  "null": {
+   "rows_identical": true,
+   "tallies": [
+    {
+     "Safe (conditional on its preconditions)": 1435,
+     "Safe (unconditional)": 1113,
+     "Unknown": 2355,
+     "Unsafe": 18
+    },
+    {
+     "Safe (conditional on its preconditions)": 1435,
+     "Safe (unconditional)": 1113,
+     "Unknown": 2355,
+     "Unsafe": 18
+    }
+   ]
+  },
+  "sidecar_keys_differing": [
+   "callback_members"
+  ],
+  "callback_members_keys_differing": [
+   "prepass"
+  ],
+  "prepass": {
+   "units": 1444,
+   "read": 987,
+   "rounds": 2,
+   "unread": {}
+  },
+  "prepass_tokens": 69,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "members_after": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    27
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    1
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    2
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    6
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "members_before": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    27
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    1
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    2
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    6
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "demoted": [
+   [],
+   []
+  ],
+  "run_json_binary": [
+   "82ae791402d14090b63c6826ec6ce851df8b34a81f87ae2458b84ef99e7f0493",
+   "c6f21efea0e66bf58c9615b823fc461bc172da1e0d13f54c85fadae8dd763dcd"
+  ]
+ },
+ "system": {
+  "before": {
+   "name": "before",
+   "totals": {
+    "Unknown": 351,
+    "Safe": 93,
+    "Unsafe": 4
+   },
+   "sha256": "263e93ab3eed26afed7a74285b0b0c381decefab2beade94c4e38b6a5c1dabc5",
+   "seconds": "94.617"
+  },
+  "after": {
+   "name": "a2",
+   "totals": {
+    "Unknown": 351,
+    "Safe": 93,
+    "Unsafe": 4
+   },
+   "sha256": "263e93ab3eed26afed7a74285b0b0c381decefab2beade94c4e38b6a5c1dabc5",
+   "seconds": "192.766"
+  },
+  "report_identical": true,
+  "null": {
+   "rows_identical": true,
+   "tallies": [
+    {
+     "Safe (conditional on its preconditions)": 125,
+     "Safe (unconditional)": 84,
+     "Unknown": 245
+    },
+    {
+     "Safe (conditional on its preconditions)": 125,
+     "Safe (unconditional)": 84,
+     "Unknown": 245
+    }
+   ]
+  },
+  "sidecar_keys_differing": [
+   "callback_members"
+  ],
+  "callback_members_keys_differing": [
+   "members",
+   "prepass"
+  ],
+  "prepass": {
+   "units": 1419,
+   "read": 966,
+   "rounds": 2,
+   "unread": {}
+  },
+  "prepass_tokens": 69,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "members_after": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    27
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    1
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    2
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    6
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "members_before": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "demoted": [
+   [],
+   []
+  ]
+ },
+ "slice": {
+  "before": {
+   "name": "before",
+   "totals": {
+    "Unknown": 347,
+    "Safe": 52,
+    "Pending": 4,
+    "Unsafe": 1
+   },
+   "sha256": "3e0c6ccf42feaf73687df73f5a3a1eebb595238e4f71764f0b916b3fc3da09dc",
+   "seconds": "50.433"
+  },
+  "after": {
+   "name": "a2",
+   "totals": {
+    "Unknown": 347,
+    "Safe": 52,
+    "Pending": 4,
+    "Unsafe": 1
+   },
+   "sha256": "3e0c6ccf42feaf73687df73f5a3a1eebb595238e4f71764f0b916b3fc3da09dc",
+   "seconds": "150.308"
+  },
+  "report_identical": true,
+  "null": {
+   "rows_identical": true,
+   "tallies": [
+    {
+     "Safe (conditional on its preconditions)": 103,
+     "Safe (unconditional)": 71,
+     "Unknown": 232
+    },
+    {
+     "Safe (conditional on its preconditions)": 103,
+     "Safe (unconditional)": 71,
+     "Unknown": 232
+    }
+   ]
+  },
+  "sidecar_keys_differing": [
+   "callback_members"
+  ],
+  "callback_members_keys_differing": [
+   "members",
+   "prepass"
+  ],
+  "prepass": {
+   "units": 1421,
+   "read": 968,
+   "rounds": 2,
+   "unread": {}
+  },
+  "prepass_tokens": 69,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "members_after": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    27
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    false,
+    4
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    1
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    2
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    6
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "members_before": {
+   "consume_ctx.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_op_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_serve": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_u.offset_commit.cb": [
+    true,
+    0
+   ],
+   "rd_kafka_op_s.rko_u.terminated.cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.background_event_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.consume_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.dr_msg_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.error_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.log_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.rebalance_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.stats_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_conf.throttle_cb": [
+    true,
+    0
+   ],
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": [
+    true,
+    0
+   ]
+  },
+  "demoted": [
+   [],
+   []
+  ]
+ },
+ "system_checkpointed": {
+  "whole_seconds": "179.008",
+  "checkpointed_seconds": "175.089",
+  "exits": [
+   "0",
+   "0"
+  ],
+  "report_identical": true,
+  "sidecar_identical": true,
+  "report_sha256": "263e93ab3eed26afed7a74285b0b0c381decefab2beade94c4e38b6a5c1dabc5",
+  "whole_equals_null_run_report": true,
+  "checkpoints": 15,
+  "console_lines": [
+   "member facts pre-pass: 1419 unit(s), 966 read, 0 unread",
+   "callback members: 0 demoted",
+   "callback members: 0 demoted"
+  ]
+ }
+}

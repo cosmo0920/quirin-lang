@@ -1,0 +1,50 @@
+{
+ "corpus": {
+  "exit": "0",
+  "units": 1415,
+  "read": 963,
+  "unread": {},
+  "rounds": 2,
+  "tokens": 69,
+  "seconds": 133.6,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "outside_program": 100
+ },
+ "system": {
+  "exit": "0",
+  "units": 1419,
+  "read": 966,
+  "unread": {},
+  "rounds": 2,
+  "tokens": 69,
+  "seconds": 112.4,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "outside_program": 100
+ },
+ "slice": {
+  "exit": "0",
+  "units": 1421,
+  "read": 968,
+  "unread": {},
+  "rounds": 2,
+  "tokens": 69,
+  "seconds": 110.5,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100
+  },
+  "outside_program": 100
+ }
+}
