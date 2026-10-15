@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/handoff-candidate-own-callbacks"
-BASE = "5b1ceecd5 (rebased from d708641bc)"
+BASE = "635669fdb (rebased from d708641bc)"
 
 
 def main() -> int:
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/hcoc/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (324 -> 325: QCore.CandidateComposition); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (325 -> 326 on main 635669fdb: QCore.CandidateComposition); "
         "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
