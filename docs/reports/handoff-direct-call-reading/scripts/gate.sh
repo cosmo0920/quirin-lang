@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# gate.sh NAME [PART] -- HANDOFF-CANDIDATE-OWN-CALLBACKS (from OP-CALLBACK-MEMBER-PATH-RELEASE, from SUPPLIED-OWNED-RETURN-CODE-HANDOFF, from OP-APP-RK-CALLBACKS-VIA-POLL-CB) (from OP-CALLBACK-CANDIDATE-CONTRACTS, from OP-CONSTRUCTOR-DECLARATIONS, from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, copied from
+# gate.sh NAME [PART] -- HANDOFF-DIRECT-CALL-READING (from HANDOFF-CANDIDATE-OWN-CALLBACKS, from OP-CALLBACK-MEMBER-PATH-RELEASE, from SUPPLIED-OWNED-RETURN-CODE-HANDOFF, from OP-APP-RK-CALLBACKS-VIA-POLL-CB) (from OP-CALLBACK-CANDIDATE-CONTRACTS, from OP-CONSTRUCTOR-DECLARATIONS, from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, copied from
 # PROCESS-FIXTURES-FS-WRITE-OUTSIDE-HOST-CRATE's, from HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING's, from EXECUTION-QUOTA-LOAD-INDEPENDENCE's scripts/gate.sh): cargo check and the
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/hdcr/gate-NAME/, nothing piped, each step under the shared
 # heavy lock. PART is `code` (steps 00-07, plus the provider gate as 10-15,
-# because crates/qcore-schemas/ changed) or `docs` (08-09, after the
+# run although providers/ and crates/qcore-schemas/ are unchanged, for the
+# measured provider count build_matrix.py requires) or `docs` (08-09, after the
 # records) or `all`.
 set -u
 name="$1"

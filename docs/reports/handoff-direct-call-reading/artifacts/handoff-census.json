@@ -1,0 +1,536 @@
+{
+ "direct": {
+  "rd_kafka_background_queue_serve": {
+   "admitted": false,
+   "sites": [
+    {
+     "actuals": [
+      {
+       "param": 0
+      },
+      {
+       "param": 1
+      },
+      {
+       "param": 2
+      },
+      "other",
+      {
+       "param": 4
+      }
+     ],
+     "callee": {
+      "direct": "rd_kafka_poll_cb"
+     },
+     "compared": {
+      "RD_KAFKA_OP_RES_HANDLED": 1,
+      "RD_KAFKA_OP_RES_YIELD": 3
+     },
+     "handling": {
+      "0": {
+       "rest": {
+        "returns": [
+         {
+          "value": 1
+         }
+        ],
+        "touched": true
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        },
+        "3": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        }
+       }
+      },
+      "1": {
+       "rest": {
+        "returns": [
+         {
+          "value": 1
+         }
+        ],
+        "touched": false
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        },
+        "3": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        }
+       }
+      },
+      "2": {
+       "rest": {
+        "returns": [
+         {
+          "value": 1
+         }
+        ],
+        "touched": true
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        },
+        "3": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        }
+       }
+      },
+      "4": {
+       "rest": {
+        "returns": [
+         {
+          "value": 1
+         }
+        ],
+        "touched": false
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        },
+        "3": {
+         "returns": [
+          "same"
+         ],
+         "touched": false
+        }
+       }
+      }
+     }
+    }
+   ],
+   "why": "Disagrees(\"the object is named again where the guard admits the result\")"
+  },
+  "rd_kafka_consume0": {
+   "admitted": true,
+   "sites": [
+    {
+     "actuals": [
+      {
+       "param": 0
+      },
+      {
+       "param": 1
+      },
+      {
+       "local": "local0"
+      },
+      "other",
+      "other"
+     ],
+     "callee": {
+      "direct": "rd_kafka_poll_cb"
+     },
+     "compared": {
+      "RD_KAFKA_OP_RES_PASS": 0,
+      "RD_KAFKA_OP_RES_YIELD": 3
+     },
+     "handling": {
+      "0": {
+       "rest": {
+        "returns": [
+         {
+          "value": 0
+         },
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "0": {
+         "returns": [
+          {
+           "value": 0
+          },
+          "unknown"
+         ],
+         "touched": true
+        },
+        "3": {
+         "returns": [
+          {
+           "value": 0
+          }
+         ],
+         "touched": true
+        }
+       }
+      },
+      "1": {
+       "rest": {
+        "returns": [
+         {
+          "value": 0
+         },
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "0": {
+         "returns": [
+          {
+           "value": 0
+          },
+          "unknown"
+         ],
+         "touched": true
+        },
+        "3": {
+         "returns": [
+          {
+           "value": 0
+          }
+         ],
+         "touched": true
+        }
+       }
+      },
+      "2": {
+       "rest": {
+        "returns": [
+         {
+          "value": 0
+         },
+         "unknown"
+        ],
+        "touched": false
+       },
+       "values": {
+        "0": {
+         "returns": [
+          {
+           "value": 0
+          },
+          "unknown"
+         ],
+         "touched": true
+        },
+        "3": {
+         "returns": [
+          {
+           "value": 0
+          }
+         ],
+         "touched": false
+        }
+       }
+      }
+     }
+    }
+   ],
+   "why": null
+  },
+  "rd_kafka_consumer_close0": {
+   "admitted": true,
+   "sites": [
+    {
+     "actuals": [
+      {
+       "param": 0
+      },
+      {
+       "local": "local1"
+      },
+      {
+       "local": "local3"
+      },
+      "other",
+      "other"
+     ],
+     "callee": {
+      "direct": "rd_kafka_poll_cb"
+     },
+     "compared": {
+      "RD_KAFKA_OP_RES_PASS": 0
+     },
+     "handling": {
+      "0": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "0": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        }
+       }
+      },
+      "1": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "0": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        }
+       }
+      },
+      "2": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": false
+       },
+       "values": {
+        "0": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        }
+       }
+      }
+     }
+    }
+   ],
+   "why": null
+  },
+  "rd_kafka_q_serve_rkmessages": {
+   "admitted": false,
+   "sites": [
+    {
+     "actuals": [
+      {
+       "local": "local5"
+      },
+      {
+       "param": 0
+      },
+      {
+       "local": "local3"
+      },
+      "other",
+      "other"
+     ],
+     "callee": {
+      "direct": "rd_kafka_poll_cb"
+     },
+     "compared": {
+      "RD_KAFKA_OP_RES_HANDLED": 1,
+      "RD_KAFKA_OP_RES_KEEP": 2,
+      "RD_KAFKA_OP_RES_YIELD": 3
+     },
+     "handling": {
+      "0": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        },
+        "2": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        },
+        "3": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        }
+       }
+      },
+      "1": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        },
+        "2": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        },
+        "3": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": true
+        }
+       }
+      },
+      "2": {
+       "rest": {
+        "returns": [
+         "unknown"
+        ],
+        "touched": true
+       },
+       "values": {
+        "1": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": false
+        },
+        "2": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": false
+        },
+        "3": {
+         "returns": [
+          "unknown"
+         ],
+         "touched": false
+        }
+       }
+      }
+     }
+    }
+   ],
+   "why": "Disagrees(\"the object is named again where the guard admits the result\")"
+  }
+ },
+ "answers": {
+  "rd_kafka_admin_worker @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+   "admitted": true,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": null
+  },
+  "rd_kafka_admin_worker @ rd_kafka_poll_cb Member { object: Some(2), path: \"rko_op_cb\" }": {
+   "admitted": false,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": "the body of `rd_kafka_consume_cb` is not read"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_op_req0 Member { object: None, path: \"rko_serve\" }": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "the body of `rd_kafka_op_req0` is not read"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_pop_serve Formal(4)": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_pop_serve0 Formal(4)": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_pop_serve0 Member { object: None, path: \"rko_serve\" }": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_pop_serve_maybe_consume Formal(4)": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve Formal(4)": {
+   "admitted": true,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": null
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve Member { object: None, path: \"rko_serve\" }": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "no invocation is read on `rd_kafka_q_serve`'s path"
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve0 Formal(4)": {
+   "admitted": true,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": null
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve0 Member { object: None, path: \"rko_serve\" }": {
+   "admitted": true,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": null
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve_maybe_consume Formal(4)": {
+   "admitted": true,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": null
+  },
+  "rd_kafka_poll_cb @ rd_kafka_q_serve_maybe_consume Member { object: None, path: \"rko_serve\" }": {
+   "admitted": false,
+   "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+   "why": "no invocation is read on `rd_kafka_q_serve_maybe_consume`'s path"
+  },
+  "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+   "admitted": true,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": null
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+   "admitted": true,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": null
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_poll_cb Member { object: Some(2), path: \"rko_op_cb\" }": {
+   "admitted": false,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": "the body of `rd_kafka_consume_cb` is not read"
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_q_pop_serve0 Member { object: None, path: \"rko_op_cb\" }": {
+   "admitted": true,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": null
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_q_serve0 Member { object: None, path: \"rko_op_cb\" }": {
+   "admitted": true,
+   "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+   "why": null
+  }
+ }
+}

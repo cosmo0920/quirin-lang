@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""write_gate_json.py NAME -- HANDOFF-CANDIDATE-OWN-CALLBACKS (from OP-CALLBACK-MEMBER-PATH-RELEASE, from SUPPLIED-OWNED-RETURN-CODE-HANDOFF, from OP-APP-RK-CALLBACKS-VIA-POLL-CB) (from OP-CALLBACK-CANDIDATE-CONTRACTS, from OP-CONSTRUCTOR-DECLARATIONS, from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
+"""write_gate_json.py NAME -- HANDOFF-DIRECT-CALL-READING (from HANDOFF-CANDIDATE-OWN-CALLBACKS, from OP-CALLBACK-MEMBER-PATH-RELEASE, from SUPPLIED-OWNED-RETURN-CODE-HANDOFF, from OP-APP-RK-CALLBACKS-VIA-POLL-CB) (from OP-CALLBACK-CANDIDATE-CONTRACTS, from OP-CONSTRUCTOR-DECLARATIONS, from CG22-OP-CALLBACKS-AND-SERVED-QUEUES's, from PLUGIN-PACKAGE-BUILD-WRITES-EXECUTABLE-IN-PROCESS's, from
 HOST-UNREAD-REQUEST-ACCEPTANCE-BY-SCHEDULING's, from EXECUTION-QUOTA-LOAD-INDEPENDENCE's): gate.json from the standing gate's logs
 in private/hdcr/gate-NAME (exits, the runner's totals line, the Lean audit
 count, the Python suite's count, the provider gate's counts) and the Clang
@@ -14,8 +14,8 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/handoff-candidate-own-callbacks"
-BASE = "a7e0c9a3d (rebased from d708641bc)"
+REPORT = REPO / "docs/reports/handoff-direct-call-reading"
+BASE = "b2fbde2c5"
 
 
 def main() -> int:
@@ -49,8 +49,8 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"HANDOFF-CANDIDATE-OWN-CALLBACKS card gate on base {BASE}, every code "
-        f"step at {head[:9]}, scripts docs/reports/handoff-candidate-own-callbacks/scripts/gate-whole.sh, "
+        f"HANDOFF-DIRECT-CALL-READING card gate on base {BASE}, every code "
+        f"step at {head[:9]}, scripts docs/reports/handoff-direct-call-reading/scripts/gate-whole.sh, "
         "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/hdcr/gate-{name} of this worktree. "
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
@@ -58,8 +58,8 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/hdcr/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (326 -> 327 on main a7e0c9a3d: QCore.CandidateComposition); "
-        "provider gate: providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
+        f"check_lean_audits.py {lean.group(1)} audits passed (327 -> 328: QCore.HandOffDirect); "
+        "provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
         "gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) "

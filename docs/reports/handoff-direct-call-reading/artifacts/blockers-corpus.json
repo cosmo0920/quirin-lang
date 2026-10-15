@@ -1,0 +1,147 @@
+{
+ "moved": {
+  "rdkafka.c::rd_kafka_consume0": {
+   "remaining": [
+    "call to uncontracted function `rd_kafka_app_poll_start`",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_op_s.rko_u.offset_commit.cb` are not a closed set of functions (a `CStyleCastExpr`; a `memmove` into it writes a `struct rd_kafka_group_member_s`; a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`) (callback-member-open)",
+    "unresolved resource identity `rd_kafka_yield_thread`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "unresolved resource identity `rko`",
+    "call to uncontracted function `rd_kafka_message_get`",
+    "call to uncontracted function `rd_kafka_fetch_op_app_prepare`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "unresolved resource identity `rkmessage`"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka.c::rd_kafka_consumer_close0": {
+   "remaining": [
+    "call to uncontracted function `rd_kafka_consumer_close_q`",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "unresolved resource identity `rko`",
+    "unresolved resource identity `rko`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rko`",
+    "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_op_s.rko_u.offset_commit.cb` are not a closed set of functions (a `CStyleCastExpr`; a `memmove` into it writes a `struct rd_kafka_group_member_s`; a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`) (callback-member-open)",
+    "unresolved resource identity `rko`",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "unresolved resource identity `error`",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `error`",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "nullable resource `error` used by a non-null contract"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka_background.c::rd_kafka_background_queue_serve": {
+   "remaining": [
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "call to uncontracted function `rd_kafka_call_background_event_cb`",
+    "call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rko`"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka_queue.c::rd_kafka_q_serve_rkmessages": {
+   "remaining": [
+    "braced initializer, expression, or declaration is not modeled",
+    "braced initializer, expression, or declaration is not modeled",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rkq`",
+    "indirect memory access is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_q_serve_rkmessages`",
+    "call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "unresolved resource identity `cnt`",
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_app_poll_start`",
+    "indirect memory access is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_q_deq0`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rko`",
+    "call to uncontracted function `rd_kafka_purge_outdated_messages`",
+    "unresolved resource identity `rko`",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "indirect memory access is outside the resource projection",
+    "unrecognized assignment destination",
+    "call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)",
+    "unresolved resource identity `rd_kafka_yield_thread`",
+    "unresolved resource identity `rko`",
+    "indirect memory access is outside the resource projection",
+    "unrecognized assignment destination",
+    "unmodeled increment or decrement expression",
+    "unmodeled increment or decrement expression",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rko`",
+    "unresolved resource identity `_fetchpos`",
+    "unresolved resource identity `rko`",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "call to uncontracted function `rd_kafka_update_app_pos`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `rko`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `next`",
+    "unresolved resource identity `rko`",
+    "unresolved resource identity `_fetchpos`",
+    "unresolved resource identity `rko`",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "call to uncontracted function `rd_kafka_update_app_pos`",
+    "unresolved resource identity `rko`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "unresolved resource identity `cnt`"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  }
+ },
+ "rows_per_remaining_key": {
+  "braced initializer, expression, or declaration is not modeled": 1,
+  "call to uncontracted function _": 4,
+  "callback-handoff-unbranched": 2,
+  "callback-member-open": 2,
+  "indirect memory access is outside the resource projection": 3,
+  "nullable resource _ used by a non-null contract": 1,
+  "reference-drop-unheld": 2,
+  "retention-undecided": 1,
+  "unmodeled call, aggregate or indirect access in branch condition": 3,
+  "unmodeled call, aggregate or indirect access in loop condition": 3,
+  "unmodeled increment or decrement expression": 1,
+  "unrecognized assignment destination": 1,
+  "unresolved resource identity _": 4
+ }
+}

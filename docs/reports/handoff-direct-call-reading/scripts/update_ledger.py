@@ -11,7 +11,8 @@ measurement summary quoted in every amended or registered entry.
 * Amended: `UNION-OPAQUE-RECORD-WRITES-BY-TYPE` (now also the next blocker of
   the two direct callers the reading admits).
 * Registered: the stored result tested later than the next statement (or
-  initialised in its declaration), and the invoker check's converted store."""
+  initialised in its declaration), the invoker check's converted store, and
+  rule 11r's rewrite leaving the unit's token lines out of order."""
 import json
 import pathlib
 import sys
@@ -67,6 +68,28 @@ REGISTER = [
             "examples/handoff_census.rs). DISCHARGE: check_path refuses a site whose result is "
             "stored through a conversion, with a test and Lean parity, measured (expected "
             "identical)."
+        ),
+        "source": SOURCE,
+        "recorded_by": CARD,
+    },
+    {
+        "id": "RELATIONAL-REWRITE-LINE-ORDER",
+        "title": "Rule 11r's stored-return rewrite leaves the unit's token lines out of order, which turns off the typed place's statement occurrences for the whole unit",
+        "why": (
+            f"Registered by {CARD} ({RUN}). legacy_relational_post::tested_stored_returns "
+            "rewrites `NAME = f(...); if (TEST)` to `if (TEST')` with the `if`, its parenthesis "
+            "and the synthetic parentheses on the `if` line, before the moved call's tokens on "
+            "earlier lines. typed_place::occurrence declines every statement of a stream whose "
+            "lines are not non-decreasing, so wherever the rewrite fires every statement of the "
+            "unit loses its typed occurrence. The card measured the effect on its own rewrite "
+            "(binary a1: rd_kafka_DescribeGroups_resp_cb in rdkafka.c lost 9 `unresolved "
+            "resource identity __tmpstr` leaves, no status move, against a rerun of the BEFORE "
+            "binary identical to BEFORE) and keeps its own rewrite's lines non-decreasing "
+            "(stored_returns_with's keep_line_order); rule 11r's rewrite is unchanged, its "
+            "relational callees being cjson, ctraces and cfl declarations and the body-derived "
+            "dispositions of each unit. Size: not measured (the units where the 11r rewrite "
+            "fires; a counter in the rewrite gives it). DISCHARGE: the 11r rewrite keeps the "
+            "lines non-decreasing too, measured, every leaf and status change attributed."
         ),
         "source": SOURCE,
         "recorded_by": CARD,
