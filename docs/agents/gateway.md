@@ -6571,11 +6571,10 @@ own anchor here.
     declaration is not a side clause: it changes no mode, and it is published
     with the candidate's declaration (card OP-CALLBACK-CANDIDATE-CONTRACTS:
     `rk_log_callback` and the other premises of the op-callback candidates).
-    A row deciding a member through candidates its body does not spell does
-    not list them among its own dependencies
-    (`MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED`); on the measured runs none
-    stays `Safe`, because no unit's own set holds the run's (rule 12n's
-    fold). **Do not** read a callback as borrowed, admit a
+    A row deciding an invocation through candidates its body does not spell
+    lists them among its own dependencies since card
+    HANDOFF-CANDIDATE-OWN-CALLBACKS (below), except through a registry or a
+    decided registration (`MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED`). **Do not** read a callback as borrowed, admit a
     candidate on a summary of another unit, admit a releasing or keeping
     candidate outside a registry's `element` position, or place a call whose
     Clang calls disagree. **Amended by rule 15w**: an actual that is the
@@ -6615,7 +6614,18 @@ own anchor here.
     `an_undecided_own_invocation_refuses`, `a_cycle_never_supports_itself`,
     `a_self_cycle_never_stands`, `a_two_candidate_cycle_never_stands`,
     `compose_vectors_hold` bound to `COMPOSE_VECTORS`);
-    `tests/handoff_candidate_own_callbacks.rs`;
+    `tests/handoff_candidate_own_callbacks.rs`. A decided synchronous, table
+    or member invocation records its candidates (and a composed candidate's
+    inner candidates) as the row's dependencies
+    (`contract_consultation::note_relied`; registry invocations and decided
+    registrations do not yet, `MEMBER-CANDIDATE-DEPENDENCIES-UNLISTED`).
+    Measured (corpus `66910c10`, base `d708641bc`, binary `049bf574…`): 936 /
+    9 / 3,889 → **938 / 9 / 3,887**: `rd_kafka_oauthbearer_refresh_op`
+    composes, so `rd_kafka_op_destroy`'s 131 leaves in 83 rows decide and
+    `rd_kafka_event_destroy` and `ut_op_destroy_free` become Safe (34
+    declarations listed each); `rd_kafka_consume_cb` composes;
+    `rd_kafka_poll_cb` refuses at its own run-open `rko_u.offset_commit.cb`;
+    system and slice byte-identical, null tallies identical;
     [report](../reports/handoff-candidate-own-callbacks/README.md).
     `QCore.CallbackContracts`
     (`invocations_of_identities_are_identity`,

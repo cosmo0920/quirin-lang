@@ -1,0 +1,980 @@
+{
+  "answers": {
+    "rd_kafka_admin_worker @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+      "admitted": true,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": null
+    },
+    "rd_kafka_admin_worker @ rd_kafka_poll_cb Member { object: Some(2), path: \"rko_op_cb\" }": {
+      "admitted": false,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": "the body of `rd_kafka_consume_cb` is not read"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_op_req0 Member { object: None, path: \"rko_serve\" }": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "the body of `rd_kafka_op_req0` is not read"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_pop_serve Formal(4)": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_pop_serve0 Formal(4)": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_pop_serve0 Member { object: None, path: \"rko_serve\" }": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_pop_serve_maybe_consume Formal(4)": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "`rd_kafka_q_pop_serve0`: the object is named again where the guard admits the result"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve Formal(4)": {
+      "admitted": true,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": null
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve Member { object: None, path: \"rko_serve\" }": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "no invocation is read on `rd_kafka_q_serve`'s path"
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve0 Formal(4)": {
+      "admitted": true,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": null
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve0 Member { object: None, path: \"rko_serve\" }": {
+      "admitted": true,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": null
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve_maybe_consume Formal(4)": {
+      "admitted": true,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": null
+    },
+    "rd_kafka_poll_cb @ rd_kafka_q_serve_maybe_consume Member { object: None, path: \"rko_serve\" }": {
+      "admitted": false,
+      "guard": "#result != @RD_KAFKA_OP_RES_PASS",
+      "why": "no invocation is read on `rd_kafka_q_serve_maybe_consume`'s path"
+    },
+    "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+      "admitted": true,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": null
+    },
+    "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_op_destroy Member { object: Some(0), path: \"rko_op_cb\" }": {
+      "admitted": true,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": null
+    },
+    "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_poll_cb Member { object: Some(2), path: \"rko_op_cb\" }": {
+      "admitted": false,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": "the body of `rd_kafka_consume_cb` is not read"
+    },
+    "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_q_pop_serve0 Member { object: None, path: \"rko_op_cb\" }": {
+      "admitted": true,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": null
+    },
+    "rd_kafka_txn_op_send_offsets_to_transaction @ rd_kafka_q_serve0 Member { object: None, path: \"rko_op_cb\" }": {
+      "admitted": true,
+      "guard": "#result == @RD_KAFKA_OP_RES_KEEP",
+      "why": null
+    }
+  },
+  "readings": {
+    "rd_kafka_op_call": {
+      "escaping": [],
+      "formals": [],
+      "parameters": 3,
+      "sites": [
+        {
+          "actuals": [
+            {
+              "param": 0
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            }
+          ],
+          "callee": {
+            "member": {
+              "object": {
+                "param": 2
+              },
+              "path": "rko_op_cb"
+            }
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_KEEP": 2,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same",
+                  {
+                    "value": 3
+                  }
+                ],
+                "touched": false
+              },
+              "values": {
+                "2": {
+                  "returns": [
+                    "same",
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "1": {
+              "rest": {
+                "returns": [
+                  "same",
+                  {
+                    "value": 3
+                  }
+                ],
+                "touched": false
+              },
+              "values": {
+                "2": {
+                  "returns": [
+                    "same",
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "same",
+                  {
+                    "value": 3
+                  }
+                ],
+                "touched": true
+              },
+              "values": {
+                "2": {
+                  "returns": [
+                    "same",
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 3
+                    }
+                  ],
+                  "touched": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_op_destroy": {
+      "escaping": [],
+      "formals": [],
+      "parameters": 1,
+      "sites": [
+        {
+          "actuals": [
+            "other",
+            "other",
+            {
+              "param": 0
+            }
+          ],
+          "callee": {
+            "member": {
+              "object": {
+                "param": 0
+              },
+              "path": "rko_op_cb"
+            }
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_KEEP": 2,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "handling": {
+            "2": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "2": {
+                  "returns": [],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [],
+                  "touched": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_op_handle": {
+      "escaping": [],
+      "formals": [
+        5
+      ],
+      "parameters": 6,
+      "sites": [
+        {
+          "actuals": [
+            {
+              "param": 0
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            },
+            {
+              "param": 3
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_op_handle_std"
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_HANDLED": 1,
+            "RD_KAFKA_OP_RES_KEEP": 2,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "1": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": true
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "actuals": [
+            {
+              "param": 0
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 4
+            }
+          ],
+          "callee": {
+            "formal": 5
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_HANDLED": 1,
+            "RD_KAFKA_OP_RES_KEEP": 2,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "copy": [
+            {
+              "param": 2
+            },
+            "rko_serve"
+          ],
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "1": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "4": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "same"
+                  ],
+                  "touched": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_op_handle_std": {
+      "escaping": [],
+      "formals": [],
+      "parameters": 4,
+      "sites": [
+        {
+          "actuals": [
+            {
+              "param": 0
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_op_call"
+          },
+          "compared": {},
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            },
+            "1": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_q_pop_serve0": {
+      "escaping": [],
+      "formals": [
+        4
+      ],
+      "parameters": 7,
+      "sites": [
+        {
+          "actuals": [
+            "other",
+            {
+              "param": 0
+            },
+            {
+              "local": "local0"
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 5
+            },
+            {
+              "param": 4
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_op_handle"
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_HANDLED": 1,
+            "RD_KAFKA_OP_RES_KEEP": 2,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "handling": {
+            "1": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": true
+                },
+                "2": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": true
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": true
+                }
+              }
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": false
+                },
+                "2": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "4": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": false
+              },
+              "values": {
+                "1": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": true
+                },
+                "2": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": true
+                },
+                "3": {
+                  "returns": [
+                    {
+                      "value": 0
+                    }
+                  ],
+                  "touched": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "actuals": [
+            {
+              "local": "local1"
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 4
+            },
+            {
+              "param": 5
+            },
+            {
+              "param": 6
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_q_pop_serve0"
+          },
+          "compared": {},
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": true
+              },
+              "values": {}
+            },
+            "5": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_q_serve": {
+      "escaping": [],
+      "formals": [
+        4
+      ],
+      "parameters": 6,
+      "sites": [
+        {
+          "actuals": [
+            {
+              "param": 0
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 4
+            },
+            {
+              "param": 5
+            },
+            "other"
+          ],
+          "callee": {
+            "direct": "rd_kafka_q_serve0"
+          },
+          "compared": {},
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            },
+            "5": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            }
+          }
+        }
+      ]
+    },
+    "rd_kafka_q_serve0": {
+      "escaping": [],
+      "formals": [
+        4
+      ],
+      "parameters": 7,
+      "sites": [
+        {
+          "actuals": [
+            {
+              "local": "local3"
+            },
+            {
+              "param": 1
+            },
+            {
+              "param": 2
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 4
+            },
+            {
+              "param": 5
+            },
+            {
+              "param": 6
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_q_serve0"
+          },
+          "compared": {},
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": true
+              },
+              "values": {}
+            },
+            "5": {
+              "rest": {
+                "returns": [
+                  "same"
+                ],
+                "touched": false
+              },
+              "values": {}
+            }
+          }
+        },
+        {
+          "actuals": [
+            {
+              "local": "local0"
+            },
+            "other",
+            {
+              "local": "local1"
+            },
+            {
+              "param": 3
+            },
+            {
+              "param": 5
+            },
+            {
+              "param": 4
+            }
+          ],
+          "callee": {
+            "direct": "rd_kafka_op_handle"
+          },
+          "compared": {
+            "RD_KAFKA_OP_RES_PASS": 0,
+            "RD_KAFKA_OP_RES_YIELD": 3
+          },
+          "handling": {
+            "0": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "0": {
+                  "returns": [],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "unknown"
+                  ],
+                  "touched": true
+                }
+              }
+            },
+            "2": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": false
+              },
+              "values": {
+                "0": {
+                  "returns": [],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "unknown"
+                  ],
+                  "touched": false
+                }
+              }
+            },
+            "4": {
+              "rest": {
+                "returns": [
+                  "unknown"
+                ],
+                "touched": true
+              },
+              "values": {
+                "0": {
+                  "returns": [],
+                  "touched": false
+                },
+                "3": {
+                  "returns": [
+                    "unknown"
+                  ],
+                  "touched": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+ "groups": [
+  {
+   "callee": "-",
+   "candidate": "rd_kafka_poll_cb",
+   "leaves": 4,
+   "functions": 4,
+   "sample": "call to `rd_kafka_poll_cb`: it hands its parameter 2 to the callback only when `#result != @RD_KAFKA_OP_RES_PASS`, which a direct call does not read (callback-handoff-direct)"
+  },
+  {
+   "callee": "rd_kafka_op_destroy",
+   "candidate": "rd_kafka_oauthbearer_refresh_op",
+   "leaves": 131,
+   "functions": 83,
+   "sample": "call to `rd_kafka_op_destroy`: callback `rd_kafka_oauthbearer_refresh_op` (from `rd_kafka_op_s.rko_op_cb`) has no contract in force (callback-uncontracted)"
+  },
+  {
+   "callee": "rd_kafka_op_req",
+   "candidate": "rd_kafka_poll_cb",
+   "leaves": 1,
+   "functions": 1,
+   "sample": "call to `rd_kafka_op_req`: callback `rd_kafka_poll_cb` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+  },
+  {
+   "callee": "rd_kafka_op_req0",
+   "candidate": "rd_kafka_poll_cb",
+   "leaves": 1,
+   "functions": 1,
+   "sample": "call to `rd_kafka_op_req0`: callback `rd_kafka_poll_cb` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+  },
+  {
+   "callee": "rd_kafka_q_pop_serve",
+   "candidate": "-",
+   "leaves": 2,
+   "functions": 2,
+   "sample": "call to `rd_kafka_q_pop_serve`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)"
+  },
+  {
+   "callee": "rd_kafka_q_pop_serve0",
+   "candidate": "-",
+   "leaves": 2,
+   "functions": 2,
+   "sample": "call to `rd_kafka_q_pop_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+  },
+  {
+   "callee": "rd_kafka_q_serve",
+   "candidate": "rd_kafka_consume_cb",
+   "leaves": 1,
+   "functions": 1,
+   "sample": "call to `rd_kafka_q_serve`: callback `rd_kafka_consume_cb` (from `rd_kafka_consume_cb`) has no contract in force (callback-uncontracted)"
+  },
+  {
+   "callee": "rd_kafka_q_serve",
+   "candidate": "rd_kafka_poll_cb",
+   "leaves": 2,
+   "functions": 2,
+   "sample": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) has no contract in force (callback-uncontracted)"
+  },
+  {
+   "callee": "rd_kafka_q_serve0",
+   "candidate": "-",
+   "leaves": 2,
+   "functions": 2,
+   "sample": "call to `rd_kafka_q_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+  }
+ ],
+ "alone": [
+  {
+   "function": "rdkafka_op.c::rd_kafka_op_req2",
+   "leaves": [
+    "call to `rd_kafka_op_req`: callback `rd_kafka_poll_cb` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)"
+   ]
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_pop",
+   "leaves": [
+    "call to `rd_kafka_q_pop_serve`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_pop_serve",
+   "leaves": [
+    "call to `rd_kafka_q_pop_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_serve",
+   "leaves": [
+    "call to `rd_kafka_q_serve0`: its body in this unit does not validate the declared callback clause (callback-withdrawn)"
+   ]
+  }
+ ]
+}
