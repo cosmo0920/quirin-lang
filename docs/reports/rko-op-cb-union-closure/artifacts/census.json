@@ -1,0 +1,254 @@
+{
+ "base_closures": {
+  "rd_kafka_op_s.rko_op_cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\", \"a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`\", \"a whole-object assignment writes a `struct rd_kafka_replyq_s`\"}",
+  "rd_kafka_op_s.rko_u.*": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\", \"a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`\", \"a whole-object assignment writes a `struct rd_kafka_replyq_s`\"}",
+  "rd_list_s.rl_free_cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\"}",
+  "rd_kafka_timer_s.rtmr_callback": "closed over 40: {\"rd_kafka_1s_tmr_cb\", \"rd_kafka_DeleteRecords_leaders_queried_cb\", \"rd_kafka_ListOffsets_handle_result\", \"rd_kafka_ListOffsets_leaders_queried_cb\", \"rd_kafka_admin_eonce_timeout_cb\", \"rd_kafka_broker_start_reauth_cb\", \"rd_kafka_cgrp_max_poll_interval_check_tmr_cb\", \"rd_kafka_cgrp_offset_commit_tmr_cb\", \"rd_kafka_cgrp_serve_timer_cb\", \"rd_kafka_connect_any_timer_cb\", \"rd_kafka_coord_req_tmr_cb\", \"rd_kafka_coord_rkb_monitor_cb\", \"rd_kafka_decommissioned_broker_thread_join\", \"rd_kafka_idemp_pid_timer_cb\", \"rd_kafka_mcgrp_rebalance_timer_cb\", \"rd_kafka_metadata_cache_evict_tmr_cb\", \"rd_kafka_metadata_leader_query_tmr_cb\", \"rd_kafka_metadata_refresh_cb\", \"rd_kafka_mock_cgrp_classic_session_tmr_cb\", \"rd_kafka_mock_cgrp_consumer_session_tmr_cb\", \"rd_kafka_mock_connection_write_out_tmr_cb\", \"rd_kafka_mock_sgrp_fetch_session_tmr_cb\", \"rd_kafka_mock_sharegroup_session_tmr_cb\", \"rd_kafka_offset_auto_commit_tmr_cb\", \"rd_kafka_offset_broker_commit_cb\", \"rd_kafka_offset_query_tmr_cb\", \"rd_kafka_offset_sync_tmr_cb\", \"rd_kafka_offset_validate_tmr_cb\", \"rd_kafka_partition_leader_query_eonce_timeout_cb\", \"rd_kafka_partition_leader_query_eonce_timer_cb\", \"rd_kafka_rebootstrap_tmr_cb\", \"rd_kafka_sasl_cyrus_kinit_refresh_tmr_cb\", \"rd_kafka_sasl_oauthbearer_token_refresh_tmr_cb\", \"rd_kafka_share_commit_sync_timeout_cb\", \"rd_kafka_stats_emit_tmr_cb\", \"rd_kafka_telemetry_fsm_tmr_cb\", \"rd_kafka_toppar_consumer_lag_tmr_cb\", \"rd_kafka_txn_coord_monitor_cb\", \"rd_kafka_txn_coord_timer_cb\", \"rd_kafka_txn_register_partitions_tmr_cb\"}"
+ },
+ "card_closures": {
+  "rd_kafka_op_s.rko_op_cb": "closed over 27: {\"rd_kafka_DeleteRecords_leaders_queried_cb\", \"rd_kafka_ListOffsets_leaders_queried_cb\", \"rd_kafka_admin_fanout_worker\", \"rd_kafka_admin_worker\", \"rd_kafka_broker_monitor_op_cb\", \"rd_kafka_cgrp_assignor_handle_Metadata_op\", \"rd_kafka_cgrp_consumer_handle_Metadata_op\", \"rd_kafka_cgrp_handle_Metadata_op\", \"rd_kafka_oauthbearer_refresh_op\", \"rd_kafka_offset_reset_op_cb\", \"rd_kafka_offset_validate_op_cb\", \"rd_kafka_share_ack_commit_cb_register_op\", \"rd_kafka_share_commit_async_fanout_op\", \"rd_kafka_share_commit_sync_fanout_op\", \"rd_kafka_share_fetch_fanout_op\", \"rd_kafka_share_fetch_reply_op_cb\", \"rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb\", \"rd_kafka_txn_op_abort_transaction\", \"rd_kafka_txn_op_abort_transaction_ack\", \"rd_kafka_txn_op_ack_init_transactions\", \"rd_kafka_txn_op_begin_abort\", \"rd_kafka_txn_op_begin_commit\", \"rd_kafka_txn_op_begin_transaction\", \"rd_kafka_txn_op_commit_transaction\", \"rd_kafka_txn_op_commit_transaction_ack\", \"rd_kafka_txn_op_init_transactions\", \"rd_kafka_txn_op_send_offsets_to_transaction\"}",
+  "rd_kafka_op_s.rko_u.*@leaders.cb": "closed over 2: {\"rd_kafka_DeleteRecords_leaders_queried_cb\", \"rd_kafka_ListOffsets_leaders_queried_cb\"}",
+  "rd_kafka_op_s.rko_serve": "closed over 4: {\"rd_kafka_cgrp_op_serve\", \"rd_kafka_mock_cluster_op_serve\", \"rd_kafka_poll_cb\", \"rd_kafka_toppar_op_serve\"}",
+  "rd_list_s.rl_free_cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\"}"
+ },
+ "rko_u_layouts": [
+  {
+   "units": [
+    "rdkafka_admin.c",
+    "rdkafka_broker.c",
+    "rdkafka_cgrp.c",
+    "rdkafka_offset.c",
+    "rdkafka_op.c",
+    "rdkafka_partition.c"
+   ],
+   "layout": {
+    "members": {
+     "rd_kafka_timer_s.rtmr_callback": [
+      [
+       56,
+       8
+      ],
+      [
+       112,
+       8
+      ],
+      [
+       704,
+       8
+      ]
+     ],
+     "rd_list_s.rl_free_cb": [
+      [
+       24,
+       8
+      ],
+      [
+       88,
+       8
+      ],
+      [
+       744,
+       8
+      ],
+      [
+       872,
+       8
+      ]
+     ]
+    },
+    "paths": {
+     "admin_result.result_cb": [
+      56,
+      8
+     ],
+     "broker_monitor.cb": [
+      8,
+      8
+     ],
+     "leaders.cb": [
+      168,
+      8
+     ],
+     "offset_commit.cb": [
+      8,
+      8
+     ],
+     "terminated.cb": [
+      8,
+      8
+     ]
+    },
+    "records": {
+     "rd_kafka_AdminOptions_s": [
+      [
+       0,
+       656
+      ]
+     ],
+     "rd_kafka_confval_s": [
+      [
+       8,
+       64
+      ],
+      [
+       80,
+       64
+      ],
+      [
+       144,
+       64
+      ],
+      [
+       208,
+       64
+      ],
+      [
+       272,
+       64
+      ],
+      [
+       336,
+       64
+      ],
+      [
+       400,
+       64
+      ],
+      [
+       464,
+       64
+      ],
+      [
+       528,
+       64
+      ],
+      [
+       592,
+       64
+      ]
+     ],
+     "rd_kafka_fetch_pos_s": [
+      [
+       0,
+       16
+      ]
+     ],
+     "rd_kafka_message_s": [
+      [
+       8,
+       72
+      ],
+      [
+       16,
+       72
+      ]
+     ],
+     "rd_kafka_msg_s": [
+      [
+       8,
+       176
+      ],
+      [
+       16,
+       176
+      ]
+     ],
+     "rd_kafka_msgq_s": [
+      [
+       8,
+       64
+      ],
+      [
+       72,
+       64
+      ]
+     ],
+     "rd_kafka_msgs_head_s": [
+      [
+       8,
+       16
+      ],
+      [
+       72,
+       16
+      ]
+     ],
+     "rd_kafka_replyq_s": [
+      [
+       136,
+       16
+      ],
+      [
+       808,
+       16
+      ]
+     ],
+     "rd_kafka_timer_s": [
+      [
+       16,
+       56
+      ],
+      [
+       72,
+       56
+      ],
+      [
+       664,
+       56
+      ]
+     ],
+     "rd_kafkap_bytes_s": [
+      [
+       128,
+       24
+      ],
+      [
+       136,
+       24
+      ]
+     ],
+     "rd_list_s": [
+      [
+       8,
+       40
+      ],
+      [
+       72,
+       40
+      ],
+      [
+       728,
+       40
+      ],
+      [
+       856,
+       40
+      ]
+     ]
+    }
+   }
+  }
+ ],
+ "arm_site_sizing": [
+  "  29  address                  admin_request          assert",
+  "  41  address                  admin_request          constructed(const)",
+  "  17  address                  admin_request          constructed(var)",
+  "  27  address                  admin_request          none",
+  "   2  address                  admin_request          switch",
+  "   4  address                  admin_result           constructed(const)",
+  "  63  address                  admin_result           constructed(var)",
+  "   4  address                  admin_result           none",
+  "   2  address                  admin_result           switch",
+  "   4  address                  leaders                assert",
+  "   1  address                  leaders                constructed(const)",
+  "   1  assignment               admin_result           none",
+  "   1  assignment               broker_monitor         none",
+  "   1  assignment               leaders                constructed(const)",
+  "   2  assignment               offset_commit          constructed(const)",
+  "   2  assignment               offset_commit          none",
+  "   1  assignment               terminated             constructed(const)",
+  "   1  leaders.cb reference     leaders                assert",
+  "   1  leaders.cb reference     leaders                constructed(const)",
+  "total 204"
+ ]
+}

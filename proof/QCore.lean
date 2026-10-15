@@ -364,6 +364,7 @@ import QCore.OpCallbacks
 import QCore.MemberSummaryOrder
 import QCore.CallbackForward
 import QCore.AppRkCallbacks
+import QCore.UnionArmLayout
 import QCore.NullDeref
 import QCore.NullDerefGrade
 import QCore.DerefDecomposition

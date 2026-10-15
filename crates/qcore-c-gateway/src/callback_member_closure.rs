@@ -123,12 +123,36 @@ pub(crate) const LAYOUT_VECTORS: &[(
     bool,
 )] = &[
     (Some("a.cb"), Some("a.cb"), None, None, true),
-    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(32, 8)]), false),
-    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(4, 8)]), true),
+    (
+        Some("a.cb"),
+        Some("b.cb"),
+        Some(&[(0, 8)]),
+        Some(&[(32, 8)]),
+        false,
+    ),
+    (
+        Some("a.cb"),
+        Some("b.cb"),
+        Some(&[(0, 8)]),
+        Some(&[(4, 8)]),
+        true,
+    ),
     (Some("a.cb"), Some("b.cb"), None, Some(&[(32, 8)]), true),
     (None, Some("b.cb"), Some(&[(0, 8)]), Some(&[(32, 8)]), true),
-    (Some("a.cb"), Some("b.cb"), Some(&[(0, 8)]), Some(&[(8, 8)]), false),
-    (Some("a"), Some("b"), Some(&[(0, 8), (40, 8)]), Some(&[(44, 4)]), true),
+    (
+        Some("a.cb"),
+        Some("b.cb"),
+        Some(&[(0, 8)]),
+        Some(&[(8, 8)]),
+        false,
+    ),
+    (
+        Some("a"),
+        Some("b"),
+        Some(&[(0, 8), (40, 8)]),
+        Some(&[(44, 4)]),
+        true,
+    ),
 ];
 
 /// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n, layout route):
@@ -226,8 +250,9 @@ impl UnionPlan {
         };
         let mut work: Vec<(String, Option<BTreeSet<Range>>, usize)> = Vec::new();
         for (record, placement) in &self.held {
-            let ranges = place(placement, 0)
-                .and_then(|(offset, size)| Some(BTreeSet::from([(offset.checked_sub(base)?, size)])));
+            let ranges = place(placement, 0).and_then(|(offset, size)| {
+                Some(BTreeSet::from([(offset.checked_sub(base)?, size)]))
+            });
             work.push((record.clone(), ranges, 0));
         }
         while let Some((record, ranges, depth)) = work.pop() {
@@ -1125,8 +1150,10 @@ impl MemberFacts {
             if arm.split('.').any(str::is_empty) {
                 continue;
             }
-            plan.paths
-                .insert(arm.clone(), (probe.want(offset(arm)), probe.want(size(arm))));
+            plan.paths.insert(
+                arm.clone(),
+                (probe.want(offset(arm)), probe.want(size(arm))),
+            );
         }
         // The union's function-pointer members and records held by value,
         // through its anonymous members (an unnamed member cannot be spelled
@@ -1178,7 +1205,13 @@ impl MemberFacts {
 
     /// The probe plan of a record held by value: its function-pointer
     /// members and the records it holds by value, relative to itself.
-    fn plan_record(&self, record: &str, probe: &mut LayoutProbe, plan: &mut UnionPlan, depth: usize) {
+    fn plan_record(
+        &self,
+        record: &str,
+        probe: &mut LayoutProbe,
+        plan: &mut UnionPlan,
+        depth: usize,
+    ) {
         if depth > 16 || plan.records.contains_key(record) {
             return;
         }
@@ -1186,7 +1219,12 @@ impl MemberFacts {
             plan.records.insert(record.to_owned(), None);
             return;
         };
-        let keys = self.records.get(record).cloned().flatten().unwrap_or_default();
+        let keys = self
+            .records
+            .get(record)
+            .cloned()
+            .flatten()
+            .unwrap_or_default();
         let mut inner = RecordPlan::default();
         let mut nested = Vec::new();
         // Each entry: the path from the record, the keys there, whether an
@@ -1456,7 +1494,9 @@ impl MemberFacts {
             // place a union holds converted to another pointer type may be
             // written through as any type (type punning): the whole union is
             // written opaquely.
-            "CStyleCastExpr" | "ImplicitCastExpr" if node["castKind"].as_str() == Some("BitCast") => {
+            "CStyleCastExpr" | "ImplicitCastExpr"
+                if node["castKind"].as_str() == Some("BitCast") =>
+            {
                 let mut operand = children(node).first();
                 while let Some(inner) = operand
                     && kind(inner) == "ParenExpr"
@@ -2473,7 +2513,8 @@ mod tests {
     #[test]
     fn layout_vectors_hold() {
         for (arm, other, ranges, other_ranges, expected) in LAYOUT_VECTORS {
-            let set = |ranges: &Option<&[Range]>| ranges.map(|ranges| ranges.iter().copied().collect());
+            let set =
+                |ranges: &Option<&[Range]>| ranges.map(|ranges| ranges.iter().copied().collect());
             assert_eq!(
                 places_alias(*arm, *other, set(ranges), set(other_ranges)),
                 *expected,

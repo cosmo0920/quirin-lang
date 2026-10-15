@@ -5200,6 +5200,40 @@ own anchor here.
     `key_vectors_hold`, `run_decision_vectors_hold`);
     `callback_member_closure`'s `KEY_VECTORS`; `member_run_facts`'s
     `RUN_DECISION_VECTORS`; `tests/app_rk_callbacks.rs`.
+    **A union's places by layout** (card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION,
+    C04.19.3 amended; the brief's second evidence, Clang's record layout, as
+    the discriminant route needs a stated arm map and an op-type analysis
+    over 115 sites without constant local evidence): a place under a union
+    keeps its arm path beside the union's key (`U.*@arm.path`,
+    `callback_member_closure::ARM`); `read_unit` (the pre-pass and data-only
+    units) reads Clang's layout of every union its keys name in one
+    enumerator probe (`MemberFacts::probe_layouts`, `UnionLayout`: the
+    range of each arm path, function-pointer member and record held by
+    value, transitively); `Tables::aliases` keeps two places of one union
+    apart only on disjoint known bytes (`places_alias`), a record the union
+    holds only where none of its member's placements meets the place
+    (`meets_held`), and an opaque write of a held record notes the place
+    only where a placement meets it (`meets_record`); a missing range, an
+    unnamed member, an array of records and two units that disagree
+    (`merge_layout`) stay shared. A `memcpy`-family call into a place the
+    union holds and an address of one converted to another pointer type
+    (a `memset`-family filler excepted) write the whole union opaquely, and
+    an anonymous arm assigned whole from another type writes its own bytes.
+    An anonymous record (Clang's `struct T::(unnamed at …)`) is no longer
+    read as its holder `T` below a named root: `rko_u` was keyed
+    `rd_kafka_op_s.*` (the op's whole record, so `rko->rko_replyq` read as
+    an arm) and a place below an anonymous structure lost its path. Measured
+    over librdkafka's units, `rd_kafka_op_s.rko_op_cb` closes over its 27
+    candidates and `rko_u.*@leaders.cb` over two; weaker than a discriminant
+    and specific to the corpus's target. **Do not** separate two places on
+    type alone, read an ungiven range as disjoint, or merge two units'
+    differing layouts. `QCore.UnionArmLayout`
+    (`a_disjoint_write_never_changes_the_read`,
+    `a_separated_store_never_changes_the_read`,
+    `an_ungiven_range_aliases`, `a_disagreeing_union_aliases_everything`,
+    `the_layout_takes_only_shared_stores`, `layout_vectors_hold`);
+    `LAYOUT_VECTORS`; `tests/rko_union_layout.rs`;
+    [report](../reports/rko-op-cb-union-closure/README.md).
 
 <a id="constraint-12o"></a>
 

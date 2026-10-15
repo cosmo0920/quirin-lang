@@ -95,7 +95,10 @@ fn the_union_layout_is_read_and_the_read_keeps_its_arm() {
         layout.records["pos_s"],
         Some(BTreeSet::from([(8, 16), (32, 16)]))
     );
-    assert_eq!(layout.members["list_s.free_cb"], Some(BTreeSet::from([(0, 8)])));
+    assert_eq!(
+        layout.members["list_s.free_cb"],
+        Some(BTreeSet::from([(0, 8)]))
+    );
     assert!(
         facts.calls["new_cb"][&1]
             .iter()
@@ -129,9 +132,8 @@ fn a_sibling_arm_on_the_same_bytes_joins_and_a_copy_opens() {
     }
     let same = unit("void same(struct op_s *w) { w->u.same.cb2 = fb; }\n");
     assert_eq!(closure(&[&same], MEMBER), Ok(names(&["fa", "fb"])));
-    let copied = unit(
-        "void copy(struct op_s *w, const void *p) { memcpy(&w->u.early, p, sizeof w->u); }\n",
-    );
+    let copied =
+        unit("void copy(struct op_s *w, const void *p) { memcpy(&w->u.early, p, sizeof w->u); }\n");
     assert!(closure(&[&copied], MEMBER).is_err());
 }
 
@@ -172,7 +174,10 @@ fn a_separate_object_of_an_arm_type_does_not_key_into_the_union() {
     let apart = unit("void other(struct other_s *x) { x->pos = make_pos(); }\n");
     // `pos_s` is placed at 8 (early) and 32 (lp): the second meets `late.cb`.
     let open = closure(&[&apart], MEMBER).expect_err("lp.pos meets late.cb");
-    assert!(open.iter().any(|why| why.contains("struct pos_s")), "{open:?}");
+    assert!(
+        open.iter().any(|why| why.contains("struct pos_s")),
+        "{open:?}"
+    );
     // The same write read against `early.pos`'s neighbour only: a union
     // whose `pos_s` lies off the read's bytes.
     let text = "\
@@ -233,7 +238,11 @@ void set(struct conf_s *c) { c->sasl.oauth.refresh = fa; }
         },
     )
     .expect("read");
-    assert!(facts.stores.contains_key("conf_s.sasl.oauth.refresh"), "{:?}", facts.stores);
+    assert!(
+        facts.stores.contains_key("conf_s.sasl.oauth.refresh"),
+        "{:?}",
+        facts.stores
+    );
     assert_eq!(
         closure(&[&facts], "conf_s.sasl.oauth.refresh"),
         Ok(names(&["fa"]))
