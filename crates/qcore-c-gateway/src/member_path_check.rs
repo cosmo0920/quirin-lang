@@ -456,7 +456,7 @@ mod tests {
             check(
                 &body,
                 &[state("u.a", Fate::Released, false)],
-                &[helper.clone()]
+                std::slice::from_ref(&helper)
             ),
             Ok(Standing::Validated)
         );
@@ -531,7 +531,7 @@ mod tests {
             check(
                 &body,
                 &[state("u.a", Fate::Released, false)],
-                &[helper.clone()]
+                std::slice::from_ref(&helper)
             ),
             Ok(Standing::Assumption(_))
         ));
@@ -623,7 +623,7 @@ mod tests {
         let wrapper = function(vec![returning(Some(call("worker", vec![reference("p")])))]);
         let stated = [guarded(state("u.a", Fate::Released, false))];
         assert_eq!(
-            check(&wrapper, &stated, &[worker.clone()]),
+            check(&wrapper, &stated, std::slice::from_ref(&worker)),
             Ok(Standing::Validated)
         );
         // Unguarded, the KEEP exit must establish it too.

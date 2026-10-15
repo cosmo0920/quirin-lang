@@ -967,14 +967,13 @@ impl<'a, 'c> Reader<'a, 'c> {
         let null = value.is_some_and(null_constant);
         let mut touched = false;
         let written = if let Some(path) = self.path_of(stripped, bindings) {
-            for index in 0..self.paths.len() {
-                let stated = &self.paths[index];
-                if stated == &path && null {
-                    state[index] = if maybe { state[index] | NULL } else { NULL };
+            for (index, (stated, value)) in self.paths.iter().zip(state.iter_mut()).enumerate() {
+                if *stated == path && null {
+                    *value = if maybe { *value | NULL } else { NULL };
                     self.stored.insert(index);
                     touched = true;
                 } else if related(stated, &path) {
-                    state[index] |= OTHER;
+                    *value |= OTHER;
                     touched = true;
                 }
             }
