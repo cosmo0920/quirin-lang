@@ -306,9 +306,10 @@ class ExitStatusTests(unittest.TestCase):
     def run_main(self, **patches):
         stderr = io.StringIO()
         with patch.object(checks.shutil, "which", return_value="/usr/bin/lake"):
-            with patch.object(checks, "check_audits", **patches):
-                with contextlib.redirect_stderr(stderr):
-                    status = checks.main([])
+            with patch.object(checks, "check_pinned_toolchain", return_value="4.35.0"):
+                with patch.object(checks, "check_audits", **patches):
+                    with contextlib.redirect_stderr(stderr):
+                        status = checks.main([])
         return status, stderr.getvalue()
 
     def test_success_returns_zero(self):
@@ -362,9 +363,20 @@ class ProcessExitCodeTests(unittest.TestCase):
             capture_output=True, text=True, timeout=120,
         )
 
-    def stub_lake(self, directory, body):
+    def stub_lake(self, directory, body, version=None):
+        # The runner first asks `lake env lean --version` and refuses a Lean
+        # other than the pinned one; the stub answers with the real pin unless
+        # a test supplies another version.
+        version = version or checks.pinned_lean_version(self.script.parents[1] / "proof")
         lake = Path(directory) / "lake"
-        lake.write_text(f"#!/bin/sh\n{body}\n")
+        lake.write_text(
+            "#!/bin/sh\n"
+            'if [ "$1 $2 $3" = "env lean --version" ]; then\n'
+            f'  echo "Lean (version {version}, x86_64-unknown-linux-gnu, commit 0, Release)"\n'
+            "  exit 0\n"
+            "fi\n"
+            f"{body}\n"
+        )
         lake.chmod(lake.stat().st_mode | stat.S_IXUSR)
         return Path(directory)
 
@@ -385,6 +397,20 @@ class ProcessExitCodeTests(unittest.TestCase):
             "non-zero exit status 1.", result.stderr,
         )
 
+    def test_a_lean_other_than_the_pin_exits_nonzero_before_any_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            marker = Path(directory) / "built"
+            path_dir = self.stub_lake(directory, f"touch {marker}\nexit 0", version="0.0.1")
+            result = self.run_script(path_dir)
+            built = marker.exists()
+        self.assertEqual(result.returncode, 1)
+        pinned = checks.pinned_lean_version(self.script.parents[1] / "proof")
+        self.assertIn(
+            f"Lean checks failed: active Lean 0.0.1 is not the pinned Lean {pinned} "
+            "(proof/lean-toolchain)", result.stderr,
+        )
+        self.assertFalse(built, "the build ran under a Lean other than the pin")
+
     def test_successful_run_keeps_the_passed_line_and_exit_zero(self):
         # CI and the archived reports reference the "Passed N Lean audits"
         # line; a no-op lake exercises the real transcript against the real
@@ -394,6 +420,99 @@ class ProcessExitCodeTests(unittest.TestCase):
             result = self.run_script(path_dir)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertRegex(result.stdout, r"Passed \d+ Lean audits\n$")
+
+
+class ToolchainGuardTests(unittest.TestCase):
+    """LEAN-4-35-TOOLCHAIN: the runner refuses to build or audit under a Lean
+    other than the one `proof/lean-toolchain` pins, so an override (elan's
+    `ELAN_TOOLCHAIN`, a `+toolchain` shim, a non-elan `lake`) cannot check the
+    proofs under a different parser (Lean 4.35 made `given` a contract
+    keyword in `def` signatures)."""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.proof = Path(self.directory.name)
+
+    def pin(self, text):
+        (self.proof / "lean-toolchain").write_text(text)
+
+    def query(self, stdout="", returncode=0, stderr=""):
+        return subprocess.CompletedProcess(
+            ["lake", "env", "lean", "--version"], returncode, stdout, stderr,
+        )
+
+    def guard(self, **query):
+        with patch.object(checks.subprocess, "run", return_value=self.query(**query)) as run:
+            with contextlib.redirect_stdout(io.StringIO()):
+                active = checks.check_pinned_toolchain(self.proof, 5)
+        return active, run
+
+    def test_pin_is_read_from_lean_toolchain(self):
+        for text, version in (
+            ("leanprover/lean4:v4.35.0\n", "4.35.0"),
+            ("leanprover/lean4:v4.36.0-rc1", "4.36.0-rc1"),
+        ):
+            with self.subTest(text=text):
+                self.pin(text)
+                self.assertEqual(checks.pinned_lean_version(self.proof), version)
+
+    def test_unreadable_or_unversioned_pin_refuses(self):
+        with self.assertRaises(ValueError):
+            checks.pinned_lean_version(self.proof)
+        for text in ("stable", "leanprover/lean4:nightly", "leanprover/lean4:v4.35"):
+            with self.subTest(text=text):
+                self.pin(text)
+                with self.assertRaises(ValueError):
+                    checks.pinned_lean_version(self.proof)
+
+    def test_repository_pin_is_readable(self):
+        proof = Path(checks.__file__).resolve().parents[1] / "proof"
+        self.assertRegex(checks.pinned_lean_version(proof), r"^\d+\.\d+\.\d+")
+
+    def test_matching_lean_passes_and_queries_lake_inside_proof(self):
+        self.pin("leanprover/lean4:v4.35.0\n")
+        active, run = self.guard(
+            stdout="Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb, Release)\n")
+        self.assertEqual(active, "4.35.0")
+        self.assertEqual(run.call_args.args[0], ["lake", "env", "lean", "--version"])
+        self.assertEqual(run.call_args.kwargs["cwd"], self.proof)
+
+    def test_other_lean_fails_naming_both_versions(self):
+        self.pin("leanprover/lean4:v4.35.0\n")
+        for other in ("4.34.0", "4.35.1", "4.35.0-rc1"):
+            with self.subTest(active=other):
+                with self.assertRaises(ValueError) as caught:
+                    self.guard(stdout=f"Lean (version {other}, x86_64-unknown-linux-gnu, Release)\n")
+                message = str(caught.exception)
+                self.assertIn(f"active Lean {other} is not the pinned Lean 4.35.0", message)
+                self.assertIn("proof/lean-toolchain", message)
+
+    def test_failed_or_unreadable_version_query_fails(self):
+        self.pin("leanprover/lean4:v4.35.0\n")
+        with self.assertRaises(ValueError):
+            self.guard(returncode=1, stderr="error: unknown toolchain")
+        with self.assertRaises(ValueError):
+            self.guard(stdout="Lake version 5.0.0\n")
+
+    def test_version_query_timeout_is_a_timeout(self):
+        self.pin("leanprover/lean4:v4.35.0\n")
+        timeout = subprocess.TimeoutExpired(["lake"], 5)
+        with patch.object(checks.subprocess, "run", side_effect=timeout):
+            with self.assertRaises(TimeoutError):
+                checks.check_pinned_toolchain(self.proof, 5)
+
+    def test_main_refuses_before_any_build_or_audit(self):
+        stderr = io.StringIO()
+        refusal = ValueError("active Lean 4.34.0 is not the pinned Lean 4.35.0 (proof/lean-toolchain)")
+        with patch.object(checks.shutil, "which", return_value="/usr/bin/lake"):
+            with patch.object(checks, "check_pinned_toolchain", side_effect=refusal):
+                with patch.object(checks, "check_audits") as audits:
+                    with contextlib.redirect_stderr(stderr):
+                        status = checks.main([])
+        audits.assert_not_called()
+        self.assertEqual(status, 1)
+        self.assertIn("is not the pinned Lean", stderr.getvalue())
 
 
 if __name__ == "__main__":

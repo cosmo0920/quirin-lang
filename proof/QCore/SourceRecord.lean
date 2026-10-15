@@ -258,10 +258,10 @@ value the construction supplied for that field — not for any other. -/
 theorem projection_returns_what_construction_supplied
     (t : RecordType) (a : Assignment) (v : Value) (f : FieldName) (x : Int)
     (built : construct t a = some v) (declared : f ∈ names t)
-    (given : value a f = some x) :
+    (assigned : value a f = some x) :
     project v f = some x := by
   have carried := constructed_value_carries_every_declared_field t a v f built declared
-  rw [given] at carried
+  rw [assigned] at carried
   exact value_of_mem_nodup v.fields f x (constructed_fields_are_distinct t a v built) carried
 
 /-- **CT09's scenario.** Two *distinct* declared fields read back the two values

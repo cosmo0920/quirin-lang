@@ -54,10 +54,10 @@ def install (env : Env) (f : Nat) (c : Contract) : Env :=
 
 /-- The contract a CFG construction reads as the function's own: the
 declaration, else what the run is given. -/
-def ownInForce (env : Env) (f : Nat) (given : Option Contract) : Option Contract :=
+def ownInForce (env : Env) (f : Nat) (supplied : Option Contract) : Option Contract :=
   match env f with
   | some d => some d
-  | none => given
+  | none => supplied
 
 /-- The protection events of an own contract. -/
 def protectionEvents (formals : List Nat) : Option Contract → List BindingEvent

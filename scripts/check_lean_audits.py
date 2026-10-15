@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import signal
 import subprocess
@@ -253,6 +254,69 @@ def check_audits(proof, args):
     print(f"Passed {len(audits)} Lean audits", flush=True)
 
 
+PIN_PATTERN = re.compile(r"leanprover/lean4:v?(?P<version>\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)")
+ACTIVE_PATTERN = re.compile(r"\bLean \(version (?P<version>\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)[,)]")
+
+
+def pinned_lean_version(proof):
+    """The version `proof/lean-toolchain` pins, e.g. `4.35.0`. A pin this runner
+    cannot read is refused, never guessed: the version guard below compares
+    against it."""
+    path = proof / "lean-toolchain"
+    try:
+        text = path.read_text(encoding="utf-8").strip()
+    except OSError as error:
+        raise ValueError(f"cannot read the Lean pin {path}: {error}") from None
+    match = PIN_PATTERN.fullmatch(text)
+    if match is None:
+        raise ValueError(
+            f"{path} does not name a leanprover/lean4 release (read {text!r})"
+        )
+    return match.group("version")
+
+
+def check_pinned_toolchain(proof, timeout):
+    """Fail clearly when the Lean that Lake launches inside `proof` is not the
+    pinned one (LEAN-4-35-TOOLCHAIN). The audits and the build both run through
+    `lake` with `cwd=proof`, so elan normally selects `proof/lean-toolchain`;
+    an `ELAN_TOOLCHAIN` override, a `+toolchain` shim, a non-elan `lake` on
+    PATH or a stale default would otherwise check the proofs under a different
+    parser. `lake env lean --version` reports exactly the binary the audit
+    command `lake env lean` runs."""
+    pinned = pinned_lean_version(proof)
+    command = ["lake", "env", "lean", "--version"]
+    try:
+        result = subprocess.run(
+            command, cwd=proof, capture_output=True, text=True, timeout=timeout,
+            check=False,
+        )
+    except subprocess.TimeoutExpired:
+        raise TimeoutError(
+            f"Lean version query exceeded {timeout:g}s: {' '.join(command)}"
+        ) from None
+    if result.returncode != 0:
+        raise ValueError(
+            f"Lean version query `{' '.join(command)}` in {proof} exited "
+            f"{result.returncode}: {(result.stderr or result.stdout).strip()}"
+        )
+    match = ACTIVE_PATTERN.search(result.stdout)
+    if match is None:
+        raise ValueError(
+            f"cannot read the active Lean version from `{' '.join(command)}`: "
+            f"{result.stdout.strip()!r}"
+        )
+    active = match.group("version")
+    if active != pinned:
+        raise ValueError(
+            f"active Lean {active} is not the pinned Lean {pinned} "
+            f"(proof/lean-toolchain); run through elan from proof/ without a "
+            "toolchain override (ELAN_TOOLCHAIN, `+toolchain`), or install the "
+            "pinned toolchain"
+        )
+    print(f"Lean {active} matches proof/lean-toolchain", flush=True)
+    return active
+
+
 def missing_lake_error():
     """A run without `lake` must be a hard error, not a printed shrug: both
     `--skip-build` audits and the build itself invoke it."""
@@ -287,6 +351,7 @@ def main(argv=None):
     try:
         if shutil.which("lake") is None:
             raise missing_lake_error()
+        check_pinned_toolchain(proof, args.build_timeout)
         check_audits(proof, args)
     except (OSError, ValueError, TimeoutError, subprocess.CalledProcessError) as error:
         print(f"Lean checks failed: {error}", file=sys.stderr, flush=True)
