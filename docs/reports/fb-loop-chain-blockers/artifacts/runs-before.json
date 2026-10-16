@@ -1,0 +1,64 @@
+{
+ "card": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS",
+ "name": "before",
+ "binary_sha256": "1fa10894d5baeeb1e506a3e24ebe065d24c9098a38c56ee94d60044c99759835",
+ "corpus_run_json_binary_sha256": "1fa10894d5baeeb1e506a3e24ebe065d24c9098a38c56ee94d60044c99759835",
+ "routes": {
+  "corpus": {
+   "exit": "0",
+   "seconds": 906.883,
+   "report": "private/fblb/before/resource-diagnostics.json",
+   "report_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+   "custody": {
+    "Safe": 939,
+    "Unknown": 3886,
+    "Unsafe": 9,
+    "absent": 87
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 1435,
+    "Safe (unconditional)": 1114,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "null_stream_sha256": "e95b1013797a1c77ce80acafbae78f6adf1b86fb30748b0209311e9a43ff9802"
+  },
+  "system": {
+   "exit": "0",
+   "seconds": 221.033,
+   "report": "private/fblb/before-system/resource-diagnostics.json",
+   "report_sha256": "1cb9a059916dd55f29b0e8c0ab9af81af1b9665e3e1104602068375267552556",
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4,
+    "absent": 6
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 125,
+    "Safe (unconditional)": 86,
+    "Unknown": 243
+   },
+   "null_stream_sha256": "ccc198b7510f73d2d56382945c7203f3edfd34f02ed21d30d39c4f5264709c14"
+  },
+  "slice": {
+   "exit": "0",
+   "seconds": 169.094,
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/fblb-before/resource-diagnostics.json",
+   "report_sha256": "a9d0cb042075b087630c987891e664e2ef88e0b5dc338b95591f75dc466c1c8b",
+   "custody": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1,
+    "absent": 2
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 121,
+    "Safe (unconditional)": 69,
+    "Unknown": 216
+   },
+   "null_stream_sha256": "fa3f7fccad7762badd5a67721ce30cebf17d74e745d2def36313e2f37682e754"
+  }
+ }
+}
