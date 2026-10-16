@@ -48,6 +48,7 @@ KINDS = {
     "formal-handed-to-uncontracted-call": ("b", "a formal handed whole to a callee with no contract or validated summary on this route (another unit's function, or a same-unit function whose own row is Unknown), which poisons it for every later use"),
     "nested-or-condition-call": ("c", "a nested call in an actual or a call in a branch condition (CG05 nested-call effects, rule 10y)"),
     "after-retention-undecided": ("c", "a use of the interior a refused retention named (rule 12t `retention-undecided`): it clears only with the lifetime model (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME, S3)"),
+    "loop-destroy-at-path": ("c", "`mk_event_loop_destroy` of a loop at a member path (declared since RETENTION-UNMATCHED-REMOVAL-POISONS: resource_released(loop, nonnull)): a custody-taking position the access gate keeps refused (W44 premise 1; ledger RETENTION-PATH-LOOP-DESTROY-ADMISSION)"),
     "pointer-read-from-member": ("c", "a pointer loaded from a member of a formal (`thi = ins->thi`) names no identity the projection tracks; its null test and uses refuse"),
 }
 
@@ -104,6 +105,37 @@ OVERRIDES = {
     ("flb_sched_timer_coro_cb_create", 714, "identity"): ("uncontracted-result", "`timer` is written through `&timer` by flb_sched_timer_cb_create, whose own row is Unknown (no validated summary)"),
     ("schedule_request_now", 134, "identity"): ("after-retention-undecided", "`event = &timer->event` is retained by mk_event_timeout_create into `config->evl` at 133 (rule 12t retention-undecided)"),
     ("schedule_request_now", 146, "identity"): ("after-retention-undecided", "as 134"),
+}
+
+# The AFTER residual (route label ending `-after`), read by hand at the
+# rebased tip: with the function-pointer records read, these leaves refuse for
+# the next reason in line. They replace OVERRIDES entries of the same key.
+OVERRIDES_AFTER = {
+    ("flb_engine_start", 1454, "identity"): ("cascade:pointer-store-into-member", "`evl`, the loop mk_event_loop_create returned, is read by the refused `config->evl = evl` (1150)"),
+    ("flb_sched_create", 778, "access"): ("uncontracted-result", "`event = &timer->event` with `timer` from flb_sched_timer_create (another function of the unit whose row is Unknown)"),
+    ("flb_sched_destroy", 843, "access"): ("interior-address-of-looked-up-record", "`&timer->event` with `timer` from mk_list_foreach over `sched->timers`"),
+    **{("flb_sched_destroy", line, "identity"): ("cascade:interior-address-of-looked-up-record", "`sched` is read by the refused statement at 843")
+       for line in (855, 856, 860, 861, 864)},
+    **{("flb_sched_request_create", line, "identity"): ("cascade:uncontracted-result", "`request` is stored by `timer->data = request` (290) into `timer`, flb_sched_timer_create's result")
+       for line in (303, 304, 305)},
+    **{("flb_sched_retry_now", line, "identity"): ("cascade:uncontracted-result", "`request` is stored by `timer->data = request` (975) into `timer`, flb_sched_timer_create's result")
+       for line in (979, 980, 981)},
+    ("flb_sched_timer_cb_create", 663, "access"): ("uncontracted-result", "`event = &timer->event` with `timer` from flb_sched_timer_create"),
+    ("flb_sched_timer_cb_create", 672, "access"): ("cascade:uncontracted-result", "`event` from 663 handed to mk_event_timeout_create"),
+    **{("flb_sched_timer_create", line, "identity"): ("cascade:uncontracted-call-with-member", "`timer` is handed by `MK_EVENT_ZERO(&timer->event)` (879) to a callee with no contract on this route")
+       for line in (881, 883, 884, 885, 888, 889, 891)},
+    ("flb_sched_timer_create", 882, "access"): ("pointer-store-into-member", "`timer->config = sched->config`: a pointer read from a formal stored into the fresh record"),
+    ("collector_create", 2251, "access"): ("pointer-store-into-member", "`coll->evl = thi->evl`"),
+    ("collector_create", 2258, "access"): ("pointer-store-into-member", "`coll->evl = config->evl`"),
+    ("flb_input_collector_destroy", 3146, "access"): ("pointer-read-from-member", "`config->evl` with `struct flb_config *config = coll->instance->config;`: the loop is read through a pointer loaded from the formal's members"),
+    ("flb_input_collector_destroy", 3150, "access"): ("pointer-read-from-member", "as 3146"),
+    ("flb_input_collector_destroy", 3153, "identity"): ("cascade:pointer-read-from-member", "`coll` is read by the refused statements at 3146/3150"),
+    ("flb_input_collector_resume", 3238, "access"): ("interior-address-of-looked-up-record", "`event = &coll->event` with `coll` from get_collector"),
+    ("flb_input_collector_resume", 3248, "access"): ("interior-address-of-looked-up-record", "`coll->evl` with `coll` from get_collector"),
+    ("flb_input_collector_resume", 3261, "access"): ("interior-address-of-looked-up-record", "as 3248"),
+    ("input_thread_instance_create", 255, "identity"): ("pointer-store-into-member", "`thi->evl = mk_event_loop_create(256)`: an owned loop stored into a member of the fresh record"),
+    ("input_thread_instance_destroy", 206, "access"): ("loop-destroy-at-path", "`mk_event_loop_destroy(thi->evl)`"),
+    ("flb_destroy", 242, "access"): ("loop-destroy-at-path", "`mk_event_loop_destroy(ctx->event_loop)`"),
 }
 
 REFUSED_PAREN = None
@@ -258,6 +290,9 @@ def main():
         if r["refused_on"] == "(":
             refused_tags.add(r["tag"])
     chain = json.load(open(chain_path))
+    overrides = dict(OVERRIDES)
+    if chain["route"].endswith("-after"):
+        overrides.update(OVERRIDES_AFTER)
     texts = {}
     leaves_out = []
     counts = collections.Counter()
@@ -292,8 +327,8 @@ def main():
             index = line - first if first else None
             key = (row["function"], line, leaf["kind"])
             note = None
-            if key in OVERRIDES:
-                kind, note = OVERRIDES[key]
+            if key in overrides:
+                kind, note = overrides[key]
                 if kind.startswith("cascade:"):
                     kind = ("cascade", kind.split(":", 1)[1])
                 elif leaf["kind"] == "access":

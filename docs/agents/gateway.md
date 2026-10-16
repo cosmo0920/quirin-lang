@@ -333,6 +333,43 @@ reaches a bound or a branch.
     Pointer fields remain refused by this route; shapes outside this
     conjunction retain their prior handling, including the separate unbound
     scalar-field no-op. See [the card report](../reports/w42-indirect-access/README.md).
+    **Amendment (card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS; ledger
+    `RECORD-BODY-TOTAL-OR-REJECT`): the lexical declaration reader reads past
+    function-pointer declarators, and this route keeps its domain.**
+    `typed_field_access::read_record_body` reads a record whose only unparsed
+    member declarations are exactly `SPECIFIERS ( * NAME ) ( PARAMETERS )`
+    (one declarator, no array, no qualifier, a balanced parameter list closing
+    the declaration): such a member joins no class, so every access of it
+    keeps its refusal, and every other member is classified as in the same
+    body without it. `read_parameters` reads a formal of that shape as a name
+    of `Opaque` type, which no typed rule admits, instead of refusing every
+    declaration of the function. Any other parenthesised declaration, and any
+    `{`, `}`, `:` or `=` in a body, still refuses the whole record or function
+    (`record_body_refusal`, shared with the record-body census). **Do not**
+    let this route's base domain grow with the reader: it lowers to a store
+    whose flow check refuses an unsettled base before the statement's refusal
+    reaches the later fallbacks (the Clang-typed statement reading, rule 10k),
+    so `scalar_member_store_base` reads the member through
+    `scalar_field_of_a_fully_read_record` (records read with every member)
+    and declines a function read past a function-pointer formal
+    (`FunctionTypes::function_pointer_formals`).
+    Without that, the card's first corpus run moved `cio_options_init`
+    `Safe -> Unknown` (`memset(options, …)` then scalar stores the Clang
+    reading had decided). Other lexical routes with flow obligations (the W44
+    chain reading of a condition) are not so held; the precedence itself is
+    `LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS`. Premise stated, not
+    proved: a function pointer holds a code address, never an object the
+    projection tracks. `QCore.FunctionPointerDeclarators`
+    (`skipping_preserves_the_other_members`,
+    `a_function_pointer_member_is_never_classified`,
+    `an_unreadable_member_refuses_the_record`,
+    `the_reading_extends_the_old_reading`,
+    `a_record_read_past_a_function_pointer_is_outside_the_store_route`,
+    `a_function_read_past_a_function_pointer_formal_is_outside_the_store_route`,
+    `a_function_pointer_formal_is_opaque`,
+    `an_unreadable_formal_refuses_the_function`, the vectors);
+    `tests/function_pointer_declarators.rs` and the reader's unit tests;
+    [report](../reports/fb-loop-chain-blockers/README.md).
 
 <a id="constraint-5h"></a>
 

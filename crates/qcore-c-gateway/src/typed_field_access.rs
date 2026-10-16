@@ -304,6 +304,12 @@ pub(crate) struct FunctionTypes {
     /// `SCALAR name [ N ]` — and `None` for a name declared more than once with
     /// different answers. A side table: no [`DeclaredType`] answer changes.
     elements: BTreeMap<String, Option<ScalarElement>>,
+    /// Card **FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS**: the parameter list
+    /// carries a function-pointer formal, which the reader now reads as an
+    /// `Opaque` name instead of refusing the function. Rule 5g's
+    /// flow-refusing store keeps its domain of functions read before that
+    /// (see [`scalar_member_store_base`]).
+    function_pointer_formals: bool,
     /// Card **BASE-TYPE-READER-CENSUS**: the rule that refused this function's
     /// declarations, and the specifier-level cause of every name the reader
     /// answered `Opaque` for. Written by the reader at the return that decided
@@ -1499,6 +1505,7 @@ impl FunctionTypes {
         protected_formals: &BTreeSet<String>,
     ) -> Self {
         let bound = bound_names(body, protected_formals);
+        let function_pointer_formals = parameters.iter().any(|text| *text == "(");
         let mut variables = BTreeMap::new();
         let mut elements = BTreeMap::new();
         let mut census = DeclCensus::default();
@@ -1509,12 +1516,18 @@ impl FunctionTypes {
             &mut elements,
             &mut census,
         ) {
-            return Self::build(None, bound, BTreeMap::new(), census);
+            return Self::build(None, bound, BTreeMap::new(), false, census);
         }
         if !read_locals(model, body, &mut variables, &mut elements, &mut census) {
-            return Self::build(None, bound, BTreeMap::new(), census);
+            return Self::build(None, bound, BTreeMap::new(), false, census);
         }
-        Self::build(Some(variables), bound, elements, census)
+        Self::build(
+            Some(variables),
+            bound,
+            elements,
+            function_pointer_formals,
+            census,
+        )
     }
 
     /// Assemble one reading. Split out so the census sink is carried in exactly
@@ -1524,12 +1537,14 @@ impl FunctionTypes {
         variables: Option<BTreeMap<String, DeclaredType>>,
         bound: BTreeSet<String>,
         elements: BTreeMap<String, Option<ScalarElement>>,
+        function_pointer_formals: bool,
         census: DeclCensus,
     ) -> Self {
         Self {
             variables,
             bound,
             elements,
+            function_pointer_formals,
             #[cfg(feature = "indirect-census")]
             census,
         }
@@ -2173,7 +2188,11 @@ pub(crate) fn scalar_member_store_base<'a>(
     let [base, "-", ">", field, "=", right @ ..] = texts else {
         return None;
     };
-    if !is_name(base) || !is_name(field) || !types.may_bind(base) {
+    if !is_name(base)
+        || !is_name(field)
+        || !types.may_bind(base)
+        || types.function_pointer_formals
+    {
         return None;
     }
     let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
@@ -3367,6 +3386,28 @@ mod tests {
         assert_eq!(types.declared("t"), Some(&DeclaredType::Scalar));
         // The inner parameter name of the function pointer declares nothing.
         assert_eq!(types.declared("g"), None);
+    }
+
+    /// Rule 5g's flow-refusing store keeps its domain: a function read past a
+    /// function-pointer formal, or a record read past a function-pointer
+    /// member, is outside it, so the statement keeps its base route order.
+    #[test]
+    fn rule_5g_keeps_its_domain_of_fully_read_declarations() {
+        let model = model("struct r { int a ; } ; struct s { int a ; void ( * f ) ( void ) ; } ;");
+        let statement = texts("p -> a = 1");
+        let plain = types(&model, "struct r * p", "p = g ( ) ; p -> a = 1 ;");
+        assert!(plain.may_bind("p"));
+        assert_eq!(scalar_member_store_base(&statement, &model, &plain), Some("p"));
+        let with_formal = types(
+            &model,
+            "struct r * p , void ( * cb ) ( void )",
+            "p = g ( ) ; p -> a = 1 ;",
+        );
+        assert!(with_formal.is_readable());
+        assert_eq!(scalar_member_store_base(&statement, &model, &with_formal), None);
+        let with_member = types(&model, "struct s * p", "p = g ( ) ; p -> a = 1 ;");
+        assert!(model.scalar_field("s", "a"));
+        assert_eq!(scalar_member_store_base(&statement, &model, &with_member), None);
     }
 
     /// Every other parenthesised formal still refuses the function.

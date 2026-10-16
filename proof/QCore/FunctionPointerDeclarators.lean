@@ -246,6 +246,21 @@ theorem an_unreadable_formal_refuses_the_function (formals : List Formal)
         | tail _ h => exact h
       simp [readFormals, ih hrest]
 
+def Formal.isFnPointer : Formal → Bool
+  | .fnPointer _ => true
+  | _ => false
+
+/-- The formals as rule 5g's store route reads them: the old reading, which
+    refused every declaration of a function with a function-pointer formal. -/
+def storeRouteFormals (formals : List Formal) : Option (List (String × DeclaredType)) :=
+  if formals.any Formal.isFnPointer then none else readFormals formals
+
+/-- A function read past a function-pointer formal is outside the store route. -/
+theorem a_function_read_past_a_function_pointer_formal_is_outside_the_store_route
+    (formals : List Formal) (h : formals.any Formal.isFnPointer = true) :
+    storeRouteFormals formals = none := by
+  simp [storeRouteFormals, h]
+
 /-! ## Vectors (shared with the Rust unit tests' shapes) -/
 
 /-- `struct r { int a ; void ( * f ) ( int ) ; struct q * p ; }` reads `a` and
