@@ -51,21 +51,6 @@ NEW = [
         "source": SOURCE,
         "recorded_by": CARD,
     },
-    {
-        "id": "FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE",
-        "title": "flb_processor_instance_create allocates sizeof(struct flb_filter_instance) for a struct flb_processor_instance",
-        "why": "Observed by FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE while reading the descriptor stores: "
-        "src/flb_processor.c (flb_processor_instance_create, 66910c10 and 046accf6, the `instance = "
-        "flb_calloc(1, sizeof(struct flb_filter_instance));` before `instance->p = plugin` at :2188) sizes "
-        "the allocation by another record type than the pointer it is stored in. Whether struct "
-        "flb_filter_instance is at least as large as struct flb_processor_instance on every configuration "
-        "was not measured; nothing here is a finding or an upstream defect. DISCHARGE: both record sizes "
-        "read from Clang's layout for each analysed configuration at both revisions, and the bounds property "
-        "(or a reviewed observation) states whether every member write of the processor instance stays "
-        "inside the allocation.",
-        "source": SOURCE,
-        "recorded_by": CARD,
-    },
 ]
 
 AMEND = {
@@ -80,13 +65,22 @@ AMEND = {
     ),
 }
 
-RETIRE = CARD
+# This card's observation that flb_processor_instance_create allocates
+# `sizeof(struct flb_filter_instance)` is not registered. Its DISCHARGE was met
+# on main by card FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE
+# (docs/reports/fb-processor-instance-allocation-size/): benign but fragile;
+# the processor instance is 152 bytes and the filter instance 216 in every
+# configuration, and none of the 550 accesses goes past byte 152. That card
+# registered the sibling FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE-MEASURED
+# because the original entry was not on main. The sibling resolves the
+# observation and is retired here.
+RETIRE = {CARD, "FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE-MEASURED"}
 
 
 def main():
     matrix = json.loads(MATRIX.read_text())
     entries = matrix["named_followups"]
-    entries[:] = [e for e in entries if e["id"] != RETIRE]
+    entries[:] = [e for e in entries if e["id"] not in RETIRE]
     for entry in entries:
         if entry["id"] in AMEND and AMEND[entry["id"]] not in entry["why"]:
             entry["why"] += AMEND[entry["id"]]
