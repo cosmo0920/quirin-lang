@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/fb-event-loop-retention"
-BASE = "8b360766c"
+BASE = "aa8d8b030"
 
 
 def main() -> int:
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/fbel/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (329 on main 8b360766c; this card adds QCore.RetentionPath and QCore.RegistrationById); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (329 on main aa8d8b030; this card adds QCore.RetentionPath and QCore.RegistrationById); "
         "provider gate (required: providers/ and qcore-schemas change): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "

@@ -179,11 +179,14 @@ check is empty.
 
 ## Gate
 
-Standing gate and provider gate at `520e7d12b` on base `8b360766c`, under one
-exclusive flock of the shared heavy lock for the whole gate
-([`scripts/gate-whole.sh`](scripts/gate-whole.sh), [`scripts/gate.sh`](scripts/gate.sh),
-[`scripts/finish-gate.sh`](scripts/finish-gate.sh); logs `private/fbel/gate-g2`
-of this worktree; exits in [`gate/`](gate/), summary [`gate.json`](gate.json)):
+Standing gate and provider gate at the rebased tip `7f3956ca4` on base
+`aa8d8b030` (main after `b93c8f8b9` restored the consultation log on declined
+probes, which the access gate's withheld-declaration lookup reaches, so the
+whole gate was rerun), under one exclusive flock of the shared heavy lock for
+the whole gate ([`scripts/gate-whole.sh`](scripts/gate-whole.sh),
+[`scripts/gate.sh`](scripts/gate.sh), [`scripts/finish-gate.sh`](scripts/finish-gate.sh);
+logs `private/fbel/gate-g3` of this worktree; exits in [`gate/`](gate/),
+summary [`gate.json`](gate.json)):
 
 | Step | Exit | Count |
 | --- | --- | --- |
@@ -191,11 +194,11 @@ of this worktree; exits in [`gate/`](gate/), summary [`gate.json`](gate.json)):
 | `git submodule update --init --recursive` | 0 | |
 | `cargo fmt --all -- --check` | 0 | |
 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
-| `scripts/run_test_binaries.py` | 0 | 506 units, 519 summaries, 8,172 passed, 0 failed, 15 ignored, no rerun |
+| `scripts/run_test_binaries.py` | 0 | 506 units, 519 summaries, 8,176 passed, 0 failed, 15 ignored, no rerun |
 | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
 | `scripts/check_lean_audits.py` | 0 | 331 audits |
-| `python3 -m unittest discover -s scripts/tests` (08) | 1 | the committed matrix's derived Lean count, before 09a |
-| `build_matrix.py . --gate gate.json` (09a), then the Python suite (09b) | 0, 0 | 374 tests |
+| `python3 -m unittest discover -s scripts/tests` (08) | 0 | 374 tests |
+| `build_matrix.py . --gate gate.json` (09a), the Python suite (09b) | 0, 0 | 374 tests |
 | `build_docs_index.py`, `--check` | 0, 0 | |
 | `providers/package.py build`, `verify qcore.libevent`, `verify qcore.librdkafka` | 0, 0, 0 | |
 | `cargo check --locked` in `providers/`, `providers/contracts.py check` | 0, 0 | |
@@ -203,11 +206,15 @@ of this worktree; exits in [`gate/`](gate/), summary [`gate.json`](gate.json)):
 | `python3 -m unittest discover -s providers/tests` | 0 | 25 |
 | provider `fmt --check`, `clippy -D warnings` | 0, 0 | |
 
-A first gate (`g1`, at `21ca60d8a`) failed: clippy (`map` over `filter_map` in
-the new route test), three `provider_selection` module counts (61 -> 63), the
-Fluent Bit provider crate's contract index (the new module unlisted), and the
-Python corpus count (131 -> 133); repaired in `520e7d12b`, a commit that
-changes no source the measured `quirin-audit` binary is built from (tests, the
-providers workspace's own index, Python tests). Pins: [`scripts/pin.sh`](scripts/pin.sh)
-pinned all ten declarations at the three revisions (exit 0 each) and
-`pin --verify-contracts` exits 0.
+Earlier attempts, kept as attempts: `g1` (at `21ca60d8a`, base `8b360766c`)
+failed clippy (`map` over `filter_map` in the new route test), three
+`provider_selection` module counts (61 -> 63), the Fluent Bit provider crate's
+contract index (the new module unlisted) and the Python corpus count
+(131 -> 133), repaired in the next commit (tests, the providers workspace's own
+index, Python tests: no source the measured `quirin-audit` binary is built
+from); `g2` (at `520e7d12b`, same base) passed every step. A targeted check
+after the first rebase (onto `a5e4d39d8`, [`scripts/rebase-check.sh`](scripts/rebase-check.sh))
+found main's own `QCore.ReturnCodeHandOff` not building, which main fixed in
+`aa8d8b030`. Pins: [`scripts/pin.sh`](scripts/pin.sh) pinned all ten
+declarations at the three revisions (exit 0 each) and `pin --verify-contracts`
+exits 0.
