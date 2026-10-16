@@ -93,7 +93,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
     // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 63);
+    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 64);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -1070,6 +1071,22 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "print",
         ResourceFunctionContract::new([], R::Owned { nullable: true }),
     );
+    // Card FB-TEARDOWN-DESTROY-DECLARATIONS: the four teardown declarations
+    // with no member-path state (the ten with states are retaining).
+    for name in [
+        "flb_sched_timer_destroy",
+        "flb_task_queue_destroy",
+        "flb_input_collector_destroy",
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+        );
+    }
+    old.insert_contract(
+        "flb_input_chunk_release_route",
+        ResourceFunctionContract::new([], R::None),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1390,7 +1407,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
     // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 63);
+    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 64);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);

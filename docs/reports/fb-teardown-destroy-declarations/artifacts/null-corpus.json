@@ -1,0 +1,15 @@
+{
+ "before": {
+  "Safe (conditional on its preconditions)": 1435,
+  "Safe (unconditional)": 1113,
+  "Unknown": 2355,
+  "Unsafe": 18
+ },
+ "after": {
+  "Safe (conditional on its preconditions)": 1435,
+  "Safe (unconditional)": 1113,
+  "Unknown": 2355,
+  "Unsafe": 18
+ },
+ "differing_rows": []
+}

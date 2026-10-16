@@ -1,0 +1,1144 @@
+{
+ "statuses_before": {
+  "Unknown": 351,
+  "Safe": 93,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 349,
+  "Safe": 95,
+  "Unsafe": 4
+ },
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves_by_label": {
+  "callee:flb_sched_timer_destroy": 2
+ },
+ "removed": {
+  "call to uncontracted function `_`": 100
+ },
+ "added": {
+  "unresolved resource identity `_`": 80,
+  "indirect memory access is outside the resource projection": 16
+ },
+ "moving_rows": 52,
+ "status_moves": [
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cb_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18107: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cb_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18107: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_destroy_tasks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "19025: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "19025: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "handle_output_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_chunk_release_route"
+   ],
+   "lost": [
+    "19432: call to uncontracted function `flb_input_chunk_release_route`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_destroy_tasks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "19025: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "19025: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "handle_output_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_chunk_release_route"
+   ],
+   "lost": [
+    "19432: call to uncontracted function `flb_input_chunk_release_route`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "occurrence": 1,
+   "function": "flb_engine_dispatch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17679: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17679: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "occurrence": 2,
+   "function": "flb_engine_dispatch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17679: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17679: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "18175: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "18175: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "memrb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "20067: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "20067: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "18175: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "18175: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "memrb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "20067: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "20067: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_enable_multi_threading",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18546: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18546: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_exit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18028: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18028: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_flush_finished",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_flush_destroy"
+   ],
+   "lost": [
+    "18083: call to uncontracted function `flb_output_flush_destroy`"
+   ],
+   "gained": [
+    "18083: unresolved resource identity `out_flush`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_init_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18720: call to uncontracted function `flb_output_instance_destroy`",
+    "18816: call to uncontracted function `flb_output_instance_destroy`",
+    "18855: call to uncontracted function `flb_output_instance_destroy`",
+    "18869: call to uncontracted function `flb_output_instance_destroy`",
+    "18877: call to uncontracted function `flb_output_instance_destroy`",
+    "18885: call to uncontracted function `flb_output_instance_destroy`",
+    "18891: call to uncontracted function `flb_output_instance_destroy`",
+    "18895: call to uncontracted function `flb_output_instance_destroy`",
+    "18901: call to uncontracted function `flb_output_instance_destroy`",
+    "18913: call to uncontracted function `flb_output_instance_destroy`",
+    "18918: call to uncontracted function `flb_output_instance_destroy`",
+    "18925: call to uncontracted function `flb_output_instance_destroy`",
+    "18932: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18720: unresolved resource identity `ins`",
+    "18816: unresolved resource identity `ins`",
+    "18855: unresolved resource identity `ins`",
+    "18869: unresolved resource identity `ins`",
+    "18877: unresolved resource identity `ins`",
+    "18885: unresolved resource identity `ins`",
+    "18891: unresolved resource identity `ins`",
+    "18895: unresolved resource identity `ins`",
+    "18901: unresolved resource identity `ins`",
+    "18913: unresolved resource identity `ins`",
+    "18918: unresolved resource identity `ins`",
+    "18925: unresolved resource identity `ins`",
+    "18932: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_instance_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_queue_destroy"
+   ],
+   "lost": [
+    "17998: call to uncontracted function `flb_task_queue_destroy`"
+   ],
+   "gained": [
+    "17998: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_net_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18574: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18574: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_queue_destroy"
+   ],
+   "lost": [
+    "18174: call to uncontracted function `flb_task_queue_destroy`",
+    "18189: call to uncontracted function `flb_task_queue_destroy`",
+    "18245: call to uncontracted function `flb_task_queue_destroy`"
+   ],
+   "gained": [
+    "18174: indirect memory access is outside the resource projection",
+    "18189: indirect memory access is outside the resource projection",
+    "18245: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_task_flush",
+   "row": 1,
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:flb_output_flush_destroy"
+   ],
+   "lost": [
+    "17932: call to uncontracted function `flb_output_flush_destroy`"
+   ],
+   "gained": [
+    "17932: unresolved resource identity `out_flush`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_enable_multi_threading",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18546: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18546: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_exit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18028: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18028: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_flush_finished",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_flush_destroy"
+   ],
+   "lost": [
+    "18083: call to uncontracted function `flb_output_flush_destroy`"
+   ],
+   "gained": [
+    "18083: unresolved resource identity `out_flush`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_init_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18720: call to uncontracted function `flb_output_instance_destroy`",
+    "18816: call to uncontracted function `flb_output_instance_destroy`",
+    "18855: call to uncontracted function `flb_output_instance_destroy`",
+    "18869: call to uncontracted function `flb_output_instance_destroy`",
+    "18877: call to uncontracted function `flb_output_instance_destroy`",
+    "18885: call to uncontracted function `flb_output_instance_destroy`",
+    "18891: call to uncontracted function `flb_output_instance_destroy`",
+    "18895: call to uncontracted function `flb_output_instance_destroy`",
+    "18901: call to uncontracted function `flb_output_instance_destroy`",
+    "18913: call to uncontracted function `flb_output_instance_destroy`",
+    "18918: call to uncontracted function `flb_output_instance_destroy`",
+    "18925: call to uncontracted function `flb_output_instance_destroy`",
+    "18932: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18720: unresolved resource identity `ins`",
+    "18816: unresolved resource identity `ins`",
+    "18855: unresolved resource identity `ins`",
+    "18869: unresolved resource identity `ins`",
+    "18877: unresolved resource identity `ins`",
+    "18885: unresolved resource identity `ins`",
+    "18891: unresolved resource identity `ins`",
+    "18895: unresolved resource identity `ins`",
+    "18901: unresolved resource identity `ins`",
+    "18913: unresolved resource identity `ins`",
+    "18918: unresolved resource identity `ins`",
+    "18925: unresolved resource identity `ins`",
+    "18932: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_instance_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_queue_destroy"
+   ],
+   "lost": [
+    "17998: call to uncontracted function `flb_task_queue_destroy`"
+   ],
+   "gained": [
+    "17998: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_net_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_output_instance_destroy"
+   ],
+   "lost": [
+    "18574: call to uncontracted function `flb_output_instance_destroy`"
+   ],
+   "gained": [
+    "18574: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_queue_destroy"
+   ],
+   "lost": [
+    "18174: call to uncontracted function `flb_task_queue_destroy`",
+    "18189: call to uncontracted function `flb_task_queue_destroy`",
+    "18245: call to uncontracted function `flb_task_queue_destroy`"
+   ],
+   "gained": [
+    "18174: indirect memory access is outside the resource projection",
+    "18189: indirect memory access is outside the resource projection",
+    "18245: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_task_flush",
+   "row": 1,
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "labels": [
+    "callee:flb_output_flush_destroy"
+   ],
+   "lost": [
+    "17932: call to uncontracted function `flb_output_flush_destroy`"
+   ],
+   "gained": [
+    "17932: unresolved resource identity `out_flush`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18148: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18148: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy",
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18177: call to uncontracted function `flb_sched_request_destroy`",
+    "18182: call to uncontracted function `flb_sched_request_destroy`",
+    "18188: call to uncontracted function `flb_sched_timer_destroy`",
+    "18193: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18177: unresolved resource identity `request`",
+    "18182: unresolved resource identity `request`",
+    "18188: unresolved resource identity `timer`",
+    "18193: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_event_handler",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy"
+   ],
+   "lost": [
+    "18019: call to uncontracted function `flb_sched_request_destroy`",
+    "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+   ],
+   "gained": [
+    "18019: unresolved resource identity `req`",
+    "18031: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_request_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "17835: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "17835: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_request_invalidate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy"
+   ],
+   "lost": [
+    "17864: call to uncontracted function `flb_sched_request_destroy`",
+    "17871: call to uncontracted function `flb_sched_request_destroy`"
+   ],
+   "gained": [
+    "17864: unresolved resource identity `request`",
+    "17871: unresolved resource identity `request`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_retry_now",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18281: call to uncontracted function `flb_sched_timer_destroy`",
+    "18295: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18281: unresolved resource identity `timer`",
+    "18295: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cb_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18073: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18073: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cb_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18107: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cleanup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18248: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18248: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_coro_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_coro_destroy"
+   ],
+   "lost": [
+    "17962: call to uncontracted function `flb_coro_destroy`"
+   ],
+   "gained": [
+    "17962: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18148: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18148: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy",
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18177: call to uncontracted function `flb_sched_request_destroy`",
+    "18182: call to uncontracted function `flb_sched_request_destroy`",
+    "18188: call to uncontracted function `flb_sched_timer_destroy`",
+    "18193: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18177: unresolved resource identity `request`",
+    "18182: unresolved resource identity `request`",
+    "18188: unresolved resource identity `timer`",
+    "18193: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_event_handler",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy"
+   ],
+   "lost": [
+    "18019: call to uncontracted function `flb_sched_request_destroy`",
+    "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+   ],
+   "gained": [
+    "18019: unresolved resource identity `req`",
+    "18031: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_request_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "17835: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "17835: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_request_invalidate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_request_destroy"
+   ],
+   "lost": [
+    "17864: call to uncontracted function `flb_sched_request_destroy`",
+    "17871: call to uncontracted function `flb_sched_request_destroy`"
+   ],
+   "gained": [
+    "17864: unresolved resource identity `request`",
+    "17871: unresolved resource identity `request`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_retry_now",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18281: call to uncontracted function `flb_sched_timer_destroy`",
+    "18295: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18281: unresolved resource identity `timer`",
+    "18295: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cb_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18073: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18073: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cb_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18107: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cleanup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_sched_timer_destroy"
+   ],
+   "lost": [
+    "18248: call to uncontracted function `flb_sched_timer_destroy`"
+   ],
+   "gained": [
+    "18248: unresolved resource identity `timer`"
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_coro_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_coro_destroy"
+   ],
+   "lost": [
+    "17962: call to uncontracted function `flb_coro_destroy`"
+   ],
+   "gained": [
+    "17962: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_event_chunk_destroy",
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17711: call to uncontracted function `flb_event_chunk_destroy`",
+    "17817: call to uncontracted function `flb_task_destroy`",
+    "17872: call to uncontracted function `flb_task_destroy`",
+    "17889: call to uncontracted function `flb_task_destroy`",
+    "17928: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17711: unresolved resource identity `evc`",
+    "17817: unresolved resource identity `task`",
+    "17872: unresolved resource identity `task`",
+    "17889: unresolved resource identity `task`",
+    "17928: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_event_chunk_destroy"
+   ],
+   "lost": [
+    "17969: call to uncontracted function `flb_event_chunk_destroy`"
+   ],
+   "gained": [
+    "17969: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_retry_reschedule",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17484: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17484: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_event_chunk_destroy",
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17711: call to uncontracted function `flb_event_chunk_destroy`",
+    "17817: call to uncontracted function `flb_task_destroy`",
+    "17872: call to uncontracted function `flb_task_destroy`",
+    "17889: call to uncontracted function `flb_task_destroy`",
+    "17928: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17711: unresolved resource identity `evc`",
+    "17817: unresolved resource identity `task`",
+    "17872: unresolved resource identity `task`",
+    "17889: unresolved resource identity `task`",
+    "17928: unresolved resource identity `task`"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_event_chunk_destroy"
+   ],
+   "lost": [
+    "17969: call to uncontracted function `flb_event_chunk_destroy`"
+   ],
+   "gained": [
+    "17969: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_retry_reschedule",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "17484: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "17484: unresolved resource identity `task`"
+   ]
+  }
+ ]
+}
