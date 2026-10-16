@@ -302,7 +302,15 @@ Records only, as in the brief: the Python suite, the docs index and its
 `--check`, and `build_matrix` (the ledger changed). No product code changed,
 so the standing gate is not run. The steps and their exits are in
 [`scripts/gate.sh`](scripts/gate.sh); its logs are in `private/fbpia/gate/`.
-The results are below in "Gate results".
+At records commit `4f3749ea1` the results are:
+
+* `build_matrix.py . --gate docs/reports/union-opaque-record-writes/gate.json`
+  exits 0. The only change is that the provenance string now names that gate
+  by its repository path. No number is re-measured. It reports 329 Lean
+  audits and 131 contract modules.
+* `build_docs_index.py` exits 0, and `--check` exits 0.
+* The Python suite, run under the heavy lock, exits 0: 374 tests OK.
+* The bold rule-id duplicate check is empty.
 
 ## Files
 

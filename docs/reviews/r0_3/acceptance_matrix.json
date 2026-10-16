@@ -7095,7 +7095,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a57183b7d746d0523/docs/reports/union-opaque-record-writes/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/union-opaque-record-writes/gate.json)"
  },
  "named_followups": [
   {

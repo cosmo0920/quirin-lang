@@ -434,6 +434,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [fb-processor-instance-allocation-size](fb-processor-instance-allocation-size/README.md) | FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE: a processor instance allocated by the filter instance's size |
+
 | [fb-quant-contract-census](fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
 
 | [fb-system-audit-cards](fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
