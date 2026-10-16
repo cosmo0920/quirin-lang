@@ -617,7 +617,16 @@ mod tests {
             .map(|&(op, actual, constant, fate, spelled)| {
                 vec![
                     op.to_owned(),
-                    actual.map_or_else(|| "none".to_owned(), |value| value.to_string()),
+                    actual.map_or_else(
+                        || "none".to_owned(),
+                        |value| {
+                            if value < 0 {
+                                format!("some ({value})")
+                            } else {
+                                format!("some {value}")
+                            }
+                        },
+                    ),
                     constant.to_string(),
                     fate.to_owned(),
                     spelled.to_owned(),

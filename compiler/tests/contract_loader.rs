@@ -1657,7 +1657,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/event_loop.qv` (seven Monkey event-loop operations) and
     // `fluent_bit/input_collector_registration.qv` (three collector
     // setters), entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 133, "corpus module count");
+    // 133 -> 134: card FB-TEARDOWN-DESTROY-DECLARATIONS adds
+    // `fluent_bit/teardown_destroy.qv` (fourteen destroyer declarations, ten
+    // with member-path states), entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 134, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1987,9 +1990,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // with the retaining declarations) and three Fluent Bit collector setters
     // (`fluent_bit/input_collector_registration.qv`, withheld); 61 -> 63
     // selected modules. Rejected unchanged.
+    // 63 -> 64 selected, 475 -> 489 by card FB-TEARDOWN-DESTROY-DECLARATIONS:
+    // `fluent_bit/teardown_destroy.qv`, fourteen declarations (ten with
+    // member-path states, withheld with the retaining declarations).
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (63, 475, 314)
+        (64, 489, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

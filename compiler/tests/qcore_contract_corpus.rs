@@ -775,6 +775,66 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_output_thread_pool_flush",
         6,
     ),
+    // Card FB-TEARDOWN-DESTROY-DECLARATIONS: the teardown destroyers, ten
+    // with rule 30's member-path states (read at a direct call).
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_sched_timer_destroy",
+        3,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_sched_request_destroy",
+        4,
+    ),
+    ("fluent_bit/teardown_destroy.qv", "flb_task_destroy", 6),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_task_queue_destroy",
+        3,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_event_chunk_destroy",
+        4,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_output_flush_destroy",
+        4,
+    ),
+    ("fluent_bit/teardown_destroy.qv", "flb_coro_destroy", 4),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_input_chunk_release_route",
+        4,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_output_instance_destroy",
+        34,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_input_instance_destroy",
+        34,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_input_coro_destroy",
+        4,
+    ),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_input_collector_destroy",
+        3,
+    ),
+    ("fluent_bit/teardown_destroy.qv", "flb_tail_file_remove", 15),
+    (
+        "fluent_bit/teardown_destroy.qv",
+        "flb_tail_config_destroy",
+        18,
+    ),
     ("fluent_bit/time.qv", "flb_time_now", 2),
     (
         "language/quantified_indices.qv",
@@ -2291,7 +2351,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // (bounds contract v1, pinned in the cfl crate's new `bounds-contracts.lock`).
     // 131 -> 133 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION's
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
-    assert_eq!(sources.len(), 133, "unexpected contract corpus size");
+    // 133 -> 134 by card FB-TEARDOWN-DESTROY-DECLARATIONS'
+    // `fluent_bit/teardown_destroy.qv`.
+    assert_eq!(sources.len(), 134, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

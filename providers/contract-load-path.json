@@ -240,6 +240,7 @@
         "fluent_bit/storage_backlog.qv",
         "fluent_bit/task_route_queries.qv",
         "fluent_bit/task_users.qv",
+        "fluent_bit/teardown_destroy.qv",
         "fluent_bit/time.qv"
       ],
       "published": {},
@@ -265,6 +266,7 @@
         "fluent_bit/storage_backlog.qv",
         "fluent_bit/task_route_queries.qv",
         "fluent_bit/task_users.qv",
+        "fluent_bit/teardown_destroy.qv",
         "fluent_bit/time.qv"
       ],
       "bounds_view": [
