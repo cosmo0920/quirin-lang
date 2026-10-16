@@ -72,6 +72,18 @@ int h_op_serve(void *q, h_cb_t *cb, void *opaque) {
     return 0;
 }
 
+/* Stores the callback's result into a narrower variable before comparing
+ * with PASS: the split classes could disagree with the guard. */
+int h_converted_serve(void *q, h_cb_t *cb, void *opaque) {
+    struct hop *op;
+    while ((op = h_dequeue(q))) {
+        unsigned char res = cb(q, op, opaque);
+        if (res == H_PASS)
+            h_destroy(op);
+    }
+    return 0;
+}
+
 h_res_t not_pass_cb(void *q, struct hop *op, void *opaque) {
     if (op->x)
         return H_PASS;
@@ -225,6 +237,21 @@ fn a_guard_the_caller_does_not_branch_on_never_admits() {
         return;
     }
     let refused = call("use_keep_at_pass_loop", "h_serve", "keep_cb");
+    assert!(
+        refused.refused_with("callback-handoff-unbranched"),
+        "{refused:?}"
+    );
+}
+
+/// An invoker that stores the callback's result through a conversion before
+/// comparing refuses (`callback-handoff-unbranched`), even when the compared
+/// constant and per-class handling otherwise match.
+#[test]
+fn an_invoker_that_converts_the_result_refuses() {
+    if !clang_available() {
+        return;
+    }
+    let refused = call("use_converted", "h_converted_serve", "not_pass_cb");
     assert!(
         refused.refused_with("callback-handoff-unbranched"),
         "{refused:?}"

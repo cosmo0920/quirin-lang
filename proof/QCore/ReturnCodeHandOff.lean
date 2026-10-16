@@ -85,10 +85,13 @@ theorem owner_after_ne (k r : Int) :
 /-! ### The caller's reading and its admission -/
 
 /-- One caller's reading of the handed object after the call: whether each
-compared constant's class names it again, and whether the rest does. -/
+compared constant's class names it again, whether the rest does, and whether
+storing the call's result into the variable the body tests converted it
+(`result_converted`). -/
 structure Reading where
   compared : List (Int × Bool)
   rest : Bool
+  resultConverted : Bool := false
   deriving Repr
 
 /-- Whether a result value touches the object under the reading. -/
@@ -111,10 +114,11 @@ def admit (g : Guard) (rd : Reading) : Bool :=
 def branchesOn (g : Guard) (rd : Reading) : Bool :=
   rd.compared.any fun p => p.1 == g.value
 
-/-- The admission rule 12m reads: no admitted class touches and the same
-constant is compared. -/
+/-- The admission rule 12m reads (`check_path` and `direct_admission`): the
+result is not stored through a conversion, no admitted class touches, and the
+same constant is compared. -/
 def admitted (g : Guard) (rd : Reading) : Bool :=
-  admit g rd && branchesOn g rd
+  !rd.resultConverted && admit g rd && branchesOn g rd
 
 theorem find_some_mem {l : List (Int × Bool)} {r : Int} {p : Int × Bool}
     (h : l.find? (fun q => q.1 == r) = some p) : p ∈ l ∧ p.1 = r := by
@@ -170,6 +174,19 @@ theorem the_caller_keeps_what_the_guard_leaves (g : Guard) (r : Int)
 theorem an_unbranched_guard_never_admits (g : Guard) (rd : Reading)
     (h : branchesOn g rd = false) : admitted g rd = false := by
   unfold admitted; simp [h]
+
+/-- A site that stores the result through a conversion (`result_converted`)
+never admits (`check_path` and `direct_admission`). -/
+theorem a_converted_result_never_admits (g : Guard) (rd : Reading)
+    (h : rd.resultConverted = true) : admitted g rd = false := by
+  unfold admitted; simp [h]
+
+/-- Any admitted site stores the result without conversion. -/
+theorem an_admitted_branch_never_converts_the_result (g : Guard) (rd : Reading)
+    (h : admitted g rd = true) : rd.resultConverted = false := by
+  unfold admitted at h
+  simp only [Bool.and_eq_true, Bool.not_eq_true'] at h
+  exact h.1.1
 
 /-- A forwarder returns the result unchanged where it does not touch: the
 caller's reading of the forwarded value composes with the forwarder's. -/

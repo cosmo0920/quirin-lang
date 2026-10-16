@@ -1974,6 +1974,12 @@ fn check_path(path: &[Step<'_>], query: &Query<'_>, guard: &Values) -> Result<()
     let mut values = guard.clone();
     let mut position = query.position;
     for (level, step) in path.iter().enumerate().rev() {
+        if step.site.result_converted {
+            return Err(format!(
+                "`{}` stores the result through a conversion",
+                step.name
+            ));
+        }
         if let Some(value) = step.site.compared.get(constant) {
             if *value != query.value {
                 return Err(format!(
@@ -2223,6 +2229,75 @@ mod tests {
             Ok(Values::Only(BTreeSet::from([2, 3])))
         );
         assert!(forward(&site, 0, &Values::Except(BTreeSet::from([0]))).is_err());
+    }
+
+    /// `check_path` refuses a step whose site stores the result through a
+    /// conversion, even when the compared constant and per-class handling
+    /// would otherwise admit it.
+    #[test]
+    fn check_path_refuses_a_converted_result_store() {
+        let guard = HandOffGuard {
+            op: GuardOp::Ne,
+            constant: "H_PASS".into(),
+        };
+        let query = Query {
+            invoker: "h_serve",
+            invocation: Invocation::Formal(1),
+            position: 1,
+            handed: Handed::Own,
+            guard: &guard,
+            value: 0,
+        };
+        let make_site = |result_converted| Site {
+            callee: SiteCallee::Formal(1),
+            actuals: vec![SiteActual::Param(0), SiteActual::Local("op".into())],
+            handling: BTreeMap::from([(
+                1,
+                Some(Handling {
+                    values: BTreeMap::from([(
+                        0,
+                        Outcome {
+                            touched: true,
+                            returns: BTreeSet::new(),
+                        },
+                    )]),
+                    rest: Outcome {
+                        touched: false,
+                        returns: BTreeSet::new(),
+                    },
+                }),
+            )]),
+            compared: BTreeMap::from([("H_PASS".into(), 0)]),
+            copy: None,
+            result_converted,
+        };
+        let values = Values::Except(BTreeSet::from([0]));
+        let exact = make_site(false);
+        assert_eq!(
+            check_path(
+                &[Step {
+                    name: "h_serve".into(),
+                    site: &exact
+                }],
+                &query,
+                &values
+            ),
+            Ok(())
+        );
+        let converted = make_site(true);
+        let err = check_path(
+            &[Step {
+                name: "h_serve".into(),
+                site: &converted,
+            }],
+            &query,
+            &values,
+        )
+        .expect_err("a converted result store is refused");
+        assert!(
+            err.contains("stores the result through a conversion"),
+            "{err}"
+        );
     }
 
     /// Card HANDOFF-CANDIDATE-OWN-CALLBACKS: the classifier's vectors hold,

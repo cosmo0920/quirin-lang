@@ -1294,12 +1294,15 @@ followed from the call to every exit, and a class the guard admits must not
 name the object again before a rebinding or a noreturn call; what the
 function returns there is followed into its caller's site; the path ends
 where the object is a local (it was created there), and at the invoker a
-handed parameter must never be returned on a path the guard admits; some
+handed parameter must never be returned on a path the guard admits; no site
+of the path may store the result through a conversion; some
 function of the path must compare the result with the guard's own constant
 (`QCore.ReturnCodeHandOff.an_admitted_branch_never_touches_a_taken_object`,
-`an_unbranched_guard_never_admits`). A body not read, two different
+`an_unbranched_guard_never_admits`,
+`a_converted_result_never_admits`). A body not read, two different
 readings of one function, a callback formal that escapes, a member copied
-into a variable before its call other than exactly (below) or an unread
+into a variable before its call other than exactly (below), a result stored
+through a conversion or an unread
 construct refuses. **An exact copy** (card HANDOFF-CANDIDATE-OWN-CALLBACKS):
 a call through a variable (a formal, or an automatic local) that the body
 writes exactly once, `v = o->m` or `T v = o->m;` with no conversion but an

@@ -37,6 +37,18 @@ contract {
     ensures normal resource_return_none();
 };
 
+// A serve loop that stores the callback's result through a narrowing
+// conversion before comparing with PASS.
+extern fn h_converted_serve(q: ptr<mut, u8>, cb: fnptr, opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(q);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(opaque);
+    ensures normal resource_callback_invoked(cb, _, supplied_owned, opaque);
+    ensures normal resource_return_none();
+};
+
 // A serve loop whose op stays its own at `_` (an op callback's position).
 extern fn h_op_serve(q: ptr<mut, u8>, cb: fnptr, opaque: ptr<mut, u8>) -> i32
 contract {

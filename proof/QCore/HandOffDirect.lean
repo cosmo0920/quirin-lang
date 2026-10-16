@@ -120,13 +120,18 @@ theorem an_unbranched_direct_call_never_decides (g : Guard) (rd : Reading)
     (t : RelationalPost.Rel) (h : branchesOn g rd = false) : directDecides g rd t = false := by
   simp [directDecides, QCore.ReturnCodeHandOff.an_unbranched_guard_never_admits g rd h]
 
+/-- **A direct call whose result is stored through a conversion never decides.** -/
+theorem a_converted_direct_call_never_decides (g : Guard) (rd : Reading)
+    (t : RelationalPost.Rel) (h : rd.resultConverted = true) : directDecides g rd t = false := by
+  simp [directDecides, QCore.ReturnCodeHandOff.a_converted_result_never_admits g rd h]
+
 /-- A decided call never touches an object the callback took. -/
 theorem a_decided_call_never_touches_a_taken_object (g : Guard) (rd : Reading)
     (t : RelationalPost.Rel) (h : directDecides g rd t = true) (r : Int)
     (hg : QCore.ReturnCodeHandOff.holds g r = true) : touches rd r = false := by
   simp only [directDecides, admitted, Bool.and_eq_true] at h
   exact QCore.ReturnCodeHandOff.an_admitted_branch_never_touches_a_taken_object
-    g rd r h.1.1.1 hg
+    g rd r h.1.1.1.2 hg
 
 /-- **A decided split is the guard on every value**: every returned value
 takes an edge that selects an owner, and it is the guard's. -/

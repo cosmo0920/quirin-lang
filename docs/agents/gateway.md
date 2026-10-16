@@ -5077,8 +5077,9 @@ own anchor here.
     what the function returns there (the result, a constant, anything) is
     checked at its caller's site; the path ends at a local (the object was
     created there), and at the invoker a handed parameter is never returned
-    on an admitted path; some function on the path compares the result
-    with the guard's own constant. Admitted, the custody contract decides
+    on an admitted path; no site on the path stores the result through a
+    conversion (`Site::result_converted`); some function on the path compares
+    the result with the guard's own constant. Admitted, the custody contract decides
     with the handed formal taken at `supplied_owned` and kept by the
     invoker at `_` or a parameter (its requirement on the call kept);
     refused, `callback-handoff-unbranched`. A direct call of a hand-off
@@ -5098,11 +5099,14 @@ own anchor here.
     the check reads the invoker's own path, as the decision names it; that
     the invoker invokes the callback only there is the declaration's
     assumption. **Do not** admit a hand-off on a path not read, a guard no
-    function on the path compares, a callback formal that escapes, or at a
+    function on the path compares, a site that stores the result through a
+    conversion, a callback formal that escapes, or at a
     direct call outside the reading below. `QCore.ReturnCodeHandOff`
     (`owner_after_is_the_guard`,
     `an_admitted_branch_never_touches_a_taken_object`,
     `an_unbranched_guard_never_admits`,
+    `a_converted_result_never_admits`,
+    `an_admitted_branch_never_converts_the_result`,
     `admission_composes_through_a_forwarder`, `owner_vectors_hold`,
     `branch_vectors_hold`); `tests/return_code_handoff.rs`;
     [report](../reports/supplied-owned-return-code-handoff/README.md).

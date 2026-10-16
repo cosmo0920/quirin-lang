@@ -8,6 +8,8 @@ import QCore.ReturnCodeHandOff
 #print axioms QCore.ReturnCodeHandOff.an_admitted_branch_never_touches_a_taken_object
 #print axioms QCore.ReturnCodeHandOff.the_caller_keeps_what_the_guard_leaves
 #print axioms QCore.ReturnCodeHandOff.an_unbranched_guard_never_admits
+#print axioms QCore.ReturnCodeHandOff.a_converted_result_never_admits
+#print axioms QCore.ReturnCodeHandOff.an_admitted_branch_never_converts_the_result
 #print axioms QCore.ReturnCodeHandOff.admission_composes_through_a_forwarder
 #print axioms QCore.ReturnCodeHandOff.an_alias_means_its_name
 #print axioms QCore.ReturnCodeHandOff.an_undeclared_alias_rejects
