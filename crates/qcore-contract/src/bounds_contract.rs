@@ -32,6 +32,25 @@
 //! UNIT  = elements | bytes
 //! ```
 //!
+//! # One member clause, three kinds (card NONNULL-MEMBER-UNIFIED-QUALIFIER)
+//!
+//! USER DECISION 2026-10-16 ("As shown above", "Migrate, one spelling", "Yes,
+//! all kinds"): the null property's member facts are one clause.
+//!
+//! ```text
+//! requires nonnull_member(TAG, FIELD);                                  // rule 14t
+//! requires nonnull_member(TAG, FIELD) where quant #scope [[stable]];    // rule 14x
+//! requires nonnull_member(TAG, FIELD, P) where quant #scope [[scope]];  // rule 14z
+//! ```
+//!
+//! `P` is required with `[[scope]]` and rejected otherwise; any other
+//! qualifier is rejected; the retired words `nonnull_member_stable` /
+//! `nonnull_member_scope` are rejected with a diagnostic naming the new form.
+//! Each kind loads to exactly the fact its retired spelling did
+//! ([`BoundsClause::NonnullMember`], [`BoundsClause::NonnullMemberStable`],
+//! [`BoundsClause::NonnullMemberScope`]; `QCore.NullMemberQualifier`). A
+//! named premise stands beside any of them.
+//!
 //! # Quantified index checks (card QUANT-INDEX-CHECKS)
 //!
 //! `quant checks P, Idx #i: PREDICATE;` binds `#i` universally: every index
@@ -132,7 +151,9 @@ pub const RESERVED_SPELLINGS: [&str; 17] = [
     // Card NULL-CANDIDATE-TRIAGE (G05e).
     "nonnull_member",
     "nonnull_result",
-    // Card NULL-MEMBER-INVARIANT-SCOPE (G05f).
+    // Card NULL-MEMBER-INVARIANT-SCOPE (G05f). Retired by card
+    // NONNULL-MEMBER-UNIFIED-QUALIFIER (merged into `nonnull_member`, no
+    // alias); still reserved, so no other vocabulary takes them.
     "nonnull_member_stable",
     "nonnull_member_scope",
     // Card NULL-TRIAGE-UNRESOLVED-PATHS (G05e).
@@ -253,7 +274,9 @@ pub enum BoundsClause {
     /// against every analysed body that defines it. Null property only.
     NonnullResult,
     /// Card NULL-MEMBER-INVARIANT-SCOPE (C09.3, grammar G05f, rule 14x):
-    /// `requires nonnull_member_stable(TAG, FIELD);` -- `struct TAG`'s `FIELD`
+    /// `requires nonnull_member(TAG, FIELD) where quant #scope [[stable]];`
+    /// (spelled `nonnull_member_stable(TAG, FIELD)` until card
+    /// NONNULL-MEMBER-UNIFIED-QUALIFIER) -- `struct TAG`'s `FIELD`
     /// is never made NULL on an existing object: every store the analysed
     /// units make to it is proved non-null, except an initializer list,
     /// which writes a fresh object. A non-null value is then kept for the
@@ -265,7 +288,9 @@ pub enum BoundsClause {
         field: String,
     },
     /// Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): `requires
-    /// nonnull_member_scope(TAG, FIELD, P);` -- on entry to the declared
+    /// nonnull_member(TAG, FIELD, P) where quant #scope [[scope]];` (spelled
+    /// `nonnull_member_scope(TAG, FIELD, P)` until card
+    /// NONNULL-MEMBER-UNIFIED-QUALIFIER) -- on entry to the declared
     /// function, the `struct TAG` object its pointer parameter `P` names
     /// has a non-null `FIELD`. Every caller's actual is checked; the body
     /// reads it non-null at entry. Null property only.
@@ -287,11 +312,12 @@ pub enum BoundsClause {
     /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification
     /// C09.3, USER DECISION 2026-10-15, "Only nonnull_member* need it"):
     /// `requires resource_premise(NAME, "STATEMENT");` beside a
-    /// `nonnull_member_stable` or `nonnull_member_scope` clause of the same
-    /// declaration -- the member facts that declaration states are in force
-    /// only under the named premise, and every null row resting on one lists
-    /// it. Admitted beside no other bounds or null clause. Changes no mode;
-    /// read by the null property only.
+    /// `nonnull_member` clause of any kind (card NONNULL-MEMBER-UNIFIED-QUALIFIER,
+    /// USER DECISION 2026-10-16 "Yes, all kinds"; before it, beside the stable
+    /// and scope kinds only) of the same declaration -- the member facts that
+    /// declaration states are in force only under the named premise, and every
+    /// null row resting on one lists it. Admitted beside no other bounds or
+    /// null clause. Changes no mode; read by the null property only.
     Premise {
         name: String,
         statement: String,
@@ -642,6 +668,56 @@ fn type_kind(source: &str) -> Result<ParameterKind, String> {
     }
 }
 
+/// Card NONNULL-MEMBER-UNIFIED-QUALIFIER: the kind a `nonnull_member` clause
+/// states; `Plain` when it has no qualifier.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum MemberQualifier {
+    Plain,
+    Stable,
+    Scope,
+}
+
+impl MemberQualifier {
+    /// The clause's one spelling of this kind.
+    fn form(self) -> &'static str {
+        match self {
+            Self::Plain => "nonnull_member(TAG, FIELD)",
+            Self::Stable => "nonnull_member(TAG, FIELD) where quant #scope [[stable]]",
+            Self::Scope => "nonnull_member(TAG, FIELD, P) where quant #scope [[scope]]",
+        }
+    }
+}
+
+const QUALIFIER_SHAPE: &str = "nonnull-member-qualifier-shape: a member clause's qualifier is `where quant #scope [[stable]]` or `where quant #scope [[scope]]`";
+
+/// The qualifier after `where`: exactly `quant #scope [[stable]]` or `quant
+/// #scope [[scope]]`.
+fn member_qualifier(tokens: &[TokenKind]) -> Result<MemberQualifier, String> {
+    let [
+        TokenKind::Word(quant),
+        TokenKind::Symbol(Symbol::Hash),
+        TokenKind::Word(scope),
+        TokenKind::Symbol(Symbol::LeftBracket),
+        TokenKind::Symbol(Symbol::LeftBracket),
+        TokenKind::Word(word),
+        TokenKind::Symbol(Symbol::RightBracket),
+        TokenKind::Symbol(Symbol::RightBracket),
+    ] = tokens
+    else {
+        return Err(QUALIFIER_SHAPE.into());
+    };
+    if quant != "quant" || scope != "scope" {
+        return Err(QUALIFIER_SHAPE.into());
+    }
+    match word.as_str() {
+        "stable" => Ok(MemberQualifier::Stable),
+        "scope" => Ok(MemberQualifier::Scope),
+        other => Err(format!(
+            "nonnull-member-qualifier-unknown: `[[{other}]]` is no member qualifier; the qualifiers are `[[stable]]` and `[[scope]]`"
+        )),
+    }
+}
+
 /// Split `NAME ( ARGS )` into the name and its top-level comma-separated
 /// argument token groups. Anything else is `None`.
 fn call(tokens: &[TokenKind]) -> Option<(&str, Vec<&[TokenKind]>)> {
@@ -780,13 +856,21 @@ fn render(tokens: &[TokenKind]) -> String {
             // Card NULL-TRIAGE-UNRESOLVED-PATHS: a negative literal's sign
             // (no tracked bounds text spelled one before).
             TokenKind::Symbol(Symbol::Minus) => "-".into(),
+            // Card NONNULL-MEMBER-UNIFIED-QUALIFIER: a member qualifier,
+            // `where quant #scope [[stable]]` (no tracked bounds text spelled
+            // `#`, `[` or `]` in a `requires` or `ensures` clause before).
+            TokenKind::Symbol(Symbol::Hash) => "#".into(),
+            TokenKind::Symbol(Symbol::LeftBracket) => "[".into(),
+            TokenKind::Symbol(Symbol::RightBracket) => "]".into(),
             other => format!("{other:?}"),
         };
         if !out.is_empty()
-            && !matches!(piece.as_str(), "(" | ")" | ",")
+            && !matches!(piece.as_str(), "(" | ")" | "," | "]")
             && !out.ends_with('(')
             && !out.ends_with(" -")
             && !out.ends_with("(-")
+            && !out.ends_with('#')
+            && !out.ends_with('[')
         {
             out.push(' ');
         }
@@ -852,7 +936,115 @@ impl Reader<'_> {
         }
     }
 
+    /// Card NONNULL-MEMBER-UNIFIED-QUALIFIER (C09.3, grammar G05e/G05f, rules
+    /// 14t, 14x, 14z; USER DECISION 2026-10-16): a clause headed
+    /// `nonnull_member` in one of its three kinds, or a retired word. `None`
+    /// for any other head. The kinds load to exactly the facts of the three
+    /// spellings this replaces (`QCore.NullMemberQualifier`).
+    fn member_clause(
+        &self,
+        requires: bool,
+        tokens: &[TokenKind],
+    ) -> Result<Option<BoundsClause>, String> {
+        match tokens.first() {
+            Some(TokenKind::Word(w)) if w == "nonnull_member_stable" => {
+                return Err(format!(
+                    "nonnull-member-retired-spelling: `nonnull_member_stable` was merged into `nonnull_member` (no alias); write `requires {};`",
+                    MemberQualifier::Stable.form()
+                ));
+            }
+            Some(TokenKind::Word(w)) if w == "nonnull_member_scope" => {
+                return Err(format!(
+                    "nonnull-member-retired-spelling: `nonnull_member_scope` was merged into `nonnull_member` (no alias); write `requires {};`",
+                    MemberQualifier::Scope.form()
+                ));
+            }
+            Some(TokenKind::Word(w)) if w == "nonnull_member" => {}
+            _ => return Ok(None),
+        }
+        // The qualifier follows the argument list, after a `where` outside
+        // every parenthesis.
+        let mut depth = 0usize;
+        let mut split = None;
+        for (index, token) in tokens.iter().enumerate() {
+            match token {
+                TokenKind::Symbol(Symbol::LeftParen) => depth += 1,
+                TokenKind::Symbol(Symbol::RightParen) => depth = depth.saturating_sub(1),
+                TokenKind::Word(w) if depth == 0 && w == "where" => {
+                    split = Some(index);
+                    break;
+                }
+                _ => {}
+            }
+        }
+        let (head, qualifier) = match split {
+            Some(index) => (&tokens[..index], member_qualifier(&tokens[index + 1..])?),
+            None => (tokens, MemberQualifier::Plain),
+        };
+        if !requires {
+            return Err(
+                "nonnull-member-requires: a `nonnull_member` clause is a precondition (`requires`), never an `ensures`"
+                    .into(),
+            );
+        }
+        let shape = || {
+            format!(
+                "nonnull-member-shape: write `{}`, `{}` or `{}`, with TAG a C struct tag (never a parameter of the declaration) and FIELD a member",
+                MemberQualifier::Plain.form(),
+                MemberQualifier::Stable.form(),
+                MemberQualifier::Scope.form()
+            )
+        };
+        let (_, groups) = call(head).ok_or_else(shape)?;
+        let tag_field =
+            |tag: &[TokenKind], field: &[TokenKind]| -> Result<(String, String), String> {
+                let tag = single_word(tag)
+                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
+                    .ok_or_else(shape)?;
+                let field = single_word(field).ok_or_else(shape)?;
+                Ok((tag.to_owned(), field.to_owned()))
+            };
+        match (groups.as_slice(), qualifier) {
+            ([tag, field], MemberQualifier::Plain) => {
+                let (tag, field) = tag_field(tag, field)?;
+                Ok(Some(BoundsClause::NonnullMember { tag, field }))
+            }
+            ([tag, field], MemberQualifier::Stable) => {
+                let (tag, field) = tag_field(tag, field)?;
+                Ok(Some(BoundsClause::NonnullMemberStable { tag, field }))
+            }
+            ([tag, field, p], MemberQualifier::Scope) => {
+                let (tag, field) = tag_field(tag, field)?;
+                let parameter = self.parameter(p, ParameterKind::Pointer).map_err(|_| {
+                    format!(
+                        "nonnull-member-scope-parameter: `{}`'s P is a pointer parameter of the declaration",
+                        MemberQualifier::Scope.form()
+                    )
+                })?;
+                Ok(Some(BoundsClause::NonnullMemberScope {
+                    tag,
+                    field,
+                    parameter,
+                }))
+            }
+            ([_, _], MemberQualifier::Scope) => Err(format!(
+                "nonnull-member-scope-needs-parameter: `[[scope]]` states the member of a pointer parameter P; write `{}`",
+                MemberQualifier::Scope.form()
+            )),
+            ([_, _, _], MemberQualifier::Plain | MemberQualifier::Stable) => Err(format!(
+                "nonnull-member-parameter-needs-scope: a third argument P is admitted only with `where quant #scope [[scope]]`; write `{}`",
+                MemberQualifier::Scope.form()
+            )),
+            _ => Err(shape()),
+        }
+    }
+
     fn clause(&self, requires: bool, tokens: &[TokenKind]) -> Result<BoundsClause, String> {
+        // Card NONNULL-MEMBER-UNIFIED-QUALIFIER: the member clause, in its
+        // three kinds, and the retired words.
+        if let Some(clause) = self.member_clause(requires, tokens)? {
+            return Ok(clause);
+        }
         let (name, groups) = call(tokens).ok_or("malformed bounds clause")?;
         match (requires, name, groups.as_slice()) {
             (true, "bounds_extent", [p, n, u]) => Ok(BoundsClause::Extent {
@@ -882,54 +1074,7 @@ impl Reader<'_> {
                 })
             }
             (false, "bounds_preserves_extents", []) => Ok(BoundsClause::PreservesExtents),
-            // Card NULL-CANDIDATE-TRIAGE (G05e): the null property's
-            // type-level member declaration and its non-null result.
-            (true, "nonnull_member", [tag, field]) => {
-                let tag = single_word(tag)
-                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
-                    .ok_or(
-                        "nonnull-member-shape: `nonnull_member(TAG, FIELD)` names a C struct tag",
-                    )?;
-                let field = single_word(field)
-                    .ok_or("nonnull-member-shape: `nonnull_member(TAG, FIELD)` names a member")?;
-                Ok(BoundsClause::NonnullMember {
-                    tag: tag.to_owned(),
-                    field: field.to_owned(),
-                })
-            }
-            // Card NULL-MEMBER-INVARIANT-SCOPE (G05f): the stable member
-            // and the function-scope entry.
-            (true, "nonnull_member_stable", [tag, field]) => {
-                let tag = single_word(tag)
-                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
-                    .ok_or(
-                        "nonnull-member-stable-shape: `nonnull_member_stable(TAG, FIELD)` names a C struct tag",
-                    )?;
-                let field = single_word(field)
-                    .ok_or("nonnull-member-stable-shape: `nonnull_member_stable(TAG, FIELD)` names a member")?;
-                Ok(BoundsClause::NonnullMemberStable {
-                    tag: tag.to_owned(),
-                    field: field.to_owned(),
-                })
-            }
-            (true, "nonnull_member_scope", [tag, field, p]) => {
-                let tag = single_word(tag)
-                    .filter(|w| !self.parameters.iter().any(|p| p.name == *w))
-                    .ok_or(
-                        "nonnull-member-scope-shape: `nonnull_member_scope(TAG, FIELD, P)` names a C struct tag",
-                    )?;
-                let field = single_word(field).ok_or(
-                    "nonnull-member-scope-shape: `nonnull_member_scope(TAG, FIELD, P)` names a member",
-                )?;
-                let parameter = self.parameter(p, ParameterKind::Pointer).map_err(|_| {
-                    "nonnull-member-scope-parameter: `nonnull_member_scope(TAG, FIELD, P)`'s P is a pointer parameter of the declaration".to_owned()
-                })?;
-                Ok(BoundsClause::NonnullMemberScope {
-                    tag: tag.to_owned(),
-                    field: field.to_owned(),
-                    parameter,
-                })
-            }
+            // Card NULL-CANDIDATE-TRIAGE (G05e): the declared non-null result.
             (false, "nonnull_result", []) => {
                 if self.result != Some(ParameterKind::Pointer) {
                     return Err(
@@ -1235,20 +1380,23 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         }
     }
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15):
-    // a premise names what a scoped member fact rests on, so it stands only
-    // beside `nonnull_member_stable` or `nonnull_member_scope`.
+    // a premise names what a member fact rests on, so it stands only beside
+    // a member clause; card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION
+    // 2026-10-16, "Yes, all kinds"): beside any of its three kinds.
     if clauses
         .iter()
         .any(|entry| matches!(entry.clause, BoundsClause::Premise { .. }))
         && !clauses.iter().any(|entry| {
             matches!(
                 entry.clause,
-                BoundsClause::NonnullMemberStable { .. } | BoundsClause::NonnullMemberScope { .. }
+                BoundsClause::NonnullMember { .. }
+                    | BoundsClause::NonnullMemberStable { .. }
+                    | BoundsClause::NonnullMemberScope { .. }
             )
         })
     {
         return Err(
-            "premise-beside-member: a bounds declaration admits `requires resource_premise(NAME, \"STATEMENT\");` only beside `nonnull_member_stable` or `nonnull_member_scope`"
+            "premise-beside-member: a bounds declaration admits `requires resource_premise(NAME, \"STATEMENT\");` only beside a `nonnull_member` clause (plain, `[[stable]]` or `[[scope]]`)"
                 .into(),
         );
     }

@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 
 use qcore_contract::bounds_contract::{BoundsClause, BoundsContracts};
 
-/// A declared stable member (`nonnull_member_stable(TAG, FIELD)`).
+/// A declared stable member (`nonnull_member(TAG, FIELD) where quant #scope [[stable]]`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct StableDecl {
     /// The declaration that carries it.
@@ -19,7 +19,7 @@ pub(super) struct StableDecl {
     pub(super) held: Option<String>,
 }
 
-/// One function-scope entry (`nonnull_member_scope(TAG, FIELD, P)`).
+/// One function-scope entry (`nonnull_member(TAG, FIELD, P) where quant #scope [[scope]]`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct ScopeEntry {
     pub(super) position: usize,
@@ -77,6 +77,12 @@ pub(super) fn declared_stable_and_scopes(
                             position,
                             tag: tag.clone(),
                             field: field.clone(),
+                            // The evidence label names the fact kind; card
+                            // NONNULL-MEMBER-UNIFIED-QUALIFIER kept it byte
+                            // for byte (rows and the fold are unchanged), so
+                            // it is no surface spelling: the clause is
+                            // `nonnull_member(TAG, FIELD, P) where quant
+                            // #scope [[scope]]`.
                             text: format!("nonnull_member_scope({tag}, {field}, {parameter})"),
                         });
                     }
@@ -106,7 +112,8 @@ pub struct NullPremise {
     pub name: String,
     pub statement: String,
     /// The row dependencies that carry it: `stable:TAG.FIELD` (a stable
-    /// member's fact) or a function name (its scope entries).
+    /// member's fact), `member:TAG.FIELD` (a plain member's) or a function
+    /// name (its scope entries).
     pub through: Vec<String>,
 }
 
@@ -116,8 +123,11 @@ pub const PREMISE_DEPENDENCY: &str = "premise:";
 /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises of the member
 /// facts, keyed by the row dependency each fact is listed under: a stable
 /// member's `stable:TAG.FIELD` (its host declaration's premises) and a scope
-/// declaration's function name (the declaration's premises). A held
-/// declaration keeps its premises: a row naming it lists them too.
+/// declaration's function name (the declaration's premises); card
+/// NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes, all
+/// kinds"): and a plain member's `member:TAG.FIELD` (rule 14t; its host
+/// declaration's premises). A held declaration keeps its premises: a row
+/// naming it lists them too.
 #[must_use]
 pub fn member_fact_premises(
     contracts: &BoundsContracts,
@@ -134,6 +144,7 @@ pub fn member_fact_premises(
         }
         for entry in &contract.clauses {
             let key = match &entry.clause {
+                BoundsClause::NonnullMember { tag, field } => format!("member:{tag}.{field}"),
                 BoundsClause::NonnullMemberStable { tag, field } => format!("stable:{tag}.{field}"),
                 BoundsClause::NonnullMemberScope { .. } => name.clone(),
                 _ => continue,

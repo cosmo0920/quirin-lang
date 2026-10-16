@@ -25,12 +25,12 @@ const STABLE: &str = "module contract;
 extern fn nd_make(k: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(S, next);
+    requires nonnull_member(S, next) where quant #scope [[stable]];
 };
 extern fn scoped(s: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(S, next, s);
+    requires nonnull_member(S, next, s) where quant #scope [[scope]];
 };
 ";
 
@@ -39,7 +39,7 @@ const SCOPE_ONLY: &str = "module contract;
 extern fn scoped(s: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(S, next, s);
+    requires nonnull_member(S, next, s) where quant #scope [[scope]];
 };
 ";
 
@@ -284,24 +284,24 @@ fn the_new_clauses_are_checked_by_the_loader() {
     let load = |body: &str| {
         load_bounds_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text(body))]))
     };
-    assert!(load("requires nonnull_member_stable(S, next);").is_ok());
-    assert!(load("requires nonnull_member_scope(S, next, s);").is_ok());
+    assert!(load("requires nonnull_member(S, next) where quant #scope [[stable]];").is_ok());
+    assert!(load("requires nonnull_member(S, next, s) where quant #scope [[scope]];").is_ok());
     // A parameter is no struct tag; the scope's pointer is a pointer
     // parameter; a stable member is no postcondition.
-    assert!(load("requires nonnull_member_stable(s, next);").is_err());
-    assert!(load("requires nonnull_member_scope(S, next, k);").is_err());
-    assert!(load("requires nonnull_member_scope(S, next, q);").is_err());
-    assert!(load("ensures normal nonnull_member_stable(S, next);").is_err());
+    assert!(load("requires nonnull_member(s, next) where quant #scope [[stable]];").is_err());
+    assert!(load("requires nonnull_member(S, next, k) where quant #scope [[scope]];").is_err());
+    assert!(load("requires nonnull_member(S, next, q) where quant #scope [[scope]];").is_err());
+    assert!(load("ensures normal nonnull_member(S, next) where quant #scope [[stable]];").is_err());
     assert!(
         load(
-            "requires nonnull_member_stable(S, next);\n    requires nonnull_member_stable(S, next);"
+            "requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires nonnull_member(S, next) where quant #scope [[stable]];"
         )
         .is_err()
     );
     // The bounds consumer reads the environment without them.
     let loaded = load_bounds_contract_sources(&BTreeMap::from([(
         "m.qv".to_owned(),
-        text("requires nonnull_member_stable(S, next);\n    requires nonnull_member_scope(S, next, s);"),
+        text("requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires nonnull_member(S, next, s) where quant #scope [[scope]];"),
     )]))
     .expect("loads");
     assert!(loaded.for_bounds().functions.is_empty());

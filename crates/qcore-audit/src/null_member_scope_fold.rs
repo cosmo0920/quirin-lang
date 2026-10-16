@@ -2,7 +2,7 @@
 //! fold's part for stable members and function-scope entries, called from
 //! [`crate::null_fold::fold`].
 //!
-//! * Each **stable member** (`nonnull_member_stable(TAG, FIELD)`) is checked
+//! * Each **stable member** (`nonnull_member(TAG, FIELD) where quant #scope [[stable]]`) is checked
 //!   against every store the analysed units made to it: an assignment or a
 //!   whole-object write of an existing object is examined (one not proved
 //!   withdraws it); an initializer list writes a fresh object and is counted
@@ -32,7 +32,8 @@ pub struct Declarations {
     /// function -> (entries as written, held).
     pub scopes: BTreeMap<String, (Vec<String>, bool)>,
     /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the named premises of each
-    /// premised member fact, by its row dependency (`stable:TAG.FIELD`, or a
+    /// premised member fact, by its row dependency (`stable:TAG.FIELD`,
+    /// `member:TAG.FIELD` since card NONNULL-MEMBER-UNIFIED-QUALIFIER, or a
     /// scope declaration's function name).
     pub premises: BTreeMap<String, Vec<(String, String)>>,
 }
@@ -181,8 +182,9 @@ pub fn withdrawals(
 
 /// Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a declaration record's named
 /// premises (`premises`, absent when it states none, so an unpremised
-/// record keeps its bytes).
-fn premise_list(record: &mut Value, premises: Option<&Vec<(String, String)>>) {
+/// record keeps its bytes). Card NONNULL-MEMBER-UNIFIED-QUALIFIER: rule 14t's
+/// `member_declarations` records list them too.
+pub(crate) fn premise_list(record: &mut Value, premises: Option<&Vec<(String, String)>>) {
     if let Some(premises) = premises.filter(|p| !p.is_empty()) {
         record["premises"] = json!(
             premises
@@ -249,7 +251,7 @@ mod tests {
     fn environment() -> BoundsContracts {
         load_bounds_contract_sources(&BTreeMap::from([(
             "m.qv".to_owned(),
-            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member_stable(S, next);\n    requires nonnull_member(T, owner);\n};\n".to_owned(),
+            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires nonnull_member(T, owner);\n};\n".to_owned(),
         )]))
         .expect("loads")
     }
@@ -319,7 +321,7 @@ mod tests {
     fn a_premised_member_fact_is_listed_on_the_record_and_on_a_travelled_row() {
         let premised = load_bounds_contract_sources(&BTreeMap::from([(
             "m.qv".to_owned(),
-            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member_stable(S, next);\n    requires resource_premise(no_plugin, \"no code outside the run stores S.next\");\n};\n".to_owned(),
+            "module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {\n    requires bounds_contract_v1;\n    requires nonnull_member(S, next) where quant #scope [[stable]];\n    requires resource_premise(no_plugin, \"no code outside the run stores S.next\");\n};\n".to_owned(),
         )]))
         .expect("loads");
         let caller = json!({"library": "l", "file": "a.c", "member_stores": [], "stable_stores": [],
@@ -359,6 +361,63 @@ mod tests {
         assert!(plain[0]["null"].get("premises").is_none());
         assert!(
             plain_section["stable_declarations"]["S.next"]
+                .get("premises")
+                .is_none()
+        );
+    }
+    /// Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes,
+    /// all kinds"): a premised plain member's `member_declarations` record
+    /// lists its premise, and so does a row whose travelled dependencies name
+    /// `member:TAG.FIELD`; the verdict is the unpremised one.
+    #[test]
+    fn a_premised_plain_member_is_listed_on_the_record_and_on_a_travelled_row() {
+        let declaration = |premise: &str| {
+            load_bounds_contract_sources(&BTreeMap::from([(
+                "m.qv".to_owned(),
+                format!("module contract;\nextern fn make(k: i32) -> ptr<mut, u8>\ncontract {{\n    requires bounds_contract_v1;\n    requires nonnull_member(T, owner);\n    {premise}\n}};\n"),
+            )]))
+            .expect("loads")
+        };
+        let premised = declaration(
+            "requires resource_premise(no_plugin, \"no code outside the run stores T.owner\");",
+        );
+        let unpremised = declaration("");
+        let caller = json!({"library": "l", "file": "a.c", "member_stores": [], "stable_stores": [],
+            "external_calls": [], "definitions": []});
+        let home = json!({"library": "l", "file": "b.c", "member_stores": [], "stable_stores": [],
+            "external_calls": [], "definitions": [{"function": "mk", "external": true, "parameters": 0,
+                "inferred": [], "returns_non_null": true, "returns_null_on_a_path": false,
+                "dependencies": ["member:T.owner"]}]});
+        let travelled = || {
+            vec![row(
+                json!([{"id": 0, "line": 4, "subject": "p", "outcome": "candidate", "sources": ["uncontracted-result:mk"]}]),
+                json!([]),
+            )]
+        };
+        let mut rows = travelled();
+        let section = crate::null_fold::fold(&mut rows, &[caller.clone(), home.clone()], &premised);
+        assert_eq!(rows[0]["null"]["checks"][0]["outcome"], "proved");
+        assert_eq!(rows[0]["null"]["premises"][0]["name"], "no_plugin");
+        assert_eq!(
+            rows[0]["null"]["premises"][0]["through"],
+            json!(["member:T.owner"])
+        );
+        assert!(
+            rows[0]["null"]["contract_dependencies"]
+                .as_array()
+                .unwrap()
+                .contains(&json!("premise:no_plugin"))
+        );
+        assert_eq!(
+            section["member_declarations"]["T.owner"]["premises"][0]["name"],
+            "no_plugin"
+        );
+        let mut plain = travelled();
+        let plain_section = crate::null_fold::fold(&mut plain, &[caller, home], &unpremised);
+        assert_eq!(plain[0]["null"]["verdict"], rows[0]["null"]["verdict"]);
+        assert!(plain[0]["null"].get("premises").is_none());
+        assert!(
+            plain_section["member_declarations"]["T.owner"]
                 .get("premises")
                 .is_none()
         );

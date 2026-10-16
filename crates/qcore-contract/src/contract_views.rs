@@ -882,22 +882,21 @@ fn check_null_deref_only(declaration: &ViewDeclaration) -> Result<(), String> {
             (clause.kind == "requires" && clause.expression == "bounds_contract_v1")
                 || clause.kind == "quant null-deref"
                 // Card NULL-CANDIDATE-TRIAGE: the null property's member and
-                // result declarations (G05e), which custody never reads.
+                // result declarations (G05e), which custody never reads; card
+                // NONNULL-MEMBER-UNIFIED-QUALIFIER: every kind of the member
+                // clause, the stable member and the function-scope entry
+                // (G05f) included (their retired words are the bounds
+                // loader's rejection).
                 || (clause.kind == "requires"
                     && clause.expression.starts_with("nonnull_member("))
-                // Card NULL-MEMBER-INVARIANT-SCOPE: the stable member and the
-                // function-scope entry (G05f), which custody never reads.
-                || (clause.kind == "requires"
-                    && (clause.expression.starts_with("nonnull_member_stable(")
-                        || clause.expression.starts_with("nonnull_member_scope(")))
                 || (clause.kind == "normal"
                     && clause.expression.replace(' ', "") == "nonnull_result()")
                 // Card NULL-TRIAGE-UNRESOLVED-PATHS: the result range (G05e).
                 || (clause.kind == "normal"
                     && clause.expression.starts_with("nonnull_result_range("))
-                // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a scoped member
-                // fact's named premise (its placement beside a stable or
-                // scope clause is the bounds loader's check).
+                // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: a member fact's
+                // named premise (its placement beside a member clause is the
+                // bounds loader's check).
                 || (clause.kind == "requires"
                     && clause.expression.starts_with("resource_premise("))
         });

@@ -4,6 +4,10 @@
 //! null row resting on the premised fact listing it, on a real Clang AST.
 //! The premise changes no verdict, check or reason.
 //!
+//! Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes, all
+//! kinds"; rule 14t): the premise also stands beside a plain member, and a
+//! row resting on `member:TAG.FIELD` lists it.
+//!
 //! The fixture declarations are trusted test assumptions, not library facts.
 
 use std::collections::BTreeMap;
@@ -15,13 +19,15 @@ use qcore_schemas::contract::ResourceContracts;
 
 const DECLARATIONS: &str = "\
 struct S { int a; struct S *next; };
+struct R { struct S *link; };
 void nd_use(void *p); struct S *nd_make(int k);
 ";
 
 const PREMISE: &str =
     "requires resource_premise(no_plugin, \"no code outside the run stores into S.next\");";
 
-/// The stable member and a scope entry, each premised (or not).
+/// The stable member, a scope entry and a plain member, each premised (or
+/// not).
 fn clauses(premised: bool) -> String {
     let premise = if premised { PREMISE } else { "" };
     format!(
@@ -29,13 +35,19 @@ fn clauses(premised: bool) -> String {
 extern fn nd_make(k: i32) -> ptr<mut, u8>
 contract {{
     requires bounds_contract_v1;
-    requires nonnull_member_stable(S, next);
+    requires nonnull_member(S, next) where quant #scope [[stable]];
     {premise}
 }};
 extern fn scoped(s: ptr<mut, u8>) -> i32
 contract {{
     requires bounds_contract_v1;
-    requires nonnull_member_scope(S, next, s);
+    requires nonnull_member(S, next, s) where quant #scope [[scope]];
+    {premise}
+}};
+extern fn nd_make_r(k: i32) -> ptr<mut, u8>
+contract {{
+    requires bounds_contract_v1;
+    requires nonnull_member(R, link);
     {premise}
 }};
 extern fn deref(p: ptr<mut, u8>) -> unit
@@ -75,9 +87,10 @@ int scoped(struct S *s) { if (!s) return 0; nd_use(s); return s->next->a; }
 int keeper(struct S *s) { if (!s || !s->next) return 0; nd_use(s); return s->next->a; }
 int caller(struct S *s) { if (!s || !s->next) return 0; return scoped(s); }
 int plain(struct S *s) { deref(s); return 0; }
+int reader(struct R *r) { if (!r) return 0; return r->link->a; }
 ";
 
-const FUNCTIONS: [&str; 4] = ["scoped", "keeper", "caller", "plain"];
+const FUNCTIONS: [&str; 5] = ["scoped", "keeper", "caller", "plain", "reader"];
 
 fn report(premised: bool) -> NullUnitReport {
     let text = format!("{DECLARATIONS}\n{SOURCE}\n");
@@ -118,11 +131,13 @@ fn every_row_resting_on_a_premised_member_fact_lists_the_premise() {
     }
     let unit = report(true);
     // The scope entry's own body and a caller checked against it, through the
-    // function's name; the kept fact, through `stable:S.next`.
+    // function's name; the kept fact, through `stable:S.next`; the plain
+    // member's read, through `member:R.link`.
     for (name, through) in [
         ("scoped", "scoped"),
         ("keeper", "stable:S.next"),
         ("caller", "scoped"),
+        ("reader", "member:R.link"),
     ] {
         let row = row(&unit, name);
         assert_eq!(row.premises.len(), 1, "{name}: {row:#?}");
@@ -170,7 +185,7 @@ fn listing_the_premise_changes_no_verdict_check_or_reason() {
 }
 
 #[test]
-fn the_premise_stands_only_beside_a_scoped_member_form() {
+fn the_premise_stands_only_beside_a_member_clause_of_any_kind() {
     let text = |body: &str| {
         format!(
             "module contract;\nextern fn f(s: ptr<mut, u8>, k: i32) -> unit\ncontract {{\n    requires bounds_contract_v1;\n    {body}\n}};\n"
@@ -180,7 +195,7 @@ fn the_premise_stands_only_beside_a_scoped_member_form() {
         load_bounds_contract_sources(&BTreeMap::from([("m.qv".to_owned(), text(body))]))
     };
     let ok = load(&format!(
-        "requires nonnull_member_stable(S, next);\n    {PREMISE}"
+        "requires nonnull_member(S, next) where quant #scope [[stable]];\n    {PREMISE}"
     ))
     .expect("beside a stable member");
     assert_eq!(
@@ -191,16 +206,22 @@ fn the_premise_stands_only_beside_a_scoped_member_form() {
     assert!(ok.for_bounds().functions.is_empty());
     assert!(
         load(&format!(
-            "requires nonnull_member_scope(S, next, s);\n    {PREMISE}"
+            "requires nonnull_member(S, next, s) where quant #scope [[scope]];\n    {PREMISE}"
         ))
         .is_ok()
     );
-    // Beside no scoped member form: alone, beside a `quant null-deref`,
-    // beside rule 14t's plain member, beside a bounds clause.
-    assert!(load(PREMISE).is_err());
-    assert!(load(&format!("quant null-deref #s;\n    {PREMISE}")).is_err());
-    assert!(load(&format!("requires nonnull_member(S, next);\n    {PREMISE}")).is_err());
-    assert!(load(&format!("requires bounds_index(k, 4);\n    {PREMISE}")).is_err());
+    // Card NONNULL-MEMBER-UNIFIED-QUALIFIER: beside rule 14t's plain member.
+    assert!(load(&format!("requires nonnull_member(S, next);\n    {PREMISE}")).is_ok());
+    // Beside no member clause: alone, beside a `quant null-deref`, beside a
+    // bounds clause; each names the rule.
+    for body in [
+        PREMISE.to_owned(),
+        format!("quant null-deref #s;\n    {PREMISE}"),
+        format!("requires bounds_index(k, 4);\n    {PREMISE}"),
+    ] {
+        let error = load(&body).expect_err("a premise beside no member clause");
+        assert!(error.contains("premise-beside-member"), "{error}");
+    }
     // Malformed, repeated or a postcondition: the module is rejected.
     for bad in [
         "requires resource_premise(No_plugin, \"x\");",
@@ -213,7 +234,7 @@ fn the_premise_stands_only_beside_a_scoped_member_form() {
     ] {
         assert!(
             load(&format!(
-                "requires nonnull_member_stable(S, next);\n    {bad}"
+                "requires nonnull_member(S, next) where quant #scope [[stable]];\n    {bad}"
             ))
             .is_err(),
             "{bad} must reject the module"

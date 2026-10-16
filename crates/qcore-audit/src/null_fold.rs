@@ -339,20 +339,24 @@ pub fn fold(rows: &mut [Value], evidence: &[Value], environment: &BoundsContract
         } else {
             member_standing(examined, failed)
         };
-        member_section.insert(
-            member.clone(),
-            json!({
-                "host": host,
-                "standing": standing,
-                "clauses": {
-                    "stores": if *held { "held" } else if failed > 0 { "withdrawn" } else if examined == 0 { "unexamined" } else { "validated" },
-                    "construction": "declared-assumption",
-                },
-                "stores_examined": examined,
-                "stores_not_proved": failed,
-                "failures": failures,
-            }),
+        let mut record = json!({
+            "host": host,
+            "standing": standing,
+            "clauses": {
+                "stores": if *held { "held" } else if failed > 0 { "withdrawn" } else if examined == 0 { "unexamined" } else { "validated" },
+                "construction": "declared-assumption",
+            },
+            "stores_examined": examined,
+            "stores_not_proved": failed,
+            "failures": failures,
+        });
+        // Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16,
+        // "Yes, all kinds"): a premised plain member's record lists them.
+        crate::null_member_scope_fold::premise_list(
+            &mut record,
+            declarations.premises.get(&format!("member:{member}")),
         );
+        member_section.insert(member.clone(), record);
     }
     let (stable_section, scope_section) =
         crate::null_member_scope_fold::sections(evidence, &declarations, &withdrawn);

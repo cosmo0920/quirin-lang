@@ -1315,7 +1315,8 @@ impl<'a> SourceParser<'a> {
     /// no escape and no control character, each name at most once per
     /// declaration. Anything else rejects the module. Where a vocabulary
     /// admits the clause is its loader's (resource v1 anywhere; bounds v1
-    /// only beside `nonnull_member_stable` / `nonnull_member_scope`).
+    /// only beside a `nonnull_member` clause, of any kind since card
+    /// NONNULL-MEMBER-UNIFIED-QUALIFIER).
     fn premise_clause(
         &self,
         kind: &SourceContractClauseKind,

@@ -897,7 +897,11 @@ impl<'a> Walker<'a> {
                         ));
                     }
                     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14y): a fact
-                    // kept across a call or a store by a stable member.
+                    // kept across a call or a store by a stable member. The
+                    // label names the fact kind, kept byte for byte by card
+                    // NONNULL-MEMBER-UNIFIED-QUALIFIER (the clause is
+                    // `nonnull_member(TAG, FIELD) where quant #scope
+                    // [[stable]]`).
                     Proof::NonNullResult(name) if name.starts_with("stable:") => {
                         self.assumptions.insert(format!(
                             "{name}: a non-null member kept (nonnull_member_stable; every store to an existing object checked, whole-object writes premised)"

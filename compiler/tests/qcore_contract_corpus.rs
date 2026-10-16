@@ -678,8 +678,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_processor_instance_create",
         2,
     ),
-    // ... and ten function-scope entries `nonnull_member_scope(flb_input_instance,
-    // p, ins)` (selector and one entry each).
+    // ... and ten function-scope entries `nonnull_member(flb_input_instance,
+    // p, ins) where quant #scope [[scope]]` (selector and one entry each;
+    // card NONNULL-MEMBER-UNIFIED-QUALIFIER migrated their spelling, counts
+    // unchanged).
     ("fluent_bit/null_deref.qv", "flb_input_plugin_pause", 2),
     ("fluent_bit/null_deref.qv", "flb_input_plugin_resume", 2),
     ("fluent_bit/null_deref.qv", "flb_input_pause", 2),
@@ -1666,10 +1668,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card NULL-CANDIDATE-TRIAGE (rules 14t-14u): non-null members (each the
     // selector and one member clause, two on the topic constructor), a
     // non-null result, and seven more `quant null-deref` checks.
-    ("librdkafka/null_deref.qv", "rd_kafka_toppar_new0", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_topic_new0", 3),
-    ("librdkafka/null_deref.qv", "rd_kafka_cgrp_new", 2),
-    ("librdkafka/null_deref.qv", "rd_kafka_transport_new", 2),
+    // Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes,
+    // all kinds"): +1 on each of the four plain member declarations, which
+    // name `rk_no_plugin_library` (2 -> 3, 3 -> 4, 2 -> 3, 2 -> 3).
+    ("librdkafka/null_deref.qv", "rd_kafka_toppar_new0", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_topic_new0", 4),
+    ("librdkafka/null_deref.qv", "rd_kafka_cgrp_new", 3),
+    ("librdkafka/null_deref.qv", "rd_kafka_transport_new", 3),
     ("librdkafka/null_deref.qv", "rd_kafka_topic_keep", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_flush", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_message_errstr", 2),
@@ -1681,7 +1686,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a stable member, hosted
     // on the broker's constructor (the selector and one stable clause).
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1 on each of the 67 premised
-    // nonnull_member_stable / nonnull_member_scope declarations (`rk_no_plugin_library`).
+    // stable and scope member declarations (`rk_no_plugin_library`; spelled
+    // `nonnull_member(...) where quant #scope [[stable]]` / `[[scope]]` since
+    // card NONNULL-MEMBER-UNIFIED-QUALIFIER, counts unchanged).
     ("librdkafka/null_deref.qv", "rd_kafka_broker_add", 3),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): sixty-six function-scope
     // entries of the registered broker (the selector and one scope clause).
