@@ -1,0 +1,72 @@
+{
+ "corpus": {
+  "custody": {
+   "Unknown": 3917,
+   "Safe": 908,
+   "Unsafe": 9
+  },
+  "null": {
+   "Unknown": 2516,
+   "Safe": 2386,
+   "Unsafe": 18,
+   "Pending": 1
+  },
+  "combined": {
+   "Unknown": 4099,
+   "Safe": 794,
+   "Unsafe": 27,
+   "Pending": 1
+  },
+  "moves": {
+   "custody Safe -> Unknown": 31,
+   "combined Safe -> Unknown": 31,
+   "null Safe -> Unknown": 162,
+   "null Safe -> Pending": 1,
+   "combined Safe -> Pending": 1
+  }
+ },
+ "system": {
+  "custody": {
+   "Unknown": 349,
+   "Safe": 95,
+   "Unsafe": 4
+  },
+  "null": {
+   "Unknown": 243,
+   "Safe": 209,
+   "Pending": 2
+  },
+  "combined": {
+   "Unknown": 385,
+   "Safe": 63,
+   "Pending": 2,
+   "Unsafe": 4
+  },
+  "moves": {
+   "null Safe -> Pending": 2,
+   "combined Safe -> Pending": 2
+  }
+ },
+ "slice": {
+  "custody": {
+   "Unknown": 347,
+   "Safe": 52,
+   "Pending": 4,
+   "Unsafe": 1
+  },
+  "null": {
+   "Safe": 174,
+   "Unknown": 216,
+   "Pending": 16
+  },
+  "combined": {
+   "Unknown": 372,
+   "Safe": 31,
+   "Pending": 2,
+   "Unsafe": 1
+  },
+  "moves": {
+   "null Safe -> Pending": 16
+  }
+ }
+}
