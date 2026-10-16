@@ -579,6 +579,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [op-constructor-declarations](op-constructor-declarations/README.md) | OP-CONSTRUCTOR-DECLARATIONS: op constructors and their result states |
 
+| [outer-contract](outer-contract/README.md) | OUTER-CONTRACT: outer contracts and the runtime projection (stage 1) |
+
 | [outer-contract-design](outer-contract-design/README.md) | OUTER-CONTRACT-DESIGN: code loaded at runtime, stated as an outer contract |
 
 | [owned-field-route-reach](owned-field-route-reach/README.md) | `OWNED-FIELD-ROUTE-REACH` (wave 41) — the reach of wave 39's owned-field rules, measured, then closed or named |

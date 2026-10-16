@@ -678,6 +678,16 @@ fn tally<'a>(verdicts: impl Iterator<Item = &'a str>) -> Value {
 
 type RowKey = (String, String, String, usize);
 
+/// A null row as the projection reads it: its key, null verdict, facts, and
+/// its custody and combined verdicts.
+type NullRow = (
+    RowKey,
+    Verdict,
+    BTreeSet<Fact>,
+    Option<Verdict>,
+    Option<Verdict>,
+);
+
 /// Project the static rows: `units` the report's unit rows, `null_rows` the
 /// folded null rows when the null property was selected, `premises` the
 /// declarations' premises ([`crate::contract_dependencies::premises`]).
@@ -749,13 +759,7 @@ pub fn project(units: &[Value], null_rows: Option<&[Value]>, premises: &Value) -
         .iter()
         .map(|(key, _, facts)| (key.clone(), facts.clone()))
         .collect();
-    let mut null: Vec<(
-        RowKey,
-        Verdict,
-        BTreeSet<Fact>,
-        Option<Verdict>,
-        Option<Verdict>,
-    )> = Vec::new();
+    let mut null: Vec<NullRow> = Vec::new();
     let mut seen: BTreeMap<(String, String, String), usize> = BTreeMap::new();
     for row in null_rows.into_iter().flatten() {
         let library = row["library"].as_str().unwrap_or_default().to_owned();

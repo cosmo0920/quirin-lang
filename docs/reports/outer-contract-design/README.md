@@ -6,6 +6,11 @@ Base: local `main` `3f8f1a617`. This is the census and the proposal. The card
 Lean module is changed. Rule id `31` is reserved for the implementation.
 Prediction: [PREDICTION.md](PREDICTION.md), committed with this README.
 
+**Decided 2026-10-17** (D1 "B: loader envelope", D2 "Yes, as proposed", D3
+"Both from one run", D4 "Later"); stage 1 is implemented by card
+OUTER-CONTRACT ([report](../outer-contract/README.md)). This report is
+frozen as the design evidence.
+
 ## 1. Authority
 
 **User direction (2026-10-16, verbatim, as recorded in the brief).** Asked

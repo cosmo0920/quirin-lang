@@ -1689,7 +1689,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 133 -> 134: card FB-TEARDOWN-DESTROY-DECLARATIONS adds
     // `fluent_bit/teardown_destroy.qv` (fourteen destroyer declarations, ten
     // with member-path states), entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 134, "corpus module count");
+    // 134 -> 135: card OUTER-CONTRACT adds `fluent_bit/outer.qv`, an outer
+    // contract v1 module (the crate's outer view, never selected):
+    // resource-v1 rejects both loader declarations.
+    assert_eq!(modules.len(), 135, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2029,9 +2032,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `mk_event_loop_create` and `mk_event_loop_destroy` in
     // `monkey/event_loop.qv` (plain declarations). Selection and rejected
     // unchanged.
+    // 328 -> 330 rejected by card OUTER-CONTRACT: the two loader declarations
+    // of `fluent_bit/outer.qv` (outer contract v1), likewise rejected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (64, 491, 328)
+        (64, 491, 330)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

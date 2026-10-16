@@ -443,3 +443,16 @@ as in a resource lock; a bounds module never uses `#include` or `inherit` (the
 probe leaves one out of every view). `qcore-provider-chunkio`'s bounds view is
 `chunkio/file_st_bounds.qv` and `chunkio/meta_len_bounds.qv` (five pinned
 declarations). [Report](../reports/cg16-bounds-transport-and-chunkio-neighbours/README.md).
+
+**Outer view (OUTER-CONTRACT, gateway rule [31](gateway.md#constraint-31)).**
+An outer contract v1 module (C04.20) lives in the provider crate that owns its
+loaders and is listed in the crate record's generated `outer_view`: every owned
+module in neither other view that names `outer_contract_v1`, loaded together by
+the outer loader (a citation needs its definition), so a crate whose outer
+modules do not load together refuses the probe. The three views are disjoint.
+Its pins live in the crate's `outer-contracts.lock`, written only by
+`quirin-audit pin --outer` after review at every pinned revision and verified
+with the other locks by `pin --verify-contracts`; a loader whose pin is not in
+force covers nothing in the runtime projection and reaches every record.
+`quirin-provider-fluent-bit`'s outer view is `fluent_bit/outer.qv` (two pinned
+loaders). [Report](../reports/outer-contract/README.md).
