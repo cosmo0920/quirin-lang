@@ -61,6 +61,7 @@
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
     "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
     "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",

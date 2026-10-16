@@ -2041,7 +2041,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: three Monkey
     // registrations (C04.14), two removals of one registration and three
     // collector setters forwarded through an id (C04.19.3): 88 -> 96.
-    assert_eq!(loaded.retaining().len(), 96);
+    // Card FB-TEARDOWN-DESTROY-DECLARATIONS: the ten Fluent Bit destroyers
+    // with member-path states (`fluent_bit/teardown_destroy.qv`; the other
+    // four are in the function map): 96 -> 106.
+    assert_eq!(loaded.retaining().len(), 106);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()
