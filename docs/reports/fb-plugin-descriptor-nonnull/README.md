@@ -167,26 +167,26 @@ New caller candidates in rows already Unknown (no verdict move): slice
   descriptor's 34 slice candidates are 38 removed of which 12 are re-added at
   callers; the three output functions it named do not move.
 
-### After the rebase onto `cc3e79559`
+### After the rebase onto `8b360766c`
 
-The card was rebased onto main `cc3e79559`, which came after
+The card was rebased onto main `8b360766c`, which came after
 HANDOFF-CANDIDATE-OWN-CALLBACKS, MEMBER-PREPASS-OTHER-ROUTES,
 MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS, LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED and
--REMAINDER, HANDOFF-DIRECT-CALL-READING, UNION-OPAQUE-RECORD-WRITES-BY-TYPE and
-FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE.
+-REMAINDER, HANDOFF-DIRECT-CALL-READING, UNION-OPAQUE-RECORD-WRITES-BY-TYPE,
+FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE and RELATIONAL-REWRITE-LINE-ORDER.
 
 It was then measured again ([arbiter.sh](scripts/arbiter.sh),
-[arbiter_compare.sh](scripts/arbiter_compare.sh)): main's binary `9176f5a9…` on
-main's tree, worktree detached at `4285ff7cd`, against the rebased tip's
-`9ec3bc45…` (`6ebc59ad4`). Each corpus `run.json` `binary_sha256` matches.
-`cc3e79559` adds records only over `4285ff7cd`: no file under `crates/`,
-`compiler/`, `providers/`, `contract/`, `proof/` or `scripts/` differs, so this
-is main's analyzer on main's contracts. Two earlier passes gave the same result
-and are superseded: one against `4c0803f1f` (`da1c5b4e…` / `c881cdfb…`), one
-against `1c7333db1` (`14036267…` / `f2c0e9a9…`).
+[arbiter_compare.sh](scripts/arbiter_compare.sh)): main's binary `282efa84…` on
+main's tree (worktree detached at `8b360766c`) against the rebased tip's
+`d5c51f14…` (`1fae6572b`). Each corpus `run.json` `binary_sha256` matches.
+Three earlier passes gave the same result and are superseded: against
+`4c0803f1f` (`da1c5b4e…` / `c881cdfb…`), `1c7333db1` (`14036267…` /
+`f2c0e9a9…`) and `4285ff7cd` (= `cc3e79559`'s code; `9176f5a9…` / `9ec3bc45…`).
 
-* **Custody is byte-identical** on every route: corpus `9076ae48…` 938 / 9 /
-  3,887, system `50963097…`, slice `ecd778b2…`. No custody column moved.
+* **Custody is byte-identical** on every route: corpus `de6343c7…` 938 / 9 /
+  3,887, system `cc469720…`, slice `ecd778b2…`. No custody column moved.
+  The corpus and system digests differ from the earlier passes' because of
+  main's own changes, identically on both sides.
 * **The null movement is the first base's, row for row**
   ([rebase-identity.json](artifacts/rebase-identity.json),
   [compare-rebased-*.json](artifacts/compare-rebased-slice.json)): the same
@@ -250,7 +250,7 @@ bold rule-id duplicate check is empty (no new id). Logs: `private/fbn/gate-g5/`,
 
 ## 5. Ledger
 
-`named_followups` 790 → 790 on main `cc3e79559` ([update_ledger.py](scripts/update_ledger.py),
+`named_followups` 789 → 789 on main `8b360766c` ([update_ledger.py](scripts/update_ledger.py),
 idempotent; `dimensions.named_followups` equals the list length). At the first
 base it went 783 → 785.
 
