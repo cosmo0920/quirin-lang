@@ -1,0 +1,214 @@
+{
+ "route": "slice",
+ "before": {
+  "report_sha256": "61c29c852ef76efb6cc9480f8b837496fb13cad50338e21443da1da5aa674ab1",
+  "rows": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1
+  },
+  "null": {
+   "Safe-conditional": 121,
+   "Safe-unconditional": 69,
+   "Unknown": 216
+  }
+ },
+ "after": {
+  "report_sha256": "c6b4b887c6c6bdc258e2ca2d5f347c52756fd6333ab633de19550c351d109cca",
+  "rows": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1
+  },
+  "null": {
+   "Safe-conditional": 121,
+   "Safe-unconditional": 69,
+   "Unknown": 216
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17271,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     17271,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17238,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     17238,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c#1",
+   "function": "input_thread_instance_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17271,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     17271,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c#1",
+   "function": "input_thread_instance_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17238,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     17238,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "flb_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     18425,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "flb_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18461,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     18461,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c#1",
+   "function": "flb_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     18425,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c#1",
+   "function": "flb_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18461,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     18461,
+     1
+    ]
+   ]
+  }
+ ],
+ "null_moves": []
+}

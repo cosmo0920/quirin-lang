@@ -1,0 +1,112 @@
+{
+ "base": "main 3f8f1a617 (BEFORE binary built from its git archive; main moved to a423fca5d by a records-only commit, the measured code is identical)",
+ "tip_measured": "6710d60a83b0595f47f7bae487e639c87d80481f",
+ "binaries": {
+  "before": "dac1482d57475cd99e830d325bfe14aa2aa1c55b0797ff138803b367fc856891",
+  "after": "f743353a5bb4f870919f94c54e188f3b4878902a29c778aa2787c002a4c81b6d"
+ },
+ "corpus_run_binary_sha256": {
+  "before": "dac1482d57475cd99e830d325bfe14aa2aa1c55b0797ff138803b367fc856891",
+  "after": "f743353a5bb4f870919f94c54e188f3b4878902a29c778aa2787c002a4c81b6d"
+ },
+ "corpus": {
+  "before": {
+   "report": "private/rup/before/resource-diagnostics.json",
+   "sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+   "rows": {
+    "Safe": 939,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe-conditional": 1435,
+    "Safe-unconditional": 1114,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "seconds": 903.63
+  },
+  "after": {
+   "report": "private/rup/after/resource-diagnostics.json",
+   "sha256": "33e139c0e69a6926e51b1fd9bc37c9034cf8e65178e568501dea395e11ec369c",
+   "rows": {
+    "Safe": 939,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe-conditional": 1435,
+    "Safe-unconditional": 1114,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "seconds": 900.156
+  }
+ },
+ "system": {
+  "before": {
+   "report": "private/rup/before-system/resource-diagnostics.json",
+   "sha256": "6e4c41ea8b0658f810ff088411117eb74bde9fc8d8db6c07c9412b4914d209d3",
+   "rows": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe-conditional": 125,
+    "Safe-unconditional": 86,
+    "Unknown": 243
+   },
+   "seconds": 220.18
+  },
+  "after": {
+   "report": "private/rup/after-system/resource-diagnostics.json",
+   "sha256": "b1203de8b5452497a2d82cd8651c999416618dbdb0ae3e4a037e396bb14ea06c",
+   "rows": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe-conditional": 125,
+    "Safe-unconditional": 86,
+    "Unknown": 243
+   },
+   "seconds": 219.616
+  }
+ },
+ "slice": {
+  "before": {
+   "report": "private/w47-tail/attempt-1/rup-before/resource-diagnostics.json",
+   "sha256": "61c29c852ef76efb6cc9480f8b837496fb13cad50338e21443da1da5aa674ab1",
+   "rows": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe-conditional": 121,
+    "Safe-unconditional": 69,
+    "Unknown": 216
+   },
+   "seconds": 167.48
+  },
+  "after": {
+   "report": "private/w47-tail/attempt-1/rup-after/resource-diagnostics.json",
+   "sha256": "c6b4b887c6c6bdc258e2ca2d5f347c52756fd6333ab633de19550c351d109cca",
+   "rows": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe-conditional": 121,
+    "Safe-unconditional": 69,
+    "Unknown": 216
+   },
+   "seconds": 167.747
+  }
+ }
+}

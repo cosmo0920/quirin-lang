@@ -1,0 +1,288 @@
+{
+ "route": "corpus",
+ "before": {
+  "report_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+  "rows": {
+   "Safe": 939,
+   "Unknown": 3886,
+   "Unsafe": 9
+  },
+  "null": {
+   "Safe-conditional": 1435,
+   "Safe-unconditional": 1114,
+   "Unknown": 2354,
+   "Unsafe": 18
+  }
+ },
+ "after": {
+  "report_sha256": "33e139c0e69a6926e51b1fd9bc37c9034cf8e65178e568501dea395e11ec369c",
+  "rows": {
+   "Safe": 939,
+   "Unknown": 3886,
+   "Unsafe": 9
+  },
+  "null": {
+   "Safe-conditional": 1435,
+   "Safe-unconditional": 1114,
+   "Unknown": 2354,
+   "Unsafe": 18
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_lib_worker",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6530,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6530,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6568,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6568,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "unmodeled expression may mutate a formal resource identity",
+     6390,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     6370,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6417,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled increment or decrement expression",
+     6390,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `evl`",
+     6529,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled expression may mutate a formal resource identity",
+     6436,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled expression may mutate a formal resource identity",
+     6469,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6529,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled increment or decrement expression",
+     6436,
+     1
+    ],
+    [
+     "unsupported",
+     "unmodeled increment or decrement expression",
+     6469,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6132,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6136,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6132,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6136,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/monkey.c",
+   "function": "mk_server_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6044,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6055,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6059,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6061,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6071,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `server`",
+     6072,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     6044,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_create`",
+     6059,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6055,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6061,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6071,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_loop_destroy`",
+     6072,
+     1
+    ]
+   ]
+  }
+ ],
+ "null_moves": []
+}
