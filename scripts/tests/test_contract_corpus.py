@@ -57,9 +57,11 @@ class CanonicalCorpus(unittest.TestCase):
         # monkey/event_loop.qv in qcore-provider-libevent (80 -> 81) and
         # fluent_bit/input_collector_registration.qv in
         # quirin-provider-fluent-bit (51 -> 52).
-        self.assertEqual(len(modules), 133)
+        # 133 -> 134: FB-TEARDOWN-DESTROY-DECLARATIONS's
+        # fluent_bit/teardown_destroy.qv in quirin-provider-fluent-bit (52 -> 53).
+        self.assertEqual(len(modules), 134)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 81)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 52)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 53)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 
