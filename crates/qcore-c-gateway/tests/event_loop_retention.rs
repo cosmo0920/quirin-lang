@@ -188,6 +188,24 @@ fn a_removal_with_no_record_is_the_identity() {
 }
 
 #[test]
+fn an_interior_of_a_frame_object_is_never_a_callers_object() {
+    if !clang_available() {
+        return;
+    }
+    // `&h.event` points into this frame's own object: neither a caller's
+    // object (which would outlive a frame holder) nor a tracked identity, so
+    // the retention is undecided.
+    let rows = rows(
+        "void frame_interior(void) { struct ev_loop *l = ev_loop_create(); if (!l) return; struct coll h; ev_add(l, &h.event); ev_loop_destroy(l); }",
+    );
+    assert!(
+        !rows["frame_interior"].safe(),
+        "{:?}",
+        rows["frame_interior"]
+    );
+}
+
+#[test]
 fn a_loop_destroyed_first_ends_its_records_and_a_release_while_held_refuses() {
     if !clang_available() {
         return;

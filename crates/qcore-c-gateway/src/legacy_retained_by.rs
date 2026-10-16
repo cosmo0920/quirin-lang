@@ -44,8 +44,9 @@ pub enum RetainedSpelling {
     /// Any other plain name.
     Name(String),
     /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `&X->f[->g]` (or
-    /// `.`), a pointer to a member of the object the plain name `X` denotes.
-    Interior(String, Vec<String>),
+    /// `.`), a pointer to a member (at least one) of the object the plain
+    /// name `X` denotes; `true` when `X` is an unrebound formal.
+    Interior(String, Vec<String>, bool),
 }
 
 /// A holder's actual, as spelled.
@@ -527,7 +528,14 @@ impl Parser<'_> {
             }),
             // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `&X->f[->g]`.
             Some(["&", root, rest @ ..]) if is_identifier(root) => member_chain(rest)
-                .map(|fields| RetainedSpelling::Interior((*root).to_owned(), fields)),
+                .filter(|fields| !fields.is_empty())
+                .map(|fields| {
+                    RetainedSpelling::Interior(
+                        (*root).to_owned(),
+                        fields,
+                        self.caller_formals.contains(root),
+                    )
+                }),
             _ => None,
         }
     }
@@ -668,13 +676,13 @@ pub(super) fn retained_class(state: &AbstractState, retained: &RetainedSpelling)
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: an interior of a
         // caller's object is that object's member; of a tracked identity, its
         // member; anything else is undecided.
-        RetainedSpelling::Interior(root, fields) => {
+        RetainedSpelling::Interior(root, fields, formal) => {
             match retained_class(
                 state,
-                &if state.pointers.contains_key(root) {
-                    RetainedSpelling::Name(root.clone())
-                } else {
+                &if *formal {
                     RetainedSpelling::Formal(root.clone())
+                } else {
+                    RetainedSpelling::Name(root.clone())
                 },
             ) {
                 Retained::CallerObject(name) => {

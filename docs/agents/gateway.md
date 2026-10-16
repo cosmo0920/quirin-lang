@@ -1322,7 +1322,10 @@ refusal stays.
     paired-collector state only at the callback boundary with both results
     succeeded, a resume's running state only under active ingestion) are the
     kernel's; the public pause/resume, registration and `mk_event_*` stay
-    undeclared (rule 10j). **Do not** apply a loop-owner declaration on a
+    undeclared (rule 10j; since card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION
+    the registrations and `mk_event_*` are declared as retentions, removals
+    and id-forwarded registrations, rules 12t and 12n, with no loop-owner
+    obligation). **Do not** apply a loop-owner declaration on a
     route that derives no thread, treat an unresolved hop or a missing
     caller as discharged, name a spawned thread after its spawner, or relax a
     refusal because another context discharges. Premises stated, not proved
@@ -5440,6 +5443,40 @@ own anchor here.
     HANDOFF-CANDIDATE-OWN-CALLBACKS) are decided by this rule as in the
     candidate's own body, over the run's set only, when the candidate is
     composed at an invocation (rule 13u's amendment).
+    **A registration forwarded through an id** (card
+    FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, contract specification
+    C04.19.3; USER DECISION 2026-10-16, "Result + list"):
+    `resource_callback_member_registered(#id, TAG.FIELD, F) where #id =
+    #result in P.LIST;` (`contract_callback.rs` `by_id_clause`;
+    `CallbackClause::MemberRegistered::by_id`, `IdLink`, omitted when
+    absent) is read everywhere as the setter form: at a call it changes
+    nothing on the caller's state, and for the run's closure every call is a
+    store of its `F` actual (`callback_member_fold::declared_stores`
+    unchanged). Its body check (`crates/qcore-c-gateway/src/registration_by_id.rs`,
+    hooked in `legacy_callback_route::settle`, evidence `12n`): in a unit
+    that defines the setter, the clause stands only where the body, or the
+    one in-unit helper it hands `F` and `P` whole to, creates exactly one
+    local `struct TAG *` record from a declaration whose result is owned,
+    links it once into `P->LIST` with a declaration publishing its first
+    actual into its second, stores `F` once into the member (no other
+    access to it) and returns the record's one id member or a negative
+    constant (a helper: the record or a null constant), the setter naming
+    its record only through member accesses off the member, a null test
+    and that return; anything else withdraws the declaration there
+    (`callback-withdrawn`); elsewhere a declared assumption (rule 13i). A
+    view `&r->H` handed to a call reaches that member only (premise
+    `P-PATH-MEMBER-VIEW`, rule 30's reading). **Do not** read the id as the
+    record at a later call (no consumer resolves it yet), validate a body
+    that creates or links twice, or follow a helper beyond one level.
+    Declarations: the three collector setters in `quirin-provider-fluent-bit`
+    (`fluent_bit/input_collector_registration.qv`, bodies identical at
+    66910c10, 046accf6 and 90978ac6, pinned at all three).
+    `QCore.RegistrationById`
+    (`a_forwarded_registration_is_the_in_body_store`,
+    `an_unresolved_or_ambiguous_id_never_decides`,
+    `two_records_never_validate`, `an_unlinked_record_never_validates`,
+    `vectors_hold`); `VECTORS`; `tests/event_loop_retention.rs`;
+    [report](../reports/fb-event-loop-retention/README.md).
 
 <a id="constraint-12o"></a>
 
@@ -5784,6 +5821,51 @@ own anchor here.
     `trace_vectors_hold` and ten more), bound to `retained_by.rs` by the
     shared vectors and to route G by `tests/callee_retention_class1.rs`;
     [report](../reports/callee-retention-class1/README.md).
+    **Amendment (card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION, contract
+    specification C04.14.3; USER DECISIONS 2026-10-16, "Tracked holder path"
+    and "R3: quant state"): holder paths and the removal of one
+    registration.** Loader `contract_retained_by.rs` (`path_clause`,
+    `removal_clause`, `paths_and_removals`), schema
+    `qcore_schemas::retained_by::{PathRetention, Removal}`
+    (`RetainingContract::{path_retentions, removals}`, omitted when empty);
+    decisions `retained_by.rs` (`Holder::Path`, `Retained::TrackedInterior`,
+    `HeldObject::SiteInterior`, `HeldBy::Path`, `removal_key`,
+    `Event::Remove`, `PATH_DECISION_VECTORS`, `PATH_TRACE_VECTORS`); route G
+    `legacy_retained_by.rs` (`path_stable`, `Parser::{path_holder,
+    retained_spelling}`, `Operands::removals`, printed only when present).
+    Shared items: `HeldObject::site` (the two held-identity checks of
+    `legacy_slot_move_borrow.rs` and `legacy_reference_count.rs` read an
+    interior too) and the access gate's contract lookup in
+    `legacy_call_argument_access.rs`, which now reads a withheld
+    declaration's borrowed positions as the function map's (discharging
+    `RETAINING-CALL-MEMBER-ACTUAL`; a call the hook refuses keeps the gate's
+    refusal). (1) **A path holder** is the object at a member path below an
+    unrebound formal the body names only through member accesses off the
+    path (premise `P-HOLDER-PATH-STABLE`); every other member spelling is a
+    holder the body cannot name. A caller's object, a tracked identity or an
+    interior `&X->f` retained there is recorded, and the record outlives the
+    frame: it refuses at an exit unless a removal of exactly it ended it. (2)
+    **A removal** (`quant live #H: #holds(P) |-> #absent;`) drops only the
+    record its actuals key, and nothing otherwise: an unmatched removal never
+    decides, and a later release of the held object refuses. (3) A release
+    or transfer of an identity while an interior of it is held refuses. A
+    retention is still never forwarded into a summary, so every Fluent Bit
+    registration (each removal is in another function, the census's §1.4)
+    refuses at its registering function's exit
+    (`FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`). **Do not** resolve a path
+    below a local or a call's result, match a removal to a record by its
+    holder alone, read a destroy at a path as a holder release, or forward a
+    retention into a summary. Declarations: Monkey's seven event-loop
+    operations in `qcore-provider-libevent` (`monkey/event_loop.qv`, pinned
+    at 66910c10, 046accf6 and the 90978ac6 export; descriptor effects under
+    the named premise `mk_event_descriptors`). `QCore.RetentionPath`
+    (`a_path_record_ends_only_by_its_own_removal`,
+    `an_unresolved_path_never_decides`,
+    `an_unmatched_removal_keeps_every_record`,
+    `a_safe_path_never_releases_a_held_identity`,
+    `a_safe_path_leaves_no_outliving_holder_holding`, the vectors);
+    `tests/event_loop_retention.rs`;
+    [report](../reports/fb-event-loop-retention/README.md).
 
 <a id="constraint-12u"></a>
 
