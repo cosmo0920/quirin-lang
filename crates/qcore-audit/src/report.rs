@@ -277,10 +277,12 @@ impl AuditReport {
     /// Card NULL-SAFETY-PROPERTY: write the null selection's rows (JSON
     /// lines) and their tally beside them, when the run selected the
     /// property. The custody report is written elsewhere and never reads
-    /// these.
-    pub fn write_null_selection(&self) -> Result<(), String> {
+    /// these. Returns the folded rows written (card OUTER-CONTRACT: the
+    /// runtime projection reads them), `None` when the property is not
+    /// selected.
+    pub fn write_null_selection(&self) -> Result<Option<Vec<Value>>, String> {
         let Some(path) = std::env::var_os(crate::projection::NULL_SELECTION) else {
-            return Ok(());
+            return Ok(None);
         };
         let path = std::path::PathBuf::from(path);
         // Card NULL-CANDIDATE-TRIAGE (rules 14t-14v): the run's fold of the
@@ -305,7 +307,28 @@ impl AuditReport {
         let summary_path = path.with_extension("summary.json");
         fs::write(&summary_path, bytes)
             .map_err(|e| format!("could not write {}: {e}", summary_path.display()))?;
-        Ok(())
+        Ok(Some(rows))
+    }
+
+    /// Card OUTER-CONTRACT (gateway rule 31): write the runtime projection
+    /// of the published rows (custody, and `null_rows` when the null
+    /// property was selected) beside them, when the run selected it
+    /// (`QCORE_OUTER_PROJECTION`). The static report is written before and
+    /// is never read back: no static byte moves.
+    pub fn write_outer_projection(
+        &self,
+        contracts: &ResourceContracts,
+        null_rows: Option<&[Value]>,
+    ) -> Result<(), String> {
+        if !crate::outer_selection::selected() {
+            return Ok(());
+        }
+        let premises = crate::contract_dependencies::premises(contracts)?;
+        let Some(projection) = crate::outer_selection::project(&self.units, null_rows, &premises)
+        else {
+            return Err("the outer projection is selected but no outer environment was installed on this route".into());
+        };
+        crate::outer_selection::write(&projection)
     }
 
     /// Card CG16-INDEX-AND-OFFSET-EXTENTS: one function's bounds row.

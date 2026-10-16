@@ -109,6 +109,7 @@ impl ViewDeclaration {
                     SourceContractClauseKind::QuantNullDeref => "quant null-deref".into(),
                     SourceContractClauseKind::QuantDeref => "quant deref".into(),
                     SourceContractClauseKind::QuantLive => "quant live".into(),
+                    SourceContractClauseKind::QuantOuter => "quant".into(),
                 },
                 expression: clause.value.expression_source.trim().to_owned(),
             })

@@ -692,6 +692,13 @@ impl NoBuildAudit {
             &root,
             &contracts,
         )?;
+        // Card OUTER-CONTRACT (rule 31): the outer environment.
+        crate::outer_selection::select_for_route(
+            "contracts",
+            input.manifest_path(),
+            input.manifest_text(),
+            &root,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         // The no-build "source profile": the selection and the assumed
         // configuration. Every compile-task identity and every certificate's
@@ -793,6 +800,8 @@ impl NoBuildAudit {
             .iter()
             .map(|unit| self.entry(unit))
             .collect::<Result<Vec<_>, _>>()?;
+        // Card OUTER-CONTRACT (rule 31): what each loader's binders reach.
+        crate::outer_selection::compute_reach(&entries)?;
         if let Some(prepass) = crate::member_prepass::run(
             &entries,
             &self.contracts,
@@ -1137,7 +1146,9 @@ impl NoBuildAudit {
             // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds rows, when the
             // property is selected (nothing otherwise).
             self.report.write_bounds_selection()?;
-            self.report.write_null_selection()?;
+            let null_rows = self.report.write_null_selection()?;
+            self.report
+                .write_outer_projection(&self.contracts, null_rows.as_deref())?;
             let mut bytes =
                 serde_json::to_vec_pretty(&self.sidecar).map_err(|error| error.to_string())?;
             bytes.push(b'\n');

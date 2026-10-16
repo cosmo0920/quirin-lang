@@ -39,7 +39,7 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
         AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
         IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
-        PluginClaimUncertified as Plugin, ProviderFailure as Provider, ResidualCustody as Custody,
+        OuterContract as Outer, PluginClaimUncertified as Plugin, ProviderFailure as Provider, ResidualCustody as Custody,
         StaleEvidence as Stale, UnsupportedSyntax as Syntax,
     };
     vec![
@@ -214,6 +214,13 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
              the audit validates (QP010: unverified provider allegation: evidence v2 has no \
              counterexample checker)",
             Plugin,
+        ),
+        // Card OUTER-CONTRACT (rule 31): the runtime projection's reason
+        // (`qcore_audit::outer_selection`).
+        (
+            "rests on outer contract `flb_external_plugin@0123abcd` through \
+             stable:flb_output_instance.p (runtime projection, rule 31)",
+            Outer,
         ),
         (
             "`k_close`'s declared contract in k.qcore awaits human review \

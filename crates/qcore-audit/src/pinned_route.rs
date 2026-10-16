@@ -142,6 +142,14 @@ pub fn run(
         &root,
         &contracts,
     )?;
+    // Card OUTER-CONTRACT (rule 31): with the runtime projection selected,
+    // the outer views of the same load path, pinned over the audited source.
+    crate::outer_selection::select_for_route(
+        "pinned",
+        contract_manifest,
+        &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
+        &root,
+    )?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: kept so the pending-review section can
     // be added once the report it counts is complete.
     let mut contract_sidecar = None;
@@ -211,6 +219,9 @@ pub fn run(
             prepass_entries.extend(plan.selected.iter().cloned());
         }
         let scope = crate::member_prepass::load_scope(profile.directory())?;
+        // Card OUTER-CONTRACT (rule 31): what each loader's binders reach,
+        // read from the loader's own unit in the production database.
+        crate::outer_selection::compute_reach(&prepass_entries)?;
         crate::member_prepass::run(&prepass_entries, &contracts, &scope, Some(&root), jobs)
     };
     if let Some(prepass) = &prepass {
@@ -520,7 +531,8 @@ pub fn run(
     if let Some(path) = diagnostic_report {
         report.write_with_revision_key(path, "fluent_bit_revision")?;
         report.write_bounds_selection()?;
-        report.write_null_selection()?;
+        let null_rows = report.write_null_selection()?;
+        report.write_outer_projection(&contracts, null_rows.as_deref())?;
         let (provider_results, native_results): (Vec<_>, Vec<_>) = native_results
             .into_iter()
             .partition(|record| record["kind"] == "provider_source_effect");

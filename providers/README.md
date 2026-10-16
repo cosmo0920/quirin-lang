@@ -75,7 +75,12 @@ the owned modules the bounds contract v1 loader accepts (disjoint from the
 resource view), which the audit routes load when `QCORE_BOUNDS_PROPERTY`
 selects the bounds property; their pins are the crate's
 `bounds-contracts.lock`, written by `quirin-audit pin --bounds --source-root
-<checkout>` after review (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS). Both actions
+<checkout>` after review (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS). Each record
+also carries an `outer_view`, the owned modules the outer contract v1 loader
+accepts (disjoint from both other views, loaded together per crate), which the
+audit routes load when `QCORE_OUTER_PROJECTION` selects the runtime projection;
+their pins are the crate's `outer-contracts.lock`, written by `quirin-audit pin
+--outer --source-root <checkout>` (card OUTER-CONTRACT, gateway rule 31). Both actions
 refuse symbolic links, invalid or unowned paths, and any reintroduced
 `contract/qcore/` legacy tree. Intentional declaration/clause changes still
 require the corpus pin updates.

@@ -433,6 +433,7 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
     let mut crates = serde_json::Map::new();
     let mut union = Vec::new();
     let mut bounds_union = BTreeMap::new();
+    let mut outer_union = BTreeMap::new();
     // Card W45-USER-CONTRACT-PLUGINS: on a user load path only the user's own
     // crates are probed; the extended load path's views are its own.
     let probed = manifest.contract_roots.keys().filter(|name| {
@@ -482,10 +483,38 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
                 "`{name}:{both}` is accepted by both the resource and the bounds loader"
             ));
         }
+        // Card OUTER-CONTRACT: the outer contract loader's view: every owned
+        // module, in neither other view, that names the selector, loaded
+        // together (a citation needs its definition, so a module is never
+        // probed alone). A set that does not load refuses the probe rather
+        // than leaving a loader's runtime condition out of every view.
+        let mut outer_view = Vec::new();
+        let mut outer_sources = BTreeMap::new();
+        for (module, text) in &krate.modules {
+            if text.contains(qcore_contract::outer_contract::OUTER_CONTRACT_MARKER)
+                && !modules.contains(module)
+                && !bounds_view.contains(module)
+            {
+                outer_view.push(module.clone());
+                outer_sources.insert(format!("{name}:{module}"), text.clone());
+            }
+        }
+        if !outer_sources.is_empty() {
+            qcore_contract::outer_contract::load_outer_contract_sources(&outer_sources).map_err(
+                |error| format!("the outer modules of `{name}` do not load together: {error}"),
+            )?;
+            outer_union.extend(outer_sources);
+        }
         crates.insert(
             name.clone(),
-            json!({"resource_view": modules, "refused": refused, "bounds_view": bounds_view}),
+            json!({"resource_view": modules, "refused": refused, "bounds_view": bounds_view, "outer_view": outer_view}),
         );
+    }
+    // Card OUTER-CONTRACT: the outer views load together.
+    if !outer_union.is_empty() {
+        qcore_contract::outer_contract::load_outer_contract_sources(&outer_union).map_err(
+            |error| format!("the outer views of the load path do not load together: {error}"),
+        )?;
     }
     if !bounds_union.is_empty() {
         qcore_contract::bounds_contract::load_bounds_contract_sources(&bounds_union).map_err(

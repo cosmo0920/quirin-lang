@@ -1,4 +1,4 @@
-# qcore-schemas 15.0.0
+# qcore-schemas 18.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -484,3 +484,20 @@ unchanged**: no existing reason text classifies differently, no task digest
 moves, and `ReasonedVerdict` and `Chain` serialize only (a deserializer would be
 a second, unchecked constructor). Plugin protocol 1 and evidence versions 1
 and 2 are unchanged.
+
+## The outer-contract reason (18.0.0)
+
+Card OUTER-CONTRACT (gateway rule 31, contract specification C04.20; USER
+DECISIONS 2026-10-17). The runtime projection's `Pending` names the outer
+contract it rests on.
+
+| Addition | Kind |
+|---|---|
+| `ReasonCategory::OuterContract` (`outer-contract`, subject: analyser, human-resolvable) | new variant on an exhaustively matched enum; the closed vocabulary grows from ten to eleven |
+| `PendingReason::OuterContract` | new variant: a closed-world fact a row rests on is vouched for by an outer contract (`NAME@DIGEST` in the reason) |
+
+Major bump by the exhaustive-variant precedent. **Existing wire bytes are
+unchanged**: no existing reason text classifies differently (the new marker,
+`rests on outer contract`, is spelled by no earlier site), and no static
+verdict reads the new reason. Plugin protocol 1 and evidence versions 1 and 2
+are unchanged.

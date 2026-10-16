@@ -118,6 +118,48 @@ pub fn row_field(dependencies: &RowDependencies) -> Value {
 /// The row field's key of the named null premises (rule 14n).
 pub const NULL_PREMISES_KEY: &str = "null_premises";
 
+/// Card OUTER-CONTRACT (rule 31): the row field's key of the run-set member
+/// keys (`TAG.FIELD`) a declaration the row rests on invokes (rule 12n): the
+/// closed-world facts a runtime projection reads.
+pub const RUN_SET_MEMBERS_KEY: &str = "run_set_members";
+
+/// Card OUTER-CONTRACT (rule 31): the row field's key of the member keys a
+/// constructor the row rests on states a result state for (rule 14e), kept
+/// only because the run's stores keep them (premise P-OPCTOR-STORES-SEEN).
+pub const STATED_MEMBERS_KEY: &str = "stated_members";
+
+/// Add the closed-world member keys of the declarations `dependencies` names
+/// to the row field, each list only when nonempty (a row resting on none
+/// keeps its bytes).
+fn add_member_keys(
+    field: &mut Value,
+    dependencies: &RowDependencies,
+    invoked: &BTreeMap<String, BTreeSet<String>>,
+    constructed: &BTreeMap<String, BTreeMap<String, bool>>,
+) {
+    let mut run_set = BTreeSet::new();
+    let mut stated = BTreeSet::new();
+    for name in dependencies
+        .declarations
+        .iter()
+        .chain(&dependencies.held)
+        .chain(&dependencies.withdrawn)
+    {
+        if let Some(members) = invoked.get(name) {
+            run_set.extend(members.iter().cloned());
+        }
+        if let Some(members) = constructed.get(name) {
+            stated.extend(members.keys().cloned());
+        }
+    }
+    if !run_set.is_empty() {
+        field[RUN_SET_MEMBERS_KEY] = names(&run_set);
+    }
+    if !stated.is_empty() {
+        field[STATED_MEMBERS_KEY] = names(&stated);
+    }
+}
+
 /// The unit field: what each examined body made of its declaration, for the
 /// declared names only; `None` when the unit examined none.
 #[must_use]
@@ -181,12 +223,16 @@ pub fn annotate_unit(
     };
     let dependencies =
         qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
+    let invoked = crate::callback_member_fold::member_declarations(contracts);
+    let constructed = crate::callback_member_fold::constructed_declarations(contracts);
     for function in row["functions"].as_array_mut().into_iter().flatten() {
         let Some(name) = function["function"].as_str() else {
             continue;
         };
         if let Some(dependencies) = dependencies.get(name) {
-            function[ROW_KEY] = row_field(dependencies);
+            let mut field = row_field(dependencies);
+            add_member_keys(&mut field, dependencies, &invoked, &constructed);
+            function[ROW_KEY] = field;
         }
     }
     if let Some(field) = unit_field(record, contracts) {

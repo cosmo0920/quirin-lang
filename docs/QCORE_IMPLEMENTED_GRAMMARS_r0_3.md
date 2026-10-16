@@ -4179,6 +4179,50 @@ bounds clause. A premise under `ensures`, a malformed one and a repeated name
 reject it at parse, in every vocabulary. No reserved spelling is added:
 `resource_premise` is G05's.
 
+## G05g. Outer contract v1
+
+Card OUTER-CONTRACT, contract specification
+[C04.20](QCORE_CONTRACT_SPEC_r0_3.md#c0420-outer-contracts-code-loaded-at-runtime),
+gateway rule [31](agents/gateway.md#constraint-31); USER DECISIONS 2026-10-17,
+D1 "B: loader envelope" and D2 "Yes, as proposed". A module whose every
+declaration selects `outer_contract_v1` is read by
+`crates/qcore-contract/src/outer_contract.rs`. The frontend reads a clause that
+begins `quant #outer` as its own kind (`SourceContractClauseKind::QuantOuter`,
+expression from `#outer`); every other consumer rejects it.
+
+```ebnf
+outer_declaration = "extern", "fn", IDENT, "(", parameters, ")", "->", type,
+    "contract", "{", outer_clause, { outer_clause }, "}", ";" ;
+outer_clause      = "requires", "outer_contract_v1", ";"
+                  | "quant", "#", "outer", outer_form, ";" ;
+outer_form        = "[[", "contract", "]]", NAME, [ ",", STRING ]
+                  | "where", "#", IDENT, "in", "#", "loaded", "[[", "runtime", "]]",
+                    [ "when", "#", "result", ( "==" | "!=" ), [ "-" ], INTEGER ]
+                  | "#", "loaded", ":", envelope ;
+envelope          = IDENT, ".", IDENT, { ".", IDENT }, MAPS_TO, "#", ( "kept" | "registered" )
+                  | "#", "premise", IDENT ;
+NAME              = lowercase identifier, [a-z][a-z0-9_]* ;
+STRING            = one plain string: not blank, no escape, no control character ;
+```
+
+Static conditions, each rejecting the whole selection with the named
+diagnostic: exactly one `requires outer_contract_v1;` (and no other
+`requires` or `ensures`, `outer-clause-foreign`); exactly one header
+(`outer-contract-missing`, `outer-contract-repeated`, `outer-contract-shape`,
+`outer-statement`); at least one runtime condition (`outer-runtime-missing`),
+each binding a distinct pointer formal (`outer-binder-parameter`,
+`outer-binder-pointer`, `outer-runtime-repeated`, `outer-runtime-shape`), a
+guard only on an integer result (`outer-guard-result`); `#loaded`,
+`#kept` and `#registered` written with `#` (`outer-loaded-keyword`,
+`outer-envelope-keyword`); a dotted member path (`outer-envelope-member`) and
+one of the two values (`outer-envelope-value`); no repeated envelope key
+(`outer-envelope-repeated`); envelope lines only on the defining declaration
+(`outer-envelope-citation`); across the selection one definition per contract
+(`outer-contract-defined-twice`) and no citation without one
+(`outer-contract-undefined`). The digest of a declaration covers every clause as
+written (`text_sha256`), and the pin (`quirin-audit pin --outer`) binds it to
+the loader's body.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

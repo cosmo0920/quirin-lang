@@ -6435,9 +6435,18 @@ own anchor here.
     clause's shape is the contract format's, refused at parse in every
     module. Bounds v1 admits it only beside a scoped member form (rule 14x).
     A Quirin model contract may state it (`contract_loader::module_premises`).
+    **Amended by card OUTER-CONTRACT** (rule 31; USER DECISION 2026-10-17,
+    D3 "Both from one run"): the runtime projection is the **one reader** of
+    the dependency record that publishes a verdict. It reads the record after
+    every static verdict is written, publishes its verdicts in its own
+    document (`QCORE_OUTER_PROJECTION`) beside the unchanged static ones, and
+    only lowers (the join with the static verdict); no static verdict reads
+    the record, and the record gains the run-set and stated member keys
+    (`run_set_members`, `stated_members`) of the declarations a row rests on.
     `QCore.ContractDependencies`
     (`publishing_the_set_changes_no_verdict`,
-    `two_sets_publish_the_same_verdict_row`).
+    `two_sets_publish_the_same_verdict_row`); `QCore.OuterContract`
+    (`static_projection_is_identity`, `runtime_never_promotes`).
 
 <a id="constraint-13i"></a>
 
@@ -8221,3 +8230,63 @@ own anchor here.
     `the_join_is_cautious`, `direct_vectors_hold`, `guard_vectors_hold`);
     `tests/member_path_direct_call.rs`;
     [report](../reports/fb-teardown-destroy-declarations/README.md).
+
+<a id="constraint-31"></a>
+
+31. **An outer contract states what code loaded at runtime may do; the
+    runtime projection joins each closed-world fact a row rests on with
+    `Pending` where an in-force outer contract reaching it covers it and
+    `Unknown` where none does, beside the unchanged static verdicts.** Card
+    OUTER-CONTRACT (contract specification C04.20, grammar G05g; USER
+    DECISIONS 2026-10-17, D1 "B: loader envelope", D2 "Yes, as proposed",
+    D3 "Both from one run", D4 "Later"). The loader is
+    `qcore_contract::outer_contract` (total-or-reject, its own
+    `outer_contract_v1` vocabulary, a crate's `outer_view` disjoint from its
+    resource and bounds views, `qcore_audit::providers::probe_resource_views`
+    loads a crate's outer modules together); the pin is `quirin-audit pin
+    --outer` into each crate's `outer-contracts.lock`; the selection, the
+    reach and the projection are `qcore_audit::outer_selection`
+    (`select_for_route` beside the bounds selection, `compute_reach` beside
+    the member pre-pass, `AuditReport::write_outer_projection` after the null
+    rows) on the pinned, configured and no-build routes, only with
+    `QCORE_OUTER_PROJECTION=PATH`. A row's closed-world facts come from its
+    dependency record: a null row's `stable:TAG.FIELD` (rule 14x) and
+    `member:TAG.FIELD` (rule 14t) and listed premises; a custody row's
+    `run_set_members` (rule 12n) and `stated_members` (rule 14e), which
+    `contract_dependencies::annotate_unit` adds to the row field from the
+    declarations it names, and the premises of those declarations; every
+    named premise is closed-world except `outer_selection::NOT_CLOSED_WORLD`
+    (a new one is closed-world until listed). The reach of a `#loaded`
+    binder is read from Clang's AST of the loader's own unit
+    (`qcore_c_gateway::outer_record_graph`): typed pointers, embedded records,
+    arrays, the reverse `container_of` edge of an embedded record; a `void *`,
+    an undefined or location-named record, a held loader or an unread unit
+    reaches every record. Under each scenario (each contract alone, and
+    `all`) a reached fact contributes `Pending`
+    (`PendingReason::OuterContract`, reason `rests on outer contract
+    NAME@DIGEST`, category `outer-contract`) when the contract is in force and an
+    envelope line covers it (`#kept`: a stable, declared or stated member or
+    a run set; `#registered`: a run set; `#premise NAME`), and `Unknown`
+    (`outer-uncovered`) otherwise; a premise is reached by every contract;
+    the runtime verdict is the join with the static one. The static report,
+    its sidecar and the null rows are written exactly as without the
+    projection (only the dependency field's two member lists are new), and
+    the projection is its own document. Fluent Bit (stage 1):
+    `flb_external_plugin` on `flb_plugin_load` and `flb_plugin_proxy_create`,
+    envelope the four stable `flb_*_instance.p`; librdkafka's
+    `rk_no_plugin_library` stays a premise until
+    `RK-PLUGIN-LIBRARY-OUTER-ENVELOPE`. **Do not** let the projection change a
+    static byte or verdict, read a fact a contract does not reach as covered,
+    count an uncovered or unpinned fact as `Pending`, promote any row, or
+    publish an outer `Pending` without its `NAME@DIGEST`.
+    `QCore.OuterContract` (`static_projection_is_identity`,
+    `runtime_never_promotes`, `a_row_without_closed_world_facts_is_unchanged`,
+    `a_covered_fact_is_pending_with_its_contract`,
+    `a_pending_contribution_names_its_contract`,
+    `every_outer_pending_names_a_contract`,
+    `an_uncovered_fact_is_never_safe_or_pending`, `runtime_is_the_join`,
+    `reachability_over_approximates`, `projection_vectors_hold`);
+    `crates/qcore-contract/tests/outer_contract.rs`,
+    `crates/qcore-c-gateway/tests/outer_record_graph.rs`,
+    `crates/qcore-audit/tests/outer_projection.rs`;
+    [report](../reports/outer-contract/README.md).

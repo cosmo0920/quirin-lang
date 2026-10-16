@@ -1,0 +1,51 @@
+module contract;
+
+// Card OUTER-CONTRACT (contract specification C04.20, grammar G05g, gateway
+// rule 31). USER DECISIONS 2026-10-17, recorded verbatim in the card's
+// report: D1 "B: loader envelope", D2 "Yes, as proposed".
+//
+// Fluent Bit runs code from outside the build through two loaders, reached
+// from flb_plugin_load_router (`-e PATH`, `plugins_file`, a `[PLUGINS]` or
+// `plugins:` section, hot reload):
+//
+// * flb_plugin_load (src/flb_plugin.c:200): dlopen of a C shared object
+//   (`flb-*.so`) and dlsym of its `<type>_<name>_plugin` descriptor, which is
+//   memcpy'd into an flb_malloc'ed struct flb_{input,processor,filter,output}_plugin
+//   linked into config->*_plugins; the plugin's callbacks then receive the
+//   instances, the config, event chunks and buffers, and every exported
+//   symbol (the binary is linked with ENABLE_EXPORTS ON). It returns 0 when
+//   the plugin is linked, -1 otherwise.
+// * flb_plugin_proxy_create (src/flb_plugin_proxy.c:598): dlopen of a Go
+//   plugin; in-tree proxy callbacks stand in its descriptor, and the Go side
+//   receives the instance (o_ins / i_ins), the flb_api table and its context
+//   (src/proxy/go/go.c). The proxy is linked into config->proxies.
+//
+// Both bodies were read at 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 and
+// 046accf6aded7906f66a1baf0202da349e521736 and are byte-identical there
+// (`git diff --stat` of src/flb_plugin.c and src/flb_plugin_proxy.c is
+// empty); each receives the config as its last formal, and everything the
+// loaded code is later handed is reachable from it.
+//
+// The envelope vouches for the four stable plugin descriptors the null
+// property relies on (rules 14x/14y; FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE):
+// loaded code never stores into an instance's `p`. Every other closed-world
+// fact reachable from `#config` is uncovered, so a row resting on one is
+// `Unknown` in the runtime projection (rule 31).
+
+extern fn flb_plugin_load(path: ptr<mut, u8>, ctx: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires outer_contract_v1;
+    quant #outer [[contract]] flb_external_plugin, "a Fluent Bit plugin loaded from outside the build (a C shared object through flb_plugin_load or a Go plugin through flb_plugin_proxy_create) stores into no member of a struct flb_*_instance or struct flb_config that the core owns, registers callbacks only through the core's setters, reaches only the objects it is handed and the exported API (it forges no pointer), and calls core functions only under their published conditions";
+    quant #outer where #config in #loaded [[runtime]] when #result == 0;
+    quant #outer #loaded: flb_input_instance.p |-> #kept;
+    quant #outer #loaded: flb_output_instance.p |-> #kept;
+    quant #outer #loaded: flb_filter_instance.p |-> #kept;
+    quant #outer #loaded: flb_processor_instance.p |-> #kept;
+};
+
+extern fn flb_plugin_proxy_create(dso_path: ptr<const, u8>, kind: i32, config: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires outer_contract_v1;
+    quant #outer [[contract]] flb_external_plugin;
+    quant #outer where #config in #loaded [[runtime]];
+};

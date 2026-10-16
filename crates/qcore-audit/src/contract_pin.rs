@@ -44,6 +44,12 @@
 //! locks. Card **CG16-BOUNDS-TRANSPORT-AND-CHUNKIO-NEIGHBOURS** (rule 14i):
 //! `--bounds --track-tip REF` and `--bounds --untrack-tip` record and turn back
 //! tip entries in the bounds locks exactly as in the resource locks.
+//!
+//! Card **OUTER-CONTRACT** (rule 31): `--outer` selects the outer contract
+//! locks (`outer-contracts.lock`, one per crate with a non-empty outer view,
+//! [`crate::outer_selection`]), exactly as `--bounds` selects the bounds
+//! locks; each entry pins a loader declaration to the loader's body.
+//! `--verify-contracts` verifies all three kinds of lock.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -71,8 +77,8 @@ DIR] [--crate NAME]... [--function NAME]... [--regenerate | --check [--revision 
 --drop-revision REV [--load-path FILE | --modules DIR] [--crate NAME]... [--function NAME]... | \
 pin --verify-contracts [--load-path FILE] [--crate NAME]... | pin --source-root DIR --function \
 NAME... --track-tip REF [--repository-name NAME] [--repository-url URL] [--release-label TEXT] | \
-pin --source-root DIR --function NAME... --untrack-tip (`--bounds` with a pin, --check, \
---regenerate or --drop-revision selects the bounds locks)";
+pin --source-root DIR --function NAME... --untrack-tip (`--bounds` or `--outer` with a pin, \
+--check, --regenerate or --drop-revision selects the bounds or the outer locks)";
 
 /// The lock's generated-by line.
 pub const GENERATED_BY: &str = "quirin-audit pin";
@@ -104,6 +110,8 @@ struct Arguments {
     release_label: Option<String>,
     /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: act on the bounds locks.
     bounds: bool,
+    /// Card OUTER-CONTRACT: act on the outer contract locks.
+    outer: bool,
 }
 
 fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
@@ -130,6 +138,7 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
             "--repository-url" => parsed.repository_url = Some(value("--repository-url")?),
             "--release-label" => parsed.release_label = Some(value("--release-label")?),
             "--bounds" => parsed.bounds = true,
+            "--outer" => parsed.outer = true,
             other => return Err(format!("unknown argument `{other}`")),
         }
     }
@@ -190,6 +199,13 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
     }
     if parsed.modules.is_some() && (parsed.load_path.is_some() || !parsed.crates.is_empty()) {
         return Err("--modules is not combined with --load-path or --crate".into());
+    }
+    if parsed.outer && (parsed.bounds || parsed.modules.is_some() || parsed.verify_contracts) {
+        return Err(
+            "--outer pins the outer views of load-path crates: no --bounds, --modules or \
+             --verify-contracts (which verifies every kind of lock)"
+                .into(),
+        );
     }
     if parsed.bounds && (parsed.modules.is_some() || parsed.verify_contracts) {
         return Err(
@@ -302,6 +318,76 @@ fn bounds_targets(
             label: format!("{name} (bounds)"),
             owner: name.clone(),
             lock: root.join(crate::bounds_selection::BOUNDS_LOCK_FILE),
+            declared,
+            c_names: BTreeMap::new(),
+        });
+    }
+    Ok(targets)
+}
+
+/// Card OUTER-CONTRACT: the outer contract lock targets, one per crate with a
+/// non-empty outer view (or the named ones that have one when `strict`).
+fn outer_targets(
+    load_path: &Path,
+    crates: &[String],
+    strict: bool,
+) -> Result<Vec<Target>, String> {
+    let load_path = &load_path
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", load_path.display()))?;
+    let manifest = load_contract_load_path_manifest(load_path)?;
+    let names = if crates.is_empty() {
+        manifest
+            .outer_views
+            .iter()
+            .filter(|(_, view)| !view.is_empty())
+            .filter(|(name, _)| {
+                manifest
+                    .extension
+                    .as_ref()
+                    .is_none_or(|extension| extension.user_crates.contains(*name))
+            })
+            .map(|(name, _)| name.clone())
+            .collect::<Vec<_>>()
+    } else {
+        crates.to_vec()
+    };
+    let mut targets = Vec::new();
+    for name in names {
+        let root = manifest
+            .contract_roots
+            .get(&name)
+            .and_then(|contracts| contracts.parent())
+            .ok_or_else(|| format!("`{name}` is not a crate on {}", load_path.display()))?;
+        let Some(view) = manifest.outer_views.get(&name).filter(|view| !view.is_empty()) else {
+            if strict {
+                return Err(format!("`{name}` declares no outer view to pin"));
+            }
+            continue;
+        };
+        let single = qcore_contract::load_path_manifest::LoadPathManifest {
+            outer_views: BTreeMap::from([(name.clone(), view.clone())]),
+            ..manifest.clone()
+        };
+        let (contracts, _) = crate::outer_selection::load_views(&single)?;
+        let declared = contracts
+            .loaders
+            .iter()
+            .map(|(function, loader)| {
+                (
+                    function.clone(),
+                    (
+                        module_name(&loader.module),
+                        loader.text_sha256.clone(),
+                        RevisionMode::Pinned,
+                    ),
+                )
+            })
+            .collect();
+        targets.push(Target {
+            label: format!("{name} (outer)"),
+            owner: name.clone(),
+            lock: root.join(crate::outer_selection::OUTER_LOCK_FILE),
             declared,
             c_names: BTreeMap::new(),
         });
@@ -1032,7 +1118,11 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             if arguments.verify_contracts {
                 let mut targets = crate_targets(load_path, &arguments.crates)?;
                 targets.extend(bounds_targets(load_path, &arguments.crates, false)?);
+                // Card OUTER-CONTRACT: and the outer locks.
+                targets.extend(outer_targets(load_path, &arguments.crates, false)?);
                 targets
+            } else if arguments.outer {
+                outer_targets(load_path, &arguments.crates, true)?
             } else if arguments.bounds {
                 bounds_targets(load_path, &arguments.crates, true)?
             } else {

@@ -55,6 +55,12 @@
 //! and that no module is in both views: the two loaders reject each other's
 //! vocabulary, so a module in both is a stale or hand-edited manifest.
 //!
+//! **Outer view (card OUTER-CONTRACT).** A crate record may also carry
+//! `outer_view`: the owned modules the outer contract v1 loader accepts
+//! (`qcore_contract::outer_contract`), generated and checked the same way and
+//! disjoint from both other views. The audit routes load every outer view
+//! when the runtime projection is selected (`QCORE_OUTER_PROJECTION`).
+//!
 //! **User load paths (card W45-USER-CONTRACT-PLUGINS).** A user keeps their
 //! own contract crates outside this repository, laid out like the
 //! `quirin-provider-*` crates, and lists them in their own load-path manifest
@@ -188,6 +194,9 @@ struct CrateRecord {
     /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS.
     #[serde(default)]
     bounds_view: Option<Vec<String>>,
+    /// Card OUTER-CONTRACT.
+    #[serde(default)]
+    outer_view: Option<Vec<String>>,
 }
 
 /// A load path read from its manifest, with the directory each crate's
@@ -206,6 +215,10 @@ pub struct LoadPathManifest {
     /// bounds view, sorted owned modules disjoint from its resource view. A
     /// crate that declares none is absent.
     pub bounds_views: BTreeMap<String, Vec<String>>,
+    /// Card OUTER-CONTRACT: crate name to its declared outer view, sorted
+    /// owned modules disjoint from its resource and bounds views. A crate
+    /// that declares none is absent.
+    pub outer_views: BTreeMap<String, Vec<String>>,
     /// Card W45-USER-CONTRACT-PLUGINS: present exactly for a manifest that
     /// extends a shipped one.
     pub extension: Option<LoadPathExtension>,
@@ -363,6 +376,7 @@ fn read_manifest(
     let mut contract_roots = BTreeMap::new();
     let mut resource_views = BTreeMap::new();
     let mut bounds_views = BTreeMap::new();
+    let mut outer_views = BTreeMap::new();
     for record in manifest.crates {
         let name = record.name.clone();
         if !relative_directory(&record.contracts) {
@@ -460,6 +474,38 @@ fn read_manifest(
             }
             bounds_views.insert(name.clone(), view.clone());
         }
+        // Card OUTER-CONTRACT: the outer view's shape, disjoint from both.
+        if let Some(view) = &record.outer_view {
+            if view.windows(2).any(|pair| pair[0] >= pair[1]) {
+                return Err(refuse(
+                    &name,
+                    "outer view modules are not sorted and unique".into(),
+                ));
+            }
+            if let Some(module) = view.iter().find(|module| !listed.contains(*module)) {
+                return Err(refuse(
+                    &name,
+                    format!("outer view names `{module}`, which the crate does not own"),
+                ));
+            }
+            let in_other = |module: &String| {
+                record
+                    .resource_view
+                    .as_ref()
+                    .is_some_and(|other| other.contains(module))
+                    || record
+                        .bounds_view
+                        .as_ref()
+                        .is_some_and(|other| other.contains(module))
+            };
+            if let Some(module) = view.iter().find(|module| in_other(module)) {
+                return Err(refuse(
+                    &name,
+                    format!("`{module}` is in its outer view and in another view"),
+                ));
+            }
+            outer_views.insert(name.clone(), view.clone());
+        }
         let mut modules = BTreeMap::new();
         for module in &record.modules {
             let file = root.join(module);
@@ -499,6 +545,7 @@ fn read_manifest(
             contract_roots,
             resource_views,
             bounds_views,
+            outer_views,
             extension: None,
         });
     };
@@ -586,11 +633,14 @@ fn read_manifest(
     views.extend(resource_views);
     let mut all_bounds_views = shipped.bounds_views;
     all_bounds_views.extend(bounds_views);
+    let mut all_outer_views = shipped.outer_views;
+    all_outer_views.extend(outer_views);
     Ok(LoadPathManifest {
         load_path: ContractLoadPath::new(all)?,
         contract_roots: roots,
         resource_views: views,
         bounds_views: all_bounds_views,
+        outer_views: all_outer_views,
         extension: Some(LoadPathExtension {
             base: base_path,
             base_sha256,

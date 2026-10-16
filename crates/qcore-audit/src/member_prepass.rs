@@ -248,7 +248,7 @@ enum Reading {
     Outside(usize),
 }
 
-fn c_unit<'a>(entry: &CompileEntry, source: &'a str) -> Result<C11TranslationUnit<'a>, String> {
+pub(crate) fn c_unit<'a>(entry: &CompileEntry, source: &'a str) -> Result<C11TranslationUnit<'a>, String> {
     let options = compiler_options(entry)?;
     Ok(C11TranslationUnit {
         source,
@@ -344,7 +344,7 @@ fn run_own(
 /// Preprocess a unit with its own recorded command: `-c` and `-o FILE`
 /// dropped, `extra` added, run from its directory. The command the build
 /// compiled the unit with, so what it includes is what the program includes.
-fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String> {
+pub(crate) fn preprocess_own(entry: &CompileEntry, extra: &[&str]) -> Result<String, String> {
     let (program, mut args) = own_arguments(entry, false)?;
     args.extend(extra.iter().map(|word| (*word).to_owned()));
     run_own(entry, &program, &args, None)
@@ -581,7 +581,7 @@ fn read_identifiers(entry: &CompileEntry, scope: &[Outside]) -> Reading {
 }
 
 /// The C dialect a command names (`-std=`), for reading preprocessed text.
-fn dialect_of(entry: &CompileEntry) -> qcore_c_gateway::legacy_c::CCompilerDialect {
+pub(crate) fn dialect_of(entry: &CompileEntry) -> qcore_c_gateway::legacy_c::CCompilerDialect {
     use qcore_c_gateway::legacy_c::CCompilerDialect;
     let words = shell_words(&entry.command).unwrap_or_default();
     match words

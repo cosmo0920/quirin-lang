@@ -128,14 +128,20 @@ pub enum PendingReason {
     /// witness the audit checks independently (contract spec §C11.1).
     /// Resolved by a person supplying a checkable certificate or witness.
     PluginClaimUncertified,
+    /// Card OUTER-CONTRACT (gateway rule 31): in the runtime projection, a
+    /// closed-world fact the row rests on is vouched for by an outer contract
+    /// (contract spec §C04.20), named `NAME@DIGEST` in the reason. Resolved by
+    /// a person reviewing the loaded code against the contract.
+    OuterContract,
 }
 
 impl PendingReason {
     /// Every reason, in order.
-    pub const ALL: [Self; 3] = [
+    pub const ALL: [Self; 4] = [
         Self::AwaitingHumanReview,
         Self::ContractPinMismatch,
         Self::PluginClaimUncertified,
+        Self::OuterContract,
     ];
 
     /// The closed §L21.1 category this reason is reported under.
@@ -145,6 +151,7 @@ impl PendingReason {
             Self::AwaitingHumanReview => ReasonCategory::AwaitingHumanReview,
             Self::ContractPinMismatch => ReasonCategory::ContractPinMismatch,
             Self::PluginClaimUncertified => ReasonCategory::PluginClaimUncertified,
+            Self::OuterContract => ReasonCategory::OuterContract,
         }
     }
 

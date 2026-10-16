@@ -724,6 +724,9 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                         // Card NULL-DEREF-QTT-GROUNDING: likewise.
                         SourceContractClauseKind::QuantDeref => "quant deref".to_owned(),
                         SourceContractClauseKind::QuantLive => "quant live".to_owned(),
+                        // Card OUTER-CONTRACT: the expression starts at
+                        // `#outer`, so `quant` re-renders it as written.
+                        SourceContractClauseKind::QuantOuter => "quant".to_owned(),
                     };
                     (introducer, clause.value.expression_source.clone())
                 })

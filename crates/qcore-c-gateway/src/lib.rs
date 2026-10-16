@@ -227,6 +227,8 @@ mod call_exits;
 // CG30-DIALECTS-FLAGS-TYPES (rule 11y): dialect, target and type identities.
 pub mod c_frontend_identity;
 pub mod typed_c_ast;
+// Card OUTER-CONTRACT (rule 31): the record graph a runtime projection reads.
+pub mod outer_record_graph;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type
 // of each field dispatch and store, for the thread-entry census.
 pub mod typed_dispatch_census;

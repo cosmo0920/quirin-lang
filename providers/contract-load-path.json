@@ -66,7 +66,8 @@
       "bounds_view": [
         "chunkio/file_st_bounds.qv",
         "chunkio/meta_len_bounds.qv"
-      ]
+      ],
+      "outer_view": []
     },
     {
       "name": "qcore-provider-cmetrics",
@@ -91,7 +92,8 @@
       ],
       "bounds_view": [
         "cmetrics/null_deref.qv"
-      ]
+      ],
+      "outer_view": []
     },
     {
       "name": "qcore-provider-ctraces",
@@ -108,7 +110,8 @@
       "resource_view": [
         "ctraces/context_lifetime.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     },
     {
       "name": "qcore-provider-libevent",
@@ -150,7 +153,8 @@
         "monkey/string.qv",
         "monkey/vhost_set.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     },
     {
       "name": "qcore-provider-librdkafka",
@@ -184,7 +188,8 @@
       ],
       "bounds_view": [
         "librdkafka/null_deref.qv"
-      ]
+      ],
+      "outer_view": []
     },
     {
       "name": "quirin-provider-cfl",
@@ -206,7 +211,8 @@
       ],
       "bounds_view": [
         "cfl/null_deref.qv"
-      ]
+      ],
+      "outer_view": []
     },
     {
       "name": "quirin-provider-fluent-bit",
@@ -232,6 +238,7 @@
         "fluent_bit/loop_owner.qv",
         "fluent_bit/memory.qv",
         "fluent_bit/null_deref.qv",
+        "fluent_bit/outer.qv",
         "fluent_bit/output_flush_id.qv",
         "fluent_bit/output_singleplex.qv",
         "fluent_bit/resource_memory.qv",
@@ -271,6 +278,9 @@
       ],
       "bounds_view": [
         "fluent_bit/null_deref.qv"
+      ],
+      "outer_view": [
+        "fluent_bit/outer.qv"
       ]
     },
     {
@@ -321,7 +331,8 @@
         "libc/time.qv",
         "libc/unistd.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     },
     {
       "name": "quirin-provider-mpack",
@@ -336,7 +347,8 @@
       "resource_view": [
         "mpack/writer.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     },
     {
       "name": "quirin-provider-msgpack",
@@ -351,7 +363,8 @@
       "resource_view": [
         "msgpack/packer.qv"
       ],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     },
     {
       "name": "quirin-provider-shared",
@@ -373,7 +386,8 @@
       ],
       "published": {},
       "resource_view": [],
-      "bounds_view": []
+      "bounds_view": [],
+      "outer_view": []
     }
   ]
 }

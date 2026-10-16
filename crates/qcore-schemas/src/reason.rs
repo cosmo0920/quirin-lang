@@ -100,13 +100,21 @@ pub enum ReasonCategory {
     /// Subject: the analyser — the row says nothing about the analysed source
     /// and never contributes to a provisional `Unsafe`.
     PluginClaimUncertified,
+    /// Card OUTER-CONTRACT (gateway rule 31): in the runtime projection, the
+    /// row rests on a closed-world fact that code loaded at runtime could
+    /// falsify, and an outer contract (`quant #outer [[contract]] NAME`)
+    /// vouches for it. The contract is the reason: a person resolves it by
+    /// reviewing the loaded code against the contract, or by a deployment that
+    /// loads nothing. Subject: the analyser — the row says nothing about the
+    /// analysed source and never contributes to a provisional `Unsafe`.
+    OuterContract,
 }
 
 impl ReasonCategory {
     /// Every category, in declaration order. The vocabulary is closed: adding a
     /// member is a compatibility event, and the totality tests enumerate this
     /// array rather than a hand-written list.
-    pub const ALL: [Self; 10] = [
+    pub const ALL: [Self; 11] = [
         Self::UnsupportedSyntax,
         Self::MissingPremise,
         Self::IncompleteObligationCoverage,
@@ -117,6 +125,7 @@ impl ReasonCategory {
         Self::AwaitingHumanReview,
         Self::ContractPinMismatch,
         Self::PluginClaimUncertified,
+        Self::OuterContract,
     ];
 
     /// The spec spelling, identical to the serde representation.
@@ -133,6 +142,7 @@ impl ReasonCategory {
             Self::AwaitingHumanReview => "awaiting-human-review",
             Self::ContractPinMismatch => "contract-pin-mismatch",
             Self::PluginClaimUncertified => "plugin-claim-uncertified",
+            Self::OuterContract => "outer-contract",
         }
     }
 
@@ -147,7 +157,8 @@ impl ReasonCategory {
             | Self::ProviderFailure
             | Self::AwaitingHumanReview
             | Self::ContractPinMismatch
-            | Self::PluginClaimUncertified => ReasonSubject::Analyser,
+            | Self::PluginClaimUncertified
+            | Self::OuterContract => ReasonSubject::Analyser,
             Self::EnvironmentUnavailable => ReasonSubject::Environment,
         }
     }
@@ -177,7 +188,9 @@ impl ReasonCategory {
     /// Card W45-USER-CONTRACT-PLUGINS: `true` for the categories a person
     /// resolves by a named act — a review edit (`awaiting-human-review`), a
     /// re-pin after review (`contract-pin-mismatch`) or a checkable
-    /// certificate for a plugin's claim (`plugin-claim-uncertified`). A row
+    /// certificate for a plugin's claim (`plugin-claim-uncertified`) or a
+    /// review of loaded code against an outer contract (`outer-contract`,
+    /// card OUTER-CONTRACT). A row
     /// withheld for one of these alone is `Pending`
     /// ([`crate::verdict::Verdict::Pending`]); every other category leaves its
     /// row `Unknown`. Exactly the categories of
@@ -186,7 +199,10 @@ impl ReasonCategory {
     pub const fn is_human_resolvable(self) -> bool {
         matches!(
             self,
-            Self::AwaitingHumanReview | Self::ContractPinMismatch | Self::PluginClaimUncertified
+            Self::AwaitingHumanReview
+                | Self::ContractPinMismatch
+                | Self::PluginClaimUncertified
+                | Self::OuterContract
         )
     }
 
@@ -488,6 +504,15 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     (
         "plugin claim uncertified",
         ReasonCategory::PluginClaimUncertified,
+    ),
+    // ---- outer contract (card OUTER-CONTRACT, rule 31): a runtime-projected
+    // row resting on a closed-world fact an outer contract vouches for.
+    // Matched before every source-subject rule: the phrase names a contract
+    // about loaded code, never the analysed source. Site:
+    // `qcore_audit::outer_selection`.
+    (
+        "rests on outer contract",
+        ReasonCategory::OuterContract,
     ),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the

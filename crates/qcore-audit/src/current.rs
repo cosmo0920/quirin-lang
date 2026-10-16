@@ -171,6 +171,13 @@ impl CurrentAudit {
             &checkout,
             &contracts,
         )?;
+        // Card OUTER-CONTRACT (rule 31): the outer environment.
+        crate::outer_selection::select_for_route(
+            "configured",
+            input.manifest_path(),
+            input.manifest_text(),
+            &checkout,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         let source_profile_sha256 = profile.manifest_digest().to_owned();
         let dependencies = BTreeMap::from([
@@ -629,7 +636,9 @@ impl CurrentAudit {
             self.report
                 .write_with_revision_key(path, "fluent_bit_revision")?;
             self.report.write_bounds_selection()?;
-            self.report.write_null_selection()?;
+            let null_rows = self.report.write_null_selection()?;
+            self.report
+                .write_outer_projection(&self.contracts, null_rows.as_deref())?;
             fs::write(
                 path.with_extension("contracts.json"),
                 serde_json::to_vec_pretty(&self.assumptions).map_err(|error| error.to_string())?,

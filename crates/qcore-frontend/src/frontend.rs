@@ -156,6 +156,17 @@ pub enum SourceContractClauseKind {
     /// checked restatement of the function's own resource v1 declaration;
     /// every other consumer rejects it. Before this card a parse error.
     QuantLive,
+    /// Card `OUTER-CONTRACT` (USER DECISIONS 2026-10-17, D1 "B: loader
+    /// envelope", D2 "Yes, as proposed"): `quant #outer …;`, a clause of an
+    /// outer contract v1 declaration (`requires outer_contract_v1;`): the
+    /// contract header `quant #outer [[contract]] NAME, "STATEMENT";`, the
+    /// runtime condition `quant #outer where #P in #loaded [[runtime]];` or an
+    /// envelope line `quant #outer #loaded: TAG.FIELD |-> #kept;`. The
+    /// expression starts at `#outer`. Only the outer contract v1 loader
+    /// (`qcore_contract::outer_contract`) reads it; every other consumer
+    /// rejects it. Before this card the spelling was a parse error (`#` is no
+    /// exit selector).
+    QuantOuter,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1247,6 +1258,13 @@ impl<'a> SourceParser<'a> {
                 (SourceContractClauseKind::QuantDeref, cursor + 2)
             } else if self.word(cursor, "quant") && self.word(cursor + 1, "live") {
                 (SourceContractClauseKind::QuantLive, cursor + 2)
+            } else if self.word(cursor, "quant")
+                && self.symbol(cursor + 1, Symbol::Hash)
+                && self.word(cursor + 2, "outer")
+            {
+                // Card OUTER-CONTRACT: `quant #outer …;`, read whole (from
+                // `#outer`) by the outer contract v1 loader alone.
+                (SourceContractClauseKind::QuantOuter, cursor + 1)
             } else if self.word(cursor, "quant")
                 && self.symbol(cursor + 2, Symbol::Hash)
                 && !["normal", "any", "error"]

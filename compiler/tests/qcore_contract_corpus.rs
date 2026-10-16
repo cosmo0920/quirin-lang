@@ -708,6 +708,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_thread_instance_exit",
         2,
     ),
+    // Card OUTER-CONTRACT (rule 31, C04.20): the outer contract
+    // `flb_external_plugin` (outer contract v1, the crate's outer view, pinned
+    // in `outer-contracts.lock`): the defining loader's selector, header,
+    // runtime condition and four envelope lines; the citing loader's selector,
+    // header and runtime condition.
+    ("fluent_bit/outer.qv", "flb_plugin_load", 7),
+    ("fluent_bit/outer.qv", "flb_plugin_proxy_create", 3),
     (
         "fluent_bit/output_flush_id.qv",
         "flb_output_flush_id_get",
@@ -2403,7 +2410,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
     // 133 -> 134 by card FB-TEARDOWN-DESTROY-DECLARATIONS'
     // `fluent_bit/teardown_destroy.qv`.
-    assert_eq!(sources.len(), 134, "unexpected contract corpus size");
+    // 134 -> 135 by card OUTER-CONTRACT's `fluent_bit/outer.qv`, the first
+    // outer contract v1 module (pinned in `outer-contracts.lock`, outside
+    // every resource and bounds view).
+    assert_eq!(sources.len(), 135, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
@@ -2494,7 +2504,8 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                         | SourceContractClauseKind::QuantCheck
                         | SourceContractClauseKind::QuantNullDeref
                         | SourceContractClauseKind::QuantDeref
-                        | SourceContractClauseKind::QuantLive => {}
+                        | SourceContractClauseKind::QuantLive
+                        | SourceContractClauseKind::QuantOuter => {}
                         SourceContractClauseKind::Ensures(selector)
                         | SourceContractClauseKind::Quant(selector) => match selector {
                             SourceContractExitSelector::Normal => has_normal = true,

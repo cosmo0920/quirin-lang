@@ -214,6 +214,8 @@ pub fn run_current_route_with_checkpoints(
         prepass_entries.extend(monkey_entries.iter().cloned());
     }
     let scope = crate::member_prepass::load_scope(profile.directory())?;
+    // Card OUTER-CONTRACT (rule 31): what each loader's binders reach.
+    crate::outer_selection::compute_reach(&prepass_entries)?;
     if let Some(prepass) = crate::member_prepass::run(
         &prepass_entries,
         audit.contracts(),

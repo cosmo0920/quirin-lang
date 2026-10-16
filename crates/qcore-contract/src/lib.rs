@@ -20,6 +20,7 @@ pub mod descriptor_observation;
 mod extension_compatibility;
 pub mod extern_bridge;
 pub mod load_path_manifest;
+pub mod outer_contract;
 pub mod profile_loader;
 
 mod profile_json;
