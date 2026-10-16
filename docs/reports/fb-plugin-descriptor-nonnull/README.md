@@ -167,16 +167,18 @@ New caller candidates in rows already Unknown (no verdict move): slice
   descriptor's 34 slice candidates are 38 removed of which 12 are re-added at
   callers; the three output functions it named do not move.
 
-### After the rebase onto `4c0803f1f`
+### After the rebase onto `1c7333db1`
 
-The card was rebased onto main `4c0803f1f` (after HANDOFF-CANDIDATE-OWN-CALLBACKS,
-MEMBER-PREPASS-OTHER-ROUTES, MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS,
-LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED and -REMAINDER). It was then measured again,
-main's binary `da1c5b4e…` on main's tree (worktree detached at `4c0803f1f`)
-against the rebased tip's `c881cdfb…` (`693d65682`), with each corpus
-`run.json` `binary_sha256` matching:
+The card was rebased onto main `1c7333db1`, which came after
+HANDOFF-CANDIDATE-OWN-CALLBACKS, MEMBER-PREPASS-OTHER-ROUTES,
+MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS, LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED and
+-REMAINDER, and HANDOFF-DIRECT-CALL-READING. It was then measured again: main's
+binary `14036267…` on main's tree (worktree detached at `1c7333db1`) against the
+rebased tip's `f2c0e9a9…` (`e6273a2e0`), with each corpus `run.json`
+`binary_sha256` matching. An intermediate pass against `4c0803f1f` (binaries
+`da1c5b4e…` / `c881cdfb…`) gave the same result and is superseded.
 
-* **Custody is byte-identical** on every route: corpus `fc645e9b…` 938 / 9 /
+* **Custody is byte-identical** on every route: corpus `1e76a508…` 938 / 9 /
   3,887, system `50963097…`, slice `ecd778b2…`. No custody column moved.
 * **The null movement is the first base's, row for row**
   ([rebase-identity.json](artifacts/rebase-identity.json),
