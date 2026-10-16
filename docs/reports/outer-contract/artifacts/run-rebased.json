@@ -1,0 +1,32 @@
+{
+ "main2": {
+  "binary_sha256": "401f4b8f72485245fd953360562b2c5c38e18f8879ddd32f908318b5638536de",
+  "head": "b157c9cba309b9236bed04738c91f3b17d43e425",
+  "corpus_run_binary_sha256": "401f4b8f72485245fd953360562b2c5c38e18f8879ddd32f908318b5638536de",
+  "seconds": {
+   "corpus": "896.411",
+   "system": "219.076",
+   "slice": "166.974"
+  },
+  "exits": {
+   "corpus": "0",
+   "system": "0",
+   "slice": "0"
+  }
+ },
+ "tip2": {
+  "binary_sha256": "4dbe1215313995fd5ef9c81c08e9d624dddd07f18b1393e7d674522e1e15622c",
+  "head": "6bb6ea5ab70adc4dfaa4cdc4b0b0f629db827312",
+  "corpus_run_binary_sha256": "4dbe1215313995fd5ef9c81c08e9d624dddd07f18b1393e7d674522e1e15622c",
+  "seconds": {
+   "corpus": "895.177",
+   "system": "229.367",
+   "slice": "174.304"
+  },
+  "exits": {
+   "corpus": "0",
+   "system": "0",
+   "slice": "0"
+  }
+ }
+}

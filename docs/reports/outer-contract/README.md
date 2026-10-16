@@ -1,8 +1,11 @@
 # OUTER-CONTRACT: outer contracts and the runtime projection (stage 1)
 
 Card **OUTER-CONTRACT** (wave 48, round 31; card-high). Base: local `main`
-`a423fca5d`. Main moved past the design card's base `3f8f1a617` only by
-records; no code, contract or Lean file changed. This card implements the
+`b157c9cba`. The card was first built and measured on `a423fca5d`, which
+differs from the design card's base `3f8f1a617` only in records. It was then
+rebased onto `b157c9cba`, where RETENTION-UNMATCHED-REMOVAL-POISONS changed
+rule 12t, the retention code and libevent's contracts, and was measured again
+against main's own binary (section 3.4). This card implements the
 design of [OUTER-CONTRACT-DESIGN](../outer-contract-design/README.md) as the
 user decided it. New gateway rule [31](../../agents/gateway.md#constraint-31);
 rule 13h is amended in place. Contract specification C04.20 and grammar G05g
@@ -176,7 +179,28 @@ plugins loaded, nothing vouches that loaded code leaves librdkafka's objects
 alone. Stage 2 (`RK-PLUGIN-LIBRARY-OUTER-ENVELOPE`) is what can make them
 Pending.
 
-### 3.4 Prediction against outcome
+### 3.4 After the rebase onto `b157c9cba`
+
+The combined arbiter was run with [arbiter.sh](scripts/arbiter.sh) and
+[runs.py](scripts/runs.py) ([run-rebased.json](artifacts/run-rebased.json),
+[compare-rebased.json](artifacts/compare-rebased.json)). Main's binary
+`401f4b8f…` ran on main's own tree, and the rebased tip's binary `4dbe1215…`
+(head `6bb6ea5ab`) ran with the projection. Every exit was 0, and each corpus
+`run.json` `binary_sha256` matches its binary. The result is the first base's,
+row for row:
+
+* **Static scope:** identical. The system report (`ef4e8adf…`) and the slice
+  report (`1faa1013…`) are byte-identical. The corpus report (`33e139c0…` →
+  `efb100ed…`) is identical once the two new lists are removed (140 and 127
+  rows). The sidecars, the null rows (`47994044…`, `7aed2c50…`, `515b39f5…`)
+  and their summaries are byte-identical. Main's totals equal the first base's.
+* **Runtime scope:** the same tallies and the same moved rows on every route
+  (the moved-row lists compare equal). The contract identity is unchanged.
+
+The digests differ from the first base's because of main's own changes, which
+appear identically on both sides.
+
+### 3.5 Prediction against outcome
 
 * **Static scope:** predicted identical, outcome identical. The null summary
   turned out byte-identical too; the prediction had allowed for its
@@ -216,7 +240,7 @@ GATE_SECTION
 
 ## 6. Ledger
 
-`named_followups` went from 792 to 795 on main `a423fca5d`
+`named_followups` went from 794 to 797 on main `b157c9cba` (792 to 795 on the first base)
 ([update_ledger.py](scripts/update_ledger.py); idempotent;
 `dimensions.named_followups` equals the list length). No entry was retired:
 the design card registered none. Registered:
@@ -232,12 +256,15 @@ the design card registered none. Registered:
 ## Files
 
 * **Scripts:**
-  * [pin.sh](scripts/pin.sh), [run.sh](scripts/run.sh), [build.sh](scripts/build.sh), [measure.sh](scripts/measure.sh);
+  * [pin.sh](scripts/pin.sh), [run.sh](scripts/run.sh), [arbiter.sh](scripts/arbiter.sh), [build.sh](scripts/build.sh), [measure.sh](scripts/measure.sh), [runs.py](scripts/runs.py);
   * [compare.py](scripts/compare.py), [predict.py](scripts/predict.py);
   * [gate.sh](scripts/gate.sh), [provider-gate.sh](scripts/provider-gate.sh), [heavy.sh](scripts/heavy.sh);
   * [update_ledger.py](scripts/update_ledger.py).
-* **Artifacts:** [compare.json](artifacts/compare.json),
-  [prediction.json](artifacts/prediction.json), [run.json](artifacts/run.json).
+* **Artifacts:** [compare.json](artifacts/compare.json) and
+  [run.json](artifacts/run.json) (first base),
+  [compare-rebased.json](artifacts/compare-rebased.json) and
+  [run-rebased.json](artifacts/run-rebased.json) (rebased),
+  [prediction.json](artifacts/prediction.json).
 * **Private outputs:** `private/oc/`, plus the slice runs in
   `/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/oc-tip/`.
   The BEFORE runs stay in `private/ocd/` and
