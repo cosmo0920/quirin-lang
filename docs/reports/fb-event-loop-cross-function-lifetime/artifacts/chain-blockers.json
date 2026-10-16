@@ -1,0 +1,1240 @@
+{
+ "chains": {
+  "R1/R2 collectors and instances": [
+   "collector_create",
+   "collector_start",
+   "flb_input_set_collector_time",
+   "flb_input_set_collector_event",
+   "flb_input_set_collector_socket",
+   "flb_input_collector_start",
+   "flb_input_collectors_signal_start",
+   "flb_input_collectors_start",
+   "flb_input_thread_collectors_start",
+   "flb_input_collector_pause",
+   "flb_input_collector_resume",
+   "flb_input_collector_delete",
+   "flb_input_collector_destroy",
+   "flb_input_instance_destroy",
+   "flb_input_instance_exit",
+   "flb_input_exit_all",
+   "flb_input_thread_instance_exit",
+   "flb_input_thread_instance_init",
+   "input_thread",
+   "input_thread_instance_create",
+   "input_thread_instance_destroy",
+   "input_instance_channel_events_init"
+  ],
+  "R3 engine and library": [
+   "flb_engine_start",
+   "flb_engine_shutdown",
+   "flb_create",
+   "flb_destroy",
+   "flb_stop",
+   "flb_config_exit"
+  ],
+  "R4 output workers": [
+   "flb_output_thread_pool_create",
+   "flb_output_thread_pool_destroy",
+   "output_thread"
+  ],
+  "R6 scheduler": [
+   "flb_sched_create",
+   "flb_sched_destroy",
+   "flb_sched_timer_create",
+   "flb_sched_timer_cb_create",
+   "flb_sched_timer_coro_cb_create",
+   "flb_sched_timer_cb_disable",
+   "flb_sched_timer_cb_destroy",
+   "flb_sched_timer_destroy",
+   "flb_sched_timer_invalidate",
+   "flb_sched_timer_cleanup",
+   "flb_sched_request_create",
+   "flb_sched_request_destroy",
+   "flb_sched_request_invalidate",
+   "schedule_request_now",
+   "flb_sched_retry_now",
+   "flb_task_retry_destroy"
+  ]
+ },
+ "routes": {
+  "system": {
+   "rows": [
+    {
+     "unit": "src/flb_engine.c",
+     "function": "flb_engine_shutdown",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 7,
+      "callee": 10
+     },
+     "blockers": 7,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `config`"
+    },
+    {
+     "unit": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 57,
+      "access": 21,
+      "identity": 26,
+      "other": 1
+     },
+     "blockers": 47,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_net_lib_init`"
+    },
+    {
+     "unit": "src/flb_engine.c#1",
+     "function": "flb_engine_shutdown",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 7,
+      "callee": 10
+     },
+     "blockers": 7,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `config`"
+    },
+    {
+     "unit": "src/flb_engine.c#1",
+     "function": "flb_engine_start",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 57,
+      "access": 21,
+      "identity": 26,
+      "other": 1
+     },
+     "blockers": 47,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_net_lib_init`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 13,
+      "callee": 9,
+      "lifetime": 1
+     },
+     "blockers": 18,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 9,
+      "access": 1
+     },
+     "blockers": 10,
+     "only_blockers": true,
+     "first_leaf": "unresolved resource identity `request`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_request_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 3,
+      "identity": 6,
+      "access": 3
+     },
+     "blockers": 9,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_request_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "other": 1,
+      "identity": 2,
+      "callee": 1
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "unlink by `mk_list_del` of `req`, which this function has not published"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_request_invalidate",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 2
+     },
+     "blockers": 2,
+     "only_blockers": true,
+     "first_leaf": "unresolved resource identity `request`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_retry_now",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "identity": 7,
+      "access": 3
+     },
+     "blockers": 10,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 7,
+      "access": 4,
+      "other": 1
+     },
+     "blockers": 11,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_destroy",
+     "chain": "R6 scheduler",
+     "status": "Safe",
+     "leaves": {},
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": null
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cb_disable",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 1
+     },
+     "blockers": 1,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_cleanup",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 1,
+      "callee": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `timer`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_coro_cb_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 4
+     },
+     "blockers": 9,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 1,
+      "identity": 1
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_invalidate",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1,
+      "access": 2
+     },
+     "blockers": 3,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "function": "schedule_request_now",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "lifetime": 1,
+      "identity": 4
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 13,
+      "callee": 9,
+      "lifetime": 1
+     },
+     "blockers": 18,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 9,
+      "access": 1
+     },
+     "blockers": 10,
+     "only_blockers": true,
+     "first_leaf": "unresolved resource identity `request`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_request_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 3,
+      "identity": 6,
+      "access": 3
+     },
+     "blockers": 9,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_request_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "other": 1,
+      "identity": 2,
+      "callee": 1
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "unlink by `mk_list_del` of `req`, which this function has not published"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_request_invalidate",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 2
+     },
+     "blockers": 2,
+     "only_blockers": true,
+     "first_leaf": "unresolved resource identity `request`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_retry_now",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "identity": 7,
+      "access": 3
+     },
+     "blockers": 10,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_cb_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 7,
+      "access": 4,
+      "other": 1
+     },
+     "blockers": 11,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_cb_destroy",
+     "chain": "R6 scheduler",
+     "status": "Safe",
+     "leaves": {},
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": null
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_cb_disable",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 1
+     },
+     "blockers": 1,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_cleanup",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 1,
+      "callee": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `timer`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_coro_cb_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_create",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 4
+     },
+     "blockers": 9,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 1,
+      "identity": 1
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "flb_sched_timer_invalidate",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1,
+      "access": 2
+     },
+     "blockers": 3,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    },
+    {
+     "unit": "src/flb_scheduler.c#1",
+     "function": "schedule_request_now",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "lifetime": 1,
+      "identity": 4
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    },
+    {
+     "unit": "src/flb_task.c",
+     "function": "flb_task_retry_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "other": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_request_invalidate`"
+    },
+    {
+     "unit": "src/flb_task.c#1",
+     "function": "flb_task_retry_destroy",
+     "chain": "R6 scheduler",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "other": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_sched_request_invalidate`"
+    }
+   ],
+   "summary": {
+    "rows": 36,
+    "rows_first_configuration": 18,
+    "rows_with_blockers": 34,
+    "rows_only_blockers": 8,
+    "access_leaves": 92,
+    "identity_leaves": 184,
+    "statuses": {
+     "Unknown": 34,
+     "Safe": 2
+    }
+   }
+  },
+  "slice": {
+   "rows": [
+    {
+     "unit": "src/flb_input.c",
+     "function": "collector_create",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 7,
+      "identity": 2,
+      "other": 1
+     },
+     "blockers": 9,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "collector_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 3
+     },
+     "blockers": 3,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collector_delete",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 4,
+      "identity": 1
+     },
+     "blockers": 5,
+     "only_blockers": true,
+     "first_leaf": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collector_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 2,
+      "identity": 1
+     },
+     "blockers": 3,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collector_pause",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 3,
+      "identity": 1
+     },
+     "blockers": 4,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collector_resume",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 10
+     },
+     "blockers": 15,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collector_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_start`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collectors_signal_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 1,
+      "callee": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "nested call `flb_input_name` inside a modeled call is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_collectors_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "access": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_thread_collectors_signal_start`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_exit_all",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 3,
+      "callee": 1
+     },
+     "blockers": 3,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `ins`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_instance_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 28,
+      "access": 26,
+      "identity": 10,
+      "other": 1
+     },
+     "blockers": 36,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_ingress_destroy`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_instance_exit",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to `flb_input_thread_instance_exit` whose declared contract awaits human review (awaiting-human-review)"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_set_collector_event",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_set_collector_socket",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "flb_input_set_collector_time",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c",
+     "function": "input_instance_channel_events_init",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 3,
+      "identity": 1
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_event_loop_get`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "collector_create",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 7,
+      "identity": 2,
+      "other": 1
+     },
+     "blockers": 9,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "collector_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 3
+     },
+     "blockers": 3,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collector_delete",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 4,
+      "identity": 1
+     },
+     "blockers": 5,
+     "only_blockers": true,
+     "first_leaf": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collector_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 2,
+      "identity": 1
+     },
+     "blockers": 3,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collector_pause",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 3,
+      "identity": 1
+     },
+     "blockers": 4,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collector_resume",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 5,
+      "identity": 10
+     },
+     "blockers": 15,
+     "only_blockers": true,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collector_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_start`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collectors_signal_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "access": 1,
+      "callee": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "nested call `flb_input_name` inside a modeled call is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_collectors_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 2,
+      "access": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_thread_collectors_signal_start`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_exit_all",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 3,
+      "callee": 1
+     },
+     "blockers": 3,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `ins`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_instance_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 28,
+      "access": 26,
+      "identity": 10,
+      "other": 1
+     },
+     "blockers": 36,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_ingress_destroy`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_instance_exit",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to `flb_input_thread_instance_exit` whose declared contract awaits human review (awaiting-human-review)"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_set_collector_event",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_set_collector_socket",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 1
+     },
+     "blockers": 1,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "flb_input_set_collector_time",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "identity": 2
+     },
+     "blockers": 2,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `collector_create`"
+    },
+    {
+     "unit": "src/flb_input.c#1",
+     "function": "input_instance_channel_events_init",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1,
+      "access": 3,
+      "identity": 1
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_event_loop_get`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "flb_input_thread_collectors_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1
+     },
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_collector_start`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 2,
+      "access": 5,
+      "callee": 1
+     },
+     "blockers": 7,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `thi`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "flb_input_thread_instance_init",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 5,
+      "access": 8
+     },
+     "blockers": 8,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `input_thread_instance_create`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "input_thread",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 19,
+      "callee": 32,
+      "access": 14,
+      "other": 1
+     },
+     "blockers": 33,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `data`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "input_thread_instance_create",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 11,
+      "access": 8,
+      "callee": 11
+     },
+     "blockers": 19,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `ins`"
+    },
+    {
+     "unit": "src/flb_input_thread.c",
+     "function": "input_thread_instance_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 6,
+      "callee": 2,
+      "access": 4
+     },
+     "blockers": 10,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `thi`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "flb_input_thread_collectors_start",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 1
+     },
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_input_collector_start`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "flb_input_thread_instance_exit",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 2,
+      "access": 5,
+      "callee": 1
+     },
+     "blockers": 7,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `thi`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "flb_input_thread_instance_init",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 5,
+      "access": 8
+     },
+     "blockers": 8,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `input_thread_instance_create`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "input_thread",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 19,
+      "callee": 32,
+      "access": 14,
+      "other": 1
+     },
+     "blockers": 33,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `data`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "input_thread_instance_create",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 11,
+      "access": 8,
+      "callee": 11
+     },
+     "blockers": 19,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `ins`"
+    },
+    {
+     "unit": "src/flb_input_thread.c#1",
+     "function": "input_thread_instance_destroy",
+     "chain": "R1/R2 collectors and instances",
+     "status": "Unknown",
+     "leaves": {
+      "identity": 6,
+      "callee": 2,
+      "access": 4
+     },
+     "blockers": 10,
+     "only_blockers": false,
+     "first_leaf": "unresolved resource identity `thi`"
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "function": "flb_create",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 8,
+      "identity": 1,
+      "access": 3
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_config_init`"
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "function": "flb_destroy",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "access": 2,
+      "callee": 3,
+      "identity": 2
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_lib.c",
+     "function": "flb_stop",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 4
+     },
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)"
+    },
+    {
+     "unit": "src/flb_lib.c#1",
+     "function": "flb_create",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 8,
+      "identity": 1,
+      "access": 3
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "call to uncontracted function `flb_config_init`"
+    },
+    {
+     "unit": "src/flb_lib.c#1",
+     "function": "flb_destroy",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "access": 2,
+      "callee": 3,
+      "identity": 2
+     },
+     "blockers": 4,
+     "only_blockers": false,
+     "first_leaf": "indirect memory access is outside the resource projection"
+    },
+    {
+     "unit": "src/flb_lib.c#1",
+     "function": "flb_stop",
+     "chain": "R3 engine and library",
+     "status": "Unknown",
+     "leaves": {
+      "callee": 4
+     },
+     "blockers": 0,
+     "only_blockers": false,
+     "first_leaf": "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)"
+    }
+   ],
+   "summary": {
+    "rows": 50,
+    "rows_first_configuration": 25,
+    "rows_with_blockers": 46,
+    "rows_only_blockers": 10,
+    "access_leaves": 206,
+    "identity_leaves": 148,
+    "statuses": {
+     "Unknown": 50
+    }
+   }
+  }
+ }
+}

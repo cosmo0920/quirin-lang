@@ -1,9 +1,10 @@
-# FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (paused for the user)
+# FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing)
 
-Design card with a mandatory pause. This report holds the census and the
-proposal. [PREDICTION.md](PREDICTION.md) holds the BEFORE measurement and the
-movement expected for each variant. **No product code was written.** The card
-waits for the user's choice.
+A design card. It paused for the user with the census, the proposal and
+[PREDICTION.md](PREDICTION.md) (the BEFORE measurement and the expected
+movement per variant). The user decided on 2026-10-17 (below), and the card
+lands as records only: this report, the ledger changes in §7, and **no product
+code**. The lifetime model is built later, after the blockers card, as S3.
 
 Base: local `main` `3f8f1a617` (round 31). Authority: the ledger entries
 `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME` (T1/T2) and
@@ -26,6 +27,33 @@ The integrator read this as a hybrid of three parts. First, a run-wide
 candidate set per loop member, computed the way rule 12n computes callback
 sets. Second, a per-function summary model. Third, cross-function ordering
 checked against those summaries.
+
+## User decisions (2026-10-17, verbatim)
+
+From the coordinator's message (USER DECISIONS 2026-10-17):
+
+> - **D6:** "Blockers first". The access and identity blockers on the registration and teardown chains get cleared before any lifetime model is built.
+> - **D2:** "Yes, small fix card now". The 12t poisoning plus destroy-ends-records fix goes to a separate small card, RETENTION-UNMATCHED-REMOVAL-POISONS, which I'm launching.
+> - **D1/D5:** "S3 declared protocols". When the lifetime model is built, it uses declared lifetime protocols. The S3 syntax (D4) is decided when that card starts.
+> - **D3:** "Yes, derived only". Guarded loop-path equalities are allowed only when derived from single proven stores and an immutable flag.
+
+What follows from them for this report:
+
+* §5's recommendation (S1, then S2) is superseded by D1/D5: the model is
+  **S3**, declared lifetime protocols checked against every registration and
+  store site (§3, S3). Its syntax, including the `quant registered` word and
+  member guards (D4), is open until that card starts. S1's derived summaries
+  remain the composition S3's validated declarations feed (§3, S3 "Model").
+* D3 restricts §2.3: a guarded equality stands only when derived from single
+  proven stores and an immutable flag (as `flb_input_collector.evl`'s two
+  `collector_create` stores under `flb_input_is_threaded`); it is never
+  declared.
+* D2 moves §2.4's "destroy at a path" and "removal poisoning" items, and the
+  §1.5 correction, to RETENTION-UNMATCHED-REMOVAL-POISONS, which owns them; this
+  card registers no entry for them.
+* D6 orders the work: FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (§7) first, so
+  that a lifetime model can show movement (PREDICTION.md, "What would move
+  rows").
 
 ## 1. Census
 
@@ -687,7 +715,7 @@ variant at these revisions. The per-row prediction is in
 | C4 (condvar publication) | none | none | none |
 | C5 (join before release) | none | **refines the reason**: the joins are unchecked or absent on a path (`flb_input_thread.c:602-607`, `flb_output_thread.c:640-646`) | none |
 
-## 5. Recommendation
+## 5. Recommendation (superseded by the 2026-10-17 decisions)
 
 Implement **S1** with the §2.4 prerequisites first. Use the candidate sets as
 the pre-pass, the equalities derived, and no new syntax. Add **S2** as S1's
@@ -735,23 +763,124 @@ Decisions requested from the user:
 
 None of these is a finding.
 
-* **`RETENTION-UNMATCHED-REMOVAL-CLEARS-STATUS`** (§1.5, §2.4). The
-  composition of rule 12t and `QCore.RetentionPath` accepts a removal at an
-  unmatched path followed by a matched one. Monkey's `_mk_event_del` resets
-  the event's status on the first call, so the second call does nothing when
-  the loops differ. The fix is to poison the record. To be registered in the
-  ledger when the user's decision lands; it is in scope of any variant.
-* **Unjoined teardown paths (readings, not validated).**
-  * `flb_input_instance_exit` drops the -1 of `flb_input_thread_instance_exit`
-    (no join, `flb_input_thread.c:602-605`), and the engine then frees the
+* **The unmatched-removal correction** (§1.5, §2.4): owned by the fix card
+  RETENTION-UNMATCHED-REMOVAL-POISONS (D2). This card registers no ledger
+  entry for it.
+* **Unjoined teardown paths (readings, not validated),** registered as
+  `FB-UNJOINED-TEARDOWN-READINGS` (§7) under rule 10q / C5:
+  * R1: `flb_input_instance_exit` drops the -1 of
+    `flb_input_thread_instance_exit` (no join, `flb_input_thread.c:602-605`;
+    the join at `:607` is unchecked), and the engine then frees the
     collectors and the instance while the thread may run (§1.5).
-  * `flb_output_thread_pool_destroy` frees `th_ins` without a join when the
-    stop write fails (`flb_output_thread.c:640-644`).
-  * `flb_input_thread_instance_init` destroys `thi` after storing it in
-    `ins->thi` when the spawn fails (`flb_input_thread.c:626`, `:632`), so a
-    later exit reads a freed `thi`.
+  * R4: `flb_output_thread_pool_destroy` frees `th_ins` without a join when
+    the stop write fails (`flb_output_thread.c:640-644`; also
+    `W47-ENGINE-THREAD-JOIN-CANDIDATES` (iv)), and joins unchecked otherwise.
 
-  Each is a candidate for C5's census (rule 10q). None is presented as an
-  upstream defect.
+  None is presented as an upstream defect.
+* **Not registered, report follow-on only:** `flb_input_thread_instance_init`
+  destroys `thi` after storing it in `ins->thi` when the spawn fails
+  (`flb_input_thread.c:626`, `:632`), so a later exit reads a freed `thi`. It
+  is a reading for C5's census, like the two above.
 * **The open HTTP-server members** (`flb_http_server_init` has no direct
   call in the tree). Any variant keeps them open.
+
+## 7. Records-only landing (2026-10-17)
+
+**Sizing the blockers (D6).** [`scripts/chain_blockers.py`](scripts/chain_blockers.py)
+reads the system and slice reports at `main` `3f8f1a617`. The binary was
+rebuilt from the clean tree: `fb1e08ca…`, which differs from the first
+build's `2a91836f…`. Its reports are byte-identical to the BEFORE's,
+`9d3fc333…` and `cfd3065a…`, so the measured figures are unchanged. The output
+is [`artifacts/chain-blockers.json`](artifacts/chain-blockers.json).
+
+For every function on the R1–R6 chains the script classifies each leaf:
+
+* **access:** `indirect memory access is outside the resource projection`,
+  or a nested or unmodeled call;
+* **identity:** `unresolved resource identity`;
+* **callee:** a call refusal;
+* **lifetime:** rule 12t;
+* **other.**
+
+The chains have 36 rows on the system route and 50 on the slice,
+counting both configurations of each unit:
+
+| Route | Rows with an access or identity leaf | Rows with only those | Access leaves | Identity leaves |
+| --- | --- | --- | --- | --- |
+| system | 34 | 8 | 92 | 184 |
+| slice | 46 | 10 | 206 | 148 |
+
+Per row, first configuration of each unit:
+
+| Route | Chain | Function | Status | Access | Identity | Callee | Lifetime | Other | Only blockers |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| system | R3 | `flb_engine_shutdown` | Unknown | 0 | 7 | 10 | 0 | 0 |  |
+| system | R3 | `flb_engine_start` | Unknown | 21 | 26 | 57 | 0 | 1 |  |
+| system | R6 | `flb_sched_create` | Unknown | 5 | 13 | 9 | 1 | 0 |  |
+| system | R6 | `flb_sched_destroy` | Unknown | 1 | 9 | 0 | 0 | 0 | yes |
+| system | R6 | `flb_sched_request_create` | Unknown | 3 | 6 | 3 | 0 | 0 |  |
+| system | R6 | `flb_sched_request_destroy` | Unknown | 0 | 2 | 1 | 0 | 1 |  |
+| system | R6 | `flb_sched_request_invalidate` | Unknown | 0 | 2 | 0 | 0 | 0 | yes |
+| system | R6 | `flb_sched_retry_now` | Unknown | 3 | 7 | 2 | 0 | 0 |  |
+| system | R6 | `flb_sched_timer_cb_create` | Unknown | 4 | 7 | 1 | 0 | 1 |  |
+| system | R6 | `flb_sched_timer_cb_destroy` | Safe | 0 | 0 | 0 | 0 | 0 |  |
+| system | R6 | `flb_sched_timer_cb_disable` | Unknown | 1 | 0 | 0 | 0 | 0 | yes |
+| system | R6 | `flb_sched_timer_cleanup` | Unknown | 0 | 1 | 1 | 0 | 0 |  |
+| system | R6 | `flb_sched_timer_coro_cb_create` | Unknown | 0 | 1 | 1 | 0 | 0 |  |
+| system | R6 | `flb_sched_timer_create` | Unknown | 5 | 4 | 0 | 0 | 0 | yes |
+| system | R6 | `flb_sched_timer_destroy` | Unknown | 1 | 1 | 1 | 0 | 0 |  |
+| system | R6 | `flb_sched_timer_invalidate` | Unknown | 2 | 1 | 1 | 0 | 0 |  |
+| system | R6 | `schedule_request_now` | Unknown | 0 | 4 | 0 | 1 | 0 |  |
+| system | R6 | `flb_task_retry_destroy` | Unknown | 0 | 1 | 2 | 0 | 1 |  |
+| slice | R1/R2 | `collector_create` | Unknown | 7 | 2 | 0 | 0 | 1 |  |
+| slice | R1/R2 | `collector_start` | Unknown | 3 | 0 | 0 | 0 | 0 | yes |
+| slice | R1/R2 | `flb_input_collector_delete` | Unknown | 4 | 1 | 0 | 0 | 0 | yes |
+| slice | R1/R2 | `flb_input_collector_destroy` | Unknown | 2 | 1 | 0 | 0 | 0 | yes |
+| slice | R1/R2 | `flb_input_collector_pause` | Unknown | 3 | 1 | 0 | 0 | 0 | yes |
+| slice | R1/R2 | `flb_input_collector_resume` | Unknown | 5 | 10 | 0 | 0 | 0 | yes |
+| slice | R1/R2 | `flb_input_collector_start` | Unknown | 1 | 0 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_collectors_signal_start` | Unknown | 1 | 0 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_collectors_start` | Unknown | 2 | 0 | 2 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_exit_all` | Unknown | 0 | 3 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_instance_destroy` | Unknown | 26 | 10 | 28 | 0 | 1 |  |
+| slice | R1/R2 | `flb_input_instance_exit` | Unknown | 2 | 0 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_set_collector_event` | Unknown | 0 | 1 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_set_collector_socket` | Unknown | 0 | 1 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_set_collector_time` | Unknown | 0 | 2 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `input_instance_channel_events_init` | Unknown | 3 | 1 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_thread_collectors_start` | Unknown | 0 | 0 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_thread_instance_exit` | Unknown | 5 | 2 | 1 | 0 | 0 |  |
+| slice | R1/R2 | `flb_input_thread_instance_init` | Unknown | 8 | 0 | 5 | 0 | 0 |  |
+| slice | R1/R2 | `input_thread` | Unknown | 14 | 19 | 32 | 0 | 1 |  |
+| slice | R1/R2 | `input_thread_instance_create` | Unknown | 8 | 11 | 11 | 0 | 0 |  |
+| slice | R1/R2 | `input_thread_instance_destroy` | Unknown | 4 | 6 | 2 | 0 | 0 |  |
+| slice | R3 | `flb_create` | Unknown | 3 | 1 | 8 | 0 | 0 |  |
+| slice | R3 | `flb_destroy` | Unknown | 2 | 2 | 3 | 0 | 0 |  |
+| slice | R3 | `flb_stop` | Unknown | 0 | 0 | 4 | 0 | 0 |  |
+
+The output-worker functions (R4) are on neither route. The lifetime column
+confirms PREDICTION.md: only `schedule_request_now` and `flb_sched_create`
+reach rule 12t.
+
+**Ledger** ([`scripts/update_ledger.py`](scripts/update_ledger.py), idempotent):
+`named_followups` 790 → 792.
+
+* **Narrowed `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`** to "S3 declared
+  lifetime protocols, after the blockers card". DISCHARGE: the user's S3
+  syntax decision, then the implementation with Lean, measured.
+* **Registered `FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS`**, sized per row as
+  above. DISCHARGE: the blockers cleared or named, so that a lifetime model can
+  show movement.
+* **Registered `FB-UNJOINED-TEARDOWN-READINGS`**: R1 and R4 under rule 10q /
+  C5, as readings.
+* **Not registered:** `RETENTION-UNMATCHED-REMOVAL-CLEARS-STATUS`, which the
+  fix card owns.
+
+`W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS` is unchanged. No rule id is taken;
+32 is released and unused.
+
+The matrix was regenerated with `docs/reports/remaining-d02/build_matrix.py .`
+and no `--gate`, because this landing ran no standing gate. The gate block's
+numbers are carried from the previous matrix, and the generator labels them
+`carried_from_previous_matrix`. The list length equals
+`dimensions.named_followups` (792).
