@@ -363,6 +363,78 @@
       ]
     },
     {
+      "function": "mk_event_loop_create",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "6060d7c3beff934866328944e660de729c6c2442d15cabf860fdc7fc30226887",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "4d293c9a39f59f1419ee3f2b54aa8e7537b5a38023e7d2fc13410f7235968861"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "4d293c9a39f59f1419ee3f2b54aa8e7537b5a38023e7d2fc13410f7235968861",
+              "body_sha256": "7900635a61bc5b8fb521284cb4f1d738b48eb323efc0b0e164193e5bd2713063"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_loop_destroy",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "58738af2b603efd9fe4bbf149d69726ffe3d5d3c34310a6e34b34d74c07697d4",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "e6c50348db28ef5174f9d3c8840701f68b629e430140255518312066e315d7f7"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "e6c50348db28ef5174f9d3c8840701f68b629e430140255518312066e315d7f7",
+              "body_sha256": "8b50e41236be0958fa52d865d4fcc82ecf04b645e8fa483660ef3c7c123ffe25"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_event_timeout_create",
       "module": "monkey/event_loop.qv",
       "contract_sha256": "7f3d018731119527167718d01bc21f2af40cbe3346da5551e89229b12722bc96",
