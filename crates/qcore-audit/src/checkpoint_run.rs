@@ -99,6 +99,15 @@ pub(crate) fn run(
             crate::projection::NULL_SELECTION
         ));
     }
+    // Card OUTER-CONTRACT (rule 31): likewise for the runtime projection.
+    if crate::outer_selection::selected() {
+        return Err(format!(
+            "checkpoints refuse the runtime projection ({}): a checkpoint carries no outer \
+             environment or reach and its identity names neither, so a reused or composed run \
+             would omit the requested projection; run without --checkpoints",
+            crate::outer_selection::PROJECTION
+        ));
+    }
     if std::env::var_os(crate::projection::BOUNDS_SELECTION).is_some() {
         return Err(format!(
             "checkpoints refuse the bounds selection ({}): a checkpoint carries no bounds rows, \

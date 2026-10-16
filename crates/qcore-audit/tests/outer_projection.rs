@@ -107,7 +107,11 @@ fn a_covered_fact_is_pending_and_an_uncovered_one_unknown() {
     let in_force = contract(true, all());
     let covered = contribution(&stable("instance.p"), &in_force).unwrap();
     assert_eq!(covered.verdict, Verdict::Pending);
-    assert!(covered.reason.contains("rests on outer contract `app_plugin@abc`"));
+    assert!(
+        covered
+            .reason
+            .contains("rests on outer contract `app_plugin@abc`")
+    );
     assert_eq!(
         qcore_schemas::reason::ReasonCategory::classify(&covered.reason).unwrap(),
         qcore_schemas::reason::ReasonCategory::OuterContract
@@ -120,17 +124,24 @@ fn a_covered_fact_is_pending_and_an_uncovered_one_unknown() {
         key: "collector.cb".into(),
     };
     assert_eq!(
-        contribution(&registered_run_set, &in_force).unwrap().verdict,
+        contribution(&registered_run_set, &in_force)
+            .unwrap()
+            .verdict,
         Verdict::Pending
     );
     assert_eq!(
-        contribution(&stable("collector.cb"), &in_force).unwrap().verdict,
+        contribution(&stable("collector.cb"), &in_force)
+            .unwrap()
+            .verdict,
         Verdict::Unknown
     );
     let premise = Fact::Premise {
         name: "app_closed".into(),
     };
-    assert_eq!(contribution(&premise, &in_force).unwrap().verdict, Verdict::Pending);
+    assert_eq!(
+        contribution(&premise, &in_force).unwrap().verdict,
+        Verdict::Pending
+    );
     // A contract not in force covers nothing.
     let held = contract(false, all());
     assert_eq!(
@@ -140,7 +151,10 @@ fn a_covered_fact_is_pending_and_an_uncovered_one_unknown() {
     // An unreachable record contributes nothing; a premise is always reached.
     let narrow = contract(true, Reach::Records(BTreeSet::from(["config".to_owned()])));
     assert!(contribution(&stable("instance.p"), &narrow).is_none());
-    assert_eq!(contribution(&premise, &narrow).unwrap().verdict, Verdict::Pending);
+    assert_eq!(
+        contribution(&premise, &narrow).unwrap().verdict,
+        Verdict::Pending
+    );
 }
 
 #[test]
@@ -161,7 +175,12 @@ fn the_runtime_verdict_is_the_join_and_never_promotes() {
         }
     }
     assert_eq!(
-        runtime_verdict(Verdict::Safe, &BTreeSet::from([stable("instance.p")]), &scenario).0,
+        runtime_verdict(
+            Verdict::Safe,
+            &BTreeSet::from([stable("instance.p")]),
+            &scenario
+        )
+        .0,
         Verdict::Pending
     );
     assert_eq!(
@@ -174,7 +193,12 @@ fn the_runtime_verdict_is_the_join_and_never_promotes() {
         Verdict::Unknown
     );
     assert_eq!(
-        runtime_verdict(Verdict::Unsafe, &BTreeSet::from([stable("instance.p")]), &scenario).0,
+        runtime_verdict(
+            Verdict::Unsafe,
+            &BTreeSet::from([stable("instance.p")]),
+            &scenario
+        )
+        .0,
         Verdict::Unsafe
     );
 }
@@ -336,7 +360,10 @@ fn the_static_report_is_identical_and_the_pin_and_reach_decide() {
         "all-records"
     );
     // No row rests on a closed-world fact: every scenario equals the static one.
-    assert_eq!(projection["scenarios"]["all"]["custody"], projection["static"]["custody"]);
+    assert_eq!(
+        projection["scenarios"]["all"]["custody"],
+        projection["static"]["custody"]
+    );
     assert_eq!(projection["scenarios"]["all"]["moved"], json!([]));
     // Pinned: in force, and the reach is read from the loader's own unit,
     // where `void *ctx` reaches every record.
@@ -358,7 +385,10 @@ fn the_static_report_is_identical_and_the_pin_and_reach_decide() {
     let reach = &projection["loaders"][0]["reach"];
     assert_eq!(reach["reach"]["kind"], "all-records", "{reach:#}");
     assert!(
-        reach["reach"]["witness"].as_str().unwrap().contains("void pointer"),
+        reach["reach"]["witness"]
+            .as_str()
+            .unwrap()
+            .contains("void pointer"),
         "{reach:#}"
     );
     assert!(

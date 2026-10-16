@@ -218,9 +218,11 @@ impl OuterContracts {
     #[must_use]
     pub fn in_force(&self, contract: &str) -> bool {
         self.contracts.get(contract).is_some_and(|c| {
-            c.loaders
-                .iter()
-                .all(|loader| self.loaders.get(loader).is_some_and(|l| l.pin_hold.is_none()))
+            c.loaders.iter().all(|loader| {
+                self.loaders
+                    .get(loader)
+                    .is_some_and(|l| l.pin_hold.is_none())
+            })
         })
     }
 
@@ -453,12 +455,8 @@ fn read_clause(tokens: &[TokenKind], signature: &Signature<'_>) -> Result<Clause
                 op @ ..,
             ] if when == "when" && result == "result" => {
                 let (op, value) = match op {
-                    [TokenKind::Symbol(Symbol::EqualEqual), value @ ..] => {
-                        (GuardOp::Equal, value)
-                    }
-                    [TokenKind::Symbol(Symbol::NotEqual), value @ ..] => {
-                        (GuardOp::NotEqual, value)
-                    }
+                    [TokenKind::Symbol(Symbol::EqualEqual), value @ ..] => (GuardOp::Equal, value),
+                    [TokenKind::Symbol(Symbol::NotEqual), value @ ..] => (GuardOp::NotEqual, value),
                     _ => return Err(shape()),
                 };
                 let value = match value {
@@ -484,16 +482,19 @@ fn read_clause(tokens: &[TokenKind], signature: &Signature<'_>) -> Result<Clause
         }));
     }
     // `#loaded: TAG.PATH |-> #kept | #registered` or `#loaded: #premise NAME`
-    if hash_word(rest, 0, "loaded")
-        && matches!(rest.get(2), Some(TokenKind::Symbol(Symbol::Colon)))
+    if hash_word(rest, 0, "loaded") && matches!(rest.get(2), Some(TokenKind::Symbol(Symbol::Colon)))
     {
         let line = &rest[3..];
         if hash_word(line, 0, "premise") {
             return match &line[2..] {
                 [TokenKind::Word(name)] if !name.is_empty() => {
-                    Ok(Clause::Envelope(EnvelopeLine::Premise { name: name.clone() }))
+                    Ok(Clause::Envelope(EnvelopeLine::Premise {
+                        name: name.clone(),
+                    }))
                 }
-                _ => Err("outer-envelope-premise: write `quant #outer #loaded: #premise NAME;`".into()),
+                _ => Err(
+                    "outer-envelope-premise: write `quant #outer #loaded: #premise NAME;`".into(),
+                ),
             };
         }
         let shape = || {
@@ -605,8 +606,7 @@ fn load_loader(path: &str, decl: &SourceDeclaration) -> Result<OuterLoader, Stri
         match &clause.kind {
             SourceContractClauseKind::Requires => {
                 normalised.push(format!("requires {}", render(&tokens)));
-                if matches!(tokens.as_slice(), [TokenKind::Word(w)] if w == OUTER_CONTRACT_MARKER)
-                {
+                if matches!(tokens.as_slice(), [TokenKind::Word(w)] if w == OUTER_CONTRACT_MARKER) {
                     selectors += 1;
                     continue;
                 }
@@ -658,9 +658,8 @@ fn load_loader(path: &str, decl: &SourceDeclaration) -> Result<OuterLoader, Stri
             "an outer contract declaration carries exactly one `requires {OUTER_CONTRACT_MARKER};`"
         ));
     }
-    let (name, statement) = header.ok_or(
-        "outer-contract-missing: a loader hosts one `quant #outer [[contract]] NAME…;`",
-    )?;
+    let (name, statement) = header
+        .ok_or("outer-contract-missing: a loader hosts one `quant #outer [[contract]] NAME…;`")?;
     if runtime.is_empty() {
         return Err(
             "outer-runtime-missing: a loader states at least one `quant #outer where #P in #loaded [[runtime]];`"
@@ -737,12 +736,15 @@ pub fn load_outer_contract_sources(
         }
     }
     for loader in contracts.loaders.values() {
-        let contract = contracts.contracts.get_mut(&loader.contract).ok_or_else(|| {
-            format!(
-                "outer-contract-undefined: `{}` cites `{}`, which no loader defines",
-                loader.name, loader.contract
-            )
-        })?;
+        let contract = contracts
+            .contracts
+            .get_mut(&loader.contract)
+            .ok_or_else(|| {
+                format!(
+                    "outer-contract-undefined: `{}` cites `{}`, which no loader defines",
+                    loader.name, loader.contract
+                )
+            })?;
         contract.loaders.insert(loader.name.clone());
     }
     Ok(contracts)

@@ -8,12 +8,14 @@ use qcore_contract::outer_contract::{
     EnvelopeLine, GuardOp, MemberEnvelope, load_outer_contract_sources,
 };
 
-const FLUENT_BIT: &str = include_str!(
-    "../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv"
-);
+const FLUENT_BIT: &str =
+    include_str!("../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/outer.qv");
 
 fn load(text: &str) -> Result<qcore_contract::outer_contract::OuterContracts, String> {
-    load_outer_contract_sources(&BTreeMap::from([("app:outer.qv".to_owned(), text.to_owned())]))
+    load_outer_contract_sources(&BTreeMap::from([(
+        "app:outer.qv".to_owned(),
+        text.to_owned(),
+    )]))
 }
 
 const DEFINITION: &str = r#"module contract;
@@ -38,7 +40,11 @@ fn the_fluent_bit_module_loads() {
     let contract = &contracts.contracts["flb_external_plugin"];
     assert_eq!(contract.defined_by, "flb_plugin_load");
     assert_eq!(contract.loaders.len(), 2);
-    let keys = contract.envelope.iter().map(EnvelopeLine::key).collect::<Vec<_>>();
+    let keys = contract
+        .envelope
+        .iter()
+        .map(EnvelopeLine::key)
+        .collect::<Vec<_>>();
     assert_eq!(
         keys,
         [
@@ -51,7 +57,10 @@ fn the_fluent_bit_module_loads() {
     let load = &contracts.loaders["flb_plugin_load"];
     assert_eq!(load.runtime[0].binder, "config");
     assert_eq!(load.runtime[0].index, 2);
-    assert_eq!(load.runtime[0].guard.as_ref().map(|g| (g.op, g.value)), Some((GuardOp::Equal, 0)));
+    assert_eq!(
+        load.runtime[0].guard.as_ref().map(|g| (g.op, g.value)),
+        Some((GuardOp::Equal, 0))
+    );
     let proxy = &contracts.loaders["flb_plugin_proxy_create"];
     assert!(proxy.statement.is_none() && proxy.envelope.is_empty());
     assert!(proxy.runtime[0].guard.is_none());
@@ -87,7 +96,8 @@ fn every_form_reads_and_the_digest_covers_each_line() {
         .expect("loads");
     assert_ne!(changed.digest("app_plugin").unwrap(), before);
     let mut held = contracts.clone();
-    held.hold_for_pin_mismatch("load_plugin", "contract-changed", "test").unwrap();
+    held.hold_for_pin_mismatch("load_plugin", "contract-changed", "test")
+        .unwrap();
     assert!(!held.in_force("app_plugin"));
 }
 
@@ -129,12 +139,20 @@ fn malformed_forms_reject_the_module_with_a_named_diagnostic() {
             "",
             "outer-runtime-missing",
         ),
-        ("#loaded [[runtime]]", "loaded [[runtime]]", "outer-loaded-keyword"),
+        (
+            "#loaded [[runtime]]",
+            "loaded [[runtime]]",
+            "outer-loaded-keyword",
+        ),
         ("#config in", "#path2 in", "outer-binder-parameter"),
         ("[[runtime]] when", "[[stable]] when", "outer-runtime-shape"),
         ("|-> #kept", "|-> kept", "outer-envelope-keyword"),
         ("|-> #kept", "|-> #moved", "outer-envelope-value"),
-        ("app_instance.p |->", "app_instance |->", "outer-envelope-member"),
+        (
+            "app_instance.p |->",
+            "app_instance |->",
+            "outer-envelope-member",
+        ),
         (
             "app_plugin, \"a loaded",
             "App_Plugin, \"a loaded",

@@ -248,7 +248,10 @@ enum Reading {
     Outside(usize),
 }
 
-pub(crate) fn c_unit<'a>(entry: &CompileEntry, source: &'a str) -> Result<C11TranslationUnit<'a>, String> {
+pub(crate) fn c_unit<'a>(
+    entry: &CompileEntry,
+    source: &'a str,
+) -> Result<C11TranslationUnit<'a>, String> {
     let options = compiler_options(entry)?;
     Ok(C11TranslationUnit {
         source,

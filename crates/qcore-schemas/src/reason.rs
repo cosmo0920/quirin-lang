@@ -510,10 +510,7 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
     // Matched before every source-subject rule: the phrase names a contract
     // about loaded code, never the analysed source. Site:
     // `qcore_audit::outer_selection`.
-    (
-        "rests on outer contract",
-        ReasonCategory::OuterContract,
-    ),
+    ("rests on outer contract", ReasonCategory::OuterContract),
     // ---- missing premise: a declared assumption or trusted contract input
     // the analysis requires was refused or is unusable. The subject is the
     // declared premise, not the analysed source.

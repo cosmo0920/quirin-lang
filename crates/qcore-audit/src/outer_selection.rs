@@ -194,9 +194,7 @@ pub fn apply_outer_pins(
             &mut tips,
         );
         let (reason, detail) = match &standing {
-            PinStanding::InForce { .. } | PinStanding::InForceAtTip { .. } => {
-                (None, String::new())
-            }
+            PinStanding::InForce { .. } | PinStanding::InForceAtTip { .. } => (None, String::new()),
             PinStanding::Mismatch { reason, detail, .. } => {
                 (Some(reason.as_str().to_owned()), detail.clone())
             }
@@ -384,20 +382,29 @@ pub fn compute_reach(entries: &[CompileEntry]) -> Result<(), String> {
             .map(|site| site.path.clone())
             .collect::<BTreeSet<_>>();
         if paths.is_empty() {
-            computed.insert(name.clone(), all("no definition site in the audited source".into()));
+            computed.insert(
+                name.clone(),
+                all("no definition site in the audited source".into()),
+            );
             continue;
         }
         let matching = entries
             .iter()
             .filter(|entry| {
-                let file = entry.file.canonicalize().unwrap_or_else(|_| entry.file.clone());
+                let file = entry
+                    .file
+                    .canonicalize()
+                    .unwrap_or_else(|_| entry.file.clone());
                 paths.iter().any(|path| file == root.join(path))
             })
             .collect::<Vec<_>>();
         if matching.is_empty() {
             computed.insert(
                 name.clone(),
-                all(format!("no compile entry for {}", paths.iter().cloned().collect::<Vec<_>>().join(", "))),
+                all(format!(
+                    "no compile entry for {}",
+                    paths.iter().cloned().collect::<Vec<_>>().join(", ")
+                )),
             );
             continue;
         }
@@ -497,7 +504,11 @@ fn closed_world_premise(name: &str) -> bool {
 }
 
 fn strings(value: &Value) -> impl Iterator<Item = &str> {
-    value.as_array().into_iter().flatten().filter_map(Value::as_str)
+    value
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
 }
 
 /// The closed-world facts of a null row (its `null` object).
@@ -518,7 +529,10 @@ pub fn null_facts(null: &Value) -> BTreeSet<Fact> {
         }
     }
     for premise in null["premises"].as_array().into_iter().flatten() {
-        if let Some(name) = premise.get("name").and_then(Value::as_str).or(premise.as_str())
+        if let Some(name) = premise
+            .get("name")
+            .and_then(Value::as_str)
+            .or(premise.as_str())
             && closed_world_premise(name)
         {
             facts.insert(Fact::Premise {
@@ -588,29 +602,31 @@ pub fn contribution(fact: &Fact, contract: &ScenarioContract) -> Option<Contribu
         return None;
     }
     let spelling = fact.spelling();
-    Some(if contract.in_force && fact.covered_by(&contract.envelope) {
-        Contribution {
-            verdict: Verdict::Pending,
-            reason: format!(
-                "rests on outer contract `{}` through {spelling} (runtime projection, rule 31; {})",
-                contract.identity,
-                PendingReason::OuterContract.category().as_str()
-            ),
-        }
-    } else {
-        Contribution {
-            verdict: Verdict::Unknown,
-            reason: format!(
-                "outer-uncovered: {spelling} is reachable from code `{}` loads and {} (runtime projection, rule 31)",
-                contract.name,
-                if contract.in_force {
-                    "no envelope line covers it"
-                } else {
-                    "the contract is not in force"
-                }
-            ),
-        }
-    })
+    Some(
+        if contract.in_force && fact.covered_by(&contract.envelope) {
+            Contribution {
+                verdict: Verdict::Pending,
+                reason: format!(
+                    "rests on outer contract `{}` through {spelling} (runtime projection, rule 31; {})",
+                    contract.identity,
+                    PendingReason::OuterContract.category().as_str()
+                ),
+            }
+        } else {
+            Contribution {
+                verdict: Verdict::Unknown,
+                reason: format!(
+                    "outer-uncovered: {spelling} is reachable from code `{}` loads and {} (runtime projection, rule 31)",
+                    contract.name,
+                    if contract.in_force {
+                        "no envelope line covers it"
+                    } else {
+                        "the contract is not in force"
+                    }
+                ),
+            }
+        },
+    )
 }
 
 /// The runtime verdict of a row under a scenario, with its reasons: the
@@ -703,7 +719,11 @@ pub fn project(units: &[Value], null_rows: Option<&[Value]>, premises: &Value) -
         .collect();
     scenarios.push((
         ALL_SCENARIO.to_owned(),
-        contracts.contracts.keys().map(|name| scenario_contract(name)).collect(),
+        contracts
+            .contracts
+            .keys()
+            .map(|name| scenario_contract(name))
+            .collect(),
     ));
     // The custody rows, keyed (library, file, function, occurrence).
     let mut custody: Vec<(RowKey, Verdict, BTreeSet<Fact>)> = Vec::new();
@@ -729,8 +749,13 @@ pub fn project(units: &[Value], null_rows: Option<&[Value]>, premises: &Value) -
         .iter()
         .map(|(key, _, facts)| (key.clone(), facts.clone()))
         .collect();
-    let mut null: Vec<(RowKey, Verdict, BTreeSet<Fact>, Option<Verdict>, Option<Verdict>)> =
-        Vec::new();
+    let mut null: Vec<(
+        RowKey,
+        Verdict,
+        BTreeSet<Fact>,
+        Option<Verdict>,
+        Option<Verdict>,
+    )> = Vec::new();
     let mut seen: BTreeMap<(String, String, String), usize> = BTreeMap::new();
     for row in null_rows.into_iter().flatten() {
         let library = row["library"].as_str().unwrap_or_default().to_owned();
@@ -758,9 +783,7 @@ pub fn project(units: &[Value], null_rows: Option<&[Value]>, premises: &Value) -
         "combined": tally(null.iter().filter_map(|(.., c)| c.map(Verdict::as_str))),
     });
     let mut scenario_sections = serde_json::Map::new();
-    let row_value = |key: &RowKey| {
-        json!({"library": key.0, "file": key.1, "function": key.2, "occurrence": key.3})
-    };
+    let row_value = |key: &RowKey| json!({"library": key.0, "file": key.1, "function": key.2, "occurrence": key.3});
     for (name, scenario) in &scenarios {
         let mut custody_runtime = Vec::new();
         let mut moved = Vec::new();

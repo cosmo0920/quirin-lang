@@ -39,8 +39,8 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
     use ReasonCategory::{
         AwaitingHumanReview as Review, ContractPinMismatch as Pin, EnvironmentUnavailable as Env,
         IncompleteObligationCoverage as Coverage, MissingPremise as Premise,
-        OuterContract as Outer, PluginClaimUncertified as Plugin, ProviderFailure as Provider, ResidualCustody as Custody,
-        StaleEvidence as Stale, UnsupportedSyntax as Syntax,
+        OuterContract as Outer, PluginClaimUncertified as Plugin, ProviderFailure as Provider,
+        ResidualCustody as Custody, StaleEvidence as Stale, UnsupportedSyntax as Syntax,
     };
     vec![
         // -- qcore-verification: obligation derivation ------------------------

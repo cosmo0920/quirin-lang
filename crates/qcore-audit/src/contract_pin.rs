@@ -327,11 +327,7 @@ fn bounds_targets(
 
 /// Card OUTER-CONTRACT: the outer contract lock targets, one per crate with a
 /// non-empty outer view (or the named ones that have one when `strict`).
-fn outer_targets(
-    load_path: &Path,
-    crates: &[String],
-    strict: bool,
-) -> Result<Vec<Target>, String> {
+fn outer_targets(load_path: &Path, crates: &[String], strict: bool) -> Result<Vec<Target>, String> {
     let load_path = &load_path
         .canonicalize()
         .map_err(|error| format!("{}: {error}", load_path.display()))?;
@@ -359,7 +355,11 @@ fn outer_targets(
             .get(&name)
             .and_then(|contracts| contracts.parent())
             .ok_or_else(|| format!("`{name}` is not a crate on {}", load_path.display()))?;
-        let Some(view) = manifest.outer_views.get(&name).filter(|view| !view.is_empty()) else {
+        let Some(view) = manifest
+            .outer_views
+            .get(&name)
+            .filter(|view| !view.is_empty())
+        else {
             if strict {
                 return Err(format!("`{name}` declares no outer view to pin"));
             }

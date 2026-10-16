@@ -121,8 +121,12 @@ fn read_type(spelling: &str) -> TypeReading {
         .filter(|word| !QUALIFIERS.contains(&word.as_str()))
         .collect::<Vec<_>>();
     // A function type or a pointer to one: code, not data.
-    if tokens.windows(2).any(|pair| pair[0] == "(" && pair[1] == "*")
-        || tokens.windows(2).any(|pair| pair[0] == ")" && pair[1] == "(")
+    if tokens
+        .windows(2)
+        .any(|pair| pair[0] == "(" && pair[1] == "*")
+        || tokens
+            .windows(2)
+            .any(|pair| pair[0] == ")" && pair[1] == "(")
     {
         return TypeReading::Nothing;
     }
@@ -189,7 +193,8 @@ impl RecordGraph {
                         }
                         TypeReading::Universal(why) => {
                             let name = child.get("name").and_then(Value::as_str).unwrap_or("?");
-                            into.universal.get_or_insert_with(|| format!("member `{name}`: {why}"));
+                            into.universal
+                                .get_or_insert_with(|| format!("member `{name}`: {why}"));
                         }
                     }
                 }
@@ -258,11 +263,17 @@ impl RecordGraph {
         let mut containers: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
         for (tag, node) in &self.records {
             for embedded in &node.embedded {
-                containers.entry(embedded.as_str()).or_default().insert(tag.as_str());
+                containers
+                    .entry(embedded.as_str())
+                    .or_default()
+                    .insert(tag.as_str());
             }
         }
         let mut seen = BTreeSet::new();
-        let mut queue = start.into_iter().map(|(tag, _)| tag).collect::<VecDeque<_>>();
+        let mut queue = start
+            .into_iter()
+            .map(|(tag, _)| tag)
+            .collect::<VecDeque<_>>();
         while let Some(tag) = queue.pop_front() {
             if !seen.insert(tag.clone()) {
                 continue;
@@ -289,7 +300,11 @@ impl RecordGraph {
     /// when the unit does not declare the function or the parameter.
     #[must_use]
     pub fn reach_of_parameter(&self, function: &str, index: usize) -> Reach {
-        match self.functions.get(function).and_then(|params| params.get(index)) {
+        match self
+            .functions
+            .get(function)
+            .and_then(|params| params.get(index))
+        {
             Some(spelling) => self.reach_of_type(spelling),
             None => Reach::All {
                 witness: format!("`{function}` parameter {index} is not declared in the unit"),
@@ -352,7 +367,9 @@ impl<'de> Deserialize<'de> for GraphRoot {
                     }
                 }
                 if root_kind.as_str() != Some("TranslationUnitDecl") {
-                    return Err(serde::de::Error::custom("expected Clang TranslationUnitDecl"));
+                    return Err(serde::de::Error::custom(
+                        "expected Clang TranslationUnitDecl",
+                    ));
                 }
                 graph
                     .map(GraphRoot)
@@ -380,7 +397,7 @@ pub fn read_unit(
 
 #[cfg(test)]
 mod tests {
-    use super::{Reach, read_type, TypeReading};
+    use super::{Reach, TypeReading, read_type};
 
     #[test]
     fn member_types_read_as_the_rule_states() {
@@ -397,14 +414,25 @@ mod tests {
             TypeReading::Records(vec![("a".into(), false)])
         );
         assert!(matches!(read_type("void *"), TypeReading::Universal(_)));
-        assert!(matches!(read_type("const void *const"), TypeReading::Universal(_)));
-        assert_eq!(read_type("int (*)(struct a *, void *)"), TypeReading::Nothing);
+        assert!(matches!(
+            read_type("const void *const"),
+            TypeReading::Universal(_)
+        ));
+        assert_eq!(
+            read_type("int (*)(struct a *, void *)"),
+            TypeReading::Nothing
+        );
         assert_eq!(read_type("char *"), TypeReading::Nothing);
         assert_eq!(read_type("unsigned long"), TypeReading::Nothing);
         assert!(matches!(
             read_type("struct (unnamed struct at a.c:3:5)"),
             TypeReading::Universal(_)
         ));
-        assert!(Reach::All { witness: String::new() }.contains("anything"));
+        assert!(
+            Reach::All {
+                witness: String::new()
+            }
+            .contains("anything")
+        );
     }
 }
