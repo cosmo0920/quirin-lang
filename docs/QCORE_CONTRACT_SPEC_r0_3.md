@@ -901,7 +901,7 @@ contract {
 **Every vocabulary** (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER; USER DECISIONS 2026-10-15, verbatim: "Only nonnull_member* need it", "Add premise support"). The clause belongs to the contract format, which checks its shape in every module as it parses it: a clause headed `resource_premise` that is not exactly a `requires` of `resource_premise(NAME, "STATEMENT")` under the loading rules above, or that repeats a name in one declaration, rejects the module whatever its vocabulary. Where it may stand is each vocabulary's rule:
 
 * **Resource contract v1:** beside the selector, as above.
-* **Bounds contract v1** (C09.3): only beside `nonnull_member_stable` or `nonnull_member_scope` in the same declaration. It is then a premise of those member facts, listed by every null row resting on one. Beside no other bounds or null clause, a `quant null-deref` and rule 14t's `nonnull_member` included, it rejects the module. The bounds consumer never reads it.
+* **Bounds contract v1** (C09.3): only beside a `nonnull_member` clause, of any kind, in the same declaration (card NONNULL-MEMBER-UNIFIED-QUALIFIER, USER DECISION 2026-10-16, verbatim: "Yes, all kinds"; before it, beside the stable and scope kinds only). It is then a premise of those member facts, listed by every null row resting on one. Beside no other bounds or null clause, a `quant null-deref` included, it rejects the module. The bounds consumer never reads it.
 * **A Quirin model contract** (a `resource type` module that no resource view selects, such as librdkafka's `queue_destructor.qv`) may state it on any `extern fn`. `module_premises` reads it from the format alone. No verdict consults a model contract, so it is published with the module and pinned by the module's clause count and digest.
 
 The premise `rk_no_plugin_library` is named by `rd_kafka_crash` (`memory.qv`), `rd_kafka_dump0` (`kafka_mem.qv`) and the model contract `rd_kafka_q_destroy_final` too. With a non-null `rk`, the assertion-failure dump drops queue references that may run an interceptor or `rk_conf.log_cb`. The destructor's purge cascade reaches the log callback.
@@ -2618,8 +2618,8 @@ A global member declaration is withdrawn by one NULL store anywhere, which
 makes it false for members that hold only on some objects. Two scoped forms
 are admitted, each checked, neither a "trust me" scope:
 
-* *Stable members, an object-state scope.* `requires nonnull_member_stable(TAG,
-  FIELD);` says `FIELD` is never made NULL on an **existing** `struct TAG`
+* *Stable members, an object-state scope.* `requires nonnull_member(TAG,
+  FIELD) where quant #scope [[stable]];` says `FIELD` is never made NULL on an **existing** `struct TAG`
   object. The state "set" (non-null) is entered at any non-null store or
   observation and is never left; a fresh object starts outside it. Checked
   at every store the analysed units make: an assignment or compound update,
@@ -2635,7 +2635,7 @@ are admitted, each checked, neither a "trust me" scope:
   `V` is assigned (`stable_fact_persists`), carried as the proof and
   dependency `stable:TAG.FIELD`. A null or possibly-null fact, or one on a
   base the walk does not track, is forgotten as before.
-* *Function scopes.* `requires nonnull_member_scope(TAG, FIELD, P);` on a
+* *Function scopes.* `requires nonnull_member(TAG, FIELD, P) where quant #scope [[scope]];` on a
   function says that on entry `P->FIELD` is non-null. The body reads it so
   and its row is `Safe` only conditional on it; each caller's actual is a
   `call-precondition` check of `ACTUAL->FIELD` (by fact, or by the caller's
@@ -2652,25 +2652,59 @@ are admitted, each checked, neither a "trust me" scope:
   (reset in `rd_kafka_recv`), `mk_list.next` and `cfl_list.next` (set to NULL
   by `mk_list_del`, `cfl_list_del`) are not declared.
 * *Premised member facts* (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER, USER
-  DECISION 2026-10-15, verbatim: "Only nonnull_member* need it"). Both
-  scoped forms are checked against every store the **analysed** units make,
-  so a store made by code outside the run could falsify them unchecked. A
-  callback a plugin library registers is such code. A declaration stating
-  either form may therefore name the premises its facts rest on, `requires
-  resource_premise(NAME, "STATEMENT");` (C04.18). The facts are then in
-  force only under them. Every null row whose dependency set names a premised
-  fact (`stable:TAG.FIELD`, or the scope declaration's function, as the
-  fold's travel leaves the set too) lists each premise in `premises`, with
-  the dependencies that carry it, and as the dependency `premise:NAME`. The
-  fold's `stable_declarations` / `scope_declarations` records list them.
+  DECISION 2026-10-15, verbatim: "Only nonnull_member* need it"; card
+  NONNULL-MEMBER-UNIFIED-QUALIFIER, USER DECISION 2026-10-16, verbatim: "Yes,
+  all kinds"). Every kind of the member clause is checked against every store
+  the **analysed** units make, so a store made by code outside the run could
+  falsify it unchecked. A callback a plugin library registers is such code. A
+  declaration stating a member clause of any kind may therefore name the
+  premises its facts rest on, `requires resource_premise(NAME, "STATEMENT");`
+  (C04.18). The facts are then in force only under them. Every null row whose
+  dependency set names a premised fact (`member:TAG.FIELD`,
+  `stable:TAG.FIELD`, or the scope declaration's function, as the fold's
+  travel leaves the set too) lists each premise in `premises`, with the
+  dependencies that carry it, and as the dependency `premise:NAME`. The fold's
+  `member_declarations`, `stable_declarations` and `scope_declarations`
+  records list them.
   Nothing decides on it: verdicts, checks and reasons are those without it.
   A `quant null-deref` fact (a function dereferences its formal) does not
   depend on which callback runs and takes no premise. librdkafka's 67
   `rd_kafka_broker_s.rkb_rk` declarations name `rk_no_plugin_library`
   (census and rule:
-  `docs/reports/librdkafka-plugin-premise-remainder/`). Lean:
+  `docs/reports/librdkafka-plugin-premise-remainder/`), and so do its four
+  plain declarations whose five members meet the same rule
+  (`rd_kafka_toppar_s.rktp_rkt`, `rd_kafka_topic_s.rkt_rk` and `.rkt_topic`,
+  `rd_kafka_cgrp_s.rkcg_rk`, `rd_kafka_transport_s.rktrans_rkb`;
+  `docs/reports/nonnull-member-unified-qualifier/`). Fluent Bit's member
+  declarations name none. Lean:
   `QCore.NullMemberPremise` (`a_resting_row_lists_the_premise`,
   `listed_premises_put_every_fact_in_force`, `listing_changes_no_verdict`).
+
+**One clause, three kinds** (card NONNULL-MEMBER-UNIFIED-QUALIFIER,
+grammar [G05f](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05f-scoped-member-invariants)).
+
+> **USER DECISION 2026-10-16** (decision 3), verbatim: "As shown above",
+> "Migrate, one spelling", "Yes, all kinds". The spellings: plain `requires
+> nonnull_member(TAG, FIELD);`, stable `requires nonnull_member(TAG, FIELD)
+> where quant #scope [[stable]];`, scope `requires nonnull_member(TAG, FIELD,
+> P) where quant #scope [[scope]];`. `P` is required with `[[scope]]` and
+> rejected otherwise. The old words `nonnull_member_stable` / `_scope` are
+> migrated and then rejected, with a diagnostic naming the new form. No
+> aliases. The plugin premise applies to all three kinds by the same
+> reachability rule.
+
+The kinds are the three facts above, unchanged: each loads to exactly what
+its retired spelling loaded to, and every admitted merged clause is the
+migration of exactly one retired clause (`QCore.NullMemberQualifier`:
+`the_merged_surface_loads_the_old_fact`,
+`every_admitted_clause_is_a_migrated_one`,
+`the_merged_surface_is_equivalent_to_the_old_forms`, audited in
+`proof/AuditNullMemberQualifier.lean`). Every tracked declaration was
+rewritten (librdkafka 67, Fluent Bit 14) and re-pinned with `pin --bounds` at
+both audited revisions; verdicts are unchanged, only text, digests, pins and
+the premise fields. The null property's evidence labels keep their kind names
+(`nonnull_member_stable`, `nonnull_member_scope(…)`) byte for byte; they are
+labels, not surface spellings.
 
 Lean: `QCore.NullMemberScope` (`stable_fact_persists`,
 `a_scoped_use_sees_non_null`, `a_fresh_store_does_not_reach`,

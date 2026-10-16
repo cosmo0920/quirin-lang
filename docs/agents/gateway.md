@@ -7535,7 +7535,9 @@ own anchor here.
     for the run.** Card NULL-CANDIDATE-TRIAGE (grammar G05e; spelled
     `null_member_nonnull` until NULL-MEMBER-INVARIANT-SCOPE's rename, C09.3
     "Naming", no alias).
-    `requires nonnull_member(TAG, FIELD);` in bounds contract v1 (a
+    `requires nonnull_member(TAG, FIELD);` in bounds contract v1 (the plain
+    kind of the one member clause, grammar G05f, since card
+    NONNULL-MEMBER-UNIFIED-QUALIFIER; a
     type-level declaration its host function, the record's constructor,
     carries; pinned in the crate's `bounds-contracts.lock`): a read of
     `E->FIELD` or `E.FIELD` of a `struct TAG` (through typedefs) with no fact
@@ -7549,6 +7551,15 @@ own anchor here.
     indeterminate object's member is never read before its first store) is a
     premise no store covers; `partly-validated` when every examined store is
     proved, `declared-assumption` when no analysed unit stores it.
+    The check covers the analysed units' stores only, so the declaration may
+    name a premise (card NONNULL-MEMBER-UNIFIED-QUALIFIER, USER DECISION
+    2026-10-16 "Yes, all kinds"; rule 14x's premised facts): every null row
+    whose dependency set names `member:TAG.FIELD` lists it, and so does the
+    fold's `member_declarations` record. librdkafka's four plain
+    declarations (`rd_kafka_toppar_s.rktp_rkt`, `rd_kafka_topic_s.rkt_rk`
+    and `.rkt_topic`, `rd_kafka_cgrp_s.rkcg_rk`,
+    `rd_kafka_transport_s.rktrans_rkb`) name `rk_no_plugin_library` by the
+    census rule (`docs/reports/nonnull-member-unified-qualifier/`).
     **Do not** read a held or withdrawn member declaration, or label one
     `validated`. `QCore.NullTriage` (`member_invariant_holds`,
     `a_member_declaration_is_never_validated`, `a_failed_store_withdraws`;
@@ -7615,7 +7626,11 @@ own anchor here.
     resting on a withdrawn declaration.** Card NULL-MEMBER-INVARIANT-SCOPE
     (contract specification C09.3, grammar G05f; `null_deref/scope.rs`,
     `walk.rs` (`stable_store`), `qcore_audit::null_member_scope_fold`).
-    `requires nonnull_member_stable(TAG, FIELD);` in bounds contract v1 (a
+    `requires nonnull_member(TAG, FIELD) where quant #scope [[stable]];` in
+    bounds contract v1 (spelled `nonnull_member_stable(TAG, FIELD)` until
+    card NONNULL-MEMBER-UNIFIED-QUALIFIER, which merged the three member
+    forms into one clause, rejects the old word naming the new form and
+    keeps the fact unchanged, `QCore.NullMemberQualifier`; a
     type-level declaration its host, the record's constructor, carries;
     pinned in the crate's `bounds-contracts.lock`) says `FIELD` is never
     made NULL on an existing `struct TAG` object. Every assignment and
@@ -7652,11 +7667,14 @@ own anchor here.
     **Premised facts** (card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER, USER
     DECISION 2026-10-15 "Only nonnull_member* need it"; contract
     specification C04.18, C09.3). The check covers the analysed units' stores
-    only. A declaration stating this form (or rule 14z's) may therefore name
-    `requires resource_premise(NAME, "STATEMENT");`; in bounds v1 nowhere
-    else (`premise-beside-member`). The facts are then in force only under
-    it. Every null row whose dependency set names `stable:TAG.FIELD` (or a
-    premised scope function), including a set the fold's travel grows
+    only. A declaration stating a member clause of any kind (this rule's,
+    rule 14z's, and since card NONNULL-MEMBER-UNIFIED-QUALIFIER, USER
+    DECISION 2026-10-16 "Yes, all kinds", rule 14t's plain kind) may
+    therefore name `requires resource_premise(NAME, "STATEMENT");`; in
+    bounds v1 nowhere else (`premise-beside-member`). The facts are then in
+    force only under it. Every null row whose dependency set names
+    `stable:TAG.FIELD`, `member:TAG.FIELD` (or a premised scope function),
+    including a set the fold's travel grows
     (`null_fold::add_dependencies`), lists it in `premises` and as
     `premise:NAME`. The fold's records list it. No decision reads it. A
     `quant null-deref` fact takes none. librdkafka's 67
@@ -7704,7 +7722,11 @@ own anchor here.
 14z. **A function-scope entry is the callee's entry fact and a checked
     obligation at every call.** Card NULL-MEMBER-INVARIANT-SCOPE (`walk.rs`:
     the entry facts, `scope_obligation`; `null_deref.rs`, the row's scope).
-    `requires nonnull_member_scope(TAG, FIELD, P);` on a function's bounds
+    `requires nonnull_member(TAG, FIELD, P) where quant #scope [[scope]];`
+    (spelled `nonnull_member_scope(TAG, FIELD, P)` until card
+    NONNULL-MEMBER-UNIFIED-QUALIFIER; `P` is required with `[[scope]]` and
+    rejected otherwise; the evidence labels below keep the old kind name,
+    byte for byte) on a function's bounds
     declaration (`P` a pointer parameter) says that on entry `P->FIELD` is
     non-null. The body reads it so (proof `precondition:declared:
     nonnull_member_scope(…)`, held while the declaration is), its row is `Safe`

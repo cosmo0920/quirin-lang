@@ -3688,7 +3688,7 @@ The review markers (card W45-CONTRACT-DEFERRED-REVIEW, contract specification C0
 
 The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C06.2) have their own static conditions. A declaration carries at most one `contract_revision_marker`; a second one is a duplicate (the same mode) or a conflict (the other mode). A `clause_revision_marker` wraps exactly one `resource_predicate`, read as if written bare, and may not restate the contract-level marker's mode. It cannot wrap a marker of either kind, and a `clause_review_marker` cannot wrap it; it cannot wrap the selector or a `literal_argument_premise`, which take the contract's mode; and it is admitted only under `ensures normal`, as the contract-level form is only under `requires`. A `revision_mode` other than `pinned` or `flexible` is malformed. Every violation rejects the whole module. With no marker a declaration is pinned. Inheritance (G05a, C15) does not copy a parent's revision markers: elaboration drops the contract-level form and unwraps the clause-level one.
 
-The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a scoped member form only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
+The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-CONTRACT-DEPENDENCIES, contract specification C04.18) names an assumption the declaration rests on: `NAME` a lowercase identifier, the statement one plain, non-blank string with no escape and no control character, each name at most once per declaration; any other shape, a repeated name and an `ensures` spelling each reject the whole module. It changes no mode, is rederived from the retained texts (`declaration_premises`), is part of the declaration's text and so of its contract digest and pin, and inheritance (G05a) copies it, compared by the agreement check. Since card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER the shape check belongs to the contract format: `crates/qcore-frontend/src/frontend.rs` (`premise_clause`) refuses, at parse, any other shape, an introducer other than `requires` and a repeated name in one declaration, in every module. A resource-v1, bounds-v1 (G05f, beside a member clause of any kind only) or Quirin model contract is rejected whole. A model contract's premises are read by `contract_loader::module_premises`.
 
 The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
 
@@ -4072,7 +4072,9 @@ exempts modules the bounds loader accepts). The card introduced them as
 renamed them on the user's decision of 2026-10-11 (one `nonnull_` scheme,
 `nullable_` reserved for clauses stating a value may be NULL; contract
 specification C09.3, "Naming"). There is no alias: the old spellings are
-refused as any unknown bounds clause is. The clauses are part of the
+refused as any unknown bounds clause is. Since card
+NONNULL-MEMBER-UNIFIED-QUALIFIER `nonnull_member` is G05f's `member_clause`,
+whose plain kind is this clause; a named premise may stand beside it. The clauses are part of the
 declaration digest and pinned with it. Only the null property reads them:
 `BoundsContracts::for_bounds()` removes them like `quant null-deref`, and
 `resource_*` consumers reject the module. A declaration beside a
@@ -4103,46 +4105,79 @@ The first tracked use is `providers/quirin-provider-cfl/contracts/cfl/null_deref
 Card NULL-MEMBER-INVARIANT-SCOPE, contract specification
 [C09.3](QCORE_CONTRACT_SPEC_r0_3.md#c093-null-dereference-the-property-cnullderefv1-and-quant-null-deref)
 ("Scoped member invariants"), gateway rules
-[14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z).
-Two more preconditions of G05b, read by
-`crates/qcore-contract/src/bounds_contract.rs` (`BoundsClause::NonnullMemberStable`,
-`BoundsClause::NonnullMemberScope`):
+[14x](agents/gateway.md#constraint-14x)–[14z](agents/gateway.md#constraint-14z);
+one clause since card NONNULL-MEMBER-UNIFIED-QUALIFIER (gateway rule
+[14t](agents/gateway.md#constraint-14t); USER DECISION 2026-10-16, decision 3,
+verbatim: "As shown above", "Migrate, one spelling", "Yes, all kinds"). G05e's
+member clause takes a qualifier, read by
+`crates/qcore-contract/src/bounds_contract.rs` (`member_clause`,
+`member_qualifier`):
 
 ```ebnf
-bounds_pre = … | "nonnull_member_stable", "(", IDENT, ",", IDENT, ")"
-               | "nonnull_member_scope", "(", IDENT, ",", IDENT, ",", IDENT, ")" ;
+bounds_pre       = … | member_clause ;
+member_clause    = "nonnull_member", "(", IDENT, ",", IDENT, ")"                       (* plain, 14t *)
+                 | "nonnull_member", "(", IDENT, ",", IDENT, ")", member_qualifier      (* [[stable]], 14x *)
+                 | "nonnull_member", "(", IDENT, ",", IDENT, ",", IDENT, ")", member_qualifier ;
+                                                                                         (* [[scope]], 14z *)
+member_qualifier = "where", "quant", "#", "scope", "[", "[", ("stable" | "scope"), "]", "]" ;
 ```
 
-Static conditions, each rejecting the whole module: the first `IDENT` of
-either is a C struct tag, never a parameter of the declaration, and the
-second a member name (`nonnull-member-shape`, `nonnull-member-scope-shape`); the
-third `IDENT` of `nonnull_member_scope` is a pointer parameter of the declaration
-(`nonnull-member-scope-parameter`); at most one `nonnull_member_stable` per (tag,
-member) and one `nonnull_member_scope` per (parameter, tag, member) per
-declaration; neither is a postcondition. Both words were absent from every
-tracked contract module when introduced (`RESERVED_SPELLINGS`, 16). The
-clauses are part of the declaration digest and pinned with it. Only the null
-property reads them: `BoundsContracts::for_bounds()` removes them, and
-`resource_*` consumers reject the module. A declaration beside a resource-v1
-declaration of the same function is a registered `null_deref_beside` relation.
-`nonnull_member_stable` is a type-level declaration hosted, like G05e's member
-declaration, on the record's constructor; `nonnull_member_scope` belongs to the
-function it is written on.
+The three kinds load to exactly the facts the three spellings before the card
+loaded to: plain `BoundsClause::NonnullMember`, `[[stable]]`
+`BoundsClause::NonnullMemberStable`, `[[scope]]`
+`BoundsClause::NonnullMemberScope` (`QCore.NullMemberQualifier`:
+`the_merged_surface_is_equivalent_to_the_old_forms`). Static conditions,
+each rejecting the whole module with a named diagnostic:
+
+* the first `IDENT` is a C struct tag, never a parameter of the declaration,
+  and the second a member name; any other argument shape
+  (`nonnull-member-shape`);
+* the third `IDENT` is admitted only with `[[scope]]`
+  (`nonnull-member-parameter-needs-scope`), `[[scope]]` only with it
+  (`nonnull-member-scope-needs-parameter`), and it names a pointer parameter
+  of the declaration (`nonnull-member-scope-parameter`);
+* the qualifier is exactly `where quant #scope [[WORD]]`
+  (`nonnull-member-qualifier-shape`), `WORD` `stable` or `scope`
+  (`nonnull-member-qualifier-unknown`);
+* the clause is a `requires`, never an `ensures` (`nonnull-member-requires`);
+* at most one plain clause and one `[[stable]]` clause per (tag, member), and
+  one `[[scope]]` clause per (parameter, tag, member), per declaration;
+* the retired words `nonnull_member_stable` and `nonnull_member_scope` (the
+  card's migration rewrote every tracked declaration: librdkafka 67, Fluent
+  Bit 14) are rejected in every position, a held one included, with a
+  diagnostic naming the form to write (`nonnull-member-retired-spelling`).
+  There is no alias. Both words stay in `RESERVED_SPELLINGS` (17), so no other
+  vocabulary takes them.
+
+The clauses are part of the declaration digest and pinned with it; the text
+the digest covers renders the qualifier as written above, so spacing does
+not move it. Only the null property reads them:
+`BoundsContracts::for_bounds()` removes them, and `resource_*` consumers
+reject the module. A declaration beside a resource-v1 declaration of the same
+function is a registered `null_deref_beside` relation. A plain or
+`[[stable]]` clause is a type-level declaration hosted, like G05e's member
+declaration, on the record's constructor; a `[[scope]]` clause belongs to the
+function it is written on. The null property's evidence labels keep their
+kind names (`nonnull_member_stable; …` in an assumption, `nonnull_member_scope(TAG,
+FIELD, P)` in a scope or check subject), byte for byte: they are not surface
+spellings.
 
 Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (contract specification C04.18
-"Every vocabulary", C09.3 "Premised member facts"): G05's named premise is a
-bounds precondition only beside these two forms (`BoundsClause::Premise`):
+"Every vocabulary", C09.3 "Premised member facts"), extended by card
+NONNULL-MEMBER-UNIFIED-QUALIFIER ("Yes, all kinds"): G05's named premise is a
+bounds precondition only beside a member clause, of any kind
+(`BoundsClause::Premise`):
 
 ```ebnf
 bounds_pre = … | named_premise ;   (* only in a declaration that also states
-                                      nonnull_member_stable or nonnull_member_scope *)
+                                      a member_clause of any kind *)
 ```
 
-A declaration with a premise and neither form rejects the module
-(`premise-beside-member`). The same applies beside `quant null-deref`, rule
-14t's `nonnull_member` or any bounds clause. A premise under `ensures`, a
-malformed one and a repeated name reject it at parse, in every vocabulary.
-No reserved spelling is added: `resource_premise` is G05's.
+A declaration with a premise and no member clause rejects the module
+(`premise-beside-member`). The same applies beside `quant null-deref` or any
+bounds clause. A premise under `ensures`, a malformed one and a repeated name
+reject it at parse, in every vocabulary. No reserved spelling is added:
+`resource_premise` is G05's.
 
 ## G06. Observation predicate grammar
 
