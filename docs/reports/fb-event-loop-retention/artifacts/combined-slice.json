@@ -1,0 +1,485 @@
+{
+ "route": "slice",
+ "before": {
+  "report_sha256": "e251fb9f424aea819561a28460cea3e8a87423b5684b028edcb849c9e5966838",
+  "rows": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1
+  },
+  "null": {
+   "Safe-conditional": 103,
+   "Safe-unconditional": 71,
+   "Unknown": 232
+  }
+ },
+ "after": {
+  "report_sha256": "5652f8198e058288c5ae43a37db94a6513075a40cd9c0cd013962bd28b17d16b",
+  "rows": {
+   "Pending": 4,
+   "Safe": 52,
+   "Unknown": 347,
+   "Unsafe": 1
+  },
+  "null": {
+   "Safe-conditional": 103,
+   "Safe-unconditional": 71,
+   "Unknown": 232
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "plugins/in_tail/tail.c",
+   "function": "in_tail_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19531,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19538,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19547,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19555,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19563,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19575,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19586,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_event`",
+     19531,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_event`",
+     19563,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     19538,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     19547,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     19555,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     19575,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     19586,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20329,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20336,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_event`",
+     20329,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     20336,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "plugins/in_tail/tail_fs_stat.c",
+   "function": "flb_tail_fs_stat_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     20137,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     20143,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "collector_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19539,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19550,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     19550,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     19539,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c",
+   "function": "flb_input_collector_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20238,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20250,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     20250,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     20238,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c#1",
+   "function": "collector_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19539,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19550,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     19550,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     19539,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input.c#1",
+   "function": "flb_input_collector_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20238,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20250,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     20250,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     20238,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     17381,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c",
+   "function": "input_thread_instance_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     17231,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c#1",
+   "function": "input_thread",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     17381,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_input_thread.c#1",
+   "function": "input_thread_instance_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     17231,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "do_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     19011,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c",
+   "function": "flb_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18458,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     18458,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c#1",
+   "function": "do_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     19011,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_lib.c#1",
+   "function": "flb_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18458,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     18458,
+     1
+    ]
+   ]
+  }
+ ],
+ "null_moves": []
+}

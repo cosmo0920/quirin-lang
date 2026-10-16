@@ -1,0 +1,457 @@
+{
+ "route": "system",
+ "before": {
+  "report_sha256": "f67554a09110129987054e191ce709b4cdb2ac81e704352b5343c9ab2a21d192",
+  "rows": {
+   "Safe": 93,
+   "Unknown": 351,
+   "Unsafe": 4
+  },
+  "null": {
+   "Safe-conditional": 125,
+   "Safe-unconditional": 84,
+   "Unknown": 245
+  }
+ },
+ "after": {
+  "report_sha256": "58dab925be3e330bd6db09ba1b55f27ef4b9e059c71835dcbe95a613573a819c",
+  "rows": {
+   "Safe": 93,
+   "Unknown": 351,
+   "Unsafe": 4
+  },
+  "null": {
+   "Safe-conditional": 125,
+   "Safe-unconditional": 84,
+   "Unknown": 245
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [],
+ "leaf_only_moves": [
+  {
+   "file": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `flb_input_set_collector_time`",
+     18295,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_flush_timer_reset",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     19152,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_shutdown",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `config`",
+     20049,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `config`",
+     20055,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     20049,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     20055,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19957,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     19957,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     19897,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c#1",
+   "function": "flb_engine_flush_timer_reset",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     19152,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c#1",
+   "function": "flb_engine_shutdown",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `config`",
+     20049,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `config`",
+     20055,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     20049,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     20055,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_engine.c#1",
+   "function": "flb_engine_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19957,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     19957,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     19897,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     18144,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     18144,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18197,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     18197,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18069,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     18069,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_disable",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18100,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     18100,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c",
+   "function": "schedule_request_now",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     17714,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     17714,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c#1",
+   "function": "flb_sched_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     18144,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     18144,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c#1",
+   "function": "flb_sched_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     18197,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_destroy`",
+     18197,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_cb_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18069,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     18069,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_cb_disable",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18100,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     18100,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "src/flb_scheduler.c#1",
+   "function": "schedule_request_now",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     17714,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     17714,
+     1
+    ]
+   ]
+  }
+ ],
+ "null_moves": []
+}

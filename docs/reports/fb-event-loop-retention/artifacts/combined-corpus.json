@@ -1,0 +1,435 @@
+{
+ "route": "corpus",
+ "before": {
+  "report_sha256": "7326ba39dd133c1290a8b2f8b14c4fdcf34171586f936edeb53d703e032fc289",
+  "rows": {
+   "Safe": 938,
+   "Unknown": 3887,
+   "Unsafe": 9
+  },
+  "null": {
+   "Safe-conditional": 1435,
+   "Safe-unconditional": 1113,
+   "Unknown": 2355,
+   "Unsafe": 18
+  }
+ },
+ "after": {
+  "report_sha256": "96a0112a79934bd737b3e77d50d9d4538dbe4b9d54b8929b281d21ea350204d8",
+  "rows": {
+   "Safe": 939,
+   "Unknown": 3886,
+   "Unsafe": 9
+  },
+  "null": {
+   "Safe-conditional": 1435,
+   "Safe-unconditional": 1113,
+   "Unknown": 2355,
+   "Unsafe": 18
+  }
+ },
+ "unit_status_moves": {},
+ "status_moves": [
+  {
+   "file": "mk_core/mk_event.c",
+   "function": "mk_event_timeout_disable",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     3663,
+     1
+    ]
+   ]
+  }
+ ],
+ "leaf_only_moves": [
+  {
+   "file": "mk_server/mk_http_thread.c",
+   "function": "thread_cb_init_vars",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6039,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6039,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_lib_worker",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     6519,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_lib_yield",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     6503,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6494,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6494,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6503,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_lib.c",
+   "function": "mk_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     6551,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_net.c",
+   "function": "mk_net_conn_create",
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `conn`",
+     6004,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     6004,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     5996,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     5996,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6004,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_net.c",
+   "function": "mk_net_conn_write",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     6070,
+     1
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `sched`",
+     6111,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6070,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6111,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_event_close",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6942,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6942,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_launch_worker_loop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6653,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_channel_create`",
+     6653,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_remove_client",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_del`",
+     6754,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_fifo_worker_setup",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6344,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6344,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_listen_handler",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6218,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6218,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6377,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6382,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6377,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6382,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     6389,
+     1
+    ]
+   ]
+  },
+  {
+   "file": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6456,
+     1
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     6466,
+     1
+    ]
+   ],
+   "removed": [
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_add`",
+     6456,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_create`",
+     6466,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_timeout_destroy`",
+     6523,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     6435,
+     1
+    ],
+    [
+     "unsupported",
+     "call to uncontracted function `mk_event_wait`",
+     6468,
+     1
+    ]
+   ]
+  }
+ ],
+ "null_moves": []
+}

@@ -142,6 +142,25 @@ borrowed callee too. One corpus gain the prediction did not name
 `input_thread`, `flb_destroy` stay Unknown); **none discharges**, as
 predicted: each rests on cross-function ordering.
 
+### Combined arbiter on the rebased tip
+
+Main `aa8d8b030` (binary `c330fbce…`, built from its git archive) against the
+rebased tip `7f3956ca4` (binary `f7c0c05e…`), every route under the heavy lock
+with the null property ([`scripts/export.sh`](scripts/export.sh), the same
+build and measurement scripts; `artifacts/combined-{corpus,system,slice}.json`):
+
+| Route | main → tip | Reports |
+| --- | --- | --- |
+| corpus | 938 / 9 / 3,887 → **939 / 9 / 3,886** | `7326ba39…` → `96a0112a…` |
+| system | 93 / 4 / 351 → 93 / 4 / 351 | `f67554a0…` → `58dab925…` |
+| slice | 52 / 1 / 347 / 4 Pending → identical | `e251fb9f…` → `5652f819…` |
+
+The null property is identical on every route. On each route the set of moved
+rows, their statuses and their added and removed leaves (line numbers aside)
+equal the card's own BEFORE/AFTER above: the one Safe gain
+`mk_event_timeout_disable`, 13 / 17 / 15 rows trading leaves. The three main
+commits since `8b360766c` do not interact with this card's movement.
+
 ## Ledger
 
 `named_followups` 789 → 790 ([`scripts/update_ledger.py`](scripts/update_ledger.py),
