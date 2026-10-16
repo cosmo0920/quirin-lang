@@ -1,0 +1,62 @@
+{
+ "statuses_before": {
+  "Unknown": 351,
+  "Safe": 93,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 351,
+  "Safe": 93,
+  "Unsafe": 4
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "unresolved resource identity `_`": 2
+ },
+ "added": {
+  "unresolved resource identity `_`": 2
+ },
+ "moving_rows": 2,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_task_singleplex_enqueue",
+   "row": 1,
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17844: unresolved resource identity `retry`"
+   ],
+   "gained": [
+    "17843: unresolved resource identity `retry`"
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_task_singleplex_enqueue",
+   "row": 1,
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17844: unresolved resource identity `retry`"
+   ],
+   "gained": [
+    "17843: unresolved resource identity `retry`"
+   ]
+  }
+ ]
+}

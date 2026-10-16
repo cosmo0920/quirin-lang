@@ -3781,7 +3781,8 @@ own anchor here.
     `crates/qcore-c-gateway/src/relational_post.rs` (`read_test`,
     `class_name`, `integer_constant`), the route-G adapter
     `legacy_relational_post.rs`, the summary route
-    `legacy_relational_summary.rs`, thin hooks in `legacy_c.rs`
+    `legacy_relational_summary.rs`, the stream guard
+    `legacy_stream_line_order.rs`, thin hooks in `legacy_c.rs`
     (`build_function_cfg_with`, the `if` arm, the uncontracted fallback),
     `legacy_summary.rs` (`derive_custody_summaries`) and
     `legacy_reserved_spelling.rs` (the class prefix)). It amends rule 10x's
@@ -3805,7 +3806,18 @@ own anchor here.
     class call the classifier refuses, is the plan of its named refusal.
     `NAME = f(…);` followed immediately by such an `if` testing `NAME` is
     rewritten to the same C with the assignment in the condition (statement
-    boundary `;`, `{`, `}` before `NAME`). An out slot a class leaves
+    boundary `;`, `{`, `}` before `NAME`); the rewritten `if` head (the
+    `if`, its parenthesis, the condition before `NAME` and the added
+    parenthesis) takes `NAME`'s line and the parenthesis closing the moved
+    call the call's own, so the stream's lines stay non-decreasing (card
+    RELATIONAL-REWRITE-LINE-ORDER,
+    [report](../reports/relational-rewrite-line-order/README.md): before it the `if` kept its own line
+    ahead of the moved call's, and `typed_place::occurrence` declined every
+    statement of the unit). The stream the parser reads, after every
+    rewrite, is guarded: one whose lines are not non-decreasing is a hard
+    error in debug and test builds and, in release builds, a function whose
+    first instruction is the refusal `stream-line-order` (never `Safe`,
+    counted as a leaf). An out slot a class leaves
     unwritten (`resource_borrowed` beside `resource_out` in another class)
     is passed as data on that class, `&NAME` only, and `NAME` then holds an
     untracked value (`OpaqueValue`). (3) **Untested.** Every other call of a
@@ -3824,8 +3836,9 @@ own anchor here.
     no summary leaves it a declared assumption (rule 8). **Do not** put a
     disposition in the function map, apply a class on a call whose value is
     not decided by its own test, prune an edge a selection calls
-    infeasible, or treat `resource_borrowed` on an out slot as unwritten
-    outside a disposition. Premises stated, not proved: faithful Clang
+    infeasible, treat `resource_borrowed` on an out slot as unwritten
+    outside a disposition, or leave a rewritten stream's lines out of
+    order. Premises stated, not proved: faithful Clang
     extraction (trust boundary 28), the declared dispositions (constraint 4),
     and that replacing a `return` by divergence leaves every state on every
     other path as it was (the CFG's own construction).

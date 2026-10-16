@@ -640,6 +640,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [region-joins-loan](region-joins-loan/README.md) | REGION-JOINS-LOAN — the loan half of CT25 |
 
+| [relational-rewrite-line-order](relational-rewrite-line-order/README.md) | RELATIONAL-REWRITE-LINE-ORDER: rule 11r's rewrite keeps the stream's lines in order |
+
 | [remaining-alias-aggregate](remaining-alias-aggregate/README.md) | ALIAS-AGGREGATE — the twelve identity residuals, measured to their roots — 2026-09-10 |
 
 | [remaining-alias-locals](remaining-alias-locals/README.md) | ALIAS-LOCALS — two locals, and the definite-alias relation kind — 2026-09-09 |

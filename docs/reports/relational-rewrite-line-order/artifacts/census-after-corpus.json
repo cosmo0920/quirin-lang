@@ -1,0 +1,63 @@
+{
+ "rewrites": {
+  "handoff-direct": {
+   "units": 1,
+   "sites": 2,
+   "unsorted_units": 0,
+   "site_list": [
+    [
+     "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5",
+     23732
+    ],
+    [
+     "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5",
+     23871
+    ]
+   ]
+  },
+  "relational-11r": {
+   "units": 1,
+   "sites": 3,
+   "unsorted_units": 0,
+   "site_list": [
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7203
+    ],
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7421
+    ],
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7436
+    ]
+   ]
+  }
+ },
+ "stages": {
+  "generic-selection": {
+   "functions": 36,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "handoff-direct": {
+   "functions": 244,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "literal-premise": {
+   "functions": 4744,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "relational-11r": {
+   "functions": 78,
+   "unsorted_after": 0,
+   "broke": 0
+  }
+ },
+ "unsorted_units": 0,
+ "unsorted_unit_functions": 0,
+ "units": {}
+}
