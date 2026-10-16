@@ -132,19 +132,21 @@ fn a_record_with_a_function_pointer_member_reads_its_other_members() {
     assert!(stop.safe(), "{stop:?}");
 }
 
-/// The function-pointer member itself joins no class of the lexical reader: a
-/// store into it keeps its refusal. (A read of it as a call actual is the
-/// Clang-typed call-actual reading's (rule 10k), which this card does not
-/// change.)
+/// The function-pointer member itself joins no class of the lexical reader,
+/// so nothing about it changes: a store of a function-pointer formal into it
+/// is decided by the Clang-typed statement reading (rule 10k) exactly as at
+/// the base, where the same row is `Safe` with no diagnostic (measured on the
+/// base reader with this fixture).
 #[test]
-fn the_function_pointer_member_itself_stays_refused() {
+fn the_function_pointer_member_is_decided_as_before() {
     if !clang_available() {
         return;
     }
     let store = row(
         "void set_cb(struct fcoll *coll, int (*cb)(void *, int)) { coll->cb_collect = cb; }",
     );
-    assert!(!store.safe(), "{store:?}");
+    assert!(store.safe(), "{store:?}");
+    assert!(store.unsupported.is_empty(), "{store:?}");
 }
 
 /// Any other parenthesised member still refuses the whole record: an array
@@ -163,7 +165,11 @@ fn an_array_of_function_pointers_still_refuses_the_record() {
 
 /// `flb_sched_timer_cb_create`'s and `collector_create`'s shape: a function
 /// whose only unparsed formal is a function pointer reads its other
-/// declarations, so a scalar store through a never-bound formal decides.
+/// declarations, so a scalar store through a never-bound formal decides. (At
+/// the base the Clang-typed statement reading already decided this one row;
+/// the reader's own change is pinned by the unit test
+/// `a_function_pointer_formal_is_opaque_and_the_function_is_read`. This pins
+/// that the now-readable declarations do not make it refuse.)
 #[test]
 fn a_function_pointer_formal_leaves_the_function_readable() {
     if !clang_available() {
