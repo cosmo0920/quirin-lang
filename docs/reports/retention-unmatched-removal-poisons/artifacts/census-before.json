@@ -1,0 +1,527 @@
+{
+ "corpus": {
+  "loop": [
+   {
+    "file": "mk_core/mk_event.c",
+    "function": "mk_event_loop_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `_mk_event_loop_create`",
+     "call to uncontracted function `_mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_core/mk_event.c",
+    "function": "mk_event_loop_destroy",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `_mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/mk_lib.c",
+    "function": "mk_lib_worker",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/mk_lib.c",
+    "function": "mk_start",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/mk_server.c",
+    "function": "mk_server_loop_balancer",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`",
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/mk_server.c",
+    "function": "mk_server_worker_loop",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/monkey.c",
+    "function": "mk_exit_all",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "mk_server/monkey.c",
+    "function": "mk_server_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`",
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   }
+  ],
+  "retention": [
+   {
+    "file": "lz4.c",
+    "function": "LZ4_compress_continue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_continue` retains `source` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4.c",
+    "function": "LZ4_compress_fast",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_extState` retains `source` in `ctxPtr`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4.c",
+    "function": "LZ4_compress_limitedOutput_continue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_continue` retains `src` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4.c",
+    "function": "LZ4_compress_limitedOutput_withState",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4.c",
+    "function": "LZ4_compress_withState",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4frame.c",
+    "function": "LZ4F_compressBlock",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4frame.c",
+    "function": "LZ4F_compressBlockHC",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4frame.c",
+    "function": "LZ4F_compressBlockHC_continue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4frame.c",
+    "function": "LZ4F_compressBlock_continue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4hc.c",
+    "function": "LZ4_compressHC2_limitedOutput_withStateHC",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4hc.c",
+    "function": "LZ4_compressHC_limitedOutput_continue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_continue` retains `src` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4hc.c",
+    "function": "LZ4_compressHC_limitedOutput_withStateHC",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "lz4hc.c",
+    "function": "LZ4_compress_HC",
+    "status": "Unknown",
+    "leaves": [
+     "call to `LZ4_compress_HC_extStateHC` retains `src` in `statePtr`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_committed",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_consumer_close0",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_offsets_for_times",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_purge",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_query_watermark_offsets",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_seek_partitions",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_commit_async",
+    "status": "Unknown",
+    "leaves": [
+     "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_commit_sync",
+    "status": "Unknown",
+    "leaves": [
+     "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)",
+     "call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_fetch_fanout",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka.c",
+    "function": "rd_kafka_share_set_acknowledgement_commit_cb",
+    "status": "Unknown",
+    "leaves": [
+     "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_ConsumerGroupListing_list_append_dedup",
+    "status": "Unknown",
+    "leaves": [
+     "call to `rd_list_add` retains `grp` in `to_add`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_admin.c",
+    "function": "rd_kafka_admin_request_op_new",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_metadata.c",
+    "function": "rd_kafka_metadata",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "function": "rd_kafka_commit",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_offset.c",
+    "function": "rd_kafka_commit_queue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_topic_partition_list_query_leaders_async",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_partition.c",
+    "function": "rd_kafka_toppars_pause_resume",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_queue.c",
+    "function": "rd_kafka_queue_new",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "rdkafka_txnmgr.c",
+    "function": "rd_kafka_send_offsets_to_transaction",
+    "status": "Unknown",
+    "leaves": [
+     "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    ]
+   },
+   {
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_append_raw",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_ring_buffer_enqueue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "flb_input_chunk.c",
+    "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   }
+  ]
+ },
+ "system": {
+  "loop": [
+   {
+    "file": "src/flb_engine.c",
+    "function": "flb_engine_start",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   },
+   {
+    "file": "src/flb_engine.c#1",
+    "function": "flb_engine_start",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   }
+  ],
+  "retention": [
+   {
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_append_raw",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_ring_buffer_enqueue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_input_chunk.c#1",
+    "function": "flb_input_chunk_append_raw",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_input_chunk.c#1",
+    "function": "flb_input_chunk_ring_buffer_enqueue",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_input_chunk.c#1",
+    "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+    "status": "Unknown",
+    "leaves": [
+     "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_scheduler.c",
+    "function": "flb_sched_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_scheduler.c",
+    "function": "schedule_request_now",
+    "status": "Unknown",
+    "leaves": [
+     "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_scheduler.c#1",
+    "function": "flb_sched_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   },
+   {
+    "file": "src/flb_scheduler.c#1",
+    "function": "schedule_request_now",
+    "status": "Unknown",
+    "leaves": [
+     "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    ]
+   }
+  ]
+ },
+ "slice": {
+  "loop": [
+   {
+    "file": "src/flb_input_thread.c",
+    "function": "input_thread_instance_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   },
+   {
+    "file": "src/flb_input_thread.c",
+    "function": "input_thread_instance_destroy",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "src/flb_input_thread.c#1",
+    "function": "input_thread_instance_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   },
+   {
+    "file": "src/flb_input_thread.c#1",
+    "function": "input_thread_instance_destroy",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   },
+   {
+    "file": "src/flb_lib.c",
+    "function": "flb_destroy",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   },
+   {
+    "file": "src/flb_lib.c#1",
+    "function": "flb_create",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_create`"
+    ]
+   },
+   {
+    "file": "src/flb_lib.c#1",
+    "function": "flb_destroy",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `mk_event_loop_destroy`"
+    ]
+   }
+  ],
+  "retention": []
+ }
+}
