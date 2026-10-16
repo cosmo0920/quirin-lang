@@ -193,6 +193,37 @@
       ]
     },
     {
+      "function": "flb_coro_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "ad70b8920c8f1c4da9034b851aa563c5c7c1cd3a38201760793ff1aad24e091b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_coro.h",
+              "kind": "definition",
+              "declaration_sha256": "81e5a50cf9148bbffc88a39c332246863d99e8756a4626db98865c91bedd9c4f",
+              "body_sha256": "a1b7be0432e2ae37ba53e092ff7863e29b54eea2e1078e06cd06725aa4bdff07"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_create",
       "module": "fluent_bit/input_instance.qv",
       "contract_sha256": "25ce56b62ea69f67cd81534b386eb2b0e4fb4980435bfb5d4fa6b362a3417e07",
@@ -327,6 +358,42 @@
               "kind": "definition",
               "declaration_sha256": "ca09fed31f69d0077a49b54472015c0de46e64ff6770d95b4c21a7391eb639e9",
               "body_sha256": "a45a70e930855004f1f3eb3d267838a00df709771401d0cd1359fed0ab278dc6"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_event_chunk_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "1bac5fc9815d5df3462293938cb6e57d2b206bfbf51738b30bc5103153301efd",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "f1daff71dd193497d274be16f00ce9ad5de749cb39a638e570b8f10c159f6f63"
+            },
+            {
+              "path": "src/flb_event.c",
+              "kind": "definition",
+              "declaration_sha256": "f1daff71dd193497d274be16f00ce9ad5de749cb39a638e570b8f10c159f6f63",
+              "body_sha256": "b93400c6ebec10df9d789b9bd9a504263bfe85a99b817feff969670951ede07b"
             }
           ]
         }
@@ -706,6 +773,42 @@
       ]
     },
     {
+      "function": "flb_input_chunk_release_route",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "a88ed4f52542f9b2751f3e4ad9fa074ae28b7ce58a7abcd7f12f62ba51bf7c98",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input_chunk.h",
+              "kind": "declaration",
+              "declaration_sha256": "37338c9f736da418f18a217eed296d9854cac12ec8d253d254453a07b73ba461"
+            },
+            {
+              "path": "src/flb_input_chunk.c",
+              "kind": "definition",
+              "declaration_sha256": "37338c9f736da418f18a217eed296d9854cac12ec8d253d254453a07b73ba461",
+              "body_sha256": "ea54053a49bd11b0b68a38c3aec0caa1f28e306d4d8c7cb59ee66c53c05474c3"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input_chunk_total_size",
       "module": "fluent_bit/input_chunk_total_size.qv",
       "contract_sha256": "dde554289008ea4d237be5c4cdb949ae08642e5789a53570290d9159acf4f47b",
@@ -768,6 +871,42 @@
               "kind": "definition",
               "declaration_sha256": "272b36984a649de39a0dca8abb7d57f66000a52721bdaecf9b5f57f01896ea99",
               "body_sha256": "e97662afd3893d181880657874c6c3b2fea7ab387169543ac28c541fdce60188"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_collector_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "4c0bcc5a21a70e01b46ee5253dbc258399dd02c9a51a4a4ab42428d4b077ea07",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "03863f85482f70729b0490d71d20375627c1f89a77aa3b42106f690cd353c25e"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "03863f85482f70729b0490d71d20375627c1f89a77aa3b42106f690cd353c25e",
+              "body_sha256": "53d673eed99420688b14d0bf5b56158efc60b29190084624727b085c39a2398a"
             }
           ]
         }
@@ -876,6 +1015,74 @@
               "kind": "definition",
               "declaration_sha256": "e2c96105579b2884bb87795863b5786a677a0016551f9a3a03027173b282c969",
               "body_sha256": "a019cbd10df20d3ee37097e9e9927fa52d14764ece891b6a571e0f19736ca719"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_coro_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "a419d94c018d7c3ff0335cc6801f929860147851a7cf69a88c0237d21aa68365",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "15be996faba61f77eb1b94f564ecbabeb984d4b67980f52b94f178d683e2a381",
+              "body_sha256": "be2b2cc9cce5ccfcb6abb8c8eb89b3e19641f4adecd0af6e2ce090bedea48d87"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_instance_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "675a055b4a553053ef401af6635c5f33f237a49b32f52df6cdadd1d16c186dd1",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "8eca44e4e0da7d5dc889db62f8a658f5c55c80c45fefb2a2a96a95ae7ddc4452"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "8eca44e4e0da7d5dc889db62f8a658f5c55c80c45fefb2a2a96a95ae7ddc4452",
+              "body_sha256": "f9dbd4643ecf31b8c1f41aff356b9c60b71af0b7ab557eb07269bb68f423b286"
+            },
+            {
+              "path": "tests/runtime/custom_calyptia_input_test.c",
+              "kind": "declaration",
+              "declaration_sha256": "8eca44e4e0da7d5dc889db62f8a658f5c55c80c45fefb2a2a96a95ae7ddc4452"
             }
           ]
         }
@@ -1185,6 +1392,37 @@
       ]
     },
     {
+      "function": "flb_output_flush_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "daa1e42204d8fe7759e395c609019509de8b98522a6b9aeef3ea0554132d7941",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_output.h",
+              "kind": "definition",
+              "declaration_sha256": "4c13320f9f94463b863c880d7ee02ddf77f01206606fac0d7b8f14f3cb259c18",
+              "body_sha256": "05c13c9a3fb06e9786002bb0073a7eb9019cac35454d3545c34a2232a27c995d"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_output_flush_id_get",
       "module": "fluent_bit/output_flush_id.qv",
       "contract_sha256": "32ce25a90e71d44b47dd12aee51f240ccf068fcc7570e1516771fa05e71b189d",
@@ -1211,6 +1449,38 @@
               "kind": "definition",
               "declaration_sha256": "4d2256460711131f3fcfd821da0d1d79b17afd9246d5b4a4e346fe5a9ab778d3",
               "body_sha256": "2862f2cef9898cec0758f06cadcf524d2822e5201fd4da0800931ebcf7ddd42d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_output_instance_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "296187b3fac77a9eef003cfadb40caa948226f51847b6af7bac397d8d8bbb8c0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_output.h",
+              "kind": "declaration",
+              "declaration_sha256": "2174fcfa623438faf56cee2fe6802d82133fb7b6dc35143ecf25c5ecbaf84832"
+            },
+            {
+              "path": "src/flb_output.c",
+              "kind": "definition",
+              "declaration_sha256": "2174fcfa623438faf56cee2fe6802d82133fb7b6dc35143ecf25c5ecbaf84832",
+              "body_sha256": "2a314a59a83c111d54676998535add2f3c890024be8268329b243789a94fbc4e"
             }
           ]
         }
@@ -1494,6 +1764,78 @@
       ]
     },
     {
+      "function": "flb_sched_request_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "84f4984b7ada87ac2e79c25955e4b9bb47ff90e07c00cbea2c6b17e567ea5e23",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_scheduler.h",
+              "kind": "declaration",
+              "declaration_sha256": "0dee9cf5abb098e7d2141f9ca5e373455ba5728cf19c6eab019200b176c2f327"
+            },
+            {
+              "path": "src/flb_scheduler.c",
+              "kind": "definition",
+              "declaration_sha256": "0dee9cf5abb098e7d2141f9ca5e373455ba5728cf19c6eab019200b176c2f327",
+              "body_sha256": "0fc1f3d2d7b24410533dc4247bd35e97b0499d78fffc66a62102fb2fd9b4e15d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_sched_timer_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "e16500f08d92bce9d8e01e9944c05024dc25831e7f2f7a545cb788d060f8e1f7",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_scheduler.h",
+              "kind": "declaration",
+              "declaration_sha256": "9c2be7a2ad683b25e3f648a7a01fceaa47e3ead4cc5ffbdb55ff04042bb7d7e5"
+            },
+            {
+              "path": "src/flb_scheduler.c",
+              "kind": "definition",
+              "declaration_sha256": "9c2be7a2ad683b25e3f648a7a01fceaa47e3ead4cc5ffbdb55ff04042bb7d7e5",
+              "body_sha256": "dd7b9d6395c5f71d82af054e893ad96f428b4451fdf9536e0f5ab001f820e90b"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_sds_create_len",
       "module": "fluent_bit/resource_memory.qv",
       "contract_sha256": "23e59794820125ede3722ee0ef0d655eb0d42ffa963391f25b1a67beed87e8b8",
@@ -1720,6 +2062,98 @@
       ]
     },
     {
+      "function": "flb_tail_config_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "5ada9dd4150dffbceb0404aa03534f9ffee34fdfe02503d841a7caa7330d4489",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            }
+          ],
+          "sites": [
+            {
+              "path": "plugins/in_tail/tail_config.c",
+              "kind": "definition",
+              "declaration_sha256": "9265823369b313d61f3b20fca6f2ed86f2638847eb715e7600f69a018732d9d1",
+              "body_sha256": "98e0824615b99d1284ad84bed296e2816f3572a79b8c9b504b34e9461408a868"
+            },
+            {
+              "path": "plugins/in_tail/tail_config.h",
+              "kind": "declaration",
+              "declaration_sha256": "9265823369b313d61f3b20fca6f2ed86f2638847eb715e7600f69a018732d9d1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_tail_file_remove",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "801cb0b48ff257c2a9fc5e56bf8ff536d4b8f0e39861b2081570657d69b2310b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            }
+          ],
+          "sites": [
+            {
+              "path": "plugins/in_tail/tail_file.c",
+              "kind": "definition",
+              "declaration_sha256": "37ced6919e6a4cf32229f98570aea1cee6a3a3f87983ffaea26d5678bb2625bf",
+              "body_sha256": "54321dc58d2f9062145bda9c8048a4ff9baadc96fedc5d266a0760c5d7f538ec"
+            },
+            {
+              "path": "plugins/in_tail/tail_file.h",
+              "kind": "declaration",
+              "declaration_sha256": "37ced6919e6a4cf32229f98570aea1cee6a3a3f87983ffaea26d5678bb2625bf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_task_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "503889ed37a5f8eb467490a0154fb5e7f5e37258c82e09edbdd48b8c03ad7d32",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_task.h",
+              "kind": "declaration",
+              "declaration_sha256": "7785a713f3818b836e25db35cb51cc21045f73f7e5115e32db59582d31835835"
+            },
+            {
+              "path": "src/flb_task.c",
+              "kind": "definition",
+              "declaration_sha256": "7785a713f3818b836e25db35cb51cc21045f73f7e5115e32db59582d31835835",
+              "body_sha256": "ef45662296f67b9df70ee054509c679667fb0f44ea990a07209918e6ae2edd52"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_task_get_route_status",
       "module": "fluent_bit/task_route_queries.qv",
       "contract_sha256": "a550a297d0cd64ad0ce7b946f229144944a35b0a68de24e11c7ddea6830105a5",
@@ -1741,6 +2175,42 @@
               "kind": "definition",
               "declaration_sha256": "f341326d2a4dc5b15f53cf5a755748a63f97cbd7dc1f01da815e5822369ffe86",
               "body_sha256": "21e910d66946a53cd55c3ff1b86a3d0143c3ebc649eb76716ad3522991bd235d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_task_queue_destroy",
+      "module": "fluent_bit/teardown_destroy.qv",
+      "contract_sha256": "31303d6c83b78a27600b3d17d535662efe6e87bca03a51170fac68eaf77beea9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_task.h",
+              "kind": "declaration",
+              "declaration_sha256": "770e8642a0bfccd5f620e53035f64305fdcc517b10046658a8cf78ee848b1948"
+            },
+            {
+              "path": "src/flb_task.c",
+              "kind": "definition",
+              "declaration_sha256": "770e8642a0bfccd5f620e53035f64305fdcc517b10046658a8cf78ee848b1948",
+              "body_sha256": "3bfb39fc5c5c9db58b09c10822b80e9cca127a42b964e39c0628bbf9d5000bbf"
             }
           ]
         }
