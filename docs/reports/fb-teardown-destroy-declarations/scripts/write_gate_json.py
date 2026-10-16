@@ -15,7 +15,13 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/fb-teardown-destroy-declarations"
-BASE = "aa8d8b030"
+BASE = "b08c7c3d3"
+RERUN_NOTE = (
+    "At that head two Python count pins failed; the fix changes Python test files only "
+    "(gate-NAME/python-rerun-diff.txt), so the Rust, Lean and provider-Rust steps stand, and "
+    "scripts/gate-python-rerun.sh reran 13-provider-python and the docs part (08, 09) at "
+    "{head} (the failed logs kept in gate-NAME/superseded/). "
+)
 
 
 def main() -> int:
@@ -48,24 +54,23 @@ def main() -> int:
     provider_python = re.search(r"Ran (\d+) tests", (logs / "13-provider-python.log").read_text())
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
+    rerun_note = (
+        RERUN_NOTE.format(head=(logs / "python-rerun-head").read_text().strip()[:9])
+        if (logs / "python-rerun-head").exists()
+        else ""
+    )
     note = (
         f"FB-TEARDOWN-DESTROY-DECLARATIONS card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/fb-teardown-destroy-declarations/scripts/gate-whole.sh, "
         "gate.sh, gate-python-rerun.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/ftd/gate-{name} of this worktree. "
-        "At that head two Python count pins failed (13-provider-python 1: "
-        "test_contract_load_path 62 != 61; 08-python: test_contract_corpus 132 != 131 beside the "
-        "accounted matrix test); the fix changes two Python test files only "
-        "(gate-NAME/python-rerun-diff.txt), so the Rust, Lean and provider-Rust steps stand, and "
-        "scripts/gate-python-rerun.sh reran 13-provider-python and the docs part (08, 09) at "
-        f"{(logs / 'python-rerun-head').read_text().strip()[:9]} (the failed logs kept in "
-        "gate-NAME/superseded/). "
+        f"{rerun_note}"
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
         "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/ftd/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (329 on main aa8d8b030; AuditMemberPathDirectCall added); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (331 on main b08c7c3d3; AuditMemberPathDirectCall added); "
         "provider gate (required: providers/ and qcore-schemas change): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
