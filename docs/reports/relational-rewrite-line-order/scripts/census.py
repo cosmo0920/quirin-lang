@@ -66,12 +66,14 @@ def main():
                 files[function["function"]].add(unit["file"])
     units = {}
     for source, functions in sorted(unsorted_functions.items()):
-        candidates = None
-        for function in functions:
-            found = files.get(function, set())
-            if found:
-                candidates = set(found) if candidates is None else candidates & found
-        units[source] = {"files": sorted(candidates or []),
+        # The unit's stream also holds the definitions its headers bring in
+        # (built as callees, reported under their own units), so the unit is
+        # the report file holding the most of its built functions.
+        overlap = collections.Counter(file for function in functions
+                                      for file in files.get(function, ()))
+        best = max(overlap.values(), default=0)
+        units[source] = {"files": sorted(f for f, n in overlap.items() if n == best),
+                         "overlap": dict(overlap.most_common()),
                          "functions": sorted(functions)}
     summary = {
         "rewrites": {name: {"units": len(e["units"]), "sites": len(e["sites"]),

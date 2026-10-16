@@ -1,0 +1,158 @@
+{
+ "rewrites": {
+  "handoff-direct": {
+   "units": 1,
+   "sites": 2,
+   "unsorted_units": 0,
+   "site_list": [
+    [
+     "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5",
+     23732
+    ],
+    [
+     "2c96702b87ae1357693259512add5a8ebe03599de6b07c127424a9a9fa5a09e5",
+     23871
+    ]
+   ]
+  },
+  "relational-11r": {
+   "units": 1,
+   "sites": 3,
+   "unsorted_units": 1,
+   "site_list": [
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7203
+    ],
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7421
+    ],
+    [
+     "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e",
+     7436
+    ]
+   ]
+  }
+ },
+ "stages": {
+  "generic-selection": {
+   "functions": 36,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "handoff-direct": {
+   "functions": 244,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "literal-premise": {
+   "functions": 4744,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "relational-11r": {
+   "functions": 78,
+   "unsorted_after": 78,
+   "broke": 78
+  }
+ },
+ "unsorted_units": 1,
+ "unsorted_unit_functions": 78,
+ "units": {
+  "cf1f719e900f5003d7205345719b36a311fbd37a86d5dd477e2e96e170c81b6e": {
+   "files": [
+    "cmt_decode_opentelemetry.c"
+   ],
+   "overlap": {
+    "cmt_decode_opentelemetry.c": 40,
+    "rdxxhash.c": 7,
+    "cmt_decode_prometheus_remote_write.c": 6,
+    "cmt_decode_statsd.c": 4,
+    "cmt_encode_msgpack.c": 1,
+    "cmt_encode_prometheus_remote_write.c": 1,
+    "cmt_encode_opentelemetry.c": 1
+   },
+   "functions": [
+    "XXH3_64bits_internal",
+    "XXH3_accumulate_512_sse2",
+    "XXH3_avalanche",
+    "XXH3_consumeStripes",
+    "XXH3_digest_long",
+    "XXH3_finalizeLong_64b",
+    "XXH3_len_0to16_64b",
+    "XXH3_len_129to240_64b",
+    "XXH3_len_17to128_64b",
+    "XXH3_len_1to3_64b",
+    "XXH3_len_4to8_64b",
+    "XXH3_len_9to16_64b",
+    "XXH3_mergeAccs",
+    "XXH3_mix16B",
+    "XXH3_mix2Accs",
+    "XXH3_mul128_fold64",
+    "XXH3_reset_internal",
+    "XXH3_rrmxmx",
+    "XXH3_update",
+    "XXH64_avalanche",
+    "XXH_mult64to128",
+    "XXH_read32",
+    "XXH_read64",
+    "XXH_readLE32",
+    "XXH_readLE64",
+    "XXH_swap32",
+    "XXH_swap64",
+    "XXH_xorshift64",
+    "__cfl_list_add",
+    "__cfl_list_del",
+    "_mm_add_epi64",
+    "_mm_loadu_si128",
+    "_mm_mul_epu32",
+    "_mm_xor_si128",
+    "append_new_map_label_key",
+    "append_new_metric_label_value",
+    "cfl_list_add",
+    "cfl_list_del",
+    "cfl_list_init",
+    "cfl_list_size",
+    "clone_array",
+    "clone_array_entry",
+    "clone_exemplars_to_kvlist",
+    "clone_kvlist",
+    "clone_kvlist_entry",
+    "clone_variant",
+    "cmt_decode_opentelemetry_create",
+    "cmt_decode_opentelemetry_destroy",
+    "compute_metric_hash",
+    "create_label",
+    "decode_counter_entry",
+    "decode_data_point_labels",
+    "decode_exponential_histogram_data_point",
+    "decode_exponential_histogram_data_point_list",
+    "decode_exponential_histogram_entry",
+    "decode_gauge_entry",
+    "decode_histogram_data_point",
+    "decode_histogram_data_point_list",
+    "decode_histogram_entry",
+    "decode_metric_unit",
+    "decode_metrics_entry",
+    "decode_numerical_data_point",
+    "decode_numerical_data_point_list",
+    "decode_resource_metadata_and_attributes",
+    "decode_resource_metrics_entry",
+    "decode_resource_metrics_metadata",
+    "decode_scope_metadata_and_attributes",
+    "decode_scope_metrics_entry",
+    "decode_scope_metrics_metadata",
+    "decode_service_request",
+    "decode_summary_data_point",
+    "decode_summary_data_point_list",
+    "decode_summary_entry",
+    "destroy_context_list",
+    "get_or_create_data_point_metadata_context",
+    "get_or_create_external_metadata_kvlist",
+    "get_or_create_metric_metadata_context",
+    "map_type_to_key"
+   ]
+  }
+ }
+}

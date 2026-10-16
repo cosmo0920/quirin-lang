@@ -1,0 +1,92 @@
+{
+ "rewrites": {
+  "relational-11r": {
+   "units": 1,
+   "sites": 1,
+   "unsorted_units": 1,
+   "site_list": [
+    [
+     "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de",
+     17843
+    ]
+   ]
+  }
+ },
+ "stages": {
+  "generic-selection": {
+   "functions": 1,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "literal-premise": {
+   "functions": 174,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "relational-11r": {
+   "functions": 46,
+   "unsorted_after": 46,
+   "broke": 46
+  }
+ },
+ "unsorted_units": 1,
+ "unsorted_unit_functions": 46,
+ "units": {
+  "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de": {
+   "files": [
+    "src/flb_output.c"
+   ],
+   "overlap": {
+    "src/flb_output.c": 39
+   },
+   "functions": [
+    "check_protocol",
+    "flb_output_check",
+    "flb_output_coro_add",
+    "flb_output_enable_multi_threading",
+    "flb_output_exit",
+    "flb_output_flush_finished",
+    "flb_output_flush_id_get",
+    "flb_output_flush_prepare_destroy",
+    "flb_output_free_properties",
+    "flb_output_get_cmt_instance",
+    "flb_output_get_global_config_map",
+    "flb_output_get_instance",
+    "flb_output_get_property",
+    "flb_output_http_server_property_check",
+    "flb_output_init_all",
+    "flb_output_instance_destroy",
+    "flb_output_log_check",
+    "flb_output_name",
+    "flb_output_net_default",
+    "flb_output_net_property_check",
+    "flb_output_new",
+    "flb_output_oauth2_property_check",
+    "flb_output_plugin_property_check",
+    "flb_output_pre_run",
+    "flb_output_prepare",
+    "flb_output_proxy_tls_ca_check",
+    "flb_output_set_context",
+    "flb_output_set_http_debug_callbacks",
+    "flb_output_set_property",
+    "flb_output_task_flush",
+    "flb_output_task_flush_error",
+    "flb_output_task_queue_enqueue",
+    "flb_output_task_queue_flush_one",
+    "flb_output_task_singleplex_enqueue",
+    "flb_output_task_singleplex_flush_next",
+    "flb_output_upstream_ha_set",
+    "flb_output_upstream_set",
+    "flb_strdup",
+    "flb_stream_enable_flags",
+    "flb_stream_enable_thread_safety",
+    "flb_stream_get_flags",
+    "flb_stream_set_flags",
+    "flb_strndup",
+    "instance_id",
+    "mk_list_entry_orphan",
+    "prop_key_check"
+   ]
+  }
+ }
+}
