@@ -1,0 +1,3 @@
+ providers/tests/test_contract_load_path.py | 4 +++-
+ scripts/tests/test_contract_corpus.py      | 6 ++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
