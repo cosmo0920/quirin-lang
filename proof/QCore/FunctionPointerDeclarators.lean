@@ -162,6 +162,31 @@ theorem a_function_pointer_member_is_never_classified (body : List MemberDecl)
     rw [this] at hmem
     exact distinct x.2 hmem
 
+/-! ## Rule 5g's store route keeps its domain
+
+Rule 5g lowers `BASE->FIELD = scalar` to a store whose flow check refuses an
+unsettled base, before the statement's refusal reaches the later fallbacks.
+It reads the member through the old reading, so a record read past a
+function-pointer member stays outside it and the statement keeps its route
+order: the reader repair only admits. -/
+
+/-- The class rule 5g's store route reads: the old, whole-record reading. -/
+def storeRouteClass (body : List MemberDecl) (field : String) : Option MemberClass :=
+  (readBodyBefore body).bind fun members => (members.find? (·.1 == field)).map (·.2)
+
+/-- A record read past a function-pointer member is outside the store route. -/
+theorem a_record_read_past_a_function_pointer_is_outside_the_store_route
+    (body : List MemberDecl) (field : String)
+    (h : body.any MemberDecl.isFnPointer = true) : storeRouteClass body field = none := by
+  simp [storeRouteClass, readBodyBefore, h]
+
+/-- On a record read with every member, the store route and the reading agree. -/
+theorem on_a_fully_read_record_the_store_route_reads_as_before
+    (body : List MemberDecl) (field : String)
+    (h : body.any MemberDecl.isFnPointer = false) :
+    storeRouteClass body field = classOf body field := by
+  simp [storeRouteClass, classOf, readBodyBefore, h]
+
 /-! ## Formals -/
 
 /-- A formal's declared type, as far as the reader commits. `opaque` is never
