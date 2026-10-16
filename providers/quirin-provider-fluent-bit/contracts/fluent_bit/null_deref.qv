@@ -51,10 +51,16 @@ contract {
     quant null-deref #ic;
 };
 
+// Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, decision
+// 3, "Migrate, one spelling"): the stable and scope kinds are spelled as one
+// clause, `nonnull_member(TAG, FIELD) where quant #scope [[stable]]` and
+// `nonnull_member(TAG, FIELD, P) where quant #scope [[scope]]`; each loads to
+// the fact its retired spelling did. No declaration here names a premise.
+//
 // Card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE (contract specification C09.3
 // "Scoped member invariants", grammar G05f, gateway rules 14x-14z): the
 // plugin descriptor of a Fluent Bit instance, `instance->p`, is stable.
-// `requires nonnull_member_stable(TAG, p);` says p is never made NULL on an
+// `requires nonnull_member(TAG, p) where quant #scope [[stable]];` says p is never made NULL on an
 // existing instance. Every store of p the trees make was read at 66910c10 and
 // 046accf6 (and the tail-pause export of 90978ac6, byte-identical to 046accf6
 // for every function below): each constructor finds the plugin by name in
@@ -74,29 +80,29 @@ contract {
 extern fn flb_input_new(config: ptr<mut, u8>, input: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(flb_input_instance, p);
+    requires nonnull_member(flb_input_instance, p) where quant #scope [[stable]];
 };
 
 extern fn flb_output_new(config: ptr<mut, u8>, output: ptr<const, u8>, data: ptr<mut, u8>, public_only: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(flb_output_instance, p);
+    requires nonnull_member(flb_output_instance, p) where quant #scope [[stable]];
 };
 
 extern fn flb_filter_new(config: ptr<mut, u8>, filter: ptr<const, u8>, data: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(flb_filter_instance, p);
+    requires nonnull_member(flb_filter_instance, p) where quant #scope [[stable]];
 };
 
 extern fn flb_processor_instance_create(config: ptr<mut, u8>, pu: ptr<mut, u8>, event_type: i32, name: ptr<const, u8>, data: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(flb_processor_instance, p);
+    requires nonnull_member(flb_processor_instance, p) where quant #scope [[stable]];
 };
 
-// Function-scope entries (rule 14z): `requires nonnull_member_scope(
-// flb_input_instance, p, ins);` says the instance `ins` names has a non-null
+// Function-scope entries (rule 14z): `requires nonnull_member(
+// flb_input_instance, p, ins) where quant #scope [[scope]];` says the instance `ins` names has a non-null
 // plugin on entry; every direct caller's actual is a checked obligation, and
 // with p stable (above) the entry fact lasts the whole body. Chosen by
 // docs/reports/fb-plugin-descriptor-nonnull/scripts/scope_candidates.py from
@@ -113,68 +119,68 @@ contract {
 extern fn flb_input_plugin_pause(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input.c: `if (ins->p->cb_resume_checked != NULL)`, then `ins->p->cb_resume`.
 extern fn flb_input_plugin_resume(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input.c: `flb_input_buf_paused(ins)`, then `ins->p->cb_pause || ins->p->cb_pause_checked`, and `flb_input_plugin_pause(ins)`.
 extern fn flb_input_pause(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input.c: `ins->p->cb_resume || ins->p->cb_resume_checked`, and `flb_input_plugin_resume(ins)`.
 extern fn flb_input_resume(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input.c: `flb_input_is_threaded(ins)` (then `flb_input_thread_instance_pre_run(config, ins)`), else `ins->p->cb_pre_run`.
 extern fn flb_input_instance_pre_run(ins: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input.c: `flb_input_is_threaded(ins)`, then `p = ins->p; if (p->cb_exit && ins->context)`.
 extern fn flb_input_instance_exit(ins: ptr<mut, u8>, config: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input_thread.c: `if (ins->p->cb_pre_run)`.
 extern fn flb_input_thread_instance_pre_run(config: ptr<mut, u8>, ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input_thread.c: `flb_plg_debug(ins, "thread pause instance")` reads `ins->p->name` (flb_input_plugin.h:50-54).
 extern fn flb_input_thread_instance_pause(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input_thread.c: `flb_plg_debug(ins, "thread resume instance")` reads `ins->p->name`.
 extern fn flb_input_thread_instance_resume(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };
 
 // flb_input_thread.c: `flb_plg_debug(ins, "thread exit instance")` reads `ins->p->name`.
 extern fn flb_input_thread_instance_exit(ins: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(flb_input_instance, p, ins);
+    requires nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]];
 };

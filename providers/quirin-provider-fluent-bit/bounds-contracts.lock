@@ -8,7 +8,7 @@
     {
       "function": "flb_filter_new",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "220e69ee30090154a96e97e88aff43cbed12b72b8a4fc87854886261688770a3",
+      "contract_sha256": "28c3df24465f9bfee1c5ea59f065c8bc5211b6f627ecfb7a8a74d4e1a4ee6200",
       "identities": [
         {
           "reviewed_at": [
@@ -72,7 +72,7 @@
     {
       "function": "flb_input_instance_exit",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "f6ea281d4937b6e3251672aa19ae1a1ca40b58e21f0217e00b6ca3b304c9eed1",
+      "contract_sha256": "6f5ff899367a94b42ee673f246d28f5805758f7e5eb52a02396ae0f8d61bec9a",
       "identities": [
         {
           "reviewed_at": [
@@ -104,7 +104,7 @@
     {
       "function": "flb_input_instance_pre_run",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "18fdebeeab001f434b209699cfeb657d04a685a9197e0e842d60b902cae048c0",
+      "contract_sha256": "3a2d4bdcb7f8f0be6610196d3e0be74f7a66ac8ba9759e115522dde18d822b21",
       "identities": [
         {
           "reviewed_at": [
@@ -131,7 +131,7 @@
     {
       "function": "flb_input_new",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "6a54c58cf2da3ac5857f8ea0c4846d64cc2b8fb59b5c85e8e916c14337666584",
+      "contract_sha256": "baf11bfc0d7c0a03e040a5b7f9f62415f6b7e62fcf0a14f525174ef433f45bdf",
       "identities": [
         {
           "reviewed_at": [
@@ -200,7 +200,7 @@
     {
       "function": "flb_input_pause",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "2bde205fb61787202166eb0f79314c3d40a27c6d6da503e9f998bd29a905dd31",
+      "contract_sha256": "e133c30689af68ea7be9aa1133641c91df05ac5036f4ce6932b2c093cae5bb93",
       "identities": [
         {
           "reviewed_at": [
@@ -249,7 +249,7 @@
     {
       "function": "flb_input_plugin_pause",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "a2edd2ae8834d04b170b961b5f311b9423060cbbea3ca29c6e6a020376fe3340",
+      "contract_sha256": "10150730b0cef1d19fe468823c4da7a9a07b78b1007a20beb8adc1d2af2e61a9",
       "identities": [
         {
           "reviewed_at": [
@@ -281,7 +281,7 @@
     {
       "function": "flb_input_plugin_resume",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "639d2ae99d2c93dff2a3dae5a2c6f198f3d75ddd7d6f98718f847d1d6e0a306a",
+      "contract_sha256": "7e4d995768409fa57725f0e3a23cd3410e324b5efb4e11b903fa787bf15c626d",
       "identities": [
         {
           "reviewed_at": [
@@ -313,7 +313,7 @@
     {
       "function": "flb_input_resume",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "03cff80cc91614aa7df499c80c7cce535c11acc7a518f6cff046510601c80682",
+      "contract_sha256": "3a9b73d33a4961745407fea5bb63665da73f42d2dd98944886f56db4bc90689c",
       "identities": [
         {
           "reviewed_at": [
@@ -345,7 +345,7 @@
     {
       "function": "flb_input_thread_instance_exit",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "631ceac8b1153066275bd25eefaba93238ecb836b3803ca7ee29aeeab564d04f",
+      "contract_sha256": "0b32b1da7728dccf0ff719cb71ab89c265c60a555dbc7ec0104574b049e54d4e",
       "identities": [
         {
           "reviewed_at": [
@@ -377,7 +377,7 @@
     {
       "function": "flb_input_thread_instance_pause",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "0d0f68b9a9a729433f1bd4fdb6e78ca9948c8589acaaef936187e6d80c1319a4",
+      "contract_sha256": "1256ed98fea915c68d68b4b80ed30e5e2e3ee447d417a7c67706b634fefcf2f0",
       "identities": [
         {
           "reviewed_at": [
@@ -409,7 +409,7 @@
     {
       "function": "flb_input_thread_instance_pre_run",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "4ba5cb5267cc48462e80490f815ae706e3b43fb74037e6b793e8f7aa350d7dc1",
+      "contract_sha256": "c816dd8363a73ebf85821b42877dca755ee947f9053cc5a76be18b5a524c6819",
       "identities": [
         {
           "reviewed_at": [
@@ -441,7 +441,7 @@
     {
       "function": "flb_input_thread_instance_resume",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "9aa18242f05f2b9ad25581fb58169110eea8823cf9517973900c225a474d2275",
+      "contract_sha256": "191cf2f7a1d7052c59d22981d2094c9dbf5740ea9a8e920f325d1630de0cfafe",
       "identities": [
         {
           "reviewed_at": [
@@ -542,7 +542,7 @@
     {
       "function": "flb_output_new",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "edfd500b651ebd9d753584440585ac8f373ab5d9816ee86911604caa679c673e",
+      "contract_sha256": "b1685d4185a9fc8a4f4bb188e71097c8d41a06786a567d079396a05a07d5c23c",
       "identities": [
         {
           "reviewed_at": [
@@ -672,7 +672,7 @@
     {
       "function": "flb_processor_instance_create",
       "module": "fluent_bit/null_deref.qv",
-      "contract_sha256": "41b99e67902e57bf2ad89745f1e818400ab071dde6c08b59d8078f63cbd0db0a",
+      "contract_sha256": "3df688dccaeaa745d85dfb8cbb37c1955f902490b520bc4906b24644ec0656a9",
       "identities": [
         {
           "reviewed_at": [

@@ -2577,13 +2577,35 @@ fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premi
             "{function}"
         );
     }
-    // The 67 premised member declarations of the null view.
+    // The 67 premised stable/scope member declarations of the null view,
+    // and since card NONNULL-MEMBER-UNIFIED-QUALIFIER ("Yes, all kinds") its
+    // four premised plain member declarations: 71.
     assert_eq!(
         premised
             .keys()
             .filter(|(module, _)| module == "librdkafka/null_deref.qv")
             .count(),
-        67
+        71
+    );
+    for function in [
+        "rd_kafka_toppar_new0",
+        "rd_kafka_topic_new0",
+        "rd_kafka_cgrp_new",
+        "rd_kafka_transport_new",
+    ] {
+        assert!(
+            premised[&("librdkafka/null_deref.qv".to_owned(), function.to_owned())]
+                .iter()
+                .any(|p| p.name == "rk_no_plugin_library"),
+            "{function}"
+        );
+    }
+    // Fluent Bit's member declarations name none (out-of-tree plugins are
+    // OUTER-CONTRACT-DESIGN's).
+    assert!(
+        !premised
+            .keys()
+            .any(|(module, _)| module == "fluent_bit/null_deref.qv")
     );
 }
 

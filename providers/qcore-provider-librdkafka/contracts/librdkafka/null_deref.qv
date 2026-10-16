@@ -86,6 +86,19 @@ contract {
 // builds a lookup key `rd_kafka_broker_t skel = {.rkb_nodeid = ...}` whose
 // rkb_rk is NULL, and three unit tests build brokers without it).
 
+// Card NONNULL-MEMBER-UNIFIED-QUALIFIER (USER DECISION 2026-10-16, "Yes, all
+// kinds"; contract specification C09.3, gateway rules 14t, 14x): the plugin
+// premise applies to every kind of `nonnull_member` by the same reachability
+// rule. A plain member's fact is checked against the analysed units' stores
+// exactly as a stable member's is, so a store made by a plugin's callback
+// could falsify it too. Each of the four declarations below meets
+// LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER's rule at 66910c10 and 046accf6 (rule
+// (a): a store to the member is reachable from an external function; rule
+// (b): the host body reaches an rk_conf or interceptor call;
+// docs/reports/nonnull-member-unified-qualifier/artifacts/member-census-reproduced.json),
+// so each names P-RK-NO-PLUGIN-LIBRARY, and every null row resting on
+// `member:TAG.FIELD` lists it.
+//
 // rdkafka_partition.c: rd_kafka_toppar_new0 stores `rktp->rktp_rkt =
 // rd_kafka_topic_keep(rkt)` (a declared non-null result, below) and
 // `rktp->rktp_rkt = rkt` after reading rkt.
@@ -93,6 +106,7 @@ extern fn rd_kafka_toppar_new0(rkt: ptr<mut, u8>, partition: i32, func: ptr<cons
 contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_toppar_s, rktp_rkt);
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
 // rdkafka_topic.c: rd_kafka_topic_new0 stores `rkt->rkt_topic =
@@ -102,6 +116,7 @@ contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_topic_s, rkt_rk);
     requires nonnull_member(rd_kafka_topic_s, rkt_topic);
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
 // rdkafka_cgrp.c: rd_kafka_cgrp_new stores `rkcg->rkcg_rk = rk`.
@@ -109,6 +124,7 @@ extern fn rd_kafka_cgrp_new(rk: ptr<mut, u8>, group_protocol: i32, group_id: ptr
 contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_cgrp_s, rkcg_rk);
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
 // rdkafka_transport.c: rd_kafka_transport_new stores `rktrans->rktrans_rkb
@@ -117,6 +133,7 @@ extern fn rd_kafka_transport_new(rkb: ptr<mut, u8>, s: i32, errstr: ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
     requires nonnull_member(rd_kafka_transport_s, rktrans_rkb);
+    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
 // Card NULL-CANDIDATE-TRIAGE (rule 14u): a declared non-null result,
@@ -198,7 +215,8 @@ contract {
 // (`plugin.library.paths`) -- could falsify it unchecked. Each declaration
 // below whose member a callback outside the run could reach names
 // P-RK-NO-PLUGIN-LIBRARY (`requires resource_premise(rk_no_plugin_library,
-// ...)`, admitted only beside these two forms), and every null row resting on
+// ...)`, admitted beside every kind of `nonnull_member` since card
+// NONNULL-MEMBER-UNIFIED-QUALIFIER), and every null row resting on
 // the fact lists it. The rule and its census are in
 // docs/reports/librdkafka-plugin-premise-remainder/ (`member_reach.py`):
 // rd_kafka_broker_s.rkb_rk is stored by rd_kafka_broker_add, which the public
@@ -208,7 +226,7 @@ contract {
 //
 // Card NULL-MEMBER-INVARIANT-SCOPE (contract specification C09.3, grammar
 // G05f, gateway rules 14x-14z): scoped member invariants. `requires
-// nonnull_member_stable(TAG, FIELD);` says FIELD is never made NULL on an
+// nonnull_member(TAG, FIELD) where quant #scope [[stable]];` says FIELD is never made NULL on an
 // existing struct TAG object: every assignment the analysed units make to it
 // is checked non-null (one not proved withdraws the declaration for the
 // run), while an initializer list writes a fresh object and may leave it
@@ -234,13 +252,13 @@ contract {
 extern fn rd_kafka_broker_add(rk: ptr<mut, u8>, source: i32, proto: i32, name: ptr<const, u8>, port: u16, nodeid: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_stable(rd_kafka_broker_s, rkb_rk);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk) where quant #scope [[stable]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
 // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14z): function-scope entries of the
-// registered broker. `requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk,
-// rkb);` says the broker `rkb` names has a non-null rkb_rk on entry; every
+// registered broker. `requires nonnull_member(rd_kafka_broker_s, rkb_rk,
+// rkb) where quant #scope [[scope]];` says the broker `rkb` names has a non-null rkb_rk on entry; every
 // caller's actual is a checked obligation, and with rkb_rk stable (above) the
 // entry fact lasts the whole body. Chosen by `scripts/scope_candidates.py`
 // from the stable reading's run: each function whose own row kept a
@@ -254,7 +272,7 @@ contract {
 extern fn rd_kafka_ShareAcknowledgeRequest(rkb: ptr<mut, u8>, group_id: ptr<const, u8>, member_id: ptr<const, u8>, share_session_epoch: i32, rko_orig: ptr<mut, u8>, now: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -262,7 +280,7 @@ contract {
 extern fn rd_kafka_broker_active_toppar_add(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -270,7 +288,7 @@ contract {
 extern fn rd_kafka_broker_active_toppar_del(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -278,7 +296,7 @@ contract {
 extern fn rd_kafka_broker_buf_enq0(rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -286,7 +304,7 @@ contract {
 extern fn rd_kafka_broker_buf_retry(rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -294,7 +312,7 @@ contract {
 extern fn rd_kafka_broker_bufq_timeout_scan(rkb: ptr<mut, u8>, is_waitresp_q: i32, rkbq: ptr<mut, u8>, partial_cntp: ptr<mut, u8>, ApiKey: i16, err: i32, now: i64, description: ptr<const, u8>, log_first_n: i32) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -302,7 +320,7 @@ contract {
 extern fn rd_kafka_broker_conn_closed(rkb: ptr<mut, u8>, err: i32, errstr: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -310,7 +328,7 @@ contract {
 extern fn rd_kafka_broker_connect(rkb: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -318,7 +336,7 @@ contract {
 extern fn rd_kafka_broker_connect_auth(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -326,7 +344,7 @@ contract {
 extern fn rd_kafka_broker_connect_done(rkb: ptr<mut, u8>, errstr: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -334,7 +352,7 @@ contract {
 extern fn rd_kafka_broker_connect_up(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -342,7 +360,7 @@ contract {
 extern fn rd_kafka_broker_consumer_serve(rkb: ptr<mut, u8>, abs_timeout: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -350,7 +368,7 @@ contract {
 extern fn rd_kafka_broker_destroy_final(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -358,7 +376,7 @@ contract {
 extern fn rd_kafka_broker_feature_disable(rkb: ptr<mut, u8>, features: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -366,7 +384,7 @@ contract {
 extern fn rd_kafka_broker_feature_enable(rkb: ptr<mut, u8>, features: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -374,7 +392,7 @@ contract {
 extern fn rd_kafka_broker_features_set(rkb: ptr<mut, u8>, features: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -382,7 +400,7 @@ contract {
 extern fn rd_kafka_broker_fetch_backoff(rkb: ptr<mut, u8>, err: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -390,7 +408,7 @@ contract {
 extern fn rd_kafka_broker_fetch_toppars(rkb: ptr<mut, u8>, now: i64) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -398,7 +416,7 @@ contract {
 extern fn rd_kafka_broker_handle_purge_queues(rkb: ptr<mut, u8>, rko: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -406,7 +424,7 @@ contract {
 extern fn rd_kafka_broker_idle_check(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -414,7 +432,7 @@ contract {
 extern fn rd_kafka_broker_internal_serve(rkb: ptr<mut, u8>, abs_timeout: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -422,7 +440,7 @@ contract {
 extern fn rd_kafka_broker_needs_connection(rkb: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -430,7 +448,7 @@ contract {
 extern fn rd_kafka_broker_produce_toppars(rkb: ptr<mut, u8>, now: i64, next_wakeup: ptr<mut, u8>, do_timeout_scan: i32) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -438,7 +456,7 @@ contract {
 extern fn rd_kafka_broker_resolve(rkb: ptr<mut, u8>, nodename: ptr<const, u8>, reset_cached_addr: i32) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -446,7 +464,7 @@ contract {
 extern fn rd_kafka_broker_retry_bufs_move(rkb: ptr<mut, u8>, next_wakeup: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -454,7 +472,7 @@ contract {
 extern fn rd_kafka_broker_serve(rkb: ptr<mut, u8>, timeout_ms: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -462,7 +480,7 @@ contract {
 extern fn rd_kafka_broker_session_add_partition_to_toppars_in_session(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -470,7 +488,7 @@ contract {
 extern fn rd_kafka_broker_session_remove_partition_from_toppars_in_session(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -478,7 +496,7 @@ contract {
 extern fn rd_kafka_broker_session_reset(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -486,7 +504,7 @@ contract {
 extern fn rd_kafka_broker_session_update_epoch(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -494,7 +512,7 @@ contract {
 extern fn rd_kafka_broker_session_update_partitions(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -502,7 +520,7 @@ contract {
 extern fn rd_kafka_broker_set_api_versions(rkb: ptr<mut, u8>, apis: ptr<mut, u8>, api_cnt: usize) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -510,7 +528,7 @@ contract {
 extern fn rd_kafka_broker_set_nodename(rkb: ptr<mut, u8>, from_rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -518,7 +536,7 @@ contract {
 extern fn rd_kafka_broker_set_state(rkb: ptr<mut, u8>, state: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -526,7 +544,7 @@ contract {
 extern fn rd_kafka_broker_share_fetch_session_clear(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -534,7 +552,7 @@ contract {
 extern fn rd_kafka_broker_share_fetch_session_leave(rkb: ptr<mut, u8>, rko_orig: ptr<mut, u8>, now: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -542,7 +560,7 @@ contract {
 extern fn rd_kafka_broker_share_rpc(rkb: ptr<mut, u8>, rko_orig: ptr<mut, u8>, now: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -550,7 +568,7 @@ contract {
 extern fn rd_kafka_broker_share_session_toppar_add(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -558,7 +576,7 @@ contract {
 extern fn rd_kafka_broker_timeout_scan(rkb: ptr<mut, u8>, now: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -566,7 +584,7 @@ contract {
 extern fn rd_kafka_broker_toppar_msgq_scan(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, now: i64, abs_next_timeout: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -574,7 +592,7 @@ contract {
 extern fn rd_kafka_broker_wakeup(rkb: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -582,7 +600,7 @@ contract {
 extern fn rd_kafka_buf_new_request0(rkb: ptr<mut, u8>, ApiKey: i16, segcnt: i32, size: usize, is_flexver: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -590,7 +608,7 @@ contract {
 extern fn rd_kafka_buf_retry(rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -598,7 +616,7 @@ contract {
 extern fn rd_kafka_bufq_connection_reset(rkb: ptr<mut, u8>, rkbufq: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -606,7 +624,7 @@ contract {
 extern fn rd_kafka_bufq_dump(rkb: ptr<mut, u8>, fac: ptr<const, u8>, rkbq: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -614,7 +632,7 @@ contract {
 extern fn rd_kafka_bufq_purge(rkb: ptr<mut, u8>, rkbufq: ptr<mut, u8>, err: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -622,7 +640,7 @@ contract {
 extern fn rd_kafka_dr_implicit_ack(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, last_msgid: u64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -630,7 +648,7 @@ contract {
 extern fn rd_kafka_features_check(rkb: ptr<mut, u8>, broker_apis: ptr<mut, u8>, broker_api_cnt: usize) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -638,7 +656,7 @@ contract {
 extern fn rd_kafka_fetch_reply_handle_partition_error(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, tver: ptr<const, u8>, err: i32, HighwaterMarkOffset: i64) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -646,7 +664,7 @@ contract {
 extern fn rd_kafka_group_MemberMetadata_consumer_read(rkb: ptr<mut, u8>, rkgm: ptr<mut, u8>, MemberMetadata: ptr<const, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -654,7 +672,7 @@ contract {
 extern fn rd_kafka_handle_Produce_metadata_update(rkb: ptr<mut, u8>, ProduceTags: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -662,7 +680,7 @@ contract {
 extern fn rd_kafka_idemp_request_pid_failed(rkb: ptr<mut, u8>, err: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -670,7 +688,7 @@ contract {
 extern fn rd_kafka_msgbatch_handle_Produce_result(rkb: ptr<mut, u8>, batch: ptr<mut, u8>, err: i32, presult: ptr<const, u8>, request: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -678,7 +696,7 @@ contract {
 extern fn rd_kafka_op_throttle_time(rkb: ptr<mut, u8>, rkq: ptr<mut, u8>, throttle_time: i32) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -686,7 +704,7 @@ contract {
 extern fn rd_kafka_parse_Metadata_update_topic(rkb: ptr<mut, u8>, mdt: ptr<const, u8>, mdit: ptr<const, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -694,7 +712,7 @@ contract {
 extern fn rd_kafka_recv(rkb: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -702,7 +720,7 @@ contract {
 extern fn rd_kafka_req_response(rkb: ptr<mut, u8>, rkbuf: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -710,7 +728,7 @@ contract {
 extern fn rd_kafka_sasl_broker_init(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -718,7 +736,7 @@ contract {
 extern fn rd_kafka_sasl_broker_term(rkb: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -726,7 +744,7 @@ contract {
 extern fn rd_kafka_send(rkb: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -734,7 +752,7 @@ contract {
 extern fn rd_kafka_ssl_hmac(rkb: ptr<mut, u8>, evp: ptr<const, u8>, in: ptr<const, u8>, salt: ptr<const, u8>, itcnt: i32, out: ptr<mut, u8>) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -742,7 +760,7 @@ contract {
 extern fn rd_kafka_toppar_fetch_backoff(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, err: i32) -> i64
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -750,7 +768,7 @@ contract {
 extern fn rd_kafka_transport_connect(rkb: ptr<mut, u8>, sinx: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: usize) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -758,7 +776,7 @@ contract {
 extern fn rd_kafka_transport_ssl_connect(rkb: ptr<mut, u8>, rktrans: ptr<mut, u8>, errstr: ptr<mut, u8>, errstr_size: usize) -> i32
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -766,7 +784,7 @@ contract {
 extern fn rd_kafka_waitresp_find(rkb: ptr<mut, u8>, corrid: i32) -> ptr<mut, u8>
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
 
@@ -774,6 +792,6 @@ contract {
 extern fn rd_kafkap_share_leader_changes_apply(rkb: ptr<mut, u8>, leader_changes: ptr<mut, u8>, NodeEndpoints: ptr<mut, u8>) -> unit
 contract {
     requires bounds_contract_v1;
-    requires nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb);
+    requires nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]];
     requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
 };
