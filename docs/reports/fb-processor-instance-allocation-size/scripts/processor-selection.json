@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "fb-processor-instance-allocation-size",
+  "description": "Card FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE: src/flb_processor.c alone (both recorded configurations), to read what the existing custody, bounds and null properties say of flb_processor_instance_create and its lifecycle functions. A measurement selection only; it changes no profile.",
+  "groups": [
+    {
+      "library": "fluent_bit",
+      "label": "fb-processor",
+      "files": [
+        "src/flb_processor.c"
+      ]
+    }
+  ]
+}
