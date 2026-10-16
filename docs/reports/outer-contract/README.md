@@ -216,7 +216,18 @@ GATE_SECTION
 
 ## 6. Ledger
 
-LEDGER_SECTION
+`named_followups` went from 792 to 795 on main `a423fca5d`
+([update_ledger.py](scripts/update_ledger.py); idempotent;
+`dimensions.named_followups` equals the list length). No entry was retired:
+the design card registered none. Registered:
+
+* `RK-PLUGIN-LIBRARY-OUTER-ENVELOPE`: stage 2, the `rk_plugin_library`
+  envelope in place of the 163 premise clauses. Its PREREQUISITE is
+  NONNULL-MEMBER-UNIFIED-QUALIFIER, and its own DISCHARGE names the envelope
+  lines and the cross-library decision.
+* `FLB-LIB-HOST-OUTER-CALLER`: the library-mode host (M8), D4 "Later".
+* `OUTER-PROJECTION-CHECKPOINT-ROUTE`: the projection on checkpointed and
+  composed runs, which refuse it today.
 
 ## Files
 
