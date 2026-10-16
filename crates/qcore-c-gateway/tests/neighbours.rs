@@ -1025,5 +1025,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
     // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
     // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 63);
+    // 63 -> 64 by card FB-TEARDOWN-DESTROY-DECLARATIONS: `fluent_bit/teardown_destroy.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 64);
 }
