@@ -110,7 +110,7 @@ assertion is unchanged). `opaque_vectors_hold` checks `OPAQUE_VECTORS`.
 ## 4. Measurement
 
 BEFORE `before` (`a063a291…`, built at `1c7333db1`) and AFTER `a1`
-(`44412766…`, built at `95f2b42bc`; later commits change records only),
+(`44412766…`, built at `95f2b42bc`; later commits apply rustfmt and change records only),
 each `run.json` naming its binary, every route with the null property
 ([summary](artifacts/summary.json), [`measure.sh`](scripts/measure.sh)):
 
@@ -206,7 +206,37 @@ Rust's `OPAQUE_VECTORS`). Lean audits stay **329**.
 
 ## 7. Gate
 
-Filled in by the gate step below.
+Gate **g2** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/uorw/gate-g2/`): the full standing gate, with the provider gate run
+as well (not required: `providers/` is unchanged; run so the regenerated
+matrix carries a measured provider count). Every code step ran at
+**`dfc4e26b7`** on `1c7333db1`; later commits change records only. One
+exclusive flock on the shared heavy lock covered the whole gate
+(02:20:22Z–02:48:27Z, [`gate-run.sh`](scripts/gate-run.sh),
+[`gate-whole.sh`](scripts/gate-whole.sh), [`gate.sh`](scripts/gate.sh),
+[`finish-gate.sh`](scripts/finish-gate.sh)). Lean 4.35.0.
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets`, submodule, `fmt --check`, `clippy --locked -D warnings` | 0, 0, 0, 0 | |
+| `run_test_binaries.py` | 0 | 504 units, 517 summaries, **8,151 passed, 0 failed, 15 ignored** (`private/uorw/tests-g2/`), no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **329** audits passed |
+| provider gate | 0 each | `package.py` build, verify `qcore.libevent` and `qcore.librdkafka`; `cargo check --locked`; `contracts.py check`; `cargo test` 133 passed / 0 failed; providers Python 25 OK; fmt; clippy |
+| Python suite (08), docs index check (09) | 0, 0 | 374 tests |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests), docs index (10b, 10c) | 0, 0, 0, 0 | |
+
+The gate's own `cargo clean --profile dev` (07z) queued behind another
+card's hold of the lock; the worktree's `target/` (59.8 GiB) and
+`providers/target` (8.9 GiB) were cleaned by hand on the integrator's disk
+notice, so 07z has no exit in [gate/](gate/). The bold rule-id duplicate
+check is empty. Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
+
+**Discarded attempt:** gate **g1** at `c763227c5` (logs
+`private/uorw/gate-g1/`) failed `cargo fmt --check` and the provider
+workspace's `fmt --check` (exit 1 each, the same rustfmt diff in
+`callback_member_closure.rs`); `dfc4e26b7` applies rustfmt and changes
+nothing else. Its other steps were 0 (8,151 passed, 329 Lean audits).
 
 ## Files
 
