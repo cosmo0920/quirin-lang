@@ -207,46 +207,43 @@ above); `W45-FB-BACKLOG-REACHABLE-RELEASE` amended (the six list-entry
 destroyers left undeclared). `W45-FB-USERS-RELEASE-CHECK` is unchanged.
 `scripts/update_ledger.py`.
 
-## 8. Rebase and gate
+## 8. Rebases and gate
 
-**Rebase.** Measured on `8b360766c`; rebased (no merge commits, no
-conflict) onto `a5e4d39d8` and then `aa8d8b030` (main's
-`handoff_branch::check_path` stored-result conversion refusal and its Lean
-fix). The only shared file is `handoff_branch.rs`, where this card adds
-`resolve_parameter` beside `resolve`; the landed change touches the
-librdkafka hand-off route, which no Fluent Bit row reads, so the arbiters
-above were not rerun on the rebased tip (landing-race policy: records and a
-disjoint function; the integrator's combined arbiter decides).
+**Rebases.** Measured on `8b360766c`; rebased (no merge commits) onto
+`a5e4d39d8`, `aa8d8b030` and finally `b08c7c3d3`, where
+FB-EVENT-LOOP-RETENTION-AND-REGISTRATION landed beside this card. The last
+rebase conflicted in the grammar (both cards' paragraphs kept) and in every
+module-count pin, which were recounted with both cards' modules, never
+taken from either side: corpus modules 131 + 2 + 1 = **134**, resource-view
+and manifest modules 61 + 2 + 1 = **64**, v1 declarations 465 + 10 + 14 =
+**489** (selected 64), retaining declarations 88 + 8 + 10 = **106**,
+qcore-provider modules 81, quirin-provider modules 53. The increment record
+`wave-48-part8.md` had reached 27,241 bytes, so this card's paragraph opens
+`wave-48-part9.md` (increments README updated). STATUS and the ledger were
+re-applied on main's (`scripts/update_ledger.py`: 790 entries =
+`dimensions.named_followups`).
 
-**Gate g1** (at `4c035b231`, the tip on `a5e4d39d8` before the second rebase) was stopped after two steps
-failed: 04-tests 2 failures (two production-module count pins this card
-missed, `neighbours.rs`, `prod_contracts.rs`; fixed in `d92069d2f`) and
-07-lean 1 (`QCore.ReturnCodeHandOff` on main `a5e4d39d8` itself, which
-`aa8d8b030` fixed; no file of this card). Its logs are kept in
-`private/ftd/gate-g1`.
+**Earlier gates.** g1 (`4c035b231`, on `a5e4d39d8`) was stopped: two missed
+count pins (04-tests) and main's own Lean failure in
+`QCore.ReturnCodeHandOff` (07-lean, fixed by `aa8d8b030`). g2 (on
+`aa8d8b030`) passed after two Python count pins were fixed and those steps
+rerun; its logs are kept in `private/ftd/gate-g2`. Both are superseded by g3.
 
-**Gate g2** (`gate.json`; every code step at `ead6d2112` on `aa8d8b030`, one
-exclusive flock for the whole gate, logs `private/ftd/gate-g2`, test logs
-`private/ftd/tests-g2`): `cargo check --workspace --all-targets` 0;
-submodule 0; `cargo fmt --check` 0; `clippy --locked` 0;
-`run_test_binaries.py` **505 units, 518 summaries, 8,169 passed, 0 failed,
-15 ignored**, exit 0, no rerun; both reevaluation probes 0;
-`check_lean_audits.py` **330** Lean audits (329 on main; the audit
-`AuditMemberPathDirectCall.lean` added); provider gate: `package.py` build
-and verify (libevent, librdkafka) 0 / 0 / 0, `cargo check --locked` in
-`providers/` 0, `providers/contracts.py check` 0, `cargo test` in
-`providers/` **133 passed** / 0 failed, `cargo fmt` and `clippy` in
-`providers/` 0. Two Python count pins failed at that head
-(13-provider-python 1: `test_contract_load_path`, 62 != 61; 08-python:
-`test_contract_corpus`, 132 != 131, beside the matrix test that always fails
-before the regeneration); the fix (`a756f7ed8`) changes those two Python
-test files only (`python-rerun-diff.txt`), so the Rust, Lean and
-provider-Rust steps stand, and `scripts/gate-python-rerun.sh` reran
-13-provider-python (25 OK, exit 0) and the docs part at `a756f7ed8`
-(08-python 374 tests, 1 failure: the accounted matrix test; 09-index 0); the
-failed logs are kept in `gate-g2/superseded/`. Then `finish-gate.sh`:
-`build_matrix.py . --gate gate.json` (09a), the Python suite again (09b) and
-the docs index (10b, 10c); exits in `gate/`.
+**Gate g3** (`gate.json`, `gate/`; every code step at `9dc98a68e` on
+`b08c7c3d3`, one exclusive flock for the whole gate, logs
+`private/ftd/gate-g3`, test logs `private/ftd/tests-g3`):
+`cargo check --workspace --all-targets` 0; submodule 0; `cargo fmt --check`
+0; `clippy --locked` 0; `run_test_binaries.py` **507 units, 520 summaries,
+8,185 passed, 0 failed, 15 ignored**, exit 0, no rerun; both reevaluation
+probes 0; `check_lean_audits.py` **332** Lean audits (331 on main; this
+card's `AuditMemberPathDirectCall.lean` added); provider gate:
+`package.py` build and verify (libevent, librdkafka) 0 / 0 / 0, `cargo check
+--locked` in `providers/` 0, `providers/contracts.py check` 0, `cargo test`
+in `providers/` **133 passed** / 0 failed, `providers/tests` 25 OK, `cargo
+fmt` and `clippy` in `providers/` 0; Python suite 374 tests with only the
+matrix test that fails before the regeneration (08), docs index 0 (09);
+then `build_matrix.py . --gate gate.json` (09a) 0, the Python suite (09b)
+0, the docs index (10b, 10c) 0.
 
 ## 9. Combined arbiter against main `aa8d8b030`
 

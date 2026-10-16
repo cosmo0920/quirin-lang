@@ -62,7 +62,7 @@ def main() -> int:
     note = (
         f"FB-TEARDOWN-DESTROY-DECLARATIONS card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/fb-teardown-destroy-declarations/scripts/gate-whole.sh, "
-        "gate.sh, gate-python-rerun.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
+        f"gate.sh, {'gate-python-rerun.sh, ' if rerun_note else ''}finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/ftd/gate-{name} of this worktree. "
         f"{rerun_note}"
         "cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "

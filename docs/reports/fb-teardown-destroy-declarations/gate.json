@@ -1,6 +1,6 @@
 {
-  "note": "FB-TEARDOWN-DESTROY-DECLARATIONS card gate on base aa8d8b030, every code step at ead6d2112, scripts docs/reports/fb-teardown-destroy-declarations/scripts/gate-whole.sh, gate.sh, gate-python-rerun.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/ftd/gate-g2 of this worktree. At that head two Python count pins failed (13-provider-python 1: test_contract_load_path 62 != 61; 08-python: test_contract_corpus 132 != 131 beside the accounted matrix test); the fix changes two Python test files only (gate-NAME/python-rerun-diff.txt), so the Rust, Lean and provider-Rust steps stand, and scripts/gate-python-rerun.sh reran 13-provider-python and the docs part (08, 09) at a756f7ed8 (the failed logs kept in gate-NAME/superseded/). cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 505 units, 518 summaries, 8,169 passed, 0 failed, 15 ignored, exit 0 (private/ftd/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 330 audits passed (329 on main aa8d8b030; AuditMemberPathDirectCall added); provider gate (required: providers/ and qcore-schemas change): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 8169,
+  "note": "FB-TEARDOWN-DESTROY-DECLARATIONS card gate on base b08c7c3d3, every code step at 9dc98a68e, scripts docs/reports/fb-teardown-destroy-declarations/scripts/gate-whole.sh, gate.sh, finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/ftd/gate-g3 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 507 units, 520 summaries, 8,185 passed, 0 failed, 15 ignored, exit 0 (private/ftd/tests-g3), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 332 audits passed (331 on main b08c7c3d3; AuditMemberPathDirectCall added); provider gate (required: providers/ and qcore-schemas change): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8185,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "complete",
-  "lean_audits": 330,
+  "lean_audits": 332,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }
