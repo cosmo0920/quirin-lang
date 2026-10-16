@@ -1,0 +1,53 @@
+exit 0
+         0 | struct flb_processor_instance
+         0 |   int id
+         4 |   int log_level
+         8 |   int event_type
+        12 |   char[32] name
+        48 |   char * alias
+        56 |   void * context
+        64 |   void * data
+        72 |   struct flb_processor_unit * pu
+        80 |   struct flb_processor_plugin * p
+        88 |   struct mk_list properties
+        88 |     struct mk_list * prev
+        96 |     struct mk_list * next
+       104 |   struct mk_list * config_map
+       112 |   struct flb_log_event_decoder * log_decoder
+       120 |   struct flb_log_event_encoder * log_encoder
+       128 |   struct cmt * cmt
+       136 |   int notification_channel
+       144 |   struct flb_config * config
+           | [sizeof=152, align=8]
+
+         0 | struct flb_filter_instance
+         0 |   int event_type
+         4 |   int id
+         8 |   int log_level
+        12 |   int log_suppress_interval
+        16 |   char[32] name
+        48 |   char * alias
+        56 |   char * match
+        64 |   struct flb_regex * match_regex
+        72 |   void * parent_processor
+        80 |   void * context
+        88 |   void * data
+        96 |   struct flb_filter_plugin * p
+       104 |   struct mk_list properties
+       104 |     struct mk_list * prev
+       112 |     struct mk_list * next
+       120 |   struct mk_list * config_map
+       128 |   struct mk_list _head
+       128 |     struct mk_list * prev
+       136 |     struct mk_list * next
+       144 |   struct cmt * cmt
+       152 |   struct cmt_counter * cmt_records
+       160 |   struct cmt_counter * cmt_bytes
+       168 |   struct cmt_counter * cmt_add_records
+       176 |   struct cmt_counter * cmt_drop_records
+       184 |   struct cmt_counter * cmt_drop_bytes
+       192 |   struct flb_metrics * metrics
+       200 |   int notification_channel
+       208 |   struct flb_config * config
+           | [sizeof=216, align=8]
+

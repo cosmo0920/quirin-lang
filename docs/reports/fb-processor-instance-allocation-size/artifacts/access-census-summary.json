@@ -1,0 +1,3352 @@
+{
+ "configurations": [
+  {
+   "config": "corpus-66910c10",
+   "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "variants": [
+    {
+     "variant": "static",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    },
+    {
+     "variant": "shared",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    }
+   ],
+   "units_read": 50,
+   "units_failed": [
+    "plugins/processor_sql/parser/sql_parser.c",
+    "src/fluent-bit.c"
+   ],
+   "units_without_record": [
+    "plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c",
+    "tests/internal/cumulative_to_delta.c",
+    "tests/internal/hash.c",
+    "tests/internal/hmac.c"
+   ],
+   "accesses": 550,
+   "accesses_by_member": {
+    "id": {
+     "count": 1,
+     "offset": 0,
+     "end": 4
+    },
+    "log_level": {
+     "count": 154,
+     "offset": 4,
+     "end": 8
+    },
+    "event_type": {
+     "count": 2,
+     "offset": 8,
+     "end": 12
+    },
+    "name": {
+     "count": 3,
+     "offset": 12,
+     "end": 44
+    },
+    "alias": {
+     "count": 6,
+     "offset": 48,
+     "end": 56
+    },
+    "context": {
+     "count": 24,
+     "offset": 56,
+     "end": 64
+    },
+    "data": {
+     "count": 1,
+     "offset": 64,
+     "end": 72
+    },
+    "pu": {
+     "count": 5,
+     "offset": 72,
+     "end": 80
+    },
+    "p": {
+     "count": 173,
+     "offset": 80,
+     "end": 88
+    },
+    "properties": {
+     "count": 56,
+     "offset": 88,
+     "end": 104
+    },
+    "config_map": {
+     "count": 50,
+     "offset": 104,
+     "end": 112
+    },
+    "log_decoder": {
+     "count": 10,
+     "offset": 112,
+     "end": 120
+    },
+    "log_encoder": {
+     "count": 7,
+     "offset": 120,
+     "end": 128
+    },
+    "cmt": {
+     "count": 4,
+     "offset": 128,
+     "end": 136
+    },
+    "notification_channel": {
+     "count": 2,
+     "offset": 136,
+     "end": 140
+    },
+    "config": {
+     "count": 52,
+     "offset": 144,
+     "end": 152
+    }
+   },
+   "max_member_end": 152,
+   "outside_filter_sizeof": [],
+   "allocation_path_table": [
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 377,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 381,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 391,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 400,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 140,
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "member": "notification_channel",
+     "offset": 136,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1543,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1549,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1554,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1586,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1616,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1640,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1670,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1671,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1686,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1687,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1722,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1725,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1772,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1773,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2069,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2070,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2080,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2101,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2141,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2176,
+     "member": "config",
+     "offset": 144,
+     "use": "write"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2182,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 4,
+     "file": "src/flb_processor.c",
+     "line": 2185,
+     "member": "id",
+     "offset": 0,
+     "use": "write"
+    },
+    {
+     "end": 12,
+     "file": "src/flb_processor.c",
+     "line": 2186,
+     "member": "event_type",
+     "offset": 8,
+     "use": "write"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2187,
+     "member": "alias",
+     "offset": 48,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2188,
+     "member": "p",
+     "offset": 80,
+     "use": "write"
+    },
+    {
+     "end": 72,
+     "file": "src/flb_processor.c",
+     "line": 2189,
+     "member": "data",
+     "offset": 64,
+     "use": "write"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2190,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2191,
+     "member": "pu",
+     "offset": 72,
+     "use": "write"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2193,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2195,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "write"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2196,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2203,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "write"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2204,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2209,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2218,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2220,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2221,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2227,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2228,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2231,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2240,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2270,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2275,
+     "member": "config_map",
+     "offset": 104,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2278,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2279,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2280,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2284,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2290,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2297,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2313,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2315,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2318,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2324,
+     "member": "cmt",
+     "offset": 128,
+     "use": "write"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2326,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2348,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2358,
+     "member": "context",
+     "offset": 56,
+     "use": "write"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2368,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2369,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2373,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2377,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2378,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2382,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2383,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2386,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2387,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2390,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2391,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/fluent-bit.c",
+     "line": 509,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void",
+     "cast": "ToVoid",
+     "count": 1,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "plugins/processor_tda/tda.c:1116"
+     ]
+    },
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void *",
+     "cast": "BitCast",
+     "count": 5,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "benchmarks/flb-bench-processor_sampling.c:220",
+      "benchmarks/flb-bench-processor_sampling.c:295",
+      "src/flb_notification.c:130",
+      "src/flb_processor.c:2394",
+      "src/flb_processor.c:792"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "count": 16,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_cumulative_to_delta/cumulative_to_delta.c:147)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_labels/labels.c:473)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_metrics_selector/selector.c:442)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_sampling/sampling.c:165)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2363)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:781)",
+      "src/flb_notification.c:123",
+      "src/flb_notification.c:358",
+      "src/flb_processor.c:1143",
+      "src/flb_processor.c:1178",
+      "src/flb_processor.c:1182",
+      "src/flb_processor.c:1216",
+      "src/flb_processor.c:1228",
+      "src/flb_processor.c:1537",
+      "src/flb_processor.c:2171",
+      "tests/internal/plugin_alias.c:359"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "count": 7,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_help.c:642)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2155)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2168)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2174)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2199)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2207)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/fluent-bit.c:472)"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "system-046accf6",
+   "revision": "046accf6aded7906f66a1baf0202da349e521736",
+   "variants": [
+    {
+     "variant": "static",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    },
+    {
+     "variant": "shared",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    }
+   ],
+   "units_read": 50,
+   "units_failed": [
+    "plugins/processor_sql/parser/sql_parser.c",
+    "src/fluent-bit.c"
+   ],
+   "units_without_record": [
+    "plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c",
+    "tests/internal/cumulative_to_delta.c",
+    "tests/internal/hash.c",
+    "tests/internal/hmac.c"
+   ],
+   "accesses": 550,
+   "accesses_by_member": {
+    "id": {
+     "count": 1,
+     "offset": 0,
+     "end": 4
+    },
+    "log_level": {
+     "count": 154,
+     "offset": 4,
+     "end": 8
+    },
+    "event_type": {
+     "count": 2,
+     "offset": 8,
+     "end": 12
+    },
+    "name": {
+     "count": 3,
+     "offset": 12,
+     "end": 44
+    },
+    "alias": {
+     "count": 6,
+     "offset": 48,
+     "end": 56
+    },
+    "context": {
+     "count": 24,
+     "offset": 56,
+     "end": 64
+    },
+    "data": {
+     "count": 1,
+     "offset": 64,
+     "end": 72
+    },
+    "pu": {
+     "count": 5,
+     "offset": 72,
+     "end": 80
+    },
+    "p": {
+     "count": 173,
+     "offset": 80,
+     "end": 88
+    },
+    "properties": {
+     "count": 56,
+     "offset": 88,
+     "end": 104
+    },
+    "config_map": {
+     "count": 50,
+     "offset": 104,
+     "end": 112
+    },
+    "log_decoder": {
+     "count": 10,
+     "offset": 112,
+     "end": 120
+    },
+    "log_encoder": {
+     "count": 7,
+     "offset": 120,
+     "end": 128
+    },
+    "cmt": {
+     "count": 4,
+     "offset": 128,
+     "end": 136
+    },
+    "notification_channel": {
+     "count": 2,
+     "offset": 136,
+     "end": 140
+    },
+    "config": {
+     "count": 52,
+     "offset": 144,
+     "end": 152
+    }
+   },
+   "max_member_end": 152,
+   "outside_filter_sizeof": [],
+   "allocation_path_table": [
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 377,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 381,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 391,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 400,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 140,
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "member": "notification_channel",
+     "offset": 136,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1543,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1549,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1554,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1586,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1616,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1640,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1670,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1671,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1686,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1687,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1722,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1725,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1772,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1773,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2069,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2070,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2080,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2101,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2141,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2176,
+     "member": "config",
+     "offset": 144,
+     "use": "write"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2182,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 4,
+     "file": "src/flb_processor.c",
+     "line": 2185,
+     "member": "id",
+     "offset": 0,
+     "use": "write"
+    },
+    {
+     "end": 12,
+     "file": "src/flb_processor.c",
+     "line": 2186,
+     "member": "event_type",
+     "offset": 8,
+     "use": "write"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2187,
+     "member": "alias",
+     "offset": 48,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2188,
+     "member": "p",
+     "offset": 80,
+     "use": "write"
+    },
+    {
+     "end": 72,
+     "file": "src/flb_processor.c",
+     "line": 2189,
+     "member": "data",
+     "offset": 64,
+     "use": "write"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2190,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2191,
+     "member": "pu",
+     "offset": 72,
+     "use": "write"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2193,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2195,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "write"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2196,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2203,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "write"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2204,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2209,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2218,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2220,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2221,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2227,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2228,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2231,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2240,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2270,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2275,
+     "member": "config_map",
+     "offset": 104,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2278,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2279,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2280,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2284,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2290,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2297,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2313,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2315,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2318,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2324,
+     "member": "cmt",
+     "offset": 128,
+     "use": "write"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2326,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2348,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2358,
+     "member": "context",
+     "offset": 56,
+     "use": "write"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2368,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2369,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2373,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2377,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2378,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2382,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2383,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2386,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2387,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2390,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2391,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/fluent-bit.c",
+     "line": 509,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void",
+     "cast": "ToVoid",
+     "count": 1,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "plugins/processor_tda/tda.c:1116"
+     ]
+    },
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void *",
+     "cast": "BitCast",
+     "count": 5,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "benchmarks/flb-bench-processor_sampling.c:220",
+      "benchmarks/flb-bench-processor_sampling.c:295",
+      "src/flb_notification.c:130",
+      "src/flb_processor.c:2394",
+      "src/flb_processor.c:792"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "count": 16,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_cumulative_to_delta/cumulative_to_delta.c:147)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_labels/labels.c:473)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_metrics_selector/selector.c:442)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_sampling/sampling.c:165)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2363)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:781)",
+      "src/flb_notification.c:123",
+      "src/flb_notification.c:358",
+      "src/flb_processor.c:1143",
+      "src/flb_processor.c:1178",
+      "src/flb_processor.c:1182",
+      "src/flb_processor.c:1216",
+      "src/flb_processor.c:1228",
+      "src/flb_processor.c:1537",
+      "src/flb_processor.c:2171",
+      "tests/internal/plugin_alias.c:359"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "count": 7,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_help.c:642)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2155)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2168)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2174)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2199)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2207)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/fluent-bit.c:472)"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "pins-046accf6",
+   "revision": "046accf6aded7906f66a1baf0202da349e521736",
+   "variants": [
+    {
+     "variant": "static",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    },
+    {
+     "variant": "shared",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    }
+   ],
+   "units_read": 50,
+   "units_failed": [
+    "plugins/processor_sql/parser/sql_parser.c",
+    "src/fluent-bit.c"
+   ],
+   "units_without_record": [
+    "plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c",
+    "tests/internal/cumulative_to_delta.c",
+    "tests/internal/hash.c",
+    "tests/internal/hmac.c"
+   ],
+   "accesses": 550,
+   "accesses_by_member": {
+    "id": {
+     "count": 1,
+     "offset": 0,
+     "end": 4
+    },
+    "log_level": {
+     "count": 154,
+     "offset": 4,
+     "end": 8
+    },
+    "event_type": {
+     "count": 2,
+     "offset": 8,
+     "end": 12
+    },
+    "name": {
+     "count": 3,
+     "offset": 12,
+     "end": 44
+    },
+    "alias": {
+     "count": 6,
+     "offset": 48,
+     "end": 56
+    },
+    "context": {
+     "count": 24,
+     "offset": 56,
+     "end": 64
+    },
+    "data": {
+     "count": 1,
+     "offset": 64,
+     "end": 72
+    },
+    "pu": {
+     "count": 5,
+     "offset": 72,
+     "end": 80
+    },
+    "p": {
+     "count": 173,
+     "offset": 80,
+     "end": 88
+    },
+    "properties": {
+     "count": 56,
+     "offset": 88,
+     "end": 104
+    },
+    "config_map": {
+     "count": 50,
+     "offset": 104,
+     "end": 112
+    },
+    "log_decoder": {
+     "count": 10,
+     "offset": 112,
+     "end": 120
+    },
+    "log_encoder": {
+     "count": 7,
+     "offset": 120,
+     "end": 128
+    },
+    "cmt": {
+     "count": 4,
+     "offset": 128,
+     "end": 136
+    },
+    "notification_channel": {
+     "count": 2,
+     "offset": 136,
+     "end": 140
+    },
+    "config": {
+     "count": 52,
+     "offset": 144,
+     "end": 152
+    }
+   },
+   "max_member_end": 152,
+   "outside_filter_sizeof": [],
+   "allocation_path_table": [
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 377,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 381,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 391,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 400,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 140,
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "member": "notification_channel",
+     "offset": 136,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1543,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1549,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1554,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1586,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1616,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1640,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1670,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1671,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1686,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1687,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1722,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1725,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1772,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1773,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2069,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2070,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2080,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2101,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2141,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2176,
+     "member": "config",
+     "offset": 144,
+     "use": "write"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2182,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 4,
+     "file": "src/flb_processor.c",
+     "line": 2185,
+     "member": "id",
+     "offset": 0,
+     "use": "write"
+    },
+    {
+     "end": 12,
+     "file": "src/flb_processor.c",
+     "line": 2186,
+     "member": "event_type",
+     "offset": 8,
+     "use": "write"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2187,
+     "member": "alias",
+     "offset": 48,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2188,
+     "member": "p",
+     "offset": 80,
+     "use": "write"
+    },
+    {
+     "end": 72,
+     "file": "src/flb_processor.c",
+     "line": 2189,
+     "member": "data",
+     "offset": 64,
+     "use": "write"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2190,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2191,
+     "member": "pu",
+     "offset": 72,
+     "use": "write"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2193,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2195,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "write"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2196,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2203,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "write"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2204,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2209,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2218,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2220,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2221,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2227,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2228,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2231,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2240,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2270,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2275,
+     "member": "config_map",
+     "offset": 104,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2278,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2279,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2280,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2284,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2290,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2297,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2313,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2315,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2318,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2324,
+     "member": "cmt",
+     "offset": 128,
+     "use": "write"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2326,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2348,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2358,
+     "member": "context",
+     "offset": 56,
+     "use": "write"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2368,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2369,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2373,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2377,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2378,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2382,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2383,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2386,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2387,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2390,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2391,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/fluent-bit.c",
+     "line": 509,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void",
+     "cast": "ToVoid",
+     "count": 1,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "plugins/processor_tda/tda.c:1116"
+     ]
+    },
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void *",
+     "cast": "BitCast",
+     "count": 5,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "benchmarks/flb-bench-processor_sampling.c:220",
+      "benchmarks/flb-bench-processor_sampling.c:295",
+      "src/flb_notification.c:130",
+      "src/flb_processor.c:2394",
+      "src/flb_processor.c:792"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "count": 16,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_cumulative_to_delta/cumulative_to_delta.c:147)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_labels/labels.c:473)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_metrics_selector/selector.c:442)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_sampling/sampling.c:165)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2363)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:781)",
+      "src/flb_notification.c:123",
+      "src/flb_notification.c:358",
+      "src/flb_processor.c:1143",
+      "src/flb_processor.c:1178",
+      "src/flb_processor.c:1182",
+      "src/flb_processor.c:1216",
+      "src/flb_processor.c:1228",
+      "src/flb_processor.c:1537",
+      "src/flb_processor.c:2171",
+      "tests/internal/plugin_alias.c:359"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "count": 7,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_help.c:642)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2155)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2168)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2174)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2199)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2207)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/fluent-bit.c:472)"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "slice-34155955",
+   "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+   "variants": [
+    {
+     "variant": "static",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    },
+    {
+     "variant": "shared",
+     "processor_sizeof": 152,
+     "filter_sizeof": 216
+    }
+   ],
+   "units_read": 50,
+   "units_failed": [
+    "plugins/processor_sql/parser/sql_parser.c",
+    "src/fluent-bit.c"
+   ],
+   "units_without_record": [
+    "plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c",
+    "tests/internal/cumulative_to_delta.c",
+    "tests/internal/hash.c",
+    "tests/internal/hmac.c"
+   ],
+   "accesses": 550,
+   "accesses_by_member": {
+    "id": {
+     "count": 1,
+     "offset": 0,
+     "end": 4
+    },
+    "log_level": {
+     "count": 154,
+     "offset": 4,
+     "end": 8
+    },
+    "event_type": {
+     "count": 2,
+     "offset": 8,
+     "end": 12
+    },
+    "name": {
+     "count": 3,
+     "offset": 12,
+     "end": 44
+    },
+    "alias": {
+     "count": 6,
+     "offset": 48,
+     "end": 56
+    },
+    "context": {
+     "count": 24,
+     "offset": 56,
+     "end": 64
+    },
+    "data": {
+     "count": 1,
+     "offset": 64,
+     "end": 72
+    },
+    "pu": {
+     "count": 5,
+     "offset": 72,
+     "end": 80
+    },
+    "p": {
+     "count": 173,
+     "offset": 80,
+     "end": 88
+    },
+    "properties": {
+     "count": 56,
+     "offset": 88,
+     "end": 104
+    },
+    "config_map": {
+     "count": 50,
+     "offset": 104,
+     "end": 112
+    },
+    "log_decoder": {
+     "count": 10,
+     "offset": 112,
+     "end": 120
+    },
+    "log_encoder": {
+     "count": 7,
+     "offset": 120,
+     "end": 128
+    },
+    "cmt": {
+     "count": 4,
+     "offset": 128,
+     "end": 136
+    },
+    "notification_channel": {
+     "count": 2,
+     "offset": 136,
+     "end": 140
+    },
+    "config": {
+     "count": 52,
+     "offset": 144,
+     "end": 152
+    }
+   },
+   "max_member_end": 152,
+   "outside_filter_sizeof": [],
+   "allocation_path_table": [
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 377,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 381,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 391,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 400,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_help.c",
+     "line": 404,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 140,
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "member": "notification_channel",
+     "offset": 136,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1543,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1549,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1554,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1586,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1616,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1640,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 1670,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 1671,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1686,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1687,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1722,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1725,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1772,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 1773,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2069,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2070,
+     "member": "pu",
+     "offset": 72,
+     "use": "read"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2080,
+     "member": "config",
+     "offset": 144,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2101,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2141,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 152,
+     "file": "src/flb_processor.c",
+     "line": 2176,
+     "member": "config",
+     "offset": 144,
+     "use": "write"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2182,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 4,
+     "file": "src/flb_processor.c",
+     "line": 2185,
+     "member": "id",
+     "offset": 0,
+     "use": "write"
+    },
+    {
+     "end": 12,
+     "file": "src/flb_processor.c",
+     "line": 2186,
+     "member": "event_type",
+     "offset": 8,
+     "use": "write"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2187,
+     "member": "alias",
+     "offset": 48,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2188,
+     "member": "p",
+     "offset": 80,
+     "use": "write"
+    },
+    {
+     "end": 72,
+     "file": "src/flb_processor.c",
+     "line": 2189,
+     "member": "data",
+     "offset": 64,
+     "use": "write"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2190,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 80,
+     "file": "src/flb_processor.c",
+     "line": 2191,
+     "member": "pu",
+     "offset": 72,
+     "use": "write"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2193,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2195,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "write"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2196,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2203,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "write"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2204,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2209,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2218,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2220,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2221,
+     "member": "context",
+     "offset": 56,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2227,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2228,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2231,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2240,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2270,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2275,
+     "member": "config_map",
+     "offset": 104,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2278,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2279,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2280,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2284,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2290,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2297,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2313,
+     "member": "log_level",
+     "offset": 4,
+     "use": "read"
+    },
+    {
+     "end": 8,
+     "file": "src/flb_processor.c",
+     "line": 2315,
+     "member": "log_level",
+     "offset": 4,
+     "use": "write"
+    },
+    {
+     "end": 88,
+     "file": "src/flb_processor.c",
+     "line": 2318,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2324,
+     "member": "cmt",
+     "offset": 128,
+     "use": "write"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2326,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 44,
+     "file": "src/flb_processor.c",
+     "line": 2348,
+     "member": "name",
+     "offset": 12,
+     "use": "address"
+    },
+    {
+     "end": 64,
+     "file": "src/flb_processor.c",
+     "line": 2358,
+     "member": "context",
+     "offset": 56,
+     "use": "write"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2368,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 112,
+     "file": "src/flb_processor.c",
+     "line": 2369,
+     "member": "config_map",
+     "offset": 104,
+     "use": "read"
+    },
+    {
+     "end": 104,
+     "file": "src/flb_processor.c",
+     "line": 2373,
+     "member": "properties",
+     "offset": 88,
+     "use": "address"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2377,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 136,
+     "file": "src/flb_processor.c",
+     "line": 2378,
+     "member": "cmt",
+     "offset": 128,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2382,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 56,
+     "file": "src/flb_processor.c",
+     "line": 2383,
+     "member": "alias",
+     "offset": 48,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2386,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 128,
+     "file": "src/flb_processor.c",
+     "line": 2387,
+     "member": "log_encoder",
+     "offset": 120,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2390,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 120,
+     "file": "src/flb_processor.c",
+     "line": 2391,
+     "member": "log_decoder",
+     "offset": 112,
+     "use": "read"
+    },
+    {
+     "end": 88,
+     "file": "src/fluent-bit.c",
+     "line": 509,
+     "member": "p",
+     "offset": 80,
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void",
+     "cast": "ToVoid",
+     "count": 1,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "plugins/processor_tda/tda.c:1116"
+     ]
+    },
+    {
+     "from": "struct flb_processor_instance *",
+     "to": "void *",
+     "cast": "BitCast",
+     "count": 5,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "benchmarks/flb-bench-processor_sampling.c:220",
+      "benchmarks/flb-bench-processor_sampling.c:295",
+      "src/flb_notification.c:130",
+      "src/flb_processor.c:2394",
+      "src/flb_processor.c:792"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "count": 16,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_cumulative_to_delta/cumulative_to_delta.c:147)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_labels/labels.c:473)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_metrics_selector/selector.c:442)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (plugins/processor_sampling/sampling.c:165)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2363)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:781)",
+      "src/flb_notification.c:123",
+      "src/flb_notification.c:358",
+      "src/flb_processor.c:1143",
+      "src/flb_processor.c:1178",
+      "src/flb_processor.c:1182",
+      "src/flb_processor.c:1216",
+      "src/flb_processor.c:1228",
+      "src/flb_processor.c:1537",
+      "src/flb_processor.c:2171",
+      "tests/internal/plugin_alias.c:359"
+     ]
+    },
+    {
+     "from": "void *",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "count": 7,
+     "other_type_is_void_or_self": true,
+     "sites": [
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_help.c:642)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2155)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2168)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2174)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2199)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/flb_processor.c:2207)",
+      "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h:26 (src/fluent-bit.c:472)"
+     ]
+    }
+   ]
+  }
+ ]
+}

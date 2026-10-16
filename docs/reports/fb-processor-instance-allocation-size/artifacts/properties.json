@@ -1,0 +1,4642 @@
+{
+ "slice-34155955": {
+  "exit": "0",
+  "null_summary": {
+   "Safe": 10,
+   "Unknown": 60,
+   "Unsafe": 2
+  },
+  "null_findings": [
+   {
+    "function": "flb_processor_run",
+    "file": "src/flb_processor.c",
+    "null": "Unsafe",
+    "findings": [
+     {
+      "id": 17,
+      "kind": "member-access",
+      "line": 19508,
+      "origin": "src/flb_processor.c:1379",
+      "outcome": "finding",
+      "sources": [
+       "null-literal"
+      ],
+      "subject": "list"
+     }
+    ],
+    "triage": [
+     {
+      "check": 17,
+      "class": "null-on-normal-path",
+      "paths": 5,
+      "reason": "a null pointer constant at line 19476",
+      "status": "finding",
+      "witness": {
+       "class": "null-on-normal-path",
+       "condition": "a null pointer constant at line 19476",
+       "path": [
+        {
+         "line": 19490,
+         "origin": "src/flb_processor.c:1352",
+         "step": "decision",
+         "text": "`type == 1` is false"
+        },
+        {
+         "line": 19493,
+         "origin": "src/flb_processor.c:1355",
+         "step": "decision",
+         "text": "`type == 2` is false"
+        },
+        {
+         "line": 19496,
+         "origin": "src/flb_processor.c:1358",
+         "step": "decision",
+         "text": "`type == 4` is false"
+        },
+        {
+         "line": 19499,
+         "origin": "src/flb_processor.c:1361",
+         "step": "decision",
+         "text": "`type == 8` is false"
+        },
+        {
+         "line": 19476,
+         "origin": "src/flb_processor.c:1335",
+         "step": "null-event",
+         "text": "a null pointer constant at line 19476"
+        },
+        {
+         "line": 19508,
+         "origin": "src/flb_processor.c:1379",
+         "step": "dereference",
+         "text": "list->next"
+        }
+       ]
+      }
+     },
+     {
+      "check": 39,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 72,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 84,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ]
+   },
+   {
+    "function": "flb_processor_run",
+    "file": "src/flb_processor.c",
+    "null": "Unsafe",
+    "findings": [
+     {
+      "id": 17,
+      "kind": "member-access",
+      "line": 19508,
+      "origin": "src/flb_processor.c:1379",
+      "outcome": "finding",
+      "sources": [
+       "null-literal"
+      ],
+      "subject": "list"
+     }
+    ],
+    "triage": [
+     {
+      "check": 17,
+      "class": "null-on-normal-path",
+      "paths": 5,
+      "reason": "a null pointer constant at line 19476",
+      "status": "finding",
+      "witness": {
+       "class": "null-on-normal-path",
+       "condition": "a null pointer constant at line 19476",
+       "path": [
+        {
+         "line": 19490,
+         "origin": "src/flb_processor.c:1352",
+         "step": "decision",
+         "text": "`type == 1` is false"
+        },
+        {
+         "line": 19493,
+         "origin": "src/flb_processor.c:1355",
+         "step": "decision",
+         "text": "`type == 2` is false"
+        },
+        {
+         "line": 19496,
+         "origin": "src/flb_processor.c:1358",
+         "step": "decision",
+         "text": "`type == 4` is false"
+        },
+        {
+         "line": 19499,
+         "origin": "src/flb_processor.c:1361",
+         "step": "decision",
+         "text": "`type == 8` is false"
+        },
+        {
+         "line": 19476,
+         "origin": "src/flb_processor.c:1335",
+         "step": "null-event",
+         "text": "a null pointer constant at line 19476"
+        },
+        {
+         "line": 19508,
+         "origin": "src/flb_processor.c:1379",
+         "step": "dereference",
+         "text": "list->next"
+        }
+       ]
+      }
+     },
+     {
+      "check": 39,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 72,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 84,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ]
+   }
+  ],
+  "bounds_summary": {
+   "bounds": {
+    "Safe": 2,
+    "Unknown": 70
+   },
+   "combined": {
+    "Safe": 2,
+    "Unknown": 70
+   },
+   "custody": {
+    "Safe": 10,
+    "Unknown": 62
+   }
+  },
+  "path": [
+   {
+    "function": "flb_processor_instance_create",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `instance`",
+        8
+       ],
+       [
+        "unknown_alias: unresolved resource identity `plugin`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_read_groups`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_destroy`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        10
+       ],
+       [
+        "unsupported: nullable resource `instance` used by a non-null contract",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 16,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2176",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2185",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2186",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 21,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2187",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 22,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2188",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 23,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2189",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 24,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2190",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 25,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2191",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 26,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2193",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "&instance->properties at inferred `mk_list_init` quant null-deref #list"
+     },
+     {
+      "id": 27,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2195",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 28,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2196",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 29,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 30,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 31,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 35,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2203",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     },
+     {
+      "id": 37,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2204",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 38,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 39,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 40,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 44,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2209",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     }
+    ],
+    "null_triage": [
+     {
+      "check": 35,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20110 at line 20112, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 44,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20116 at line 20118, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      49
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `instance`",
+      19
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_create",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `instance`",
+        8
+       ],
+       [
+        "unknown_alias: unresolved resource identity `plugin`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_read_groups`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_destroy`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        10
+       ],
+       [
+        "unsupported: nullable resource `instance` used by a non-null contract",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 16,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2176",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2185",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2186",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 21,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2187",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 22,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2188",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 23,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2189",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 24,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2190",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 25,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2191",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 26,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2193",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "&instance->properties at inferred `mk_list_init` quant null-deref #list"
+     },
+     {
+      "id": 27,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2195",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 28,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2196",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 29,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 30,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 31,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 35,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2203",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     },
+     {
+      "id": 37,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2204",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 38,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 39,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 40,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 44,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2209",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     }
+    ],
+    "null_triage": [
+     {
+      "check": 35,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20110 at line 20112, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 44,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20116 at line 20118, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      49
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `instance`",
+      19
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_destroy",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_config_map_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_release`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_encoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Safe",
+    "combined_null": "Unknown",
+    "null_reasons": [],
+    "null_instance_checks": [
+     {
+      "id": 1,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2368",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2369",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2377",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 7,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20231"
+      ],
+      "subject": "ins->cmt at quant null-deref #cmt"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2382",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2383",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 11,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2386",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 12,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2387",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2390",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 15,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2391",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      18
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      11
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_destroy",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_config_map_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_release`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_encoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Safe",
+    "combined_null": "Unknown",
+    "null_reasons": [],
+    "null_instance_checks": [
+     {
+      "id": 1,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2368",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2369",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2377",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 7,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20231"
+      ],
+      "subject": "ins->cmt at quant null-deref #cmt"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2382",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2383",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 11,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2386",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 12,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2387",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2390",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 15,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2391",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      18
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      11
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_exit",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2218",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2220",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2221",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      7
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      3
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_exit",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2218",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2220",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2221",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      7
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      3
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_init",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `config`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_get_name`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 4,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2313",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2315",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2318",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 13,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2324",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2326",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      23
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      6
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_init",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `config`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_get_name`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 4,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2313",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2315",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2318",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 13,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2324",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2326",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      23
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      6
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_set_property",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `tmp`",
+        6
+       ],
+       [
+        "unknown_alias: unresolved resource identity `v`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_env_var_translate`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_item_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_get_level_str`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_property`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2069",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2070",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:5"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 10,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->config"
+      ],
+      "proofs": null,
+      "subject": "ins->config"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2088",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 17,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2097",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->p"
+      ],
+      "proofs": null,
+      "subject": "ins->p"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      40
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      7
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_set_property",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `tmp`",
+        6
+       ],
+       [
+        "unknown_alias: unresolved resource identity `v`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_env_var_translate`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_item_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_get_level_str`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_property`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2069",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2070",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:5"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 10,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->config"
+      ],
+      "proofs": null,
+      "subject": "ins->config"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2088",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 17,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2097",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->p"
+      ],
+      "proofs": null,
+      "subject": "ins->p"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      40
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      7
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_unit_create",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `f`",
+        7
+       ],
+       [
+        "unknown_alias: unresolved resource identity `processor_plugin`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        16
+       ],
+       [
+        "unknown_alias: unresolved resource identity `unit_name`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_new`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_plugin_alias_get`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        11
+       ],
+       [
+        "unsupported: nullable resource `pu` used by a non-null contract",
+        1
+       ],
+       [
+        "unsupported: publication by `mk_list_add` of `pu`, which this function does not hold as one live object",
+        4
+       ],
+       [
+        "unsupported: unlink by `mk_list_del` of `f_ins`, which this function has not published",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      105
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_create",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `f`",
+        7
+       ],
+       [
+        "unknown_alias: unresolved resource identity `processor_plugin`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        16
+       ],
+       [
+        "unknown_alias: unresolved resource identity `unit_name`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_new`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_plugin_alias_get`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        11
+       ],
+       [
+        "unsupported: nullable resource `pu` used by a non-null contract",
+        1
+       ],
+       [
+        "unsupported: publication by `mk_list_add` of `pu`, which this function does not hold as one live object",
+        4
+       ],
+       [
+        "unsupported: unlink by `mk_list_del` of `f_ins`, which this function has not published",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      105
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_destroy",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_condition_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_exit`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      21
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_destroy",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_condition_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_exit`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      21
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_init",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: call to uncontracted function `flb_filter_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      26
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_init",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: call to uncontracted function `flb_filter_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      26
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_set_property",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `str_val`",
+        3
+       ],
+       [
+        "unknown_alias: unresolved resource identity `val`",
+        7
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_set_property`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_condition`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        3
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+        1
+       ],
+       [
+        "unsupported: unmodeled expression may mutate a formal resource identity",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      61
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_set_property",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `str_val`",
+        3
+       ],
+       [
+        "unknown_alias: unresolved resource identity `val`",
+        7
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_set_property`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_condition`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        3
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+        1
+       ],
+       [
+        "unsupported: unmodeled expression may mutate a formal resource identity",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      61
+     ]
+    ],
+    "bounds_instance_subjects": []
+   }
+  ]
+ },
+ "system-046accf6": {
+  "exit": "0",
+  "null_summary": {
+   "Safe": 10,
+   "Unknown": 60,
+   "Unsafe": 2
+  },
+  "null_findings": [
+   {
+    "function": "flb_processor_run",
+    "file": "src/flb_processor.c",
+    "null": "Unsafe",
+    "findings": [
+     {
+      "id": 17,
+      "kind": "member-access",
+      "line": 19508,
+      "origin": "src/flb_processor.c:1379",
+      "outcome": "finding",
+      "sources": [
+       "null-literal"
+      ],
+      "subject": "list"
+     }
+    ],
+    "triage": [
+     {
+      "check": 17,
+      "class": "null-on-normal-path",
+      "paths": 5,
+      "reason": "a null pointer constant at line 19476",
+      "status": "finding",
+      "witness": {
+       "class": "null-on-normal-path",
+       "condition": "a null pointer constant at line 19476",
+       "path": [
+        {
+         "line": 19490,
+         "origin": "src/flb_processor.c:1352",
+         "step": "decision",
+         "text": "`type == 1` is false"
+        },
+        {
+         "line": 19493,
+         "origin": "src/flb_processor.c:1355",
+         "step": "decision",
+         "text": "`type == 2` is false"
+        },
+        {
+         "line": 19496,
+         "origin": "src/flb_processor.c:1358",
+         "step": "decision",
+         "text": "`type == 4` is false"
+        },
+        {
+         "line": 19499,
+         "origin": "src/flb_processor.c:1361",
+         "step": "decision",
+         "text": "`type == 8` is false"
+        },
+        {
+         "line": 19476,
+         "origin": "src/flb_processor.c:1335",
+         "step": "null-event",
+         "text": "a null pointer constant at line 19476"
+        },
+        {
+         "line": 19508,
+         "origin": "src/flb_processor.c:1379",
+         "step": "dereference",
+         "text": "list->next"
+        }
+       ]
+      }
+     },
+     {
+      "check": 39,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 72,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 84,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ]
+   },
+   {
+    "function": "flb_processor_run",
+    "file": "src/flb_processor.c",
+    "null": "Unsafe",
+    "findings": [
+     {
+      "id": 17,
+      "kind": "member-access",
+      "line": 19508,
+      "origin": "src/flb_processor.c:1379",
+      "outcome": "finding",
+      "sources": [
+       "null-literal"
+      ],
+      "subject": "list"
+     }
+    ],
+    "triage": [
+     {
+      "check": 17,
+      "class": "null-on-normal-path",
+      "paths": 5,
+      "reason": "a null pointer constant at line 19476",
+      "status": "finding",
+      "witness": {
+       "class": "null-on-normal-path",
+       "condition": "a null pointer constant at line 19476",
+       "path": [
+        {
+         "line": 19490,
+         "origin": "src/flb_processor.c:1352",
+         "step": "decision",
+         "text": "`type == 1` is false"
+        },
+        {
+         "line": 19493,
+         "origin": "src/flb_processor.c:1355",
+         "step": "decision",
+         "text": "`type == 2` is false"
+        },
+        {
+         "line": 19496,
+         "origin": "src/flb_processor.c:1358",
+         "step": "decision",
+         "text": "`type == 4` is false"
+        },
+        {
+         "line": 19499,
+         "origin": "src/flb_processor.c:1361",
+         "step": "decision",
+         "text": "`type == 8` is false"
+        },
+        {
+         "line": 19476,
+         "origin": "src/flb_processor.c:1335",
+         "step": "null-event",
+         "text": "a null pointer constant at line 19476"
+        },
+        {
+         "line": 19508,
+         "origin": "src/flb_processor.c:1379",
+         "step": "dereference",
+         "text": "list->next"
+        }
+       ]
+      }
+     },
+     {
+      "check": 39,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 72,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 84,
+      "paths": 1075,
+      "reason": "a condition over the result of `acquire_lock` at line 19527: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ]
+   }
+  ],
+  "bounds_summary": {
+   "bounds": {
+    "Safe": 2,
+    "Unknown": 70
+   },
+   "combined": {
+    "Safe": 2,
+    "Unknown": 70
+   },
+   "custody": {
+    "Safe": 10,
+    "Unknown": 62
+   }
+  },
+  "path": [
+   {
+    "function": "flb_processor_instance_create",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `instance`",
+        8
+       ],
+       [
+        "unknown_alias: unresolved resource identity `plugin`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_read_groups`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_destroy`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        10
+       ],
+       [
+        "unsupported: nullable resource `instance` used by a non-null contract",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 16,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2176",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2185",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2186",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 21,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2187",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 22,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2188",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 23,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2189",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 24,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2190",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 25,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2191",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 26,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2193",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "&instance->properties at inferred `mk_list_init` quant null-deref #list"
+     },
+     {
+      "id": 27,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2195",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 28,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2196",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 29,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 30,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 31,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 35,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2203",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     },
+     {
+      "id": 37,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2204",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 38,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 39,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 40,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 44,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2209",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     }
+    ],
+    "null_triage": [
+     {
+      "check": 35,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20110 at line 20112, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 44,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20116 at line 20118, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      49
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `instance`",
+      19
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_create",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `instance`",
+        8
+       ],
+       [
+        "unknown_alias: unresolved resource identity `plugin`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_read_groups`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_destroy`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        10
+       ],
+       [
+        "unsupported: nullable resource `instance` used by a non-null contract",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 16,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2176",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2185",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2186",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 21,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2187",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 22,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2188",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 23,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2189",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 24,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2190",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 25,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2191",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 26,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2193",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "&instance->properties at inferred `mk_list_init` quant null-deref #list"
+     },
+     {
+      "id": 27,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2195",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 28,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2196",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 29,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 30,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20090"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 31,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2197",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 35,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2203",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     },
+     {
+      "id": 37,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2204",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 38,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 39,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:35"
+      ],
+      "subject": "instance"
+     },
+     {
+      "id": 40,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2205",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:instance->p"
+      ],
+      "proofs": null,
+      "subject": "instance->p"
+     },
+     {
+      "id": 44,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2209",
+      "outcome": "candidate",
+      "sources": [
+       "null-literal"
+      ],
+      "proofs": null,
+      "subject": "instance"
+     }
+    ],
+    "null_triage": [
+     {
+      "check": 35,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20110 at line 20112, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     },
+     {
+      "check": 44,
+      "paths": 904,
+      "reason": "an inexact path reaches the dereference NULL: a null pointer constant at line 20116 at line 20118, but only along a condition over the result of `strcasecmp` at line 20081: its range is a bound, not a range the callee is known to return",
+      "status": "unresolved",
+      "witness": {
+       "path": null
+      }
+     }
+    ],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      49
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `instance`",
+      19
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_destroy",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_config_map_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_release`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_encoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Safe",
+    "combined_null": "Unknown",
+    "null_reasons": [],
+    "null_instance_checks": [
+     {
+      "id": 1,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2368",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2369",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2377",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 7,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20231"
+      ],
+      "subject": "ins->cmt at quant null-deref #cmt"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2382",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2383",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 11,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2386",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 12,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2387",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2390",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 15,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2391",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      18
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      11
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_destroy",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_config_map_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_release`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_decoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_event_encoder_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Safe",
+    "combined_null": "Unknown",
+    "null_reasons": [],
+    "null_instance_checks": [
+     {
+      "id": 1,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2368",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2369",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2377",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 7,
+      "kind": "call-precondition",
+      "origin": "src/flb_processor.c:2378",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20231"
+      ],
+      "subject": "ins->cmt at quant null-deref #cmt"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2382",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2383",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 11,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2386",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 12,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2387",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2390",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 15,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2391",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "tested:20224"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      18
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      11
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_exit",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2218",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2220",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2221",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      7
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      3
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_exit",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 2,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2218",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2220",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 8,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2221",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      7
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      3
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_init",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `config`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_get_name`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 4,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2313",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2315",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2318",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 13,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2324",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2326",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      23
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      6
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_init",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `config`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_get_name`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 4,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2313",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2315",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2318",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 13,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2324",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2326",
+      "outcome": "proved",
+      "sources": null,
+      "proofs": [
+       "precondition:inferred: quant null-deref #ins"
+      ],
+      "subject": "ins"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      23
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      6
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_set_property",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `tmp`",
+        6
+       ],
+       [
+        "unknown_alias: unresolved resource identity `v`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_env_var_translate`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_item_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_get_level_str`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_property`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2069",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2070",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:5"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 10,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->config"
+      ],
+      "proofs": null,
+      "subject": "ins->config"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2088",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 17,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2097",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->p"
+      ],
+      "proofs": null,
+      "subject": "ins->p"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      40
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      7
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_instance_set_property",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `ins`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `tmp`",
+        6
+       ],
+       [
+        "unknown_alias: unresolved resource identity `v`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_env_var_translate`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_kv_item_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_log_get_level_str`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_property`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [
+     {
+      "id": 5,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2069",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 6,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2070",
+      "outcome": "moved",
+      "sources": null,
+      "proofs": [
+       "moved:5"
+      ],
+      "subject": "ins"
+     },
+     {
+      "id": 9,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 10,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2080",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->config"
+      ],
+      "proofs": null,
+      "subject": "ins->config"
+     },
+     {
+      "id": 14,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2088",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 17,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2097",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 19,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "formal:ins"
+      ],
+      "proofs": null,
+      "subject": "ins"
+     },
+     {
+      "id": 20,
+      "kind": "member-access",
+      "origin": "src/flb_processor.c:2101",
+      "outcome": "candidate",
+      "sources": [
+       "memory-field:ins->p"
+      ],
+      "proofs": null,
+      "subject": "ins->p"
+     }
+    ],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      40
+     ]
+    ],
+    "bounds_instance_subjects": [
+     [
+      "bounds-missing-extent: no extent established for `ins`",
+      7
+     ]
+    ]
+   },
+   {
+    "function": "flb_processor_unit_create",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `f`",
+        7
+       ],
+       [
+        "unknown_alias: unresolved resource identity `processor_plugin`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        16
+       ],
+       [
+        "unknown_alias: unresolved resource identity `unit_name`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_new`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_plugin_alias_get`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        11
+       ],
+       [
+        "unsupported: nullable resource `pu` used by a non-null contract",
+        1
+       ],
+       [
+        "unsupported: publication by `mk_list_add` of `pu`, which this function does not hold as one live object",
+        4
+       ],
+       [
+        "unsupported: unlink by `mk_list_del` of `f_ins`, which this function has not published",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      105
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_create",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `f`",
+        7
+       ],
+       [
+        "unknown_alias: unresolved resource identity `processor_plugin`",
+        1
+       ],
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        16
+       ],
+       [
+        "unknown_alias: unresolved resource identity `unit_name`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_new`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_plugin_alias_get`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_instance_create`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `mk_list_init`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        3
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        11
+       ],
+       [
+        "unsupported: nullable resource `pu` used by a non-null contract",
+        1
+       ],
+       [
+        "unsupported: publication by `mk_list_add` of `pu`, which this function does not hold as one live object",
+        4
+       ],
+       [
+        "unsupported: unlink by `mk_list_del` of `f_ins`, which this function has not published",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      105
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_destroy",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_condition_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_exit`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      21
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_destroy",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `pu`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_condition_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_destroy`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_instance_exit`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `pthread_mutex_destroy`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      21
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_init",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: call to uncontracted function `flb_filter_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      26
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_init",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unsupported: call to uncontracted function `flb_filter_init`",
+        1
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        1
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      26
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_set_property",
+    "variant": 0,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `str_val`",
+        3
+       ],
+       [
+        "unknown_alias: unresolved resource identity `val`",
+        7
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_set_property`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_condition`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        3
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+        1
+       ],
+       [
+        "unsupported: unmodeled expression may mutate a formal resource identity",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      61
+     ]
+    ],
+    "bounds_instance_subjects": []
+   },
+   {
+    "function": "flb_processor_unit_set_property",
+    "variant": 1,
+    "custody": "Unknown",
+    "custody_rows": [
+     {
+      "status": "Unknown",
+      "diagnostics": [
+       [
+        "unknown_alias: unresolved resource identity `str_val`",
+        3
+       ],
+       [
+        "unknown_alias: unresolved resource identity `val`",
+        7
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_filter_set_property`",
+        2
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_processor_unit_set_condition`",
+        1
+       ],
+       [
+        "unsupported: call to uncontracted function `flb_sds_create`",
+        3
+       ],
+       [
+        "unsupported: indirect memory access is outside the resource projection",
+        3
+       ],
+       [
+        "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+        1
+       ],
+       [
+        "unsupported: unmodeled expression may mutate a formal resource identity",
+        3
+       ]
+      ]
+     }
+    ],
+    "null_verdict": "Unknown",
+    "combined_null": "Unknown",
+    "null_reasons": [
+     "null-deref-candidate"
+    ],
+    "null_instance_checks": [],
+    "null_triage": [],
+    "bounds_verdict": "Unknown",
+    "bounds_reason_codes": [
+     [
+      "bounds-missing-extent",
+      61
+     ]
+    ],
+    "bounds_instance_subjects": []
+   }
+  ]
+ }
+}

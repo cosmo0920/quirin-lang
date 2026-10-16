@@ -1,0 +1,40 @@
+#include <stddef.h>
+#include <fluent-bit/flb_processor.h>
+#include <fluent-bit/flb_filter.h>
+typedef struct flb_processor_instance P;
+typedef struct flb_filter_instance F;
+char size_P[sizeof(P)];
+char size_F[sizeof(F)];
+_Static_assert(sizeof(F) >= sizeof(P), "filter instance smaller than processor instance");
+char off_id[offsetof(P, id) + 1];
+char size_id[sizeof(((P *)0)->id)];
+char off_log_level[offsetof(P, log_level) + 1];
+char size_log_level[sizeof(((P *)0)->log_level)];
+char off_event_type[offsetof(P, event_type) + 1];
+char size_event_type[sizeof(((P *)0)->event_type)];
+char off_name[offsetof(P, name) + 1];
+char size_name[sizeof(((P *)0)->name)];
+char off_alias[offsetof(P, alias) + 1];
+char size_alias[sizeof(((P *)0)->alias)];
+char off_context[offsetof(P, context) + 1];
+char size_context[sizeof(((P *)0)->context)];
+char off_data[offsetof(P, data) + 1];
+char size_data[sizeof(((P *)0)->data)];
+char off_pu[offsetof(P, pu) + 1];
+char size_pu[sizeof(((P *)0)->pu)];
+char off_p[offsetof(P, p) + 1];
+char size_p[sizeof(((P *)0)->p)];
+char off_properties[offsetof(P, properties) + 1];
+char size_properties[sizeof(((P *)0)->properties)];
+char off_config_map[offsetof(P, config_map) + 1];
+char size_config_map[sizeof(((P *)0)->config_map)];
+char off_log_decoder[offsetof(P, log_decoder) + 1];
+char size_log_decoder[sizeof(((P *)0)->log_decoder)];
+char off_log_encoder[offsetof(P, log_encoder) + 1];
+char size_log_encoder[sizeof(((P *)0)->log_encoder)];
+char off_cmt[offsetof(P, cmt) + 1];
+char size_cmt[sizeof(((P *)0)->cmt)];
+char off_notification_channel[offsetof(P, notification_channel) + 1];
+char size_notification_channel[sizeof(((P *)0)->notification_channel)];
+char off_config[offsetof(P, config) + 1];
+char size_config[sizeof(((P *)0)->config)];

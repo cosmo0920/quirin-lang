@@ -1,0 +1,6455 @@
+{
+ "config": "system-046accf6",
+ "units": [
+  {
+   "unit": "benchmarks/flb-bench-processor_sampling.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "void *",
+     "cast": "BitCast",
+     "file": "benchmarks/flb-bench-processor_sampling.c",
+     "line": 220,
+     "site": "benchmarks/flb-bench-processor_sampling.c:220",
+     "from": "struct flb_processor_instance *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "void *",
+     "cast": "BitCast",
+     "file": "benchmarks/flb-bench-processor_sampling.c",
+     "line": 295,
+     "site": "benchmarks/flb-bench-processor_sampling.c:295",
+     "from": "struct flb_processor_instance *"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 73,
+     "col": 10,
+     "site": "plugins/processor_content_modifier/cm.c:73",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 76,
+     "col": 11,
+     "site": "plugins/processor_content_modifier/cm.c:76",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 92,
+     "col": 10,
+     "site": "plugins/processor_content_modifier/cm.c:92",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 95,
+     "col": 11,
+     "site": "plugins/processor_content_modifier/cm.c:95",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 111,
+     "col": 10,
+     "site": "plugins/processor_content_modifier/cm.c:111",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm.c",
+     "line": 114,
+     "col": 11,
+     "site": "plugins/processor_content_modifier/cm.c:114",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_config.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 51,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:51",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 51,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:51",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 79,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:79",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 79,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:79",
+     "use": "read"
+    },
+    {
+     "member": "event_type",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 96,
+     "col": 18,
+     "site": "plugins/processor_content_modifier/cm_config.c:96",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 142,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:142",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 142,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:142",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 157,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:157",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 157,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:157",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 183,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:183",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 183,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:183",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 198,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:198",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 198,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:198",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 216,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:216",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 216,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:216",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 265,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:265",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 265,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:265",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 280,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:280",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 280,
+     "col": 31,
+     "site": "plugins/processor_content_modifier/cm_config.c:280",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 288,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:288",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 288,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:288",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 310,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:310",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 310,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:310",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 324,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:324",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 324,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:324",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 335,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:335",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 335,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:335",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 341,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:341",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 341,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:341",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 347,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:347",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 347,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:347",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 353,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:353",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 353,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:353",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 383,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:383",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 383,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_config.c:383",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 406,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:406",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_config.c",
+     "line": 406,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_config.c:406",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_logs.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 77,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_logs.c:77",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 77,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_logs.c:77",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 124,
+     "col": 19,
+     "site": "plugins/processor_content_modifier/cm_logs.c:124",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 124,
+     "col": 19,
+     "site": "plugins/processor_content_modifier/cm_logs.c:124",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 141,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_logs.c:141",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 141,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_logs.c:141",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 360,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_logs.c:360",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 360,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_logs.c:360",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 427,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_logs.c:427",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_logs.c",
+     "line": 427,
+     "col": 27,
+     "site": "plugins/processor_content_modifier/cm_logs.c:427",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_metrics.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 69,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:69",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 69,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:69",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 113,
+     "col": 19,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:113",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 113,
+     "col": 19,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:113",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 130,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:130",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_content_modifier/cm_metrics.c",
+     "line": 130,
+     "col": 23,
+     "site": "plugins/processor_content_modifier/cm_metrics.c:130",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_opentelemetry.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_traces.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_content_modifier/cm_utils.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 102,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:102",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 102,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:102",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 121,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:121",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 121,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:121",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 137,
+     "col": 5,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:137",
+     "use": "write"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 138,
+     "col": 9,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:138",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 169,
+     "col": 44,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:169",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 215,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:215",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c",
+     "line": 215,
+     "col": 23,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:215",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "plugins/processor_cumulative_to_delta/cumulative_to_delta.c:147",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/processor_cumulative_to_delta/cumulative_to_delta_core.c",
+   "exit": 0,
+   "record_found": false,
+   "fields": [],
+   "accesses": [],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_labels/labels.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 259,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:259",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 259,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:259",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 290,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:290",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 290,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:290",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 314,
+     "col": 31,
+     "site": "plugins/processor_labels/labels.c:314",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 314,
+     "col": 31,
+     "site": "plugins/processor_labels/labels.c:314",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 328,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:328",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 328,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:328",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 339,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:339",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 339,
+     "col": 27,
+     "site": "plugins/processor_labels/labels.c:339",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 460,
+     "col": 5,
+     "site": "plugins/processor_labels/labels.c:460",
+     "use": "write"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 463,
+     "col": 9,
+     "site": "plugins/processor_labels/labels.c:463",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 1856,
+     "col": 47,
+     "site": "plugins/processor_labels/labels.c:1856",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 1860,
+     "col": 23,
+     "site": "plugins/processor_labels/labels.c:1860",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_labels/labels.c",
+     "line": 1860,
+     "col": 23,
+     "site": "plugins/processor_labels/labels.c:1860",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "plugins/processor_labels/labels.c:473",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/processor_metrics_selector/selector.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 91,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:91",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 91,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:91",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 102,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:102",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 102,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:102",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 106,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:106",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 106,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:106",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 110,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:110",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 110,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:110",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 116,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:116",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 116,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:116",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 127,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:127",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 127,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:127",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 131,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:131",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 131,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:131",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 135,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:135",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 135,
+     "col": 27,
+     "site": "plugins/processor_metrics_selector/selector.c:135",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 143,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:143",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 143,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:143",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 155,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:155",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 155,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:155",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 164,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:164",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 164,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:164",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 174,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:174",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 174,
+     "col": 31,
+     "site": "plugins/processor_metrics_selector/selector.c:174",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 234,
+     "col": 5,
+     "site": "plugins/processor_metrics_selector/selector.c:234",
+     "use": "write"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 237,
+     "col": 9,
+     "site": "plugins/processor_metrics_selector/selector.c:237",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 291,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:291",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 291,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:291",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 323,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:323",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 323,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:323",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 348,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:348",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 348,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:348",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 359,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:359",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 359,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:359",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 393,
+     "col": 35,
+     "site": "plugins/processor_metrics_selector/selector.c:393",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 397,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:397",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_metrics_selector/selector.c",
+     "line": 397,
+     "col": 23,
+     "site": "plugins/processor_metrics_selector/selector.c:397",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "plugins/processor_metrics_selector/selector.c:442",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/processor_opentelemetry_envelope/otel_envelope.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_opentelemetry_envelope/otel_envelope.c",
+     "line": 188,
+     "col": 27,
+     "site": "plugins/processor_opentelemetry_envelope/otel_envelope.c:188",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_opentelemetry_envelope/otel_envelope.c",
+     "line": 188,
+     "col": 27,
+     "site": "plugins/processor_opentelemetry_envelope/otel_envelope.c:188",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 90,
+     "col": 28,
+     "site": "plugins/processor_sampling/sampling.c:90",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 94,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:94",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 94,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:94",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 112,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:112",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 112,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:112",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 138,
+     "col": 5,
+     "site": "plugins/processor_sampling/sampling.c:138",
+     "use": "write"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 145,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:145",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 145,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:145",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 153,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:153",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 153,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling.c:153",
+     "use": "read"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling.c",
+     "line": 166,
+     "col": 33,
+     "site": "plugins/processor_sampling/sampling.c:166",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "plugins/processor_sampling/sampling.c:165",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_attribute.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 47,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:47",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 47,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:47",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 59,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:59",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 59,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:59",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 68,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:68",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 68,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:68",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 80,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:80",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 80,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:80",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 90,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:90",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 90,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:90",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 97,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:97",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_boolean_attribute.c",
+     "line": 97,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_boolean_attribute.c:97",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_latency.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 70,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:70",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 70,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:70",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 82,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:82",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 82,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:82",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 90,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:90",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_latency.c",
+     "line": 90,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_latency.c:90",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 47,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:47",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 47,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:47",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 59,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:59",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 59,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:59",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 68,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:68",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 68,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:68",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 80,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:80",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 80,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:80",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 90,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:90",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 90,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:90",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 103,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:103",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 103,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:103",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 112,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:112",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 112,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:112",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 125,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:125",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 125,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:125",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 132,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:132",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_numeric_attribute.c",
+     "line": 132,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_numeric_attribute.c:132",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_span_count.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 65,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:65",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 65,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:65",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 78,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:78",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 78,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:78",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 88,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:88",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 88,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:88",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 101,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:101",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 101,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:101",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 107,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:107",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_span_count.c",
+     "line": 107,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_span_count.c:107",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_status_codes.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 72,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:72",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 72,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:72",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 78,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:78",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 78,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:78",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 87,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:87",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 87,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:87",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 102,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:102",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_status_codes.c",
+     "line": 102,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_status_codes.c:102",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 50,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:50",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 50,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:50",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 62,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:62",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 62,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:62",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 71,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:71",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 71,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:71",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 86,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:86",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 86,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:86",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 96,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:96",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 96,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:96",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 105,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:105",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 105,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:105",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 140,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:140",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_string_attribute.c",
+     "line": 140,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_string_attribute.c:140",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_cond_trace_state.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 151,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:151",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 151,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:151",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 157,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:157",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 157,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:157",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 164,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:164",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_cond_trace_state.c",
+     "line": 164,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_cond_trace_state.c:164",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_conditions.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 160,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conditions.c:160",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 160,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conditions.c:160",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 175,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:175",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 175,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:175",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 182,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:182",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 182,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:182",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 188,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:188",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 188,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:188",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 196,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:196",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 196,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:196",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 230,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:230",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conditions.c",
+     "line": 230,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conditions.c:230",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_conf.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 96,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:96",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 96,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:96",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 109,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:109",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 109,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:109",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 135,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:135",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 135,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:135",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 140,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:140",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 140,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:140",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 146,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:146",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 146,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:146",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 153,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:153",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 153,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:153",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 160,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:160",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 160,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:160",
+     "use": "read"
+    },
+    {
+     "member": "pu",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 181,
+     "col": 55,
+     "site": "plugins/processor_sampling/sampling_conf.c:181",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 192,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:192",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 192,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:192",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 200,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:200",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 200,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:200",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 208,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:208",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 208,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_conf.c:208",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 222,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:222",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_conf.c",
+     "line": 222,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_conf.c:222",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_probabilistic.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_probabilistic.c",
+     "line": 45,
+     "col": 18,
+     "site": "plugins/processor_sampling/sampling_probabilistic.c:45",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_probabilistic.c",
+     "line": 45,
+     "col": 18,
+     "site": "plugins/processor_sampling/sampling_probabilistic.c:45",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_span_registry.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 91,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:91",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 91,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:91",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 135,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:135",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 135,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:135",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 140,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:140",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 140,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:140",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 163,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:163",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 163,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:163",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 171,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:171",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 171,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:171",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 187,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:187",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 187,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:187",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 243,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:243",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 243,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:243",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 274,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:274",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_span_registry.c",
+     "line": 274,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_span_registry.c:274",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sampling/sampling_tail.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 264,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:264",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 264,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:264",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 277,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:277",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 277,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:277",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 287,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:287",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 287,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:287",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 372,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:372",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 372,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:372",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 378,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:378",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 378,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:378",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 432,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:432",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 432,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:432",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 498,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:498",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 498,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:498",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 585,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:585",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 585,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:585",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 593,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:593",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 593,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:593",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 602,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:602",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 602,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:602",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 628,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:628",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 628,
+     "col": 31,
+     "site": "plugins/processor_sampling/sampling_tail.c:628",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 733,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:733",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 733,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:733",
+     "use": "read"
+    },
+    {
+     "member": "pu",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 738,
+     "col": 76,
+     "site": "plugins/processor_sampling/sampling_tail.c:738",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 740,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:740",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 740,
+     "col": 27,
+     "site": "plugins/processor_sampling/sampling_tail.c:740",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 820,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:820",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 820,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:820",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 833,
+     "col": 18,
+     "site": "plugins/processor_sampling/sampling_tail.c:833",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 833,
+     "col": 18,
+     "site": "plugins/processor_sampling/sampling_tail.c:833",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 846,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:846",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 846,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:846",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 864,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:864",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 864,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:864",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 871,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:871",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 871,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:871",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 889,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:889",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sampling/sampling_tail.c",
+     "line": 889,
+     "col": 23,
+     "site": "plugins/processor_sampling/sampling_tail.c:889",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sql/parser/sql_expression.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sql/parser/sql_parser.c",
+   "exit": 1,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sql/sql.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_sql/sql.c",
+     "line": 664,
+     "col": 11,
+     "site": "plugins/processor_sql/sql.c:664",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_sql/sql_config.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sql/sql_config.c",
+     "line": 47,
+     "col": 23,
+     "site": "plugins/processor_sql/sql_config.c:47",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sql/sql_config.c",
+     "line": 47,
+     "col": 23,
+     "site": "plugins/processor_sql/sql_config.c:47",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_sql/sql_config.c",
+     "line": 55,
+     "col": 23,
+     "site": "plugins/processor_sql/sql_config.c:55",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_sql/sql_config.c",
+     "line": 55,
+     "col": 23,
+     "site": "plugins/processor_sql/sql_config.c:55",
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "plugins/processor_tda/tda.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 433,
+     "col": 18,
+     "site": "plugins/processor_tda/tda.c:433",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 433,
+     "col": 18,
+     "site": "plugins/processor_tda/tda.c:433",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 835,
+     "col": 22,
+     "site": "plugins/processor_tda/tda.c:835",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 835,
+     "col": 22,
+     "site": "plugins/processor_tda/tda.c:835",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 874,
+     "col": 19,
+     "site": "plugins/processor_tda/tda.c:874",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 874,
+     "col": 19,
+     "site": "plugins/processor_tda/tda.c:874",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1002,
+     "col": 19,
+     "site": "plugins/processor_tda/tda.c:1002",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1002,
+     "col": 19,
+     "site": "plugins/processor_tda/tda.c:1002",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1067,
+     "col": 23,
+     "site": "plugins/processor_tda/tda.c:1067",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1067,
+     "col": 23,
+     "site": "plugins/processor_tda/tda.c:1067",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1072,
+     "col": 5,
+     "site": "plugins/processor_tda/tda.c:1072",
+     "use": "write"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1149,
+     "col": 35,
+     "site": "plugins/processor_tda/tda.c:1149",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1166,
+     "col": 26,
+     "site": "plugins/processor_tda/tda.c:1166",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1166,
+     "col": 26,
+     "site": "plugins/processor_tda/tda.c:1166",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1173,
+     "col": 26,
+     "site": "plugins/processor_tda/tda.c:1173",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1173,
+     "col": 26,
+     "site": "plugins/processor_tda/tda.c:1173",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "CStyleCastExpr",
+     "to": "void",
+     "cast": "ToVoid",
+     "file": "plugins/processor_tda/tda.c",
+     "line": 1116,
+     "site": "plugins/processor_tda/tda.c:1116",
+     "from": "struct flb_processor_instance *"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_help.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 377,
+     "col": 23,
+     "site": "src/flb_help.c:377",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 381,
+     "col": 23,
+     "site": "src/flb_help.c:381",
+     "use": "read"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 391,
+     "col": 54,
+     "site": "src/flb_help.c:391",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 400,
+     "col": 9,
+     "site": "src/flb_help.c:400",
+     "use": "read"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 404,
+     "col": 44,
+     "site": "src/flb_help.c:404",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_help.c",
+     "line": 404,
+     "col": 57,
+     "site": "src/flb_help.c:404",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_help.c:642",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_metrics_exporter.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "src/flb_notification.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "notification_channel",
+     "op": "->",
+     "file": "src/flb_notification.c",
+     "line": 258,
+     "col": 40,
+     "site": "src/flb_notification.c:258",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_notification.c",
+     "line": 356,
+     "col": 13,
+     "site": "src/flb_notification.c:356",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_notification.c",
+     "line": 357,
+     "col": 22,
+     "site": "src/flb_notification.c:357",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "src/flb_notification.c",
+     "line": 358,
+     "col": 49,
+     "site": "src/flb_notification.c:358",
+     "use": "read"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "src/flb_notification.c",
+     "line": 359,
+     "col": 49,
+     "site": "src/flb_notification.c:359",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_notification.c",
+     "line": 123,
+     "site": "src/flb_notification.c:124",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "void *",
+     "cast": "BitCast",
+     "file": "src/flb_notification.c",
+     "line": 130,
+     "site": "src/flb_notification.c:130",
+     "from": "struct flb_processor_instance *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_notification.c",
+     "line": 358,
+     "site": "src/flb_notification.c:358",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_processor.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "notification_channel",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "col": 9,
+     "site": "src/flb_processor.c:1228",
+     "use": "write"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1543,
+     "col": 21,
+     "site": "src/flb_processor.c:1543",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1549,
+     "col": 53,
+     "site": "src/flb_processor.c:1549",
+     "use": "read"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "col": 63,
+     "site": "src/flb_processor.c:1552",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1552,
+     "col": 83,
+     "site": "src/flb_processor.c:1552",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1554,
+     "col": 57,
+     "site": "src/flb_processor.c:1554",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1586,
+     "col": 27,
+     "site": "src/flb_processor.c:1586",
+     "use": "read"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1616,
+     "col": 57,
+     "site": "src/flb_processor.c:1616",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1640,
+     "col": 57,
+     "site": "src/flb_processor.c:1640",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1670,
+     "col": 53,
+     "site": "src/flb_processor.c:1670",
+     "use": "read"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1671,
+     "col": 79,
+     "site": "src/flb_processor.c:1671",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1686,
+     "col": 21,
+     "site": "src/flb_processor.c:1686",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1687,
+     "col": 27,
+     "site": "src/flb_processor.c:1687",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1722,
+     "col": 21,
+     "site": "src/flb_processor.c:1722",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1725,
+     "col": 27,
+     "site": "src/flb_processor.c:1725",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1772,
+     "col": 21,
+     "site": "src/flb_processor.c:1772",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 1773,
+     "col": 27,
+     "site": "src/flb_processor.c:1773",
+     "use": "read"
+    },
+    {
+     "member": "pu",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2069,
+     "col": 13,
+     "site": "src/flb_processor.c:2069",
+     "use": "read"
+    },
+    {
+     "member": "pu",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2070,
+     "col": 51,
+     "site": "src/flb_processor.c:2070",
+     "use": "read"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2080,
+     "col": 37,
+     "site": "src/flb_processor.c:2080",
+     "use": "read"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "lib/cfl/include/cfl/cfl_variant.h",
+     "line": 2088,
+     "col": 9,
+     "site": "src/flb_processor.c:2080",
+     "use": "write"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "lib/cfl/include/cfl/cfl_variant.h",
+     "line": 2097,
+     "col": 9,
+     "site": "src/flb_processor.c:2080",
+     "use": "write"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2101,
+     "col": 53,
+     "site": "src/flb_processor.c:2101",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "lib/cfl/include/cfl/cfl_variant.h",
+     "line": 2113,
+     "col": 34,
+     "site": "src/flb_processor.c:2103",
+     "use": "address"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2141,
+     "col": 39,
+     "site": "src/flb_processor.c:2141",
+     "use": "address"
+    },
+    {
+     "member": "config",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2176,
+     "col": 5,
+     "site": "src/flb_processor.c:2176",
+     "use": "write"
+    },
+    {
+     "member": "name",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2182,
+     "col": 14,
+     "site": "src/flb_processor.c:2182",
+     "use": "address"
+    },
+    {
+     "member": "id",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2185,
+     "col": 5,
+     "site": "src/flb_processor.c:2185",
+     "use": "write"
+    },
+    {
+     "member": "event_type",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2186,
+     "col": 5,
+     "site": "src/flb_processor.c:2186",
+     "use": "write"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2187,
+     "col": 5,
+     "site": "src/flb_processor.c:2187",
+     "use": "write"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2188,
+     "col": 5,
+     "site": "src/flb_processor.c:2188",
+     "use": "write"
+    },
+    {
+     "member": "data",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2189,
+     "col": 5,
+     "site": "src/flb_processor.c:2189",
+     "use": "write"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2190,
+     "col": 5,
+     "site": "src/flb_processor.c:2190",
+     "use": "write"
+    },
+    {
+     "member": "pu",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2191,
+     "col": 5,
+     "site": "src/flb_processor.c:2191",
+     "use": "write"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2193,
+     "col": 19,
+     "site": "src/flb_processor.c:2193",
+     "use": "address"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2195,
+     "col": 5,
+     "site": "src/flb_processor.c:2195",
+     "use": "write"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2196,
+     "col": 9,
+     "site": "src/flb_processor.c:2196",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "col": 23,
+     "site": "src/flb_processor.c:2197",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2197,
+     "col": 23,
+     "site": "src/flb_processor.c:2197",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2203,
+     "col": 5,
+     "site": "src/flb_processor.c:2203",
+     "use": "write"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2204,
+     "col": 9,
+     "site": "src/flb_processor.c:2204",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "col": 23,
+     "site": "src/flb_processor.c:2205",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2205,
+     "col": 23,
+     "site": "src/flb_processor.c:2205",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2209,
+     "col": 39,
+     "site": "src/flb_processor.c:2209",
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2218,
+     "col": 14,
+     "site": "src/flb_processor.c:2218",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2220,
+     "col": 36,
+     "site": "src/flb_processor.c:2220",
+     "use": "read"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2221,
+     "col": 30,
+     "site": "src/flb_processor.c:2221",
+     "use": "read"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2227,
+     "col": 9,
+     "site": "src/flb_processor.c:2227",
+     "use": "read"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2228,
+     "col": 16,
+     "site": "src/flb_processor.c:2228",
+     "use": "read"
+    },
+    {
+     "member": "name",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2231,
+     "col": 12,
+     "site": "src/flb_processor.c:2231",
+     "use": "address"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2240,
+     "col": 38,
+     "site": "src/flb_processor.c:2240",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "col": 38,
+     "site": "src/flb_processor.c:2247",
+     "use": "address"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2247,
+     "col": 38,
+     "site": "src/flb_processor.c:2247",
+     "use": "address"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2270,
+     "col": 42,
+     "site": "src/flb_processor.c:2270",
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2275,
+     "col": 9,
+     "site": "src/flb_processor.c:2275",
+     "use": "write"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2278,
+     "col": 47,
+     "site": "src/flb_processor.c:2278",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2279,
+     "col": 48,
+     "site": "src/flb_processor.c:2279",
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2280,
+     "col": 47,
+     "site": "src/flb_processor.c:2280",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2284,
+     "col": 38,
+     "site": "src/flb_processor.c:2284",
+     "use": "address"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2290,
+     "col": 50,
+     "site": "src/flb_processor.c:2290",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2297,
+     "col": 34,
+     "site": "src/flb_processor.c:2297",
+     "use": "address"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2313,
+     "col": 9,
+     "site": "src/flb_processor.c:2313",
+     "use": "read"
+    },
+    {
+     "member": "log_level",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2315,
+     "col": 9,
+     "site": "src/flb_processor.c:2315",
+     "use": "write"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2318,
+     "col": 9,
+     "site": "src/flb_processor.c:2318",
+     "use": "read"
+    },
+    {
+     "member": "cmt",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2324,
+     "col": 5,
+     "site": "src/flb_processor.c:2324",
+     "use": "write"
+    },
+    {
+     "member": "cmt",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2326,
+     "col": 10,
+     "site": "src/flb_processor.c:2326",
+     "use": "read"
+    },
+    {
+     "member": "name",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2348,
+     "col": 69,
+     "site": "src/flb_processor.c:2348",
+     "use": "address"
+    },
+    {
+     "member": "context",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2358,
+     "col": 5,
+     "site": "src/flb_processor.c:2358",
+     "use": "write"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2368,
+     "col": 9,
+     "site": "src/flb_processor.c:2368",
+     "use": "read"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2369,
+     "col": 32,
+     "site": "src/flb_processor.c:2369",
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2373,
+     "col": 21,
+     "site": "src/flb_processor.c:2373",
+     "use": "address"
+    },
+    {
+     "member": "cmt",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2377,
+     "col": 9,
+     "site": "src/flb_processor.c:2377",
+     "use": "read"
+    },
+    {
+     "member": "cmt",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2378,
+     "col": 21,
+     "site": "src/flb_processor.c:2378",
+     "use": "read"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2382,
+     "col": 9,
+     "site": "src/flb_processor.c:2382",
+     "use": "read"
+    },
+    {
+     "member": "alias",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2383,
+     "col": 25,
+     "site": "src/flb_processor.c:2383",
+     "use": "read"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2386,
+     "col": 9,
+     "site": "src/flb_processor.c:2386",
+     "use": "read"
+    },
+    {
+     "member": "log_encoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2387,
+     "col": 39,
+     "site": "src/flb_processor.c:2387",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2390,
+     "col": 9,
+     "site": "src/flb_processor.c:2390",
+     "use": "read"
+    },
+    {
+     "member": "log_decoder",
+     "op": "->",
+     "file": "src/flb_processor.c",
+     "line": 2391,
+     "col": 39,
+     "site": "src/flb_processor.c:2391",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:781",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "void *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 792,
+     "site": "src/flb_processor.c:792",
+     "from": "struct flb_processor_instance *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1143,
+     "site": "src/flb_processor.c:1143",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1178,
+     "site": "src/flb_processor.c:1178",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1182,
+     "site": "src/flb_processor.c:1182",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1216,
+     "site": "src/flb_processor.c:1216",
+     "from": "void *"
+    },
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1228,
+     "site": "src/flb_processor.c:1228",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 1537,
+     "site": "src/flb_processor.c:1537",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2155",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2168",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 2171,
+     "site": "src/flb_processor.c:2171",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2174",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2199",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2207",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/flb_processor.c:2363",
+     "from": "void *"
+    },
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "void *",
+     "cast": "BitCast",
+     "file": "src/flb_processor.c",
+     "line": 2394,
+     "site": "src/flb_processor.c:2394",
+     "from": "struct flb_processor_instance *"
+    }
+   ]
+  },
+  {
+   "unit": "src/fluent-bit.c",
+   "exit": 1,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "src/fluent-bit.c",
+     "line": 509,
+     "col": 15,
+     "site": "src/fluent-bit.c:509",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "ImplicitCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "NullToPointer",
+     "file": "/usr/lib/llvm-21/lib/clang/21/include/__stddef_null.h",
+     "line": 26,
+     "site": "src/fluent-bit.c:472",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "tests/internal/config_format_yaml.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/cumulative_to_delta.c",
+   "exit": 0,
+   "record_found": false,
+   "fields": [],
+   "accesses": [],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/file.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/hash.c",
+   "exit": 0,
+   "record_found": false,
+   "fields": [],
+   "accesses": [],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/hmac.c",
+   "exit": 0,
+   "record_found": false,
+   "fields": [],
+   "accesses": [],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/mp_chunk_cobj.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/multiline.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/plugin_alias.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "p",
+     "op": "->",
+     "file": "tests/internal/plugin_alias.c",
+     "line": 359,
+     "col": 27,
+     "site": "tests/internal/plugin_alias.c:359",
+     "use": "read"
+    }
+   ],
+   "conversions": [
+    {
+     "kind": "CStyleCastExpr",
+     "to": "struct flb_processor_instance *",
+     "cast": "BitCast",
+     "file": "tests/internal/plugin_alias.c",
+     "line": 359,
+     "site": "tests/internal/plugin_alias.c:359",
+     "from": "void *"
+    }
+   ]
+  },
+  {
+   "unit": "tests/internal/processor.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/processor_conditional.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/reload.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/router_config.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  },
+  {
+   "unit": "tests/internal/stream_processor.c",
+   "exit": 0,
+   "record_found": true,
+   "fields": [
+    "alias",
+    "cmt",
+    "config",
+    "config_map",
+    "context",
+    "data",
+    "event_type",
+    "id",
+    "log_decoder",
+    "log_encoder",
+    "log_level",
+    "name",
+    "notification_channel",
+    "p",
+    "properties",
+    "pu"
+   ],
+   "accesses": [
+    {
+     "member": "config",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 31,
+     "site": null,
+     "use": "read"
+    },
+    {
+     "member": "properties",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 45,
+     "site": null,
+     "use": "address"
+    },
+    {
+     "member": "config_map",
+     "op": "->",
+     "file": "include/fluent-bit/flb_processor.h",
+     "line": 294,
+     "col": 62,
+     "site": null,
+     "use": "read"
+    }
+   ],
+   "conversions": []
+  }
+ ]
+}

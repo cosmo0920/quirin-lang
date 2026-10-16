@@ -1,0 +1,1354 @@
+[
+ {
+  "config": "corpus-66910c10",
+  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-static.dir/flb_processor.c.o",
+  "variant": "static",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src",
+  "compiler": "/usr/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "corpus-66910c10",
+  "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-shared.dir/flb_processor.c.o",
+  "variant": "shared",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src",
+  "compiler": "/usr/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "system-046accf6",
+  "revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-static.dir/flb_processor.c.o",
+  "variant": "static",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "system-046accf6",
+  "revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-shared.dir/flb_processor.c.o",
+  "variant": "shared",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "pins-046accf6",
+  "revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w48-callee-closure-r3/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "dcff56cf71f3f1fcff85351f2277e3c5d6e6bd9a5a8a263a6724bca312e3a3a7",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-static.dir/flb_processor.c.o",
+  "variant": "static",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w48-callee-closure-r3/attempt-1/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "pins-046accf6",
+  "revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w48-callee-closure-r3/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "dcff56cf71f3f1fcff85351f2277e3c5d6e6bd9a5a8a263a6724bca312e3a3a7",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-shared.dir/flb_processor.c.o",
+  "variant": "shared",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w48-callee-closure-r3/attempt-1/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "slice-34155955",
+  "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-static.dir/flb_processor.c.o",
+  "variant": "static",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ },
+ {
+  "config": "slice-34155955",
+  "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "unit_sha256": "015f68b9c167844dcc949ee029131e0cd55febcf6a26d93827d1a3a8823ba64b",
+  "object": "CMakeFiles/fluent-bit-shared.dir/flb_processor.c.o",
+  "variant": "shared",
+  "directory": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/src",
+  "compiler": "/usr/lib/llvm-21/bin/clang",
+  "layout_exit": 0,
+  "processor_sizeof": 152,
+  "processor_align": 8,
+  "filter_sizeof": 216,
+  "filter_align": 8,
+  "filter_minus_processor": 64,
+  "filter_has_match_regex": true,
+  "filter_has_metrics": true,
+  "processor_members": [
+   {
+    "name": "id",
+    "type": "int",
+    "layout_offset": 0,
+    "probe_offset": 0,
+    "size": 4,
+    "end": 4,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_level",
+    "type": "int",
+    "layout_offset": 4,
+    "probe_offset": 4,
+    "size": 4,
+    "end": 8,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "event_type",
+    "type": "int",
+    "layout_offset": 8,
+    "probe_offset": 8,
+    "size": 4,
+    "end": 12,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "name",
+    "type": "char[32]",
+    "layout_offset": 12,
+    "probe_offset": 12,
+    "size": 32,
+    "end": 44,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "alias",
+    "type": "char *",
+    "layout_offset": 48,
+    "probe_offset": 48,
+    "size": 8,
+    "end": 56,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "context",
+    "type": "void *",
+    "layout_offset": 56,
+    "probe_offset": 56,
+    "size": 8,
+    "end": 64,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "data",
+    "type": "void *",
+    "layout_offset": 64,
+    "probe_offset": 64,
+    "size": 8,
+    "end": 72,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "pu",
+    "type": "struct flb_processor_unit *",
+    "layout_offset": 72,
+    "probe_offset": 72,
+    "size": 8,
+    "end": 80,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "p",
+    "type": "struct flb_processor_plugin *",
+    "layout_offset": 80,
+    "probe_offset": 80,
+    "size": 8,
+    "end": 88,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "properties",
+    "type": "struct mk_list",
+    "layout_offset": 88,
+    "probe_offset": 88,
+    "size": 16,
+    "end": 104,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config_map",
+    "type": "struct mk_list *",
+    "layout_offset": 104,
+    "probe_offset": 104,
+    "size": 8,
+    "end": 112,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_decoder",
+    "type": "struct flb_log_event_decoder *",
+    "layout_offset": 112,
+    "probe_offset": 112,
+    "size": 8,
+    "end": 120,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "log_encoder",
+    "type": "struct flb_log_event_encoder *",
+    "layout_offset": 120,
+    "probe_offset": 120,
+    "size": 8,
+    "end": 128,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "cmt",
+    "type": "struct cmt *",
+    "layout_offset": 128,
+    "probe_offset": 128,
+    "size": 8,
+    "end": 136,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "notification_channel",
+    "type": "int",
+    "layout_offset": 136,
+    "probe_offset": 136,
+    "size": 4,
+    "end": 140,
+    "within_filter_sizeof": true
+   },
+   {
+    "name": "config",
+    "type": "struct flb_config *",
+    "layout_offset": 144,
+    "probe_offset": 144,
+    "size": 8,
+    "end": 152,
+    "within_filter_sizeof": true
+   }
+  ],
+  "probe_exit": 0,
+  "probe_sizeof_processor": 152,
+  "probe_sizeof_filter": 216,
+  "layout_and_probe_agree": true
+ }
+]

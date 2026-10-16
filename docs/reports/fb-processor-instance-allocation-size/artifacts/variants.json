@@ -1,0 +1,113 @@
+[
+ {
+  "variant": "recorded-without-regex-metrics",
+  "extra_flags": [],
+  "removed_defines": [
+   "-DFLB_HAVE_METRICS",
+   "-DFLB_HAVE_REGEX"
+  ],
+  "exit": 0,
+  "sizeof_processor": 152,
+  "sizeof_filter": 200,
+  "first_errors": []
+ },
+ {
+  "variant": "i686-linux-gnu",
+  "extra_flags": [
+   "--target=i686-linux-gnu"
+  ],
+  "removed_defines": [],
+  "exit": 0,
+  "sizeof_processor": 96,
+  "sizeof_filter": 132,
+  "first_errors": []
+ },
+ {
+  "variant": "i686-linux-gnu-without-regex-metrics",
+  "extra_flags": [
+   "--target=i686-linux-gnu"
+  ],
+  "removed_defines": [
+   "-DFLB_HAVE_METRICS",
+   "-DFLB_HAVE_REGEX"
+  ],
+  "exit": 0,
+  "sizeof_processor": 96,
+  "sizeof_filter": 124,
+  "first_errors": []
+ },
+ {
+  "variant": "armv7a-linux-gnueabihf",
+  "extra_flags": [
+   "--target=armv7a-linux-gnueabihf"
+  ],
+  "removed_defines": [],
+  "exit": 1,
+  "sizeof_processor": null,
+  "sizeof_filter": null,
+  "first_errors": [
+   "/usr/include/pthread.h:698:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:710:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:733:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:746:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:751:6: error: 'regparm' is not valid on this platform"
+  ]
+ },
+ {
+  "variant": "armv7a-linux-gnueabihf-without-regex-metrics",
+  "extra_flags": [
+   "--target=armv7a-linux-gnueabihf"
+  ],
+  "removed_defines": [
+   "-DFLB_HAVE_METRICS",
+   "-DFLB_HAVE_REGEX"
+  ],
+  "exit": 1,
+  "sizeof_processor": null,
+  "sizeof_filter": null,
+  "first_errors": [
+   "/usr/include/pthread.h:698:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:710:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:733:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:746:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:751:6: error: 'regparm' is not valid on this platform"
+  ]
+ },
+ {
+  "variant": "aarch64-linux-gnu",
+  "extra_flags": [
+   "--target=aarch64-linux-gnu"
+  ],
+  "removed_defines": [],
+  "exit": 1,
+  "sizeof_processor": null,
+  "sizeof_filter": null,
+  "first_errors": [
+   "/usr/include/pthread.h:698:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:710:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:733:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:746:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:751:6: error: 'regparm' is not valid on this platform"
+  ]
+ },
+ {
+  "variant": "aarch64-linux-gnu-without-regex-metrics",
+  "extra_flags": [
+   "--target=aarch64-linux-gnu"
+  ],
+  "removed_defines": [
+   "-DFLB_HAVE_METRICS",
+   "-DFLB_HAVE_REGEX"
+  ],
+  "exit": 1,
+  "sizeof_processor": null,
+  "sizeof_filter": null,
+  "first_errors": [
+   "/usr/include/pthread.h:698:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:710:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:733:6: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:746:3: error: 'regparm' is not valid on this platform",
+   "/usr/include/pthread.h:751:6: error: 'regparm' is not valid on this platform"
+  ]
+ }
+]
