@@ -1,0 +1,55 @@
+{
+ "before": {
+  "Safe (conditional on its preconditions)": 125,
+  "Safe (unconditional)": 84,
+  "Unknown": 245
+ },
+ "after": {
+  "Safe (conditional on its preconditions)": 125,
+  "Safe (unconditional)": 84,
+  "Unknown": 245
+ },
+ "differing_rows": [
+  {
+   "row": [
+    "fluent-bit-system",
+    "src/flb_engine.c",
+    "handle_output_event"
+   ],
+   "fields": [
+    "custody_null_premises"
+   ],
+   "verdicts": [
+    [
+     "Unknown",
+     "Unknown"
+    ],
+    [
+     "Unknown",
+     "Unknown"
+    ]
+   ]
+  },
+  {
+   "row": [
+    "fluent-bit-system",
+    "src/flb_scheduler.c",
+    "flb_sched_timer_cb_destroy"
+   ],
+   "fields": [
+    "combined",
+    "custody"
+   ],
+   "verdicts": [
+    [
+     "Safe",
+     "Safe"
+    ],
+    [
+     "Safe",
+     "Safe"
+    ]
+   ]
+  }
+ ]
+}

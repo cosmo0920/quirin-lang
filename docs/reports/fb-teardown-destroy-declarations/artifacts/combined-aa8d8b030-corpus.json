@@ -1,0 +1,62 @@
+{
+ "statuses_before": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 2
+ },
+ "added": {
+  "indirect memory access is outside the resource projection": 2
+ },
+ "moving_rows": 2,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "18143: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "18143: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "memrb_input_chunk_release_space",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_task_destroy"
+   ],
+   "lost": [
+    "20009: call to uncontracted function `flb_task_destroy`"
+   ],
+   "gained": [
+    "20009: indirect memory access is outside the resource projection"
+   ]
+  }
+ ]
+}

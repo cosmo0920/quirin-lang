@@ -247,3 +247,20 @@ provider-Rust steps stand, and `scripts/gate-python-rerun.sh` reran
 failed logs are kept in `gate-g2/superseded/`. Then `finish-gate.sh`:
 `build_matrix.py . --gate gate.json` (09a), the Python suite again (09b) and
 the docs index (10b, 10c); exits in `gate/`.
+
+## 9. Combined arbiter against main `aa8d8b030`
+
+Requested by the integrator: main `aa8d8b030` (three code commits since the
+measured base: `a5e4d39d8`, `b93c8f8b9`, `aa8d8b030`), built from a clean
+export (binary `88b27dd6…`), against this card's tip `8673dbfde` (binary
+`87c1abdb…`), each route under the heavy lock with the null property
+(`scripts/combined.sh`, `scripts/combined_compare.sh`;
+`artifacts/combined-aa8d8b030-*.json`). Corpus 938 / 9 / 3,887 → 938 / 9 /
+3,887 (reports `7326ba39…` → `998b4310…`); system 93 / 4 / 351 → **95** / 4 /
+**349**, the only status move `flb_sched_timer_cb_destroy` in both
+configurations; slice 52 / 1 / 347 / 4 Pending unchanged; null tallies
+identical on all three routes (the null stream differs only in the same two
+system rows as in section 6). The moved rows (corpus 2, system 52, slice 31)
+are exactly section 6's, row for row with the same leaves lost and gained
+(compared by leaf text; line numbers are the analysed stream's). No other
+difference.
