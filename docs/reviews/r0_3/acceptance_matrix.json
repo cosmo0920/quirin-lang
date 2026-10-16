@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "UNION-OPAQUE-RECORD-WRITES-BY-TYPE card gate on base 1c7333db1, every code step at dfc4e26b7, scripts docs/reports/union-opaque-record-writes/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/uorw/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 504 units, 517 summaries, 8,151 passed, 0 failed, 15 ignored, exit 0 (private/uorw/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 329 audits passed (329 on main 1c7333db1, unchanged: QCore.UnionArmLayout's existing audit extended); provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
-  "workspace_tests": 8151,
+  "note": "RELATIONAL-REWRITE-LINE-ORDER card gate on base 1c7333db1, every code step at 21e54f082, scripts docs/reports/relational-rewrite-line-order/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/rrlo/gate-g1 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 503 units, 516 summaries, 8,149 passed, 0 failed, 15 ignored, exit 0 (private/rrlo/tests-g1), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 329 audits passed (329 on main 1c7333db1, unchanged: no Lean module, no decision rule changes); provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8149,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 329,
@@ -7095,7 +7095,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/union-opaque-record-writes/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/relational-rewrite-line-order/gate.json)"
  },
  "named_followups": [
   {

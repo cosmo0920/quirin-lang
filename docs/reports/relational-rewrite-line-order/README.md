@@ -154,7 +154,22 @@ unseen.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (filled after the gate run).
+Gate g1 at `21e54f082` (the code at `8b5ae962f` plus records), on base
+`1c7333db1`, one exclusive flock on the shared heavy lock held for the whole
+gate ([`gate-run.sh`](scripts/gate-run.sh), [`gate-whole.sh`](scripts/gate-whole.sh),
+[`gate.sh`](scripts/gate.sh), [`finish-gate.sh`](scripts/finish-gate.sh);
+exits in [gate/](gate/), summary [gate.json](gate.json), logs
+`private/rrlo/gate-g1/` and `private/rrlo/tests-g1/` of the card's
+worktree): `cargo check --workspace --all-targets` 0; submodule 0; `cargo
+fmt --check` 0; `clippy --locked -D warnings` 0; `run_test_binaries.py` 0
+(503 units, 516 summaries, **8,149 passed**, 0 failed, 15 ignored; no
+rerun); both reevaluation probes 0; `check_lean_audits.py` 0 (**329**
+audits); Python suite 0 (374 tests); docs index check 0; provider gate (run
+although `providers/` is unchanged, for the matrix's measured count):
+packages build and verify 0, `cargo check --locked` 0, `contracts.py check`
+0, provider tests 0 (133 passed), provider Python 0 (25), provider fmt and
+clippy 0; then the matrix regenerated with this gate file (09a) 0, the
+Python suite again (09b) 0 and the docs index (10b, 10c) 0.
 
 ## Files likely to conflict
 
