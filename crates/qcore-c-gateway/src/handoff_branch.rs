@@ -2120,6 +2120,56 @@ pub fn resolve(
     }
 }
 
+/// Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30's parameter guard, rule
+/// 13l): the value of `@constant` as an enumerator of the type of
+/// `callee`'s parameter `index`, read through Clang in every unit in scope
+/// that declares the callee. `Err` as [`resolve`].
+///
+/// # Errors
+/// Why the constant does not resolve.
+pub fn resolve_parameter(
+    units: &[&crate::callback_member_closure::MemberFacts],
+    callee: &str,
+    index: usize,
+    constant: &str,
+) -> Result<i64, String> {
+    let mut values = BTreeSet::new();
+    let mut declared = false;
+    for facts in units {
+        let Some(parameter) = facts
+            .parameter_types
+            .get(callee)
+            .and_then(|types| types.get(index))
+        else {
+            continue;
+        };
+        declared = true;
+        let value = facts
+            .typed_constants
+            .get(constant)
+            .and_then(|types| types.get(parameter))
+            .ok_or_else(|| {
+                format!(
+                    "`@{constant}` is not an enumerator of `{callee}`'s parameter type \
+                     `{parameter}`"
+                )
+            })?;
+        values.insert(*value);
+    }
+    if !declared {
+        return Err(format!(
+            "no unit in scope declares `{callee}`'s parameter {index}, so `@{constant}` is not \
+             resolved"
+        ));
+    }
+    match values.into_iter().collect::<Vec<_>>().as_slice() {
+        [value] => Ok(*value),
+        _ => Err(format!(
+            "`@{constant}` has two values in the units in scope"
+        )),
+    }
+}
+
 /// One row of [`BRANCH_VECTORS`].
 pub type BranchVector = (bool, i64, &'static [(i64, bool)], bool, bool);
 

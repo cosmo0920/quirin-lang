@@ -452,6 +452,12 @@ pub struct MemberFacts {
     /// a typedef name), with its value as Clang read the unit.
     #[serde(default)]
     pub typed_constants: BTreeMap<String, BTreeMap<String, i64>>,
+    /// Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30, decision 2): each
+    /// declared function's parameter types as Clang spells them, for an `@`
+    /// constant of a parameter guard (rule 13l, resolved in the guarded
+    /// parameter's own enumeration). Omitted when empty.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub parameter_types: BTreeMap<String, Vec<String>>,
     /// The typedef declarations that name an enumeration (build state).
     #[serde(skip)]
     enum_typedefs: BTreeSet<String>,
@@ -1534,6 +1540,14 @@ impl MemberFacts {
                     self.result_types
                         .entry(name.to_owned())
                         .or_insert_with(|| result.to_owned());
+                }
+                if let Some(parameters) = node["type"]["qualType"]
+                    .as_str()
+                    .and_then(function_type_parameters)
+                {
+                    self.parameter_types
+                        .entry(name.to_owned())
+                        .or_insert(parameters);
                 }
                 if !self.handling.contains_key(name)
                     && let Some(handling) = crate::handoff_branch::function_handling(
@@ -2765,6 +2779,38 @@ pub(crate) fn vector_units(facts: &[(usize, &str, &str)]) -> Vec<MemberFacts> {
         }
     }
     units
+}
+
+/// The parameter types of a Clang function type spelling `R (A, B, ...)`,
+/// split at top-level commas (`R (void)` and `R ()` have none). `None` for a
+/// spelling not of that shape.
+#[must_use]
+pub fn function_type_parameters(spelling: &str) -> Option<Vec<String>> {
+    let open = spelling.find(" (")? + 1;
+    let inner = spelling[open..].strip_prefix('(')?.strip_suffix(')')?;
+    let mut parts = Vec::new();
+    let mut depth = 0usize;
+    let mut current = String::new();
+    for ch in inner.chars() {
+        match ch {
+            '(' | '[' => depth += 1,
+            ')' | ']' => depth = depth.checked_sub(1)?,
+            ',' if depth == 0 => {
+                parts.push(current.trim().to_owned());
+                current.clear();
+                continue;
+            }
+            _ => {}
+        }
+        current.push(ch);
+    }
+    if !current.trim().is_empty() {
+        parts.push(current.trim().to_owned());
+    }
+    if parts.len() == 1 && parts[0] == "void" {
+        parts.clear();
+    }
+    Some(parts)
 }
 
 #[cfg(test)]

@@ -1,0 +1,101 @@
+module contract;
+
+// Card FB-TEARDOWN-DESTROY-DECLARATIONS (gateway rule 30 at a direct call,
+// contract spec C04.19.6 amended; decision 2, the parameter guard):
+// synthetic `d_*` callees. Trusted test assumptions, not facts about any
+// library.
+
+alias #FREE = @D_FREE;
+
+extern fn d_item_new(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn d_item_free(it: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(it, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn d_box_new() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+// Frees the box only: what its members hold is the caller's.
+extern fn d_box_free(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A destroyer: frees the box and the item its payload holds.
+extern fn d_box_destroy(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> #released;
+};
+
+// Frees the box and hands its payload to another holder.
+extern fn d_box_destroy_move(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> #moved;
+};
+
+// Frees the box, and its payload only on some paths.
+extern fn d_box_destroy_maybe(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> {#released, #kept};
+};
+
+// Frees the box; frees its payload exactly when `del` is not zero.
+extern fn d_box_destroy_del(b: ptr<mut, u8>, del: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_borrowed(del);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> #released when #del != 0;
+};
+
+// The same, the constant an enumerator of the parameter's own enumeration.
+extern fn d_box_destroy_mode(b: ptr<mut, u8>, mode: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> #released when #mode == #FREE;
+};
+
+// Takes the payload and leaves the member designating it; the box stays.
+extern fn d_box_drain(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+    quant live #b: box.payload |-> #stale;
+};
+
+// States a path below the payload, never the payload itself.
+extern fn d_box_destroy_deep(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+    quant live #b: box.payload.x |-> #released;
+};

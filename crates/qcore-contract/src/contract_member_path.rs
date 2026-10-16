@@ -22,7 +22,9 @@ use qcore_frontend::lexer::{MAPS_TO, Symbol, TokenKind, lex};
 use qcore_schemas::callback::CallbackMember;
 use qcore_schemas::contract::{ResourceFunctionContract, ResourceParameterMode};
 use qcore_schemas::handoff::{GuardOp, HandOff, HandOffGuard, RESERVED_KEYWORDS};
-use qcore_schemas::member_path::{Fate, KEPT, MemberPathState, PathState, complements};
+use qcore_schemas::member_path::{
+    Fate, GuardConstant, KEPT, MemberPathState, ParameterGuard, ParameterOp, PathState, complements,
+};
 
 /// The guarded value's binder.
 const RESULT: &str = "result";
@@ -38,8 +40,19 @@ pub(super) struct Written {
     pub member: CallbackMember,
     pub state: PathState,
     pub guard: Option<HandOffGuard>,
+    /// Card FB-TEARDOWN-DESTROY-DECLARATIONS (decision 2): `when #PARAM OP
+    /// CONST`, the parameter by name, before the declaration is known.
+    pub parameter_guard: Option<WrittenParameterGuard>,
     /// The clause, for diagnostics.
     pub text: String,
+}
+
+/// `when #PARAM OP CONST` as written, its alias resolved.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) struct WrittenParameterGuard {
+    pub name: String,
+    pub op: ParameterOp,
+    pub constant: GuardConstant,
 }
 
 fn is_identifier(text: &str) -> bool {
@@ -189,47 +202,120 @@ pub(super) fn quant_live_clause(
         at += 2;
         PathState { fate, maybe: false }
     };
-    let guard = if at == tokens.len() {
-        None
-    } else {
-        // `when # result OP (@ NAME | # ALIAS)`, then the end.
-        if word(at) != Some("when") || !symbol(at + 1, Symbol::Hash) || word(at + 2) != Some(RESULT)
-        {
-            return Err(format!(
-                "quant-live-path-guard: a member-path state is guarded by `when #{RESULT} OP \
-                 @NAME` or not at all: {}",
-                shape()
-            ));
-        }
-        let op = if symbol(at + 3, Symbol::EqualEqual) {
-            GuardOp::Eq
-        } else if symbol(at + 3, Symbol::NotEqual) {
-            GuardOp::Ne
-        } else {
-            return Err(format!(
-                "quant-live-path-guard: the guard compares with `==` or `!=` only: {}",
-                shape()
-            ));
-        };
-        if !(symbol(at + 4, Symbol::At) || symbol(at + 4, Symbol::Hash)) || tokens.len() != at + 6 {
-            return Err(format!(
-                "quant-live-path-guard: the guard's constant is `@NAME` or a module alias \
-                 `#NAME`: {}",
-                shape()
-            ));
-        }
-        let name = word(at + 5)
-            .filter(|name| is_identifier(name))
-            .ok_or_else(shape)?;
-        let constant = if symbol(at + 4, Symbol::At) {
-            name.to_owned()
-        } else {
-            aliases.get(name).cloned().ok_or_else(|| {
-                format!("quant-live-handoff-alias: `#{name}` is not an alias this module declares")
-            })?
-        };
-        Some(HandOffGuard { op, constant })
+    let guard_shape = || {
+        format!(
+            "quant-live-path-guard: a member-path state is guarded by `when #{RESULT} OP @NAME` \
+             beside a hand-off, by `when #PARAM OP CONST` on an integer parameter, or not at \
+             all: {}",
+            shape()
+        )
     };
+    let mut guard = None;
+    let mut parameter_guard = None;
+    if at != tokens.len() {
+        // `when # WORD OP CONSTANT`, then the end.
+        if word(at) != Some("when") || !symbol(at + 1, Symbol::Hash) {
+            return Err(guard_shape());
+        }
+        let binder = word(at + 2)
+            .filter(|name| is_identifier(name))
+            .ok_or_else(guard_shape)?;
+        let op = match tokens.get(at + 3) {
+            Some(TokenKind::Symbol(Symbol::EqualEqual)) => ParameterOp::Eq,
+            Some(TokenKind::Symbol(Symbol::NotEqual)) => ParameterOp::Ne,
+            Some(TokenKind::Symbol(Symbol::Less)) => ParameterOp::Lt,
+            Some(TokenKind::Symbol(Symbol::Greater)) => ParameterOp::Gt,
+            Some(TokenKind::Symbol(Symbol::LessEqual)) => ParameterOp::Le,
+            Some(TokenKind::Symbol(Symbol::GreaterEqual)) => ParameterOp::Ge,
+            _ => return Err(guard_shape()),
+        };
+        if binder == RESULT {
+            // The hand-off complement: `#result (== | !=) (@NAME | #ALIAS)`.
+            let op = match op {
+                ParameterOp::Eq => GuardOp::Eq,
+                ParameterOp::Ne => GuardOp::Ne,
+                _ => {
+                    return Err(format!(
+                        "quant-live-path-guard: the guard compares with `==` or `!=` only: {}",
+                        shape()
+                    ));
+                }
+            };
+            if !(symbol(at + 4, Symbol::At) || symbol(at + 4, Symbol::Hash))
+                || tokens.len() != at + 6
+            {
+                return Err(format!(
+                    "quant-live-path-guard: the guard's constant is `@NAME` or a module alias \
+                     `#NAME`: {}",
+                    shape()
+                ));
+            }
+            let name = word(at + 5)
+                .filter(|name| is_identifier(name))
+                .ok_or_else(shape)?;
+            let constant = if symbol(at + 4, Symbol::At) {
+                name.to_owned()
+            } else {
+                aliases.get(name).cloned().ok_or_else(|| {
+                    format!(
+                        "quant-live-handoff-alias: `#{name}` is not an alias this module declares"
+                    )
+                })?
+            };
+            guard = Some(HandOffGuard { op, constant });
+        } else {
+            if RESERVED_KEYWORDS.contains(&binder) {
+                return Err(format!(
+                    "quant-live-path-guard: `#{binder}` is a reserved keyword, not a parameter"
+                ));
+            }
+            // Card FB-TEARDOWN-DESTROY-DECLARATIONS (decision 2): `#PARAM OP
+            // CONST`, the constant a canonical decimal (an optional `-`), an
+            // `@` enumerator or a module alias.
+            let constant_error = || {
+                format!(
+                    "quant-live-path-guard-constant: a parameter guard's constant is a canonical \
+                     decimal, `@NAME` or a module alias `#NAME`: {}",
+                    shape()
+                )
+            };
+            let (constant, end) = match (tokens.get(at + 4), tokens.get(at + 5)) {
+                (Some(TokenKind::Symbol(Symbol::At)), Some(TokenKind::Word(name)))
+                    if is_identifier(name) =>
+                {
+                    (GuardConstant::Name(name.clone()), at + 6)
+                }
+                (Some(TokenKind::Symbol(Symbol::Hash)), Some(TokenKind::Word(name)))
+                    if is_identifier(name) =>
+                {
+                    let target = aliases.get(name.as_str()).cloned().ok_or_else(|| {
+                        format!(
+                            "quant-live-handoff-alias: `#{name}` is not an alias this module \
+                             declares"
+                        )
+                    })?;
+                    (GuardConstant::Name(target), at + 6)
+                }
+                (Some(TokenKind::Integer(digits)), _) => (
+                    GuardConstant::Value(canonical(digits, false).ok_or_else(constant_error)?),
+                    at + 5,
+                ),
+                (Some(TokenKind::Symbol(Symbol::Minus)), Some(TokenKind::Integer(digits))) => (
+                    GuardConstant::Value(canonical(digits, true).ok_or_else(constant_error)?),
+                    at + 6,
+                ),
+                _ => return Err(constant_error()),
+            };
+            if tokens.len() != end {
+                return Err(guard_shape());
+            }
+            parameter_guard = Some(WrittenParameterGuard {
+                name: binder.to_owned(),
+                op,
+                constant,
+            });
+        }
+    }
     let tag = segments.remove(0);
     Ok(Written {
         parameter: parameter.to_owned(),
@@ -239,16 +325,33 @@ pub(super) fn quant_live_clause(
         },
         state,
         guard,
+        parameter_guard,
         text: format!("quant live {source}"),
     })
 }
 
+/// A canonical decimal (no leading zero, no suffix, no `-0`), negated when
+/// `negative`.
+fn canonical(digits: &str, negative: bool) -> Option<i128> {
+    if digits.is_empty()
+        || !digits.bytes().all(|byte| byte.is_ascii_digit())
+        || (digits.len() > 1 && digits.starts_with('0'))
+        || (negative && digits == "0")
+    {
+        return None;
+    }
+    let value: i128 = digits.parse().ok()?;
+    Some(if negative { -value } else { value })
+}
+
 /// Validate one declaration's member-path clauses against its loaded custody
 /// contract and hand-off: each binder a depth-one pointer formal stated
-/// `resource_borrowed` with no kind, or the formal the hand-off hands
-/// (`resource_owned(P, nonnull)`); one state per path and no path below
-/// another of the same formal; a guard only beside a hand-off, its exact
-/// complement.
+/// `resource_borrowed` or `resource_released` with no kind, or the formal the
+/// hand-off hands (`resource_owned(P, nonnull)`); one state per path and no
+/// path below another of the same formal; a result guard only beside a
+/// hand-off, its exact complement; a parameter guard (card
+/// FB-TEARDOWN-DESTROY-DECLARATIONS) on a plain integer parameter other than
+/// the binder, a decimal constant in its range that partitions it.
 ///
 /// # Errors
 /// The module's rejection.
@@ -280,18 +383,58 @@ pub(super) fn declaration(
             ));
         }
         let handed = handoff.is_some_and(|handoff| handoff.parameter == at);
+        // Card FB-TEARDOWN-DESTROY-DECLARATIONS: a destroyer's own object
+        // (`resource_released`) is a binder too; its states are what the
+        // release does to the objects its members held.
         let mode_ok = match contract.parameters[at] {
-            ResourceParameterMode::Borrowed => true,
+            ResourceParameterMode::Borrowed | ResourceParameterMode::Released { .. } => true,
             ResourceParameterMode::Owned { nullable: false } => handed,
             _ => false,
         };
         if !mode_ok || contract.parameter_kinds.contains_key(&at) {
             return Err(format!(
-                "quant-live-path-binder: `{}`: the formal is `resource_borrowed` with no kind, \
-                 or the formal a hand-off hands (`resource_owned({}, nonnull)`)",
+                "quant-live-path-binder: `{}`: the formal is `resource_borrowed` or \
+                 `resource_released` with no kind, or the formal a hand-off hands \
+                 (`resource_owned({}, nonnull)`)",
                 clause.text, clause.parameter
             ));
         }
+        let parameter_guard = match &clause.parameter_guard {
+            None => None,
+            Some(written) => {
+                let tested = names.get(written.name.as_str()).copied().ok_or_else(|| {
+                    format!(
+                        "quant-live-path-guard: `{}`: `#{}` names no parameter",
+                        clause.text, written.name
+                    )
+                })?;
+                let (low, high) = super::retained_by::guard_range(&parameter_types[tested])
+                    .filter(|_| tested != at)
+                    .ok_or_else(|| {
+                        format!(
+                            "quant-live-path-guard: `{}`: `#{}` is not a plain integer parameter \
+                             other than the binder (`i8`-`i64`, `isize`, `u8`-`u64`, `usize`)",
+                            clause.text, written.name
+                        )
+                    })?;
+                if let GuardConstant::Value(value) = written.constant
+                    && !written.op.partitions(value, low, high)
+                {
+                    return Err(format!(
+                        "quant-live-path-guard: `{}`: the constant lies outside `#{}`'s range or \
+                         the guard does not partition it",
+                        clause.text, written.name
+                    ));
+                }
+                Some(ParameterGuard {
+                    parameter: tested,
+                    op: written.op,
+                    constant: written.constant.clone(),
+                    low,
+                    high,
+                })
+            }
+        };
         if let Some(guard) = &clause.guard {
             let Some(handoff) = handoff.filter(|_| handed) else {
                 return Err(format!(
@@ -328,6 +471,7 @@ pub(super) fn declaration(
             member: clause.member.clone(),
             state: clause.state,
             guard: clause.guard.clone(),
+            parameter_guard,
         });
     }
     Ok(states)
@@ -411,6 +555,56 @@ mod tests {
         for (text, diagnostic) in cases {
             let text = text.replace("{M}", MAPS_TO);
             let error = quant_live_clause(&text, &aliases()).expect_err(&text);
+            assert!(error.starts_with(diagnostic), "{text}: {error}");
+        }
+    }
+
+    #[test]
+    fn a_parameter_guard_reads_every_operator_and_constant_form() {
+        let mut aliases = aliases();
+        aliases.insert("ON".to_owned(), "FLAG_ON".to_owned());
+        for (guard, op, constant) in [
+            ("#del != 0", ParameterOp::Ne, GuardConstant::Value(0)),
+            ("#del == 1", ParameterOp::Eq, GuardConstant::Value(1)),
+            ("#del < -2", ParameterOp::Lt, GuardConstant::Value(-2)),
+            ("#del >= 3", ParameterOp::Ge, GuardConstant::Value(3)),
+            ("#del <= 3", ParameterOp::Le, GuardConstant::Value(3)),
+            ("#del > 3", ParameterOp::Gt, GuardConstant::Value(3)),
+            (
+                "#del == @FLAG_ON",
+                ParameterOp::Eq,
+                GuardConstant::Name("FLAG_ON".into()),
+            ),
+            (
+                "#del != #ON",
+                ParameterOp::Ne,
+                GuardConstant::Name("FLAG_ON".into()),
+            ),
+        ] {
+            let text = format!("#task: flb_task.ic {MAPS_TO} #released when {guard}");
+            let read = quant_live_clause(&text, &aliases).expect(&text);
+            assert_eq!(read.guard, None, "{text}");
+            assert_eq!(
+                read.parameter_guard,
+                Some(WrittenParameterGuard {
+                    name: "del".into(),
+                    op,
+                    constant
+                }),
+                "{text}"
+            );
+        }
+        for (guard, diagnostic) in [
+            ("#del != 00", "quant-live-path-guard-constant:"),
+            ("#del != -0", "quant-live-path-guard-constant:"),
+            ("#del != del", "quant-live-path-guard-constant:"),
+            ("#del != 1 2", "quant-live-path-guard:"),
+            ("#del ! 1", "quant-live-path-guard:"),
+            ("#moved != 1", "quant-live-path-guard:"),
+            ("#del != #NOPE", "quant-live-handoff-alias:"),
+        ] {
+            let text = format!("#task: flb_task.ic {MAPS_TO} #released when {guard}");
+            let error = quant_live_clause(&text, &aliases).expect_err(&text);
             assert!(error.starts_with(diagnostic), "{text}: {error}");
         }
     }

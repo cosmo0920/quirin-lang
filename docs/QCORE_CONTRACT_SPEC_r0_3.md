@@ -1414,12 +1414,14 @@ contract {
 
 **Grammar** (G05, G05d; total-or-reject). `quant live #P: TAG.PATH |-> V
 [when #result OP C];` with `P` a depth-one pointer parameter stated
-`resource_borrowed` with no kind, or the formal the declaration's hand-off
+`resource_borrowed` with no kind (since card FB-TEARDOWN-DESTROY-DECLARATIONS
+also `resource_released`, below), or the formal the declaration's hand-off
 hands (`resource_owned(P, nonnull)`); `TAG.PATH` a dotted member path below
 `struct TAG`; `V` one of `#released`, `#moved`, `#stale`, `#kept`, or exactly
-`{V', #kept}` with `V'` one of the first three. A guard stands only beside a
-hand-off of the same formal and is its complement (the same constant, the
-other operator), so every result is in exactly one of the two classes. One
+`{V', #kept}` with `V'` one of the first three. A result guard stands only
+beside a hand-off of the same formal and is its complement (the same
+constant, the other operator), so every result is in exactly one of the two
+classes; a parameter guard (`when #X OP K`, below) stands anywhere. One
 state per path of a formal, never a path below another stated one. The
 clauses stand only beside a hand-off and plain predicates, and withhold the
 declaration from the function map. The four words join the reserved
@@ -1460,7 +1462,54 @@ leaves `#kept` is left to the arms exactly as before. `gone` releases the
 linked object once and drops the link (`QCore.MemberPathRelease.gone_leaves_exactly_once`,
 `a_gone_join_is_gone_for_every_candidate`); a decided registration
 (C04.19.4) narrows the candidates as it narrows the arms. A **direct call** of
-a declaration carrying member-path states refuses (`member-path-direct`).
+a declaration carrying member-path states beside a hand-off refuses
+(`member-path-direct`); every other direct call is read as below.
+
+**A direct call (card FB-TEARDOWN-DESTROY-DECLARATIONS, rule 30 amended).**
+On the user's decision of 2026-10-16 (decision 2, verbatim: "Yes, allow it")
+and the card's brief ("rule 30 at a direct call of a body-checked
+destroyer"). No new word or value: the four states and the set are read at
+a direct call, and two placements stand inside the decided spellings.
+
+* **The binder may be a released formal.** Beside `resource_borrowed`, the
+  binder may be a depth-one pointer the declaration states
+  `resource_released(P, nonnull | nullable)` with no kind: a destroyer's own
+  object. Its states say what the call does to the objects its members held;
+  the member's own reading after the call is not observable (the object is
+  released), so the body check validates such a state only where the body
+  also clears the member, and otherwise leaves it a declared assumption.
+* **A parameter guard.** `quant live #P: TAG.PATH |-> V when #X OP K;` with
+  `X` a plain integer parameter of the declaration other than `P` (`i8`–`i64`,
+  `isize`, `u8`–`u64`, `usize`, the C04.14.1 ranges), `OP` one of `==`, `!=`,
+  `<`, `>`, `<=`, `>=`, and `K` a canonical decimal (an optional `-`, in `X`'s
+  range, partitioning it), an `@NAME` or a module alias (rule 13l: Clang
+  resolves the enumerator in the guarded parameter's own enumeration, per
+  unit; an unresolved name decides nothing). The state holds in the class the
+  guard admits and the path reads `#kept` in the other. It stands with or
+  without a hand-off; the result guard keeps its rules.
+
+**What a consumer MUST apply at a direct call.** The call runs once and no
+arm follows it. For each parameter position some state names, each guard is
+decided from the call's actual at `X`, exactly as C04.14.1 decides (a decimal
+constant or an unshadowed file-scope enumeration constant Clang states, in
+range): a holding guard keeps the state, a failing one reads `#kept`, and an
+undecided actual reads the **cautious join** of the two, `{V, #kept}` (rule
+12o's join; `QCore.MemberPathDirectCall.an_unknown_value_gives_the_join`).
+Then every tracked object the caller linked at a member path of the actual's
+object is decided (`compose_direct`): `#released` / `#moved` — gone (released
+once, the link dropped); `#kept` and every path no state names — stays,
+exactly as before (premise P-B08-SHALLOW); `#stale` — taken once while the
+member still designates it: the link is kept and a later release or hand-off
+of the object refuses (`member-path-double-release`); a set (an undecided
+guard's join included) refuses (`member-path-undecided`), as do a link that
+is not one live object, and a path below or above a stated one
+(`member-path-unstated`). A declaration whose states the unit's body check
+withdrew refuses there (`member-path-unstated`). At a callback invocation a
+parameter guard is never decided: its state reads the cautious join. The
+Lean model is `QCore.MemberPathDirectCall` (`the_direct_call_state_is_sound`,
+`a_release_after_taken_is_a_double_release`,
+`a_set_never_decides_at_a_direct_call`, `a_constant_selects_its_arm`,
+`an_unknown_value_never_releases`, `the_join_is_cautious`).
 
 **Checked against the body (rule 30).** In a unit that defines the declared
 function: every store of a pointer value into a member path of the stated

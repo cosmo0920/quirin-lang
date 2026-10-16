@@ -298,6 +298,12 @@ pub(super) struct AbstractState {
     /// Empty in every function that calls no constructor with a stated
     /// state, which keeps the join as it was.
     pub(super) constructed: BTreeMap<(usize, String), super::constructed_route::ObjectState>,
+    /// Card **FB-TEARDOWN-DESTROY-DECLARATIONS** (rule 30 at a direct call):
+    /// the sites a direct call took through a path it leaves `#stale` (the
+    /// member still designates them); a later release or hand-off of one
+    /// refuses as a double release. Joined by union; empty in every function
+    /// that calls no such declaration, which keeps the join as it was.
+    pub(super) member_path_taken: BTreeSet<usize>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -423,6 +429,8 @@ impl AbstractState {
         reference_route::join(self, incoming);
         callback_route::join(&mut self.registries, &incoming.registries);
         super::constructed_route::join(&mut self.constructed, &incoming.constructed);
+        self.member_path_taken
+            .extend(incoming.member_path_taken.iter().copied());
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -4563,6 +4571,26 @@ pub(super) fn apply_resource_action(
         // retains is neither released nor handed on; the refusal is a hazard,
         // never an accusation.
         if retained_by_route::refuse_release_of_held(
+            function,
+            line,
+            source,
+            site,
+            state,
+            diagnostics,
+        ) {
+            let held = AbstractPointer {
+                targets: BTreeSet::from([site]),
+                ..AbstractPointer::default()
+            };
+            mark_unresolved_effect(state, &held);
+            state.unmodeled = true;
+            continue;
+        }
+        // Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call):
+        // an object a call took through a path it left stale is not the
+        // caller's to release or hand on again; the refusal is a hazard,
+        // never an accusation.
+        if member_path_route::refuse_release_of_taken(
             function,
             line,
             source,

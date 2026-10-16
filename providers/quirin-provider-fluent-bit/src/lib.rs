@@ -114,6 +114,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/task_users.qv"),
     ),
     (
+        "fluent_bit/teardown_destroy.qv",
+        include_str!("../contracts/fluent_bit/teardown_destroy.qv"),
+    ),
+    (
         "fluent_bit/time.qv",
         include_str!("../contracts/fluent_bit/time.qv"),
     ),

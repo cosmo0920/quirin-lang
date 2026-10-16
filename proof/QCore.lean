@@ -368,6 +368,7 @@ import QCore.UnionArmLayout
 import QCore.ReturnCodeHandOff
 import QCore.MemberPathRelease
 import QCore.MemberPathUnitHelpers
+import QCore.MemberPathDirectCall
 import QCore.CandidateComposition
 import QCore.HandOffDirect
 import QCore.NullDeref

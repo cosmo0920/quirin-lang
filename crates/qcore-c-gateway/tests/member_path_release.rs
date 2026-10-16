@@ -196,8 +196,13 @@ fn an_unnamed_path_is_kept_and_left_to_the_arms() {
     assert!(!two.safe(), "{two:?}");
 }
 
+/// Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call): a
+/// direct call of a member-path declaration without a hand-off reads its
+/// states once: the payload moved by the direct call is gone before the
+/// op's own callback and arms run (before the card the call refused
+/// `member-path-direct`, which a declaration beside a hand-off still does).
 #[test]
-fn a_direct_call_of_a_member_path_declaration_refuses() {
+fn a_direct_call_of_a_member_path_declaration_reads_its_states() {
     if !clang_available() {
         return;
     }
@@ -206,7 +211,14 @@ fn a_direct_call_of_a_member_path_declaration_refuses() {
          if (!it) { return; } o = c_op_new_cb(1, c_cb_moves); o->payload = it; \
          c_cb_moves(NULL, NULL, o); c_op_destroy(o); }",
     );
-    assert!(direct.refused_with("member-path-direct"), "{direct:?}");
+    assert!(direct.safe(), "{direct:?}");
+    // A stale direct call: the type-1 arm then releases the payload again.
+    let stale = row(
+        "void link_and_destroy(int n) { struct item *it; struct op *o; it = c_item_new(n); \
+         if (!it) { return; } o = c_op_new_cb(1, c_cb_moves); o->payload = it; \
+         c_cb_stale(NULL, NULL, o); c_op_destroy(o); }",
+    );
+    assert!(!stale.safe(), "{stale:?}");
 }
 
 #[test]

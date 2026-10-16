@@ -231,7 +231,7 @@ fn collect_values<'a>(node: &'a Value, values: &mut Vec<&'a str>) {
 
 /// The value of a constant `words` in the body of `function`: a decimal
 /// constant, or an unshadowed file-scope enumeration constant Clang states.
-fn constant_value(tokens: &[Token], function: &str, words: &[&str]) -> Option<i128> {
+pub(crate) fn constant_value(tokens: &[Token], function: &str, words: &[&str]) -> Option<i128> {
     if let Some(value) = literal_value(words) {
         return Some(value);
     }

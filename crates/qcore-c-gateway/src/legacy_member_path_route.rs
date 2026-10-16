@@ -25,7 +25,8 @@ use qcore_schemas::arm_release::ArmJoin;
 use qcore_schemas::callback::CallbackActual;
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::member_path::{
-    MemberPathState, Outcome, PathState, Refusal, compose, join_all, state_at,
+    DirectOutcome, Fate, GuardConstant, GuardDecision, MemberPathState, Outcome, PathState,
+    Refusal, compose, compose_direct, join_all, state_at, state_under,
 };
 
 use super::callback_route::ArmOperands;
@@ -40,8 +41,10 @@ pub const STALE: &str = "member-path-stale";
 pub const UNDECIDED: &str = "member-path-undecided";
 /// A path no declaration in force states.
 pub const UNSTATED: &str = "member-path-unstated";
-/// A direct call of a member-path declaration (its states are read only at
-/// a callback invocation).
+/// A direct call of a member-path declaration that also hands its formal
+/// to a callback (a hand-off): its states are read only at a callback
+/// invocation. Card FB-TEARDOWN-DESTROY-DECLARATIONS reads every other
+/// direct call ([`direct_operands`], [`apply_direct`]).
 pub const DIRECT: &str = "member-path-direct";
 
 /// The member-path reading of one invocation at one parameter position.
@@ -80,12 +83,12 @@ pub(super) fn operands(
                     .retaining_contract(name)
                     .filter(|_| contracts.contract(name).is_none())
                     .map(|declared| {
-                        declared
-                            .member_paths
-                            .iter()
-                            .filter(|state| state.parameter == position)
-                            .cloned()
-                            .collect::<Vec<_>>()
+                        invocation_states(
+                            declared
+                                .member_paths
+                                .iter()
+                                .filter(|state| state.parameter == position),
+                        )
                     })
                     .unwrap_or_default();
                 (name.clone(), states)
@@ -250,4 +253,195 @@ pub(super) fn apply(
             );
         }
     }
+}
+
+/// Card **FB-TEARDOWN-DESTROY-DECLARATIONS** (decision 2): at a callback
+/// invocation a parameter guard is never decided (the invocation's actuals
+/// are the invoker's, read by no guard), so each guarded state reads the
+/// cautious join of its two arms.
+pub(super) fn invocation_states<'a>(
+    states: impl IntoIterator<Item = &'a MemberPathState>,
+) -> Vec<MemberPathState> {
+    states
+        .into_iter()
+        .map(|state| {
+            let mut state = state.clone();
+            if state.parameter_guard.take().is_some() {
+                state.state = state_under(state.state, GuardDecision::Undecided);
+            }
+            state
+        })
+        .collect()
+}
+
+/// Card **FB-TEARDOWN-DESTROY-DECLARATIONS** (rule 30 at a direct call): the
+/// states one direct call of a member-path declaration leaves at one
+/// parameter position, each guard decided at the call.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DirectOperands {
+    /// The actual at the position, as spelled.
+    pub object: Vec<String>,
+    pub position: usize,
+    /// The stated paths with their state at this call.
+    pub states: Vec<MemberPathState>,
+}
+
+/// The direct-call readings of a call to a member-path declaration: one per
+/// parameter position some state names. `decide` gives the decision of a
+/// parameter guard at this call (a constant actual decides, everything else
+/// is undecided: the cautious join).
+pub(super) fn direct_operands(
+    states: &[MemberPathState],
+    actual: &dyn Fn(usize) -> Option<Vec<String>>,
+    decide: &dyn Fn(&qcore_schemas::member_path::ParameterGuard) -> GuardDecision,
+) -> Vec<DirectOperands> {
+    let positions = states
+        .iter()
+        .map(|state| state.parameter)
+        .collect::<BTreeSet<_>>();
+    positions
+        .into_iter()
+        .map(|position| DirectOperands {
+            object: actual(position).unwrap_or_default(),
+            position,
+            states: states
+                .iter()
+                .filter(|state| state.parameter == position)
+                .map(|state| {
+                    let mut state = state.clone();
+                    if let Some(guard) = state.parameter_guard.take() {
+                        state.state = state_under(state.state, decide(&guard));
+                    }
+                    state
+                })
+                .collect(),
+        })
+        .collect()
+}
+
+/// The value of a parameter guard's constant at a call: a decimal as
+/// written, an `@` enumerator through `resolve` (rule 13l), `None` when it
+/// does not resolve (the guard is then undecided).
+pub(super) fn guard_constant(
+    guard: &qcore_schemas::member_path::ParameterGuard,
+    resolve: &dyn Fn(&str) -> Option<i64>,
+) -> Option<i128> {
+    match &guard.constant {
+        GuardConstant::Value(value) => Some(*value),
+        GuardConstant::Name(name) => resolve(name).map(i128::from),
+    }
+}
+
+/// Rule 30 at a direct call: every tracked object the caller linked at a
+/// stated path of the actual's object is decided by [`compose_direct`]:
+/// `gone` releases it once and drops the link, `stays` leaves it, `taken`
+/// releases it once, keeps the link (the member still designates it) and
+/// records it so a later release or hand-off refuses; a set, an undecided
+/// guard's join and a path below a stated one refuse. A path no state names
+/// is `#kept`, left exactly as before the card (premise P-B08-SHALLOW).
+pub(super) fn apply_direct(
+    function: &str,
+    line: usize,
+    callee: &str,
+    operands: &DirectOperands,
+    state: &mut AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    let [name] = operands.object.as_slice() else {
+        return;
+    };
+    let Some(pointer) = state.pointers.get(name).cloned() else {
+        return;
+    };
+    for site in &pointer.targets {
+        let Some(fields) = state.field_links.get(site).cloned() else {
+            continue;
+        };
+        for (field, children) in fields {
+            let stated = state_at(&operands.states, operands.position, &field);
+            if stated
+                == Some(PathState {
+                    fate: Fate::Kept,
+                    maybe: false,
+                })
+            {
+                continue;
+            }
+            let place = format!("{name}->{field}");
+            let single = !pointer.unknown && pointer.targets.len() == 1;
+            let live = children
+                .iter()
+                .all(|child| state.resources.get(child).copied().unwrap_or(0) & super::LIVE != 0);
+            let (reason, detail) = match compose_direct(stated) {
+                DirectOutcome::Stays => continue,
+                outcome @ (DirectOutcome::Gone | DirectOutcome::Taken) if single && live => {
+                    for child in &children {
+                        let status = state.resources.get(child).copied().unwrap_or(0);
+                        state.resources.insert(
+                            *child,
+                            (status & !(super::LIVE | super::CONTAINED)) | super::RELEASED,
+                        );
+                    }
+                    if outcome == DirectOutcome::Gone {
+                        if let Some(links) = state.field_links.get_mut(site) {
+                            links.remove(&field);
+                            if links.is_empty() {
+                                state.field_links.remove(site);
+                            }
+                        }
+                    } else {
+                        state.member_path_taken.extend(children.iter().copied());
+                    }
+                    continue;
+                }
+                DirectOutcome::Gone | DirectOutcome::Taken => (
+                    UNDECIDED,
+                    format!("`{place}` does not link one live object the call takes"),
+                ),
+                DirectOutcome::Refused(Refusal::Unstated) => (
+                    UNSTATED,
+                    format!("no state of the declaration in force names `{place}` as one path"),
+                ),
+                DirectOutcome::Refused(_) => (
+                    UNDECIDED,
+                    format!("the call does not decide whether `{place}` is taken"),
+                ),
+            };
+            refuse(
+                function,
+                line,
+                refusal(callee, &detail, reason),
+                state,
+                diagnostics,
+            );
+        }
+    }
+}
+
+/// Card **FB-TEARDOWN-DESTROY-DECLARATIONS**: a release or hand-off of an
+/// object a direct call took through a path it left `#stale` refuses
+/// (`member-path-double-release`). `true` when it refused.
+pub(super) fn refuse_release_of_taken(
+    function: &str,
+    line: usize,
+    source: &str,
+    site: usize,
+    state: &AbstractState,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) -> bool {
+    if !state.member_path_taken.contains(&site) {
+        return false;
+    }
+    diagnostics.insert(LegacyDiagnostic {
+        function: function.to_owned(),
+        line,
+        kind: LegacyDiagnosticKind::Unsupported {
+            description: format!(
+                "`{source}` designates an object a call took through a member path it left \
+                 stale, and releasing or handing it on again is a double release \
+                 ({DOUBLE_RELEASE})"
+            ),
+        },
+    });
+    true
 }

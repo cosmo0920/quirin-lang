@@ -152,6 +152,10 @@ pub struct Operands {
     /// member-path states at each parameter position of a decided
     /// invocation, composed with the arms before them.
     pub member_paths: Vec<super::member_path_route::MemberPathOperands>,
+    /// Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call): the
+    /// states a direct call of a member-path declaration leaves at each
+    /// parameter position, each guard decided at the call.
+    pub direct_member_paths: Vec<super::member_path_route::DirectOperands>,
 }
 
 /// Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12o): the arms of a
@@ -935,15 +939,65 @@ impl Parser<'_> {
             return Err(self.handoff_direct_refusal(function, handoff));
         }
         // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
-        // are read only at a callback invocation, composed with the
-        // invoker's arms; a direct call does not compose them.
+        // beside a hand-off are read only at a callback invocation, composed
+        // with the invoker's arms. Card FB-TEARDOWN-DESTROY-DECLARATIONS: a
+        // direct call of any other member-path declaration reads its states
+        // once (`member_path_route::apply_direct`); withdrawn in this unit,
+        // it has no states in force and refuses.
         if !declaration.member_paths.is_empty() {
-            return Err(refusal(
-                function,
-                "it states what it leaves at member paths of a formal's object, which only a \
-                 callback invocation composes",
-                super::member_path_route::DIRECT,
-            ));
+            if declaration.handoff.is_some() || !member_path_plain(declaration) {
+                return Err(refusal(
+                    function,
+                    "it states what it leaves at member paths of a formal's object beside a \
+                     hand-off, which only a callback invocation composes",
+                    super::member_path_route::DIRECT,
+                ));
+            }
+            if declaration.member_paths_withdrawn {
+                return Err(refusal(
+                    function,
+                    "its body in this unit contradicts the member-path states it declares",
+                    super::member_path_route::UNSTATED,
+                ));
+            }
+            let decide = |guard: &qcore_schemas::member_path::ParameterGuard| {
+                let words = actual(guard.parameter);
+                let value = words.as_ref().and_then(|words| {
+                    let words = words.iter().map(String::as_str).collect::<Vec<_>>();
+                    super::retention_guard::constant_value(
+                        self.tokens,
+                        &self.typed_path_function,
+                        &words,
+                    )
+                });
+                let constant = super::member_path_route::guard_constant(guard, &|name| {
+                    crate::typed_access_path::with_indirect_call_unit(|unit| {
+                        crate::handoff_branch::resolve_parameter(
+                            &[unit.member_facts()],
+                            function,
+                            guard.parameter,
+                            name,
+                        )
+                        .ok()
+                    })
+                    .flatten()
+                });
+                guard.decide(value, constant)
+            };
+            return Ok(Some(Operands {
+                uses: Vec::new(),
+                texts: Vec::new(),
+                owned: BTreeMap::new(),
+                arms: None,
+                constructed: None,
+                member_uses: Vec::new(),
+                member_paths: Vec::new(),
+                direct_member_paths: super::member_path_route::direct_operands(
+                    &declaration.member_paths,
+                    actual,
+                    &decide,
+                ),
+            }));
         }
         if declaration.callbacks_withdrawn {
             return Err(refusal(
@@ -994,6 +1048,7 @@ impl Parser<'_> {
             constructed: None,
             member_uses: Vec::new(),
             member_paths: Vec::new(),
+            direct_member_paths: Vec::new(),
         };
         // Card OP-CONSTRUCTOR-DECLARATIONS (rules 12o, 13w, 14e): a
         // constructor's stated result state, unless its body in this unit
@@ -1252,7 +1307,12 @@ impl Parser<'_> {
                                 .map(|(name, declared)| {
                                     (
                                         name.clone(),
-                                        (declared.contract.clone(), declared.member_paths.clone()),
+                                        (
+                                            declared.contract.clone(),
+                                            super::member_path_route::invocation_states(
+                                                &declared.member_paths,
+                                            ),
+                                        ),
                                     )
                                 })
                                 .collect(),
@@ -1478,6 +1538,10 @@ pub(super) fn apply(
     // before the release's arms; a linked path some candidate states is
     // decided by their composition with the arms, every other path by the
     // arms as before.
+    // Card FB-TEARDOWN-DESTROY-DECLARATIONS (rule 30 at a direct call).
+    for direct in &operands.direct_member_paths {
+        super::member_path_route::apply_direct(function, line, callee, direct, state, diagnostics);
+    }
     for member_paths in &operands.member_paths {
         super::member_path_route::apply(
             function,

@@ -7995,7 +7995,8 @@ own anchor here.
     (`classified`: such a candidate reads as its custody contract, after rule
     12m's branch check when it also hands its formal; `callback_operands`:
     the states at each parameter position of a decided invocation, and a
-    direct call refuses `member-path-direct`; `apply`: the composition before
+    direct call beside a hand-off refuses `member-path-direct` (every other
+    direct call: the amendment below); `apply`: the composition before
     `apply_arms`), in `legacy_constructed_route.rs` (`decide_member`: a
     decided registration's candidates, the same composition) and in
     `legacy_retained_by.rs`. Only a tracked object the caller linked at a
@@ -8062,8 +8063,8 @@ own anchor here.
     (`OP-CALLBACK-CANDIDATE-CONTRACTS`); `rd_kafka_op_destroy`'s 131 leaves
     now name `rd_kafka_oauthbearer_refresh_op`, no status moves. **Do not**
     read an unnamed member as released, a stale path as decided, a may-set
-    as taken where no arm releases the path, or a member-path declaration at
-    a direct call. `QCore.MemberPathRelease`
+    as taken where no arm releases the path, or a member-path declaration
+    beside a hand-off at a direct call. `QCore.MemberPathRelease`
     (`gone_leaves_exactly_once`, `stays_never_leaves`,
     `a_stale_path_never_decides`, `an_unstated_member_never_decides`,
     `a_refusal_refuses_the_join`, `a_gone_join_is_gone_for_every_candidate`,
@@ -8071,3 +8072,44 @@ own anchor here.
     `the_complement_partitions_the_results`, `compose_vectors_hold`);
     `tests/member_path_release.rs`;
     [report](../reports/op-callback-member-path-release/README.md).
+    **Amended by card FB-TEARDOWN-DESTROY-DECLARATIONS** (C04.19.6, on the
+    user's decision of 2026-10-16, "Yes, allow it"): **a direct call of a
+    member-path declaration with no hand-off reads its states once.**
+    `legacy_callback_route::callback_operands` builds
+    `member_path_route::direct_operands` (each parameter guard decided from
+    the call's actual by `retention_guard::constant_value`, an `@` constant
+    resolved by `handoff_branch::resolve_parameter` in the guarded
+    parameter's own enumeration, `MemberFacts::parameter_types`); hook 2
+    runs `apply_direct` before the arms: for each tracked object the caller
+    linked at a member path of the actual's object, `compose_direct`
+    (`qcore_schemas::member_path`) decides `gone` (`#released`, `#moved`:
+    released once, the link dropped), `stays` (`#kept`, an unnamed path,
+    P-B08-SHALLOW as before), `taken` (`#stale`: released once, the link
+    kept, the site in `AbstractState::member_path_taken`, so a later release
+    or hand-off of it refuses `member-path-double-release` in
+    `apply_resource_action`), or refuses (`member-path-undecided` for a
+    set, an undecided guard's join or a link that is not one live object;
+    `member-path-unstated` for a path below or above a stated one, and for a
+    declaration its unit's body check withdrew). The loader admits a binder
+    stated `resource_released` (a destroyer's own object) and `when #X OP K`
+    on a plain integer parameter other than the binder (six comparisons; a
+    canonical decimal in range that partitions it, an `@` enumerator or a
+    module alias; `ParameterGuard`, `MemberPathState::parameter_guard`); a
+    failing guard reads `#kept`, an undecided one the cautious join
+    `{V, #kept}` (`state_under`), and at a callback invocation a parameter
+    guard always reads the join (`invocation_states`). The body check reads a
+    parameter-guarded state at every exit. Declared in
+    `quirin-provider-fluent-bit` (`fluent_bit/teardown_destroy.qv`): 14
+    declarations, 10 with member-path states, none guarded (no destroyer's
+    custody depends on a scalar). **Do not** decide a guard from a value
+    that is not a constant in range, read an undecided guard's favourable
+    arm, read a stale path at a direct call as gone, or release an object
+    a direct call took through a stale path again.
+    `QCore.MemberPathDirectCall` (`the_direct_call_state_is_sound`,
+    `a_release_after_taken_is_a_double_release`,
+    `a_set_never_decides_at_a_direct_call`,
+    `an_unstated_path_never_decides`, `a_constant_selects_its_arm`,
+    `an_unknown_value_gives_the_join`, `an_unknown_value_never_releases`,
+    `the_join_is_cautious`, `direct_vectors_hold`, `guard_vectors_hold`);
+    `tests/member_path_direct_call.rs`;
+    [report](../reports/fb-teardown-destroy-declarations/README.md).

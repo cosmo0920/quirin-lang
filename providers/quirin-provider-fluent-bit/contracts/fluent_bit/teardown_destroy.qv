@@ -1,0 +1,298 @@
+module contract;
+
+// Fluent Bit teardown destroyers — resource-projection vocabulary version 1
+// with rule 30's member-path states read at a direct call (card
+// FB-TEARDOWN-DESTROY-DECLARATIONS; contract specification C04.19.6, amended;
+// gateway rule 30). Every declaration here is a DECLARED ASSUMPTION about one
+// C function, read against its body at the revisions it is pinned to and
+// checked again by the audit wherever a unit defines the body (rule 30's body
+// check, rules 13i-13k, C06.4). Nothing here is trusted beyond that.
+//
+// Bodies read (card report, `scripts/bodies.py`): the 66910c10 corpus
+// source, the 046accf6 system clone and the 90978ac6 export. Unless a
+// declaration says otherwise the body is byte-identical at all three.
+//
+// ## What a member-path state says here
+//
+// `ensures normal resource_released(P, …)` releases the destroyer's own
+// object. `quant live #P: TAG.PATH |-> #released;` says the object that
+// member held is released by the call too (`#moved`: handed to another
+// holder, never the caller); `{#released, #kept}` says it is released on some
+// paths only. A member the declaration does not name is `#kept`: the call
+// does not release what it holds (premise P-B08-SHALLOW). At a direct call
+// (rule 30, this card) a tracked object the caller linked at a named path
+// leaves the caller's custody once; at a set or a path below a named one the
+// call refuses. The formal itself is released, so the member's own reading
+// after the call is not observable: the state is what the call did to the
+// object the member held.
+//
+// No state below carries a guard: no destroyer's custody depends on a scalar
+// argument. `flb_task_destroy`'s `del`, like `flb_input_chunk_destroy`'s
+// (fluent_bit/input_chunk_destroy.qv), selects only whether
+// `cio_chunk_close` unlinks the backing file.
+//
+// ## Deliberately not declared
+//
+// `flb_task_retry_clean`, `flb_sched_request_invalidate`, `flb_output_exit`,
+// `flb_input_exit_all`, `flb_engine_destroy_tasks` and
+// `flb_tail_file_remove_all` destroy list entries reachable from a borrowed
+// formal (a retry, a request, every instance, every task, every file).
+// Resource v1 states no list custody, so `resource_borrowed` would hide the
+// release of an object a caller may still track: unfaithful.
+// `flb_task_users_release` may destroy its borrowed task
+// (W45-FB-USERS-RELEASE-CHECK).
+
+// src/flb_scheduler.c:905-913. `flb_sched_timer_cb_disable(timer)` removes
+// the timer's event (embedded `timer->event`), `mk_list_del`, `flb_free`; a
+// NULL timer faults in `flb_sched_timer_cb_disable` (`timer->timer_fd`).
+extern fn flb_sched_timer_destroy(timer: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(timer, nonnull);
+    ensures normal resource_return_none();
+};
+
+// src/flb_scheduler.c:328-352. `if (!req) return 0;`, then unlinks the
+// request, hands `req->timer` to `flb_sched_timer_invalidate` (:894-902,
+// which disables it and moves it onto `sched->timers_drop`, freed later by
+// `flb_sched_timer_cleanup`, never by the caller) and frees the request.
+extern fn flb_sched_request_destroy(req: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(req, nullable);
+    ensures normal resource_return_none();
+    quant live #req: flb_sched_request.timer |-> #moved;
+};
+
+// src/flb_task.c:899-948. Frees every route (a list), unlinks the task,
+// `flb_input_chunk_destroy(task->ic, del)` when `task->ic != NULL` (`del`
+// selects the on-disk deletion only), destroys every retry (a list), and
+// `flb_event_chunk_destroy(task->event_chunk)` when non-NULL, then
+// `flb_free(task)`. `task->id` is read first: a NULL task faults.
+extern fn flb_task_destroy(task: ptr<mut, u8>, del: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(task, nonnull);
+    ensures normal resource_borrowed(del);
+    ensures normal resource_return_none();
+    quant live #task: flb_task.ic |-> #released;
+    quant live #task: flb_task.event_chunk |-> #released;
+};
+
+// src/flb_task.c:962-980. Frees the entries of `queue->pending` and
+// `queue->in_progress` (lists) and the queue.
+extern fn flb_task_queue_destroy(queue: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(queue, nonnull);
+    ensures normal resource_return_none();
+};
+
+// src/flb_event.c:69-79. `if (!evc) return;`, `flb_sds_destroy(evc->tag)`
+// when set, `flb_free(evc)`. `evc->data` is the caller's buffer, not freed.
+extern fn flb_event_chunk_destroy(evc: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(evc, nullable);
+    ensures normal resource_return_none();
+    quant live #evc: flb_event_chunk.tag |-> #released;
+};
+
+// include/fluent-bit/flb_output.h:672-679 (`static FLB_INLINE`). Unlinks the
+// flush, `flb_coro_destroy(out_flush->coro)`, `flb_free(out_flush)`.
+extern fn flb_output_flush_destroy(out_flush: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(out_flush, nonnull);
+    ensures normal resource_return_none();
+    quant live #out_flush: flb_output_flush.coro |-> #released;
+};
+
+// include/fluent-bit/flb_coro.h:94-108 (`static FLB_INLINE`). `co_delete`
+// of `coro->callee` when non-NULL, `flb_free(coro)`; `FLB_CORO_DATA(coro)`
+// is read first.
+extern fn flb_coro_destroy(coro: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(coro, nonnull);
+    ensures normal resource_return_none();
+    quant live #coro: flb_coro.callee |-> #released;
+};
+
+// src/flb_input_chunk.c:815-846. Releases nothing: returns -1 on a NULL
+// `ic`, `o_ins` or routes mask, 0 when the route's bit is clear, otherwise
+// subtracts the chunk's size from the output's accounting and clears the
+// bit. Both pointers are read and kept by nobody.
+extern fn flb_input_chunk_release_route(ic: ptr<mut, u8>, o_ins: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_borrowed(o_ins);
+    ensures normal resource_return_none();
+};
+
+// src/flb_output.c:544-641 with its static helper `flb_output_free_properties`
+// (which at 046accf6 and 90978ac6 also frees `tls_crl_file`, a member the
+// 66910c10 tree does not have): pinned at 046accf6 and 90978ac6 only. Each
+// named member is destroyed when set (`flb_sds_destroy` reads NULL); `tls`
+// only when `use_tls`, the singleplex queue only under
+// `FLB_OUTPUT_SYNCHRONOUS`. The cmetrics counters and gauges are released
+// with their context `cmt` (`cmt_destroy`); the property lists, the
+// processor's own members and the event channels are not member paths.
+extern fn flb_output_instance_destroy(ins: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ins, nonnull);
+    ensures normal resource_return_none();
+    quant live #ins: flb_output_instance.alias |-> #released;
+    quant live #ins: flb_output_instance.host.uri |-> #released;
+    quant live #ins: flb_output_instance.host.name |-> #released;
+    quant live #ins: flb_output_instance.host.address |-> #released;
+    quant live #ins: flb_output_instance.host.listen |-> #released;
+    quant live #ins: flb_output_instance.match |-> #released;
+    quant live #ins: flb_output_instance.match_regex |-> #released;
+    quant live #ins: flb_output_instance.tls |-> {#released, #kept};
+    quant live #ins: flb_output_instance.tls_config_map |-> #released;
+    quant live #ins: flb_output_instance.tls_vhost |-> #released;
+    quant live #ins: flb_output_instance.tls_ca_path |-> #released;
+    quant live #ins: flb_output_instance.tls_ca_file |-> #released;
+    quant live #ins: flb_output_instance.tls_crt_file |-> #released;
+    quant live #ins: flb_output_instance.tls_key_file |-> #released;
+    quant live #ins: flb_output_instance.tls_key_passwd |-> #released;
+    quant live #ins: flb_output_instance.tls_crl_file |-> #released;
+    quant live #ins: flb_output_instance.tls_min_version |-> #released;
+    quant live #ins: flb_output_instance.tls_max_version |-> #released;
+    quant live #ins: flb_output_instance.tls_ciphers |-> #released;
+    quant live #ins: flb_output_instance.tls_proxy_ca_path |-> #released;
+    quant live #ins: flb_output_instance.tls_proxy_ca_file |-> #released;
+    quant live #ins: flb_output_instance.cmt |-> #released;
+    quant live #ins: flb_output_instance.metrics |-> #released;
+    quant live #ins: flb_output_instance.callback |-> #released;
+    quant live #ins: flb_output_instance.config_map |-> #released;
+    quant live #ins: flb_output_instance.net_config_map |-> #released;
+    quant live #ins: flb_output_instance.http_server_config_map |-> #released;
+    quant live #ins: flb_output_instance.http_server_config |-> #released;
+    quant live #ins: flb_output_instance.oauth2_config_map |-> #released;
+    quant live #ins: flb_output_instance.singleplex_queue |-> {#released, #kept};
+    quant live #ins: flb_output_instance.processor |-> #released;
+};
+
+// src/flb_input.c:1152-1354 at 046accf6 and 90978ac6 (identical; the
+// 66910c10 body lacks the `tls_crl_file` release and the member): pinned at
+// those two. Each named member is destroyed when set (the four chunk hash
+// tables are then set NULL); `tls` only when `use_tls`. Not member paths:
+// the task list (`flb_engine_destroy_tasks`), the property lists, the
+// collectors (a list), the storage context (`flb_storage_input_destroy`,
+// which also destroys the chunks) and the event channels.
+extern fn flb_input_instance_destroy(ins: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ins, nonnull);
+    ensures normal resource_return_none();
+    quant live #ins: flb_input_instance.alias |-> #released;
+    quant live #ins: flb_input_instance.host.uri |-> #released;
+    quant live #ins: flb_input_instance.host.name |-> #released;
+    quant live #ins: flb_input_instance.host.address |-> #released;
+    quant live #ins: flb_input_instance.host.listen |-> #released;
+    quant live #ins: flb_input_instance.tls |-> {#released, #kept};
+    quant live #ins: flb_input_instance.tls_config_map |-> #released;
+    quant live #ins: flb_input_instance.tls_vhost |-> #released;
+    quant live #ins: flb_input_instance.tls_ca_path |-> #released;
+    quant live #ins: flb_input_instance.tls_ca_file |-> #released;
+    quant live #ins: flb_input_instance.tls_crt_file |-> #released;
+    quant live #ins: flb_input_instance.tls_key_file |-> #released;
+    quant live #ins: flb_input_instance.tls_crl_file |-> #released;
+    quant live #ins: flb_input_instance.tls_key_passwd |-> #released;
+    quant live #ins: flb_input_instance.tls_min_version |-> #released;
+    quant live #ins: flb_input_instance.tls_max_version |-> #released;
+    quant live #ins: flb_input_instance.tls_ciphers |-> #released;
+    quant live #ins: flb_input_instance.tag |-> #released;
+    quant live #ins: flb_input_instance.cmt |-> #released;
+    quant live #ins: flb_input_instance.metrics |-> #released;
+    quant live #ins: flb_input_instance.config_map |-> #released;
+    quant live #ins: flb_input_instance.net_config_map |-> #released;
+    quant live #ins: flb_input_instance.http_server_config_map |-> #released;
+    quant live #ins: flb_input_instance.http_server_config |-> #released;
+    quant live #ins: flb_input_instance.oauth2_jwt_config_map |-> #released;
+    quant live #ins: flb_input_instance.ht_log_chunks |-> #released;
+    quant live #ins: flb_input_instance.ht_metric_chunks |-> #released;
+    quant live #ins: flb_input_instance.ht_trace_chunks |-> #released;
+    quant live #ins: flb_input_instance.ht_profile_chunks |-> #released;
+    quant live #ins: flb_input_instance.rb |-> #released;
+    quant live #ins: flb_input_instance.processor |-> #released;
+};
+
+// src/flb_input.c (`static`): unlinks the input coroutine,
+// `flb_coro_destroy(input_coro->coro)`, `flb_free(input_coro)`.
+extern fn flb_input_coro_destroy(input_coro: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(input_coro, nonnull);
+    ensures normal resource_return_none();
+    quant live #input_coro: flb_input_coro.coro |-> #released;
+};
+
+// src/flb_input.c: removes the collector's event (embedded `coll->event`)
+// from the instance's loop and frees the collector; `coll->instance` is read
+// first.
+extern fn flb_input_collector_destroy(coll: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(coll, nonnull);
+    ensures normal resource_return_none();
+};
+
+// plugins/in_tail/tail_file.c:1994-2076 at the 90978ac6 export (which adds
+// `flb_tail_file_budget_release` to the 046accf6 body): pinned there. Each
+// named member is destroyed (when set, where the body tests it);
+// `msgpack_sbuffer_destroy(&file->mult_sbuf)` frees `mult_sbuf.data`. Not
+// member paths: the multiline stream (`ctx->ml_ctx`), the hash-table entries
+// (`ctx->static_hash`, `ctx->event_hash`), the file descriptor.
+extern fn flb_tail_file_remove(file: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(file, nonnull);
+    ensures normal resource_return_none();
+    quant live #file: flb_tail_file.decompression_context |-> #released;
+    quant live #file: flb_tail_file.sl_log_event_encoder |-> #released;
+    quant live #file: flb_tail_file.ml_log_event_encoder |-> #released;
+    quant live #file: flb_tail_file.mult_sbuf.data |-> #released;
+    quant live #file: flb_tail_file.dmode_buf |-> #released;
+    quant live #file: flb_tail_file.dmode_lastline |-> #released;
+    quant live #file: flb_tail_file.tag_buf |-> #released;
+    quant live #file: flb_tail_file.buf_data |-> #released;
+    quant live #file: flb_tail_file.name |-> #released;
+    quant live #file: flb_tail_file.orig_name |-> #released;
+    quant live #file: flb_tail_file.real_name |-> #released;
+    quant live #file: flb_tail_file.hash_key |-> #released;
+};
+
+// plugins/in_tail/tail_config.c:584-654 at the 90978ac6 export (which adds
+// the file budget, the dormant tables and the aged-out table to the
+// 046accf6 body): pinned there. Each named member is destroyed when set; the
+// five SQLite statements are finalized only when `db` is set. Not member
+// paths: the file lists (`flb_tail_file_remove_all`, under `file_budget`),
+// the multiline parsers (`flb_tail_mult_destroy`), the pipes, `parser`
+// (`flb_parser_get`, not owned) and the cmetrics counters (owned by the
+// instance's context).
+extern fn flb_tail_config_destroy(config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(config, nonnull);
+    ensures normal resource_return_none();
+    quant live #config: flb_tail_config.file_budget |-> #released;
+    quant live #config: flb_tail_config.ml_ctx |-> #released;
+    quant live #config: flb_tail_config.tag_regex |-> #released;
+    quant live #config: flb_tail_config.stmt_get_file |-> {#released, #kept};
+    quant live #config: flb_tail_config.stmt_insert_file |-> {#released, #kept};
+    quant live #config: flb_tail_config.stmt_delete_file |-> {#released, #kept};
+    quant live #config: flb_tail_config.stmt_rotate_file |-> {#released, #kept};
+    quant live #config: flb_tail_config.stmt_offset |-> {#released, #kept};
+    quant live #config: flb_tail_config.db |-> #released;
+    quant live #config: flb_tail_config.static_hash |-> #released;
+    quant live #config: flb_tail_config.event_hash |-> #released;
+    quant live #config: flb_tail_config.dormant_inodes |-> #released;
+    quant live #config: flb_tail_config.dormant_files |-> #released;
+    quant live #config: flb_tail_config.ignored_file_sizes |-> #released;
+    quant live #config: flb_tail_config.aged_out_file_inodes |-> #released;
+};
