@@ -385,5 +385,6 @@ import QCore.ReturnCorrectness
 import QCore.MemberPrepassRoutes
 import QCore.RetentionPath
 import QCore.RegistrationById
+import QCore.FunctionPointerDeclarators
 
 /-! The executable formal core of QCore-C revision 0.1. -/

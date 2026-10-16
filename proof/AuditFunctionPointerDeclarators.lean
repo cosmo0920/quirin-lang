@@ -1,0 +1,14 @@
+import QCore.FunctionPointerDeclarators
+
+/-! Audited companion to FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (ledger RECORD-BODY-TOTAL-OR-REJECT; the lexical declaration reader of `typed_field_access.rs`): a record member that is exactly a function-pointer declarator is skipped and joins no class, every other member reads as in the same body without it, every other unparsed declaration still refuses the whole record, and a function-pointer formal is read as a name of no committed type while every other unparsed formal still refuses the function. -/
+
+#print axioms QCore.FunctionPointerDeclarators.an_unreadable_member_refuses_the_record
+#print axioms QCore.FunctionPointerDeclarators.a_body_without_unreadable_members_is_read
+#print axioms QCore.FunctionPointerDeclarators.the_reading_extends_the_old_reading
+#print axioms QCore.FunctionPointerDeclarators.skipping_preserves_the_other_members
+#print axioms QCore.FunctionPointerDeclarators.a_read_member_is_a_parsed_declaration
+#print axioms QCore.FunctionPointerDeclarators.a_function_pointer_member_is_never_classified
+#print axioms QCore.FunctionPointerDeclarators.a_function_pointer_formal_is_opaque
+#print axioms QCore.FunctionPointerDeclarators.an_opaque_formal_is_never_committed
+#print axioms QCore.FunctionPointerDeclarators.an_unreadable_formal_refuses_the_function
+#print axioms QCore.FunctionPointerDeclarators.vectors_hold

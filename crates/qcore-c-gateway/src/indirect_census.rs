@@ -317,9 +317,9 @@ pub(crate) fn record_body(tag: &str, body: &[&str]) {
     }
     let note = RecordBodyNote {
         tag: tag.to_owned(),
-        refused_on: body
-            .iter()
-            .find(|text| matches!(**text, "{" | "}" | "(" | ")" | ":" | "="))
+        // The reader's own answer (card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS:
+        // a function-pointer member no longer refuses the body).
+        refused_on: crate::typed_field_access::record_body_refusal(body)
             .map(|text| (*text).to_owned()),
         body_tokens: body.len(),
     };
@@ -893,6 +893,10 @@ pub enum OpaqueCause {
     /// The reader answered `Opaque` and the note sink recorded no rule.
     /// Published rather than folded away.
     Unrecorded,
+    /// Card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: a function-pointer formal
+    /// (`R ( * cb ) ( P )`), read as a name of no committed type rather than
+    /// refusing the function's declarations.
+    FunctionPointerDeclarator,
 }
 
 /// Why a base name has no declaration in this function at all.

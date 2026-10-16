@@ -459,6 +459,94 @@ fn read_aggregate_definition(slice: &[&str]) -> Option<TypedefTarget> {
     Some(TypedefTarget::Aggregate(head))
 }
 
+/// Card **FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS**: the name one declaration
+/// group declares when it is exactly a function-pointer declarator,
+/// `SPECIFIERS ( * NAME ) ( PARAMETERS )`.
+///
+/// The specifier run is non-empty and holds only names and `*`; the
+/// declarator is one `*` and one name in parentheses (no array, no
+/// qualifier, no second level); the parameter list is balanced, closes the
+/// group, and holds no `{`, `}`, `;`, `=` or `:`. Every other shape answers
+/// `None`, so a caller that refused a parenthesised declaration before still
+/// refuses everything this does not name.
+fn function_pointer_declarator<'a>(group: &[&'a str]) -> Option<&'a str> {
+    let open = group.iter().position(|text| *text == "(")?;
+    // Specifiers are identifier tokens (keywords such as `void`, `struct`,
+    // `const` included) and `*`.
+    let identifier = |text: &str| {
+        text.as_bytes()
+            .first()
+            .is_some_and(|byte| byte.is_ascii_alphabetic() || *byte == b'_')
+    };
+    if open == 0
+        || group[..open]
+            .iter()
+            .any(|text| !(identifier(text) || *text == "*"))
+    {
+        return None;
+    }
+    let ["*", name, ")", "("] = group.get(open + 1..open + 5)? else {
+        return None;
+    };
+    if !is_name(name) || RESERVED_WORDS.contains(name) {
+        return None;
+    }
+    let close = matching_close(group, open + 4, "(", ")")?;
+    if close + 1 != group.len()
+        || group[open + 5..close]
+            .iter()
+            .any(|text| matches!(*text, "{" | "}" | ";" | "=" | ":"))
+    {
+        return None;
+    }
+    Some(name)
+}
+
+/// One parameter list's declaration groups, split at the commas outside
+/// parentheses, so a function-pointer formal's own parameter list stays in
+/// its group. Without parentheses this is the plain comma split.
+fn parameter_groups<'s, 'a>(parameters: &'s [&'a str]) -> Vec<&'s [&'a str]> {
+    let mut groups = Vec::new();
+    let mut depth = 0usize;
+    let mut start = 0;
+    for (index, text) in parameters.iter().enumerate() {
+        match *text {
+            "(" => depth += 1,
+            ")" => depth = depth.saturating_sub(1),
+            "," if depth == 0 => {
+                groups.push(&parameters[start..index]);
+                start = index + 1;
+            }
+            _ => {}
+        }
+    }
+    groups.push(&parameters[start..]);
+    groups
+}
+
+/// The token on which [`TypedAccessModel::read_record_body`] refuses a whole
+/// record body, if any: a `{`, `}`, `:` or `=` anywhere, or a parenthesis in
+/// a member declaration that is not exactly a function-pointer declarator
+/// ([`function_pointer_declarator`]). Shared with the record-body census so
+/// that its `refused_on` is the reader's own answer.
+pub(crate) fn record_body_refusal<'a>(body: &[&'a str]) -> Option<&'a str> {
+    if let Some(offending) = body
+        .iter()
+        .find(|text| matches!(**text, "{" | "}" | ":" | "="))
+    {
+        return Some(offending);
+    }
+    body.split(|text| *text == ";")
+        .filter(|member| member.iter().any(|text| matches!(*text, "(" | ")")))
+        .find(|member| function_pointer_declarator(member).is_none())
+        .and_then(|member| {
+            member
+                .iter()
+                .find(|text| matches!(**text, "(" | ")"))
+                .copied()
+        })
+}
+
 fn matching_close(texts: &[&str], open_index: usize, open: &str, close: &str) -> Option<usize> {
     let mut depth = 0usize;
     for (index, text) in texts.iter().enumerate().skip(open_index) {
@@ -775,15 +863,22 @@ impl TypedAccessModel {
     /// Read every member declaration of one record body, or refuse the record.
     ///
     /// The result is all-or-nothing on purpose: a body carrying a bitfield, a
-    /// nested anonymous aggregate, a function-pointer member or any declarator
-    /// this reader cannot resolve yields `None`, and the whole record is then
-    /// inadmissible. Reading only the members it understands would risk
-    /// attributing a scalar type to a name it had actually misparsed.
+    /// nested anonymous aggregate or any declarator this reader cannot resolve
+    /// yields `None`, and the whole record is then inadmissible. Reading only
+    /// the members it understands would risk attributing a scalar type to a
+    /// name it had actually misparsed.
+    ///
+    /// Card **FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS** (ledger
+    /// `RECORD-BODY-TOTAL-OR-REJECT`): the one exception is a member
+    /// declaration that is exactly a function-pointer declarator
+    /// ([`function_pointer_declarator`]). It is parsed whole — its name and
+    /// its extent are certain, and no other member's tokens are inside it —
+    /// and joins **no** class, so every access of it keeps its refusal; every
+    /// other member is classified exactly as in the same body without it. A
+    /// function pointer holds a code address, never an object the projection
+    /// tracks, and a store into it stays refused (it is in no store class).
     fn read_record_body(&self, body: &[&str]) -> Option<RecordMembers> {
-        if body
-            .iter()
-            .any(|text| matches!(*text, "{" | "}" | "(" | ")" | ":" | "="))
-        {
+        if record_body_refusal(body).is_some() {
             return None;
         }
         let mut scalar_fields = BTreeSet::new();
@@ -794,6 +889,11 @@ impl TypedAccessModel {
         let mut non_pointer_fields = BTreeSet::new();
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
+                continue;
+            }
+            // A parenthesised member passed `record_body_refusal`, so it is
+            // exactly one function-pointer declarator: it joins no class.
+            if member.iter().any(|text| matches!(*text, "(" | ")")) {
                 continue;
             }
             let mut groups = member.split(|text| *text == ",");
@@ -1712,7 +1812,7 @@ fn read_parameters(
     let parameters = crate::variadic_tail::named_parameters(parameters);
     if let Some(offending) = parameters
         .iter()
-        .find(|text| matches!(**text, "(" | ")" | "{" | "}" | "." | ";" | "="))
+        .find(|text| matches!(**text, "{" | "}" | "." | ";" | "="))
     {
         note_refusal!(
             census,
@@ -1723,7 +1823,34 @@ fn read_parameters(
     if parameters.is_empty() || parameters == ["void"] {
         return true;
     }
-    for group in parameters.split(|text| *text == ",") {
+    for group in parameter_groups(parameters) {
+        // Card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: a function-pointer
+        // formal `R ( * cb ) ( P )` declares `cb` with no committed type
+        // (`Opaque`, which no typed rule admits) instead of refusing every
+        // declaration of the function. Any other parenthesised parameter
+        // still refuses them all, as before.
+        if group.iter().any(|text| matches!(*text, "(" | ")")) {
+            let Some(name) = function_pointer_declarator(group) else {
+                let offending = group
+                    .iter()
+                    .find(|text| matches!(**text, "(" | ")"))
+                    .copied()
+                    .unwrap_or("(");
+                note_refusal!(
+                    census,
+                    crate::indirect_census::DeclRefusal::ParameterListToken(offending.to_owned())
+                );
+                return false;
+            };
+            note_name_opaque!(
+                census,
+                name,
+                Some(crate::indirect_census::OpaqueCause::FunctionPointerDeclarator)
+            );
+            record_element(elements, name, None);
+            record_variable(variables, name.to_owned(), DeclaredType::Opaque, census);
+            continue;
+        }
         let Some((specifiers, declarator)) = split_declarator(group) else {
             note_refusal!(
                 census,
@@ -3103,10 +3230,125 @@ mod tests {
         assert!(!model.scalar_field("r", "a"));
     }
 
+    /// Card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS (amends the former
+    /// `a_function_pointer_member_refuses_the_whole_record`): a member that is
+    /// exactly a function-pointer declarator joins no class, and every other
+    /// member is read as in the same record without it.
     #[test]
-    fn a_function_pointer_member_refuses_the_whole_record() {
-        let model = model("struct r { int a ; void ( * f ) ( int ) ; } ;");
-        assert!(!model.scalar_field("r", "a"));
+    fn a_function_pointer_member_joins_no_class_and_the_rest_is_read() {
+        let with = model(
+            "struct r { int a ; void ( * f ) ( int , void ( * g ) ( void ) ) ; \
+             struct q * p ; void * v ; struct q s ; } ;",
+        );
+        let without = model("struct r { int a ; struct q * p ; void * v ; struct q s ; } ;");
+        for field in ["a", "p", "v", "s", "f", "g"] {
+            assert_eq!(
+                with.scalar_field("r", field),
+                without.scalar_field("r", field),
+                "{field}"
+            );
+            assert_eq!(
+                with.borrowable_field("r", field),
+                without.borrowable_field("r", field),
+                "{field}"
+            );
+            assert_eq!(
+                with.single_pointer_field("r", field),
+                without.single_pointer_field("r", field),
+                "{field}"
+            );
+            assert_eq!(
+                with.void_pointer_field("r", field),
+                without.void_pointer_field("r", field),
+                "{field}"
+            );
+            assert_eq!(
+                with.addressable_field("r", field),
+                without.addressable_field("r", field),
+                "{field}"
+            );
+            assert_eq!(
+                with.record_pointer_field("r", field),
+                without.record_pointer_field("r", field),
+                "{field}"
+            );
+        }
+        assert!(with.scalar_field("r", "a"));
+        assert_eq!(with.record_pointer_field("r", "p"), Some("q"));
+        assert!(with.record_definition_is_complete("r"));
+        // The function pointer itself is in no class: every access keeps its
+        // refusal.
+        assert!(!with.borrowable_field("r", "f"));
+        assert!(!with.addressable_field("r", "f"));
+    }
+
+    /// Every other parenthesised member declaration still refuses the whole
+    /// record, as does any `{`, `}`, `:` or `=` beside a function pointer.
+    #[test]
+    fn any_other_parenthesised_member_still_refuses_the_whole_record() {
+        for member in [
+            "int ( * f [ 2 ] ) ( void ) ;",
+            "int ( * * f ) ( void ) ;",
+            "int ( * const f ) ( void ) ;",
+            "int ( * f ) ( void ) , b ;",
+            "int ( f ) ;",
+            "int ( * f ) ;",
+            "int ( * f ) ( void ) [ 2 ] ;",
+            "int x __attribute__ ( ( aligned ( 8 ) ) ) ;",
+            "void ( * f ) ( int ) ; unsigned b : 1 ;",
+            "void ( * f ) ( int ) ; union { int x ; } ;",
+        ] {
+            let model = model(&format!("struct r {{ int a ; {member} }} ;"));
+            assert!(!model.scalar_field("r", "a"), "{member}");
+            assert!(!model.record_definition_is_complete("r"), "{member}");
+        }
+    }
+
+    /// The census's `refused_on` is the reader's own answer.
+    #[test]
+    fn the_record_body_refusal_is_the_readers_answer() {
+        let body = |source: &'static str| texts(source);
+        assert_eq!(record_body_refusal(&body("int a ; void ( * f ) ( int ) ;")), None);
+        assert_eq!(record_body_refusal(&body("int a ; int ( * f [ 2 ] ) ( void ) ;")), Some("("));
+        assert_eq!(record_body_refusal(&body("void ( * f ) ( int ) ; int b : 1 ;")), Some(":"));
+    }
+
+    /// A function-pointer formal is a name of no committed type; the
+    /// function's other declarations are read.
+    #[test]
+    fn a_function_pointer_formal_is_opaque_and_the_function_is_read() {
+        let model = model("struct r { int a ; } ;");
+        let types = types(
+            &model,
+            "struct r * p , void ( * cb ) ( struct r * , int ( * g ) ( void ) ) , int n",
+            "int t ; t = n ; p -> a = t ;",
+        );
+        assert!(types.is_readable());
+        assert_eq!(types.declared("cb"), Some(&DeclaredType::Opaque));
+        assert_eq!(types.scalar_element("cb"), None);
+        assert_eq!(
+            types.declared("p"),
+            Some(&DeclaredType::RecordPointer("r".into()))
+        );
+        assert_eq!(types.declared("n"), Some(&DeclaredType::Scalar));
+        assert_eq!(types.declared("t"), Some(&DeclaredType::Scalar));
+        // The inner parameter name of the function pointer declares nothing.
+        assert_eq!(types.declared("g"), None);
+    }
+
+    /// Every other parenthesised formal still refuses the function.
+    #[test]
+    fn any_other_parenthesised_formal_still_refuses_the_function() {
+        let model = model("struct r { int a ; } ;");
+        for parameters in [
+            "struct r * p , int ( * cb [ 2 ] ) ( void )",
+            "struct r * p , int ( * * cb ) ( void )",
+            "struct r * p , int ( cb )",
+            "struct r * p , int ( * cb ) ( int x = 1 )",
+        ] {
+            let types = types(&model, parameters, "p -> a = 1 ;");
+            assert!(!types.is_readable(), "{parameters}");
+        }
     }
 
     #[test]
