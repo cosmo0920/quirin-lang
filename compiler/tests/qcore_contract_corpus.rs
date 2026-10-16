@@ -2043,6 +2043,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/event_loop.qv", "mk_event_timeout_destroy", 6),
     ("monkey/event_loop.qv", "mk_event_channel_destroy", 7),
     ("monkey/event_loop.qv", "mk_event_wait", 3),
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: the loop's create and destroy
+    // (a destroy ends every record the loop holds, rule 12t).
+    ("monkey/event_loop.qv", "mk_event_loop_create", 3),
+    ("monkey/event_loop.qv", "mk_event_loop_destroy", 3),
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
     ("monkey/event_payload.qv", "cb_event_source_projection", 12),

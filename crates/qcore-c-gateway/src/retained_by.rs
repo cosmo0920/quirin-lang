@@ -45,6 +45,16 @@
 //! release of the object while an interior is held refuses as a release of a
 //! held object does. The Lean model is `QCore.RetentionPath`, bound by
 //! [`PATH_DECISION_VECTORS`] and [`PATH_TRACE_VECTORS`].
+//!
+//! Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (USER DECISION 2026-10-17,
+//! "Yes, small fix card now"): Monkey's `_mk_event_del` clears the event's
+//! registered status even through a loop that does not hold it, so a later
+//! removal through the right loop does nothing. A removal therefore drops
+//! only the exactly matching record that is not poisoned, and **poisons**
+//! every other record whose held object it may name ([`remove`]); a poisoned
+//! record ends only when its holder ends ([`end_holder`]: the loop's destroy,
+//! a released tracked holder, a declared reset), refuses at an exit as
+//! [`POISONED`], and a release of its object while it is held refuses.
 
 /// The prefix a retaining callee's custody contract is installed under for
 /// one classification (reserved: a source spelling it is escaped first).
@@ -157,6 +167,14 @@ pub enum HeldBy {
     Path(PathRoot, Vec<String>),
 }
 
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS**: the stable reason key of a
+/// record a removal through another (or an undecided) holder poisoned, still
+/// held at an exit.
+pub const POISONED: &str = "retention-removal-poisoned";
+
+/// One recorded retention: what is held, and by what.
+pub type Record = (HeldObject, HeldBy);
+
 /// The decision at one retaining call.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Decision {
@@ -208,24 +226,83 @@ pub fn decide(retained: &Retained, holder: &Holder) -> Decision {
     }
 }
 
-/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): the record
-/// a removal of `retained` from `holder` names, when both are decided; `None`
-/// drops nothing (an unmatched removal).
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t), corrected
+/// by card **RETENTION-UNMATCHED-REMOVAL-POISONS**: what a removal names. Each
+/// side is `None` when its actual is not one a record keys on.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RemovalKey {
+    /// The held object the removal names.
+    pub object: Option<HeldObject>,
+    /// The holder it removes from.
+    pub holder: Option<HeldBy>,
+}
+
+/// The removal of `retained` from `holder`, each side decided or not.
 #[must_use]
-pub fn removal_key(retained: &Retained, holder: &Holder) -> Option<(HeldObject, HeldBy)> {
+pub fn removal_key(retained: &Retained, holder: &Holder) -> RemovalKey {
     let object = match retained {
-        Retained::CallerObject(name) => HeldObject::Name(name.clone()),
-        Retained::Tracked(site) => HeldObject::Site(*site),
-        Retained::TrackedInterior(site, fields) => HeldObject::SiteInterior(*site, fields.clone()),
-        Retained::Static | Retained::Other => return None,
+        Retained::CallerObject(name) => Some(HeldObject::Name(name.clone())),
+        Retained::Tracked(site) => Some(HeldObject::Site(*site)),
+        Retained::TrackedInterior(site, fields) => {
+            Some(HeldObject::SiteInterior(*site, fields.clone()))
+        }
+        Retained::Static | Retained::Other => None,
     };
-    let by = match holder {
-        Holder::Frame(name) => HeldBy::Frame(name.clone()),
-        Holder::Tracked(site) => HeldBy::Site(*site),
-        Holder::Path(root, fields) => HeldBy::Path(root.clone(), fields.clone()),
-        Holder::Global | Holder::Foreign => return None,
+    let holder = match holder {
+        Holder::Frame(name) => Some(HeldBy::Frame(name.clone())),
+        Holder::Tracked(site) => Some(HeldBy::Site(*site)),
+        Holder::Path(root, fields) => Some(HeldBy::Path(root.clone(), fields.clone())),
+        Holder::Global | Holder::Foreign => None,
     };
-    Some((object, by))
+    RemovalKey { object, holder }
+}
+
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS**: whether a removal naming
+/// `object` (`None`: undecided) may clear the status of `held`'s object. Only
+/// two distinct tracked identities are known to be distinct objects; a
+/// caller's object may be any other caller's object or a tracked one.
+#[must_use]
+pub fn may_name(object: Option<&HeldObject>, held: &HeldObject) -> bool {
+    match object {
+        None => true,
+        Some(object) => match (object.site(), held.site()) {
+            (Some(left), Some(right)) => left == right,
+            _ => true,
+        },
+    }
+}
+
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (rule 12t): one removal over
+/// the records. The exactly matching record drops unless it is poisoned;
+/// every record still held whose object the removal may name is poisoned.
+pub fn remove(
+    held: &mut std::collections::BTreeSet<Record>,
+    poisoned: &mut std::collections::BTreeSet<Record>,
+    key: &RemovalKey,
+) {
+    if let (Some(object), Some(holder)) = (&key.object, &key.holder) {
+        let record = (object.clone(), holder.clone());
+        if !poisoned.contains(&record) {
+            held.remove(&record);
+        }
+    }
+    for record in held.iter() {
+        if may_name(key.object.as_ref(), &record.0) {
+            poisoned.insert(record.clone());
+        }
+    }
+}
+
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (rule 12t): a holder that
+/// ends (a loop's destroy, a released tracked holder, a declared reset) holds
+/// nothing any more, poisoned records included.
+pub fn end_holder(
+    held: &mut std::collections::BTreeSet<Record>,
+    poisoned: &mut std::collections::BTreeSet<Record>,
+    by: &HeldBy,
+) {
+    held.retain(|(_, holder)| holder != by);
+    poisoned.retain(|(_, holder)| holder != by);
 }
 
 /// The refusal of an undecided retention.
@@ -251,6 +328,17 @@ pub fn exit_description(name: &str) -> String {
     format!("a holder retaining `{name}` may outlive this function's frame ({UNDECIDED})")
 }
 
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS**: the refusal of an exit at
+/// which a poisoned record is still held.
+#[must_use]
+pub fn poisoned_exit_description(name: &str) -> String {
+    format!(
+        "a holder retaining `{name}` may outlive this function's frame: a removal through \
+         another or an undecided holder cleared its registration status, so no later removal \
+         ends it ({POISONED})"
+    )
+}
+
 /// One event of a path, for the shared trace vectors: what the transfer
 /// does to the records.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -266,8 +354,12 @@ pub enum Event {
     /// A release of a tracked holder.
     ReleaseHolder(usize),
     /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a removal of one
-    /// registration (`None`: undecided, drops nothing).
-    Remove(Option<(HeldObject, HeldBy)>),
+    /// registration; card RETENTION-UNMATCHED-REMOVAL-POISONS: it poisons
+    /// every other record it may name ([`remove`]).
+    Remove(RemovalKey),
+    /// Card RETENTION-UNMATCHED-REMOVAL-POISONS: the holder's destroy (a
+    /// loop's, at any holder): it ends every record held there.
+    Destroy(HeldBy),
 }
 
 /// The outcome of a path: `Safe` only when no event refused and no tracked
@@ -281,25 +373,30 @@ pub enum Outcome {
 /// Replay one path's events over the records, as route G's transfer does.
 #[must_use]
 pub fn replay(events: &[Event]) -> Outcome {
-    let mut held: Vec<(HeldObject, HeldBy)> = Vec::new();
+    let mut held: std::collections::BTreeSet<Record> = std::collections::BTreeSet::new();
+    let mut poisoned: std::collections::BTreeSet<Record> = std::collections::BTreeSet::new();
     for event in events {
         match event {
             Event::Retain(Decision::Outlives) => {}
             Event::Retain(Decision::Undecided) => return Outcome::Refused,
-            Event::Retain(Decision::Record(object, by)) => held.push((object.clone(), by.clone())),
+            Event::Retain(Decision::Record(object, by)) => {
+                held.insert((object.clone(), by.clone()));
+            }
             Event::Release(site) => {
                 if held.iter().any(|(object, _)| object.site() == Some(*site)) {
                     return Outcome::Refused;
                 }
                 // A released holder holds nothing any more.
-                held.retain(|(_, by)| *by != HeldBy::Site(*site));
+                end_holder(&mut held, &mut poisoned, &HeldBy::Site(*site));
             }
-            Event::ResetFrame(name) => held.retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
+            Event::ResetFrame(name) => {
+                end_holder(&mut held, &mut poisoned, &HeldBy::Frame(name.clone()));
+            }
             Event::ResetSite(site) | Event::ReleaseHolder(site) => {
-                held.retain(|(_, by)| *by != HeldBy::Site(*site));
+                end_holder(&mut held, &mut poisoned, &HeldBy::Site(*site));
             }
-            Event::Remove(Some(record)) => held.retain(|existing| existing != record),
-            Event::Remove(None) => {}
+            Event::Remove(key) => remove(&mut held, &mut poisoned, key),
+            Event::Destroy(by) => end_holder(&mut held, &mut poisoned, by),
         }
     }
     // A frame holder dies at the exit; a tracked or path holder still holding
@@ -436,6 +533,26 @@ pub const PATH_TRACE_VECTORS: &[(&str, bool)] = &[
     ("loop-destroyed-then-release", true),
     // Two registrations at one path; removing one leaves the other.
     ("one-of-two-removed", false),
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: the old sequence. Removed
+    // through another path (poisoned), then through its own: still held.
+    ("unmatched-then-matched", false),
+    // The same with a tracked object and a tracked loop, then the object's
+    // release: refused (released while held).
+    ("unmatched-matched-release", false),
+    // Removed through its own loop, then released: decides.
+    ("matched-then-release", true),
+    // The loop destroyed, then the object released: decides.
+    ("destroy-then-release", true),
+    // Poisoned, then its loop destroyed, then released: decides.
+    ("poisoned-destroyed-release", true),
+    // A path record poisoned, then the path's loop destroyed: decides.
+    ("poisoned-path-destroyed", true),
+    // A removal whose holder is undecided poisons the record of its object.
+    ("undecided-holder-poisons", false),
+    // A removal whose object is undecided poisons every record.
+    ("undecided-object-poisons", false),
+    // A removal of another tracked identity poisons nothing.
+    ("other-identity-untouched", true),
 ];
 
 /// The event path a [`PATH_TRACE_VECTORS`] row names.
@@ -477,6 +594,64 @@ pub fn path_trace(name: &str) -> Vec<Event> {
                 &path(),
             )),
             Event::Remove(removal_key(&caller(), &path())),
+        ],
+        "unmatched-then-matched" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&caller(), &other())),
+            Event::Remove(removal_key(&caller(), &path())),
+        ],
+        "unmatched-matched-release" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Remove(removal_key(&interior(), &Holder::Tracked(3))),
+            Event::Remove(removal_key(&interior(), &Holder::Tracked(2))),
+            Event::Release(1),
+            Event::ReleaseHolder(2),
+            Event::ReleaseHolder(3),
+        ],
+        "matched-then-release" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Remove(removal_key(&interior(), &Holder::Tracked(2))),
+            Event::Release(1),
+            Event::ReleaseHolder(2),
+        ],
+        "destroy-then-release" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Destroy(HeldBy::Site(2)),
+            Event::Release(1),
+        ],
+        "poisoned-destroyed-release" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Remove(removal_key(&interior(), &Holder::Tracked(3))),
+            Event::Destroy(HeldBy::Site(2)),
+            Event::Release(1),
+            Event::ReleaseHolder(3),
+        ],
+        "poisoned-path-destroyed" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&caller(), &other())),
+            Event::Destroy(HeldBy::Path(
+                PathRoot::Formal("coll".into()),
+                vec!["evl".into()],
+            )),
+        ],
+        "undecided-holder-poisons" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&caller(), &Holder::Foreign)),
+            Event::Remove(removal_key(&caller(), &path())),
+        ],
+        "undecided-object-poisons" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&Retained::Other, &path())),
+            Event::Remove(removal_key(&caller(), &path())),
+        ],
+        "other-identity-untouched" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Remove(removal_key(
+                &Retained::TrackedInterior(4, vec!["event".into()]),
+                &Holder::Tracked(3),
+            )),
+            Event::Remove(removal_key(&interior(), &Holder::Tracked(2))),
+            Event::Release(1),
         ],
         _ => Vec::new(),
     }

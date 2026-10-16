@@ -144,10 +144,20 @@ fn a_path_holder_still_holding_at_the_exit_is_refused() {
          void elsewhere(struct coll *coll, struct cfg *config) { ev_add(coll->evl, &coll->event); ev_del(config->evl, &coll->event); }\n\
          void one_of_two(struct coll *coll) { ev_add(coll->evl, &coll->event); ev_add(coll->evl, &coll->timer); ev_del(coll->evl, &coll->event); }",
     );
+    assert!(
+        rows["start"].refused_with("retention-undecided"),
+        "{:?}",
+        rows["start"]
+    );
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: a removal through another
+    // path poisons the record; a removal of another caller's member poisons
+    // the remaining one (two caller objects are not known to be distinct).
     for name in ["start", "elsewhere", "one_of_two"] {
         assert!(!rows[name].safe(), "{name}: {:?}", rows[name]);
+    }
+    for name in ["elsewhere", "one_of_two"] {
         assert!(
-            rows[name].refused_with("retention-undecided"),
+            rows[name].refused_with("retention-removal-poisoned"),
             "{name}: {:?}",
             rows[name]
         );
@@ -285,12 +295,100 @@ fn a_registration_forwarded_through_an_id_stands_only_on_its_body() {
     );
 }
 
+/// Card RETENTION-UNMATCHED-REMOVAL-POISONS (rule 12t, USER DECISION
+/// 2026-10-17): two tracked loops `l` and `m` and one tracked object `o`
+/// registered in `l`. The prefix allocates and unwinds every failure.
+const TWO_LOOPS: &str = "struct ev_loop *l = ev_loop_create(); if (!l) return; \
+     struct ev_loop *m = ev_loop_create(); if (!m) { ev_loop_destroy(l); return; } \
+     void *o = ev_alloc(8); if (!o) { ev_loop_destroy(m); ev_loop_destroy(l); return; } \
+     ev_add(l, o);";
+
+#[test]
+fn an_unmatched_removal_poisons_the_record() {
+    if !clang_available() {
+        return;
+    }
+    let source = format!(
+        "void old_sequence(void) {{ {TWO_LOOPS} ev_del(m, o); ev_del(l, o); ev_free(o); ev_loop_destroy(m); ev_loop_destroy(l); }}\n\
+         void matched(void) {{ {TWO_LOOPS} ev_del(l, o); ev_free(o); ev_loop_destroy(m); ev_loop_destroy(l); }}\n\
+         void destroyed(void) {{ {TWO_LOOPS} ev_loop_destroy(l); ev_free(o); ev_loop_destroy(m); }}\n\
+         void poisoned_then_destroyed(void) {{ {TWO_LOOPS} ev_del(m, o); ev_loop_destroy(l); ev_free(o); ev_loop_destroy(m); }}\n\
+         void poisoned_removed_then_destroyed(void) {{ {TWO_LOOPS} ev_del(m, o); ev_del(l, o); ev_loop_destroy(l); ev_free(o); ev_loop_destroy(m); }}"
+    );
+    let rows = rows(&source);
+    // Unmatched removal, matched removal, release: the right loop may still
+    // hold `o`, so its release refuses (never Unsafe).
+    assert!(!rows["old_sequence"].safe(), "{:?}", rows["old_sequence"]);
+    assert!(
+        rows["old_sequence"].refused_with("retention-released-while-held"),
+        "{:?}",
+        rows["old_sequence"]
+    );
+    assert_ne!(rows["old_sequence"].status, AnalysisStatus::Unsafe);
+    // Matched removal, then release: decides.
+    assert!(rows["matched"].safe(), "{:?}", rows["matched"]);
+    // The loop's destroy, then release: decides.
+    assert!(rows["destroyed"].safe(), "{:?}", rows["destroyed"]);
+    // Poisoned, then the loop destroyed, then release: decides.
+    assert!(
+        rows["poisoned_then_destroyed"].safe(),
+        "{:?}",
+        rows["poisoned_then_destroyed"]
+    );
+    assert!(
+        rows["poisoned_removed_then_destroyed"].safe(),
+        "{:?}",
+        rows["poisoned_removed_then_destroyed"]
+    );
+}
+
+#[test]
+fn a_poisoned_path_record_names_its_reason_at_the_exit() {
+    if !clang_available() {
+        return;
+    }
+    let rows = rows(
+        "void old_path(struct coll *coll, struct cfg *config) { ev_add(coll->evl, &coll->event); ev_del(config->evl, &coll->event); ev_del(coll->evl, &coll->event); }\n\
+         void own_path(struct coll *coll) { ev_add(coll->evl, &coll->event); ev_del(coll->evl, &coll->event); }\n\
+         void other_member(struct coll *coll, struct cfg *config) { ev_add(coll->evl, &coll->event); ev_del(config->evl, &coll->timer); ev_del(coll->evl, &coll->event); }",
+    );
+    assert!(!rows["old_path"].safe(), "{:?}", rows["old_path"]);
+    assert!(
+        rows["old_path"].refused_with("retention-removal-poisoned"),
+        "{:?}",
+        rows["old_path"]
+    );
+    assert!(rows["own_path"].safe(), "{:?}", rows["own_path"]);
+    // A caller's objects are not known to be distinct (a union, an alias):
+    // a removal of another member through another loop poisons too.
+    assert!(
+        rows["other_member"].refused_with("retention-removal-poisoned"),
+        "{:?}",
+        rows["other_member"]
+    );
+}
+
+#[test]
+fn a_loop_destroy_at_a_path_stays_refused() {
+    if !clang_available() {
+        return;
+    }
+    // The destroy releases a member actual: a custody-taking position the
+    // access gate keeps refused, so the call decides nothing on route G.
+    let rows = rows(
+        "void path_destroy(struct coll *coll) { ev_add(coll->evl, &coll->event); ev_loop_destroy(coll->evl); }",
+    );
+    assert!(!rows["path_destroy"].safe(), "{:?}", rows["path_destroy"]);
+    assert_ne!(rows["path_destroy"].status, AnalysisStatus::Unsafe);
+}
+
 #[test]
 fn the_shared_vectors_hold() {
     use qcore_c_gateway::retained_by::{
         Outcome, PATH_DECISION_VECTORS, PATH_TRACE_VECTORS, path_trace, replay,
     };
     assert_eq!(PATH_DECISION_VECTORS.len(), 9);
+    assert_eq!(PATH_TRACE_VECTORS.len(), 17);
     for (name, safe) in PATH_TRACE_VECTORS {
         assert_eq!(replay(&path_trace(name)) == Outcome::Safe, *safe, "{name}");
     }

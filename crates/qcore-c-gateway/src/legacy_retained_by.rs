@@ -29,9 +29,9 @@ use super::{
     AbstractState, LIVE, LegacyDiagnostic, LegacyDiagnosticKind, LegacyInstruction, Parser, Token,
 };
 use crate::retained_by::{
-    Decision, HeldBy, HeldObject, Holder, PathRoot, Retained, decide, exit_description,
-    released_while_held_description, removal_key, retained_callee, retained_name,
-    undecided_description,
+    Decision, HeldBy, HeldObject, Holder, PathRoot, Retained, decide, end_holder, exit_description,
+    poisoned_exit_description, released_while_held_description, removal_key, remove,
+    retained_callee, retained_name, undecided_description,
 };
 
 /// A retained pointer's actual, as spelled.
@@ -443,7 +443,9 @@ impl Parser<'_> {
         }
         // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t, USER
         // DECISION 2026-10-16, "R3: quant state"): each removal, never a
-        // refusal: an actual no record can be keyed on drops nothing.
+        // refusal. Card RETENTION-UNMATCHED-REMOVAL-POISONS: an actual no
+        // record can be keyed on (`None`) drops nothing but poisons what it
+        // may name ([`apply`]).
         for removal in &declaration.removals {
             let retained = self.retained_spelling(actual(removal.retained));
             let held = holder(self, removal.holder).map(|(held, _)| held);
@@ -706,31 +708,31 @@ pub(super) fn apply(
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: a reset holder holds
+    // nothing any more, poisoned records included.
     for reset in &operands.resets {
-        match holder_class(state, reset, destination) {
-            Holder::Frame(name) => state
-                .retained
-                .retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
-            Holder::Tracked(site) => state.retained.retain(|(_, by)| *by != HeldBy::Site(site)),
-            Holder::Path(root, fields) => {
-                let by = HeldBy::Path(root, fields);
-                state.retained.retain(|(_, held)| *held != by);
-            }
-            Holder::Global | Holder::Foreign => {}
-        }
-    }
-    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a removal
-    // drops exactly the record it names, and nothing when it names none.
-    for (retained, holder) in &operands.removals {
-        let (Some(retained), Some(holder)) = (retained, holder) else {
-            continue;
+        let by = match holder_class(state, reset, destination) {
+            Holder::Frame(name) => HeldBy::Frame(name),
+            Holder::Tracked(site) => HeldBy::Site(site),
+            Holder::Path(root, fields) => HeldBy::Path(root, fields),
+            Holder::Global | Holder::Foreign => continue,
         };
-        if let Some(record) = removal_key(
-            &retained_class(state, retained),
-            &holder_class(state, holder, destination),
-        ) {
-            state.retained.remove(&record);
-        }
+        end_holder(&mut state.retained, &mut state.poisoned, &by);
+    }
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t), corrected by
+    // card RETENTION-UNMATCHED-REMOVAL-POISONS: a removal drops exactly the
+    // unpoisoned record it names, and poisons every other record whose object
+    // it may name; an actual no record keys on is an undecided side, which
+    // names more, never less.
+    for (retained, holder) in &operands.removals {
+        let object = retained
+            .as_ref()
+            .map_or(Retained::Other, |retained| retained_class(state, retained));
+        let holder = holder.as_ref().map_or(Holder::Foreign, |holder| {
+            holder_class(state, holder, destination)
+        });
+        let key = removal_key(&object, &holder);
+        remove(&mut state.retained, &mut state.poisoned, &key);
     }
     for (retained, retained_text, holder, holder_text) in &operands.retentions {
         match decide(
@@ -798,8 +800,16 @@ pub(super) fn refuse_release_of_held(
 
 /// Hook (rule 12t): a released holder holds nothing any more.
 pub(super) fn holder_released(state: &mut AbstractState, site: usize) {
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: a released (destroyed) loop
+    // ends every record it held, poisoned ones included.
+    holder_ended(state, &HeldBy::Site(site));
+}
+
+/// Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (rule 12t): a holder that
+/// ends (released, destroyed, a registry's drop) holds nothing any more.
+pub(super) fn holder_ended(state: &mut AbstractState, by: &HeldBy) {
     if !state.retained.is_empty() {
-        state.retained.retain(|(_, by)| *by != HeldBy::Site(site));
+        end_holder(&mut state.retained, &mut state.poisoned, by);
     }
 }
 
@@ -811,7 +821,7 @@ pub(super) fn report_exit(
     state: &AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
-    for (object, by) in &state.retained {
+    for record @ (object, by) in &state.retained {
         if matches!(by, HeldBy::Site(_) | HeldBy::Path(..)) {
             let name = match object {
                 HeldObject::Name(name) => name.clone(),
@@ -819,12 +829,17 @@ pub(super) fn report_exit(
                     "a pointer this body tracks".to_owned()
                 }
             };
+            // Card RETENTION-UNMATCHED-REMOVAL-POISONS: a poisoned record
+            // names why no removal ended it.
+            let description = if state.poisoned.contains(record) {
+                poisoned_exit_description(&name)
+            } else {
+                exit_description(&name)
+            };
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line,
-                kind: LegacyDiagnosticKind::Unsupported {
-                    description: exit_description(&name),
-                },
+                kind: LegacyDiagnosticKind::Unsupported { description },
             });
         }
     }

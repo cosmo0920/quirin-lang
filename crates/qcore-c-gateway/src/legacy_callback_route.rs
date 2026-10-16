@@ -1749,7 +1749,7 @@ pub(super) fn apply(
                     RegistryKey::Frame(name) => crate::retained_by::HeldBy::Frame(name.clone()),
                     RegistryKey::Site(site) => crate::retained_by::HeldBy::Site(*site),
                 };
-                state.retained.retain(|(_, held)| *held != by);
+                super::retained_by_route::holder_ended(state, &by);
                 if let RegistryKey::Site(site) = key
                     && state
                         .contained

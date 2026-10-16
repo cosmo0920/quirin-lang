@@ -40,7 +40,22 @@ module contract;
 //   link unlinked, MK_EVENT_NEW); an unregistered event is left as it is, so
 //   after the call the loop holds no registration of it either way, and
 //   mk_event_timeout_destroy(loop, NULL) does nothing. timeout_destroy then
-//   closes `event->fd`.
+//   closes `event->fd`. Card RETENTION-UNMATCHED-REMOVAL-POISONS: through a
+//   loop that does not hold the event, EPOLL_CTL_DEL fails (ignored) and
+//   MK_EVENT_NEW still clears the status, so a later removal through the
+//   loop that does hold it returns at :140 and leaves it registered. Rule
+//   12t reads this: a removal that does not match a record exactly poisons
+//   every record it may name, which then ends only by its loop's destroy.
+// * mk_event_loop_create (:61) and mk_event_loop_destroy (:91), card
+//   RETENTION-UNMATCHED-REMOVAL-POISONS (bodies identical at the three
+//   revisions): create allocates the backend (`_mk_event_loop_create`, epoll
+//   :48: an epoll descriptor and its event array), then the loop and its
+//   event array (`mk_mem_alloc_z`), freeing what it made and returning NULL
+//   on any failure; a fresh loop the caller owns. destroy dereferences
+//   `loop->data` (non-null), closes the epoll descriptor (which drops every
+//   registration the loop held, without touching the events' statuses), and
+//   frees the arrays and the loop. Rule 12t reads the destroy as the end of
+//   every record the loop holds, poisoned or not.
 // * mk_event_channel_destroy (:193): removes and closes only when
 //   `event->fd == r_fd` (epoll backend :397); otherwise it returns -1 with
 //   the registration in place. No clause states that condition, so this
@@ -127,5 +142,19 @@ extern fn mk_event_wait(loop: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(loop);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_loop_create(size: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn mk_event_loop_destroy(loop: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(loop, nonnull);
     ensures normal resource_return_none();
 };

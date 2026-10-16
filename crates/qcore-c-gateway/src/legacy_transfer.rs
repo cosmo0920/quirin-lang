@@ -273,6 +273,13 @@ pub(super) struct AbstractState {
     /// arriving path recorded is kept. Empty in every function that calls no
     /// retaining callee, which keeps the join as it was.
     pub(super) retained: BTreeSet<(crate::retained_by::HeldObject, crate::retained_by::HeldBy)>,
+    /// Card **RETENTION-UNMATCHED-REMOVAL-POISONS** (rule 12t): the records
+    /// of `retained` a removal through another or an undecided holder
+    /// poisoned ([`crate::retained_by::remove`]); a poisoned record ends only
+    /// when its holder ends. Joined by union, so a record poisoned on one
+    /// arriving path stays poisoned. Empty in every function that calls no
+    /// removal, which keeps the join as it was.
+    pub(super) poisoned: BTreeSet<crate::retained_by::Record>,
     /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12y): names whose
     /// value a slot move or a borrow's end invalidated; a read refuses.
     /// Joined by union; empty in every function that calls no slot-moving or
@@ -425,6 +432,7 @@ impl AbstractState {
         container_publication::join(&mut self.published, &incoming.published);
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
         self.retained.extend(incoming.retained.iter().cloned());
+        self.poisoned.extend(incoming.poisoned.iter().cloned());
         slot_move_route::join(self, incoming);
         reference_route::join(self, incoming);
         callback_route::join(&mut self.registries, &incoming.registries);

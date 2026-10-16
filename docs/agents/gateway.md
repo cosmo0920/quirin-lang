@@ -5847,25 +5847,57 @@ own anchor here.
     frame: it refuses at an exit unless a removal of exactly it ended it. (2)
     **A removal** (`quant live #H: #holds(P) |-> #absent;`) drops only the
     record its actuals key, and nothing otherwise: an unmatched removal never
-    decides, and a later release of the held object refuses. (3) A release
+    decides, and a later release of the held object refuses. **Corrected
+    (card RETENTION-UNMATCHED-REMOVAL-POISONS, USER DECISION 2026-10-17
+    "Yes, small fix card now"):** Monkey's `_mk_event_del` clears the event's
+    registered status even through a loop that does not hold it, so a later
+    removal through the right loop does nothing; the composition above
+    accepted "unmatched removal, matched removal, release". A removal now
+    drops the exactly matching record only when it is not **poisoned**, and
+    poisons every other record whose held object it may name
+    (`retained_by::{remove, may_name}`: an undecided object or holder names
+    more, never less; only two distinct tracked identities are distinct
+    objects; shared item `AbstractState::poisoned`, joined by union). A
+    poisoned record ends only when its holder ends (`end_holder`: the loop's
+    destroy, a released tracked holder, a declared reset, a registry's
+    drop); at an exit it refuses as `retention-removal-poisoned`, and a
+    release of its object while it is held refuses as before. **A destroy of
+    the loop ends every record it holds**, poisoned or not:
+    `mk_event_loop_create` (`resource_return_owned(nullable)`) and
+    `mk_event_loop_destroy` (`resource_released(loop, nonnull)`) are declared
+    in `monkey/event_loop.qv`, so a tracked loop's destroy is a released
+    holder. A destroy at a path (`mk_event_loop_destroy(config->evl)`) ends
+    the path's records in the model (`Event::Destroy`), but on route G it
+    releases a member actual, a custody-taking position the access gate keeps
+    refused (W44-INDIRECT-CALL-ARGUMENT-ACCESS premise 1), so such a call
+    still refuses before any record is read. Two distinct paths are never one
+    loop: a derived equality (D3, "derived only") is the follow-up
+    `RETENTION-DERIVED-LOOP-PATH-EQUALITIES`. (3) A release
     or transfer of an identity while an interior of it is held refuses. A
     retention is still never forwarded into a summary, so every Fluent Bit
     registration (each removal is in another function, the census's §1.4)
     refuses at its registering function's exit
     (`FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`). **Do not** resolve a path
     below a local or a call's result, match a removal to a record by its
-    holder alone, read a destroy at a path as a holder release, or forward a
-    retention into a summary. Declarations: Monkey's seven event-loop
+    holder alone, end a poisoned record by any removal, read two distinct
+    paths as one loop without a derivation, or forward a retention into a
+    summary. Declarations: Monkey's seven event-loop
     operations in `qcore-provider-libevent` (`monkey/event_loop.qv`, pinned
     at 66910c10, 046accf6 and the 90978ac6 export; descriptor effects under
-    the named premise `mk_event_descriptors`). `QCore.RetentionPath`
-    (`a_path_record_ends_only_by_its_own_removal`,
+    the named premise `mk_event_descriptors`), and the loop's create and
+    destroy. `QCore.RetentionPath`
+    (`a_path_record_ends_only_by_its_own_removal_or_its_destroy`,
     `an_unresolved_path_never_decides`,
-    `an_unmatched_removal_keeps_every_record`,
+    `an_unmatched_removal_poisons_what_it_may_name`,
+    `a_poisoned_record_ends_only_by_its_loop_destroy`,
+    `the_old_sequence_no_longer_decides`,
     `a_safe_path_never_releases_a_held_identity`,
-    `a_safe_path_leaves_no_outliving_holder_holding`, the vectors);
+    `a_safe_path_leaves_no_outliving_holder_holding`, the vectors; the
+    earlier `an_unmatched_removal_keeps_every_record` and
+    `a_path_record_ends_only_by_its_own_removal` are corrected, not kept);
     `tests/event_loop_retention.rs`;
-    [report](../reports/fb-event-loop-retention/README.md).
+    [report](../reports/fb-event-loop-retention/README.md),
+    [poisoning report](../reports/retention-unmatched-removal-poisons/README.md).
 
 <a id="constraint-12u"></a>
 
