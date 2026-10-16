@@ -1,0 +1,92 @@
+flb_sched_timer_destroy @ 66910c10: src/flb_scheduler.c:905 4894cc4143dc5ceb
+flb_sched_timer_destroy @ 046accf6: src/flb_scheduler.c:905 4894cc4143dc5ceb
+flb_sched_timer_destroy @ 90978ac6: src/flb_scheduler.c:905 4894cc4143dc5ceb
+flb_sched_timer_destroy: 66910c10=046accf6=90978ac6
+flb_sched_request_destroy @ 66910c10: src/flb_scheduler.c:328 865be9a43e4850ca
+flb_sched_request_destroy @ 046accf6: src/flb_scheduler.c:328 865be9a43e4850ca
+flb_sched_request_destroy @ 90978ac6: src/flb_scheduler.c:328 865be9a43e4850ca
+flb_sched_request_destroy: 66910c10=046accf6=90978ac6
+flb_sched_timer_invalidate @ 66910c10: src/flb_scheduler.c:894 f63636bb817192fd
+flb_sched_timer_invalidate @ 046accf6: src/flb_scheduler.c:894 f63636bb817192fd
+flb_sched_timer_invalidate @ 90978ac6: src/flb_scheduler.c:894 f63636bb817192fd
+flb_sched_timer_invalidate: 66910c10=046accf6=90978ac6
+flb_sched_timer_cb_disable @ 66910c10: src/flb_scheduler.c:720 dec09ac34fc10268
+flb_sched_timer_cb_disable @ 046accf6: src/flb_scheduler.c:720 dec09ac34fc10268
+flb_sched_timer_cb_disable @ 90978ac6: src/flb_scheduler.c:720 dec09ac34fc10268
+flb_sched_timer_cb_disable: 66910c10=046accf6=90978ac6
+flb_task_destroy @ 66910c10: src/flb_task.c:899 9aeb999a552d9eb0
+flb_task_destroy @ 046accf6: src/flb_task.c:899 9aeb999a552d9eb0
+flb_task_destroy @ 90978ac6: src/flb_task.c:899 9aeb999a552d9eb0
+flb_task_destroy: 66910c10=046accf6=90978ac6
+flb_task_queue_destroy @ 66910c10: src/flb_task.c:962 c26fef5bac9321b6
+flb_task_queue_destroy @ 046accf6: src/flb_task.c:962 c26fef5bac9321b6
+flb_task_queue_destroy @ 90978ac6: src/flb_task.c:962 c26fef5bac9321b6
+flb_task_queue_destroy: 66910c10=046accf6=90978ac6
+flb_task_retry_clean @ 66910c10: src/flb_task.c:419 c1be62053d6a84c7
+flb_task_retry_clean @ 046accf6: src/flb_task.c:419 c1be62053d6a84c7
+flb_task_retry_clean @ 90978ac6: src/flb_task.c:419 c1be62053d6a84c7
+flb_task_retry_clean: 66910c10=046accf6=90978ac6
+flb_event_chunk_destroy @ 66910c10: src/flb_event.c:69 b82a927fec483216
+flb_event_chunk_destroy @ 046accf6: src/flb_event.c:69 b82a927fec483216
+flb_event_chunk_destroy @ 90978ac6: src/flb_event.c:69 b82a927fec483216
+flb_event_chunk_destroy: 66910c10=046accf6=90978ac6
+flb_output_flush_destroy @ 66910c10: include/fluent-bit/flb_output.h:650 0a4b66bf51e35a00
+flb_output_flush_destroy @ 046accf6: include/fluent-bit/flb_output.h:672 0a4b66bf51e35a00
+flb_output_flush_destroy @ 90978ac6: include/fluent-bit/flb_output.h:672 0a4b66bf51e35a00
+flb_output_flush_destroy: 66910c10=046accf6=90978ac6
+flb_coro_destroy @ 66910c10: include/fluent-bit/flb_coro.h:94 b1984e6412850419
+flb_coro_destroy @ 046accf6: include/fluent-bit/flb_coro.h:94 b1984e6412850419
+flb_coro_destroy @ 90978ac6: include/fluent-bit/flb_coro.h:94 b1984e6412850419
+flb_coro_destroy: 66910c10=046accf6=90978ac6
+flb_input_chunk_release_route @ 66910c10: src/flb_input_chunk.c:815 b522403b595e9857
+flb_input_chunk_release_route @ 046accf6: src/flb_input_chunk.c:815 b522403b595e9857
+flb_input_chunk_release_route @ 90978ac6: src/flb_input_chunk.c:815 b522403b595e9857
+flb_input_chunk_release_route: 66910c10=046accf6=90978ac6
+flb_output_instance_destroy @ 66910c10: src/flb_output.c:466 7d9c1c91447fbdc6
+flb_output_instance_destroy @ 046accf6: src/flb_output.c:544 7d9c1c91447fbdc6
+flb_output_instance_destroy @ 90978ac6: src/flb_output.c:544 7d9c1c91447fbdc6
+flb_output_instance_destroy: 66910c10=046accf6=90978ac6
+flb_output_free_properties @ 66910c10: src/flb_output.c:167 a4a0649526dca4ff
+flb_output_free_properties @ 046accf6: src/flb_output.c:167 b3fd59c4a6d4fe2c
+flb_output_free_properties @ 90978ac6: src/flb_output.c:167 b3fd59c4a6d4fe2c
+flb_output_free_properties: 66910c10 | 046accf6=90978ac6
+flb_sched_request_invalidate @ 66910c10: src/flb_scheduler.c:354 076deb60763a4469
+flb_sched_request_invalidate @ 046accf6: src/flb_scheduler.c:354 076deb60763a4469
+flb_sched_request_invalidate @ 90978ac6: src/flb_scheduler.c:354 076deb60763a4469
+flb_sched_request_invalidate: 66910c10=046accf6=90978ac6
+flb_engine_destroy_tasks @ 66910c10: src/flb_engine.c:125 af4e7cc48924cb27
+flb_engine_destroy_tasks @ 046accf6: src/flb_engine.c:136 af4e7cc48924cb27
+flb_engine_destroy_tasks @ 90978ac6: src/flb_engine.c:136 af4e7cc48924cb27
+flb_engine_destroy_tasks: 66910c10=046accf6=90978ac6
+flb_output_exit @ 66910c10: src/flb_output.c:566 38847297b3c7fe03
+flb_output_exit @ 046accf6: src/flb_output.c:644 38847297b3c7fe03
+flb_output_exit @ 90978ac6: src/flb_output.c:644 38847297b3c7fe03
+flb_output_exit: 66910c10=046accf6=90978ac6
+flb_input_exit_all @ 66910c10: src/flb_input.c:2127 8df99a54c694a650
+flb_input_exit_all @ 046accf6: src/flb_input.c:2145 8df99a54c694a650
+flb_input_exit_all @ 90978ac6: src/flb_input.c:2145 8df99a54c694a650
+flb_input_exit_all: 66910c10=046accf6=90978ac6
+flb_input_instance_destroy @ 66910c10: src/flb_input.c:1148 5e5015c0dff3510f
+flb_input_instance_destroy @ 046accf6: src/flb_input.c:1152 66da9abe7606577d
+flb_input_instance_destroy @ 90978ac6: src/flb_input.c:1152 66da9abe7606577d
+flb_input_instance_destroy: 66910c10 | 046accf6=90978ac6
+flb_input_coro_destroy @ 66910c10: src/flb_input.c:722 c1ccc097d1b7c8cd
+flb_input_coro_destroy @ 046accf6: src/flb_input.c:723 c1ccc097d1b7c8cd
+flb_input_coro_destroy @ 90978ac6: src/flb_input.c:723 c1ccc097d1b7c8cd
+flb_input_coro_destroy: 66910c10=046accf6=90978ac6
+flb_input_collector_destroy @ 66910c10: src/flb_input.c:3120 400dd033c7b387de
+flb_input_collector_destroy @ 046accf6: src/flb_input.c:3140 400dd033c7b387de
+flb_input_collector_destroy @ 90978ac6: src/flb_input.c:3140 400dd033c7b387de
+flb_input_collector_destroy: 66910c10=046accf6=90978ac6
+flb_tail_file_remove @ 66910c10: plugins/in_tail/tail_file.c:1758 98a04b46fa563f2a
+flb_tail_file_remove @ 046accf6: plugins/in_tail/tail_file.c:1758 98a04b46fa563f2a
+flb_tail_file_remove @ 90978ac6: plugins/in_tail/tail_file.c:1994 ad02c55e5f242ede
+flb_tail_file_remove: 66910c10=046accf6 | 90978ac6
+flb_tail_file_remove_all @ 66910c10: plugins/in_tail/tail_file.c:1841 7d1fdeb7c28097c0
+flb_tail_file_remove_all @ 046accf6: plugins/in_tail/tail_file.c:1841 7d1fdeb7c28097c0
+flb_tail_file_remove_all @ 90978ac6: plugins/in_tail/tail_file.c:2154 7d1fdeb7c28097c0
+flb_tail_file_remove_all: 66910c10=046accf6=90978ac6
+flb_tail_config_destroy @ 66910c10: plugins/in_tail/tail_config.c:557 7f63c11d821476d1
+flb_tail_config_destroy @ 046accf6: plugins/in_tail/tail_config.c:557 7f63c11d821476d1
+flb_tail_config_destroy @ 90978ac6: plugins/in_tail/tail_config.c:584 0400a1ae7d5bb1a1
+flb_tail_config_destroy: 66910c10=046accf6 | 90978ac6
