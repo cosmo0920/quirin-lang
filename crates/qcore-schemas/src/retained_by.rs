@@ -168,6 +168,29 @@ impl RetentionGuard {
     }
 }
 
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (contract spec §C04.14,
+/// gateway rule 12t; USER DECISION 2026-10-16, "Tracked holder path"):
+/// `resource_retained_by(p, F.FIELD[.FIELD])`, a holder reached through a
+/// member of the formal `root`, spelled as a path and tracked at the call.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct PathRetention {
+    pub retained: usize,
+    /// The formal the holder path starts at.
+    pub root: usize,
+    /// The member names after the formal, outermost first (never empty).
+    pub fields: Vec<String>,
+}
+
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (contract spec §C04.14,
+/// rule 12t; USER DECISION 2026-10-16, "R3: quant state"): `quant live
+/// #H: #holds(P) |-> #absent;`. After the call the holder `H` no longer holds
+/// the registration of `P`; every other registration it holds is unchanged.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct Removal {
+    pub retained: usize,
+    pub holder: usize,
+}
+
 /// A declaration with retention clauses: its custody contract (every retained
 /// pointer and every reset holder `resource_borrowed`), its retentions and
 /// the parameters whose holders it resets. Card SLOT-MOVE-AND-INTERIOR-BORROW:
@@ -263,6 +286,15 @@ pub struct RetainingContract {
     /// there; never set by the loader; omitted when false.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub member_paths_withdrawn: bool,
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): the
+    /// retentions whose holder is a path below a formal, in clause order.
+    /// Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub path_retentions: Vec<PathRetention>,
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): the
+    /// removals of one registration, in clause order. Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub removals: Vec<Removal>,
 }
 
 impl RetainingContract {
@@ -270,6 +302,9 @@ impl RetainingContract {
     /// 12t's own clauses), as opposed to carrying only slot clauses.
     #[must_use]
     pub fn retains(&self) -> bool {
-        !self.retentions.is_empty() || !self.resets.is_empty()
+        !self.retentions.is_empty()
+            || !self.resets.is_empty()
+            || !self.path_retentions.is_empty()
+            || !self.removals.is_empty()
     }
 }

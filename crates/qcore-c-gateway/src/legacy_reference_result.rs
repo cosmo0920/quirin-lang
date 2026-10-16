@@ -369,6 +369,8 @@ pub(super) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
                         handoff: None,
                         member_paths: Vec::new(),
                         member_paths_withdrawn: false,
+                        path_retentions: Vec::new(),
+                        removals: Vec::new(),
                     },
                 )
             })
@@ -466,6 +468,8 @@ mod tests {
                 handoff: None,
                 member_paths: Vec::new(),
                 member_paths_withdrawn: false,
+                path_retentions: Vec::new(),
+                removals: Vec::new(),
             },
         );
         contracts.insert_retaining(
@@ -495,6 +499,8 @@ mod tests {
                 handoff: None,
                 member_paths: Vec::new(),
                 member_paths_withdrawn: false,
+                path_retentions: Vec::new(),
+                removals: Vec::new(),
             },
         );
         contracts

@@ -637,12 +637,37 @@ fn callback_clause(clause: &qcore_schemas::callback::CallbackClause) -> Clause {
             object,
             member,
             callback,
+            by_id: None,
         } => (
             ClauseKind::Callback,
             format!("#{object}, {}, #{callback}", member.spelling()),
         ),
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12n): a
+        // registration forwarded through the returned id.
+        CallbackClause::MemberRegistered {
+            object: _,
+            member,
+            callback,
+            by_id: Some(link),
+        } => (
+            ClauseKind::Callback,
+            format!("#{}, {}, #{callback}", link.binder, member.spelling()),
+        ),
     };
-    Clause::new(kind, format!("{keyword}({arguments})"))
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the id's binding.
+    let binding = match clause {
+        CallbackClause::MemberRegistered {
+            object,
+            by_id: Some(link),
+            ..
+        } => format!(
+            " where #{} = #result in #{object}.{}",
+            link.binder,
+            link.list.join(".")
+        ),
+        _ => String::new(),
+    };
+    Clause::new(kind, format!("{keyword}({arguments}){binding}"))
 }
 
 /// The clauses of every declaration of `environment` that live only in its
@@ -819,6 +844,8 @@ mod tests {
                 handoff: None,
                 member_paths: Vec::new(),
                 member_paths_withdrawn: false,
+                path_retentions: Vec::new(),
+                removals: Vec::new(),
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

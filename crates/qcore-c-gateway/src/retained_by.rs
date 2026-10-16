@@ -32,6 +32,19 @@
 //!
 //! The Lean model is `QCore.RetainedBy`; [`DECISION_VECTORS`] and
 //! [`TRACE_VECTORS`] are shared with it.
+//!
+//! Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (USER DECISIONS
+//! 2026-10-16, "Tracked holder path" and "R3: quant state"): a holder reached
+//! through a member of an unrebound caller formal is a **path holder**
+//! ([`Holder::Path`]); a retention there is recorded as held by that path and,
+//! like a tracked holder, refuses at an exit unless a removal of exactly that
+//! registration (`quant live #H: #holds(P) |-> #absent;`, [`Event::Remove`])
+//! drops it first. A removal drops only the exactly matching record; an
+//! unmatched removal drops nothing. A pointer into a member of an object
+//! (`&X->f`) is held as that interior ([`HeldObject::SiteInterior`]), and a
+//! release of the object while an interior is held refuses as a release of a
+//! held object does. The Lean model is `QCore.RetentionPath`, bound by
+//! [`PATH_DECISION_VECTORS`] and [`PATH_TRACE_VECTORS`].
 
 /// The prefix a retaining callee's custody contract is installed under for
 /// one classification (reserved: a source spelling it is escaped first).
@@ -71,8 +84,20 @@ pub enum Retained {
     CallerObject(String),
     /// One known live identity this body tracks.
     Tracked(usize),
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a member of one known
+    /// live identity this body tracks (`&X->f`), the members outermost first.
+    TrackedInterior(usize, Vec<String>),
     /// Anything else.
     Other,
+}
+
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION**: what a path holder
+/// starts at.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum PathRoot {
+    /// An unrebound formal of the calling function, which this body names
+    /// only through member accesses.
+    Formal(String),
 }
 
 /// What the holder's actual denotes.
@@ -85,6 +110,9 @@ pub enum Holder {
     Tracked(usize),
     /// The `global` holder, or storage of static duration.
     Global,
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the object a member
+    /// path below a formal holds (`coll->evl`), resolved at the call.
+    Path(PathRoot, Vec<String>),
     /// Anything else, a caller-supplied holder included.
     Foreign,
 }
@@ -95,8 +123,25 @@ pub enum HeldObject {
     /// A tracked identity: its release or transfer is refused while held.
     Site(usize),
     /// A caller's object: this body cannot release it, so only the exit
-    /// check reads it.
+    /// check reads it. Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: an
+    /// interior of a caller's object is named by its dotted path
+    /// (`coll.event`).
     Name(String),
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a member of a tracked
+    /// identity. Its release or transfer is refused as the identity's.
+    SiteInterior(usize, Vec<String>),
+}
+
+impl HeldObject {
+    /// The tracked identity the record keeps alive, if any: a release or a
+    /// transfer of it while held refuses.
+    #[must_use]
+    pub fn site(&self) -> Option<usize> {
+        match self {
+            Self::Site(site) | Self::SiteInterior(site, _) => Some(*site),
+            Self::Name(_) => None,
+        }
+    }
 }
 
 /// What holds a recorded retention.
@@ -106,6 +151,10 @@ pub enum HeldBy {
     Frame(String),
     /// A tracked identity: holds until reset or released.
     Site(usize),
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the object at a member
+    /// path below a formal; holds until a removal of exactly this record or a
+    /// reset of that same path, and outlives the frame.
+    Path(PathRoot, Vec<String>),
 }
 
 /// The decision at one retaining call.
@@ -135,7 +184,48 @@ pub fn decide(retained: &Retained, holder: &Holder) -> Decision {
         (Retained::Tracked(site), Holder::Tracked(holder)) => {
             Decision::Record(HeldObject::Site(*site), HeldBy::Site(*holder))
         }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: an interior is held
+        // as the identity's member; a path holder records like a tracked one.
+        (Retained::TrackedInterior(site, fields), holder) => {
+            let object = HeldObject::SiteInterior(*site, fields.clone());
+            match holder {
+                Holder::Frame(name) => Decision::Record(object, HeldBy::Frame(name.clone())),
+                Holder::Tracked(holder) => Decision::Record(object, HeldBy::Site(*holder)),
+                Holder::Path(root, fields) => {
+                    Decision::Record(object, HeldBy::Path(root.clone(), fields.clone()))
+                }
+                Holder::Global | Holder::Foreign => Decision::Undecided,
+            }
+        }
+        (Retained::CallerObject(name), Holder::Path(root, fields)) => Decision::Record(
+            HeldObject::Name(name.clone()),
+            HeldBy::Path(root.clone(), fields.clone()),
+        ),
+        (Retained::Tracked(site), Holder::Path(root, fields)) => Decision::Record(
+            HeldObject::Site(*site),
+            HeldBy::Path(root.clone(), fields.clone()),
+        ),
     }
+}
+
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): the record
+/// a removal of `retained` from `holder` names, when both are decided; `None`
+/// drops nothing (an unmatched removal).
+#[must_use]
+pub fn removal_key(retained: &Retained, holder: &Holder) -> Option<(HeldObject, HeldBy)> {
+    let object = match retained {
+        Retained::CallerObject(name) => HeldObject::Name(name.clone()),
+        Retained::Tracked(site) => HeldObject::Site(*site),
+        Retained::TrackedInterior(site, fields) => HeldObject::SiteInterior(*site, fields.clone()),
+        Retained::Static | Retained::Other => return None,
+    };
+    let by = match holder {
+        Holder::Frame(name) => HeldBy::Frame(name.clone()),
+        Holder::Tracked(site) => HeldBy::Site(*site),
+        Holder::Path(root, fields) => HeldBy::Path(root.clone(), fields.clone()),
+        Holder::Global | Holder::Foreign => return None,
+    };
+    Some((object, by))
 }
 
 /// The refusal of an undecided retention.
@@ -175,6 +265,9 @@ pub enum Event {
     ResetSite(usize),
     /// A release of a tracked holder.
     ReleaseHolder(usize),
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a removal of one
+    /// registration (`None`: undecided, drops nothing).
+    Remove(Option<(HeldObject, HeldBy)>),
 }
 
 /// The outcome of a path: `Safe` only when no event refused and no tracked
@@ -195,10 +288,7 @@ pub fn replay(events: &[Event]) -> Outcome {
             Event::Retain(Decision::Undecided) => return Outcome::Refused,
             Event::Retain(Decision::Record(object, by)) => held.push((object.clone(), by.clone())),
             Event::Release(site) => {
-                if held
-                    .iter()
-                    .any(|(object, _)| *object == HeldObject::Site(*site))
-                {
+                if held.iter().any(|(object, _)| object.site() == Some(*site)) {
                     return Outcome::Refused;
                 }
                 // A released holder holds nothing any more.
@@ -208,11 +298,16 @@ pub fn replay(events: &[Event]) -> Outcome {
             Event::ResetSite(site) | Event::ReleaseHolder(site) => {
                 held.retain(|(_, by)| *by != HeldBy::Site(*site));
             }
+            Event::Remove(Some(record)) => held.retain(|existing| existing != record),
+            Event::Remove(None) => {}
         }
     }
-    // A frame holder dies at the exit; a tracked holder still holding
+    // A frame holder dies at the exit; a tracked or path holder still holding
     // outlives the frame.
-    if held.iter().any(|(_, by)| matches!(by, HeldBy::Site(_))) {
+    if held
+        .iter()
+        .any(|(_, by)| matches!(by, HeldBy::Site(_) | HeldBy::Path(..)))
+    {
         Outcome::Refused
     } else {
         Outcome::Safe
@@ -306,6 +401,87 @@ pub fn trace(name: &str) -> Vec<Event> {
     }
 }
 
+/// `pathDecisionVectors` of `QCore.RetentionPath`: retained class, holder
+/// class, decision, for the classes card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION
+/// adds (a path holder; an interior of a tracked identity).
+pub const PATH_DECISION_VECTORS: &[(&str, &str, &str)] = &[
+    ("static", "path", "outlives"),
+    ("caller", "path", "record"),
+    ("tracked", "path", "record"),
+    ("interior", "path", "record"),
+    ("other", "path", "undecided"),
+    ("interior", "frame", "record"),
+    ("interior", "tracked", "record"),
+    ("interior", "global", "undecided"),
+    ("interior", "foreign", "undecided"),
+];
+
+/// `pathTraceVectors` of `QCore.RetentionPath`: the card's controls as event
+/// paths, and whether each is `Safe`.
+pub const PATH_TRACE_VECTORS: &[(&str, bool)] = &[
+    // A caller's object registered at a path and still held at the exit.
+    ("path-held-at-exit", false),
+    // Registered at a path, then removed from exactly that path.
+    ("path-removed", true),
+    // Removed from another path: the record stays.
+    ("path-removed-elsewhere", false),
+    // A removal whose object is undecided drops nothing.
+    ("path-removal-undecided", false),
+    // A removal with no record is the identity.
+    ("removal-without-record", true),
+    // An interior held by a tracked loop; the object released while held.
+    ("interior-released-while-held", false),
+    // The tracked loop released first (destroyed before deregistration):
+    // the record ends with it, and the object's release decides.
+    ("loop-destroyed-then-release", true),
+    // Two registrations at one path; removing one leaves the other.
+    ("one-of-two-removed", false),
+];
+
+/// The event path a [`PATH_TRACE_VECTORS`] row names.
+#[must_use]
+pub fn path_trace(name: &str) -> Vec<Event> {
+    let path = || Holder::Path(PathRoot::Formal("coll".into()), vec!["evl".into()]);
+    let other = || Holder::Path(PathRoot::Formal("config".into()), vec!["evl".into()]);
+    let caller = || Retained::CallerObject("coll.event".into());
+    let interior = || Retained::TrackedInterior(1, vec!["event".into()]);
+    match name {
+        "path-held-at-exit" => vec![Event::Retain(decide(&caller(), &path()))],
+        "path-removed" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&caller(), &path())),
+        ],
+        "path-removed-elsewhere" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&caller(), &other())),
+        ],
+        "path-removal-undecided" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Remove(removal_key(&Retained::Other, &path())),
+        ],
+        "removal-without-record" => vec![Event::Remove(removal_key(&caller(), &path()))],
+        "interior-released-while-held" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::Release(1),
+            Event::ReleaseHolder(2),
+        ],
+        "loop-destroyed-then-release" => vec![
+            Event::Retain(decide(&interior(), &Holder::Tracked(2))),
+            Event::ReleaseHolder(2),
+            Event::Release(1),
+        ],
+        "one-of-two-removed" => vec![
+            Event::Retain(decide(&caller(), &path())),
+            Event::Retain(decide(
+                &Retained::CallerObject("coll.timer".into()),
+                &path(),
+            )),
+            Event::Remove(removal_key(&caller(), &path())),
+        ],
+        _ => Vec::new(),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -345,6 +521,36 @@ mod tests {
         for (name, safe) in TRACE_VECTORS {
             let outcome = replay(&trace(name));
             assert_eq!(outcome == Outcome::Safe, *safe, "{name}");
+        }
+    }
+
+    #[test]
+    fn path_vectors_bind_the_table_and_the_replay() {
+        let retained = |name: &str| match name {
+            "static" => Retained::Static,
+            "caller" => Retained::CallerObject("p".into()),
+            "tracked" => Retained::Tracked(1),
+            "interior" => Retained::TrackedInterior(1, vec!["event".into()]),
+            _ => Retained::Other,
+        };
+        let holder = |name: &str| match name {
+            "path" => Holder::Path(PathRoot::Formal("h".into()), vec!["evl".into()]),
+            "frame" => Holder::Frame("L".into()),
+            "tracked" => Holder::Tracked(2),
+            "global" => Holder::Global,
+            _ => Holder::Foreign,
+        };
+        for (p, h, expected) in PATH_DECISION_VECTORS {
+            let label = match decide(&retained(p), &holder(h)) {
+                Decision::Outlives => "outlives",
+                Decision::Record(..) => "record",
+                Decision::Undecided => "undecided",
+            };
+            assert_eq!(label, *expected, "{p} {h}");
+        }
+        for (name, safe) in PATH_TRACE_VECTORS {
+            assert!(!path_trace(name).is_empty(), "{name}");
+            assert_eq!(replay(&path_trace(name)) == Outcome::Safe, *safe, "{name}");
         }
     }
 

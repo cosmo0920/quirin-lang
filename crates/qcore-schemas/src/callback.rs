@@ -141,11 +141,32 @@ pub enum CallbackClause {
     /// (`resource_callback_member_registered(conf, TAG.FIELD, cb)`, a setter).
     /// For the run's closure every call of the declaration is a store of its
     /// `callback` actual into `member`; a declared assumption.
+    ///
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12n; USER
+    /// DECISION 2026-10-16, "Result + list"): with `by_id`, the clause is
+    /// `resource_callback_member_registered(#id, TAG.FIELD, F) where #id =
+    /// #result in P.LIST;` and the record holding the member is the one the
+    /// call links into `object`'s member path `by_id.list` and names by the
+    /// integer it returns; `object` is the list's formal. Consumers read it
+    /// as the setter form; the run's closure reads it as a store of
+    /// `callback`'s actual.
     MemberRegistered {
         object: usize,
         member: CallbackMember,
         callback: usize,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        by_id: Option<IdLink>,
     },
+}
+
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION**: the `where #ID =
+/// #result in P.LIST` binding of a registration forwarded through an id.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct IdLink {
+    /// The binder's name, without its `#` (`id`).
+    pub binder: String,
+    /// The member path of the list below the formal, outermost first.
+    pub list: Vec<String>,
 }
 
 impl CallbackClause {

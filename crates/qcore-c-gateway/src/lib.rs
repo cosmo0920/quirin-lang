@@ -69,6 +69,9 @@ mod relational_post;
 // Card CALLEE-RETENTION-CLASS1 (gateway rule 12t): retained pointers; the
 // decisions are here, the G hooks in `legacy_retained_by.rs`.
 pub mod retained_by;
+// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12n): the body check
+// of a registration forwarded through an id.
+pub mod registration_by_id;
 // Card CG22-CALLBACK-REGISTRY-CONTRACT (rules 13u-13y): callback contracts.
 pub mod arm_release_check;
 pub mod callback_contracts;

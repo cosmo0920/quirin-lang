@@ -1,0 +1,98 @@
+module contract;
+
+// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (gateway rules 12t and 12n,
+// contract spec C04.14 and C04.19.3): synthetic `ev_*` / `e_*` callees
+// shaped like Monkey's registrations and Fluent Bit's collector setters.
+// Trusted test assumptions, not facts about any library.
+
+extern fn ev_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn ev_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn ev_loop_create() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn ev_loop_destroy(loop: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(loop, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn ev_add(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, loop);
+    ensures normal resource_return_none();
+};
+
+extern fn ev_del(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(data);
+    quant live #loop: #holds(data) |-> #absent;
+    ensures normal resource_return_none();
+};
+
+extern fn ev_touch(coll: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(coll);
+    ensures normal resource_return_none();
+};
+
+extern fn e_start(coll: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(coll);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_retained_by(coll, coll.evl);
+    ensures normal resource_return_none();
+};
+
+extern fn e_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(entry);
+    ensures normal resource_borrowed(head);
+    ensures normal resource_published(entry, head);
+    ensures normal resource_return_none();
+};
+
+extern fn e_set(ins: ptr<mut, u8>, cb: fnptr, seconds: i64, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(seconds);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_callback_member_registered(#id, e_coll.cb_collect, cb) where #id = #result in ins.collectors;
+    ensures normal resource_return_none();
+};
+
+extern fn e_set_bad(ins: ptr<mut, u8>, cb: fnptr, seconds: i64, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(cb);
+    ensures normal resource_borrowed(seconds);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_callback_member_registered(#id, e_coll.cb_collect, cb) where #id = #result in ins.collectors;
+    ensures normal resource_return_none();
+};

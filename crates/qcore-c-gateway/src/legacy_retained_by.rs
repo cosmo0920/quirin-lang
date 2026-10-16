@@ -29,8 +29,9 @@ use super::{
     AbstractState, LIVE, LegacyDiagnostic, LegacyDiagnosticKind, LegacyInstruction, Parser, Token,
 };
 use crate::retained_by::{
-    Decision, HeldBy, HeldObject, Holder, Retained, decide, exit_description,
-    released_while_held_description, retained_callee, retained_name, undecided_description,
+    Decision, HeldBy, HeldObject, Holder, PathRoot, Retained, decide, exit_description,
+    released_while_held_description, removal_key, retained_callee, retained_name,
+    undecided_description,
 };
 
 /// A retained pointer's actual, as spelled.
@@ -42,6 +43,9 @@ pub enum RetainedSpelling {
     Formal(String),
     /// Any other plain name.
     Name(String),
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `&X->f[->g]` (or
+    /// `.`), a pointer to a member of the object the plain name `X` denotes.
+    Interior(String, Vec<String>),
 }
 
 /// A holder's actual, as spelled.
@@ -56,6 +60,12 @@ pub enum HolderSpelling {
     /// Card **REFCOUNT-REFERENCE-RETURNING-DECLARATIONS** (rule 13e): the
     /// object the call returns, decided against the call's destination.
     Result,
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t, USER
+    /// DECISION 2026-10-16, "Tracked holder path"): the object at a member
+    /// path below an unrebound formal this body names only through member
+    /// accesses off the path (`coll->evl`). Anything else spelled through a
+    /// member is not a holder this body can name.
+    Path(String, Vec<String>),
 }
 
 /// The operands of one retaining call, in clause order.
@@ -75,6 +85,10 @@ pub struct Operands {
     /// ([`super::callback_route`]). `None` for every call whose declaration
     /// carries no registry clause.
     pub callbacks: Option<Box<super::callback_route::Operands>>,
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): each
+    /// removal's `(retained, holder)` as spelled, `None` where the actual is
+    /// not a spelling a record can be keyed on (the removal drops nothing).
+    pub removals: Vec<(Option<RetainedSpelling>, Option<HolderSpelling>)>,
 }
 
 /// The derived form, with `callbacks` printed only when present, so every
@@ -89,6 +103,9 @@ impl std::fmt::Debug for Operands {
             .field("references", &self.references);
         if let Some(callbacks) = &self.callbacks {
             out.field("callbacks", callbacks);
+        }
+        if !self.removals.is_empty() {
+            out.field("removals", &self.removals);
         }
         out.finish()
     }
@@ -209,6 +226,58 @@ fn only_holder_mentions(body: &[&str], name: &str, contracts: &ResourceContracts
     declarations == 1
 }
 
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t, premise
+/// `P-HOLDER-PATH-STABLE`): whether `root` names, throughout `body`, only
+/// member accesses (`root->f` / `root.f`) and none of them stores into, takes
+/// the address of, or steps a member path that is a prefix of `fields`. The
+/// path then denotes one object for the whole body: the formal is never
+/// copied or rebound, and no call receives it whole or a view of the path.
+fn path_stable(body: &[&str], root: &str, fields: &[String]) -> bool {
+    let body = merged_punctuators(body);
+    let body = body.iter().map(String::as_str).collect::<Vec<_>>();
+    let mut seen = false;
+    for (index, token) in body.iter().enumerate() {
+        if *token != root {
+            continue;
+        }
+        let previous = index.checked_sub(1).map(|at| body[at]);
+        if matches!(previous, Some("." | "->")) {
+            continue;
+        }
+        seen = true;
+        // The member chain that follows the mention.
+        let mut at = index + 1;
+        let mut chain: Vec<&str> = Vec::new();
+        while matches!(body.get(at), Some(&"->" | &".")) {
+            let Some(name) = body.get(at + 1) else {
+                return false;
+            };
+            chain.push(name);
+            at += 2;
+        }
+        if chain.is_empty() {
+            return false;
+        }
+        let on_path = chain
+            .iter()
+            .zip(fields)
+            .take_while(|(segment, field)| **segment == field.as_str())
+            .count();
+        // A prefix of the path (or the path itself, or below it) is written,
+        // stepped or has its address taken.
+        let prefix = on_path == chain.len().min(fields.len()) && on_path > 0;
+        let written = matches!(
+            body.get(at),
+            Some(&"=" | &"+=" | &"-=" | &"++" | &"--" | &"|=" | &"&=" | &"^=")
+        ) || matches!(previous, Some("++" | "--"));
+        let address = previous == Some("&");
+        if prefix && (written || address) {
+            return false;
+        }
+    }
+    seen
+}
+
 impl Parser<'_> {
     /// Hook (rule 12t): classify a call to a retaining callee, or `None` when
     /// `function` has no retaining declaration.
@@ -249,7 +318,9 @@ impl Parser<'_> {
                 [name] if is_identifier(name) => {
                     Some((HolderSpelling::Name((*name).to_owned()), text))
                 }
-                _ => None,
+                // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: a member
+                // path below an unrebound formal of this function.
+                _ => this.path_holder(spelled, &[], body.as_deref()),
             }
         };
         let mut operands = Operands {
@@ -258,6 +329,7 @@ impl Parser<'_> {
             slots: Vec::new(),
             references: Vec::new(),
             callbacks: None,
+            removals: Vec::new(),
         };
         // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
         // operands, or the refusal of a declaration withdrawn in this unit.
@@ -309,28 +381,7 @@ impl Parser<'_> {
                 }
             }
             let retained_text = actual(retention.retained).map(|a| a.join(" "));
-            let retained = match actual(retention.retained) {
-                // The lexer collapses a string literal to this placeholder
-                // (premise P-RETAINED-LITERAL: at a pointer position it is a
-                // string literal, since a character literal there is an
-                // integer-to-pointer conversion Clang rejects by default).
-                Some(["__qcore_literal__"]) => Some(RetainedSpelling::Literal),
-                // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13e,
-                // P-RETAINED-PREDEFINED): `__func__` is a static array (C11
-                // 6.4.2.2p1) and `__FUNCTION__`, `__PRETTY_FUNCTION__` are
-                // its GNU spellings, which Clang lexes as keywords.
-                Some([name]) if crate::retained_by::PREDEFINED_IDENTIFIERS.contains(name) => {
-                    Some(RetainedSpelling::Literal)
-                }
-                Some([name]) if is_identifier(name) => {
-                    Some(if self.caller_formals.contains(name) {
-                        RetainedSpelling::Formal((*name).to_owned())
-                    } else {
-                        RetainedSpelling::Name((*name).to_owned())
-                    })
-                }
-                _ => None,
-            };
+            let retained = self.retained_spelling(actual(retention.retained));
             let held = match retention.holder {
                 RetentionHolder::Global => Some((HolderSpelling::Global, "global".to_owned())),
                 RetentionHolder::Result => Some((HolderSpelling::Result, "result".to_owned())),
@@ -360,6 +411,42 @@ impl Parser<'_> {
                     ));
                 }
             }
+        }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a
+        // retention whose declared holder is a path below a formal: the
+        // actual at that formal followed by the path's members.
+        for retention in &declaration.path_retentions {
+            let retained_text =
+                actual(retention.retained).map_or_else(|| "?".to_owned(), |a| a.join(" "));
+            let root = actual(retention.root);
+            let holder_text = root.map_or_else(
+                || "?".to_owned(),
+                |a| format!("{}->{}", a.join(" "), retention.fields.join("->")),
+            );
+            let retained = self.retained_spelling(actual(retention.retained));
+            let held =
+                root.and_then(|root| self.path_holder(root, &retention.fields, body.as_deref()));
+            match (retained, held) {
+                (Some(retained), Some((held, _))) => {
+                    operands
+                        .retentions
+                        .push((retained, retained_text, held, holder_text));
+                }
+                _ => {
+                    return Some(refuse(
+                        self,
+                        undecided_description(function, &retained_text, &holder_text),
+                    ));
+                }
+            }
+        }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t, USER
+        // DECISION 2026-10-16, "R3: quant state"): each removal, never a
+        // refusal: an actual no record can be keyed on drops nothing.
+        for removal in &declaration.removals {
+            let retained = self.retained_spelling(actual(removal.retained));
+            let held = holder(self, removal.holder).map(|(held, _)| held);
+            operands.removals.push((retained, held));
         }
         for &reset in &declaration.resets {
             // A reset of a holder this body cannot name forgets nothing it
@@ -417,6 +504,60 @@ impl Parser<'_> {
         Some(instruction)
     }
 
+    /// A retained pointer's actual, as spelled (rule 12t), or `None` for a
+    /// spelling no record can be keyed on.
+    fn retained_spelling(&self, actual: Option<&[&str]>) -> Option<RetainedSpelling> {
+        match actual {
+            // The lexer collapses a string literal to this placeholder
+            // (premise P-RETAINED-LITERAL: at a pointer position it is a
+            // string literal, since a character literal there is an
+            // integer-to-pointer conversion Clang rejects by default).
+            Some(["__qcore_literal__"]) => Some(RetainedSpelling::Literal),
+            // Card REFCOUNT-REFERENCE-RETURNING-DECLARATIONS (rule 13e,
+            // P-RETAINED-PREDEFINED): `__func__` is a static array (C11
+            // 6.4.2.2p1) and `__FUNCTION__`, `__PRETTY_FUNCTION__` are its GNU
+            // spellings, which Clang lexes as keywords.
+            Some([name]) if crate::retained_by::PREDEFINED_IDENTIFIERS.contains(name) => {
+                Some(RetainedSpelling::Literal)
+            }
+            Some([name]) if is_identifier(name) => Some(if self.caller_formals.contains(name) {
+                RetainedSpelling::Formal((*name).to_owned())
+            } else {
+                RetainedSpelling::Name((*name).to_owned())
+            }),
+            // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `&X->f[->g]`.
+            Some(["&", root, rest @ ..]) if is_identifier(root) => member_chain(rest)
+                .map(|fields| RetainedSpelling::Interior((*root).to_owned(), fields)),
+            _ => None,
+        }
+    }
+
+    /// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (rule 12t): the
+    /// holder `root` (an actual) followed by the declared members `fields`,
+    /// when the whole is a member path below an unrebound formal of this
+    /// function that the body names only through member accesses off the
+    /// path (`path_stable`); `None` otherwise.
+    fn path_holder(
+        &self,
+        root: &[&str],
+        fields: &[String],
+        body: Option<&[&str]>,
+    ) -> Option<(HolderSpelling, String)> {
+        let (name, mut chain) = match root {
+            [name, rest @ ..] if is_identifier(name) => ((*name).to_owned(), member_chain(rest)?),
+            _ => return None,
+        };
+        chain.extend(fields.iter().cloned());
+        if chain.is_empty()
+            || !self.caller_formals.contains(name.as_str())
+            || !body.is_some_and(|body| path_stable(body, &name, &chain))
+        {
+            return None;
+        }
+        let text = format!("{name}->{}", chain.join("->"));
+        Some((HolderSpelling::Path(name, chain), text))
+    }
+
     /// The calling function's body, as texts, between its braces.
     fn function_body_texts(&self) -> Option<Vec<&str>> {
         let (start, _) = super::find_function_body(self.tokens, &self.typed_path_function)?;
@@ -428,6 +569,46 @@ impl Parser<'_> {
                 .collect(),
         )
     }
+}
+
+/// `-> f -> g` (or `.`) as member names, `None` for anything else; empty for
+/// no tokens.
+fn member_chain(tokens: &[&str]) -> Option<Vec<String>> {
+    let tokens = merged_punctuators(tokens);
+    let tokens = tokens.iter().map(String::as_str).collect::<Vec<_>>();
+    let mut fields = Vec::new();
+    let mut rest = tokens.as_slice();
+    while let [access, name, tail @ ..] = rest {
+        if !matches!(*access, "->" | ".") || !is_identifier(name) {
+            return None;
+        }
+        fields.push((*name).to_owned());
+        rest = tail;
+    }
+    rest.is_empty().then_some(fields)
+}
+
+/// `words` with every two-byte punctuator the lexer emits byte by byte
+/// (`-` `>`, `=` `=`, `+` `+`, `+` `=`, …) read as one token.
+fn merged_punctuators(words: &[&str]) -> Vec<String> {
+    const PAIRS: [&str; 15] = [
+        "->", "==", "!=", "<=", ">=", "++", "--", "+=", "-=", "*=", "/=", "|=", "&=", "^=", "%=",
+    ];
+    let mut merged = Vec::with_capacity(words.len());
+    let mut at = 0;
+    while at < words.len() {
+        if let Some(next) = words.get(at + 1) {
+            let pair = format!("{}{next}", words[at]);
+            if words[at].len() == 1 && next.len() == 1 && PAIRS.contains(&pair.as_str()) {
+                merged.push(pair);
+                at += 2;
+                continue;
+            }
+        }
+        merged.push(words[at].to_owned());
+        at += 1;
+    }
+    merged
 }
 
 /// The one known live identity `name` denotes, if it denotes exactly one.
@@ -460,6 +641,15 @@ fn holder_class(
             .filter(|place| crate::may_alias::place_root(place) == Some(*place))
             .and_then(|place| tracked(state, place))
             .map_or(Holder::Foreign, Holder::Tracked),
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: an unbound formal
+        // (one this body holds no custody of) roots a path holder.
+        HolderSpelling::Path(root, fields) => {
+            if state.pointers.contains_key(root) {
+                Holder::Foreign
+            } else {
+                Holder::Path(PathRoot::Formal(root.clone()), fields.clone())
+            }
+        }
     }
 }
 
@@ -474,6 +664,25 @@ pub(super) fn retained_class(state: &AbstractState, retained: &RetainedSpelling)
         },
         RetainedSpelling::Name(name) => {
             tracked(state, name).map_or(Retained::Other, Retained::Tracked)
+        }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: an interior of a
+        // caller's object is that object's member; of a tracked identity, its
+        // member; anything else is undecided.
+        RetainedSpelling::Interior(root, fields) => {
+            match retained_class(
+                state,
+                &if state.pointers.contains_key(root) {
+                    RetainedSpelling::Name(root.clone())
+                } else {
+                    RetainedSpelling::Formal(root.clone())
+                },
+            ) {
+                Retained::CallerObject(name) => {
+                    Retained::CallerObject(format!("{name}.{}", fields.join(".")))
+                }
+                Retained::Tracked(site) => Retained::TrackedInterior(site, fields.clone()),
+                _ => Retained::Other,
+            }
         }
     }
 }
@@ -495,7 +704,24 @@ pub(super) fn apply(
                 .retained
                 .retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
             Holder::Tracked(site) => state.retained.retain(|(_, by)| *by != HeldBy::Site(site)),
+            Holder::Path(root, fields) => {
+                let by = HeldBy::Path(root, fields);
+                state.retained.retain(|(_, held)| *held != by);
+            }
             Holder::Global | Holder::Foreign => {}
+        }
+    }
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12t): a removal
+    // drops exactly the record it names, and nothing when it names none.
+    for (retained, holder) in &operands.removals {
+        let (Some(retained), Some(holder)) = (retained, holder) else {
+            continue;
+        };
+        if let Some(record) = removal_key(
+            &retained_class(state, retained),
+            &holder_class(state, holder, destination),
+        ) {
+            state.retained.remove(&record);
         }
     }
     for (retained, retained_text, holder, holder_text) in &operands.retentions {
@@ -549,7 +775,7 @@ pub(super) fn refuse_release_of_held(
     let held = state
         .retained
         .iter()
-        .any(|(object, _)| *object == HeldObject::Site(site));
+        .any(|(object, _)| object.site() == Some(site));
     if held {
         diagnostics.insert(LegacyDiagnostic {
             function: function.to_owned(),
@@ -578,10 +804,12 @@ pub(super) fn report_exit(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (object, by) in &state.retained {
-        if matches!(by, HeldBy::Site(_)) {
+        if matches!(by, HeldBy::Site(_) | HeldBy::Path(..)) {
             let name = match object {
                 HeldObject::Name(name) => name.clone(),
-                HeldObject::Site(_) => "a pointer this body tracks".to_owned(),
+                HeldObject::Site(_) | HeldObject::SiteInterior(..) => {
+                    "a pointer this body tracks".to_owned()
+                }
             };
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
@@ -591,5 +819,47 @@ pub(super) fn report_exit(
                 },
             });
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{member_chain, path_stable};
+
+    fn words(text: &str) -> Vec<&str> {
+        text.split_whitespace().collect()
+    }
+
+    #[test]
+    fn a_path_is_stable_only_where_its_formal_is_read_through_members_off_it() {
+        let fields = ["evl".to_owned()];
+        // Split punctuators, as the lexer emits them.
+        let stable = words("{ ev_add ( coll - > evl , & coll - > event ) ; coll - > id = 1 ; }");
+        assert!(path_stable(&stable, "coll", &fields));
+        for unstable in [
+            "{ coll - > evl = other ; }",
+            "{ ev_touch ( coll ) ; }",
+            "{ p = coll ; }",
+            "{ peek ( & coll - > evl ) ; }",
+            "{ coll - > evl + + ; }",
+            // A write below the path is read cautiously as a write of it.
+            "{ coll - > evl - > n = 1 ; }",
+            "{ }",
+        ] {
+            assert!(
+                !path_stable(&words(unstable), "coll", &fields),
+                "{unstable}"
+            );
+        }
+    }
+
+    #[test]
+    fn member_chains_read_both_spellings_of_the_arrow() {
+        assert_eq!(
+            member_chain(&["-", ">", "a", ".", "b"]),
+            Some(vec!["a".to_owned(), "b".to_owned()])
+        );
+        assert_eq!(member_chain(&["->", "a"]), Some(vec!["a".to_owned()]));
+        assert_eq!(member_chain(&["[", "0", "]"]), None);
     }
 }

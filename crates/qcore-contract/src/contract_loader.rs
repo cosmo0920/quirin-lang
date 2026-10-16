@@ -1735,9 +1735,17 @@ fn load_function_in(
     // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the member-path states, as
     // written, their guards' constants canonical.
     let mut member_path_clauses: Vec<member_path::Written> = Vec::new();
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.14): holder-path
+    // retentions and removals of one registration, as written.
+    let mut path_retentions: Vec<retained_by::WrittenPath> = Vec::new();
+    let mut removals: Vec<(String, String)> = Vec::new();
     for clause in clauses {
         if clause.value.kind == SourceContractClauseKind::QuantLive {
-            if member_path::is_member_path(&clause.value.expression_source) {
+            if retained_by::is_removal(&clause.value.expression_source) {
+                removals.push(retained_by::removal_clause(
+                    &clause.value.expression_source,
+                )?);
+            } else if member_path::is_member_path(&clause.value.expression_source) {
                 member_path_clauses.push(member_path::quant_live_clause(
                     &clause.value.expression_source,
                     aliases,
@@ -1943,6 +1951,12 @@ fn load_function_in(
         // does not read.
         if let Some(written) = callback::member_clause(expression)? {
             callback_clauses.push(written);
+            continue;
+        }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.14, rule 12t):
+        // a retention whose holder is a path below a formal.
+        if let Some(written) = retained_by::path_clause(expression)? {
+            path_retentions.push(written);
             continue;
         }
         // Card W43-ABI-ENUM-AND-CONST-PP (§C04.14.1, rule 12w): a guarded
@@ -2417,6 +2431,8 @@ fn load_function_in(
     // Card CALLEE-RETENTION-CLASS1 (§C04.14).
     let retaining = if retentions.is_empty()
         && resets.is_empty()
+        && path_retentions.is_empty()
+        && removals.is_empty()
         && slot_clauses.is_empty()
         && reference_clauses.is_empty()
         && callback_clauses.is_empty()
@@ -2453,6 +2469,27 @@ fn load_function_in(
             &parameter_kinds,
             &names,
         )?;
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.14, rule 12t).
+        let (path_declared, removals_declared) = retained_by::paths_and_removals(
+            &path_retentions,
+            &removals,
+            &declared,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?;
+        declared.path_retentions = path_declared;
+        declared.removals = removals_declared;
+        if !declared.removals.is_empty()
+            && let Some(name) = [retained_by::HOLDS, "absent"]
+                .into_iter()
+                .find(|name| names.contains_key(*name))
+        {
+            return Err(format!(
+                "`#{name}` is reserved in a `#` form: rename the parameter `{name}`"
+            ));
+        }
         // Card SLOT-MOVE-AND-INTERIOR-BORROW (§C04.15, §C04.16).
         let (slot_moves, derived_outs) = slot_move::declaration(
             &slot_clauses,
@@ -2461,6 +2498,14 @@ fn load_function_in(
             &parameter_kinds,
             &names,
         )?;
+        if (!declared.path_retentions.is_empty() || !declared.removals.is_empty())
+            && (!slot_moves.is_empty() || !derived_outs.is_empty())
+        {
+            return Err(
+                "a holder path or a removal stands only beside retentions and plain predicates"
+                    .into(),
+            );
+        }
         if let Some(retention) = declared.retentions.iter().find(|retention| {
             slot_moves
                 .iter()
@@ -2529,6 +2574,29 @@ fn load_function_in(
             }) {
                 return Err("a registry element is not also a retained pointer".into());
             }
+        }
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.19.3): `#id =
+        // #result` binds an integer result the declaration states nothing of.
+        if callbacks.iter().any(|clause| {
+            matches!(
+                clause,
+                qcore_schemas::callback::CallbackClause::MemberRegistered { by_id: Some(_), .. }
+            )
+        }) && (retained_by::guard_range(return_type).is_none()
+            || contract.result != ResourceReturnMode::None)
+        {
+            return Err(
+                "`#result` in an id binding is an integer result with `resource_return_none()`"
+                    .into(),
+            );
+        }
+        if (!declared.path_retentions.is_empty() || !declared.removals.is_empty())
+            && (!declared.references.is_empty())
+        {
+            return Err(
+                "a holder path or a removal stands only beside retentions and plain predicates"
+                    .into(),
+            );
         }
         declared.callbacks = callbacks;
         // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (§C04.19.2): the

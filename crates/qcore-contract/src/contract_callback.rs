@@ -66,6 +66,102 @@ const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
 pub(super) struct WrittenCallback {
     pub(super) keyword: &'static str,
     pub(super) arguments: Vec<String>,
+    /// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the `where #ID =
+    /// #result in P.LIST` binding of a registration forwarded through an id,
+    /// `(ID, P, LIST)`; the first argument is then `#ID`.
+    pub(super) by_id: Option<(String, String, Vec<String>)>,
+}
+
+/// Card **FB-EVENT-LOOP-RETENTION-AND-REGISTRATION** (§C04.19.3, rule 12n;
+/// USER DECISION 2026-10-16, "Result + list"): the binding keyword.
+pub(super) const WHERE: &str = "where";
+/// The binding's set word.
+pub(super) const IN: &str = "in";
+/// The bound value: the call's integer result.
+pub(super) const RESULT_VALUE: &str = "#result";
+
+fn plain_identifier(text: &str) -> bool {
+    !text.is_empty()
+        && !text.starts_with(|ch: char| ch.is_ascii_digit())
+        && text
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+}
+
+/// Read `resource_callback_member_registered(#ID, TAG.FIELD, F) where #ID =
+/// #result in P.LIST[.LIST]`, `None` when the expression carries no
+/// `where`. Every other shape with `where` rejects the module.
+fn by_id_clause(expression: &str) -> Result<Option<WrittenCallback>, String> {
+    let Some(rest) = expression.trim().strip_prefix(MEMBER_REGISTERED) else {
+        return Ok(None);
+    };
+    if !expression
+        .split(|ch: char| !(ch == '_' || ch.is_ascii_alphanumeric()))
+        .any(|word| word == WHERE)
+    {
+        return Ok(None);
+    }
+    let malformed = || {
+        format!(
+            "malformed `{MEMBER_REGISTERED}` clause `{expression}`: a registration forwarded \
+             through an id is `{MEMBER_REGISTERED}(#id, TAG.FIELD, F) where #id = #result in \
+             P.LIST;`"
+        )
+    };
+    let rest = rest.trim_start().strip_prefix('(').ok_or_else(malformed)?;
+    let close = rest.find(')').ok_or_else(malformed)?;
+    let (inner, binding) = rest.split_at(close);
+    let binding = binding[1..].trim();
+    let arguments = inner.split(',').map(str::trim).collect::<Vec<_>>();
+    let [id, member, callback] = arguments.as_slice() else {
+        return Err(malformed());
+    };
+    let id = id.strip_prefix('#').map(str::trim).ok_or_else(malformed)?;
+    fn dotted(text: &str) -> Option<Vec<&str>> {
+        let segments = text.split('.').collect::<Vec<_>>();
+        (segments.len() >= 2 && segments.iter().all(|segment| plain_identifier(segment)))
+            .then_some(segments)
+    }
+    if !plain_identifier(id) || dotted(member).is_none() || !plain_identifier(callback) {
+        return Err(malformed());
+    }
+    let binding = binding.replace('#', " #").replace('=', " = ");
+    let words = binding.split_whitespace().collect::<Vec<_>>();
+    let [where_word, binder, equals, value, in_word, list] = words.as_slice() else {
+        return Err(malformed());
+    };
+    if *where_word != WHERE || *equals != "=" || *in_word != IN {
+        return Err(malformed());
+    }
+    if binder.strip_prefix('#') != Some(id) {
+        return Err(format!(
+            "`#{id}` is bound by its `where` clause: the binding names `{binder}`"
+        ));
+    }
+    if *value != RESULT_VALUE {
+        return Err(format!(
+            "an id binding is `#{id} = {RESULT_VALUE} in P.LIST`, not `= {value}`"
+        ));
+    }
+    let list = dotted(list).ok_or_else(|| {
+        format!("`{IN}` takes a holder path `FORMAL.FIELD[.FIELD]`, not `{list}`")
+    })?;
+    Ok(Some(WrittenCallback {
+        keyword: MEMBER_REGISTERED,
+        arguments: vec![
+            format!("#{id}"),
+            (*member).to_owned(),
+            (*callback).to_owned(),
+        ],
+        by_id: Some((
+            id.to_owned(),
+            list[0].to_owned(),
+            list[1..]
+                .iter()
+                .map(|segment| (*segment).to_owned())
+                .collect(),
+        )),
+    }))
 }
 
 /// Read one callback clause from its predicate words, `None` for any other
@@ -87,6 +183,7 @@ pub(super) fn clause(words: &[&str]) -> Option<WrittenCallback> {
     Some(WrittenCallback {
         keyword,
         arguments: arguments.iter().map(|word| (*word).to_owned()).collect(),
+        by_id: None,
     })
 }
 
@@ -95,6 +192,10 @@ pub(super) fn clause(words: &[&str]) -> Option<WrittenCallback> {
 /// member the identifier-only predicate reader does not read; `None` for any
 /// other predicate.
 pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>, String> {
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the forwarded form.
+    if let Some(written) = by_id_clause(expression)? {
+        return Ok(Some(written));
+    }
     // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (Q2): a setter's registration into
     // a parameter's member, `resource_callback_member_registered(P,
     // TAG.FIELD, F)` (the `result` holder is read by the result-state reader
@@ -136,6 +237,7 @@ pub(super) fn member_clause(expression: &str) -> Result<Option<WrittenCallback>,
     Ok(Some(WrittenCallback {
         keyword,
         arguments: arguments.into_iter().map(str::to_owned).collect(),
+        by_id: None,
     }))
 }
 
@@ -364,6 +466,49 @@ pub(super) fn declaration(
             // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (§C04.19.3, Q2): a setter
             // stores its callback parameter into its object parameter's
             // member. One registration per member and per callback.
+            MEMBER_REGISTERED if clause.by_id.is_some() => {
+                // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (§C04.19.3):
+                // the record holding the member is the one the call links
+                // into `P.LIST` and names by its integer result (the loader
+                // checks the result beside the result mode).
+                let [_, member, callback] = arguments else {
+                    return Err(shape());
+                };
+                let Some((binder, root, list)) = &clause.by_id else {
+                    return Err(shape());
+                };
+                if names.contains_key(binder.as_str()) || binder == RESULT {
+                    return Err(format!(
+                        "`#{binder}` binds the returned id: rename the parameter `{binder}`"
+                    ));
+                }
+                let holder = object(root, "registration list's formal")?;
+                let callback = function_pointer(callback)?;
+                if !callbacks_named.insert(callback) {
+                    return Err("a callback is invoked or registered by one clause".into());
+                }
+                let (tag, path) = member
+                    .split_once('.')
+                    .ok_or_else(|| format!("a member is spelled `TAG.FIELD`, not `{member}`"))?;
+                let member = CallbackMember {
+                    tag: tag.to_owned(),
+                    path: path.to_owned(),
+                };
+                if !members_named
+                    .insert((MemberObject::Parameter { index: holder }, member.clone()))
+                {
+                    return Err(format!("duplicate `{MEMBER_REGISTERED}` clause"));
+                }
+                CallbackClause::MemberRegistered {
+                    object: holder,
+                    member,
+                    callback,
+                    by_id: Some(qcore_schemas::callback::IdLink {
+                        binder: binder.clone(),
+                        list: list.clone(),
+                    }),
+                }
+            }
             MEMBER_REGISTERED => {
                 let [holder, member, callback] = arguments else {
                     return Err(shape());
@@ -394,6 +539,7 @@ pub(super) fn declaration(
                     object: holder,
                     member,
                     callback,
+                    by_id: None,
                 }
             }
             other => return Err(format!("unsupported callback clause `{other}`")),

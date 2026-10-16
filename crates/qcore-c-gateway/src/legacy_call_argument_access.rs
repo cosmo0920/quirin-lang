@@ -775,7 +775,16 @@ impl Parser<'_> {
         lines: &[usize],
     ) -> Option<(String, Vec<AdmittedArgument>, Vec<ArgumentFacts>)> {
         let (call_index, callee) = find_call(texts)?;
-        let contract = self.contracts.contract(callee);
+        // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (discharging
+        // RETAINING-CALL-MEMBER-ACTUAL): a withheld declaration's borrowed
+        // positions are read as the function map's are; what the call then
+        // retains, removes or registers is its route-G hook's (rule 12t), and
+        // a re-classification that is not a contracted call keeps the refusal.
+        let contract = self.contracts.contract(callee).or_else(|| {
+            self.contracts
+                .retaining_contract(callee)
+                .map(|declared| &declared.contract)
+        });
         let spans = call_argument_spans(texts, call_index)?;
         let arity = spans.len();
         let variadic_tail = self.variadic_tails.contains(callee);

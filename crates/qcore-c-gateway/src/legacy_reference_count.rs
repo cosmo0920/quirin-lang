@@ -187,7 +187,7 @@ fn linked(state: &AbstractState, site: usize) -> bool {
         || state
             .retained
             .iter()
-            .any(|(object, _)| *object == crate::retained_by::HeldObject::Site(site))
+            .any(|(object, _)| object.site() == Some(site))
 }
 
 /// Whether one of the family's references was handed off at an exit (it

@@ -327,7 +327,7 @@ fn held_elsewhere(state: &AbstractState, site: usize) -> bool {
         || state
             .retained
             .iter()
-            .any(|(object, _)| *object == crate::retained_by::HeldObject::Site(site))
+            .any(|(object, _)| object.site() == Some(site))
         || state.collections.contains_key(&site)
         || state
             .conditional_replacements

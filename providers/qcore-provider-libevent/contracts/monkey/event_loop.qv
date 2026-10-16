@@ -1,0 +1,131 @@
+module contract;
+
+// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (gateway rule 12t, contract
+// specification §C04.14; ledger entries FB-EVENT-LOOP-RETENTION-AND-REGISTRATION
+// and W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS). Monkey's event-loop
+// registrations, declared in Monkey's owner crate.
+//
+// USER DECISIONS 2026-10-16 (verbatim in the card's report):
+// 1. "Tracked holder path": a holder reached through a member is spelled as a
+//    path and tracked by the analysis.
+// 2. Removal "R3: quant state": `quant live #loop: #holds(event) |-> #absent;`
+//    — after the call the loop formal no longer holds the registration of P;
+//    every other registration is unchanged. mk_event_channel_destroy is
+//    declared without a removal, because its removal condition can't be
+//    stated.
+//
+// ## The bodies (read at 66910c10 and 046accf6)
+//
+// `mk_core/mk_event.c` is byte-identical at 66910c10a4d7eafa810b84229cf2dcf7b0f26f97
+// (Fluent Bit's lib/monkey copy and the corpus's own Monkey source),
+// 046accf6aded7906f66a1baf0202da349e521736 and the 90978ac6 export; each
+// public operation calls its backend's `_mk_event_*` through `loop->data`.
+// The epoll backend (`mk_event_epoll.c`, the analysed configuration) differs
+// between the revisions only by `pthread_detach(tid)` in the pipe arm of
+// `_mk_event_timeout_create` (046accf6:335), which changes no registration;
+// the select, poll and kqueue arms register and remove the same way.
+//
+// * mk_event_add (mk_event.c:99): `_mk_event_add` stores `data` in the
+//   kernel's interest list (`ep_event.data.ptr = data`) and writes the event's
+//   fd, status, type, mask and priority: the loop keeps a pointer into
+//   `data`'s object. Nothing is allocated, freed or taken.
+// * mk_event_timeout_create (:156): a timerfd (or, without timerfd, a pipe
+//   and a detached worker thread) is created, stored into the event
+//   (`event->fd`) and registered through `_mk_event_add` with `data`; the fd
+//   is returned (or -1).
+// * mk_event_channel_create (:181): a pipe, its read end registered with
+//   `data`; the two ends are written through `r_fd` / `w_fd`.
+// * mk_event_del (:132) and mk_event_timeout_destroy (:172): the event is
+//   removed from the loop (`_mk_event_del`: EPOLL_CTL_DEL, the priority-queue
+//   link unlinked, MK_EVENT_NEW); an unregistered event is left as it is, so
+//   after the call the loop holds no registration of it either way, and
+//   mk_event_timeout_destroy(loop, NULL) does nothing. timeout_destroy then
+//   closes `event->fd`.
+// * mk_event_channel_destroy (:193): removes and closes only when
+//   `event->fd == r_fd` (epoll backend :397); otherwise it returns -1 with
+//   the registration in place. No clause states that condition, so this
+//   declaration states no removal (a record of the event stays).
+// * mk_event_wait (:205): `epoll_wait` into the loop's own array; nothing
+//   is registered, removed or taken.
+//
+// ## The descriptors (premise mk_event_descriptors)
+//
+// The descriptors timeout_create and channel_create make live in the event
+// (`event->fd`) and in the caller's integer slots, which v1 custody does not
+// track (a descriptor has no out slot, and a member-held descriptor has no
+// identity, §C04.6); timeout_destroy and channel_destroy close them. These
+// declarations state no descriptor effect: each descriptor's lifecycle is the
+// named premise, so every verdict resting on one of them names it.
+
+extern fn mk_event_add(loop: ptr<mut, u8>, fd: i32, type: i32, mask: u32, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(type);
+    ensures normal resource_borrowed(mask);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, loop);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_timeout_create(loop: ptr<mut, u8>, sec: i64, nsec: i64, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the descriptor the call creates lives in the registered event (event->fd), which v1 custody does not track; mk_event_timeout_destroy closes it");
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(sec);
+    ensures normal resource_borrowed(nsec);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, loop);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_channel_create(loop: ptr<mut, u8>, r_fd: ptr<mut, u8>, w_fd: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the two descriptors the call creates are written through r_fd and w_fd, which v1 custody does not track (a descriptor has no out slot); mk_event_channel_destroy closes them");
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(r_fd);
+    ensures normal resource_borrowed(w_fd);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_retained_by(data, loop);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_del(loop: ptr<mut, u8>, event: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(event);
+    quant live #loop: #holds(event) |-> #absent;
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_timeout_destroy(loop: ptr<mut, u8>, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the call closes the descriptor held in the event (event->fd), which v1 custody does not track");
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(data);
+    quant live #loop: #holds(data) |-> #absent;
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_channel_destroy(loop: ptr<mut, u8>, r_fd: i32, w_fd: i32, data: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(mk_event_descriptors, "P-MK-EVENT-DESCRIPTORS: the call closes r_fd and w_fd only when the event's descriptor is r_fd; v1 custody tracks neither");
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_borrowed(r_fd);
+    ensures normal resource_borrowed(w_fd);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_return_none();
+};
+
+extern fn mk_event_wait(loop: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(loop);
+    ensures normal resource_return_none();
+};

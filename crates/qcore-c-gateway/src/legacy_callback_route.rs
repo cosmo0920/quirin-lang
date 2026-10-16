@@ -2286,6 +2286,84 @@ pub(crate) fn settle(
         // no body evidence is recorded for it, so the declaration stays a
         // declared assumption (rule 13i).
     }
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (rule 12n, USER DECISION
+    // 2026-10-16, "Result + list"): a registration forwarded through an id
+    // stands in a unit that defines the setter only where its body (or the
+    // one helper it forwards to) creates one record, links it into the list,
+    // stores the callback into the member and returns the record's id;
+    // otherwise the declaration is withdrawn there.
+    for (name, declaration) in contracts.retaining() {
+        if declaration.callbacks_withdrawn
+            || withdrawn.iter().any(|(withdrawn, _)| withdrawn == name)
+        {
+            continue;
+        }
+        let forwarded = declaration
+            .callbacks
+            .iter()
+            .filter_map(|clause| match clause {
+                CallbackClause::MemberRegistered {
+                    object,
+                    member,
+                    callback,
+                    by_id: Some(link),
+                } => Some((*object, member, *callback, &link.list)),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        if forwarded.is_empty() {
+            continue;
+        }
+        let defined = |function: &str| -> Option<crate::registration_by_id::Defined> {
+            let (_, body) = super::slot_move_route::defined_body(tokens, function)?;
+            let parameters = parameter_names(tokens, function)?;
+            Some((
+                parameters,
+                body.iter().map(|word| (*word).to_owned()).collect(),
+            ))
+        };
+        let Some((parameters, body)) = defined(name) else {
+            continue;
+        };
+        let allocates = |callee: &str| {
+            contracts.functions().get(callee).is_some_and(|contract| {
+                matches!(
+                    contract.result,
+                    qcore_schemas::contract::ResourceReturnMode::Owned { .. }
+                )
+            })
+        };
+        let links = |callee: &str| {
+            contracts.functions().get(callee).is_some_and(|contract| {
+                contract.container_effects.get(&0)
+                    == Some(&qcore_schemas::contract::ContainerEffect::Published {
+                        container_parameter: 1,
+                    })
+            })
+        };
+        let unit = crate::registration_by_id::Unit {
+            defined: &defined,
+            allocates: &allocates,
+            links: &links,
+        };
+        let stands = forwarded.iter().all(|(object, member, callback, list)| {
+            crate::registration_by_id::validates(
+                &body,
+                &parameters,
+                *callback,
+                *object,
+                list,
+                member,
+                &unit,
+            )
+            .is_ok()
+        });
+        if stands {
+            crate::contract_dependencies::validated(name, "12n");
+        } else {
+            withdrawn.push((name.clone(), declaration.clone()));
+        }
+    }
     // Card OP-CALLBACK-MEMBER-PATH-RELEASE (rule 30): member-path states
     // stand in a unit that defines the body unless its Clang body contradicts
     // them (withdrawn there); validated where the body itself establishes

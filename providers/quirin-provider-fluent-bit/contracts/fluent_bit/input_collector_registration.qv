@@ -1,0 +1,68 @@
+module contract;
+
+// Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION (gateway rule 12n, contract
+// specification §C04.19.3; ledger entries FB-EVENT-LOOP-RETENTION-AND-REGISTRATION
+// and W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS). The public collector setters of
+// src/flb_input.c, each a registration forwarded through the id it returns.
+//
+// USER DECISION 2026-10-16 (verbatim in the card's report), "Result + list":
+//
+//     ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_collect) where #id = #result in ins.collectors;
+//
+// `#id` is the setter's returned id, naming the collector record linked into
+// `ins->collectors`; a later call taking that id resolves the same record.
+//
+// ## The bodies, read at three revisions
+//
+// The three setters and their helper `collector_create` are identical
+// (whitespace-normalised, the card's scripts/bodies.py) at
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 (:2204, :2255, :2276, :2295),
+// 046accf6aded7906f66a1baf0202da349e521736 and the 90978ac6 export (:2222,
+// :2273, :2294, :2313). Each setter calls
+// `collector_create(TYPE, ins, cb, config)`, returns -1 when it fails,
+// writes its own scalar members (seconds / nanoseconds or fd_event) and
+// returns `coll->id`. `collector_create` allocates one zeroed collector
+// (`flb_calloc`), stores `cb` into `coll->cb_collect`, chooses the loop
+// (`coll->evl = thi->evl` for a threaded instance, `config->evl` otherwise),
+// links the collector into `ins->collectors` (`mk_list_add`) and returns it.
+// Nothing the caller passed is released, stored or taken: `ins` and `config`
+// are borrowed and the result is a scalar. `flb_input_set_collector_server`
+// does not exist at these revisions (only a comment above collector_create
+// names it).
+//
+// In flb_input.c the registration is checked against these bodies (rule 12n,
+// the forwarding check); in every other unit it is a declared assumption.
+
+extern fn flb_input_set_collector_time(ins: ptr<mut, u8>, cb_collect: fnptr, seconds: i64, nanoseconds: i64, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(cb_collect);
+    ensures normal resource_borrowed(seconds);
+    ensures normal resource_borrowed(nanoseconds);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_collect) where #id = #result in ins.collectors;
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_set_collector_event(ins: ptr<mut, u8>, cb_collect: fnptr, fd: i32, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(cb_collect);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_collect) where #id = #result in ins.collectors;
+    ensures normal resource_return_none();
+};
+
+extern fn flb_input_set_collector_socket(ins: ptr<mut, u8>, cb_new_connection: fnptr, fd: i32, config: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(cb_new_connection);
+    ensures normal resource_borrowed(fd);
+    ensures normal resource_borrowed(config);
+    ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_new_connection) where #id = #result in ins.collectors;
+    ensures normal resource_return_none();
+};
