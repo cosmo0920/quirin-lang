@@ -25,6 +25,7 @@ struct fcoll { int id; struct ev_loop *evl; struct obj event; int (*cb_collect)(
 struct facoll { int id; struct ev_loop *evl; struct obj event; int (*cbs[2])(void); };
 void *ev_alloc(unsigned long n); void ev_free(void *p);
 int ev_add(struct ev_loop *loop, void *data); int ev_del(struct ev_loop *loop, void *data);
+void ev_touch(struct fcoll *coll);
 ";
 
 const INDIRECT: &str = "indirect memory access is outside the resource projection";
@@ -147,6 +148,26 @@ fn the_function_pointer_member_is_decided_as_before() {
     );
     assert!(store.safe(), "{store:?}");
     assert!(store.unsupported.is_empty(), "{store:?}");
+}
+
+/// `cio_options_init`'s shape (corpus): scalar stores through a formal the
+/// body also hands whole to a callee. Rule 5g's flow-refusing store keeps its
+/// domain of records read with every member, so on a record read past a
+/// function-pointer member these stores keep the route order they had at the
+/// base (the lexical refusal, then the Clang-typed statement reading, which
+/// decides them): the reader repair never hands a decided statement to a
+/// refusing route. Without that domain the card's first AFTER corpus run
+/// measured the corpus row `Safe -> Unknown` (four `unresolved resource
+/// identity` leaves); this fixture pins the shape on route G.
+#[test]
+fn stores_through_a_handed_formal_keep_their_base_route() {
+    if !clang_available() {
+        return;
+    }
+    let init = row(
+        "void init(struct fcoll *coll) { ev_touch(coll); coll->id = 1; coll->seconds = 2; }",
+    );
+    assert!(init.safe(), "{init:?}");
 }
 
 /// Any other parenthesised member still refuses the whole record: an array

@@ -213,6 +213,11 @@ struct RecordInfo {
     /// argument reads only "this member is not a pointer", never the member's
     /// own shape, so it is indifferent to which of those the member is.
     non_pointer_fields: BTreeSet<String>,
+    /// Card **FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS**: the body was read past
+    /// at least one function-pointer member declaration, which joins no class.
+    /// Rule 5g's flow-refusing scalar member store keeps its base domain of
+    /// records read with every member (see [`scalar_member_store_base`]).
+    function_pointer_members: bool,
 }
 
 /// What one `typedef` declaration of this unit names, as far as this reader is
@@ -253,6 +258,7 @@ struct RecordMembers {
     single_pointer_fields: BTreeSet<String>,
     void_pointer_fields: BTreeSet<String>,
     non_pointer_fields: BTreeSet<String>,
+    function_pointer_members: bool,
 }
 
 /// Declaration facts of one preprocessed translation unit.
@@ -836,6 +842,7 @@ impl TypedAccessModel {
                 entry.single_pointer_fields.clear();
                 entry.void_pointer_fields.clear();
                 entry.non_pointer_fields.clear();
+                entry.function_pointer_members = false;
                 continue;
             }
             if entry.union_tag {
@@ -856,6 +863,7 @@ impl TypedAccessModel {
                 entry.single_pointer_fields = members.single_pointer_fields;
                 entry.void_pointer_fields = members.void_pointer_fields;
                 entry.non_pointer_fields = members.non_pointer_fields;
+                entry.function_pointer_members = members.function_pointer_members;
             }
         }
     }
@@ -887,6 +895,7 @@ impl TypedAccessModel {
         let mut single_pointer_fields = BTreeSet::new();
         let mut void_pointer_fields = BTreeSet::new();
         let mut non_pointer_fields = BTreeSet::new();
+        let mut function_pointer_members = false;
         for member in body.split(|text| *text == ";") {
             if member.is_empty() {
                 continue;
@@ -894,6 +903,7 @@ impl TypedAccessModel {
             // A parenthesised member passed `record_body_refusal`, so it is
             // exactly one function-pointer declarator: it joins no class.
             if member.iter().any(|text| matches!(*text, "(" | ")")) {
+                function_pointer_members = true;
                 continue;
             }
             let mut groups = member.split(|text| *text == ",");
@@ -979,6 +989,7 @@ impl TypedAccessModel {
             single_pointer_fields,
             void_pointer_fields,
             non_pointer_fields,
+            function_pointer_members,
         })
     }
 
@@ -1170,6 +1181,17 @@ impl TypedAccessModel {
                 DeclaredType::Opaque
             }
         }
+    }
+
+    /// [`Self::scalar_field`] over a record read with **every** member, as the
+    /// reader read records before card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS:
+    /// false for a record read past a function-pointer member.
+    pub(crate) fn scalar_field_of_a_fully_read_record(&self, tag: &str, field: &str) -> bool {
+        self.scalar_field(tag, field)
+            && self
+                .records
+                .get(tag)
+                .is_some_and(|record| !record.function_pointer_members)
     }
 
     pub(crate) fn scalar_field(&self, tag: &str, field: &str) -> bool {
@@ -2157,7 +2179,14 @@ pub(crate) fn scalar_member_store_base<'a>(
     let Some(DeclaredType::RecordPointer(tag)) = types.declared_type(base) else {
         return None;
     };
-    if !model.scalar_field(tag, field)
+    // Card FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: this route lowers to an
+    // instruction whose flow check refuses a base that is not one settled
+    // identity, and it runs before the statement's refusal reaches the later
+    // fallbacks (the Clang-typed statement reading, rule 10k). A record the
+    // reader now reads past a function-pointer member stays outside it, so
+    // every statement keeps the route order it had: the reader repair only
+    // admits, it never hands a decided statement to a refusing route.
+    if !model.scalar_field_of_a_fully_read_record(tag, field)
         || right.is_empty()
         || right.contains(&"=")
         || right
@@ -3276,6 +3305,10 @@ mod tests {
         assert!(with.scalar_field("r", "a"));
         assert_eq!(with.record_pointer_field("r", "p"), Some("q"));
         assert!(with.record_definition_is_complete("r"));
+        // Rule 5g's flow-refusing store keeps its domain of records read with
+        // every member.
+        assert!(!with.scalar_field_of_a_fully_read_record("r", "a"));
+        assert!(without.scalar_field_of_a_fully_read_record("r", "a"));
         // The function pointer itself is in no class: every access keeps its
         // refusal.
         assert!(!with.borrowable_field("r", "f"));
