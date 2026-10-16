@@ -1,0 +1,762 @@
+{
+ "system": {
+  "rows": [
+   {
+    "row": "plugins/in_storage_backlog/sb.c::cb_sb_init",
+    "status": "Unknown",
+    "leaves": 16,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "plugins/in_storage_backlog/sb.c:769",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, cb_queue_chunks, 1, 0, config);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_chunk.c::flb_input_chunk_protect",
+    "status": "Unknown",
+    "leaves": 7,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input_chunk.c:3090",
+      "callee": "flb_input_pause",
+      "decider": "H public pause: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause(i);"
+     },
+     {
+      "site": "src/flb_input_chunk.c:3125",
+      "callee": "flb_input_pause",
+      "decider": "H public pause: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause(i);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_chunk.c::flb_input_chunk_set_limits",
+    "status": "Unknown",
+    "leaves": 10,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input_chunk.c:3058",
+      "callee": "flb_input_resume",
+      "decider": "H public resume: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_resume(in);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_storage.c::flb_storage_metrics_create",
+    "status": "Unknown",
+    "leaves": 3,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_storage.c:382",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(ctx->sched, FLB_SCHED_TIMER_CB_PERM, 5000,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_engine.c::flb_engine_flush_timer_reset",
+    "status": "Unknown",
+    "leaves": 7,
+    "pattern_leaves": 3,
+    "sites": [
+     {
+      "site": "src/flb_engine.c:320",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(config->evl, event);"
+     },
+     {
+      "site": "src/flb_engine.c:325",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "config->flush_fd = mk_event_timeout_create(config->evl,"
+     },
+     {
+      "site": "src/flb_engine.c:337",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "config->flush_fd = mk_event_timeout_create(config->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_engine.c::flb_engine_handle_event",
+    "status": "Unknown",
+    "leaves": 8,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_engine.c:1002",
+      "callee": "flb_input_collector_fd",
+      "decider": "G dispatcher: invokes cb_collect (P1, rule 10p)",
+      "text": "ret = flb_input_collector_fd(fd, config);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_engine.c::flb_engine_shutdown",
+    "status": "Unknown",
+    "leaves": 17,
+    "pattern_leaves": 3,
+    "sites": [
+     {
+      "site": "src/flb_engine.c:1671",
+      "callee": "flb_input_pause_all",
+      "decider": "H public pause: dispatches plugin callbacks (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause_all(config);"
+     },
+     {
+      "site": "src/flb_engine.c:1711",
+      "callee": "mk_event_channel_destroy",
+      "decider": "B removal of one registration (and two closes): needs a removal word",
+      "text": "mk_event_channel_destroy(config->evl,"
+     },
+     {
+      "site": "src/flb_engine.c:1718",
+      "callee": "mk_event_channel_destroy",
+      "decider": "B removal of one registration (and two closes): needs a removal word",
+      "text": "mk_event_channel_destroy(config->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_engine.c::flb_engine_start",
+    "status": "Unknown",
+    "leaves": 106,
+    "pattern_leaves": 9,
+    "sites": [
+     {
+      "site": "src/flb_engine.c:1168",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(config->evl,"
+     },
+     {
+      "site": "src/flb_engine.c:1237",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(config->evl,"
+     },
+     {
+      "site": "src/flb_engine.c:1246",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(config->evl,"
+     },
+     {
+      "site": "src/flb_engine.c:1392",
+      "callee": "(member actual or other)",
+      "decider": "I other: an indirect access at a member actual",
+      "text": "flb_input_collectors_start(config);"
+     },
+     {
+      "site": "src/flb_engine.c:1398",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(config->sched,"
+     },
+     {
+      "site": "src/flb_engine.c:1419",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(config->sched,"
+     },
+     {
+      "site": "src/flb_engine.c:1453",
+      "callee": "mk_event_wait",
+      "decider": "C plain: borrowed loop",
+      "text": "mk_event_wait(evl); /* potentially conditional mk_event_wait or mk_event_wait_2 based on bucket queue capacity for one shot events */"
+     },
+     {
+      "site": "src/flb_engine.c:1498",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "config->shutdown_fd = mk_event_timeout_create(evl,"
+     },
+     {
+      "site": "src/flb_engine.c:1564",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(config->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_engine.c::flb_engine_stop_ingestion",
+    "status": "Unknown",
+    "leaves": 3,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_engine.c:1746",
+      "callee": "flb_input_pause_all",
+      "decider": "H public pause: dispatches plugin callbacks (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause_all(config);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::flb_sched_create",
+    "status": "Unknown",
+    "leaves": 28,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:783",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "fd = mk_event_timeout_create(evl, FLB_SCHED_REQUEST_FRAME, 0,"
+     },
+     {
+      "site": "src/flb_scheduler.c:794",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(sched->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::flb_sched_destroy",
+    "status": "Unknown",
+    "leaves": 10,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:843",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(sched->evl, &timer->event);"
+     },
+     {
+      "site": "src/flb_scheduler.c:856",
+      "callee": "mk_event_channel_destroy",
+      "decider": "B removal of one registration (and two closes): needs a removal word",
+      "text": "mk_event_channel_destroy(sched->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::flb_sched_timer_cb_create",
+    "status": "Unknown",
+    "leaves": 13,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:672",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "fd = mk_event_timeout_create(sched->evl, sec, nsec, event);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::flb_sched_timer_cb_disable",
+    "status": "Unknown",
+    "leaves": 1,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:723",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(timer->sched->evl, &timer->event);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::flb_sched_timer_coro_cb_create",
+    "status": "Unknown",
+    "leaves": 2,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:707",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(sched, type, ms, cb, data, &timer);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_scheduler.c::schedule_request_now",
+    "status": "Unknown",
+    "leaves": 5,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_scheduler.c:133",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "fd = mk_event_timeout_create(config->evl, seconds, 0, event);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_output.c::flb_output_init_all",
+    "status": "Unknown",
+    "leaves": 89,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_output.c:1545",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(config->evl,"
+     }
+    ]
+   }
+  ],
+  "sites_by_decider_class": {
+   "A": 11,
+   "B": 7,
+   "C": 1,
+   "D": 1,
+   "E": 4,
+   "G": 1,
+   "H": 5,
+   "I": 1
+  },
+  "alone": [
+   "src/flb_scheduler.c::flb_sched_timer_cb_disable"
+  ]
+ },
+ "slice": {
+  "rows": [
+   {
+    "row": "src/flb_input.c::collector_start",
+    "status": "Unknown",
+    "leaves": 3,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input.c:2351",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "fd = mk_event_timeout_create(coll->evl, coll->seconds,"
+     },
+     {
+      "site": "src/flb_input.c:2362",
+      "callee": "mk_event_add",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "ret = mk_event_add(coll->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_collector_delete",
+    "status": "Unknown",
+    "leaves": 5,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3205",
+      "callee": "flb_input_collector_pause",
+      "decider": "F by id",
+      "text": "if (flb_input_collector_pause(coll_id, in) < 0) {"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_collector_destroy",
+    "status": "Unknown",
+    "leaves": 3,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3146",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(config->evl, &coll->event);"
+     },
+     {
+      "site": "src/flb_input.c:3150",
+      "callee": "mk_event_del",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_del(config->evl, &coll->event);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_collector_pause",
+    "status": "Unknown",
+    "leaves": 4,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3182",
+      "callee": "mk_event_timeout_destroy",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_timeout_destroy(coll->evl, &coll->event);"
+     },
+     {
+      "site": "src/flb_input.c:3185",
+      "callee": "mk_event_del",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "ret = mk_event_del(coll->evl, &coll->event);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_collector_resume",
+    "status": "Unknown",
+    "leaves": 15,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3248",
+      "callee": "mk_event_timeout_create",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "fd = mk_event_timeout_create(coll->evl, coll->seconds,"
+     },
+     {
+      "site": "src/flb_input.c:3261",
+      "callee": "mk_event_add",
+      "decider": "A registration: retained_by(data, loop); the holder actual is a path",
+      "text": "ret = mk_event_add(coll->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_collectors_signal_start",
+    "status": "Unknown",
+    "leaves": 2,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:2906",
+      "callee": "flb_input_collector_start",
+      "decider": "F start by id: retains a collector reached by id (no parameter names it)",
+      "text": "ret = flb_input_collector_start(coll->id, ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_pause_all",
+    "status": "Unknown",
+    "leaves": 1,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3131",
+      "callee": "flb_input_pause",
+      "decider": "H public pause: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "ret = flb_input_pause(ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_rate_gate_protect",
+    "status": "Unknown",
+    "leaves": 12,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:2741",
+      "callee": "flb_input_pause",
+      "decider": "H public pause: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause(ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_rate_gate_resume",
+    "status": "Unknown",
+    "leaves": 5,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:2708",
+      "callee": "flb_input_resume",
+      "decider": "H public resume: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_resume(ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_rate_gate_timer_schedule",
+    "status": "Unknown",
+    "leaves": 1,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:2685",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(ins->config->sched,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::flb_input_test_pause_resume",
+    "status": "Unknown",
+    "leaves": 2,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input.c:3005",
+      "callee": "flb_input_pause",
+      "decider": "H public pause: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_pause(ins);"
+     },
+     {
+      "site": "src/flb_input.c:3011",
+      "callee": "flb_input_resume",
+      "decider": "H public resume: dispatches a plugin callback (rule 10j undeclarable; P1)",
+      "text": "flb_input_resume(ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input.c::input_instance_channel_events_init",
+    "status": "Unknown",
+    "leaves": 5,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input.c:1380",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_thread.c::flb_input_thread_collectors_start",
+    "status": "Unknown",
+    "leaves": 1,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input_thread.c:813",
+      "callee": "flb_input_collector_start",
+      "decider": "F start by id: retains a collector reached by id (no parameter names it)",
+      "text": "ret = flb_input_collector_start(coll->id, ins);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_thread.c::input_thread",
+    "status": "Unknown",
+    "leaves": 67,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "src/flb_input_thread.c:351",
+      "callee": "flb_sched_timer_cb_create",
+      "decider": "E timer: retains data in a timer linked into sched, registers cb",
+      "text": "ret = flb_sched_timer_cb_create(sched,"
+     },
+     {
+      "site": "src/flb_input_thread.c:421",
+      "callee": "mk_event_wait",
+      "decider": "C plain: borrowed loop",
+      "text": "mk_event_wait(thi->evl);"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_thread.c::input_thread_instance_create",
+    "status": "Unknown",
+    "leaves": 30,
+    "pattern_leaves": 3,
+    "sites": [
+     {
+      "site": "src/flb_input_thread.c:262",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(thi->evl,"
+     },
+     {
+      "site": "src/flb_input_thread.c:275",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(thi->evl,"
+     },
+     {
+      "site": "src/flb_input_thread.c:287",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(thi->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_input_thread.c::input_thread_instance_destroy",
+    "status": "Unknown",
+    "leaves": 13,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_input_thread.c:197",
+      "callee": "mk_event_channel_destroy",
+      "decider": "B removal of one registration (and two closes): needs a removal word",
+      "text": "mk_event_channel_destroy(thi->evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_lib.c::do_start",
+    "status": "Unknown",
+    "leaves": 15,
+    "pattern_leaves": 4,
+    "sites": [
+     {
+      "site": "src/flb_lib.c:976",
+      "callee": "mk_event_wait",
+      "decider": "C plain: borrowed loop",
+      "text": "mk_event_wait(config->ch_evl);"
+     },
+     {
+      "site": "src/flb_lib.c:977",
+      "callee": "mk_event_foreach",
+      "decider": "C macro over loop->events (a member read, not a call)",
+      "text": "mk_event_foreach(event, config->ch_evl) {"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_lib.c::flb_create",
+    "status": "Unknown",
+    "leaves": 12,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_lib.c:209",
+      "callee": "mk_event_channel_create",
+      "decider": "A registration: retained_by(data, loop) beside two out fds",
+      "text": "ret = mk_event_channel_create(config->ch_evl,"
+     }
+    ]
+   },
+   {
+    "row": "src/flb_lib.c::flb_destroy",
+    "status": "Unknown",
+    "leaves": 7,
+    "pattern_leaves": 1,
+    "sites": [
+     {
+      "site": "src/flb_lib.c:237",
+      "callee": "mk_event_del",
+      "decider": "B removal of one registration: needs a removal word",
+      "text": "mk_event_del(ctx->event_loop, ctx->event_channel);"
+     }
+    ]
+   },
+   {
+    "row": "plugins/in_tail/tail.c::in_tail_init",
+    "status": "Unknown",
+    "leaves": 37,
+    "pattern_leaves": 7,
+    "sites": [
+     {
+      "site": "plugins/in_tail/tail.c:410",
+      "callee": "flb_input_set_collector_event",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_event(in, in_tail_collect_static,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:419",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, flb_tail_scan_callback,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:430",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, in_tail_watcher_callback,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:440",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, flb_tail_file_purge,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:450",
+      "callee": "flb_input_set_collector_event",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_event(in, in_tail_collect_pending,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:467",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, flb_tail_dmode_pending_flush,"
+     },
+     {
+      "site": "plugins/in_tail/tail.c:481",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, flb_tail_mult_pending_flush,"
+     }
+    ]
+   },
+   {
+    "row": "plugins/in_tail/tail_fs_inotify.c::flb_tail_fs_inotify_init",
+    "status": "Unknown",
+    "leaves": 13,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "plugins/in_tail/tail_fs_inotify.c:432",
+      "callee": "flb_input_set_collector_event",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_event(in, tail_fs_event,"
+     },
+     {
+      "site": "plugins/in_tail/tail_fs_inotify.c:444",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, in_tail_progress_check_callback,"
+     }
+    ]
+   },
+   {
+    "row": "plugins/in_tail/tail_fs_stat.c::flb_tail_fs_stat_init",
+    "status": "Unknown",
+    "leaves": 6,
+    "pattern_leaves": 2,
+    "sites": [
+     {
+      "site": "plugins/in_tail/tail_fs_stat.c:206",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, tail_fs_event,"
+     },
+     {
+      "site": "plugins/in_tail/tail_fs_stat.c:214",
+      "callee": "flb_input_set_collector_time",
+      "decider": "D registration forwarded through an id",
+      "text": "ret = flb_input_set_collector_time(in, tail_fs_check,"
+     }
+    ]
+   }
+  ],
+  "sites_by_decider_class": {
+   "A": 9,
+   "B": 6,
+   "C": 3,
+   "D": 11,
+   "E": 2,
+   "F": 3,
+   "H": 5
+  },
+  "alone": [
+   "src/flb_input.c::flb_input_pause_all",
+   "src/flb_input.c::flb_input_rate_gate_timer_schedule",
+   "src/flb_input.c::flb_input_test_pause_resume",
+   "src/flb_input_thread.c::flb_input_thread_collectors_start"
+  ]
+ }
+}
