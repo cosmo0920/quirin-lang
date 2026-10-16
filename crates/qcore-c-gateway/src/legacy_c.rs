@@ -3533,6 +3533,11 @@ fn build_function_cfg_unscoped(
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
+    // Card RELATIONAL-REWRITE-LINE-ORDER (rule 11r amended): the stream the
+    // parser reads keeps its lines non-decreasing; one that does not is a
+    // hard error in debug and test builds and refuses the function in
+    // release builds (its first instruction below).
+    let line_order_refusal = stream_line_order::guard(function, tokens);
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the names this body
     // spells in the stream the build reads, which bound its consultations.
     crate::contract_dependencies::body(function, tokens, body_start);
@@ -3712,13 +3717,25 @@ fn build_function_cfg_unscoped(
     parser.record_layout_census();
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
-    let statements =
+    let mut statements =
         parser
             .parse_block()
             .map_err(|failure_line| LegacyCError::MalformedFunction {
                 function: function.to_owned(),
                 line: failure_line.max(line),
             })?;
+    if let Some(description) = line_order_refusal {
+        statements.insert(
+            0,
+            Statement::Instruction(
+                LegacyInstruction::Unknown {
+                    description,
+                    writes: RefusedWrites::Unbounded,
+                },
+                line,
+            ),
+        );
+    }
     let mut cfg = CfgBuilder::build(function, &statements, publications);
     // Card CG25-RESOURCE-KINDS (rule 11v): no in-place effect is dropped by a
     // route that lowered its call without the object's place.

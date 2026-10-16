@@ -72,7 +72,8 @@ fn synthetic(text: &str, line: usize) -> Token {
 /// [`read_test`] reads with `NAME` as its destination. The assignment must
 /// start a statement (`;`, `{` or `}` before `NAME`). C evaluates the two
 /// forms identically: the assignment, then the test of the value it stored.
-/// `None` when nothing is rewritten.
+/// The stream's lines stay non-decreasing ([`stored_returns_with`]). `None`
+/// when nothing is rewritten.
 pub(super) fn tested_stored_returns(
     tokens: &[Token],
     contracts: &ResourceContracts,
@@ -85,32 +86,49 @@ pub(super) fn tested_stored_returns(
         tokens,
         &|name| relational.contains_key(name),
         &read_test,
-        false,
+        Rewrite::Relational,
     )
+}
+
+/// Which stored-return rewrite runs, for the census
+/// (`legacy_stream_line_order`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum Rewrite {
+    /// Rule 11r's, for the callees with a return-code disposition.
+    Relational,
+    /// Rule 12m's, for the direct calls of hand-off declarations.
+    HandOff,
+}
+
+impl Rewrite {
+    fn code(self) -> &'static str {
+        match self {
+            Self::Relational => "relational-11r",
+            Self::HandOff => "handoff-direct",
+        }
+    }
 }
 
 /// [`tested_stored_returns`] for the callees `is_callee` names, the rewritten
 /// condition read by `read` (card HANDOFF-DIRECT-CALL-READING shares it for
 /// the direct calls of hand-off declarations, whose constants may be
-/// enumerators). With `keep_line_order`, every token of the rewritten
-/// statement before the moved call takes the line of its first token (`NAME`)
-/// and the closing parenthesis added after it the line of the call's own, so
-/// the stream's lines stay non-decreasing (`typed_place::occurrence` declines
-/// every statement of a stream whose lines are not); rule 11r's rewrite keeps
-/// its lines as before (`RELATIONAL-REWRITE-LINE-ORDER`).
+/// enumerators). Every token of the rewritten statement before the moved call
+/// (the `if`, its parenthesis, the condition before `NAME` and the synthetic
+/// parenthesis) takes the line of the assignment's first token (`NAME`), and
+/// the closing parenthesis added after the call the line of the call's own,
+/// so a stream whose lines are non-decreasing stays so:
+/// `typed_place::occurrence` declines every statement of a stream whose lines
+/// are not, and the parser refuses such a stream outright
+/// (`legacy_stream_line_order`). Card HANDOFF-DIRECT-CALL-READING kept the
+/// hand-off rewrite's lines in order; card RELATIONAL-REWRITE-LINE-ORDER
+/// keeps rule 11r's too.
 pub(super) fn stored_returns_with(
     tokens: &[Token],
     is_callee: &dyn Fn(&str) -> bool,
     read: &dyn Fn(&[&str]) -> Option<crate::relational_post::CallTest>,
-    keep_line_order: bool,
+    rewrite: Rewrite,
 ) -> Option<Vec<Token>> {
-    let relined = |token: &Token, line: usize| {
-        if keep_line_order {
-            synthetic(&token.text, line)
-        } else {
-            token.clone()
-        }
-    };
+    let relined = |token: &Token, line: usize| synthetic(&token.text, line);
     let mut out: Option<Vec<Token>> = None;
     // Card RELATIONAL-REWRITE-LINE-ORDER: the census's sites.
     let mut sites = Vec::new();
@@ -145,12 +163,7 @@ pub(super) fn stored_returns_with(
             if occurrences.next().is_some() {
                 return None;
             }
-            let line = tokens[close + 2].line;
-            let (open_line, close_line) = if keep_line_order {
-                (tokens[index].line, tokens[close].line)
-            } else {
-                (line, line)
-            };
+            let (open_line, close_line) = (tokens[index].line, tokens[close].line);
             let mut rewritten = Vec::with_capacity(condition.len() + close - index + 3);
             rewritten.extend(
                 condition[..at]
@@ -186,15 +199,7 @@ pub(super) fn stored_returns_with(
     }
     let mut out = out?;
     out.extend_from_slice(&tokens[copied..]);
-    super::stream_line_order::record_rewrite(
-        if keep_line_order {
-            "handoff-direct"
-        } else {
-            "relational-11r"
-        },
-        &sites,
-        &out,
-    );
+    super::stream_line_order::record_rewrite(rewrite.code(), &sites, &out);
     Some(out)
 }
 
@@ -439,31 +444,73 @@ mod tests {
         );
     }
 
-    /// Card HANDOFF-DIRECT-CALL-READING: with `keep_line_order` the
-    /// rewritten statement's lines stay non-decreasing; rule 11r's own
-    /// rewrite keeps the `if` line first, as before.
+    /// Cards HANDOFF-DIRECT-CALL-READING and RELATIONAL-REWRITE-LINE-ORDER:
+    /// the rewritten statement's lines stay non-decreasing, for both
+    /// rewrites: the `if` head takes the assignment's line, the moved call
+    /// keeps its own, the condition after the name its own.
     #[test]
     fn a_line_ordered_rewrite_keeps_the_stream_sorted() {
-        let mut tokens = stream("{ rc = take ( p ) ; if ( rc != 0 ) free ( p ) ; }");
+        let mut tokens = stream("{ rc = take ( p ) ; if ( 0 != rc ) free ( p ) ; }");
         for (index, token) in tokens.iter_mut().enumerate() {
             token.line = if index >= 8 { 2 } else { 1 };
         }
         let contracts = environment();
         let relational = contracts.relational();
-        let ordered = stored_returns_with(
-            &tokens,
-            &|name| relational.contains_key(name),
-            &read_test,
-            true,
-        )
-        .expect("rewritten");
-        assert_eq!(
-            texts(&ordered),
-            "{ if ( ( rc = take ( p ) ) ! = 0 ) free ( p ) ; }"
+        for rewrite in [Rewrite::Relational, Rewrite::HandOff] {
+            let ordered = stored_returns_with(
+                &tokens,
+                &|name| relational.contains_key(name),
+                &read_test,
+                rewrite,
+            )
+            .expect("rewritten");
+            assert_eq!(
+                texts(&ordered),
+                "{ if ( 0 ! = ( rc = take ( p ) ) ) free ( p ) ; }"
+            );
+            let lines = ordered.iter().map(|token| token.line).collect::<Vec<_>>();
+            assert_eq!(
+                lines,
+                [
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2
+                ]
+            );
+        }
+        let rewritten = tested_stored_returns(&tokens, &contracts).expect("rewritten");
+        assert!(
+            super::super::stream_line_order::first_disorder(&rewritten).is_none(),
+            "{rewritten:?}"
         );
-        assert!(ordered.windows(2).all(|pair| pair[0].line <= pair[1].line));
-        let plain = tested_stored_returns(&tokens, &contracts).expect("rewritten");
-        assert!(!plain.windows(2).all(|pair| pair[0].line <= pair[1].line));
+    }
+
+    /// Card RELATIONAL-REWRITE-LINE-ORDER: in a unit where rule 11r's rewrite
+    /// fires on a test written on a later line, every other statement keeps
+    /// its typed occurrence on its own line.
+    #[test]
+    fn a_rewritten_unit_keeps_the_other_statements_occurrences() {
+        let text = "{ rc = take ( p ) ; if ( rc != 0 ) free ( p ) ; s -> n = 1 ; s -> n = 1 ; }";
+        let mut tokens = stream(text);
+        // Line 1: `{ rc = take ( p ) ;`, line 2: the test and its body,
+        // line 3: two identical statements.
+        for (index, token) in tokens.iter_mut().enumerate() {
+            token.line = match index {
+                0..=7 => 1,
+                8..=19 => 2,
+                _ => 3,
+            };
+        }
+        let rewritten = tested_stored_returns(&tokens, &environment()).expect("rewritten");
+        let second = rewritten
+            .iter()
+            .enumerate()
+            .filter(|(_, token)| token.text == "s")
+            .map(|(index, _)| index)
+            .nth(1)
+            .expect("the second statement");
+        let run = &rewritten[second..second + 7];
+        let occurrence =
+            crate::typed_place::occurrence(&rewritten, Some((second, 7)), run).expect("occurrence");
+        assert_eq!((occurrence.ordinal, occurrence.count), (1, 2));
     }
 
     #[test]

@@ -202,6 +202,41 @@ fn a_stored_return_tested_next_is_the_tested_call() {
     assert!(outcome.safe(), "{outcome:?}");
 }
 
+/// Card RELATIONAL-REWRITE-LINE-ORDER: the stored-return rewrite of a test
+/// written on a later line keeps the stream's lines in order, so the unit's
+/// other statements keep their typed occurrences: two identical member
+/// stores on one line are told apart (rule 10t) in the same body. Before the
+/// card the rewritten `if` stood on its own line ahead of the moved call's,
+/// every occurrence of the unit was declined and the stores refused.
+#[test]
+fn a_rewritten_unit_keeps_its_typed_occurrences() {
+    if !clang_available() {
+        return;
+    }
+    let outcome = run("struct S { struct { int x; } in; };\n\
+         void subject(struct S *s)\n\
+         {\n\
+           void *p = q_alloc();\n\
+           int rc;\n\
+           rc = rp_take(p);\n\
+           if (rc != 0)\n\
+             q_free(p);\n\
+           s->in.x = 1; s->in.x = 1;\n\
+         }");
+    assert!(outcome.safe(), "{outcome:?}");
+    // The rewrite's own reading is unchanged on a later line too.
+    let outcome = run("void subject(void)\n\
+         {\n\
+           void *p = q_alloc();\n\
+           int rc;\n\
+           rc = rp_take(p);\n\
+           if (rc == 0)\n\
+             return;\n\
+           q_free(p);\n\
+         }");
+    assert!(outcome.safe(), "{outcome:?}");
+}
+
 #[test]
 fn a_status_witnessed_out_slot_exists_only_on_success() {
     if !clang_available() {

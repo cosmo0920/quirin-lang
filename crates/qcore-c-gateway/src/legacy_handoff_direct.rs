@@ -91,7 +91,7 @@ pub(super) fn stored_returns(
         tokens,
         &is_callee,
         &|texts| crate::handoff_direct::read_test(texts, &is_callee, &resolve_in_unit, None),
-        true,
+        super::relational_route::Rewrite::HandOff,
     )
 }
 
