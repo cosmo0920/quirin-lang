@@ -171,6 +171,47 @@ packages build and verify 0, `cargo check --locked` 0, `contracts.py check`
 clippy 0; then the matrix regenerated with this gate file (09a) 0, the
 Python suite again (09b) 0 and the docs index (10b, 10c) 0.
 
+## 8. Rebase onto `4285ff7cd`
+
+UNION-OPAQUE-RECORD-WRITES-BY-TYPE landed (`3394a2d02`, then `4285ff7cd`);
+its code (`callback_member_closure.rs`) is disjoint from this card's. The
+card was rebased onto `4285ff7cd` (records re-applied on main's: STATUS,
+increment, ledger 787 → 786, matrix regenerated with this card's gate file;
+`audit_card_lines.sh 1c7333db1 d063f602a` lists only the two STATUS rows,
+whose cells now lead with this card's entry ahead of main's). Targeted check:
+`cargo check --workspace --all-targets` 0 at `88a391f05`, no conflict
+markers. Combined arbiter ([`rebased-chain.sh`](scripts/rebased-chain.sh),
+[`build-main.sh`](scripts/build-main.sh)): main's binary from an export of
+`4285ff7cd` (`70f66ac8…`) against the rebased tip's (`86e0bf16…`, built at
+`88a391f05`), every route with the null property
+([summary](artifacts/summary-rebased.json),
+[corpus](artifacts/compare-corpus-rebased.json),
+[system](artifacts/compare-system-rebased.json),
+[census](artifacts/census-tip-corpus.json)):
+
+| route | main `4285ff7cd` | rebased tip | report sha256 |
+| --- | --- | --- | --- |
+| corpus | 938 / 9 / 3,887 | **938 / 9 / 3,887** | `9076ae48…` → `de6343c7…` |
+| system | 93 / 4 / 351 | **93 / 4 / 351** | `1e62b6d3…` → `d76c5212…` |
+| slice | 52 / 1 / 347 / 4 Pending | byte-identical | `49220b8e…` |
+| null | 1,113 / 1,435 / 2,355 / 18; 84 / 125 / 245; 71 / 103 / 232 | rows byte-identical on all three | |
+
+The moving rows are exactly section 4's: the same three corpus leaves and the
+system leaf in both occurrences of `src/flb_output.c`, no status move, no Safe
+change; dependency counts and the Safe roll-up identical; no guard refusal;
+the rewrite fires at the same 3 + 1 sites, every stream sorted. Main's corpus
+report equals the one UNION-OPAQUE-RECORD-WRITES-BY-TYPE published. The full
+gate was not rerun after the rebase (records-only overlap with the landed
+card, per the landing-race policy); gate g1 above is on `1c7333db1`.
+
+A second rebase, onto `cc3e79559` (FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE:
+records only, no product code since `4285ff7cd`), re-merged the records:
+ledger 790 → **789** (equal to `dimensions.named_followups`), STATUS and the
+increment re-anchored on main's, the matrix regenerated with this card's
+gate file. Checked: `cargo check --workspace --all-targets` 0, no conflict
+markers, the Python suite 0, the docs index rebuilt and `--check` 0. The
+combined arbiter above stands (no product code moved on main).
+
 ## Files likely to conflict
 
 `crates/qcore-c-gateway/src/legacy_c.rs` (the census lines and the guard hook

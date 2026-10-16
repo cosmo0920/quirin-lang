@@ -1,0 +1,18 @@
+{
+ "rewrites": {},
+ "stages": {
+  "generic-selection": {
+   "functions": 3,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "literal-premise": {
+   "functions": 367,
+   "unsorted_after": 0,
+   "broke": 0
+  }
+ },
+ "unsorted_units": 0,
+ "unsorted_unit_functions": 0,
+ "units": {}
+}

@@ -1,0 +1,64 @@
+{
+ "statuses_before": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3887,
+  "Safe": 938,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "unresolved resource identity `_`": 3
+ },
+ "added": {
+  "unresolved resource identity `_`": 3
+ },
+ "moving_rows": 2,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "clone_exemplars_to_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7422: unresolved resource identity `filtered_attributes`",
+    "7437: unresolved resource identity `array`"
+   ],
+   "gained": [
+    "7421: unresolved resource identity `filtered_attributes`",
+    "7436: unresolved resource identity `array`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_or_create_external_metadata_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7206: unresolved resource identity `entry_kvlist`"
+   ],
+   "gained": [
+    "7203: unresolved resource identity `entry_kvlist`"
+   ]
+  }
+ ]
+}

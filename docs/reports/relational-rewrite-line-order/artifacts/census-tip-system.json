@@ -1,0 +1,35 @@
+{
+ "rewrites": {
+  "relational-11r": {
+   "units": 1,
+   "sites": 1,
+   "unsorted_units": 0,
+   "site_list": [
+    [
+     "8c1ecd767d5ce4d81ae538504e9169b5428f61850141d0fabedd658c3e2465de",
+     17843
+    ]
+   ]
+  }
+ },
+ "stages": {
+  "generic-selection": {
+   "functions": 1,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "literal-premise": {
+   "functions": 174,
+   "unsorted_after": 0,
+   "broke": 0
+  },
+  "relational-11r": {
+   "functions": 46,
+   "unsorted_after": 0,
+   "broke": 0
+  }
+ },
+ "unsorted_units": 0,
+ "unsorted_unit_functions": 0,
+ "units": {}
+}
