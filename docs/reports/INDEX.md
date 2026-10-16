@@ -436,6 +436,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-event-loop-retention](fb-event-loop-retention/README.md) | FB-EVENT-LOOP-RETENTION-AND-REGISTRATION |
 
+| [fb-plugin-descriptor-nonnull](fb-plugin-descriptor-nonnull/README.md) | FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE |
+
 | [fb-processor-instance-allocation-size](fb-processor-instance-allocation-size/README.md) | FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE: a processor instance allocated by the filter instance's size |
 
 | [fb-quant-contract-census](fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
