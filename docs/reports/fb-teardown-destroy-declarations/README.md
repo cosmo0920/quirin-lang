@@ -261,3 +261,28 @@ system rows as in section 6). The moved rows (corpus 2, system 52, slice 31)
 are exactly section 6's, row for row with the same leaves lost and gained
 (compared by leaf text; line numbers are the analysed stream's). No other
 difference.
+
+## 10. Combined arbiter against main `b08c7c3d3`
+
+After FB-EVENT-LOOP-RETENTION-AND-REGISTRATION landed and this card rebased
+onto it: main `b08c7c3d3` from a clean export (binary `35754baf…`) against
+the rebased tip `dff9865b4` (binary `a70902f9…`, built from the committed
+tree, no tracked change), each route under the heavy lock with the null
+property (`scripts/combined.sh b08c7c3d3`, `scripts/combined_compare.sh`;
+`artifacts/combined-b08c7c3d3-*.json`):
+
+| Route | main `b08c7c3d3` | tip | Null tallies |
+| --- | --- | --- | --- |
+| corpus | 939 / 9 / 3,886 (`96a0112a…`) | 939 / 9 / 3,886 (`f2eb590a…`) | identical: 1,113 / 1,435 / 2,355 / 18 |
+| system | 93 / 4 / 351 (`63d74edd…`) | **95** / 4 / **349** (`3dd728bb…`) | identical: 84 / 125 / 245 |
+| slice | 52 / 1 / 347 / 4 Pending (`c477a0f1…`) | unchanged (`da17c5be…`) | identical: 71 / 103 / 232 |
+
+The only status move is `flb_sched_timer_cb_destroy` (both configurations).
+The moved rows (corpus 2, system 52, slice 31) are exactly section 6's, row
+for row with the same leaves lost and gained (by leaf text); the null
+stream differs only in the same two system rows. The landed card's access
+gate change (borrowed positions of withheld declarations) moves nothing of
+this card's. No other difference. The pins still check as recorded
+(`scripts/pin.py … --check` with the tip binary: in force at every tree
+whose body was read, `verify` 0; the instance and tail destroyers not in
+force at the trees whose bodies differ, as intended).
