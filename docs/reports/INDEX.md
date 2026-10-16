@@ -948,6 +948,13 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [tsan-rows-2](tsan-rows-2/README.md) | `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39) |
 
+## U
+
+| Card directory | Original report title |
+|---|---|
+
+| [union-opaque-record-writes](union-opaque-record-writes/README.md) | UNION-OPAQUE-RECORD-WRITES-BY-TYPE: opaque record writes keyed by target |
+
 ## V
 
 | Card directory | Original report title |

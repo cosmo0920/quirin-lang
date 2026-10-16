@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""union_places.py FACTS.json UNION ARM... -- UNION-OPAQUE-RECORD-WRITES-BY-TYPE: from the
+"""union_places.py FACTS.json UNION ARM... [--out OUT.json] -- UNION-OPAQUE-RECORD-WRITES-BY-TYPE: from the
 member facts `member_facts_census` wrote, for each ARM of UNION
 (`rd_kafka_op_s.rko_u.*`): its byte range in every unit's layout (and whether
 the units agree), every store keyed into UNION whose arm range overlaps it
@@ -13,6 +13,11 @@ import sys
 facts = json.load(open(sys.argv[1]))
 union = sys.argv[2]
 arms = sys.argv[3:]
+out_path = None
+if "--out" in arms:
+    at = arms.index("--out")
+    out_path = arms[at + 1]
+    arms = arms[:at] + arms[at + 2:]
 
 
 def overlap(a, b):
@@ -56,8 +61,17 @@ for arm in arms:
             continue
         openers = sorted(unit.split("/src/")[-1] for unit, data in facts.items()
                          if "unread" not in data and record in data.get("opened", {}))
+        targets = sorted({json.dumps(target, sort_keys=True) for data in facts.values()
+                          if "unread" not in data
+                          for target in data.get("opened_targets", {}).get(record, [])})
         entry["held"].append({"record": record, "placements": sorted(map(list, placements)),
-                              "opened_in": openers})
+                              "opened_in": openers,
+                              "targets": [json.loads(target) for target in targets]})
     out["arms"][arm] = entry
-json.dump(out, sys.stdout, indent=1)
-print()
+if out_path:
+    with open(out_path, "w") as handle:
+        json.dump(out, handle, indent=1)
+        handle.write("\n")
+else:
+    json.dump(out, sys.stdout, indent=1)
+    print()

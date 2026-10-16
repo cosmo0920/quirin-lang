@@ -1,0 +1,1306 @@
+{
+ "meaning": "census_artifact.py -- UNION-OPAQUE-RECORD-WRITES-BY-TYPE: the census\nevidence in one file (artifacts/census.json): the closures\n`member_facts_census` printed over the 94 librdkafka units at the base\n(`census-base.log`, `census-base-sub.log`) and at the card's code\n(`census-a1.log`), every opaque write `opaque_sites.py` listed, and\n`union_places.py`'s reading of the stores and held records meeting the two\nmembers (base and a1). Inputs under private/uorw/. A reading aid.",
+ "closures_before": {
+  "rd_kafka_op_s.rko_u.offset_commit.cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\", \"a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`\", \"a whole-object assignment writes a `struct rd_kafka_replyq_s`\"}",
+  "rd_kafka_op_s.rko_u.terminated.cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\", \"a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`\", \"a whole-object assignment writes a `struct rd_kafka_replyq_s`\"}",
+  "rd_kafka_op_s.rko_u.broker_monitor.cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\", \"a whole-object assignment writes a `struct rd_kafka_fetch_pos_s`\", \"a whole-object assignment writes a `struct rd_kafka_replyq_s`\"}",
+  "rd_kafka_op_s.rko_op_cb": "closed over 27: {\"rd_kafka_DeleteRecords_leaders_queried_cb\", \"rd_kafka_ListOffsets_leaders_queried_cb\", \"rd_kafka_admin_fanout_worker\", \"rd_kafka_admin_worker\", \"rd_kafka_broker_monitor_op_cb\", \"rd_kafka_cgrp_assignor_handle_Metadata_op\", \"rd_kafka_cgrp_consumer_handle_Metadata_op\", \"rd_kafka_cgrp_handle_Metadata_op\", \"rd_kafka_oauthbearer_refresh_op\", \"rd_kafka_offset_reset_op_cb\", \"rd_kafka_offset_validate_op_cb\", \"rd_kafka_share_ack_commit_cb_register_op\", \"rd_kafka_share_commit_async_fanout_op\", \"rd_kafka_share_commit_sync_fanout_op\", \"rd_kafka_share_fetch_fanout_op\", \"rd_kafka_share_fetch_reply_op_cb\", \"rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb\", \"rd_kafka_txn_op_abort_transaction\", \"rd_kafka_txn_op_abort_transaction_ack\", \"rd_kafka_txn_op_ack_init_transactions\", \"rd_kafka_txn_op_begin_abort\", \"rd_kafka_txn_op_begin_commit\", \"rd_kafka_txn_op_begin_transaction\", \"rd_kafka_txn_op_commit_transaction\", \"rd_kafka_txn_op_commit_transaction_ack\", \"rd_kafka_txn_op_init_transactions\", \"rd_kafka_txn_op_send_offsets_to_transaction\"}",
+  "rd_kafka_conf_s.offset_commit_cb": "closed over 0: {}",
+  "rd_kafka_broker_monitor_s.rkbmon_cb": "closed over 2: {\"rd_kafka_coord_rkb_monitor_cb\", \"rd_kafka_txn_coord_monitor_cb\"}"
+ },
+ "closures_after": {
+  "rd_kafka_op_s.rko_u.offset_commit.cb": "closed over 4: {\"rd_kafka_coord_rkb_monitor_cb\", \"rd_kafka_decommissioned_broker_thread_join\", \"rd_kafka_offset_broker_commit_cb\", \"rd_kafka_txn_coord_monitor_cb\"}",
+  "rd_kafka_op_s.rko_u.terminated.cb": "closed over 4: {\"rd_kafka_coord_rkb_monitor_cb\", \"rd_kafka_decommissioned_broker_thread_join\", \"rd_kafka_offset_broker_commit_cb\", \"rd_kafka_txn_coord_monitor_cb\"}",
+  "rd_kafka_op_s.rko_u.broker_monitor.cb": "closed over 4: {\"rd_kafka_coord_rkb_monitor_cb\", \"rd_kafka_decommissioned_broker_thread_join\", \"rd_kafka_offset_broker_commit_cb\", \"rd_kafka_txn_coord_monitor_cb\"}",
+  "rd_kafka_op_s.rko_op_cb": "closed over 27: {\"rd_kafka_DeleteRecords_leaders_queried_cb\", \"rd_kafka_ListOffsets_leaders_queried_cb\", \"rd_kafka_admin_fanout_worker\", \"rd_kafka_admin_worker\", \"rd_kafka_broker_monitor_op_cb\", \"rd_kafka_cgrp_assignor_handle_Metadata_op\", \"rd_kafka_cgrp_consumer_handle_Metadata_op\", \"rd_kafka_cgrp_handle_Metadata_op\", \"rd_kafka_oauthbearer_refresh_op\", \"rd_kafka_offset_reset_op_cb\", \"rd_kafka_offset_validate_op_cb\", \"rd_kafka_share_ack_commit_cb_register_op\", \"rd_kafka_share_commit_async_fanout_op\", \"rd_kafka_share_commit_sync_fanout_op\", \"rd_kafka_share_fetch_fanout_op\", \"rd_kafka_share_fetch_reply_op_cb\", \"rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb\", \"rd_kafka_txn_op_abort_transaction\", \"rd_kafka_txn_op_abort_transaction_ack\", \"rd_kafka_txn_op_ack_init_transactions\", \"rd_kafka_txn_op_begin_abort\", \"rd_kafka_txn_op_begin_commit\", \"rd_kafka_txn_op_begin_transaction\", \"rd_kafka_txn_op_commit_transaction\", \"rd_kafka_txn_op_commit_transaction_ack\", \"rd_kafka_txn_op_init_transactions\", \"rd_kafka_txn_op_send_offsets_to_transaction\"}",
+  "rd_list_s.rl_free_cb": "open: {\"a `CStyleCastExpr`\", \"a `memmove` into it writes a `struct rd_kafka_group_member_s`\"}"
+ },
+ "opaque_writes": [
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "line": 3410,
+   "function": "rd_kafka_share_fetch_fanout",
+   "target": "rko<VarDecl>->rko_replyq",
+   "path": [
+    "rko_replyq"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_op_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "line": 3647,
+   "function": "rd_kafka_share_enqueue_fetch_op",
+   "target": "rko_sf<VarDecl>->rko_replyq",
+   "path": [
+    "rko_replyq"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_op_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "line": 4187,
+   "function": "rd_kafka_share_enqueue_sync_ack_op",
+   "target": "rko_sf<VarDecl>->rko_replyq",
+   "path": [
+    "rko_replyq"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_op_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "line": 4470,
+   "function": "rd_kafka_share_commit_sync",
+   "target": "rko<VarDecl>->rko_replyq",
+   "path": [
+    "rko_replyq"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_op_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka.c",
+   "line": 4752,
+   "function": "rd_kafka_seek",
+   "target": "replyq<VarDecl>",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "local",
+    "replyq"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_fetch_pos_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_cgrp.c",
+   "line": 4322,
+   "function": "rd_kafka_cgrp_update_committed_offsets",
+   "target": "rktp<VarDecl>->rktp_committed_pos",
+   "path": [
+    "rktp_committed_pos"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_toppar_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_fetch_pos_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_cgrp.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_offset.c",
+   "line": 400,
+   "function": "rd_kafka_commit",
+   "target": "rq<VarDecl>",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "local",
+    "rq"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_offset.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_fetch_pos_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "line": 1382,
+   "function": "rd_kafka_toppar_offset_commit_result",
+   "target": "rktp<ParmVarDecl>->rktp_committed_pos",
+   "path": [
+    "rktp_committed_pos"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_toppar_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_fetch_pos_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_partition.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_fetch_pos_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_partition.c",
+   "line": 2233,
+   "function": "rd_kafka_toppar_op_serve",
+   "target": "pos<VarDecl>",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "local",
+    "pos"
+   ],
+   "value": "<CallExpr:struct rd_kafka_fetch_pos_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_partition.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_fetch_pos_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "line": 1313,
+   "function": "rd_kafka_handle_OffsetFetch",
+   "target": "rktp<VarDecl>->rktp_committed_pos",
+   "path": [
+    "rktp_committed_pos"
+   ],
+   "through_union": false,
+   "root": [
+    "arrow",
+    "rd_kafka_toppar_s"
+   ],
+   "value": "<CallExpr:struct rd_kafka_fetch_pos_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_request.c"
+  },
+  {
+   "what": "whole-object assignment",
+   "record": "rd_kafka_replyq_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_request.c",
+   "line": 3110,
+   "function": "rd_kafka_MetadataRequest0",
+   "target": "use_replyq<VarDecl>",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "local",
+    "use_replyq"
+   ],
+   "value": "<CallExpr:struct rd_kafka_replyq_s>",
+   "value_kind": "CallExpr",
+   "unit": "rdkafka_request.c"
+  },
+  {
+   "what": "`memmove` into it",
+   "record": "rd_kafka_group_member_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "line": 2878,
+   "function": "ut_testReassignmentAfterOneConsumerLeaves",
+   "target": "members<VarDecl>[...]",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "untargeted",
+    "ArraySubscriptExpr"
+   ],
+   "value": null,
+   "value_kind": null,
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "what": "`memmove` into it",
+   "record": "rd_kafka_group_member_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "line": 3007,
+   "function": "ut_testSameSubscriptions",
+   "target": "members<VarDecl>[...]",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "untargeted",
+    "ArraySubscriptExpr"
+   ],
+   "value": null,
+   "value_kind": null,
+   "unit": "rdkafka_sticky_assignor.c"
+  },
+  {
+   "what": "`memmove` into it",
+   "record": "rd_kafka_group_member_s",
+   "file": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_sticky_assignor.c",
+   "line": 3089,
+   "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+   "target": "members<VarDecl>[...]",
+   "path": [],
+   "through_union": false,
+   "root": [
+    "untargeted",
+    "ArraySubscriptExpr"
+   ],
+   "value": null,
+   "value_kind": null,
+   "unit": "rdkafka_sticky_assignor.c"
+  }
+ ],
+ "union_places_before": {
+  "units_with_layout": [
+   "rdkafka_admin.c",
+   "rdkafka_broker.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_offset.c",
+   "rdkafka_op.c",
+   "rdkafka_partition.c"
+  ],
+  "arms": {
+   "offset_commit.cb": {
+    "range": [
+     [
+      8,
+      8
+     ]
+    ],
+    "agree": true,
+    "stores": [
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@broker_monitor.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_broker_monitor_s.rkbmon_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@terminated.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "function",
+        "name": "rd_kafka_decommissioned_broker_thread_join"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_cgrp.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_conf_s.offset_commit_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_offset.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "formal",
+        "function": "rd_kafka_commit0",
+        "index": 4
+       }
+      ]
+     }
+    ],
+    "held": [
+     {
+      "record": "rd_kafka_AdminOptions_s",
+      "placements": [
+       [
+        [
+         0,
+         656
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_confval_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         80,
+         64
+        ],
+        [
+         144,
+         64
+        ],
+        [
+         208,
+         64
+        ],
+        [
+         272,
+         64
+        ],
+        [
+         336,
+         64
+        ],
+        [
+         400,
+         64
+        ],
+        [
+         464,
+         64
+        ],
+        [
+         528,
+         64
+        ],
+        [
+         592,
+         64
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_fetch_pos_s",
+      "placements": [
+       [
+        [
+         0,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [
+       "rdkafka_cgrp.c",
+       "rdkafka_partition.c",
+       "rdkafka_request.c"
+      ]
+     },
+     {
+      "record": "rd_kafka_message_s",
+      "placements": [
+       [
+        [
+         8,
+         72
+        ],
+        [
+         16,
+         72
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msg_s",
+      "placements": [
+       [
+        [
+         8,
+         176
+        ],
+        [
+         16,
+         176
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msgq_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         72,
+         64
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msgs_head_s",
+      "placements": [
+       [
+        [
+         8,
+         16
+        ],
+        [
+         72,
+         16
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_list_s",
+      "placements": [
+       [
+        [
+         8,
+         40
+        ],
+        [
+         72,
+         40
+        ],
+        [
+         728,
+         40
+        ],
+        [
+         856,
+         40
+        ]
+       ]
+      ],
+      "opened_in": []
+     }
+    ]
+   },
+   "terminated.cb": {
+    "range": [
+     [
+      8,
+      8
+     ]
+    ],
+    "agree": true,
+    "stores": [
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@broker_monitor.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_broker_monitor_s.rkbmon_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@terminated.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "function",
+        "name": "rd_kafka_decommissioned_broker_thread_join"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_cgrp.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_conf_s.offset_commit_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_offset.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "formal",
+        "function": "rd_kafka_commit0",
+        "index": 4
+       }
+      ]
+     }
+    ],
+    "held": [
+     {
+      "record": "rd_kafka_AdminOptions_s",
+      "placements": [
+       [
+        [
+         0,
+         656
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_confval_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         80,
+         64
+        ],
+        [
+         144,
+         64
+        ],
+        [
+         208,
+         64
+        ],
+        [
+         272,
+         64
+        ],
+        [
+         336,
+         64
+        ],
+        [
+         400,
+         64
+        ],
+        [
+         464,
+         64
+        ],
+        [
+         528,
+         64
+        ],
+        [
+         592,
+         64
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_fetch_pos_s",
+      "placements": [
+       [
+        [
+         0,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [
+       "rdkafka_cgrp.c",
+       "rdkafka_partition.c",
+       "rdkafka_request.c"
+      ]
+     },
+     {
+      "record": "rd_kafka_message_s",
+      "placements": [
+       [
+        [
+         8,
+         72
+        ],
+        [
+         16,
+         72
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msg_s",
+      "placements": [
+       [
+        [
+         8,
+         176
+        ],
+        [
+         16,
+         176
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msgq_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         72,
+         64
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_kafka_msgs_head_s",
+      "placements": [
+       [
+        [
+         8,
+         16
+        ],
+        [
+         72,
+         16
+        ]
+       ]
+      ],
+      "opened_in": []
+     },
+     {
+      "record": "rd_list_s",
+      "placements": [
+       [
+        [
+         8,
+         40
+        ],
+        [
+         72,
+         40
+        ],
+        [
+         728,
+         40
+        ],
+        [
+         856,
+         40
+        ]
+       ]
+      ],
+      "opened_in": []
+     }
+    ]
+   }
+  }
+ },
+ "union_places_after": {
+  "units_with_layout": [
+   "rdkafka_admin.c",
+   "rdkafka_broker.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_offset.c",
+   "rdkafka_op.c",
+   "rdkafka_partition.c"
+  ],
+  "arms": {
+   "offset_commit.cb": {
+    "range": [
+     [
+      8,
+      8
+     ]
+    ],
+    "agree": true,
+    "stores": [
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@broker_monitor.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_broker_monitor_s.rkbmon_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@terminated.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "function",
+        "name": "rd_kafka_decommissioned_broker_thread_join"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_cgrp.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_conf_s.offset_commit_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_offset.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "formal",
+        "function": "rd_kafka_commit0",
+        "index": 4
+       }
+      ]
+     }
+    ],
+    "held": [
+     {
+      "record": "rd_kafka_AdminOptions_s",
+      "placements": [
+       [
+        [
+         0,
+         656
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_confval_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         80,
+         64
+        ],
+        [
+         144,
+         64
+        ],
+        [
+         208,
+         64
+        ],
+        [
+         272,
+         64
+        ],
+        [
+         336,
+         64
+        ],
+        [
+         400,
+         64
+        ],
+        [
+         464,
+         64
+        ],
+        [
+         528,
+         64
+        ],
+        [
+         592,
+         64
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_fetch_pos_s",
+      "placements": [
+       [
+        [
+         0,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [
+       "rdkafka_cgrp.c",
+       "rdkafka_partition.c",
+       "rdkafka_request.c"
+      ],
+      "targets": [
+       {
+        "path": [
+         "rktp_committed_pos"
+        ],
+        "record": "rd_kafka_toppar_s",
+        "target": "below"
+       },
+       {
+        "path": [],
+        "record": "rd_kafka_fetch_pos_s",
+        "target": "separate"
+       }
+      ]
+     },
+     {
+      "record": "rd_kafka_message_s",
+      "placements": [
+       [
+        [
+         8,
+         72
+        ],
+        [
+         16,
+         72
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msg_s",
+      "placements": [
+       [
+        [
+         8,
+         176
+        ],
+        [
+         16,
+         176
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msgq_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         72,
+         64
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msgs_head_s",
+      "placements": [
+       [
+        [
+         8,
+         16
+        ],
+        [
+         72,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_list_s",
+      "placements": [
+       [
+        [
+         8,
+         40
+        ],
+        [
+         72,
+         40
+        ],
+        [
+         728,
+         40
+        ],
+        [
+         856,
+         40
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     }
+    ]
+   },
+   "terminated.cb": {
+    "range": [
+     [
+      8,
+      8
+     ]
+    ],
+    "agree": true,
+    "stores": [
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@broker_monitor.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_broker_monitor_s.rkbmon_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_broker.c",
+      "key": "rd_kafka_op_s.rko_u.*@terminated.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "function",
+        "name": "rd_kafka_decommissioned_broker_thread_join"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_cgrp.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "member",
+        "member": "rd_kafka_conf_s.offset_commit_cb"
+       }
+      ]
+     },
+     {
+      "unit": "rdkafka_offset.c",
+      "key": "rd_kafka_op_s.rko_u.*@offset_commit.cb",
+      "range": [
+       [
+        8,
+        8
+       ]
+      ],
+      "flows": [
+       {
+        "flow": "formal",
+        "function": "rd_kafka_commit0",
+        "index": 4
+       }
+      ]
+     }
+    ],
+    "held": [
+     {
+      "record": "rd_kafka_AdminOptions_s",
+      "placements": [
+       [
+        [
+         0,
+         656
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_confval_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         80,
+         64
+        ],
+        [
+         144,
+         64
+        ],
+        [
+         208,
+         64
+        ],
+        [
+         272,
+         64
+        ],
+        [
+         336,
+         64
+        ],
+        [
+         400,
+         64
+        ],
+        [
+         464,
+         64
+        ],
+        [
+         528,
+         64
+        ],
+        [
+         592,
+         64
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_fetch_pos_s",
+      "placements": [
+       [
+        [
+         0,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [
+       "rdkafka_cgrp.c",
+       "rdkafka_partition.c",
+       "rdkafka_request.c"
+      ],
+      "targets": [
+       {
+        "path": [
+         "rktp_committed_pos"
+        ],
+        "record": "rd_kafka_toppar_s",
+        "target": "below"
+       },
+       {
+        "path": [],
+        "record": "rd_kafka_fetch_pos_s",
+        "target": "separate"
+       }
+      ]
+     },
+     {
+      "record": "rd_kafka_message_s",
+      "placements": [
+       [
+        [
+         8,
+         72
+        ],
+        [
+         16,
+         72
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msg_s",
+      "placements": [
+       [
+        [
+         8,
+         176
+        ],
+        [
+         16,
+         176
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msgq_s",
+      "placements": [
+       [
+        [
+         8,
+         64
+        ],
+        [
+         72,
+         64
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_kafka_msgs_head_s",
+      "placements": [
+       [
+        [
+         8,
+         16
+        ],
+        [
+         72,
+         16
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     },
+     {
+      "record": "rd_list_s",
+      "placements": [
+       [
+        [
+         8,
+         40
+        ],
+        [
+         72,
+         40
+        ],
+        [
+         728,
+         40
+        ],
+        [
+         856,
+         40
+        ]
+       ]
+      ],
+      "opened_in": [],
+      "targets": []
+     }
+    ]
+   }
+  }
+ }
+}

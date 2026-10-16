@@ -5381,6 +5381,44 @@ own anchor here.
     `the_layout_takes_only_shared_stores`, `layout_vectors_hold`);
     `LAYOUT_VECTORS`; `tests/rko_union_layout.rs`;
     [report](../reports/rko-op-cb-union-closure/README.md).
+    **Opaque writes keyed by target** (card
+    UNION-OPAQUE-RECORD-WRITES-BY-TYPE, C04.19.3 amended): every opaque
+    write of a record (`MemberFacts::opened`) keeps its target expression
+    (`opened_targets`, `OpaqueTarget`, read as `callback_key` reads an
+    assignment's place): a place a union holds (`U.*@arm.path`; an
+    assignment there is also an open store at that place, so its own bytes
+    decide by `places_alias`), a separate object (a local, global or
+    by-value formal, or a member path in one), a member path below a pointer
+    to a named record, or untargeted (a dereference, an array element, a
+    pointer handed to a copier, an initializer list). A union target reads a
+    held record's write by the record's placements (`meets_record`) only
+    where the write may lie in that union (`Tables::may_lie_in`,
+    `opaque_write_may_lie`): untargeted, into another union, below a record
+    the union holds by value, or on a path the tables do not read as
+    meeting no union (`path_avoids_unions`); facts without targets are read
+    by type as before. Non-union readings (a member keyed by its record, its
+    containers) stay type-keyed. **A declared spelling keeps its arm**:
+    `Tables::normalise` keys a path into a union `U.*@rest`, as a read of
+    the same place (it was the whole union, so the layout never applied to
+    a declared member: `rd_kafka_op_s.rko_u.offset_commit.cb` aliased every
+    place and held record of `rko_u`). Measured (corpus `66910c10` on main
+    `1c7333db1`): 938 / 9 / 3,887 unchanged, the four rows naming the union
+    trade one leaf each; `rko_u.offset_commit.cb` and `rko_u.terminated.cb`
+    close over the four candidates on union bytes 8..16 (three arms share
+    them), none contracted. **Do not** key a write into a union by its
+    record's type where its target is read, read a separate object or an
+    unheld record's path into a union, or read a path the tables do not
+    give as avoiding one. `QCore.UnionArmLayout`
+    (`the_target_reading_only_narrows_the_type_reading`,
+    `an_untargeted_write_is_read_by_type`,
+    `a_separate_object_never_keys_into_the_union`,
+    `a_write_below_an_unheld_record_never_keys_into_the_union`,
+    `a_union_write_is_decided_by_its_place`,
+    `a_separate_write_never_changes_the_read`,
+    `a_non_overlapping_opaque_write_never_changes_the_read`,
+    `an_unknown_range_opaque_write_aliases`, `opaque_vectors_hold`);
+    `OPAQUE_VECTORS`; `tests/union_opaque_writes.rs`;
+    [report](../reports/union-opaque-record-writes/README.md).
     **A candidate's own member invocations** (card
     HANDOFF-CANDIDATE-OWN-CALLBACKS) are decided by this rule as in the
     candidate's own body, over the run's set only, when the candidate is

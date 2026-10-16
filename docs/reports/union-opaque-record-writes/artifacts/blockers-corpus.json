@@ -1,0 +1,129 @@
+{
+ "moved": {
+  "rdkafka.c::rd_kafka_consume0": {
+   "remaining": [
+    "call to uncontracted function `rd_kafka_app_poll_start`",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)",
+    "unresolved resource identity `rd_kafka_yield_thread`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "unresolved resource identity `rko`",
+    "call to uncontracted function `rd_kafka_message_get`",
+    "call to uncontracted function `rd_kafka_fetch_op_app_prepare`",
+    "call to uncontracted function `rd_kafka_set_last_error`",
+    "call to uncontracted function `rd_kafka_app_polled`",
+    "unresolved resource identity `rkmessage`"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka.c::rd_kafka_consumer_close0": {
+   "remaining": [
+    "call to uncontracted function `rd_kafka_consumer_close_q`",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "unresolved resource identity `rko`",
+    "unresolved resource identity `rko`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rko`",
+    "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)",
+    "unresolved resource identity `rko`",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "unresolved resource identity `error`",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `rk`",
+    "indirect memory access is outside the resource projection",
+    "unresolved resource identity `error`",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "nullable resource `error` used by a non-null contract"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka.c::rd_kafka_offsets_for_times": {
+   "remaining": [
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_topic_partition_list_query_leaders`",
+    "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "indirect memory access is outside the resource projection",
+    "unmodeled call, aggregate or indirect access in for-loop condition",
+    "call to uncontracted function `rd_kafka_ListOffsetsRequest`",
+    "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "unmodeled call, aggregate or indirect access in loop condition",
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "call to uncontracted function `rd_kafka_topic_partition_list_update`",
+    "use of `rkq` after a possibly-final drop of its reference (reference-dropped)",
+    "indirect memory access is outside the resource projection",
+    "use of `rkq` after a possibly-final drop of its reference (reference-dropped)",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  },
+  "rdkafka.c::rd_kafka_query_watermark_offsets": {
+   "remaining": [
+    "call to uncontracted function `rd_kafka_topic_partition_list_new`",
+    "call to uncontracted function `rd_kafka_topic_partition_list_add`",
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_topic_partition_list_query_leaders`",
+    "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "unresolved resource identity `partitions`",
+    "call to uncontracted function `rd_list_elem`",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "call to uncontracted function `rd_kafka_ListOffsetsRequest`",
+    "call to uncontracted function `rd_kafka_ListOffsetsRequest`",
+    "unresolved resource identity `partitions`",
+    "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)",
+    "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)",
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)",
+    "unmodeled call, aggregate or indirect access in branch condition",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection",
+    "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ]
+  }
+ },
+ "rows_per_remaining_key": {
+  "call to uncontracted function _": 4,
+  "callback-own-invocation-refused": 2,
+  "callback-registry-undecided": 2,
+  "callback-uncontracted": 2,
+  "indirect memory access is outside the resource projection": 3,
+  "nullable resource _ used by a non-null contract": 1,
+  "reference-drop-unheld": 3,
+  "reference-dropped": 1,
+  "retention-undecided": 3,
+  "unmodeled call, aggregate or indirect access in branch condition": 2,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+  "unmodeled call, aggregate or indirect access in loop condition": 3,
+  "unresolved resource identity _": 3
+ }
+}

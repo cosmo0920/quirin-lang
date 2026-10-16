@@ -1,0 +1,487 @@
+{
+ "constructed_states": {
+  "declarations": {
+   "rd_kafka_conf_new": {
+    "rd_kafka_conf_s.log_cb": false,
+    "rd_kafka_conf_s.open_cb": false,
+    "rd_kafka_conf_s.socket_cb": false
+   },
+   "rd_kafka_op_new0": {
+    "rd_kafka_op_s.rko_op_cb": false,
+    "rd_kafka_op_s.rko_type": true
+   },
+   "rd_kafka_op_new_cb": {
+    "rd_kafka_op_s.rko_op_cb": false,
+    "rd_kafka_op_s.rko_type": true
+   }
+  },
+  "demoted": [],
+  "meaning": "the run's stability of every member a constructor's stated result state names (rules 12o, 13w, 14e): every store into the member in every analysed unit is classified (a store into an object its function obtained from an owned-result call only or an automatic object, a null pointer into a function-pointer member, a constant flag-or, a case-guarded rewrite); anything else, a whole-object write of the record, or a unit that recorded no facts (premise P-OPCTOR-STORES-SEEN) leaves it not kept. `demoted` lists the Safe or Pending rows resting on a constructor whose stated member the run does not keep, now Unknown (constructed-state-open). Evidence and a demotion only: no row is promoted",
+  "members": {
+   "rd_kafka_conf_s.log_cb": {
+    "kept": true
+   },
+   "rd_kafka_conf_s.open_cb": {
+    "kept": true
+   },
+   "rd_kafka_conf_s.socket_cb": {
+    "kept": true
+   },
+   "rd_kafka_op_s.rko_op_cb": {
+    "kept": true
+   },
+   "rd_kafka_op_s.rko_type": {
+    "kept": true
+   }
+  }
+ },
+ "declarations": {
+  "rd_kafka_background_queue_serve": [
+   "rd_kafka_s.rk_conf.background_event_cb",
+   "rd_kafka_s.rk_conf.consume_cb",
+   "rd_kafka_s.rk_conf.dr_cb",
+   "rd_kafka_s.rk_conf.dr_msg_cb",
+   "rd_kafka_s.rk_conf.error_cb",
+   "rd_kafka_s.rk_conf.log_cb",
+   "rd_kafka_s.rk_conf.rebalance_cb",
+   "rd_kafka_s.rk_conf.stats_cb",
+   "rd_kafka_s.rk_conf.throttle_cb"
+  ],
+  "rd_kafka_consume_cb": [
+   "consume_ctx.consume_cb"
+  ],
+  "rd_kafka_oauthbearer_refresh_op": [
+   "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb"
+  ],
+  "rd_kafka_op_destroy": [
+   "rd_kafka_op_s.rko_op_cb"
+  ],
+  "rd_kafka_op_req": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_op_req0": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_op_req2": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_poll_cb": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_u.offset_commit.cb",
+   "rd_kafka_op_s.rko_u.terminated.cb",
+   "rd_kafka_s.rk_conf.consume_cb",
+   "rd_kafka_s.rk_conf.dr_cb",
+   "rd_kafka_s.rk_conf.dr_msg_cb",
+   "rd_kafka_s.rk_conf.error_cb",
+   "rd_kafka_s.rk_conf.log_cb",
+   "rd_kafka_s.rk_conf.rebalance_cb",
+   "rd_kafka_s.rk_conf.stats_cb",
+   "rd_kafka_s.rk_conf.throttle_cb",
+   "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb"
+  ],
+  "rd_kafka_q_pop_serve": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_pop_serve0": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_pop_serve_maybe_consume": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve0": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ],
+  "rd_kafka_q_serve_maybe_consume": [
+   "rd_kafka_op_s.rko_op_cb",
+   "rd_kafka_op_s.rko_serve"
+  ]
+ },
+ "demoted": [],
+ "meaning": "the run's closure of every function-pointer member a resource_callback_member_invoked clause names (rule 12n): over every analysed unit's Clang stores into the member, a designator joins the set, a null pointer adds nothing, a read of another such member adds its set, a formal of a function whose address no unit takes adds its actuals at every call, and anything else opens it; a unit that recorded no facts opens it (premise P-CG22-MEMBER-CLOSED-WORLD). `demoted` lists the Safe or Pending rows whose unit decided a member over a set the run's closure is not contained in, now Unknown (callback-member-open). `members_over_recorded_units` is the same closure over the units that did record facts, and `units_without_facts_named` names the others (evidence only). Evidence and a demotion only: no row is promoted",
+ "members": {
+  "consume_ctx.consume_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_op_cb": {
+   "candidates": [
+    "rd_kafka_DeleteRecords_leaders_queried_cb",
+    "rd_kafka_ListOffsets_leaders_queried_cb",
+    "rd_kafka_admin_fanout_worker",
+    "rd_kafka_admin_worker",
+    "rd_kafka_broker_monitor_op_cb",
+    "rd_kafka_cgrp_assignor_handle_Metadata_op",
+    "rd_kafka_cgrp_consumer_handle_Metadata_op",
+    "rd_kafka_cgrp_handle_Metadata_op",
+    "rd_kafka_oauthbearer_refresh_op",
+    "rd_kafka_offset_reset_op_cb",
+    "rd_kafka_offset_validate_op_cb",
+    "rd_kafka_share_ack_commit_cb_register_op",
+    "rd_kafka_share_commit_async_fanout_op",
+    "rd_kafka_share_commit_sync_fanout_op",
+    "rd_kafka_share_fetch_fanout_op",
+    "rd_kafka_share_fetch_reply_op_cb",
+    "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+    "rd_kafka_txn_op_abort_transaction",
+    "rd_kafka_txn_op_abort_transaction_ack",
+    "rd_kafka_txn_op_ack_init_transactions",
+    "rd_kafka_txn_op_begin_abort",
+    "rd_kafka_txn_op_begin_commit",
+    "rd_kafka_txn_op_begin_transaction",
+    "rd_kafka_txn_op_commit_transaction",
+    "rd_kafka_txn_op_commit_transaction_ack",
+    "rd_kafka_txn_op_init_transactions",
+    "rd_kafka_txn_op_send_offsets_to_transaction"
+   ],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_serve": {
+   "candidates": [
+    "rd_kafka_cgrp_op_serve",
+    "rd_kafka_mock_cluster_op_serve",
+    "rd_kafka_poll_cb",
+    "rd_kafka_toppar_op_serve"
+   ],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_u.offset_commit.cb": {
+   "candidates": [
+    "rd_kafka_coord_rkb_monitor_cb",
+    "rd_kafka_decommissioned_broker_thread_join",
+    "rd_kafka_offset_broker_commit_cb",
+    "rd_kafka_txn_coord_monitor_cb"
+   ],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_u.terminated.cb": {
+   "candidates": [
+    "rd_kafka_coord_rkb_monitor_cb",
+    "rd_kafka_decommissioned_broker_thread_join",
+    "rd_kafka_offset_broker_commit_cb",
+    "rd_kafka_txn_coord_monitor_cb"
+   ],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.background_event_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.consume_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.dr_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.dr_msg_cb": {
+   "candidates": [
+    "cb_kafka_msg"
+   ],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.error_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.log_cb": {
+   "candidates": [
+    "cb_kafka_logger",
+    "rd_kafka_log_print"
+   ],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.rebalance_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": {
+   "candidates": [
+    "oauthbearer_token_refresh_cb",
+    "rd_kafka_oauthbearer_unsecured_token",
+    "rd_kafka_oidc_token_client_credentials_refresh_cb",
+    "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+    "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+    "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+   ],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.stats_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.throttle_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": {
+   "candidates": [],
+   "closed": true
+  }
+ },
+ "members_over_recorded_units": {
+  "consume_ctx.consume_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_op_cb": {
+   "closed": false,
+   "open": [
+    "a `CStyleCastExpr`",
+    "a `memmove` into it writes a `struct rd_kafka_group_member_s`"
+   ]
+  },
+  "rd_kafka_op_s.rko_serve": {
+   "candidates": [
+    "rd_kafka_cgrp_op_serve",
+    "rd_kafka_mock_cluster_op_serve",
+    "rd_kafka_poll_cb",
+    "rd_kafka_toppar_op_serve"
+   ],
+   "closed": true
+  },
+  "rd_kafka_op_s.rko_u.offset_commit.cb": {
+   "closed": false,
+   "open": [
+    "a `CStyleCastExpr`",
+    "a `memmove` into it writes a `struct rd_kafka_group_member_s`"
+   ]
+  },
+  "rd_kafka_op_s.rko_u.terminated.cb": {
+   "closed": false,
+   "open": [
+    "a `CStyleCastExpr`",
+    "a `memmove` into it writes a `struct rd_kafka_group_member_s`"
+   ]
+  },
+  "rd_kafka_s.rk_conf.background_event_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.consume_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.dr_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.dr_msg_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.error_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.log_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.rebalance_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.stats_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_conf.throttle_cb": {
+   "candidates": [],
+   "closed": true
+  },
+  "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": {
+   "candidates": [],
+   "closed": true
+  }
+ },
+ "prepass": {
+  "declared_stores": [
+   "Parameter { member: \"rd_kafka_conf_s.background_event_cb\", function: \"rd_kafka_conf_set_background_event_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.closesocket_cb\", function: \"rd_kafka_conf_set_closesocket_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.connect_cb\", function: \"rd_kafka_conf_set_connect_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.consume_cb\", function: \"rd_kafka_conf_set_consume_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.dr_cb\", function: \"rd_kafka_conf_set_dr_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.dr_msg_cb\", function: \"rd_kafka_conf_set_dr_msg_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.error_cb\", function: \"rd_kafka_conf_set_error_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.log_cb\", function: \"rd_kafka_conf_set_log_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.offset_commit_cb\", function: \"rd_kafka_conf_set_offset_commit_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.open_cb\", function: \"rd_kafka_conf_set_open_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.rebalance_cb\", function: \"rd_kafka_conf_set_rebalance_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.resolve_cb\", function: \"rd_kafka_conf_set_resolve_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.sasl.oauthbearer.token_refresh_cb\", function: \"rd_kafka_conf_set_oauthbearer_token_refresh_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.socket_cb\", function: \"rd_kafka_conf_set_socket_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.ssl.cert_verify_cb\", function: \"rd_kafka_conf_set_ssl_cert_verify_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.stats_cb\", function: \"rd_kafka_conf_set_stats_cb\", index: 1 }",
+   "Parameter { member: \"rd_kafka_conf_s.throttle_cb\", function: \"rd_kafka_conf_set_throttle_cb\", index: 1 }",
+   "Default { member: \"rd_kafka_conf_s.log_cb\", function: \"rd_kafka_log_print\" }",
+   "Default { member: \"rd_kafka_conf_s.open_cb\", function: \"rd_kafka_open_cb_linux\" }",
+   "Default { member: \"rd_kafka_conf_s.socket_cb\", function: \"rd_kafka_socket_cb_linux\" }"
+  ],
+  "meaning": "the member-facts pre-pass (rule 12n, card OP-APP-RK-CALLBACKS-VIA-POLL-CB, user decisions R1 and F1): every unit of the production compile database was preprocessed; a unit naming a token of an invoked member's closure graph was read whole for its facts, and a unit that names one but could not be read opens every member; a unit naming none holds no store the closure reads",
+  "outside_program": {
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S": "LuaJIT's VM assembly generated at build time by buildvm, absent from the pinned inputs; assembly names no C record or function of the run",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql-parser_lex.c": "flex output generated at build time from plugins/processor_sql/parser/sql-parser.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql_parser.c": "bison output generated at build time from plugins/processor_sql/parser/sql-parser.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_lex.c": "flex output generated at build time from src/record_accessor/ra.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_parser.c": "bison output generated at build time from src/record_accessor/ra.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_lex.c": "flex output generated at build time from src/stream_processor/parser/sql.l, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c": "bison output generated at build time from src/stream_processor/parser/sql.y, absent from the pinned inputs; the grammar's C text names no member token (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/ConfImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/ConsumerImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/HandleImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/HeadersImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/KafkaConsumerImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/MessageImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/MetadataImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/ProducerImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/QueueImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/RdKafka.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/TopicImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src-cpp/TopicPartitionImpl.cpp": "librdkafka's C++ wrapper (target rdkafka++, CMakeCache rdkafka++_LIB_DEPENDS); the fluent-bit-bin and fluent-bit-shared link lines (src/CMakeFiles/*/link.txt) link librdkafka.a and not librdkafka++, so these units are not part of the audited program",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_asm.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_fold.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_lib.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_peobj.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_aux.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_base.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_bit.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_buffer.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_ffi.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_init.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_io.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_math.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_os.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_package.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_string.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_table.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_alloc.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_api.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_asm.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_assert.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bc.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcread.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcwrite.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_buf.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_carith.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccall.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccallback.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cconv.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cdata.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_char.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_clib.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cparse.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_crecord.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ctype.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_dispatch.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_err.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ffrecord.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_func.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gc.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gdbjit.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ir.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lex.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lib.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_load.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_mcode.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_meta.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_dce.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_fold.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_loop.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_mem.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_narrow.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_sink.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_split.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_parse.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_prng.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_profile.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_record.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_serialize.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_snap.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_state.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_str.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt_num.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strscan.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_tab.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_trace.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_udata.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmevent.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmmath.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/luajit.c": "LuaJIT's units: most include headers buildvm generates at build time (lj_ffdef.h, lj_libdef.h, lj_bcdef.h, lj_recdef.h, lj_folddef.h, luajit.h), absent from the pinned inputs, so their own commands do not preprocess; LuaJIT includes only its own headers, and the raw text of every LuaJIT unit and of every header it resolves names no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/plugins/processor_sql/parser/sql_parser.c": "includes the bison header processor-sql_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_dump.c": "includes libbacktrace's installed backtrace.h (through flb_stacktrace.h), absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/fluent-bit.c": "includes libbacktrace's installed backtrace.h (through flb_stacktrace.h), absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/record_accessor/flb_ra_parser.c": "includes the bison header ra_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)",
+   "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/stream_processor/parser/flb_sp_parser.c": "includes the bison header sql_parser.h generated at build time, absent from the pinned inputs; the unit's raw text and the headers it resolves name no token of the pre-pass (artifacts/scope-check.json)"
+  },
+  "read": 987,
+  "rounds": 2,
+  "scope": {
+   "dropped": {},
+   "entries": 14,
+   "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+   "held": 100,
+   "meaning": "every exclusion of the profile's member-facts-scope.json, re-verified against this run's own sources (rule 12n): a tokens-absent exclusion holds when the unit's raw text, every file Clang resolves for it under its own command and the generator sources the entry names name no final token and every unresolved include is one the entry names as generated; a not-linked exclusion holds when the named link lines link the archive and not the wrapper. A dropped exclusion's unit is preprocessed and read like any other unit, and opens every member when it cannot be read"
+  },
+  "tokens": [
+   "consume_ctx",
+   "rd_kafka_broker_monitor_add",
+   "rd_kafka_broker_monitor_s",
+   "rd_kafka_broker_s",
+   "rd_kafka_commit0",
+   "rd_kafka_commit_queue",
+   "rd_kafka_conf_s",
+   "rd_kafka_conf_set_background_event_cb",
+   "rd_kafka_conf_set_consume_cb",
+   "rd_kafka_conf_set_dr_cb",
+   "rd_kafka_conf_set_dr_msg_cb",
+   "rd_kafka_conf_set_error_cb",
+   "rd_kafka_conf_set_log_cb",
+   "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+   "rd_kafka_conf_set_offset_commit_cb",
+   "rd_kafka_conf_set_rebalance_cb",
+   "rd_kafka_conf_set_stats_cb",
+   "rd_kafka_conf_set_throttle_cb",
+   "rd_kafka_consume_callback",
+   "rd_kafka_consume_callback0",
+   "rd_kafka_consume_callback_queue",
+   "rd_kafka_msgset_reader_s",
+   "rd_kafka_op_new_cb",
+   "rd_kafka_op_s",
+   "rd_kafka_q_s",
+   "rd_kafka_s",
+   "rd_kafka_set_logger",
+   "rd_kafka_share_set_acknowledgement_commit_cb",
+   "rd_kafka_timer_s",
+   "rd_kafka_topic_partition_list_query_leaders_async",
+   "rd_list_s"
+  ],
+  "units": 1444,
+  "unread": {},
+  "unread_reasons": {}
+ },
+ "units_without_facts": 0,
+ "units_without_facts_named": []
+}
