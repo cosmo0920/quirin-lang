@@ -226,10 +226,7 @@ exclusive flock on the shared heavy lock covered the whole gate
 | Python suite (08), docs index check (09) | 0, 0 | 374 tests |
 | `build_matrix.py . --gate gate.json` (09a), Python suite (09b, 374 tests), docs index (10b, 10c) | 0, 0, 0, 0 | |
 
-The gate's own `cargo clean --profile dev` (07z) queued behind another
-card's hold of the lock; the worktree's `target/` (59.8 GiB) and
-`providers/target` (8.9 GiB) were cleaned by hand on the integrator's disk
-notice, so 07z has no exit in [gate/](gate/). The bold rule-id duplicate
+The gate's own `cargo clean --profile dev` (07z) ran after the gate under the lock and exited 0 ([gate/](gate/)); on the integrator's disk notice the worktree's `target/` (59.8 GiB) and `providers/target` (8.9 GiB) were also cleaned in full. The bold rule-id duplicate
 check is empty. Clang: [`gate/clang-version.txt`](gate/clang-version.txt).
 
 **Discarded attempt:** gate **g1** at `c763227c5` (logs
