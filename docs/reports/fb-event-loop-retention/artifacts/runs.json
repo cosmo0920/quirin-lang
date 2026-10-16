@@ -1,0 +1,109 @@
+{
+ "base": "8b360766c (BEFORE binary built from the git archive of 6590dca2f, code identical to main)",
+ "tip_measured": "70f4cff38a35c636fdaaa27828636117d9d353bb",
+ "binaries": {
+  "before": "5e3dd883460fb8d3e6fa1ce7e18bec4ccc3cad52640d4250386f3ec58a4dbcf3",
+  "after": "ee617404f3abeacc3750b44ef455f93e17071c64499f2148db600d5a1000a2b2"
+ },
+ "note": "The first BEFORE corpus run (`before`) exited 1 after 763 s: the exported tree's third_party/libevent had no .git (`Pin(GitUnavailable)`); kept as a failed attempt, not evidence. `before2` reran it with a git clone of the pinned submodule (d82464a2).",
+ "corpus": {
+  "before": {
+   "report": "private/fbel/base-src/private/fbel/before2/resource-diagnostics.json",
+   "sha256": "de6343c72f31e46a4b9b20fa1937392e330745a04f56164fb3d31a958239e8c5",
+   "rows": {
+    "Safe": 938,
+    "Unknown": 3887,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe-conditional": 1435,
+    "Safe-unconditional": 1113,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "seconds": 690.691
+  },
+  "after": {
+   "report": "private/fbel/after-src/private/fbel/after/resource-diagnostics.json",
+   "sha256": "1277df07b7dfe0c7a7e6c032bd6802905a48a197dd2217d8606de8f84b1a651e",
+   "rows": {
+    "Safe": 939,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe-conditional": 1435,
+    "Safe-unconditional": 1113,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "seconds": 704.066
+  }
+ },
+ "system": {
+  "before": {
+   "report": "private/fbel/base-src/private/fbel/before-system/resource-diagnostics.json",
+   "sha256": "238bb021acabc2810b4ac5266a7b137f20651c50b1b2779f38a794324399eb69",
+   "rows": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe-conditional": 125,
+    "Safe-unconditional": 84,
+    "Unknown": 245
+   },
+   "seconds": 204.426
+  },
+  "after": {
+   "report": "private/fbel/after-src/private/fbel/after-system/resource-diagnostics.json",
+   "sha256": "4c295a47b4b531c276a7ca7a842900270578678238a5872aebd3cf9d8123e762",
+   "rows": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe-conditional": 125,
+    "Safe-unconditional": 84,
+    "Unknown": 245
+   },
+   "seconds": 201.802
+  }
+ },
+ "slice": {
+  "before": {
+   "report": "private/w47-tail/attempt-1/fbel-before/resource-diagnostics.json",
+   "sha256": "f8b3c3b5698b9592e1f08ff005b4e150ca11ef2d88d6eae5f89ddab865579ad8",
+   "rows": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe-conditional": 103,
+    "Safe-unconditional": 71,
+    "Unknown": 232
+   },
+   "seconds": 167.743
+  },
+  "after": {
+   "report": "private/w47-tail/attempt-1/fbel-after/resource-diagnostics.json",
+   "sha256": "5502fc27f3a0ef47c763ccbdaf071762672e1daf0b8a67d2babcef64ffaca309",
+   "rows": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe-conditional": 103,
+    "Safe-unconditional": 71,
+    "Unknown": 232
+   },
+   "seconds": 162.631
+  }
+ }
+}

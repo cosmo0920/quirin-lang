@@ -18,6 +18,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 const PRELUDE: &str = "\
 struct ev_loop; struct obj { int x; };
 struct cfg { struct ev_loop *evl; };
+struct timer { int fd; struct cfg *sched; struct obj event; };
 struct coll { int id; struct ev_loop *evl; struct obj event; struct obj timer; struct coll *next; };
 void *ev_alloc(unsigned long n); void ev_free(void *p);
 struct ev_loop *ev_loop_create(void); void ev_loop_destroy(struct ev_loop *loop);
@@ -182,9 +183,21 @@ fn a_removal_with_no_record_is_the_identity() {
     }
     let rows = rows(
         "void stop(struct coll *coll) { ev_del(coll->evl, &coll->event); }\n\
-         void stop_unresolved(struct coll *coll) { struct coll *c = coll->next; ev_del(c->evl, &c->event); }",
+         void stop_unresolved(struct coll *coll) { struct coll *c = coll->next; ev_del(c->evl, &c->event); }\n\
+         void disable(struct timer *timer) { ev_del(timer->sched->evl, &timer->event); }\n\
+         void disable_then_store(struct timer *timer) { if (timer->fd != -1) { ev_del(timer->sched->evl, &timer->event); timer->fd = -1; } }",
     );
     assert!(rows["stop"].safe(), "{:?}", rows["stop"]);
+    // The loop two members deep: the removal with no record is the identity.
+    assert!(rows["disable"].safe(), "{:?}", rows["disable"]);
+    // flb_sched_timer_cb_disable's own shape stores through the formal after
+    // the call: an older rule refuses that store (it does for a plain borrowed
+    // callee too), so the removal frees nothing there.
+    assert!(
+        !rows["disable_then_store"].safe(),
+        "{:?}",
+        rows["disable_then_store"]
+    );
 }
 
 #[test]
