@@ -1,9 +1,13 @@
 # NONNULL-MEMBER-UNIFIED-QUALIFIER: one member clause, three kinds
 
 Card NONNULL-MEMBER-UNIFIED-QUALIFIER (wave 48, round 31, card-high). Base:
-local `main` `3f8f1a617` (FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE landed). The
-[prediction](PREDICTION.md) was committed (`24d919b36`) before any loader,
-analyser, contract or Lean change.
+local `main` `3f8f1a617` (FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE landed), rebased
+onto `a423fca5d` (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's records-only landing;
+only the increment record, the docs index and the ledger conflicted). The
+[prediction](PREDICTION.md) was committed (`24d919b36`, `ee6169ed3` after the
+rebase) before any loader, analyser, contract or Lean change. Hashes below are
+the pre-rebase ones where marked: `6f0675d3f` is `17e192464` and `d62be618c`
+is `fcd296688` after it; the rebase moved no code or contract byte.
 
 ## 1. Authority
 
