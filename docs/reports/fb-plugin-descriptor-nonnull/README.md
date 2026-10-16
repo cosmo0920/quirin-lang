@@ -167,26 +167,31 @@ New caller candidates in rows already Unknown (no verdict move): slice
   descriptor's 34 slice candidates are 38 removed of which 12 are re-added at
   callers; the three output functions it named do not move.
 
-### After the rebase onto `8b360766c`
+### After the rebase onto `49d6a679c`
 
-The card was rebased onto main `8b360766c`, which came after
+The card was rebased onto main `49d6a679c`. Main had moved past
 HANDOFF-CANDIDATE-OWN-CALLBACKS, MEMBER-PREPASS-OTHER-ROUTES,
 MEMBER-PATH-STATES-THROUGH-UNIT-HELPERS, LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED and
 -REMAINDER, HANDOFF-DIRECT-CALL-READING, UNION-OPAQUE-RECORD-WRITES-BY-TYPE,
-FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE and RELATIONAL-REWRITE-LINE-ORDER.
+FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE, RELATIONAL-REWRITE-LINE-ORDER, three of
+the user's code commits (`a5e4d39d8`, `b93c8f8b9`, `aa8d8b030`),
+FB-EVENT-LOOP-RETENTION-AND-REGISTRATION and FB-TEARDOWN-DESTROY-DECLARATIONS.
+Only `contract_loader.rs`'s count (64 / 489 / 314 → 64 / 489 / 328) and the
+records conflicted. This card adds no module (its declarations are in the
+existing `fluent_bit/null_deref.qv`), so none of the module-count pins those
+cards moved changes here.
 
 It was then measured again ([arbiter.sh](scripts/arbiter.sh),
-[arbiter_compare.sh](scripts/arbiter_compare.sh)): main's binary `282efa84…` on
-main's tree (worktree detached at `8b360766c`) against the rebased tip's
-`d5c51f14…` (`1fae6572b`). Each corpus `run.json` `binary_sha256` matches.
-Three earlier passes gave the same result and are superseded: against
-`4c0803f1f` (`da1c5b4e…` / `c881cdfb…`), `1c7333db1` (`14036267…` /
-`f2c0e9a9…`) and `4285ff7cd` (= `cc3e79559`'s code; `9176f5a9…` / `9ec3bc45…`).
+[arbiter_compare.sh](scripts/arbiter_compare.sh)): main's binary `30b052f3…` on
+main's tree (worktree detached at `49d6a679c`) against the rebased tip's
+`34a81754…` (`b57c4e00e`). Each corpus `run.json` `binary_sha256` matches.
+Four earlier passes gave the same result and are superseded: against
+`4c0803f1f`, `1c7333db1`, `4285ff7cd` (= `cc3e79559`'s code) and `8b360766c`.
 
-* **Custody is byte-identical** on every route: corpus `de6343c7…` 938 / 9 /
-  3,887, system `cc469720…`, slice `ecd778b2…`. No custody column moved.
-  The corpus and system digests differ from the earlier passes' because of
-  main's own changes, identically on both sides.
+* **Custody is byte-identical** on every route: corpus `f2eb590a…` 939 / 9 /
+  3,886, system `ae2ee178…` 95 / 4 / 349, slice `8d36cf32…` 52 / 1 / 347 /
+  4 Pending. No custody column moved. The digests and totals differ from the
+  first base's because of main's own changes, identically on both sides.
 * **The null movement is the first base's, row for row**
   ([rebase-identity.json](artifacts/rebase-identity.json),
   [compare-rebased-*.json](artifacts/compare-rebased-slice.json)): the same
@@ -218,9 +223,10 @@ It is recorded for the integrator's decision, not adopted here.
 
 ## 4. Gate
 
-At `973be939d` (every step's HEAD), each step under the heavy lock, exits to
-files, nothing piped ([gate.sh](scripts/gate.sh),
-[gate-resume.sh](scripts/gate-resume.sh), [provider-gate.sh](scripts/provider-gate.sh)):
+The standing gate (g9) and the provider gate (pg7) ran at `b57c4e00e` on main
+`49d6a679c`. Every step ran under the heavy lock, with exits written to files
+and nothing piped ([gate.sh](scripts/gate.sh),
+[provider-gate.sh](scripts/provider-gate.sh)):
 
 | Step | Exit | Count |
 | --- | --- | --- |
@@ -228,29 +234,44 @@ files, nothing piped ([gate.sh](scripts/gate.sh),
 | submodule update (`--init --recursive`) | 0 | |
 | `cargo fmt --all -- --check` | 0 | |
 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
-| `python3 scripts/run_test_binaries.py` | 0 | 499 units, 512 summaries; 8,098 passed, 0 failed, 15 ignored (313 s inside the lock) |
+| `python3 scripts/run_test_binaries.py` | 0 | 507 units, 520 summaries; 8,185 passed, 0 failed, 15 ignored (455 s inside the lock) |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
-| `python3 scripts/check_lean_audits.py` | 0 | 324 Lean audits (unchanged; no Lean change) |
+| `python3 scripts/check_lean_audits.py` (Lean 4.35.0) | 0 | 332 Lean audits (no Lean change in this card) |
+| `cargo clean --profile dev` (07z) | 0 | |
 | `python3 -m unittest discover -s scripts/tests` | 0 | 374 tests OK |
 | `python3 scripts/build_docs_index.py --check` | 0 | |
 | provider: `cargo check` / `test` / `fmt` / `clippy` (`providers/`, `--locked --offline`) | 0 / 0 / 0 / 0 | 133 passed, 0 failed, 1 ignored (43 summaries) |
 | provider: `contracts.py check`, `package.py build`, `verify` ×5 | 0, 0, 0 ×5 | |
 | provider: `python3 -m unittest discover -s providers/tests` | 0 | 25 tests OK |
 
-Steps 05–09 ran through `gate-resume.sh` at the same HEAD after `gate.sh g5`
-was stopped at step 05 when free space fell to 11 GB (other cards' builds);
-this worktree's dev profile (58.5 GiB) was cleaned first. Earlier attempts,
-each superseded and none counted: g1/pg1 stopped after a `cargo fmt` diff in
-the pin table; g2/pg2 failed `cargo check` on a full disk; g3's suite failed 4
-tests (an unregistered second `null_deref_beside` pair,
-`flb_input_thread_instance_exit` beside `lib_engine_thread.qv`, and the
-loader's rejected count), fixed in `b65d6c0bd`; g4 failed `cargo fmt`. The
-bold rule-id duplicate check is empty (no new id). Logs: `private/fbn/gate-g5/`,
-`private/fbn/tests-gate-g5/`, `private/fbn/provider-gate-pg3/`.
+After the records: `build_matrix.py . --gate gate.json` and the Python suite
+and docs index again ([finish-gate.sh](scripts/finish-gate.sh); exits in
+[gate/](gate/)). Each earlier gate ran at an earlier base and is superseded.
+Each was green, or failed only on a cause since fixed:
+
+* g1–g5 / pg1–pg3 on `5b1ceecd5`:
+  * g1/pg1: a `cargo fmt` diff in the pin table;
+  * g2/pg2: `cargo check` hit a full shared disk;
+  * g3: 4 tests failed, an unregistered second `null_deref_beside` pair and
+    the loader's rejected count;
+  * g4: `cargo fmt`;
+  * g5 / pg3: green (8,098 passed, 324 audits).
+* g6 on `4c0803f1f`: green (8,135 passed, 328 audits).
+* g7 on `1c7333db1`: green (8,144 passed, 329 audits; steps 05–09 resumed at
+  the same HEAD with [gate-resume.sh](scripts/gate-resume.sh) after a stop
+  for the disk floor).
+* pg5 at `6bfa8f2b7`: green.
+* Targeted checks r1 (on `4285ff7cd`) and r2: r1 green
+  ([rebase-check.sh](scripts/rebase-check.sh)); r2 stopped when main moved.
+* g8 / pg6 on `b08c7c3d3`: green (8,176 passed, 331 audits).
+
+The bold rule-id duplicate check is empty (no new id). Logs:
+`private/fbn/gate-g9/`, `private/fbn/tests-gate-g9/`,
+`private/fbn/provider-gate-pg7/`.
 
 ## 5. Ledger
 
-`named_followups` 789 → 789 on main `8b360766c` ([update_ledger.py](scripts/update_ledger.py),
+`named_followups` 790 → 790 on main `49d6a679c` ([update_ledger.py](scripts/update_ledger.py),
 idempotent; `dimensions.named_followups` equals the list length). At the first
 base it went 783 → 785.
 

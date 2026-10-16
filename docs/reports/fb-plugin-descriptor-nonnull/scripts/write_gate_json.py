@@ -11,7 +11,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/fb-plugin-descriptor-nonnull"
-BASE = (REPO / "private/fbn/base").read_text().strip() if (REPO / "private/fbn/base").exists() else "4c0803f1f"
+BASE = (REPO / "private/fbn/base").read_text().strip() if (REPO / "private/fbn/base").exists() else "49d6a679c"
 
 
 def main() -> int:
