@@ -248,6 +248,38 @@ loader's rejected count), fixed in `b65d6c0bd`; g4 failed `cargo fmt`. The
 bold rule-id duplicate check is empty (no new id). Logs: `private/fbn/gate-g5/`,
 `private/fbn/tests-gate-g5/`, `private/fbn/provider-gate-pg3/`.
 
+## 5. Ledger
+
+`named_followups` 790 → 790 on main `cc3e79559` ([update_ledger.py](scripts/update_ledger.py),
+idempotent; `dimensions.named_followups` equals the list length). At the first
+base it went 783 → 785.
+
+* **Retired:**
+  * `FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE`: every DISCHARGE clause holds. The
+    declarations are pinned and checked, every stable store is proved and
+    nothing is withdrawn, the prediction is frozen, the system, slice and
+    corpus null rows are measured before and after with every moved row read,
+    and no custody row moved.
+  * `FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE-MEASURED`. This card observed that
+    `flb_processor_instance_create` allocates `sizeof(struct flb_filter_instance)`
+    for a `struct flb_processor_instance` (`flb_processor.c`, before `:2188`).
+    Card FB-PROCESSOR-INSTANCE-ALLOCATION-SIZE
+    ([report](../fb-processor-instance-allocation-size/README.md)) measured it
+    as benign but fragile: the processor instance is 152 bytes and the filter
+    instance 216 in every configuration, and none of the 550 accesses goes past
+    byte 152. That card registered the `-MEASURED` sibling because this card's
+    entry was not yet on main. The sibling resolves the observation, so the
+    original entry is not registered.
+* **Registered:**
+  * `NULL-MEMBER-COPY-TEST-PATH`: a tested copy (`p = ins->p; if (!p)`) does
+    not discharge `ins->p` at a scope-entry call (4 slice rows).
+  * `FB-PLUGIN-DESCRIPTOR-RESIDUAL-READERS`: the `->p`-sourced candidates the
+    declarations leave (system 80 in 19 functions, slice 224 in 71), the
+    undeclared static and output readers, member bases, and the caller
+    corrections.
+* **Amended:** `NULL-MEMBER-SCOPE-ENTRY-INFERENCE` and `NULL-MEMBER-STABLE-CENSUS`,
+  with the Fluent Bit sizes.
+
 ## Files
 
 Scripts: [build.sh](scripts/build.sh), [measure.sh](scripts/measure.sh),
