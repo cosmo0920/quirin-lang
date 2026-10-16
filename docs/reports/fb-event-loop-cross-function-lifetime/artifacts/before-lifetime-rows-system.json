@@ -1,0 +1,2764 @@
+{
+ "route": "system",
+ "report_sha256": "9d3fc333a4decdf2e7ed01f4f6f1aa741342311de1020e8e35caf9da1bd76291",
+ "totals": {
+  "Unknown": 349,
+  "Safe": 95,
+  "Unsafe": 4
+ },
+ "rows": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_exit",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18318,
+     "category": "unsupported",
+     "description": "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18317,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `data`"
+    },
+    {
+     "line": 18319,
+     "category": "unsupported",
+     "description": "call to uncontracted function `sb_destroy_backlogs`"
+    },
+    {
+     "line": 18321,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18323,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ctx`"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_pause",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18308,
+     "category": "unsupported",
+     "description": "call to `flb_input_collector_pause` outside its declared loop-owner obligation (no derived thread on this route)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18307,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `data`"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "cb_sb_resume",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18313,
+     "category": "unsupported",
+     "description": "call to `flb_input_collector_resume` outside its declared loop-owner obligation (no derived thread on this route)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18312,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `data`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_handle_event",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 19615,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_collector_fd`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 19600,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_timer_consume`"
+    },
+    {
+     "line": 19601,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_flush`"
+    },
+    {
+     "line": 19602,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_adaptive_flush_update`"
+    },
+    {
+     "line": 19606,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_timer_consume`"
+    },
+    {
+     "line": 19610,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_manager`"
+    },
+    {
+     "line": 19619,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_me_fd_event`"
+    },
+    {
+     "line": 19624,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sp_fd_event`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 19708,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_create`"
+    },
+    {
+     "line": 19859,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_collectors_start`"
+    },
+    {
+     "line": 19860,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "line": 19876,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "line": 20016,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cleanup`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 19703,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_lib_init`"
+    },
+    {
+     "line": 19704,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_ctx_init`"
+    },
+    {
+     "line": 19705,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_ctx_init`"
+    },
+    {
+     "line": 19706,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_ctx_set`"
+    },
+    {
+     "line": 19707,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_pack_init`"
+    },
+    {
+     "line": 19713,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19714,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_bucket_queue_create`"
+    },
+    {
+     "line": 19718,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19719,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19727,
+     "category": "unsupported",
+     "description": "call to `fcntl` outside its declared literal-argument premise"
+    },
+    {
+     "line": 19735,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19738,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19739,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19740,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_evl_init`"
+    },
+    {
+     "line": 19741,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_evl_set`"
+    },
+    {
+     "line": 19742,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_log_start`"
+    },
+    {
+     "line": 19747,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_fips_init`"
+    },
+    {
+     "line": 19752,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_log_pipeline_enable`"
+    },
+    {
+     "line": 19754,
+     "category": "unsupported",
+     "description": "nested call `getpid` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19755,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_bytes_to_human_readable_size`"
+    },
+    {
+     "line": 19757,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19758,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19766,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19774,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19775,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19776,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19781,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_custom_init_all`"
+    },
+    {
+     "line": 19785,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_storage_create`"
+    },
+    {
+     "line": 19791,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cmt_initialize`"
+    },
+    {
+     "line": 19792,
+     "category": "unsupported",
+     "description": "nested call `cmt_version` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19793,
+     "category": "unsupported",
+     "description": "nested call `ctr_version` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19794,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_create`"
+    },
+    {
+     "line": 19799,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19800,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_init`"
+    },
+    {
+     "line": 19801,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_set`"
+    },
+    {
+     "line": 19802,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_init_all`"
+    },
+    {
+     "line": 19807,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_filter_init_all`"
+    },
+    {
+     "line": 19812,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_pre_run_all`"
+    },
+    {
+     "line": 19813,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_output_init_all`"
+    },
+    {
+     "line": 19818,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_output_pre_run`"
+    },
+    {
+     "line": 19819,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19820,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19821,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19822,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19823,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 19829,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19831,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_router_io_set`"
+    },
+    {
+     "line": 19838,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sosreport`"
+    },
+    {
+     "line": 19841,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19843,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19849,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_hs_start`"
+    },
+    {
+     "line": 19855,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19869,
+     "category": "unsupported",
+     "description": "call to uncontracted function `getenv`"
+    },
+    {
+     "line": 19884,
+     "category": "unsupported",
+     "description": "call to uncontracted function `sb_segregate_chunks`"
+    },
+    {
+     "line": 19888,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_failed`"
+    },
+    {
+     "line": 19889,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_shutdown`"
+    },
+    {
+     "line": 19898,
+     "category": "unsupported",
+     "description": "braced initializer, expression, or declaration is not modeled"
+    },
+    {
+     "line": 19899,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19900,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_handle_event`"
+    },
+    {
+     "line": 19908,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_reschedule_retries`"
+    },
+    {
+     "line": 19910,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_stop_ingestion`"
+    },
+    {
+     "line": 19911,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19912,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19913,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19914,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19916,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19927,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19932,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_storage_chunk_count`"
+    },
+    {
+     "line": 19937,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_task_running_print`"
+    },
+    {
+     "line": 19943,
+     "category": "unsupported",
+     "description": "call to uncontracted function `sb_segregate_chunks`"
+    },
+    {
+     "line": 19950,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_flush`"
+    },
+    {
+     "line": 19955,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_shutdown`"
+    },
+    {
+     "line": 19957,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19964,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19965,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_event_handler`"
+    },
+    {
+     "line": 19967,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19969,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19974,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    },
+    {
+     "line": 19976,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19977,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19979,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19982,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19983,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19984,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19985,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_downstream_conn_event_resume`"
+    },
+    {
+     "line": 19988,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    },
+    {
+     "line": 19992,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19993,
+     "category": "unsupported",
+     "description": "call to uncontracted function `handle_output_events`"
+    },
+    {
+     "line": 19995,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19997,
+     "category": "unsupported",
+     "description": "call to uncontracted function `handle_input_event`"
+    },
+    {
+     "line": 19999,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20000,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20003,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20004,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_receive`"
+    },
+    {
+     "line": 20006,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_deliver`"
+    },
+    {
+     "line": 20007,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_cleanup`"
+    },
+    {
+     "line": 20012,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_chunk_ring_buffer_collector`"
+    },
+    {
+     "line": 20015,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_lookup_context_cleanup`"
+    },
+    {
+     "line": 20017,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_upstream_conn_pending_destroy_list`"
+    },
+    {
+     "line": 20018,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_downstream_conn_pending_destroy_list`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c#1",
+   "function": "flb_engine_handle_event",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 19615,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_collector_fd`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 19600,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_timer_consume`"
+    },
+    {
+     "line": 19601,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_flush`"
+    },
+    {
+     "line": 19602,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_adaptive_flush_update`"
+    },
+    {
+     "line": 19606,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_timer_consume`"
+    },
+    {
+     "line": 19610,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_manager`"
+    },
+    {
+     "line": 19619,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_me_fd_event`"
+    },
+    {
+     "line": 19624,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sp_fd_event`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c#1",
+   "function": "flb_engine_start",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 19708,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_create`"
+    },
+    {
+     "line": 19859,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_collectors_start`"
+    },
+    {
+     "line": 19860,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "line": 19876,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    },
+    {
+     "line": 20016,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cleanup`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 19703,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_lib_init`"
+    },
+    {
+     "line": 19704,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_ctx_init`"
+    },
+    {
+     "line": 19705,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_ctx_init`"
+    },
+    {
+     "line": 19706,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_ctx_set`"
+    },
+    {
+     "line": 19707,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_pack_init`"
+    },
+    {
+     "line": 19713,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19714,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_bucket_queue_create`"
+    },
+    {
+     "line": 19718,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19719,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19727,
+     "category": "unsupported",
+     "description": "call to `fcntl` outside its declared literal-argument premise"
+    },
+    {
+     "line": 19735,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19738,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19739,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19740,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_evl_init`"
+    },
+    {
+     "line": 19741,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_evl_set`"
+    },
+    {
+     "line": 19742,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_log_start`"
+    },
+    {
+     "line": 19747,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_fips_init`"
+    },
+    {
+     "line": 19752,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_log_pipeline_enable`"
+    },
+    {
+     "line": 19754,
+     "category": "unsupported",
+     "description": "nested call `getpid` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19755,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_utils_bytes_to_human_readable_size`"
+    },
+    {
+     "line": 19757,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19758,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19766,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19774,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19775,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19776,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19781,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_custom_init_all`"
+    },
+    {
+     "line": 19785,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_storage_create`"
+    },
+    {
+     "line": 19791,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cmt_initialize`"
+    },
+    {
+     "line": 19792,
+     "category": "unsupported",
+     "description": "nested call `cmt_version` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19793,
+     "category": "unsupported",
+     "description": "nested call `ctr_version` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 19794,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_create`"
+    },
+    {
+     "line": 19799,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19800,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_init`"
+    },
+    {
+     "line": 19801,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_set`"
+    },
+    {
+     "line": 19802,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_init_all`"
+    },
+    {
+     "line": 19807,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_filter_init_all`"
+    },
+    {
+     "line": 19812,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_pre_run_all`"
+    },
+    {
+     "line": 19813,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_output_init_all`"
+    },
+    {
+     "line": 19818,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_output_pre_run`"
+    },
+    {
+     "line": 19819,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19820,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19821,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19822,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19823,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 19829,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19831,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_router_io_set`"
+    },
+    {
+     "line": 19838,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sosreport`"
+    },
+    {
+     "line": 19841,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19843,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19849,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_hs_start`"
+    },
+    {
+     "line": 19855,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19869,
+     "category": "unsupported",
+     "description": "call to uncontracted function `getenv`"
+    },
+    {
+     "line": 19884,
+     "category": "unsupported",
+     "description": "call to uncontracted function `sb_segregate_chunks`"
+    },
+    {
+     "line": 19888,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_failed`"
+    },
+    {
+     "line": 19889,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_shutdown`"
+    },
+    {
+     "line": 19898,
+     "category": "unsupported",
+     "description": "braced initializer, expression, or declaration is not modeled"
+    },
+    {
+     "line": 19899,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19900,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_handle_event`"
+    },
+    {
+     "line": 19908,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_reschedule_retries`"
+    },
+    {
+     "line": 19910,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_stop_ingestion`"
+    },
+    {
+     "line": 19911,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19912,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19913,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19914,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19916,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19927,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `config`"
+    },
+    {
+     "line": 19932,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_storage_chunk_count`"
+    },
+    {
+     "line": 19937,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_task_running_print`"
+    },
+    {
+     "line": 19943,
+     "category": "unsupported",
+     "description": "call to uncontracted function `sb_segregate_chunks`"
+    },
+    {
+     "line": 19950,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_flush`"
+    },
+    {
+     "line": 19955,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_shutdown`"
+    },
+    {
+     "line": 19957,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19964,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19965,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_event_handler`"
+    },
+    {
+     "line": 19967,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19969,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19974,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    },
+    {
+     "line": 19976,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19977,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 19979,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19982,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19983,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19984,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `connection`"
+    },
+    {
+     "line": 19985,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_downstream_conn_event_resume`"
+    },
+    {
+     "line": 19988,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    },
+    {
+     "line": 19992,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19993,
+     "category": "unsupported",
+     "description": "call to uncontracted function `handle_output_events`"
+    },
+    {
+     "line": 19995,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 19997,
+     "category": "unsupported",
+     "description": "call to uncontracted function `handle_input_event`"
+    },
+    {
+     "line": 19999,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20000,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20003,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 20004,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_receive`"
+    },
+    {
+     "line": 20006,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_deliver`"
+    },
+    {
+     "line": 20007,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_notification_cleanup`"
+    },
+    {
+     "line": 20012,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_input_chunk_ring_buffer_collector`"
+    },
+    {
+     "line": 20015,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_net_dns_lookup_context_cleanup`"
+    },
+    {
+     "line": 20017,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_upstream_conn_pending_destroy_list`"
+    },
+    {
+     "line": 20018,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_downstream_conn_pending_destroy_list`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_append_raw",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20440,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20445,
+     "category": "unsupported",
+     "description": "call to uncontracted function `input_chunk_append_raw`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c#1",
+   "function": "flb_input_chunk_append_raw",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20440,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20445,
+     "category": "unsupported",
+     "description": "call to uncontracted function `input_chunk_append_raw`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18134,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "line": 18144,
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18123,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18124,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18125,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18126,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18127,
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`"
+    },
+    {
+     "line": 18128,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18129,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18130,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18131,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18132,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`"
+    },
+    {
+     "line": 18133,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`"
+    },
+    {
+     "line": 18136,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18139,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18140,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18141,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18142,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18143,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18146,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18148,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18149,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18152,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18153,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18158,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_destroy`"
+    },
+    {
+     "line": 18161,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18162,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18163,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18029,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17988,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_get`"
+    },
+    {
+     "line": 18002,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_del`"
+    },
+    {
+     "line": 18003,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`"
+    },
+    {
+     "line": 18010,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18011,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18014,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18015,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18017,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_dispatch_retry`"
+    },
+    {
+     "line": 18019,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    },
+    {
+     "line": 18022,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18023,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18025,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_promote`"
+    },
+    {
+     "line": 18027,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18028,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18030,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18031,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18033,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18034,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18035,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18036,
+     "category": "unsupported",
+     "description": "call to uncontracted function `timer_cb_coro_trampoline`"
+    },
+    {
+     "line": 18039,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17804,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17813,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 17814,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17815,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 17819,
+     "category": "unsupported",
+     "description": "call to uncontracted function `backoff_full_jitter`"
+    },
+    {
+     "line": 17823,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17824,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17825,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17826,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17827,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17832,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_now`"
+    },
+    {
+     "line": 17835,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_destroy",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17850,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_invalidate`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17848,
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `req`, which this function has not published"
+    },
+    {
+     "line": 17849,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    },
+    {
+     "line": 17851,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18274,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18281,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18284,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18285,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18286,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18287,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18288,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18289,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18290,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18291,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18292,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_now`"
+    },
+    {
+     "line": 18295,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18057,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18061,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18062,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18063,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18064,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18065,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18066,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18069,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18070,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18073,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18076,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18077,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18079,
+     "category": "unsupported",
+     "description": "store through `*out_timer` without an out-parameter contract"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18251,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_cleanup`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18248,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_cb_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18089,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18094,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_destroy",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18234,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18235,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18236,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_invalidate",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18227,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18228,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18229,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18230,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "schedule_request_now",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17714,
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17715,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 17719,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17721,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 17722,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "timer_cb_coro_trampoline",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17971,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17975,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18134,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    },
+    {
+     "line": 18144,
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18123,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18124,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18125,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18126,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18127,
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`"
+    },
+    {
+     "line": 18128,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18129,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18130,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18131,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 18132,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`"
+    },
+    {
+     "line": 18133,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`"
+    },
+    {
+     "line": 18136,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18139,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18140,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18141,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18142,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18143,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18146,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18148,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18149,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18152,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18153,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18158,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_destroy`"
+    },
+    {
+     "line": 18161,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 18162,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18163,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_event_handler",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18029,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17988,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_ctx_get`"
+    },
+    {
+     "line": 18002,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_del`"
+    },
+    {
+     "line": 18003,
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`"
+    },
+    {
+     "line": 18010,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18011,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18014,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18015,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18017,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_engine_dispatch_retry`"
+    },
+    {
+     "line": 18019,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    },
+    {
+     "line": 18022,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18023,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18025,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_promote`"
+    },
+    {
+     "line": 18027,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18028,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18030,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18031,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18033,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18034,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18035,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18036,
+     "category": "unsupported",
+     "description": "call to uncontracted function `timer_cb_coro_trampoline`"
+    },
+    {
+     "line": 18039,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_request_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17804,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17813,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 17814,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17815,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 17819,
+     "category": "unsupported",
+     "description": "call to uncontracted function `backoff_full_jitter`"
+    },
+    {
+     "line": 17823,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17824,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17825,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17826,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17827,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 17832,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_now`"
+    },
+    {
+     "line": 17835,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_request_destroy",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17850,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_invalidate`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17848,
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `req`, which this function has not published"
+    },
+    {
+     "line": 17849,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    },
+    {
+     "line": 17851,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_retry_now",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18274,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18281,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18284,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18285,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18286,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18287,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18288,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18289,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 18290,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18291,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18292,
+     "category": "unsupported",
+     "description": "call to uncontracted function `schedule_request_now`"
+    },
+    {
+     "line": 18295,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18057,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18061,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18062,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18063,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18064,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18065,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18066,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18069,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18070,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18073,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18076,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 18077,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18079,
+     "category": "unsupported",
+     "description": "store through `*out_timer` without an out-parameter contract"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_cleanup",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18251,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_cleanup`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18248,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_coro_cb_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18089,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18094,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_destroy",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18234,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18235,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18236,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_invalidate",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18227,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18228,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`"
+    },
+    {
+     "line": 18229,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 18230,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "schedule_request_now",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17714,
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `config - > evl`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17715,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 17719,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    },
+    {
+     "line": 17721,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 17722,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `request`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "timer_cb_coro_trampoline",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 17971,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 17975,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_coro_resume`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_metrics_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18601,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18596,
+     "category": "unsupported",
+     "description": "call to uncontracted function `metrics_context_create`"
+    },
+    {
+     "line": 18597,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sm`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c#1",
+   "function": "flb_storage_metrics_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 18601,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_create`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 18596,
+     "category": "unsupported",
+     "description": "call to uncontracted function `metrics_context_create`"
+    },
+    {
+     "line": 18597,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sm`"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20465,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20475,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c#1",
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20465,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c#1",
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20475,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_coro_cleanup",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 18263,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_destroy`"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "src/flb_scheduler.c#1",
+   "function": "flb_sched_timer_coro_cleanup",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 18263,
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_coro_destroy`"
+    }
+   ],
+   "other_leaves": []
+  }
+ ],
+ "classes": {
+  "L+other": 35,
+  "L-only": 6
+ }
+}

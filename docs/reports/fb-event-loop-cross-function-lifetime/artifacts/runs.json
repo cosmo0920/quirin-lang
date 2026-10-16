@@ -1,0 +1,38 @@
+{
+ "card": "FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME",
+ "kind": "BEFORE only (design card, no product code); scripts/build.sh and scripts/measure.sh under the shared heavy lock, with QCORE_NULL_PROPERTY",
+ "base": "3f8f1a617f35ca9300a2cd7802ba335b13b5134f",
+ "binary_sha256": "2a91836f4a402af6b1ff26f4df3781ab3e4b1f90e2be0487affed21ed277b34c",
+ "binary_built_from": "3f8f1a617 (clean tree)",
+ "routes": {
+  "corpus": {
+   "command": "python3 scripts/run_pinned_audit.py private/fbcl/before 66910c10 --inputs-root build/cycle19 --jobs 4",
+   "exit": 0,
+   "seconds": 896.826,
+   "run_json_binary_sha256": "2a91836f4a402af6b1ff26f4df3781ab3e4b1f90e2be0487affed21ed277b34c",
+   "custody": {"Safe": 939, "Unsafe": 9, "Unknown": 3886},
+   "report_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+   "null": {"Safe-unconditional": 1114, "Safe-conditional": 1435, "Unknown": 2354, "Unsafe": 18},
+   "null_sha256": "e95b1013797a1c77ce80acafbae78f6adf1b86fb30748b0209311e9a43ff9802"
+  },
+  "system": {
+   "command": "quirin-audit current (system-selection.json, 046accf6 export) --jobs 4",
+   "exit": 0,
+   "seconds": 231.373,
+   "custody": {"Safe": 95, "Unsafe": 4, "Unknown": 349},
+   "report_sha256": "9d3fc333a4decdf2e7ed01f4f6f1aa741342311de1020e8e35caf9da1bd76291",
+   "null": {"Safe-unconditional": 86, "Safe-conditional": 125, "Unknown": 243},
+   "null_sha256": "ccc198b7510f73d2d56382945c7203f3edfd34f02ed21d30d39c4f5264709c14"
+  },
+  "slice": {
+   "command": "w47-tail-pause-bindings/scripts/run-current.sh attempt-1 fbcl-before (tail-pause-selection.json, 90978ac6 export) --jobs 4",
+   "exit": 0,
+   "seconds": 175.752,
+   "custody": {"Safe": 52, "Unsafe": 1, "Unknown": 347, "Pending": 4},
+   "report_sha256": "cfd3065a88d034c645d8ca4c78f2c7580d38aa2e4991a748be54abf372c60142",
+   "null": {"Safe-unconditional": 69, "Safe-conditional": 121, "Unknown": 216},
+   "null_sha256": "fa3f7fccad7762badd5a67721ce30cebf17d74e745d2def36313e2f37682e754"
+  }
+ },
+ "equals_round_31": true
+}

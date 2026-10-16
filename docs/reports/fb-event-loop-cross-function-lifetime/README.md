@@ -430,8 +430,9 @@ here for the decision.
   record's holder is not proved equal to **poisons** the record: it stays, no
   later removal ends it, and only its loop's destroy does. This changes the
   decision of rule 12t's composition only in the A-then-B case. It is
-  fail-closed and moves no current row: the census of 12t's measured rows has
-  no such sequence (to be re-checked at implementation).
+  fail-closed (it can only turn a decided row into a refused one). Whether
+  any current row has such a sequence was not checked here; the
+  implementation measures it, and any move is a named correction.
 * **The closed world of releases of a held record type.** A record type whose
   interior is registered (for example `flb_input_collector`) must be released
   only through a pointer of its own type. Premise `P-LOOP-HELD-RELEASE-TYPED`
@@ -503,7 +504,7 @@ footprint) and `retention-removal-poisoned`.
 
 1. **The non-threaded collector (R2).**
    * `collector_start(coll, config)` gets the summary
-     `Reg(coll.event @ coll.evl)`. Its `retention-undecided` exit leaf goes.
+     `Reg(coll.event @ coll.evl)`. Its exit would no longer refuse (today the row refuses earlier, on three member accesses; PREDICTION.md).
    * `flb_input_collector_start(coll_id, in)` cannot name `coll` (a list
      lookup), so the record is lifted to `footprint(flb_input_collector.event)
      = {x.evl}`.
@@ -700,6 +701,18 @@ whose only blocker was the exit's `retention-undecided`. Every releaser's
 `Safe` needs its callers' discharge through the fold. The threaded chain stays
 `Unknown`, with the R1 reason named.
 
+**Expected yield, stated plainly** (PREDICTION.md, measured BEFORE at
+`3f8f1a617`): no status move on any route under any variant. On the system
+and slice routes, every row of the R1–R6 chains already refuses earlier, at
+member accesses (`indirect memory access is outside the resource projection`)
+and identities (`unresolved resource identity`). For example, `collector_start`
+never reaches rule 12t. The variants change leaves only: the loop
+create/destroy leaves, and `retention-undecided` at `schedule_request_now` /
+`flb_sched_create`. The design's value at these revisions is that the lifetime
+reasoning is correct and ready when those blockers clear. If the user wants
+measurable movement first, the access and identity blockers on these chains
+are the prior card.
+
 Decisions requested from the user:
 
 1. **D1.** Variant: S1 now (+ S2 later), or another combination.
@@ -710,6 +723,13 @@ Decisions requested from the user:
    needs; it is not a new spelling.
 4. **D4.** If S3 is wanted at all, the `quant registered` clause-kind word and
    member guards.
+5. **D5.** S1's scope: loop holders only (recommended), or forwarding of every
+   rule-12t retention. The second reaches 10 LZ4 / `rd_kafka_queue_new`
+   corpus rows. Whether they become `Safe` depends on the root rule
+   (PREDICTION.md).
+6. **D6.** Order: this lifetime card first, or the member-access and identity
+   blockers on the R1–R6 chains first, so that the lifetime model can be
+   measured.
 
 ## 6. Follow-ons
 

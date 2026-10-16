@@ -1,0 +1,2693 @@
+{
+ "route": "corpus",
+ "report_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+ "totals": {
+  "Unknown": 3886,
+  "Safe": 939,
+  "Unsafe": 9
+ },
+ "rows": [
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_append_raw",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20373,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20378,
+     "category": "unsupported",
+     "description": "call to uncontracted function `input_chunk_append_raw`"
+    }
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_compress_fast",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 1025,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_extState` retains `source` in `ctxPtr`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 1024,
+     "category": "unsupported",
+     "description": "unsupported assignment expression"
+    }
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_compressBlock",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 1528,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 1526,
+     "category": "unsupported",
+     "description": "call to uncontracted function `LZ4F_initStream`"
+    },
+    {
+     "line": 1530,
+     "category": "unsupported",
+     "description": "call to uncontracted function `LZ4_compress_fast_extState_fastReset`"
+    }
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_compressBlockHC",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 1544,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 1542,
+     "category": "unsupported",
+     "description": "call to uncontracted function `LZ4F_initStream`"
+    },
+    {
+     "line": 1546,
+     "category": "unsupported",
+     "description": "call to uncontracted function `LZ4_compress_HC_extStateHC_fastReset`"
+    }
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compress_HC",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 1259,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_extStateHC` retains `src` in `statePtr`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 1257,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_mem_malloc`"
+    },
+    {
+     "line": 1260,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `statePtr`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_core/mk_event.c",
+   "function": "mk_event_loop_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 3593,
+     "category": "unsupported",
+     "description": "call to uncontracted function `_mk_event_loop_create`"
+    },
+    {
+     "line": 3599,
+     "category": "unsupported",
+     "description": "call to uncontracted function `_mk_event_loop_destroy`"
+    },
+    {
+     "line": 3604,
+     "category": "unsupported",
+     "description": "call to uncontracted function `_mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 3602,
+     "category": "unsupported",
+     "description": "call has an unmodeled formal address or borrowed expression"
+    },
+    {
+     "line": 3609,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "mk_core/mk_event.c",
+   "function": "mk_event_loop_destroy",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 3614,
+     "category": "unsupported",
+     "description": "call to uncontracted function `_mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 3616,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `loop`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_lib_worker",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6530,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6514,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `data`"
+    },
+    {
+     "line": 6516,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_setup`"
+    },
+    {
+     "line": 6517,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_loop`"
+    },
+    {
+     "line": 6520,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__ctx`"
+    },
+    {
+     "line": 6520,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6520,
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression"
+    },
+    {
+     "line": 6521,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6531,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6532,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_exit_all`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_start",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6568,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6546,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_utils_worker_spawn`"
+    },
+    {
+     "line": 6550,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ctx`"
+    },
+    {
+     "line": 6552,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__ctx`"
+    },
+    {
+     "line": 6552,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6553,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6569,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6571,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_stop`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_loop_balancer",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6370,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_create`"
+    },
+    {
+     "line": 6417,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6365,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_listen_init`"
+    },
+    {
+     "line": 6377,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6382,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6390,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__ctx`"
+    },
+    {
+     "line": 6390,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evl`"
+    },
+    {
+     "line": 6390,
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression"
+    },
+    {
+     "line": 6391,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6392,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6392,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6393,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6403,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_next_target`"
+    },
+    {
+     "line": 6405,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_listen_handler`"
+    },
+    {
+     "line": 6412,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6413,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6418,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_listen_exit`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "function": "mk_server_worker_loop",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6529,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6433,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_get_thread_conf`"
+    },
+    {
+     "line": 6434,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 6436,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evl`"
+    },
+    {
+     "line": 6436,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6436,
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression"
+    },
+    {
+     "line": 6437,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6439,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6439,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 6440,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6453,
+     "category": "unsupported",
+     "description": "call to uncontracted function `pthread_getspecific`"
+    },
+    {
+     "line": 6456,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6462,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_fifo_worker_setup`"
+    },
+    {
+     "line": 6465,
+     "category": "unsupported",
+     "description": "call to uncontracted function `pthread_setspecific`"
+    },
+    {
+     "line": 6466,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6469,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evl`"
+    },
+    {
+     "line": 6469,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6469,
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression"
+    },
+    {
+     "line": 6471,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6474,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6476,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6478,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 6482,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_read`"
+    },
+    {
+     "line": 6485,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_write`"
+    },
+    {
+     "line": 6488,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6490,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_read`"
+    },
+    {
+     "line": 6492,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6498,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_close`"
+    },
+    {
+     "line": 6502,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6503,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_listen_handler`"
+    },
+    {
+     "line": 6508,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6509,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6511,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6512,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6517,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6517,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`"
+    },
+    {
+     "line": 6525,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_threads_destroy_all`"
+    },
+    {
+     "line": 6526,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_free_all`"
+    },
+    {
+     "line": 6527,
+     "category": "unsupported",
+     "description": "nested call `pthread_getspecific` inside a modeled call is outside the resource projection"
+    },
+    {
+     "line": 6528,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_server_listen_exit`"
+    },
+    {
+     "line": 6530,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_worker_free`"
+    },
+    {
+     "line": 6537,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6538,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_check_timeouts`"
+    },
+    {
+     "line": 6542,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6543,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_http_thread_event`"
+    },
+    {
+     "line": 6546,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`"
+    },
+    {
+     "line": 6547,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_fifo_worker_read`"
+    },
+    {
+     "line": 6551,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_threads_purge`"
+    },
+    {
+     "line": 6552,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_event_free_all`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/monkey.c",
+   "function": "mk_exit_all",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6132,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    },
+    {
+     "line": 6136,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6125,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_broadcast_signal`"
+    },
+    {
+     "line": 6126,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_workers_join`"
+    },
+    {
+     "line": 6127,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_plugin_exit_all`"
+    },
+    {
+     "line": 6128,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_tls_exit`"
+    },
+    {
+     "line": 6129,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_clock_exit`"
+    },
+    {
+     "line": 6130,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_sched_exit`"
+    },
+    {
+     "line": 6139,
+     "category": "unsupported",
+     "description": "call to uncontracted function `pthread_mutex_destroy`"
+    },
+    {
+     "line": 6140,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_config_free_all`"
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/monkey.c",
+   "function": "mk_server_create",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 6042,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_init`"
+    },
+    {
+     "line": 6044,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_create`"
+    },
+    {
+     "line": 6055,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    },
+    {
+     "line": 6059,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_create`"
+    },
+    {
+     "line": 6061,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    },
+    {
+     "line": 6071,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    },
+    {
+     "line": 6072,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_event_loop_destroy`"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 6041,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_net_init`"
+    },
+    {
+     "line": 6043,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6045,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6046,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6049,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6050,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6056,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6060,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6062,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6065,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6066,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 6073,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6076,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6077,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6078,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6079,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6080,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6081,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6082,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`"
+    },
+    {
+     "line": 6083,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6084,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_core_init`"
+    },
+    {
+     "line": 6085,
+     "category": "unsupported",
+     "description": "call to `pthread_once`: the callback `mk_set_up_tls_keys` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)"
+    },
+    {
+     "line": 6086,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_kernel_version`"
+    },
+    {
+     "line": 6087,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_kernel_features`"
+    },
+    {
+     "line": 6088,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6089,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    },
+    {
+     "line": 6090,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_config_set_init_values`"
+    },
+    {
+     "line": 6091,
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_mimetype_init`"
+    },
+    {
+     "line": 6092,
+     "category": "unsupported",
+     "description": "call to uncontracted function `pthread_mutex_init`"
+    },
+    {
+     "line": 6093,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `server`"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_committed",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 23970,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 23932,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkcg`"
+    },
+    {
+     "line": 23934,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_reset_offsets`"
+    },
+    {
+     "line": 23939,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_brokers_get_state_version`"
+    },
+    {
+     "line": 23940,
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held"
+    },
+    {
+     "line": 23941,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_op_set_replyq`"
+    },
+    {
+     "line": 23942,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23944,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23944,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23946,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23947,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 23948,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__DESTROY`"
+    },
+    {
+     "line": 23951,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_pop`"
+    },
+    {
+     "line": 23953,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23954,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23955,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_update`"
+    },
+    {
+     "line": 23958,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 23963,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__TIMED_OUT`"
+    },
+    {
+     "line": 23964,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23964,
+     "category": "unsupported",
+     "description": "nullable resource `rko` used by a non-null contract"
+    },
+    {
+     "line": 23966,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__TIMED_OUT`"
+    },
+    {
+     "line": 23969,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23970,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `err`"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_consumer_close0",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 23851,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 23886,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 23848,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_consumer_close_q`"
+    },
+    {
+     "line": 23850,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23853,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 23854,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23854,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23860,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23860,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23861,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in loop condition"
+    },
+    {
+     "line": 23863,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23865,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23866,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23868,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23871,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)"
+    },
+    {
+     "line": 23874,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23877,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23882,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23883,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23883,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23885,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23885,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23886,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23886,
+     "category": "unsupported",
+     "description": "nullable resource `error` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_offsets_for_times",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 24230,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 24202,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24204,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_query_leaders`"
+    },
+    {
+     "line": 24207,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 24212,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24213,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition"
+    },
+    {
+     "line": 24215,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_ListOffsetsRequest`"
+    },
+    {
+     "line": 24219,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 24220,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in loop condition"
+    },
+    {
+     "line": 24222,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)"
+    },
+    {
+     "line": 24224,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 24228,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_update`"
+    },
+    {
+     "line": 24228,
+     "category": "unsupported",
+     "description": "use of `rkq` after a possibly-final drop of its reference (reference-dropped)"
+    },
+    {
+     "line": 24229,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24229,
+     "category": "unsupported",
+     "description": "use of `rkq` after a possibly-final drop of its reference (reference-dropped)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_purge",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 24716,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 24701,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24702,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_purge_toppars`"
+    },
+    {
+     "line": 24703,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24704,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_broker_purge_queues`"
+    },
+    {
+     "line": 24708,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24712,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 24715,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_purge_ua_toppar_queues`"
+    },
+    {
+     "line": 24715,
+     "category": "unsupported",
+     "description": "use of `tmpq` after a possibly-final drop of its reference (reference-dropped)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_query_watermark_offsets",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 24112,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 24114,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 24124,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 24069,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_new`"
+    },
+    {
+     "line": 24070,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_add`"
+    },
+    {
+     "line": 24072,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24074,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_query_leaders`"
+    },
+    {
+     "line": 24077,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 24078,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `partitions`"
+    },
+    {
+     "line": 24081,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_list_elem`"
+    },
+    {
+     "line": 24083,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24085,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24086,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24090,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24092,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_ListOffsetsRequest`"
+    },
+    {
+     "line": 24096,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_ListOffsetsRequest`"
+    },
+    {
+     "line": 24099,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `partitions`"
+    },
+    {
+     "line": 24100,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `& leaders` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 24107,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)"
+    },
+    {
+     "line": 24110,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 24115,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 24116,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24117,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24119,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 24120,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_seek_partitions",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 23582,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 23589,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 23598,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 23611,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 23552,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__qcore_returned_value`"
+    },
+    {
+     "line": 23552,
+     "category": "unsupported",
+     "description": "nullable resource `__qcore_returned_value` used by a non-null contract"
+    },
+    {
+     "line": 23556,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__qcore_returned_value`"
+    },
+    {
+     "line": 23556,
+     "category": "unsupported",
+     "description": "nullable resource `__qcore_returned_value` used by a non-null contract"
+    },
+    {
+     "line": 23560,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `partitions`"
+    },
+    {
+     "line": 23560,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23560,
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression"
+    },
+    {
+     "line": 23563,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 23563,
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held"
+    },
+    {
+     "line": 23567,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 23570,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_toppar_op_seek`"
+    },
+    {
+     "line": 23574,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 23576,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 23579,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23582,
+     "category": "unsupported",
+     "description": "a reference taken at line 23559 may still be owed at this exit (reference-unbalanced)"
+    },
+    {
+     "line": 23585,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_pop`"
+    },
+    {
+     "line": 23588,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23589,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__qcore_returned_value`"
+    },
+    {
+     "line": 23589,
+     "category": "unsupported",
+     "description": "nullable resource `__qcore_returned_value` used by a non-null contract"
+    },
+    {
+     "line": 23595,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23596,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23597,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23598,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__qcore_returned_value`"
+    },
+    {
+     "line": 23598,
+     "category": "unsupported",
+     "description": "nullable resource `__qcore_returned_value` used by a non-null contract"
+    },
+    {
+     "line": 23601,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23602,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_find`"
+    },
+    {
+     "line": 23606,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23606,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 23607,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 23610,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_commit_async",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 23328,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 23315,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 23316,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23319,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23319,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23320,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23322,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_acknowledge_all_if_implicit`"
+    },
+    {
+     "line": 23323,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_build_ack_details`"
+    },
+    {
+     "line": 23325,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23325,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23330,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23331,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_enq`"
+    },
+    {
+     "line": 23333,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_release`"
+    },
+    {
+     "line": 23334,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23334,
+     "category": "unsupported",
+     "description": "nullable resource `error` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_commit_sync",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 23370,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    },
+    {
+     "line": 23371,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 23349,
+     "category": "unsupported",
+     "description": "store through `*partitions` without an out-parameter contract"
+    },
+    {
+     "line": 23350,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 23351,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23354,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23354,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23355,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23357,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_acknowledge_all_if_implicit`"
+    },
+    {
+     "line": 23358,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_build_ack_details`"
+    },
+    {
+     "line": 23360,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 23360,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23364,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_new`"
+    },
+    {
+     "line": 23366,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_list_elem`"
+    },
+    {
+     "line": 23368,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_add_copy`"
+    },
+    {
+     "line": 23373,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23375,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23376,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23377,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_enq`"
+    },
+    {
+     "line": 23378,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_pop`"
+    },
+    {
+     "line": 23379,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 23381,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23382,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23383,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko_reply`"
+    },
+    {
+     "line": 23384,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 23387,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_release`"
+    },
+    {
+     "line": 23388,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 23388,
+     "category": "unsupported",
+     "description": "nullable resource `error` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_fetch_fanout",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 0,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 22847,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22848,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22849,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_fetch_fanout_enqueue`"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_set_acknowledgement_commit_cb",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 22786,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_op_new_cb` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 22774,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 22775,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 22778,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkshare`"
+    },
+    {
+     "line": 22779,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22781,
+     "category": "unsupported",
+     "description": "unsupported assignment expression"
+    },
+    {
+     "line": 22782,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22784,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22790,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_enq`"
+    },
+    {
+     "line": 22793,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_share_release`"
+    },
+    {
+     "line": 22794,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `error`"
+    },
+    {
+     "line": 22794,
+     "category": "unsupported",
+     "description": "nullable resource `error` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupListing_list_append_dedup",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 25030,
+     "category": "unsupported",
+     "description": "call to `rd_list_add` retains `grp` in `to_add`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 25023,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_list_sort`"
+    },
+    {
+     "line": 25024,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in for-loop condition"
+    },
+    {
+     "line": 25025,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 25030,
+     "category": "unsupported",
+     "description": "call to `rd_list_add`: the registry holder `to_add` is not one this body tracks (callback-registry-undecided)"
+    },
+    {
+     "line": 25033,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_list_copy_to`"
+    },
+    {
+     "line": 25036,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_list_sort`"
+    },
+    {
+     "line": 25037,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `to_add` is not one this body tracks (callback-registry-undecided)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_request_op_new",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20466,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20451,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20453,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20456,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20458,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20459,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20462,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20464,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20465,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20466,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20466,
+     "category": "unsupported",
+     "description": "nullable resource `rko` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20225,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 20256,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 20261,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    },
+    {
+     "line": 20269,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20221,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_broker_any_usable`"
+    },
+    {
+     "line": 20226,
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held"
+    },
+    {
+     "line": 20227,
+     "category": "unsupported",
+     "description": "call to `rd_list_init`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 20230,
+     "category": "unsupported",
+     "description": "call to `rd_list_add`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 20235,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_local_topics_to_list`"
+    },
+    {
+     "line": 20241,
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held"
+    },
+    {
+     "line": 20242,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_op_set_replyq`"
+    },
+    {
+     "line": 20243,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20245,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_MetadataRequest`"
+    },
+    {
+     "line": 20251,
+     "category": "unsupported",
+     "description": "call to `rd_list_destroy`: the registry holder `& topics` is not one this body names (callback-registry-undecided)"
+    },
+    {
+     "line": 20252,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    },
+    {
+     "line": 20252,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 20253,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_q_pop`"
+    },
+    {
+     "line": 20254,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 20255,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20257,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20259,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20259,
+     "category": "unsupported",
+     "description": "nullable resource `rko` used by a non-null contract"
+    },
+    {
+     "line": 20264,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20265,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20266,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20267,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20268,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20268,
+     "category": "unsupported",
+     "description": "nullable resource `rko` used by a non-null contract"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_commit",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20362,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20350,
+     "category": "unsupported",
+     "description": "braced initializer, expression, or declaration is not modeled"
+    },
+    {
+     "line": 20351,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 20351,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkcg`"
+    },
+    {
+     "line": 20355,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_replyq_make`"
+    },
+    {
+     "line": 20357,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_commit0`"
+    },
+    {
+     "line": 20361,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `repq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_commit_queue",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 20396,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_new0` retains `rk` in `the returned object`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 20397,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_commit0`"
+    },
+    {
+     "line": 20400,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_pop_serve`: the callback `( void * ) 0` is not a closed set of functions (null pointer constant) (callback-undecided)"
+    },
+    {
+     "line": 20404,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__TIMED_OUT`"
+    },
+    {
+     "line": 20407,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 20409,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20410,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 20413,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy0` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 20415,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 20417,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `err`"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_query_leaders_async",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 0,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 22446,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 22450,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22451,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22453,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 22454,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22455,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22456,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22458,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    },
+    {
+     "line": 22459,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 22460,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 22462,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rko`"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppars_pause_resume",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 21498,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 21475,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 21479,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_get_toppar`"
+    },
+    {
+     "line": 21482,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rk`"
+    },
+    {
+     "line": 21482,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 21483,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 21486,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_toppar_op_pause_resume`"
+    },
+    {
+     "line": 21490,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 21491,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rktpar`"
+    },
+    {
+     "line": 21496,
+     "category": "unsupported",
+     "description": "call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+    },
+    {
+     "line": 21498,
+     "category": "unsupported",
+     "description": "a reference taken at line 21474 may still be owed at this exit (reference-unbalanced)"
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_send_offsets_to_transaction",
+   "status": "Unknown",
+   "class": "L+other",
+   "lifetime_leaves": [
+    {
+     "line": 21318,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": [
+    {
+     "line": 21297,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `__qcore_returned_value`"
+    },
+    {
+     "line": 21297,
+     "category": "unsupported",
+     "description": "nullable resource `__qcore_returned_value` used by a non-null contract"
+    },
+    {
+     "line": 21300,
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition"
+    },
+    {
+     "line": 21304,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_match`"
+    },
+    {
+     "line": 21306,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `valid_offsets`"
+    },
+    {
+     "line": 21307,
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `valid_offsets`"
+    },
+    {
+     "line": 21308,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_txn_curr_api_return0`"
+    },
+    {
+     "line": 21310,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_topic_partition_list_sort_by_topic`"
+    },
+    {
+     "line": 21313,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 21314,
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection"
+    },
+    {
+     "line": 21317,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_txn_op_req0`"
+    },
+    {
+     "line": 21318,
+     "category": "unsupported",
+     "description": "call to uncontracted function `rd_kafka_txn_curr_api_return0`"
+    }
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20398,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20408,
+     "category": "unsupported",
+     "description": "call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_compress_continue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1869,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_continue` retains `source` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_compress_limitedOutput_continue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1865,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_continue` retains `src` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_compress_limitedOutput_withState",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1857,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_compress_withState",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1861,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_compressBlockHC_continue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1551,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_compressBlock_continue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1538,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC2_limitedOutput_withStateHC",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1436,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC_limitedOutput_continue",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1438,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_continue` retains `src` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC_limitedOutput_withStateHC",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 1434,
+     "category": "unsupported",
+     "description": "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_new",
+   "status": "Unknown",
+   "class": "L-only",
+   "lifetime_leaves": [
+    {
+     "line": 20292,
+     "category": "unsupported",
+     "description": "a holder retaining `rk` may outlive this function's frame (retention-undecided)"
+    }
+   ],
+   "other_leaves": []
+  }
+ ],
+ "classes": {
+  "L+other": 31,
+  "L-only": 12
+ }
+}

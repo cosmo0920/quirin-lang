@@ -434,6 +434,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [fb-event-loop-cross-function-lifetime](fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (paused for the user) |
+
 | [fb-event-loop-retention](fb-event-loop-retention/README.md) | FB-EVENT-LOOP-RETENTION-AND-REGISTRATION |
 
 | [fb-plugin-descriptor-nonnull](fb-plugin-descriptor-nonnull/README.md) | FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE |
