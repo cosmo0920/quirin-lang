@@ -110,11 +110,11 @@ fn rows(source: &str) -> BTreeMap<String, Row> {
                     unsupported: row
                         .diagnostics
                         .iter()
-                        .filter_map(|d| match &d.kind {
+                        .map(|d| match &d.kind {
                             LegacyDiagnosticKind::Unsupported { description } => {
-                                Some(description.clone())
+                                description.clone()
                             }
-                            other => Some(format!("{other:?}")),
+                            other => format!("{other:?}"),
                         })
                         .collect(),
                 },

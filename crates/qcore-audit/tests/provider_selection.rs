@@ -642,7 +642,9 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(entries.len(), 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
+    // `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(entries.len(), 63);
     let resolved = resolve_providers(
         &repository.join("providers/contract-load-path.json"),
         &entries,
@@ -668,7 +670,9 @@ fn the_cycle19_provider_selection_is_the_cycle19_manifest_module_for_module() {
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(from_selection.source_assumptions().len(), 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
+    // `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(from_selection.source_assumptions().len(), 63);
     for (module, text) in from_manifest.source_assumptions() {
         assert_eq!(
             from_selection.source_assumptions().get(module),
@@ -791,7 +795,9 @@ fn every_real_crate_selected_whole_is_its_loader_view() {
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(total, 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
+    // `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(total, 63);
 }
 
 #[test]
@@ -829,7 +835,9 @@ fn all_eleven_crates_whole_and_all_loaded_are_the_cycle19_manifest_environment()
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(entries(&manifest_text).1.len(), 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: `monkey/event_loop.qv` and
+    // `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(entries(&manifest_text).1.len(), 63);
     assert_eq!(all.manifest_path().parent(), manifest_path.parent());
     // Elaborated byte for byte as the manifest: every module key and text,
     // the inclusion evidence and the loaded function table.
