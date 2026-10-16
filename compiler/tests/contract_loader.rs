@@ -1087,6 +1087,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "flb_input_chunk_release_route",
         ResourceFunctionContract::new([], R::None),
     );
+    // Card RETENTION-UNMATCHED-REMOVAL-POISONS: Monkey's loop create (a fresh
+    // loop or NULL) and destroy (consumes a non-null loop), plain
+    // declarations.
+    old.insert_contract(
+        "mk_event_loop_create",
+        ResourceFunctionContract::new([], R::Owned { nullable: true }),
+    );
+    old.insert_contract(
+        "mk_event_loop_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -2014,9 +2025,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 314 -> 328 rejected by card FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE: the
     // four stable plugin descriptors and ten function-scope entries in
     // `fluent_bit/null_deref.qv`, likewise rejected.
+    // 489 -> 491 by card RETENTION-UNMATCHED-REMOVAL-POISONS:
+    // `mk_event_loop_create` and `mk_event_loop_destroy` in
+    // `monkey/event_loop.qv` (plain declarations). Selection and rejected
+    // unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (64, 489, 328)
+        (64, 491, 328)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
