@@ -2,12 +2,17 @@
 
 Card NONNULL-MEMBER-UNIFIED-QUALIFIER (wave 48, round 31, card-high). Base:
 local `main` `3f8f1a617` (FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE landed), rebased
-onto `a423fca5d` (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's records-only landing;
-only the increment record, the docs index and the ledger conflicted). The
-[prediction](PREDICTION.md) was committed (`24d919b36`, `ee6169ed3` after the
-rebase) before any loader, analyser, contract or Lean change. Hashes below are
-the pre-rebase ones where marked: `6f0675d3f` is `17e192464` and `d62be618c`
-is `fcd296688` after it; the rebase moved no code or contract byte.
+onto `a423fca5d` (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's records-only landing)
+and then onto `b157c9cba` (RETENTION-UNMATCHED-REMOVAL-POISONS: rule 12t,
+`retained_by.rs`, libevent's `event_loop.qv` and pins in
+`compiler/tests/{qcore_contract_corpus,contract_loader}.rs`); only the
+increment record, the docs index and the ledger conflicted. The
+[prediction](PREDICTION.md) was committed (`24d919b36` before the rebases)
+before any loader, analyser, contract or Lean change. Hashes in sections 4
+and 5 are pre-rebase: the binary `a1` was built at `6f0675d3f` and measured on
+the contracts of `d62be618c`; the rebases moved none of this card's code or
+contract bytes. Section 5's combined arbiter measures main `b157c9cba` against
+the rebased tip.
 
 ## 1. Authority
 
@@ -188,8 +193,8 @@ above; the custody reports did not move at all.
 ## 6. Ledger
 
 [`update_ledger.py`](scripts/update_ledger.py): 790 → 789 on the base; on
-main `a423fca5d` (FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME's records landed, 792)
-792 → **791** (`dimensions.named_followups` equal). Retired:
+main `b157c9cba` (two cards' records landed since, 794) 794 → **793**
+(`dimensions.named_followups` equal). Retired:
 `LIBRDKAFKA-NONNULL-MEMBER-PREMISE-UNADMITTED`. Its DISCHARGE holds: the user
 decided the plain form admits the premise ("Yes, all kinds"); the five clauses'
 four declarations name it, re-pinned, measured, and every null row resting on
