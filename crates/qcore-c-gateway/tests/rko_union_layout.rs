@@ -164,16 +164,23 @@ fn a_type_punning_cast_into_the_union_opens() {
 
 /// Case 4: a whole-object write of a separate object of a type an arm holds
 /// does not key into the union where the layout puts the record off the
-/// read's bytes; where a placement meets them it still opens (the write is
-/// keyed by its type).
+/// read's bytes; card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: nor where a
+/// placement meets them, since the write is keyed by its target.
 #[test]
 fn a_separate_object_of_an_arm_type_does_not_key_into_the_union() {
     if !clang_available() {
         return;
     }
     let apart = unit("void other(struct other_s *x) { x->pos = make_pos(); }\n");
-    // `pos_s` is placed at 8 (early) and 32 (lp): the second meets `late.cb`.
-    let open = closure(&[&apart], MEMBER).expect_err("lp.pos meets late.cb");
+    // `pos_s` is placed at 8 (early) and 32 (lp): the second meets `late.cb`,
+    // but this write lies in no union (card
+    // UNION-OPAQUE-RECORD-WRITES-BY-TYPE: keyed by its target, `x->pos`
+    // below a record no union holds). Read by type (facts without targets)
+    // it still opens.
+    assert_eq!(closure(&[&apart], MEMBER), Ok(names(&["fa"])));
+    let mut by_type = apart.clone();
+    by_type.opened_targets.clear();
+    let open = closure(&[&by_type], MEMBER).expect_err("lp.pos meets late.cb");
     assert!(
         open.iter().any(|why| why.contains("struct pos_s")),
         "{open:?}"

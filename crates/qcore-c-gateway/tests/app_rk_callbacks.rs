@@ -277,9 +277,12 @@ fn a_unions_members_share_their_stores() {
         closure(&[&unit], "holder_s.slot.b"),
         Ok(names(&["freeing_log"]))
     );
+    // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: the declared spelling keeps
+    // its arm path (the layout, which puts `a` and `b` on the same bytes,
+    // shares them); it was the whole union.
     assert_eq!(
         Tables::of(&[&unit]).normalise("holder_s.slot.b"),
-        Ok(names(&["slot_u.*"]))
+        Ok(names(&["slot_u.*@b"]))
     );
 }
 

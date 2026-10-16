@@ -27,7 +27,10 @@
 //! * every record whose function-pointer members an initializer list that
 //!   cannot be mapped so, a whole-object assignment from anything but an
 //!   object of the same record, or a `memcpy`-family call may write (the
-//!   record is open).
+//!   record is open), with each write's target ([`OpaqueTarget`], card
+//!   UNION-OPAQUE-RECORD-WRITES-BY-TYPE): a union holding the record reads
+//!   the write by the record's placements only where the write may lie in
+//!   the union; a write into the union is an open store at its own place.
 //!
 //! A unit the gateway does not analyse (a data-only unit) is read the same
 //! way by [`read_unit`] (card CALLBACK-MEMBER-DATA-ONLY-UNITS), so every unit
@@ -153,6 +156,55 @@ pub(crate) const LAYOUT_VECTORS: &[(
         Some(&[(44, 4)]),
         true,
     ),
+];
+
+/// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (`QCore.UnionArmLayout`
+/// `TargetClass`): an opaque write's target, as the decision for one union
+/// reads it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TargetClass {
+    /// No target is read: a dereference, an array element, a pointer.
+    Untargeted,
+    /// A place of the union read (decided by its own bytes, as a store).
+    SameUnion,
+    /// A place of another union.
+    OtherUnion,
+    /// A separate object (`whole`: the object itself, no member path).
+    Separate { whole: bool },
+    /// A member path below a pointer to a named record.
+    Below,
+}
+
+/// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (`QCore.UnionArmLayout.mayLie`):
+/// whether an opaque write of a record the union holds may lie in the
+/// union's bytes at an unstated position, so that the record's placements
+/// decide (the reading by type). `root_held`: the union holds the record
+/// the member path starts from; `path_clear`: the tables read the path as
+/// passing through no union. A write into the union itself is decided by
+/// its own bytes (an open store at its place), never here.
+#[must_use]
+pub fn opaque_write_may_lie(class: TargetClass, root_held: bool, path_clear: bool) -> bool {
+    match class {
+        TargetClass::Untargeted | TargetClass::OtherUnion => true,
+        TargetClass::SameUnion => false,
+        TargetClass::Separate { whole } => !whole && !path_clear,
+        TargetClass::Below => root_held || !path_clear,
+    }
+}
+
+/// `OPAQUE_VECTORS` (`QCore.UnionArmLayout.opaqueVectors`): a target class,
+/// `root_held`, `path_clear`, and whether the write may lie in the union.
+#[cfg(test)]
+pub(crate) const OPAQUE_VECTORS: &[(TargetClass, bool, bool, bool)] = &[
+    (TargetClass::Untargeted, false, true, true),
+    (TargetClass::SameUnion, true, false, false),
+    (TargetClass::OtherUnion, false, true, true),
+    (TargetClass::Separate { whole: true }, false, false, false),
+    (TargetClass::Separate { whole: false }, false, true, false),
+    (TargetClass::Separate { whole: false }, false, false, true),
+    (TargetClass::Below, false, true, false),
+    (TargetClass::Below, true, true, true),
+    (TargetClass::Below, false, false, true),
 ];
 
 /// Card **RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION** (rule 12n, layout route):
@@ -304,6 +356,35 @@ pub enum Flow {
     Open { why: String },
 }
 
+/// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (rule 12n): the target of an
+/// opaque write of a record (a whole-object assignment from a call or
+/// another type, a `memcpy`-family call into it, an initializer list that
+/// cannot be mapped), read from its target expression as an assignment
+/// store's place is.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case", tag = "target")]
+pub enum OpaqueTarget {
+    /// A place a union holds: its key (`U.*@arm.path`, or the whole union
+    /// `U.*`). The write is also an open store at that key, so its own
+    /// bytes decide which of the union's places it meets.
+    Union { key: String },
+    /// A separate object: a local, a global or a by-value formal (whose
+    /// type is `record`, when named), or a member path (`path`) rooted at
+    /// one. The object itself lies in no union's bytes; a member path in it
+    /// does only where the path meets a union the tables read.
+    Separate {
+        record: Option<String>,
+        path: Vec<String>,
+    },
+    /// A member path (`path`, from the record) below a pointer to the named
+    /// `record`: it lies in a union's bytes only where the union holds the
+    /// record by value, or where the path meets a union the tables read.
+    Below { record: String, path: Vec<String> },
+    /// Anything else (a dereference, an array element, a pointer handed to
+    /// a copier, an initializer list): it may lie anywhere, keyed by type.
+    Untargeted,
+}
+
 /// One unit's facts.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemberFacts {
@@ -318,6 +399,12 @@ pub struct MemberFacts {
     /// Records whose function-pointer members something opaque may write,
     /// with why.
     pub opened: BTreeMap<String, String>,
+    /// Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE (rule 12n): where each
+    /// opaque write of a record in [`Self::opened`] lands, by its target
+    /// expression. A record in `opened` without an entry (facts written
+    /// before the card) is read as untargeted: it may lie in any union.
+    #[serde(default)]
+    pub opened_targets: BTreeMap<String, BTreeSet<OpaqueTarget>>,
     /// Typedef names of function types and of pointers to them (build state).
     #[serde(skip)]
     function_typedefs: BTreeSet<String>,
@@ -867,7 +954,14 @@ impl MemberFacts {
     /// type or a call). It replaces an initializer-list reason, which opens
     /// the record's own members but not a member of a record it embeds, so
     /// the stronger reason is the one a holder's member reads.
-    fn open_opaquely(&mut self, record: String, why: String) {
+    ///
+    /// Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: the write's target is kept
+    /// beside it ([`Self::opened_targets`]).
+    fn open_opaquely(&mut self, record: String, why: String, target: OpaqueTarget) {
+        self.opened_targets
+            .entry(record.clone())
+            .or_default()
+            .insert(target);
         self.opened
             .entry(record)
             .and_modify(|earlier| {
@@ -876,6 +970,57 @@ impl MemberFacts {
                 }
             })
             .or_insert(why);
+    }
+
+    /// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (rule 12n): the target of
+    /// an opaque write into `place`, read as an assignment store's place is
+    /// (`callback_key`): a place a union holds keeps its union key and arm
+    /// path; a by-value variable or formal, or a member path rooted at one,
+    /// is a separate object; a member path below a pointer to a named record
+    /// keeps the record and the path; anything else is untargeted.
+    fn opaque_target(&self, place: &Value) -> OpaqueTarget {
+        let place = strip(place);
+        if let Some(key) = self.union_place(place) {
+            return OpaqueTarget::Union { key };
+        }
+        let mut path = Vec::new();
+        let mut node = place;
+        loop {
+            match kind(node) {
+                "MemberExpr" => {
+                    let (Some(name), Some(base)) = (node["name"].as_str(), children(node).first())
+                    else {
+                        return OpaqueTarget::Untargeted;
+                    };
+                    if name.is_empty() {
+                        return OpaqueTarget::Untargeted;
+                    }
+                    path.push(name.to_owned());
+                    let base = strip(base);
+                    if node["isArrow"].as_bool() == Some(true) {
+                        path.reverse();
+                        return match self.record_of_node(base, true) {
+                            Some(record) => OpaqueTarget::Below { record, path },
+                            None => OpaqueTarget::Untargeted,
+                        };
+                    }
+                    node = base;
+                }
+                "DeclRefExpr"
+                    if matches!(
+                        node["referencedDecl"]["kind"].as_str(),
+                        Some("VarDecl" | "ParmVarDecl")
+                    ) && !type_text(node).contains('*') =>
+                {
+                    path.reverse();
+                    return OpaqueTarget::Separate {
+                        record: self.record_of_node(node, false),
+                        path,
+                    };
+                }
+                _ => return OpaqueTarget::Untargeted,
+            }
+        }
     }
 
     /// Card OP-APP-RK-CALLBACKS-VIA-POLL-CB: whether a node's type (or its
@@ -1517,7 +1662,16 @@ impl MemberFacts {
                     if self.record_of_node(source, false).as_deref() != Some(record.as_str())
                         || kind(source) == "CallExpr"
                     {
-                        self.open_opaquely(record, "a whole-object assignment".to_owned());
+                        // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: keyed by
+                        // its target too; a place a union holds is also an
+                        // open store there, so its own bytes decide.
+                        let target = self.opaque_target(place);
+                        if let OpaqueTarget::Union { key } = &target {
+                            self.stores.entry(key.clone()).or_default().insert(Flow::Open {
+                                why: "a whole-object assignment into the union".to_owned(),
+                            });
+                        }
+                        self.open_opaquely(record, "a whole-object assignment".to_owned(), target);
                     }
                 }
                 self.walk(left, enclosing);
@@ -1555,7 +1709,13 @@ impl MemberFacts {
                         && let Some(destination) = arguments.get(1)
                         && let Some(record) = self.record_of_node(strip(destination), true)
                     {
-                        self.open_opaquely(record, format!("a `{callee}` into it"));
+                        // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: the copy's
+                        // destination place, when it names one (`&P`, an
+                        // array); a pointer is untargeted. A place a union
+                        // holds writes the whole union opaquely (below).
+                        let target = Self::addressed(destination)
+                            .map_or(OpaqueTarget::Untargeted, |place| self.opaque_target(place));
+                        self.open_opaquely(record, format!("a `{callee}` into it"), target);
                     }
                     // Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: a copy into
                     // a place a union holds may write past the place: the
@@ -1644,6 +1804,12 @@ impl MemberFacts {
                     && self.initializes_function_pointer(node)
                     && !self.map_initializer(&record, node, enclosing)
                 {
+                    // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: an initializer
+                    // list is not read for its target: untargeted.
+                    self.opened_targets
+                        .entry(record.clone())
+                        .or_default()
+                        .insert(OpaqueTarget::Untargeted);
                     self.opened
                         .entry(record)
                         .or_insert_with(|| "an initializer list".to_owned());
@@ -1872,7 +2038,17 @@ impl Tables {
             format!("{tag}.{}", path.join("."))
         };
         if keys.union {
-            out.insert(spell(prefix, "*"));
+            // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: a declared path into a
+            // union keeps its arm path (`T.u.*@arm.cb`), as `callback_key`
+            // keys a read of the same place, so the run's layout can place
+            // it; the whole union only when nothing follows. (It was keyed
+            // as the whole union, aliasing every place the union holds.)
+            let union = spell(prefix, "*");
+            if rest.is_empty() || rest.iter().any(|segment| segment.is_empty()) {
+                out.insert(union);
+            } else {
+                out.insert(format!("{union}{ARM}{}", rest.join(".")));
+            }
             return Ok(());
         }
         let Some((segment, more)) = rest.split_first() else {
@@ -2087,6 +2263,93 @@ impl Tables {
                 && self.meets_held(member, store))
     }
 
+    /// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (rule 12n): whether a
+    /// member path from `record` passes through no union, as every reading
+    /// of the records on the way gives it. A path the tables do not read (a
+    /// record no unit defines, one defined differently within a unit, a
+    /// segment that is not a field, a step through a field that is not a
+    /// record by value, an anonymous member) is never read as avoiding one.
+    fn path_avoids_unions(&self, record: &str, path: &[String]) -> bool {
+        fn through(tables: &Tables, keys: &RecordKeys, path: &[String], depth: usize) -> bool {
+            if keys.union || depth > 64 {
+                return false;
+            }
+            let Some((segment, rest)) = path.split_first() else {
+                return true;
+            };
+            if segment.is_empty() {
+                return false;
+            }
+            match keys.fields.get(segment) {
+                None => false,
+                Some(FieldKey::Named { record }) if rest.is_empty() => tables
+                    .readings(record)
+                    .is_some_and(|readings| readings.iter().all(|keys| !keys.union)),
+                Some(FieldKey::Named { record }) => {
+                    tables.readings(record).is_some_and(|readings| {
+                        readings
+                            .iter()
+                            .all(|keys| through(tables, keys, rest, depth + 1))
+                    })
+                }
+                Some(FieldKey::Inline { keys }) => through(tables, keys, rest, depth + 1),
+                Some(FieldKey::Function | FieldKey::Plain) => false,
+            }
+        }
+        self.readings(record).is_some_and(|readings| {
+            readings
+                .iter()
+                .all(|keys| through(self, keys, path, 0))
+        })
+    }
+
+    /// Every reading of a record the units define unambiguously.
+    fn readings(&self, record: &str) -> Option<&Vec<RecordKeys>> {
+        if self.ambiguous.contains(record) {
+            return None;
+        }
+        self.records.get(record).filter(|readings| !readings.is_empty())
+    }
+
+    /// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (rule 12n): whether an
+    /// opaque write of a record the union `union` holds, landing at
+    /// `target`, may lie in that union's bytes at an unstated position (so
+    /// the record's placements decide, as before). A separate object or a
+    /// member path below a record the union does not hold, on a path that
+    /// meets no union, lies outside it; a write into this union is an open
+    /// store at its own place and decided by its bytes there. Everything
+    /// else (an untargeted write, a write into another union, a record the
+    /// union holds or a path the tables do not read) may.
+    fn may_lie_in(&self, union: &str, target: &OpaqueTarget) -> bool {
+        match target {
+            OpaqueTarget::Untargeted => opaque_write_may_lie(TargetClass::Untargeted, false, false),
+            OpaqueTarget::Union { key } => {
+                let class = if union_parts(key).map(|(other, _)| other) == Some(union) {
+                    TargetClass::SameUnion
+                } else {
+                    TargetClass::OtherUnion
+                };
+                opaque_write_may_lie(class, false, false)
+            }
+            OpaqueTarget::Separate { record, path } => opaque_write_may_lie(
+                TargetClass::Separate {
+                    whole: path.is_empty(),
+                },
+                false,
+                record
+                    .as_deref()
+                    .is_some_and(|record| self.path_avoids_unions(record, path)),
+            ),
+            OpaqueTarget::Below { record, path } => opaque_write_may_lie(
+                TargetClass::Below,
+                self.union_at(union)
+                    .iter()
+                    .any(|keys| self.embedded(keys).contains(record)),
+                self.path_avoids_unions(record, path),
+            ),
+        }
+    }
+
     /// Card RKO-OP-CB-RUN-SET-OPEN-THROUGH-UNION: the bytes of a union's arm
     /// path, when the run's layout gives them.
     fn arm_ranges(&self, union: &str, arm: &str) -> Option<BTreeSet<Range>> {
@@ -2235,17 +2498,25 @@ pub fn closure_prepared(
                 // whose opaque writes may write the member's bytes (a record
                 // a union holds only where the layout lets it meet them).
                 let mut noted = BTreeSet::new();
+                // Card UNION-OPAQUE-RECORD-WRITES-BY-TYPE: the records a
+                // union target holds whose placements meet it, with the
+                // unions concerned: an opaque write of one opens the target
+                // only where the write may lie in that union (its target).
+                let mut held_noted: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
                 for target in &targets {
                     tokens.insert(record_of_key(target).to_owned());
                     let record = record_of_key(target).to_owned();
                     containers.extend(tables.containers(&record));
                     noted.insert(record.clone());
                     records.insert(record);
-                    if is_union_key(target) {
+                    if let Some((union, _)) = union_parts(target) {
                         for keys in tables.union_at(target) {
                             for held in tables.embedded(&keys) {
                                 if tables.meets_record(target, &held) {
-                                    noted.insert(held.clone());
+                                    held_noted
+                                        .entry(held.clone())
+                                        .or_default()
+                                        .insert(union.to_owned());
                                 }
                                 records.insert(held);
                             }
@@ -2285,6 +2556,24 @@ pub fn closure_prepared(
                 for facts in units {
                     for record in &noted {
                         if let Some(why) = facts.opened.get(record) {
+                            notes.insert(format!("{why} writes a `struct {record}`"));
+                        }
+                    }
+                    for (record, unions) in &held_noted {
+                        if noted.contains(record) {
+                            continue;
+                        }
+                        let Some(why) = facts.opened.get(record) else {
+                            continue;
+                        };
+                        let lies = match facts.opened_targets.get(record) {
+                            // Facts without targets: by type, as before.
+                            None => true,
+                            Some(writes) => writes.iter().any(|write| {
+                                unions.iter().any(|union| tables.may_lie_in(union, write))
+                            }),
+                        };
+                        if lies {
                             notes.insert(format!("{why} writes a `struct {record}`"));
                         }
                     }
@@ -2634,6 +2923,18 @@ mod tests {
         assert_eq!(union_parts("slot_u.*"), Some(("slot_u.*", None)));
         assert_eq!(union_parts("conf_s.log_cb"), None);
         assert_eq!(union_parts("odd@key"), None);
+    }
+
+    #[test]
+    fn opaque_vectors_hold() {
+        for (class, root_held, path_clear, expected) in OPAQUE_VECTORS {
+            assert_eq!(
+                opaque_write_may_lie(*class, *root_held, *path_clear),
+                *expected,
+                "{class:?} {root_held} {path_clear}"
+            );
+        }
+        assert_eq!(OPAQUE_VECTORS.len(), 9);
     }
 
     #[test]

@@ -34,6 +34,18 @@ of the discriminant ones it names:
   or a reason to open.
 * **Vectors.** `layout_vectors_hold` (Rust `LAYOUT_VECTORS`, arm paths
   numbered).
+* **Opaque writes keyed by target** (card UNION-OPAQUE-RECORD-WRITES-BY-TYPE,
+  the last section): the target reading only narrows the type reading
+  (`the_target_reading_only_narrows_the_type_reading`), an untargeted write
+  is read by type (`an_untargeted_write_is_read_by_type`), a separate object
+  and a path below a record the union does not hold never key into it
+  (`a_separate_object_never_keys_into_the_union`,
+  `a_write_below_an_unheld_record_never_keys_into_the_union`,
+  `a_separate_write_never_changes_the_read`), a write into the union is
+  decided by its own place (`a_union_write_is_decided_by_its_place`,
+  `a_non_overlapping_opaque_write_never_changes_the_read`), an unknown range
+  aliases (`an_unknown_range_opaque_write_aliases`), and
+  `opaque_vectors_hold` (Rust `OPAQUE_VECTORS`).
 -/
 
 namespace QCore.UnionArmLayout
@@ -233,6 +245,128 @@ def layoutVectors : List (Option Nat × Option Nat × Option (List Range) × Opt
 theorem layout_vectors_hold :
     layoutVectors.all (fun (a, b, r, s, expected) =>
       placesAlias a b r s == expected && placesAlias b a s r == expected) = true := by
+  decide
+
+/-! ## Opaque writes keyed by target (card UNION-OPAQUE-RECORD-WRITES-BY-TYPE)
+
+An opaque write of a record (a whole-object assignment from a call or
+another type, a `memcpy`-family call into it) was keyed by the record's type:
+a union that holds the record by value read it wherever one of the record's
+placements met the read, even when the write's target was a separate object.
+It is now keyed by its target (Rust `OpaqueTarget`, `Tables::may_lie_in`,
+`opaque_write_may_lie`): a write into the union is an open store at its own
+place, decided by its bytes (`placesAlias`); a separate object, or a member
+path below a record the union does not hold on a path that meets no union,
+never lies in the union; anything else is read by type as before.
+-/
+
+/-- An opaque write's target, as the decision for one union reads it (Rust
+`TargetClass`). -/
+inductive TargetClass where
+  | untargeted
+  | sameUnion
+  | otherUnion
+  | separate (whole : Bool)
+  | below
+  deriving DecidableEq
+
+/-- Whether the write may lie in the union's bytes at an unstated position,
+so the record's placements decide (Rust `opaque_write_may_lie`). -/
+def mayLie : TargetClass → Bool → Bool → Bool
+  | .untargeted, _, _ => true
+  | .otherUnion, _, _ => true
+  | .sameUnion, _, _ => false
+  | .separate whole, _, pathClear => !whole && !pathClear
+  | .below, rootHeld, pathClear => rootHeld || !pathClear
+
+/-- The reading by type: a held record's opaque write opens a union place
+wherever one of its placements meets it. -/
+def openedByType (meets : Bool) : Bool := meets
+
+/-- The reading by target: only a write that may lie in the union is read by
+its placements. -/
+def openedByTarget (t : TargetClass) (rootHeld pathClear meets : Bool) : Bool :=
+  mayLie t rootHeld pathClear && meets
+
+/-- **The target reading only narrows the type reading**: it never opens a
+place the type reading kept closed, so it adds no reason and no candidate. -/
+theorem the_target_reading_only_narrows_the_type_reading (t : TargetClass)
+    (rootHeld pathClear meets : Bool) (h : openedByTarget t rootHeld pathClear meets = true) :
+    openedByType meets = true := by
+  simp only [openedByTarget, Bool.and_eq_true] at h
+  exact h.2
+
+/-- **An untargeted write is read by type**, as before the card. -/
+theorem an_untargeted_write_is_read_by_type (rootHeld pathClear meets : Bool) :
+    openedByTarget .untargeted rootHeld pathClear meets = openedByType meets := by
+  simp [openedByTarget, mayLie, openedByType]
+
+/-- **A separate object never keys into the union**: the object itself, or a
+member path in it that meets no union. -/
+theorem a_separate_object_never_keys_into_the_union (rootHeld meets : Bool) :
+    openedByTarget (.separate true) rootHeld false meets = false ∧
+      openedByTarget (.separate false) rootHeld true meets = false := by
+  simp [openedByTarget, mayLie]
+
+/-- **A member path below a record the union does not hold, meeting no
+union, never keys into it.** -/
+theorem a_write_below_an_unheld_record_never_keys_into_the_union (meets : Bool) :
+    openedByTarget .below false true meets = false := by
+  simp [openedByTarget, mayLie]
+
+/-- **A write into the union is never read by type**: its own place decides. -/
+theorem a_union_write_is_decided_by_its_place (rootHeld pathClear meets : Bool) :
+    openedByTarget .sameUnion rootHeld pathClear meets = false := by
+  simp [openedByTarget, mayLie]
+
+/-- Memory as separate objects, the union being one of them. -/
+abbrev Objects := Nat → Bytes
+
+/-- An opaque write of the bytes `v` over the range `r` of object `o`. -/
+def writeObject (mem : Objects) (o : Nat) (r : Range) (v : Nat → Nat) : Objects :=
+  fun p => if p = o then write (mem p) r v else mem p
+
+/-- **A write into a separate object never changes a read of the union**,
+whatever it writes. -/
+theorem a_separate_write_never_changes_the_read (mem : Objects) (u o : Nat) (h : o ≠ u)
+    (r q : Range) (v : Nat → Nat) :
+    read (writeObject mem o r v u) q = read (mem u) q := by
+  have hu : u ≠ o := fun e => h e.symm
+  simp [writeObject, hu]
+
+/-- **A non-overlapping opaque write into the union never changes the read**:
+the place the rule keeps apart is known and disjoint, so any bytes written
+there leave every read range unchanged. -/
+theorem a_non_overlapping_opaque_write_never_changes_the_read {arm other : Option Nat}
+    {rs ss : List Range} (h : placesAlias arm other (some rs) (some ss) = false)
+    (m : Bytes) (v : Nat → Nat) :
+    ∀ x ∈ rs, ∀ y ∈ ss, read (write m x v) y = read m y :=
+  a_separated_store_never_changes_the_read h m v
+
+/-- **An opaque write into the union whose range is unknown aliases every
+place**, so it opens the read. -/
+theorem an_unknown_range_opaque_write_aliases (arm other : Option Nat)
+    (s : Option (List Range)) : placesAlias arm other none s = true ∧
+      placesAlias other arm s none = true := by
+  refine ⟨an_ungiven_range_aliases arm other s, ?_⟩
+  rw [places_alias_is_symmetric]
+  exact an_ungiven_range_aliases arm other s
+
+/-- `OPAQUE_VECTORS` (`callback_member_closure.rs`). -/
+def opaqueVectors : List (TargetClass × Bool × Bool × Bool) := [
+  (.untargeted, false, true, true),
+  (.sameUnion, true, false, false),
+  (.otherUnion, false, true, true),
+  (.separate true, false, false, false),
+  (.separate false, false, true, false),
+  (.separate false, false, false, true),
+  (.below, false, true, false),
+  (.below, true, true, true),
+  (.below, false, false, true)
+]
+
+theorem opaque_vectors_hold :
+    opaqueVectors.all (fun (t, held, clear, expected) => mayLie t held clear == expected) = true := by
   decide
 
 end QCore.UnionArmLayout
