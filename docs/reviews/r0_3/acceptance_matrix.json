@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE card gate on main 49d6a679c (rebased from ca3d827fe), every code step at b57c4e00e, scripts docs/reports/fb-plugin-descriptor-nonnull/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/fbn/gate-g9 and private/fbn/provider-gate-pg7 of this worktree. gate-g9: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 507 units, 520 summaries, 8,185 passed, 0 failed, 15 ignored, exit 0 (private/fbn/tests-gate-g9); both reevaluation probes exit 0; check_lean_audits.py 332 audits passed (no Lean change); docs part (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-pg7, at b57c4e00e; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 133 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 8185,
+  "note": "RETENTION-UNMATCHED-REMOVAL-POISONS card gate on base a423fca5d, every code step at 2a1e5b786, scripts docs/reports/retention-unmatched-removal-poisons/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/rup/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 507 units, 520 summaries, 8,188 passed, 0 failed, 15 ignored, exit 0 (private/rup/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 332 audits passed (332 on main a423fca5d; this card amends QCore.RetentionPath and its audit, adding no module); provider gate (required: providers/ changes): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8188,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 332,
@@ -7098,7 +7098,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aeb858c5d5455b0d8/docs/reports/retention-unmatched-removal-poisons/gate.json)"
  },
  "named_followups": [
   {

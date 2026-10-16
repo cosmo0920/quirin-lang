@@ -105,7 +105,8 @@ remaining record refuses with the new reason. The shared vectors grow by nine
 rows (17 trace rows, bound in Rust by `path_vectors_bind_the_table_and_the_replay`
 and `the_shared_vectors_hold`, in Lean by `path_trace_vectors_hold`).
 `compiler/tests/qcore_contract_corpus.rs` pins the two new declarations' clause
-counts (3 each). The targeted run is [`scripts/targeted-tests.sh`](scripts/targeted-tests.sh)
+counts (3 each). `compiler/tests/contract_loader.rs` pins the v1 declaration
+count (489 → 491) and their plain modes. The targeted run is [`scripts/targeted-tests.sh`](scripts/targeted-tests.sh)
 (`private/rup/t2.log`, exit 0). The first run (`t1`, exit 101) failed only on
 that landed test's old reason key.
 
@@ -221,9 +222,46 @@ stays free. No grammar change: the declarations use existing clauses.
 
 ## Gate
 
-See [`gate.json`](gate.json) and [`gate/`](gate/). The standing gate and the
-provider gate ran on the tip under one exclusive flock of the shared heavy
-lock ([`scripts/gate-whole.sh`](scripts/gate-whole.sh),
-[`scripts/gate.sh`](scripts/gate.sh), [`scripts/finish-gate.sh`](scripts/finish-gate.sh),
+The standing gate and the provider gate ran at `2a1e5b786` on base
+`a423fca5d`, under one exclusive flock of the shared heavy lock held for the
+whole gate ([`scripts/run-gate.sh`](scripts/run-gate.sh),
+[`scripts/gate-whole.sh`](scripts/gate-whole.sh), [`scripts/gate.sh`](scripts/gate.sh),
+[`scripts/finish-gate.sh`](scripts/finish-gate.sh),
 [`scripts/write_gate_json.py`](scripts/write_gate_json.py)). Logs are in
-`private/rup/gate-g1` of this worktree.
+`private/rup/gate-g2` of this worktree; exits are in [`gate/`](gate/) and the
+summary in [`gate.json`](gate.json).
+
+| Step | Exit | Count |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `scripts/run_test_binaries.py` | 0 | 507 units, 520 summaries, 8,188 passed, 0 failed, 15 ignored, no rerun |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `scripts/check_lean_audits.py` | 0 | 332 audits |
+| `python3 -m unittest discover -s scripts/tests` (08) | 0 | 374 tests |
+| `build_docs_index.py --check` (09) | 0 | |
+| `build_matrix.py . --gate gate.json` (09a), the Python suite (09b) | 0, 0 | |
+| `build_docs_index.py`, `--check` (10b, 10c) | 0, 0 | |
+| `providers/package.py build`, `verify qcore.libevent`, `verify qcore.librdkafka` | 0, 0, 0 | |
+| `cargo check --locked` in `providers/`, `providers/contracts.py check` | 0, 0 | |
+| `cargo test` in `providers/` | 0 | 133 passed, 0 failed |
+| `python3 -m unittest discover -s providers/tests` | 0 | 25 tests |
+| provider `fmt --check`, `clippy -D warnings` | 0, 0 | |
+
+**Earlier attempt, kept as an attempt.** `g1` at `d5deecc96` (logs
+`private/rup/gate-g1`) passed every step except the test step (exit 101):
+8,186 passed, 2 failed, both in `qcore-compiler::test::contract_loader`. That
+binary pins the v1 declaration count (489 → 491) and lists the previous plain
+modes, and the two new declarations were in neither. Commit `2a1e5b786`
+repaired both, changing test code only. The measured binary's source is
+unchanged, so the measurements above stand. `g2` reran the whole gate.
+
+Pins ([`scripts/pin.sh`](scripts/pin.sh), logs `private/rup/pin1`): the two
+declarations pinned at the three revisions (exit 0 each). `pin --check` for
+`qcore-provider-libevent` exits 1 at each revision, as on main: the only
+declaration not in force is `mk_vhost_set`, which tracks a Monkey
+release-candidate tip. `pin --verify-contracts` exits 0. The provider
+inventory sync before pinning exited 1 on the then-stale lock (the expected
+order), and the sync after pinning exited 0.
