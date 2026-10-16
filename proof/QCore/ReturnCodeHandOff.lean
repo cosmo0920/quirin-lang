@@ -285,7 +285,7 @@ def branchVectors : List (Bool × Int × List (Int × Bool) × Bool × Bool) := 
 
 theorem branch_vectors_hold :
     branchVectors.all (fun (ne, k, compared, rest, ok) =>
-      admit ⟨if ne then .ne else .eq, k⟩ ⟨compared, rest⟩ == ok) = true := by
+      admit ⟨if ne then .ne else .eq, k⟩ { compared, rest } == ok) = true := by
   decide
 
 end QCore.ReturnCodeHandOff
