@@ -1,0 +1,148 @@
+{
+ "by_member": {
+  "member:rd_kafka_cgrp_s.rkcg_rk": 106,
+  "member:rd_kafka_topic_s.rkt_rk": 171,
+  "member:rd_kafka_topic_s.rkt_topic": 199,
+  "member:rd_kafka_toppar_s.rktp_rkt": 210,
+  "member:rd_kafka_transport_s.rktrans_rkb": 51
+ },
+ "gained_by_verdict": {
+  "Safe": 87,
+  "Unknown": 185
+ },
+ "already_listed_by_verdict": {
+  "Unknown": 100,
+  "Unsafe": 2,
+  "Safe": 30
+ },
+ "provisional_unsafe": [
+  [
+   "rd_kafka_share_fetch_reply_op",
+   "rdkafka.c"
+  ],
+  [
+   "rd_kafka_toppar_op_serve",
+   "rdkafka_partition.c"
+  ]
+ ],
+ "by_file": [
+  [
+   "rdkafka_cgrp.c",
+   99
+  ],
+  [
+   "rdkafka_partition.c",
+   65
+  ],
+  [
+   "rdkafka_topic.c",
+   28
+  ],
+  [
+   "rdkafka_offset.c",
+   27
+  ],
+  [
+   "rdkafka.c",
+   22
+  ],
+  [
+   "rdkafka_fetcher.c",
+   22
+  ],
+  [
+   "rdkafka_msg.c",
+   22
+  ],
+  [
+   "rdkafka_broker.c",
+   19
+  ],
+  [
+   "rdkafka_msgset_writer.c",
+   11
+  ],
+  [
+   "rdkafka_msgset_reader.c",
+   10
+  ],
+  [
+   "rdkafka_sasl_cyrus.c",
+   10
+  ],
+  [
+   "rdkafka_sasl_scram.c",
+   10
+  ],
+  [
+   "rdkafka_ssl.c",
+   9
+  ],
+  [
+   "rdkafka_transport.c",
+   9
+  ],
+  [
+   "rdkafka_assignment.c",
+   8
+  ],
+  [
+   "rdkafka_request.c",
+   8
+  ],
+  [
+   "rdkafka_sasl.c",
+   7
+  ],
+  [
+   "rdkafka_assignor.c",
+   4
+  ],
+  [
+   "rdkafka_sasl_oauthbearer.c",
+   4
+  ],
+  [
+   "rdkafka_op.c",
+   3
+  ],
+  [
+   "rdkafka_sasl_plain.c",
+   2
+  ],
+  [
+   "rdkafka_txnmgr.c",
+   2
+  ],
+  [
+   "rdkafka_event.c",
+   1
+  ],
+  [
+   "rdkafka_idempotence.c",
+   1
+  ],
+  [
+   "rdkafka_metadata.c",
+   1
+  ]
+ ],
+ "files": 25,
+ "member_declaration_premises": {
+  "rd_kafka_cgrp_s.rkcg_rk": [
+   "rk_no_plugin_library"
+  ],
+  "rd_kafka_topic_s.rkt_rk": [
+   "rk_no_plugin_library"
+  ],
+  "rd_kafka_topic_s.rkt_topic": [
+   "rk_no_plugin_library"
+  ],
+  "rd_kafka_toppar_s.rktp_rkt": [
+   "rk_no_plugin_library"
+  ],
+  "rd_kafka_transport_s.rktrans_rkb": [
+   "rk_no_plugin_library"
+  ]
+ }
+}

@@ -24,6 +24,7 @@ import collections
 import hashlib
 import json
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -71,12 +72,26 @@ def strip_null(row):
     return row
 
 
+RESPELLED = re.compile(r"^nonnull_member\(([^)]*)\) where quant #scope \[\[scope\]\]$")
+
+
 def strip_summary(summary):
+    """The summary without the fold records' `premises`; a scope record's
+    `entries` (each clause as written) read back in the retired spelling, so
+    the respelling is compared apart (`scope_entries_respelled`)."""
     summary = json.loads(json.dumps(summary))
     for section in ("member_declarations", "stable_declarations", "scope_declarations"):
         for record in summary.get("fold", {}).get(section, {}).values():
             record.pop("premises", None)
+            if section == "scope_declarations":
+                record["entries"] = [RESPELLED.sub(r"nonnull_member_scope(\1)", e) for e in record.get("entries", [])]
     return summary
+
+
+def respelled_entries(before, after):
+    b = before.get("fold", {}).get("scope_declarations", {})
+    a = after.get("fold", {}).get("scope_declarations", {})
+    return sum(1 for f in b if f in a and b[f].get("entries") != a[f].get("entries"))
 
 
 def premise_through(row):
@@ -144,7 +159,8 @@ def null_route(before, after, route):
         "resting_rows_listing_it_wrongly_or_not": lacking,
         "other_rows_whose_premises_changed": wrongly,
         "other_rows_listing_it_unchanged": unchanged_premise_rows,
-        "summary_identical_beyond_premises": strip_summary(as_) == strip_summary(bs),
+        "summary_identical_beyond_premises_and_respelled_entries": strip_summary(as_) == strip_summary(bs),
+        "scope_entries_respelled": respelled_entries(bs, as_),
         "member_declaration_premises_after": member_records,
         "jsonl_sha256": {"before": hashlib.sha256(bp.read_bytes()).hexdigest(),
                          "after": hashlib.sha256(ap.read_bytes()).hexdigest()},
@@ -201,7 +217,7 @@ def main():
                   "gained", n["of_which_gained_the_premise"], "widened", n["of_which_already_listed_it_through_another_fact"],
                   "lacking", len(n["resting_rows_listing_it_wrongly_or_not"]),
                   "other changed", len(n["other_rows_whose_premises_changed"]),
-                  "summary ok", n["summary_identical_beyond_premises"],
+                  "summary ok", n["summary_identical_beyond_premises_and_respelled_entries"], "respelled", n["scope_entries_respelled"],
                   "digest moved", n["rows_whose_bounds_digest_changed"])
         if c:
             print(route, "custody: identical", c["byte_identical"], c.get("difference_leaves"))

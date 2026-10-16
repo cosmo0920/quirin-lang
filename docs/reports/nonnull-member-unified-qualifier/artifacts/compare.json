@@ -1,0 +1,5335 @@
+{
+ "corpus": {
+  "custody": {
+   "after_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+   "before_sha256": "f2eb590a90f5561199874df1298fb44858356829e1d09913910c4da5efdc66ef",
+   "byte_identical": true
+  },
+  "null": {
+   "differing": [],
+   "jsonl_sha256": {
+    "after": "c2469f72aa8cfe8e8af68d83b543e700125f84ee383ae65bffe43e292fb12dcb",
+    "before": "e95b1013797a1c77ce80acafbae78f6adf1b86fb30748b0209311e9a43ff9802"
+   },
+   "member_declaration_premises_after": {
+    "rd_kafka_cgrp_s.rkcg_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_topic": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_toppar_s.rktp_rkt": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_transport_s.rktrans_rkb": [
+     "rk_no_plugin_library"
+    ]
+   },
+   "of_which_already_listed_it_through_another_fact": 132,
+   "of_which_gained_the_premise": 272,
+   "other_rows_listing_it_unchanged": 207,
+   "other_rows_whose_premises_changed": [],
+   "resting_by_member": {
+    "member:rd_kafka_cgrp_s.rkcg_rk": 106,
+    "member:rd_kafka_topic_s.rkt_rk": 171,
+    "member:rd_kafka_topic_s.rkt_topic": 199,
+    "member:rd_kafka_toppar_s.rktp_rkt": 210,
+    "member:rd_kafka_transport_s.rktrans_rkb": 51
+   },
+   "resting_by_null_verdict": {
+    "Safe": 117,
+    "Unknown": 285,
+    "Unsafe": 2
+   },
+   "resting_rows": [
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_broker_dump",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_consume",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_consume_start",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_consume_start0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_consume_stop",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_consume_stop0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_poll_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_seek",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_seek_partitions",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_fanout_op",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unsafe",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unsafe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_select_broker",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_stats_emit_all",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_stats_emit_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_stats_emit_toppar",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_thread_main",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_toppar_dump",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_add",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_apply_offsets",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_handle_OffsetFetch",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_serve_removals",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_share_assignment_serve",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_share_assignment_serve_removals",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignor.c",
+     "function": "rd_kafka_assignor_run",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignor.c",
+     "function": "rd_kafka_member_subscription_match",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignor.c",
+     "function": "rd_kafka_member_subscriptions_map",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_assignor.c",
+     "function": "ut_assignors",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_active_toppar_add",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_active_toppar_del",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_op_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_io_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_produce_toppars",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_producer_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_share_consumer_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_share_session_toppar_add",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_share_session_toppar_remove",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_thread_main",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_toppar_msgq_scan",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_toppars_timeout_scan",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_dr_implicit_ack",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_dr_msgq0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_toppar_producer_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_apply_next_subscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assign",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assigned_offsets_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assignment_clear_lost",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assignment_done",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assignment_set_lost",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assignor_handle_Metadata_op",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_assignor_run",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_apply_next_subscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_assignment_done",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_assignment_with_metadata",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_defer_offset_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_group_heartbeat",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_heartbeat_preconditions_met",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_incr_unassign_done",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_leave",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_rejoin",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_serve",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_subscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_consumer_unsubscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_clear_broker",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_dead",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_query",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_set_broker",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_coord_update",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_defer_offset_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_destroy_final",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_get_unsubscribing_topics",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_group_assignment_modify",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_group_assignment_set",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_group_is_rebalancing",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_group_leader_reset",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_FindCoordinator",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_Heartbeat",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_JoinGroup",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_LeaveGroup",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_Metadata_op",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_SyncGroup",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_assign_op",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_assignment",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_handle_assignment_cooperative",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_incr_unassign_done",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_incremental_assign",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_incremental_unassign",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_join",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_join_state_serve",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_leave",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_leave_maybe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_max_poll_interval_check_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_metadata_refresh",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_metadata_update_check",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_modify_subscription",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_offset_commit_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_offsets_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_op_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_partition_add",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_partition_del",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_propagate_commit_result",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_rejoin",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_revoke_all_rejoin",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_revoke_all_rejoin_maybe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_revoke_rejoin",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_session_timeout_check",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_set_join_state",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_set_member_id",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_set_state",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_share_consumer_leave",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_start_max_poll_interval_timer",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_subscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_subscription_set",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_terminate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_terminate0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_terminated",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_timeout_scan",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_try_terminate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_unassign",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_unassign_done",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_unsubscribe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_update_committed_offsets",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_update_session_timeout",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cgrp_update_subscribed_topics",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_cooperative_protocol_adjust_assignment",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_propagate_consumer_topic_errors",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_rebalance_op",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_rebalance_op_incr",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_share_topic_err_propagate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_cgrp.c",
+     "function": "rd_kafka_trigger_waiting_subscribe_maybe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_cgrp_s.rkcg_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_topic_partition",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "can_use_topic_ids",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_ShareFetchRequest",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_reply",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_toppars",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_toppars_in_session",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_toppars_list",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_acknowledge_reply",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_fetch_reply",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_share_rpc",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_preferred_replica_handle",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle_partition",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_fetch_reply_handle_partition_error",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_share_fetch_reply_handle",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_toppar_fetch_backoff",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_toppar_fetch_decide",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_drain_toppar",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_leader_query_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_message_destroy",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_message_get",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_message_get_from_rkm",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_message_leader_epoch",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_message_setup",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msg_destroy",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msg_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msg_new0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msg_partitioner",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msg_sticky_partition",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msgbatch_ready_produce",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_msgq_verify_order0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_produce",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_produce_batch",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_producev",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "rd_kafka_produceva",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "unittest_msg",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "unittest_msgq_insert_all_sort",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "unittest_msgq_insert_each_sort",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "unittest_msgq_insert_sort",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "unittest_msgq_order",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msg.c",
+     "function": "ut_rd_kafka_msgq_purge",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_parse",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_decompress",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_msg_v0_1",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_msg_v2",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_msgs_v2",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_peek_msg_version",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_run",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_msgset_reader_v2",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_reader.c",
+     "function": "rd_kafka_share_msgset_parse",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_create_ProduceRequest",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_alloc_buf",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_compress",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_compress_gzip",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_compress_lz4",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_compress_zstd",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_finalize",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_init",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_select_MsgVersion",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_write_Produce_header",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_msgset_writer.c",
+     "function": "rd_kafka_msgset_writer_write_msgq",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_auto_commit_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_broker_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_broker_commit_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_broker_init",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_commit",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_init",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_open",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_read",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_sync",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_file_term",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_query_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_reset",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_reset_op_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_store",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_store_init",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_store_message",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_store_stop",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_store_term",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_sync",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_sync_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_validate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_validate_op_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offset_validate_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_offsets_store",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_toppar_handle_OffsetForLeaderEpoch",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_offset.c",
+     "function": "rd_kafka_update_app_pos",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_op.c",
+     "function": "rd_kafka_fetch_op_app_prepare",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_op.c",
+     "function": "rd_kafka_op_handle_std",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_op.c",
+     "function": "rd_kafka_op_print",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_share_toppar_enq_error",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Safe",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_get",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_clear",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_del_by_idx",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_get_topics",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_new_from_rktp",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_topic",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_delegate",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_leave_for_remove",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_broker_migrate",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_consumer_lag_req",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_consumer_lag_tmr_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_add",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_add0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_link",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_destroy_final",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_enq_error",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_enq_msg",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_get2",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_get_avail",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_get_by_id2",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_handle_Offset",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_insert_msgq",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_lag_handle_Offset",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_leader_unavailable",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_new0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_commit_result",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_fetch",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_request",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_fetch_start",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_fetch_stop",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_pause_resume",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_seek",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unsafe",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unsafe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_op_version_bump",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_pause",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_pause_resume",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_pid_change",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_internal_fetch_queue_maybe",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_queues",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_remove",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_reset_base_msgid",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_resume",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_retry_msgq",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_set_fetch_state",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_version_new_barrier0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppars_pause_resume",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_AddPartitionsToTxnRequest",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_ProduceRequest",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_Produce_error",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_idempotent_Produce_error",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_idempotent_Produce_success",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_msgbatch_handle_Produce_result",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_request.c",
+     "function": "unittest_idempotent_producer",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_auth_done",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_client_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_close",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_io_event",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_send",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_sasl_send_legacy",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_canon",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_chalprompt",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_getopt",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_getrealm",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_getsecret",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_cb_log",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_client_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_close",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_cyrus.c",
+     "function": "rd_kafka_sasl_cyrus_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_oauthbearer.c",
+     "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_oauthbearer.c",
+     "function": "rd_kafka_sasl_oauthbearer_client_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_oauthbearer.c",
+     "function": "rd_kafka_sasl_oauthbearer_fsm",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_oauthbearer.c",
+     "function": "rd_kafka_sasl_oauthbearer_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_plain.c",
+     "function": "rd_kafka_sasl_plain_client_new",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_plain.c",
+     "function": "rd_kafka_sasl_plain_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_H",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_HMAC",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_Hi",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_build_client_final_message",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_build_client_first_message",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_fsm",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_handle_server_final_message",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_handle_server_first_message",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_cert_verify_cb",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_handshake",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_event",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_io_update",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_send",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_set_endpoint_id",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_verify",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_local_topics_to_list",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_assign_uas",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_cmp_rkt",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_destroy_final",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_find0_fl",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_find_fl",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_leader_query0",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_metadata_update",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_metadata_update2",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_name",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_new0",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_new_with_id",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_opaque",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_partition_cnt_update",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_partitions_remove",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_propagate_notexists",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_scan_all",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_error",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_exists",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_notexists",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_topic_set_state",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_broker_update",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_delegate_to_leader",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_forget_leader",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_idemp_msgid_restore",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_leader_update",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_kafka_toppar_undelegate",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_topic.c",
+     "function": "rd_ut_kafka_topic_set_topic_exists",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_close",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect_done",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connected",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_framed_recv",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_get_socket_error",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_io_event",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_io_serve",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_post_connect_setup",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_transport_s.rktrans_rkb"
+     ],
+     "verdict": "Safe"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+     "library": "librdkafka",
+     "listed_before": true,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    },
+    {
+     "combined": "Unknown",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_partition_registered",
+     "library": "librdkafka",
+     "listed_before": false,
+     "occurrence": 1,
+     "through": [
+      "member:rd_kafka_topic_s.rkt_rk",
+      "member:rd_kafka_topic_s.rkt_topic",
+      "member:rd_kafka_toppar_s.rktp_rkt"
+     ],
+     "verdict": "Unknown"
+    }
+   ],
+   "resting_rows_listing_it_wrongly_or_not": [],
+   "rows_after": 4921,
+   "rows_before": 4921,
+   "rows_differing_beyond_the_premise_fields": 0,
+   "rows_only_after": 0,
+   "rows_resting_on_a_premised_plain_member": 404,
+   "rows_whose_bounds_digest_changed": 4921,
+   "scope_entries_respelled": 76,
+   "summary_identical_beyond_premises_and_respelled_entries": true
+  }
+ },
+ "slice": {
+  "custody": {
+   "after_sha256": "a89fa7e0846783fab3566779af7a7478146cd6d7444a50a0702a73d90b1b5776",
+   "before_sha256": "a89fa7e0846783fab3566779af7a7478146cd6d7444a50a0702a73d90b1b5776",
+   "byte_identical": true
+  },
+  "null": {
+   "differing": [],
+   "jsonl_sha256": {
+    "after": "f70621d48ce00b78eb6e164b67903c76e0bb372aab6ef1d087407577d7816191",
+    "before": "fa3f7fccad7762badd5a67721ce30cebf17d74e745d2def36313e2f37682e754"
+   },
+   "member_declaration_premises_after": {
+    "rd_kafka_cgrp_s.rkcg_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_topic": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_toppar_s.rktp_rkt": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_transport_s.rktrans_rkb": [
+     "rk_no_plugin_library"
+    ]
+   },
+   "of_which_already_listed_it_through_another_fact": 0,
+   "of_which_gained_the_premise": 0,
+   "other_rows_listing_it_unchanged": 0,
+   "other_rows_whose_premises_changed": [],
+   "resting_by_member": {},
+   "resting_by_null_verdict": {},
+   "resting_rows": [],
+   "resting_rows_listing_it_wrongly_or_not": [],
+   "rows_after": 406,
+   "rows_before": 406,
+   "rows_differing_beyond_the_premise_fields": 0,
+   "rows_only_after": 0,
+   "rows_resting_on_a_premised_plain_member": 0,
+   "rows_whose_bounds_digest_changed": 406,
+   "scope_entries_respelled": 76,
+   "summary_identical_beyond_premises_and_respelled_entries": true
+  }
+ },
+ "system": {
+  "custody": {
+   "after_sha256": "210b42f1a153e71603a70a54efd37c34a33d9e645f16d4f6fc9643d0c36b3b32",
+   "before_sha256": "210b42f1a153e71603a70a54efd37c34a33d9e645f16d4f6fc9643d0c36b3b32",
+   "byte_identical": true
+  },
+  "null": {
+   "differing": [],
+   "jsonl_sha256": {
+    "after": "153d2ec4fd1980ab8fadbb1a8fafdbbd81bcf21410a269f2c12fda828e01d49e",
+    "before": "ccc198b7510f73d2d56382945c7203f3edfd34f02ed21d30d39c4f5264709c14"
+   },
+   "member_declaration_premises_after": {
+    "rd_kafka_cgrp_s.rkcg_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_rk": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_topic_s.rkt_topic": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_toppar_s.rktp_rkt": [
+     "rk_no_plugin_library"
+    ],
+    "rd_kafka_transport_s.rktrans_rkb": [
+     "rk_no_plugin_library"
+    ]
+   },
+   "of_which_already_listed_it_through_another_fact": 0,
+   "of_which_gained_the_premise": 0,
+   "other_rows_listing_it_unchanged": 0,
+   "other_rows_whose_premises_changed": [],
+   "resting_by_member": {},
+   "resting_by_null_verdict": {},
+   "resting_rows": [],
+   "resting_rows_listing_it_wrongly_or_not": [],
+   "rows_after": 454,
+   "rows_before": 454,
+   "rows_differing_beyond_the_premise_fields": 0,
+   "rows_only_after": 0,
+   "rows_resting_on_a_premised_plain_member": 0,
+   "rows_whose_bounds_digest_changed": 454,
+   "scope_entries_respelled": 76,
+   "summary_identical_beyond_premises_and_respelled_entries": true
+  }
+ }
+}

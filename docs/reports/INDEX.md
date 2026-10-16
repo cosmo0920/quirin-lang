@@ -552,6 +552,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [native-platform-test-isolation](native-platform-test-isolation/README.md) | Native platform test isolation and sanitizer portability |
 
+| [nonnull-member-unified-qualifier](nonnull-member-unified-qualifier/README.md) | NONNULL-MEMBER-UNIFIED-QUALIFIER: one member clause, three kinds |
+
 | [null-candidate-triage](null-candidate-triage/README.md) | NULL-CANDIDATE-TRIAGE |
 
 | [null-deref-qtt-grounding](null-deref-qtt-grounding/README.md) | NULL-DEREF-QTT-GROUNDING |
