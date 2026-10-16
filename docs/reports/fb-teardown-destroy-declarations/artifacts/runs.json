@@ -1,0 +1,102 @@
+{
+ "before": {
+  "binary_sha256": "74d5a6fb4d52009be524043288107def6f75e3511d60b1ab3625920f7a4cfc08",
+  "corpus": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a87bf0fa9e078abe5/private/ftd/src-main/private/ftd/before3c/resource-diagnostics.json",
+   "report_sha256": "de6343c72f31e46a4b9b20fa1937392e330745a04f56164fb3d31a958239e8c5",
+   "statuses": {
+    "Safe": 938,
+    "Unknown": 3887,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 1435,
+    "Safe (unconditional)": 1113,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "seconds_inside_lock": "696.476"
+  },
+  "system": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a87bf0fa9e078abe5/private/ftd/src-main/private/ftd/before3-system/resource-diagnostics.json",
+   "report_sha256": "a2ff286afed131f733483c8d7a465a447e12946ff42b358f1e3db88a75eaa277",
+   "statuses": {
+    "Safe": 93,
+    "Unknown": 351,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 125,
+    "Safe (unconditional)": 84,
+    "Unknown": 245
+   },
+   "seconds_inside_lock": "202.527"
+  },
+  "slice": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/ftd-before3/resource-diagnostics.json",
+   "report_sha256": "4cecd2206a75316ab4c929ad1b1dca77044d5eb4d596502c3e61fe8cbce2f880",
+   "statuses": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 103,
+    "Safe (unconditional)": 71,
+    "Unknown": 232
+   },
+   "seconds_inside_lock": "162.157"
+  }
+ },
+ "after": {
+  "binary_sha256": "93bca2d6ce7dabdf00ba04c99441a10b964dcb8069352dea6d39bf26a0510e66",
+  "corpus": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a87bf0fa9e078abe5/private/ftd/after2/resource-diagnostics.json",
+   "report_sha256": "70c61369b37f92d366b27fd1817410beda522fec1fbd1b94611b4a8dc4e74cbf",
+   "statuses": {
+    "Safe": 938,
+    "Unknown": 3887,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 1435,
+    "Safe (unconditional)": 1113,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "seconds_inside_lock": "777.169"
+  },
+  "system": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a87bf0fa9e078abe5/private/ftd/after2-system/resource-diagnostics.json",
+   "report_sha256": "28ef1781d8f11386646784bb18b0b6a450e0e7d3ad48c43db96d7fede0b2fc60",
+   "statuses": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 125,
+    "Safe (unconditional)": 84,
+    "Unknown": 245
+   },
+   "seconds_inside_lock": "205.943"
+  },
+  "slice": {
+   "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/ftd-after2/resource-diagnostics.json",
+   "report_sha256": "7fb09a8eeb71e024ccf27ff5ee1a995a2d58a2ad0810d1656ae409999b38f9d6",
+   "statuses": {
+    "Pending": 4,
+    "Safe": 52,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe (conditional on its preconditions)": 103,
+    "Safe (unconditional)": 71,
+    "Unknown": 232
+   },
+   "seconds_inside_lock": "168.056"
+  }
+ }
+}

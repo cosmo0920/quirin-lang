@@ -1,0 +1,742 @@
+{
+ "statuses_before": {
+  "Unknown": 347,
+  "Safe": 52,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "statuses_after": {
+  "Unknown": 347,
+  "Safe": 52,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 80
+ },
+ "added": {
+  "unresolved resource identity `_`": 78,
+  "nullable resource `_` used by a non-null contract": 27,
+  "indirect memory access is outside the resource projection": 2
+ },
+ "moving_rows": 31,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_collect_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "19495: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "19495: unresolved resource identity `f`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_collect_pending",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "19332: call to uncontracted function `flb_tail_file_remove`",
+    "19358: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "19332: unresolved resource identity `file`",
+    "19358: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_collect_static",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "19411: call to uncontracted function `flb_tail_file_remove`",
+    "19439: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "19411: unresolved resource identity `file`",
+    "19439: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_exit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_config_destroy"
+   ],
+   "lost": [
+    "19611: call to uncontracted function `flb_tail_config_destroy`"
+   ],
+   "gained": [
+    "19611: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "occurrence": 1,
+   "function": "in_tail_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_config_destroy"
+   ],
+   "lost": [
+    "19515: call to uncontracted function `flb_tail_config_destroy`",
+    "19524: call to uncontracted function `flb_tail_config_destroy`",
+    "19534: call to uncontracted function `flb_tail_config_destroy`",
+    "19543: call to uncontracted function `flb_tail_config_destroy`",
+    "19551: call to uncontracted function `flb_tail_config_destroy`",
+    "19559: call to uncontracted function `flb_tail_config_destroy`",
+    "19566: call to uncontracted function `flb_tail_config_destroy`",
+    "19580: call to uncontracted function `flb_tail_config_destroy`",
+    "19591: call to uncontracted function `flb_tail_config_destroy`"
+   ],
+   "gained": [
+    "19515: unresolved resource identity `ctx`",
+    "19524: unresolved resource identity `ctx`",
+    "19534: unresolved resource identity `ctx`",
+    "19543: unresolved resource identity `ctx`",
+    "19551: unresolved resource identity `ctx`",
+    "19559: unresolved resource identity `ctx`",
+    "19566: unresolved resource identity `ctx`",
+    "19580: unresolved resource identity `ctx`",
+    "19591: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_config.c",
+   "occurrence": 1,
+   "function": "flb_tail_config_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_config_destroy"
+   ],
+   "lost": [
+    "20405: call to uncontracted function `flb_tail_config_destroy`",
+    "20412: call to uncontracted function `flb_tail_config_destroy`",
+    "20418: call to uncontracted function `flb_tail_config_destroy`",
+    "20433: call to uncontracted function `flb_tail_config_destroy`",
+    "20442: call to uncontracted function `flb_tail_config_destroy`",
+    "20448: call to uncontracted function `flb_tail_config_destroy`",
+    "20469: call to uncontracted function `flb_tail_config_destroy`",
+    "20482: call to uncontracted function `flb_tail_config_destroy`",
+    "20489: call to uncontracted function `flb_tail_config_destroy`",
+    "20495: call to uncontracted function `flb_tail_config_destroy`",
+    "20502: call to uncontracted function `flb_tail_config_destroy`",
+    "20508: call to uncontracted function `flb_tail_config_destroy`",
+    "20525: call to uncontracted function `flb_tail_config_destroy`",
+    "20531: call to uncontracted function `flb_tail_config_destroy`",
+    "20536: call to uncontracted function `flb_tail_config_destroy`",
+    "20541: call to uncontracted function `flb_tail_config_destroy`",
+    "20547: call to uncontracted function `flb_tail_config_destroy`",
+    "20553: call to uncontracted function `flb_tail_config_destroy`",
+    "20597: call to uncontracted function `flb_tail_config_destroy`",
+    "20610: call to uncontracted function `flb_tail_config_destroy`",
+    "20622: call to uncontracted function `flb_tail_config_destroy`",
+    "20632: call to uncontracted function `flb_tail_config_destroy`",
+    "20642: call to uncontracted function `flb_tail_config_destroy`",
+    "20652: call to uncontracted function `flb_tail_config_destroy`",
+    "20662: call to uncontracted function `flb_tail_config_destroy`",
+    "20670: call to uncontracted function `flb_tail_config_destroy`",
+    "20676: call to uncontracted function `flb_tail_config_destroy`",
+    "20726: call to uncontracted function `flb_tail_config_destroy`"
+   ],
+   "gained": [
+    "20405: unresolved resource identity `ctx`",
+    "20412: nullable resource `ctx` used by a non-null contract",
+    "20412: unresolved resource identity `ctx`",
+    "20418: nullable resource `ctx` used by a non-null contract",
+    "20418: unresolved resource identity `ctx`",
+    "20433: nullable resource `ctx` used by a non-null contract",
+    "20433: unresolved resource identity `ctx`",
+    "20442: nullable resource `ctx` used by a non-null contract",
+    "20442: unresolved resource identity `ctx`",
+    "20448: nullable resource `ctx` used by a non-null contract",
+    "20448: unresolved resource identity `ctx`",
+    "20469: nullable resource `ctx` used by a non-null contract",
+    "20469: unresolved resource identity `ctx`",
+    "20482: nullable resource `ctx` used by a non-null contract",
+    "20482: unresolved resource identity `ctx`",
+    "20489: nullable resource `ctx` used by a non-null contract",
+    "20489: unresolved resource identity `ctx`",
+    "20495: nullable resource `ctx` used by a non-null contract",
+    "20495: unresolved resource identity `ctx`",
+    "20502: nullable resource `ctx` used by a non-null contract",
+    "20502: unresolved resource identity `ctx`",
+    "20508: nullable resource `ctx` used by a non-null contract",
+    "20508: unresolved resource identity `ctx`",
+    "20525: nullable resource `ctx` used by a non-null contract",
+    "20525: unresolved resource identity `ctx`",
+    "20531: nullable resource `ctx` used by a non-null contract",
+    "20531: unresolved resource identity `ctx`",
+    "20536: nullable resource `ctx` used by a non-null contract",
+    "20536: unresolved resource identity `ctx`",
+    "20541: nullable resource `ctx` used by a non-null contract",
+    "20541: unresolved resource identity `ctx`",
+    "20547: nullable resource `ctx` used by a non-null contract",
+    "20547: unresolved resource identity `ctx`",
+    "20553: nullable resource `ctx` used by a non-null contract",
+    "20553: unresolved resource identity `ctx`",
+    "20597: nullable resource `ctx` used by a non-null contract",
+    "20597: unresolved resource identity `ctx`",
+    "20610: nullable resource `ctx` used by a non-null contract",
+    "20610: unresolved resource identity `ctx`",
+    "20622: nullable resource `ctx` used by a non-null contract",
+    "20622: unresolved resource identity `ctx`",
+    "20632: nullable resource `ctx` used by a non-null contract",
+    "20632: unresolved resource identity `ctx`",
+    "20642: nullable resource `ctx` used by a non-null contract",
+    "20642: unresolved resource identity `ctx`",
+    "20652: nullable resource `ctx` used by a non-null contract",
+    "20652: unresolved resource identity `ctx`",
+    "20662: nullable resource `ctx` used by a non-null contract",
+    "20662: unresolved resource identity `ctx`",
+    "20670: nullable resource `ctx` used by a non-null contract",
+    "20670: unresolved resource identity `ctx`",
+    "20676: nullable resource `ctx` used by a non-null contract",
+    "20676: unresolved resource identity `ctx`",
+    "20726: nullable resource `ctx` used by a non-null contract",
+    "20726: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "check_purge_deleted_file",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "21521: call to uncontracted function `flb_tail_file_remove`",
+    "21529: call to uncontracted function `flb_tail_file_remove`",
+    "21545: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "21521: unresolved resource identity `file`",
+    "21529: unresolved resource identity `file`",
+    "21545: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "21577: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "21577: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_reclaim",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "21112: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "21112: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_file_remove_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "21123: call to uncontracted function `flb_tail_file_remove`",
+    "21128: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "21123: unresolved resource identity `file`",
+    "21128: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "occurrence": 1,
+   "function": "flb_tail_fs_inotify_init",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_config_destroy"
+   ],
+   "lost": [
+    "20341: call to uncontracted function `flb_tail_config_destroy`"
+   ],
+   "gained": [
+    "20341: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "occurrence": 1,
+   "function": "reconcile_file_state",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "20152: call to uncontracted function `flb_tail_file_remove`",
+    "20186: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "20152: unresolved resource identity `file`",
+    "20186: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "occurrence": 1,
+   "function": "tail_fs_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_tail_file_remove"
+   ],
+   "lost": [
+    "20083: call to uncontracted function `flb_tail_file_remove`",
+    "20091: call to uncontracted function `flb_tail_file_remove`",
+    "20122: call to uncontracted function `flb_tail_file_remove`"
+   ],
+   "gained": [
+    "20083: unresolved resource identity `file`",
+    "20091: unresolved resource identity `file`",
+    "20122: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_coro_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_coro_destroy"
+   ],
+   "lost": [
+    "18368: call to uncontracted function `flb_coro_destroy`"
+   ],
+   "gained": [
+    "18368: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_coro_finished",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_coro_destroy"
+   ],
+   "lost": [
+    "18383: call to uncontracted function `flb_input_coro_destroy`"
+   ],
+   "gained": [
+    "18383: unresolved resource identity `input_coro`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_exit_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19429: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19429: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_http_server_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19009: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19009: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_init_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19367: call to uncontracted function `flb_input_instance_destroy`",
+    "19374: call to uncontracted function `flb_input_instance_destroy`",
+    "19382: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19367: unresolved resource identity `ins`",
+    "19374: unresolved resource identity `ins`",
+    "19382: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_instance_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_collector_destroy"
+   ],
+   "lost": [
+    "18861: call to uncontracted function `flb_input_collector_destroy`"
+   ],
+   "gained": [
+    "18861: unresolved resource identity `collector`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_net_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18911: call to uncontracted function `flb_input_instance_destroy`",
+    "18918: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18911: unresolved resource identity `ins`",
+    "18918: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_oauth2_jwt_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18986: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18986: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_plugin_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18965: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18965: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_coro_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_coro_destroy"
+   ],
+   "lost": [
+    "18368: call to uncontracted function `flb_coro_destroy`"
+   ],
+   "gained": [
+    "18368: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_coro_finished",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_coro_destroy"
+   ],
+   "lost": [
+    "18383: call to uncontracted function `flb_input_coro_destroy`"
+   ],
+   "gained": [
+    "18383: unresolved resource identity `input_coro`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_exit_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19429: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19429: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_http_server_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19009: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19009: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_init_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "19367: call to uncontracted function `flb_input_instance_destroy`",
+    "19374: call to uncontracted function `flb_input_instance_destroy`",
+    "19382: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "19367: unresolved resource identity `ins`",
+    "19374: unresolved resource identity `ins`",
+    "19382: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_instance_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_collector_destroy"
+   ],
+   "lost": [
+    "18861: call to uncontracted function `flb_input_collector_destroy`"
+   ],
+   "gained": [
+    "18861: unresolved resource identity `collector`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_net_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18911: call to uncontracted function `flb_input_instance_destroy`",
+    "18918: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18911: unresolved resource identity `ins`",
+    "18918: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_oauth2_jwt_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18986: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18986: unresolved resource identity `ins`"
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_plugin_property_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:flb_input_instance_destroy"
+   ],
+   "lost": [
+    "18965: call to uncontracted function `flb_input_instance_destroy`"
+   ],
+   "gained": [
+    "18965: unresolved resource identity `ins`"
+   ]
+  }
+ ]
+}

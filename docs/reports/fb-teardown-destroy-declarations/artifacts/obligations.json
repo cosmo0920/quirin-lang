@@ -1,0 +1,540 @@
+{
+ "OB-10": {
+  "statement": "teardown retires every wrapper and touches only live output instances",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "plugins/in_storage_backlog/sb.c::sb_destroy_backlog",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlog",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_engine.c::flb_engine_start",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_output.c::flb_output_instance_destroy",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "17998: call to uncontracted function `flb_task_queue_destroy`"
+    ],
+    "gained": [
+     "17998: indirect memory access is outside the resource projection"
+    ]
+   }
+  ]
+ },
+ "OR-2": {
+  "statement": "every timer allocated in flb_sched_request_create is either reachable from a linked request or destroyed before return",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_scheduler.c::flb_sched_request_create",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "17835: call to uncontracted function `flb_sched_timer_destroy`"
+    ],
+    "gained": [
+     "17835: unresolved resource identity `timer`"
+    ]
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_timer_create",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-3": {
+  "statement": "in the FLB_RETRY arm the task-lifetime obligation moved from users (decrement without release) to task->retries is discharged on schedule failure by retry destroy followed by flb_task_users_release",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine.c::handle_output_event",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "19432: call to uncontracted function `flb_input_chunk_release_route`"
+    ],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::flb_task_retry_create",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-4": {
+  "statement": "every return of flb_engine_dispatch_retry leaves the retry either with exactly one live scheduler request, or held by a singleplex entry / in-flight flush with a task user, or retired with the task released or still owned",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_event_handler",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "18019: call to uncontracted function `flb_sched_request_destroy`",
+     "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+    ],
+    "gained": [
+     "18019: unresolved resource identity `req`",
+     "18031: unresolved resource identity `timer`"
+    ]
+   }
+  ]
+ },
+ "OR-5": {
+  "statement": "each scheduler request is destroyed exactly once: by the handler on 0, or by invalidation inside retry destruction on -1",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_scheduler.c::flb_sched_event_handler",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "18019: call to uncontracted function `flb_sched_request_destroy`",
+     "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+    ],
+    "gained": [
+     "18019: unresolved resource identity `req`",
+     "18031: unresolved resource identity `timer`"
+    ]
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_request_invalidate",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "17864: call to uncontracted function `flb_sched_request_destroy`",
+     "17871: call to uncontracted function `flb_sched_request_destroy`"
+    ],
+    "gained": [
+     "17864: unresolved resource identity `request`",
+     "17871: unresolved resource identity `request`"
+    ]
+   },
+   {
+    "function": "src/flb_task.c::flb_task_retry_destroy",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-6": {
+  "statement": "flb_output_task_queue_flush_one does not access queued_task after flb_output_task_flush returns -1, and advances the queue once",
+  "decided_after": false,
+  "moved": false,
+  "functions": [
+   {
+    "function": "src/flb_output.c::flb_output_task_flush_error",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_output.c::flb_output_task_queue_flush_one",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_output.c::flb_output_task_singleplex_flush_next",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-8": {
+  "statement": "at most one retry exists per (task, output); both NULL arms of flb_task_retry_create leave none for that output and the caller releases the completing user",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine.c::handle_output_event",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "19432: call to uncontracted function `flb_input_chunk_release_route`"
+    ],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::flb_task_retry_create",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-9": {
+  "statement": "retry destruction invalidates its scheduler request before the retry is freed, and an invalidated timer is never dispatched nor freed before the current event batch ends",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine.c::flb_engine_start",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_event_handler",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "18019: call to uncontracted function `flb_sched_request_destroy`",
+     "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+    ],
+    "gained": [
+     "18019: unresolved resource identity `req`",
+     "18031: unresolved resource identity `timer`"
+    ]
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_request_destroy",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_timer_cleanup",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "18248: call to uncontracted function `flb_sched_timer_destroy`"
+    ],
+    "gained": [
+     "18248: unresolved resource identity `timer`"
+    ]
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_timer_invalidate",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::flb_task_retry_destroy",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-10": {
+  "statement": "a completion discharges the user of the task generation that emitted it (stale/duplicate completion refused)",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine.c::handle_output_event",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "19432: call to uncontracted function `flb_input_chunk_release_route`"
+    ],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::map_free_task_id",
+    "status": [
+     [
+      "Safe"
+     ],
+     [
+      "Safe"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::map_get_task_id",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_task.c::map_set_task_id",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   }
+  ]
+ },
+ "OR-11": {
+  "statement": "flb_task_retry_reschedule failure retires the retry and destroys the task only when no users and no retries remain, and the caller then returns -1 so the handler does not destroy the already-invalidated request",
+  "decided_after": false,
+  "moved": true,
+  "functions": [
+   {
+    "function": "src/flb_engine_dispatch.c::flb_engine_dispatch_retry",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [],
+    "gained": []
+   },
+   {
+    "function": "src/flb_scheduler.c::flb_sched_event_handler",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "18019: call to uncontracted function `flb_sched_request_destroy`",
+     "18031: call to uncontracted function `flb_sched_timer_cb_destroy`"
+    ],
+    "gained": [
+     "18019: unresolved resource identity `req`",
+     "18031: unresolved resource identity `timer`"
+    ]
+   },
+   {
+    "function": "src/flb_task.c::flb_task_retry_reschedule",
+    "status": [
+     [
+      "Unknown"
+     ],
+     [
+      "Unknown"
+     ]
+    ],
+    "lost": [
+     "17484: call to uncontracted function `flb_task_destroy`"
+    ],
+    "gained": [
+     "17484: unresolved resource identity `task`"
+    ]
+   }
+  ]
+ }
+}

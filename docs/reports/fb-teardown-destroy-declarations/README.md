@@ -118,3 +118,90 @@ fluent-bit profile's manifest) and listed in the load path. Every state is
 a declared assumption unless rule 30's body check validates it in the unit
 that defines the body; for a released binder the body never clears the
 member before freeing the object, so the states stay declared assumptions.
+
+## 6. Measurement
+
+BEFORE: a clean `git archive` export of main `8b360766c`
+(`scripts/before-clean.sh`, binary `74d5a6fb…`; the export's contracts, so no
+card edit can reach it). AFTER: this card's tree, binary `93bca2d6…`
+(`scripts/build.sh after1`, built at `1670c3ba9`; the manifest, pins and test
+files committed after it are runtime data or test code). Each route under the
+shared heavy lock with `QCORE_NULL_PROPERTY` (`scripts/measure.sh`);
+identities in `artifacts/runs.json`. The BEFORE corpus report is main's
+`de6343c7…`.
+
+| Route | Custody before | Custody after | Null (before = after) | Report after |
+| --- | --- | --- | --- | --- |
+| corpus `66910c10` (`--jobs 4`) | 938 / 9 / 3,887 | 938 / 9 / 3,887 | 1,113 / 1,435 / 2,355 / 18 Unsafe | `70c61369…` |
+| system (448 rows) | 93 / 4 / 351 | **95** / 4 / **349** | 84 / 125 / 245 | `28ef1781…` |
+| tail-pause slice (404 rows) | 52 / 1 / 347 / 4 Pending | 52 / 1 / 347 / 4 Pending | 71 / 103 / 232 | `7fb09a8e…` |
+
+Every moved row is in `artifacts/compare-{corpus,system,slice}.json`
+(`scripts/compare.py`) and was read:
+
+* **The one gain** (system, both configurations of `src/flb_scheduler.c`):
+  `flb_sched_timer_cb_destroy` Unknown → **Safe**. Its body is
+  `flb_sched_timer_destroy(timer); return 0;`; its only leaf was the
+  uncontracted call. Clauses it rests on: `flb_sched_timer_destroy`'s
+  `resource_released(timer, nonnull)` and `resource_return_none()` (row
+  `contract_dependencies`: that one declaration, a declared assumption read
+  at the three trees and pinned there; its own body, in the same unit, stays
+  Unknown: `flb_sched_timer_cb_disable` is uncontracted and `flb_free(timer)`
+  reads an unresolved identity, so the declaration is not body-validated).
+  Premises: none beyond the declaration; the null row is Safe conditional on
+  the inferred `quant null-deref #timer` (unchanged), and the combined row
+  becomes Safe. The caller `flb_sched_event_handler` now reads its validated
+  summary (`call to uncontracted function flb_sched_timer_cb_destroy` →
+  `unresolved resource identity timer`).
+* **Leaf trades, no status move** (system 50 more rows, slice 31, corpus 2):
+  `call to uncontracted function` at a declared destroyer becomes
+  `unresolved resource identity` (system 80, slice 78: list entries of
+  `mk_list_foreach_safe`, formals whose binding an earlier unmodelled step
+  poisoned, objects never tracked), `indirect memory access is outside the
+  resource projection` (system 16, corpus 2: member-read actuals such as
+  `ic->task`, `ins->singleplex_queue`, `instance->coro`, `task->event_chunk`),
+  and in `flb_tail_config_create` also `nullable resource ctx used by a
+  non-null contract` (27: the `flb_calloc` result read nullable at the
+  destroy calls). `handle_output_event` loses its
+  `flb_input_chunk_release_route` leaf and gains none.
+* **No correction:** no Safe row left Safe, no Unsafe appeared, the
+  pre-existing provisional Unsafe `flb_output_task_flush` only trades its
+  `flb_output_flush_destroy` leaf. **Rule 30's direct-call reading fired
+  nowhere** on the three routes (no `member-path-*` refusal and no linked
+  member released): no caller links a tracked object at a stated path of a
+  tracked object it then destroys.
+* **Null property:** tallies identical on all three routes; the stream
+  differs only in `flb_sched_timer_cb_destroy`'s custody and combined fields
+  and in one `custody_null_premises` entry of `handle_output_event` (the
+  removed leaf's line) (`artifacts/null-{corpus,system,slice}.json`).
+* **The 30 unresolved argument identities** of the census
+  (`flb_input_chunk_destroy` 16, `flb_task_retry_destroy` 14) are unchanged:
+  no declaration decides them, as the brief expected.
+
+**Prediction against outcome.** As predicted: no corpus or slice status
+move, the null property unchanged, the alone rows `flb_engine_destroy_tasks`,
+`flb_sched_request_invalidate` and `flb_tail_file_remove_all` kept their
+leaves as `unresolved resource identity`. Not as predicted: one system
+function became Safe (`flb_sched_timer_cb_destroy`); the prediction had
+generalised from `flb_task_queue_destroy`'s and `flb_task_retry_reschedule`'s
+formals (which earlier unmodelled steps poison) to every formal, and this
+formal stays bound. The prediction's `flb_tail_config_create` direct-call
+reading did not happen: its `ctx` reads unresolved at the destroy calls.
+
+**Obligations** (`artifacts/obligations.json`, `scripts/obligations.py`):
+OB-10, OR-2, OR-3, OR-4, OR-5, OR-8, OR-9, OR-10 and OR-11 move at leaf level
+only (`flb_output_instance_destroy`, `flb_sched_request_create`,
+`handle_output_event`, `flb_sched_event_handler`,
+`flb_sched_request_invalidate`, `flb_sched_timer_cleanup`,
+`flb_task_retry_reschedule`); OR-6 does not move; none becomes decided.
+
+## 7. Ledger
+
+789 → 789: `FB-TEARDOWN-DESTROY-DECLARATIONS` retired (its DISCHARGE holds:
+the decision on the parameter guard, rule 30 at a direct call with Lean
+parity, the destroyers declared and checked against their bodies where a
+unit defines them, three routes measured with every moved row read);
+`FB-TEARDOWN-RELEASE-ACTUAL-IDENTITIES` registered (the unbound actuals
+above); `W45-FB-BACKLOG-REACHABLE-RELEASE` amended (the six list-entry
+destroyers left undeclared). `W45-FB-USERS-RELEASE-CHECK` is unchanged.
+`scripts/update_ledger.py`.

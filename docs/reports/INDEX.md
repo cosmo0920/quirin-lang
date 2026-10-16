@@ -442,6 +442,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-system-audit-cards](fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
 
+| [fb-teardown-destroy-declarations](fb-teardown-destroy-declarations/README.md) | FB-TEARDOWN-DESTROY-DECLARATIONS: rule 30 at a direct call, the parameter guard, and Fluent Bit's destroyers |
+
 | [fluent-bit-contracts-2026-09-05](fluent-bit-contracts-2026-09-05/README.md) | QCore contracts against actual Fluent Bit source — 2026-09-05 |
 
 | [fluent-bit-moving-revisions](fluent-bit-moving-revisions/README.md) | Moving Fluent Bit revisions — 2026-09-07 |

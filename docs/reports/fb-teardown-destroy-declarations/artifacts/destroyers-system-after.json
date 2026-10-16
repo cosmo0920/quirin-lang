@@ -1,0 +1,1654 @@
+{
+ "route": "system",
+ "report": "private/ftd/after2-system/resource-diagnostics.json",
+ "source_root": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+ "callees": {
+  "flb_task_retry_clean": {
+   "uncontracted_leaves": 8,
+   "unresolved_leaves": 0,
+   "rows": 1,
+   "functions": [
+    "handle_output_event"
+   ]
+  },
+  "flb_sched_request_invalidate": {
+   "uncontracted_leaves": 4,
+   "unresolved_leaves": 0,
+   "rows": 2,
+   "functions": [
+    "flb_engine_reschedule_retries",
+    "flb_task_retry_destroy"
+   ]
+  },
+  "flb_task_users_release": {
+   "uncontracted_leaves": 4,
+   "unresolved_leaves": 0,
+   "rows": 2,
+   "functions": [
+    "flb_engine_dispatch_retry",
+    "handle_output_event"
+   ]
+  },
+  "flb_output_exit": {
+   "uncontracted_leaves": 2,
+   "unresolved_leaves": 0,
+   "rows": 1,
+   "functions": [
+    "flb_engine_shutdown"
+   ]
+  },
+  "flb_input_exit_all": {
+   "uncontracted_leaves": 2,
+   "unresolved_leaves": 0,
+   "rows": 1,
+   "functions": [
+    "flb_engine_shutdown"
+   ]
+  },
+  "flb_input_chunk_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 16,
+   "rows": 5,
+   "functions": [
+    "flb_input_chunk_release_space",
+    "flb_storage_input_destroy",
+    "input_chunk_append_raw",
+    "input_chunk_get",
+    "memrb_input_chunk_release_space"
+   ]
+  },
+  "flb_event_chunk_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 2,
+   "rows": 1,
+   "functions": [
+    "flb_task_create"
+   ]
+  },
+  "flb_task_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 14,
+   "rows": 4,
+   "functions": [
+    "flb_engine_destroy_tasks",
+    "flb_engine_dispatch",
+    "flb_task_create",
+    "flb_task_retry_reschedule"
+   ]
+  },
+  "flb_task_retry_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 14,
+   "rows": 6,
+   "functions": [
+    "flb_engine_dispatch_retry",
+    "flb_task_destroy",
+    "flb_task_retry_clean",
+    "flb_task_retry_create",
+    "flb_task_retry_reschedule",
+    "handle_output_event"
+   ]
+  },
+  "flb_sched_timer_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 16,
+   "rows": 6,
+   "functions": [
+    "flb_sched_create",
+    "flb_sched_destroy",
+    "flb_sched_request_create",
+    "flb_sched_retry_now",
+    "flb_sched_timer_cb_create",
+    "flb_sched_timer_cleanup"
+   ]
+  },
+  "flb_sched_request_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 10,
+   "rows": 3,
+   "functions": [
+    "flb_sched_destroy",
+    "flb_sched_event_handler",
+    "flb_sched_request_invalidate"
+   ]
+  },
+  "flb_output_instance_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 32,
+   "rows": 4,
+   "functions": [
+    "flb_output_enable_multi_threading",
+    "flb_output_exit",
+    "flb_output_init_all",
+    "flb_output_net_property_check"
+   ]
+  },
+  "flb_output_flush_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 4,
+   "rows": 2,
+   "functions": [
+    "flb_output_flush_finished",
+    "flb_output_task_flush"
+   ]
+  }
+ },
+ "rows": [
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "status": "Unknown",
+   "leaves": 20,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:718",
+     "description": "unresolved resource identity `old_input_chunk`",
+     "source": "flb_input_chunk_destroy(old_input_chunk, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "status": "Unknown",
+   "leaves": 43,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3511",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3542",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "status": "Unknown",
+   "leaves": 20,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2909",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2926",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2944",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "memrb_input_chunk_release_space",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3224",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "status": "Unknown",
+   "leaves": 20,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:718",
+     "description": "unresolved resource identity `old_input_chunk`",
+     "source": "flb_input_chunk_destroy(old_input_chunk, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "status": "Unknown",
+   "leaves": 43,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3511",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3542",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_get",
+   "status": "Unknown",
+   "leaves": 20,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2909",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2926",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:2944",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "memrb_input_chunk_release_space",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input_chunk.c:3224",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_input_destroy",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_storage.c:634",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_FALSE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_input_destroy",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_storage.c:634",
+     "description": "unresolved resource identity `ic`",
+     "source": "flb_input_chunk_destroy(ic, FLB_FALSE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_create",
+   "status": "Unknown",
+   "leaves": 76,
+   "destroyer_leaves": 5,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_event_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:613",
+     "description": "unresolved resource identity `evc`",
+     "source": "flb_event_chunk_destroy(evc);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:739",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:814",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:834",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:887",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:936",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:429",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "status": "Unknown",
+   "leaves": 17,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:331",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_destroy",
+   "status": "Unknown",
+   "leaves": 4,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_invalidate",
+     "kind": "uncontracted",
+     "origin": "src/flb_task.c:274",
+     "description": "call to uncontracted function `flb_sched_request_invalidate`",
+     "source": "ret = flb_sched_request_invalidate(retry->parent->config, retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "status": "Unknown",
+   "leaves": 5,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:303",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:305",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_create",
+   "status": "Unknown",
+   "leaves": 76,
+   "destroyer_leaves": 5,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_event_chunk_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:613",
+     "description": "unresolved resource identity `evc`",
+     "source": "flb_event_chunk_destroy(evc);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:739",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:814",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:834",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:887",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:936",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:429",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_create",
+   "status": "Unknown",
+   "leaves": 17,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:331",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_destroy",
+   "status": "Unknown",
+   "leaves": 4,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_invalidate",
+     "kind": "uncontracted",
+     "origin": "src/flb_task.c:274",
+     "description": "call to uncontracted function `flb_sched_request_invalidate`",
+     "source": "ret = flb_sched_request_invalidate(retry->parent->config, retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "status": "Unknown",
+   "leaves": 5,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:303",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_task.c:305",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_destroy_tasks",
+   "status": "Unknown",
+   "leaves": 1,
+   "destroyer_leaves": 1,
+   "alone": true,
+   "sites": [
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine.c:145",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_FALSE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_reschedule_retries",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_invalidate",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:180",
+     "description": "call to uncontracted function `flb_sched_request_invalidate`",
+     "source": "flb_sched_request_invalidate(config, retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_shutdown",
+   "status": "Unknown",
+   "leaves": 17,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_exit",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:1684",
+     "description": "call to uncontracted function `flb_output_exit`",
+     "source": "flb_output_exit(config);"
+    },
+    {
+     "callee": "flb_input_exit_all",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:1686",
+     "description": "call to uncontracted function `flb_input_exit_all`",
+     "source": "flb_input_exit_all(config);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "status": "Unknown",
+   "leaves": 74,
+   "destroyer_leaves": 6,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:702",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:739",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:790",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine.c:817",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_users_release",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:818",
+     "description": "call to uncontracted function `flb_task_users_release`",
+     "source": "flb_task_users_release(task);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:879",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_destroy_tasks",
+   "status": "Unknown",
+   "leaves": 1,
+   "destroyer_leaves": 1,
+   "alone": true,
+   "sites": [
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine.c:145",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_FALSE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_reschedule_retries",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_invalidate",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:180",
+     "description": "call to uncontracted function `flb_sched_request_invalidate`",
+     "source": "flb_sched_request_invalidate(config, retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_shutdown",
+   "status": "Unknown",
+   "leaves": 17,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_exit",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:1684",
+     "description": "call to uncontracted function `flb_output_exit`",
+     "source": "flb_output_exit(config);"
+    },
+    {
+     "callee": "flb_input_exit_all",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:1686",
+     "description": "call to uncontracted function `flb_input_exit_all`",
+     "source": "flb_input_exit_all(config);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "status": "Unknown",
+   "leaves": 74,
+   "destroyer_leaves": 6,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:702",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:739",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:790",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    },
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine.c:817",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_users_release",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:818",
+     "description": "call to uncontracted function `flb_task_users_release`",
+     "source": "flb_task_users_release(task);"
+    },
+    {
+     "callee": "flb_task_retry_clean",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine.c:879",
+     "description": "call to uncontracted function `flb_task_retry_clean`",
+     "source": "flb_task_retry_clean(task, ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "status": "Unknown",
+   "leaves": 16,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:462",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "status": "Unknown",
+   "leaves": 15,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:151",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_users_release",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine_dispatch.c:152",
+     "description": "call to uncontracted function `flb_task_users_release`",
+     "source": "flb_task_users_release(task);"
+    },
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:188",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "status": "Unknown",
+   "leaves": 16,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:462",
+     "description": "unresolved resource identity `task`",
+     "source": "flb_task_destroy(task, FLB_TRUE);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "status": "Unknown",
+   "leaves": 15,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:151",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    },
+    {
+     "callee": "flb_task_users_release",
+     "kind": "uncontracted",
+     "origin": "src/flb_engine_dispatch.c:152",
+     "description": "call to uncontracted function `flb_task_users_release`",
+     "source": "flb_task_users_release(task);"
+    },
+    {
+     "callee": "flb_task_retry_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_engine_dispatch.c:188",
+     "description": "unresolved resource identity `retry`",
+     "source": "flb_task_retry_destroy(retry);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "status": "Unknown",
+   "leaves": 28,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:787",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "status": "Unknown",
+   "leaves": 10,
+   "destroyer_leaves": 4,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:829",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:836",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:844",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:851",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "status": "Unknown",
+   "leaves": 22,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:603",
+     "description": "unresolved resource identity `req`",
+     "source": "flb_sched_request_destroy(req);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:319",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_invalidate",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 2,
+   "alone": true,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:365",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:382",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:969",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:990",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:676",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:926",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_create",
+   "status": "Unknown",
+   "leaves": 28,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:787",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_destroy",
+   "status": "Unknown",
+   "leaves": 10,
+   "destroyer_leaves": 4,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:829",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:836",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:844",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:851",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "status": "Unknown",
+   "leaves": 22,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:603",
+     "description": "unresolved resource identity `req`",
+     "source": "flb_sched_request_destroy(req);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_create",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:319",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_request_invalidate",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 2,
+   "alone": true,
+   "sites": [
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:365",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    },
+    {
+     "callee": "flb_sched_request_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:382",
+     "description": "unresolved resource identity `request`",
+     "source": "flb_sched_request_destroy(request);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_retry_now",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:969",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    },
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:990",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:676",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_cleanup",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_sched_timer_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_scheduler.c:926",
+     "description": "unresolved resource identity `timer`",
+     "source": "flb_sched_timer_destroy(timer);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_enable_multi_threading",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1311",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_exit",
+   "status": "Unknown",
+   "leaves": 10,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:671",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "status": "Unknown",
+   "leaves": 5,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_flush_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:744",
+     "description": "unresolved resource identity `out_flush`",
+     "source": "flb_output_flush_destroy(out_flush);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "status": "Unknown",
+   "leaves": 89,
+   "destroyer_leaves": 13,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1552",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1696",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1742",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1761",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1771",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1781",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1832",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1841",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1851",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1869",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1876",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1884",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1894",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1350",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "status": "Unsafe",
+   "leaves": 9,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_flush_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:526",
+     "description": "unresolved resource identity `out_flush`",
+     "source": "flb_output_flush_destroy(out_flush);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_enable_multi_threading",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1311",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_exit",
+   "status": "Unknown",
+   "leaves": 10,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:671",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "status": "Unknown",
+   "leaves": 5,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_flush_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:744",
+     "description": "unresolved resource identity `out_flush`",
+     "source": "flb_output_flush_destroy(out_flush);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "status": "Unknown",
+   "leaves": 89,
+   "destroyer_leaves": 13,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1552",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1696",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1742",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1761",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1771",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1781",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1832",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1841",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1851",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1869",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1876",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1884",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1894",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:1350",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_output_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "status": "Unsafe",
+   "leaves": 9,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_output_flush_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_output.c:526",
+     "description": "unresolved resource identity `out_flush`",
+     "source": "flb_output_flush_destroy(out_flush);"
+    }
+   ]
+  }
+ ]
+}

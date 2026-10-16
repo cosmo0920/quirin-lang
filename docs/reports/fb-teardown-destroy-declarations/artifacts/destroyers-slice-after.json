@@ -1,0 +1,956 @@
+{
+ "route": "slice",
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/ftd-after2/resource-diagnostics.json",
+ "source_root": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+ "callees": {
+  "flb_engine_destroy_tasks": {
+   "uncontracted_leaves": 2,
+   "unresolved_leaves": 0,
+   "rows": 1,
+   "functions": [
+    "flb_input_instance_destroy"
+   ]
+  },
+  "flb_tail_file_remove_all": {
+   "uncontracted_leaves": 2,
+   "unresolved_leaves": 0,
+   "rows": 2,
+   "functions": [
+    "flb_tail_config_destroy",
+    "in_tail_exit"
+   ]
+  },
+  "flb_input_coro_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 2,
+   "rows": 1,
+   "functions": [
+    "flb_input_coro_finished"
+   ]
+  },
+  "flb_input_instance_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 18,
+   "rows": 6,
+   "functions": [
+    "flb_input_exit_all",
+    "flb_input_http_server_property_check",
+    "flb_input_init_all",
+    "flb_input_net_property_check",
+    "flb_input_oauth2_jwt_property_check",
+    "flb_input_plugin_property_check"
+   ]
+  },
+  "flb_input_collector_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 2,
+   "rows": 1,
+   "functions": [
+    "flb_input_instance_destroy"
+   ]
+  },
+  "flb_tail_file_remove": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 17,
+   "rows": 9,
+   "functions": [
+    "check_purge_deleted_file",
+    "flb_tail_file_purge",
+    "flb_tail_file_reclaim",
+    "flb_tail_file_remove_all",
+    "in_tail_collect_event",
+    "in_tail_collect_pending",
+    "in_tail_collect_static",
+    "reconcile_file_state",
+    "tail_fs_check"
+   ]
+  },
+  "flb_tail_config_destroy": {
+   "uncontracted_leaves": 0,
+   "unresolved_leaves": 39,
+   "rows": 4,
+   "functions": [
+    "flb_tail_config_create",
+    "flb_tail_fs_inotify_init",
+    "in_tail_exit",
+    "in_tail_init"
+   ]
+  }
+ },
+ "rows": [
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_coro_finished",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_coro_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:747",
+     "description": "unresolved resource identity `input_coro`",
+     "source": "flb_input_coro_destroy(input_coro);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "status": "Unknown",
+   "leaves": 4,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2160",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_http_server_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1545",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_init_all",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2081",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2090",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2100",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "leaves": 65,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_engine_destroy_tasks",
+     "kind": "uncontracted",
+     "origin": "src/flb_input.c:1239",
+     "description": "call to uncontracted function `flb_engine_destroy_tasks`",
+     "source": "flb_engine_destroy_tasks(&ins->tasks);"
+    },
+    {
+     "callee": "flb_input_collector_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1331",
+     "description": "unresolved resource identity `collector`",
+     "source": "flb_input_collector_destroy(collector);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_net_property_check",
+   "status": "Unknown",
+   "leaves": 9,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1413",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1420",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_oauth2_jwt_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1513",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_plugin_property_check",
+   "status": "Unknown",
+   "leaves": 15,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1485",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_coro_finished",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_coro_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:747",
+     "description": "unresolved resource identity `input_coro`",
+     "source": "flb_input_coro_destroy(input_coro);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "status": "Unknown",
+   "leaves": 4,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2160",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_http_server_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1545",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_init_all",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2081",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2090",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:2100",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "status": "Unknown",
+   "leaves": 65,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_engine_destroy_tasks",
+     "kind": "uncontracted",
+     "origin": "src/flb_input.c:1239",
+     "description": "call to uncontracted function `flb_engine_destroy_tasks`",
+     "source": "flb_engine_destroy_tasks(&ins->tasks);"
+    },
+    {
+     "callee": "flb_input_collector_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1331",
+     "description": "unresolved resource identity `collector`",
+     "source": "flb_input_collector_destroy(collector);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_net_property_check",
+   "status": "Unknown",
+   "leaves": 9,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1413",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    },
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1420",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_oauth2_jwt_property_check",
+   "status": "Unknown",
+   "leaves": 7,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1513",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_plugin_property_check",
+   "status": "Unknown",
+   "leaves": 15,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_input_instance_destroy",
+     "kind": "unresolved",
+     "origin": "src/flb_input.c:1485",
+     "description": "unresolved resource identity `ins`",
+     "source": "flb_input_instance_destroy(ins);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_event",
+   "status": "Unknown",
+   "leaves": 3,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:349",
+     "description": "unresolved resource identity `f`",
+     "source": "flb_tail_file_remove(f);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_pending",
+   "status": "Unknown",
+   "leaves": 8,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:84",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:119",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_collect_static",
+   "status": "Unknown",
+   "leaves": 32,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:212",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:277",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_exit",
+   "status": "Unknown",
+   "leaves": 5,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove_all",
+     "kind": "uncontracted",
+     "origin": "plugins/in_tail/tail.c:511",
+     "description": "call to uncontracted function `flb_tail_file_remove_all`",
+     "source": "flb_tail_file_remove_all(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:513",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_init",
+   "status": "Unknown",
+   "leaves": 37,
+   "destroyer_leaves": 9,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:376",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:391",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:413",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:424",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:434",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:444",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:453",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:472",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail.c:486",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_config.c",
+   "function": "flb_tail_config_create",
+   "status": "Unknown",
+   "leaves": 232,
+   "destroyer_leaves": 28,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:149",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:157",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:165",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:184",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:198",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:206",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:247",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:262",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:272",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:281",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:291",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:299",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:323",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:330",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:336",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:342",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:350",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:357",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:414",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:430",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:445",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:457",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:469",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:481",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:493",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:506",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:514",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    },
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_config.c:577",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_config.c",
+   "function": "flb_tail_config_destroy",
+   "status": "Unknown",
+   "leaves": 23,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove_all",
+     "kind": "uncontracted",
+     "origin": "plugins/in_tail/tail_config.c:588",
+     "description": "call to uncontracted function `flb_tail_file_remove_all`",
+     "source": "flb_tail_file_remove_all(config);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "check_purge_deleted_file",
+   "status": "Unknown",
+   "leaves": 12,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2825",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2839",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2860",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_purge",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2905",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_reclaim",
+   "status": "Unknown",
+   "leaves": 29,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2150",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove_all",
+   "status": "Unknown",
+   "leaves": 2,
+   "destroyer_leaves": 2,
+   "alone": true,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2163",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_file.c:2169",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_init",
+   "status": "Unknown",
+   "leaves": 13,
+   "destroyer_leaves": 1,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_config_destroy",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_inotify.c:449",
+     "description": "unresolved resource identity `ctx`",
+     "source": "flb_tail_config_destroy(ctx);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "reconcile_file_state",
+   "status": "Unknown",
+   "leaves": 15,
+   "destroyer_leaves": 2,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_inotify.c:184",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_inotify.c:228",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "function": "tail_fs_check",
+   "status": "Unknown",
+   "leaves": 28,
+   "destroyer_leaves": 3,
+   "alone": false,
+   "sites": [
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_stat.c:117",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_stat.c:130",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    },
+    {
+     "callee": "flb_tail_file_remove",
+     "kind": "unresolved",
+     "origin": "plugins/in_tail/tail_fs_stat.c:174",
+     "description": "unresolved resource identity `file`",
+     "source": "flb_tail_file_remove(file);"
+    }
+   ]
+  }
+ ]
+}
