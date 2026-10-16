@@ -1667,9 +1667,12 @@ impl MemberFacts {
                         // open store there, so its own bytes decide.
                         let target = self.opaque_target(place);
                         if let OpaqueTarget::Union { key } = &target {
-                            self.stores.entry(key.clone()).or_default().insert(Flow::Open {
-                                why: "a whole-object assignment into the union".to_owned(),
-                            });
+                            self.stores
+                                .entry(key.clone())
+                                .or_default()
+                                .insert(Flow::Open {
+                                    why: "a whole-object assignment into the union".to_owned(),
+                                });
                         }
                         self.open_opaquely(record, "a whole-object assignment".to_owned(), target);
                     }
@@ -2296,11 +2299,8 @@ impl Tables {
                 Some(FieldKey::Function | FieldKey::Plain) => false,
             }
         }
-        self.readings(record).is_some_and(|readings| {
-            readings
-                .iter()
-                .all(|keys| through(self, keys, path, 0))
-        })
+        self.readings(record)
+            .is_some_and(|readings| readings.iter().all(|keys| through(self, keys, path, 0)))
     }
 
     /// Every reading of a record the units define unambiguously.
@@ -2308,7 +2308,9 @@ impl Tables {
         if self.ambiguous.contains(record) {
             return None;
         }
-        self.records.get(record).filter(|readings| !readings.is_empty())
+        self.records
+            .get(record)
+            .filter(|readings| !readings.is_empty())
     }
 
     /// Card **UNION-OPAQUE-RECORD-WRITES-BY-TYPE** (rule 12n): whether an

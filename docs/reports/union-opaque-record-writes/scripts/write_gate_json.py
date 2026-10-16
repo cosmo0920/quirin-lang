@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/union-opaque-record-writes"
-BASE = "4c0803f1f (rebased from b2fbde2c5)"
+BASE = "1c7333db1"
 
 
 def main() -> int:
@@ -49,7 +49,7 @@ def main() -> int:
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
     note = (
-        f"HANDOFF-DIRECT-CALL-READING card gate on base {BASE}, every code "
+        f"UNION-OPAQUE-RECORD-WRITES-BY-TYPE card gate on base {BASE}, every code "
         f"step at {head[:9]}, scripts docs/reports/union-opaque-record-writes/scripts/gate-whole.sh, "
         "gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the "
         f"whole gate, logs private/uorw/gate-{name} of this worktree. "
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/uorw/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (328 on main 4c0803f1f -> 329: QCore.HandOffDirect); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (329 on main 1c7333db1, unchanged: QCore.UnionArmLayout's existing audit extended); "
         "provider gate (not required: providers/ and qcore-schemas unchanged; run for the matrix's measured provider count): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
