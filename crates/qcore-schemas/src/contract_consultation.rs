@@ -132,6 +132,19 @@ pub fn is_open() -> bool {
     LOG.with(|log| log.borrow().is_some())
 }
 
+/// A copy of the current log on this thread (`None` when none is open), for a
+/// classification probe to hand back to [`restore`] if it declines.
+#[must_use]
+pub fn snapshot() -> Option<Consulted> {
+    LOG.with(|log| log.borrow().clone())
+}
+
+/// Restore the current log on this thread to `saved` (`None` when none was
+/// open at [`snapshot`]), dropping every consultation noted since the snapshot.
+pub fn restore(saved: &Option<Consulted>) {
+    LOG.with(|log| log.borrow_mut().clone_from(saved));
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -158,5 +171,26 @@ mod tests {
         // Nothing is noted once every log is closed.
         assert!(contracts.contract("free").is_some());
         assert!(close(None).is_empty());
+    }
+
+    #[test]
+    fn snapshot_and_restore_drop_declined_consultations() {
+        let contracts = ResourceContracts::new([
+            ("free", ResourceApiKind::Release),
+            ("realloc", ResourceApiKind::Neutral),
+        ]);
+        let outer = open();
+        assert!(contracts.contract("free").is_some());
+        let saved = snapshot();
+        assert!(contracts.contract("realloc").is_some());
+        assert!(contracts.contract("missing").is_none());
+        note_null_premise("null-deref:f:1:p");
+        note_relied("cb");
+        restore(&saved);
+        let all = close(outer);
+        assert_eq!(all.found, BTreeSet::from(["free".to_owned()]));
+        assert!(all.missed.is_empty());
+        assert!(all.null_premises.is_empty());
+        assert!(all.relied.is_empty());
     }
 }

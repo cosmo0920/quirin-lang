@@ -39,17 +39,20 @@ namespace QCore.ReturnCorrectness
 
 /-! ## 15x: probe state -/
 
-/-- The parser state: the probe state (a site counter, an element counter and
-the rest of the scratch, abstracted as `scratch`) and the monotone facts. -/
+/-- The parser state: the probe state (a site counter, an element counter,
+the consultation log and the rest of the scratch, abstracted as `scratch`)
+and the monotone facts. -/
 structure State where
   nextSite : Nat
   elements : Nat
   scratch : List Nat
+  consultations : List String := []
   facts : List String
   deriving DecidableEq, Repr
 
 /-- The probe-state part of a state (Rust `ParserProbeState`). -/
-def State.probe (s : State) : Nat × Nat × List Nat := (s.nextSite, s.elements, s.scratch)
+def State.probe (s : State) : Nat × Nat × List Nat × List String :=
+  (s.nextSite, s.elements, s.scratch, s.consultations)
 
 /-- A classification probe: an answer and the state it leaves. -/
 abbrev Probe (α : Type) := State → α × State
@@ -61,7 +64,7 @@ def Grows {α : Type} (p : Probe α) : Prop := ∀ s f, f ∈ s.facts → f ∈ 
 what the probe grew them to. -/
 def restore (before after : State) : State :=
   { after with nextSite := before.nextSite, elements := before.elements,
-               scratch := before.scratch }
+               scratch := before.scratch, consultations := before.consultations }
 
 /-- A declined probe (Rust `Parser::probe` with `Probe::Decline`). -/
 def declined {α : Type} (p : Probe α) : Probe α := fun s =>
@@ -71,6 +74,10 @@ def declined {α : Type} (p : Probe α) : Probe α := fun s =>
 theorem declined_restores_probe_state {α : Type} (p : Probe α) (s : State) :
     (declined p s).2.probe = s.probe := by
   simp [declined, restore, State.probe]
+
+theorem declined_restores_consultations {α : Type} (p : Probe α) (s : State) :
+    (declined p s).2.consultations = s.consultations := by
+  simp [declined, restore]
 
 theorem declined_keeps_facts {α : Type} (p : Probe α) (hp : Grows p) (s : State)
     (f : String) (hf : f ∈ s.facts) : f ∈ (declined p s).2.facts := by

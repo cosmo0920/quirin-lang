@@ -2,6 +2,7 @@ import QCore.ReturnCorrectness
 
 /-! Audited companion to GAPO-RETURN-CORRECTNESS (gateway rules 15x, 15y, 15z). -/
 #print axioms QCore.ReturnCorrectness.declined_restores_probe_state
+#print axioms QCore.ReturnCorrectness.declined_restores_consultations
 #print axioms QCore.ReturnCorrectness.declined_keeps_facts
 #print axioms QCore.ReturnCorrectness.declined_without_new_facts_is_identity
 #print axioms QCore.ReturnCorrectness.declined_answer

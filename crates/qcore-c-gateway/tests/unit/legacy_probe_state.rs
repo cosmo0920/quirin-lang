@@ -43,7 +43,7 @@ fn the_snapshot_carries_exactly_the_probe_state_class() {
         PROBE_STATE_FIELDS
             .iter()
             .map(|name| (*name).to_owned())
-            .chain(["list_frame_count".to_owned()])
+            .chain(["list_frame_count".to_owned(), "consultations".to_owned()])
             .collect::<Vec<_>>()
     );
     let class = PARSER_FIELDS
@@ -160,30 +160,37 @@ fn bare<'a>(stream: &'a [Token], contracts: &'a ResourceContracts) -> Parser<'a>
 
 /// The W4, B01 and B01-opaque probes of a refused `return q_realloc(p, n)`
 /// (a `Reallocated` result W4 never admits) all decline; the classification
-/// they ask moves the state, and every declined probe hands all of it back.
+/// they ask moves the state and consults `q_realloc`, and every declined
+/// probe hands all of it back (the consultation log included).
 #[test]
 fn declined_return_probes_hand_back_the_whole_state() {
     let contracts = contracts();
     let stream = tokens("int subject ( void * p , int n ) { return q_realloc ( p , n ) ; }");
     let expression = tokens("q_realloc ( p , n )");
     let mut parser = bare(&stream, &contracts);
+    let enclosing = qcore_schemas::contract_consultation::open();
     let before = parser.probe_state();
     assert_eq!(parser.return_expression_instruction(&expression, 1), None);
     assert_eq!(parser.probe_state(), before);
-    // Non-vacuous: the probe's own question mints a site.
+    let after_declined = qcore_schemas::contract_consultation::close(enclosing);
+    assert!(after_declined.is_empty(), "{after_declined:?}");
+    // Non-vacuous: the probe's own question mints a site and consults `q_realloc`.
+    let enclosing = qcore_schemas::contract_consultation::open();
     let mut synthetic = super::super::return_call::assignment_prefix(1).to_vec();
     synthetic.extend(expression.iter().cloned());
     let asked = parser.classify_simple(&synthetic);
+    let kept = qcore_schemas::contract_consultation::close(enclosing);
     assert!(
         matches!(asked, LegacyInstruction::ContractCall { .. }),
         "{asked:?}"
     );
+    assert!(kept.found.contains("q_realloc"), "{kept:?}");
     assert_ne!(parser.probe_state(), before);
 }
 
-/// The scoped form: a declined probe restores every probe-state field
-/// whatever it changed; a kept one keeps them; a monotone fact (a list
-/// frame's protected names) is kept either way.
+/// The scoped form: a declined probe restores every probe-state field and the
+/// consultation log whatever it changed; a kept one keeps them; a monotone
+/// fact (a list frame's protected names) is kept either way.
 #[test]
 fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
     let contracts = contracts();
@@ -197,6 +204,7 @@ fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
         links: BTreeSet::new(),
         head: vec!["h".to_owned()],
     });
+    let enclosing = qcore_schemas::contract_consultation::open();
     let before = parser.probe_state();
     let disturb = |parser: &mut Parser<'_>| {
         parser.cursor += 7;
@@ -209,6 +217,7 @@ fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
         *parser.variadic_tail_readings.borrow_mut() = Some(Vec::new());
         parser.typed_place_origin.set(Some((4, 2)));
         parser.list_frames[0].protected.insert("e".to_owned());
+        qcore_schemas::contract_consultation::note("probed_callee", true);
     };
     let answer = parser.probe(|parser| {
         disturb(parser);
@@ -222,4 +231,6 @@ fn the_scoped_probe_restores_only_on_decline_and_keeps_monotone_facts() {
         Probe::Keep(())
     });
     assert_ne!(parser.probe_state(), before);
+    let logged = qcore_schemas::contract_consultation::close(enclosing);
+    assert!(logged.found.contains("probed_callee"));
 }

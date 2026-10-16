@@ -337,3 +337,79 @@ fn recording_twice_on_one_thread_is_independent() {
     let second = second.finish();
     assert_eq!(first, second);
 }
+
+#[test]
+fn a_declined_probe_leaves_no_consultation_in_the_function_log() {
+    // `step` has a two-class return-code disposition (`== 0` writes parameter 0
+    // as `Out`, `!= 0` leaves it `Borrowed`). In `if (step(p) == 0)`, the
+    // relational condition probe (`relational_condition_plan`) classifies edge
+    // 0 (`== 0`) under the minted class contract `qcore_relational_class__0__step`,
+    // which consults that minted name in `contracts.functions()`, and then
+    // declines when `classify_simple` refuses `p` at the `Out` slot. Restoring
+    // the probe state rolls back the minted class consultation from `subject`'s
+    // recorded `found` set.
+    use qcore_schemas::relational_post::{
+        ExitClass, RelationOp, RelationalContract, RelationalOrigin, ReturnRelation,
+    };
+    let unit = "\
+int step(void **p);\n\
+void subject(void **p) { if (step(p) == 0) { } }\n";
+    let mut contracts = ResourceContracts::default();
+    contracts.insert_relational(
+        "step",
+        RelationalContract {
+            origin: RelationalOrigin::Declared,
+            classes: vec![
+                ExitClass {
+                    relation: ReturnRelation::new(RelationOp::Eq, 0),
+                    contract: ResourceFunctionContract::new(
+                        [ResourceParameterMode::Out { nullable: false }],
+                        ResourceReturnMode::None,
+                    ),
+                },
+                ExitClass {
+                    relation: ReturnRelation::new(RelationOp::Ne, 0),
+                    contract: ResourceFunctionContract::new(
+                        [ResourceParameterMode::Borrowed],
+                        ResourceReturnMode::None,
+                    ),
+                },
+            ],
+            withdrawn: None,
+        },
+    );
+    let recording = Recording::start();
+    let summary =
+        analyze_legacy_c_translation_unit(unit, "subject", &contracts).expect("the unit analyses");
+    let record = recording.finish();
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unknown);
+    assert!(
+        !record.functions["subject"]
+            .found
+            .contains("qcore_relational_class__0__step"),
+        "{:?}",
+        record.functions["subject"]
+    );
+    // Non-vacuous: when both edges admit (`if (step(&p) == 0)`), the probe is
+    // kept and the minted class consultations stay in `subject`'s `found` set.
+    let admitted_unit = "\
+int step(void **p);\n\
+void free(void *p);\n\
+void subject(void) { void *p = 0; if (step(&p) == 0) { free(p); } }\n";
+    contracts.insert("free", ResourceApiKind::Release);
+    let recording = Recording::start();
+    let summary = analyze_legacy_c_translation_unit(admitted_unit, "subject", &contracts)
+        .expect("the unit analyses");
+    let record = recording.finish();
+    assert_eq!(summary.functions["subject"].status, AnalysisStatus::Safe);
+    assert!(
+        record.functions["subject"]
+            .found
+            .contains("qcore_relational_class__0__step")
+            && record.functions["subject"]
+                .found
+                .contains("qcore_relational_class__1__step"),
+        "{:?}",
+        record.functions["subject"]
+    );
+}

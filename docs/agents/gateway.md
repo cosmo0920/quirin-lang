@@ -7779,13 +7779,15 @@ own anchor here.
     Card GAPO-RETURN-CORRECTNESS (`legacy_probe_state.rs`: `ParserProbeState`,
     `Parser::{probe_state, restore_probe_state, probe}`, `PARSER_FIELDS`;
     shared items added: `ForeignOrigins::{lowering, restore_lowering}` and
-    `OriginsLowering` in `legacy_container_publication.rs`). Every field of
-    the parser is classified by construction (`probe_state` destructures the
-    parser without `..`, and a unit test pins the class list against the
-    declaration): **probe state** (the cursor, `next_site`, the element
-    lowerings, the element origins' admitted and pending bindings, the
+    `OriginsLowering` in `legacy_container_publication.rs`;
+    `contract_consultation::{snapshot, restore}` in `qcore_schemas`). Every
+    field of the parser is classified by construction (`probe_state`
+    destructures the parser without `..`, and a unit test pins the class list
+    against the declaration): **probe state** (the cursor, `next_site`, the
+    element lowerings, the element origins' admitted and pending bindings, the
     argument probe, the typed-position and condition-widening counters, the
-    variadic-tail widening and readings, the typed place origin), **monotone
+    variadic-tail widening and readings, the typed place origin, and rule
+    13f's active consultation log), **monotone
     facts** (a list iteration's protected element names and links, rule 4;
     the names rule 5l(2) bound over a formal), function facts, lazy caches
     and census labels. Every probe that declines restores the whole probe
@@ -7797,18 +7799,16 @@ own anchor here.
     uncast statement from the state the first classification started from
     (before, the first one's sites stayed minted: a gap). Monotone facts are
     kept by a declined probe: restoring them could only remove a refusal.
-    Output streams outside the parser (parity rows, rule 13f's consultation
-    log) are not parser state and stay recorded (residual
-    `GAPO-DECLINED-PROBE-CONSULTATIONS`). **Do not** restore part of the
-    probe state, or restore a monotone fact. Measured (corpus `66910c10`,
-    system, tail-pause slice, base `1a399e6a1`): every report, the null
-    property streams and the parity streams (Clang node addresses aside)
-    byte-identical; the leak was not a verdict defect on these inputs. The
-    site gap is shown by `tests/gapo_return_correctness.rs`.
+    Parity rows outside the parser are not parser state and stay recorded.
+    **Do not** restore part of the probe state, or restore a monotone fact.
+    Measured (corpus `66910c10`, system, tail-pause slice, base `1a399e6a1`):
+    every report, the null property streams and the parity streams (Clang node
+    addresses aside) byte-identical; the leak was not a verdict defect on
+    these inputs. The site gap is shown by `tests/gapo_return_correctness.rs`.
     `QCore.ReturnCorrectness` (`declined_restores_probe_state`,
-    `declined_keeps_facts`, `declined_without_new_facts_is_identity`,
-    `declined_probe_moves_no_site`, `replacement_from_before_has_no_gap`,
-    `replacement_after_first_gaps`);
+    `declined_restores_consultations`, `declined_keeps_facts`,
+    `declined_without_new_facts_is_identity`, `declined_probe_moves_no_site`,
+    `replacement_from_before_has_no_gap`, `replacement_after_first_gaps`);
     [report](../reports/gapo-return-correctness/README.md).
 
 <a id="constraint-15y"></a>

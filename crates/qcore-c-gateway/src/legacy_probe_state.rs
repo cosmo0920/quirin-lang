@@ -35,9 +35,12 @@
 //!   changes no later answer.
 //! * [`FieldClass::Census`]: compiled only with the census feature, labels.
 //!
-//! Output streams outside the parser (parity rows, the contract consultation
-//! log of rule 13f, censuses) are not parser state: a declined probe's rows
-//! and consultations stay recorded, as before this card.
+//! Along with the parser's [`FieldClass::ProbeState`] fields, [`ParserProbeState`]
+//! snapshots and restores the thread's contract consultation log (rule 13f),
+//! so a declined probe's contract lookups do not enter the row's dependencies.
+//! Parity rows and censuses outside the parser stay recorded.
+
+use qcore_schemas::contract_consultation::{self, Consulted};
 
 use super::{Parser, call_argument_access::ArgumentProbe, container_publication::OriginsLowering};
 use crate::variadic_tail_actuals::TailReading;
@@ -139,6 +142,8 @@ pub(super) struct ParserProbeState {
     typed_place_origin: Option<(usize, usize)>,
     /// Not restored (monotone); checked: a probe never leaves a frame pushed.
     list_frame_count: usize,
+    /// The thread's contract consultation log (rule 13f), restored on decline.
+    consultations: Option<Consulted>,
 }
 
 /// A probe's answer: kept (its state moves stand) or declined (the state is
@@ -212,6 +217,7 @@ impl Parser<'_> {
             variadic_tail_readings: variadic_tail_readings.borrow().clone(),
             typed_place_origin: typed_place_origin.get(),
             list_frame_count: list_frames.len(),
+            consultations: contract_consultation::snapshot(),
         }
     }
 
@@ -229,6 +235,7 @@ impl Parser<'_> {
             variadic_tail_readings,
             typed_place_origin,
             list_frame_count,
+            consultations,
         } = state;
         debug_assert_eq!(self.list_frames.len(), *list_frame_count);
         self.cursor = *cursor;
@@ -243,6 +250,7 @@ impl Parser<'_> {
             .borrow_mut()
             .clone_from(variadic_tail_readings);
         self.typed_place_origin.set(*typed_place_origin);
+        contract_consultation::restore(consultations);
     }
 
     /// The scoped form: run `probe`; a [`Probe::Decline`] hands the state
