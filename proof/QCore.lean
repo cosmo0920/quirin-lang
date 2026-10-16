@@ -381,5 +381,7 @@ import QCore.PrintRouteSelection
 import QCore.RouteSelection
 import QCore.ReturnCorrectness
 import QCore.MemberPrepassRoutes
+import QCore.RetentionPath
+import QCore.RegistrationById
 
 /-! The executable formal core of QCore-C revision 0.1. -/
