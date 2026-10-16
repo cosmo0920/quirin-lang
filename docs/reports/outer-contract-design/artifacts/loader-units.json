@@ -1,0 +1,260 @@
+{
+ "corpus": {
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+  "units": 1244,
+  "loader_units": [
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rddl.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lib_package.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lj_clib.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/monkey/mk_server/mk_plugin.c",
+    "in_selection": null
+   },
+   {
+    "unit": "lib/sqlite-amalgamation-3510100/sqlite3.c",
+    "in_selection": null
+   },
+   {
+    "unit": "plugins/filter_lua/lua.c",
+    "in_selection": null
+   },
+   {
+    "unit": "plugins/filter_lua/lua_config.c",
+    "in_selection": null
+   },
+   {
+    "unit": "plugins/in_gpu_metrics/nvml_gpu.c",
+    "in_selection": null
+   },
+   {
+    "unit": "plugins/in_lib/in_lib.c",
+    "in_selection": null
+   },
+   {
+    "unit": "plugins/out_lib/out_lib.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/flb_api.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/flb_config.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/flb_lib.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/flb_plugin.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/flb_plugin_proxy.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/fluent-bit.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/proxy/go/go.c",
+    "in_selection": null
+   },
+   {
+    "unit": "src/wasm/flb_wasm.c",
+    "in_selection": null
+   }
+  ]
+ },
+ "system": {
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "units": 1248,
+  "loader_units": [
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rddl.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lib_package.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lj_clib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/monkey/mk_server/mk_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/sqlite-amalgamation-3510100/sqlite3.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/filter_lua/lua.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/filter_lua/lua_config.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/in_gpu_metrics/nvml_gpu.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/in_lib/in_lib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/out_lib/out_lib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_api.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_config.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_lib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_plugin_proxy.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/fluent-bit.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/proxy/go/go.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/wasm/flb_wasm.c",
+    "in_selection": false
+   }
+  ]
+ },
+ "slice": {
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "units": 1250,
+  "loader_units": [
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rddl.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/librdkafka-2.15.0/src/rdkafka_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lib_package.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/luajit-7152e154/src/lj_clib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/monkey/mk_server/mk_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "lib/sqlite-amalgamation-3510100/sqlite3.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/filter_lua/lua.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/filter_lua/lua_config.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/in_gpu_metrics/nvml_gpu.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/in_lib/in_lib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "plugins/out_lib/out_lib.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_api.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_config.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_lib.c",
+    "in_selection": true
+   },
+   {
+    "unit": "src/flb_plugin.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/flb_plugin_proxy.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/fluent-bit.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/proxy/go/go.c",
+    "in_selection": false
+   },
+   {
+    "unit": "src/wasm/flb_wasm.c",
+    "in_selection": false
+   }
+  ]
+ }
+}

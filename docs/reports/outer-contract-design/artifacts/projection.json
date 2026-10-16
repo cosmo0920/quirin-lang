@@ -1,0 +1,7177 @@
+{
+ "corpus": {
+  "static": {
+   "custody": {
+    "Safe": 939,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2549,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 826,
+    "Unknown": 4068,
+    "Unsafe": 27
+   },
+   "safe_moves": {},
+   "moving": []
+  },
+  "A": {
+   "custody": {
+    "Safe": 918,
+    "Pending": 21,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2473,
+    "Pending": 76,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 806,
+    "Pending": 20,
+    "Unknown": 4068,
+    "Unsafe": 27
+   },
+   "safe_moves": {
+    "custody -> Pending": 21,
+    "combined -> Pending": 20,
+    "null -> Pending": 76
+   },
+   "moving": [
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_and_disable_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_pause_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_resume_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-fb": {
+   "custody": {
+    "Safe": 909,
+    "Unknown": 3916,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2473,
+    "Pending": 1,
+    "Unknown": 2429,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 797,
+    "Pending": 1,
+    "Unknown": 4096,
+    "Unsafe": 27
+   },
+   "safe_moves": {
+    "custody -> Unknown": 30,
+    "combined -> Unknown": 28,
+    "null -> Unknown": 75,
+    "combined -> Pending": 1,
+    "null -> Pending": 1
+   },
+   "moving": [
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_and_disable_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_pause_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_resume_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-rk": {
+   "custody": {
+    "Safe": 918,
+    "Pending": 21,
+    "Unknown": 3886,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2473,
+    "Pending": 75,
+    "Unknown": 2355,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 806,
+    "Pending": 19,
+    "Unknown": 4069,
+    "Unsafe": 27
+   },
+   "safe_moves": {
+    "custody -> Pending": 21,
+    "combined -> Pending": 19,
+    "null -> Pending": 75,
+    "combined -> Unknown": 1,
+    "null -> Unknown": 1
+   },
+   "moving": [
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_and_disable_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_pause_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_resume_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both": {
+   "custody": {
+    "Safe": 909,
+    "Unknown": 3916,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2473,
+    "Unknown": 2430,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 797,
+    "Unknown": 4097,
+    "Unsafe": 27
+   },
+   "safe_moves": {
+    "custody -> Unknown": 30,
+    "combined -> Unknown": 29,
+    "null -> Unknown": 76
+   },
+   "moving": [
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_and_disable_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_pause_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_resume_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "to": "Unknown",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Unknown",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both-cross": {
+   "custody": {
+    "Safe": 909,
+    "Pending": 21,
+    "Unknown": 3895,
+    "Unsafe": 9
+   },
+   "null": {
+    "Safe": 2473,
+    "Pending": 76,
+    "Unknown": 2354,
+    "Unsafe": 18
+   },
+   "combined": {
+    "Safe": 797,
+    "Pending": 20,
+    "Unknown": 4077,
+    "Unsafe": 27
+   },
+   "safe_moves": {
+    "custody -> Unknown": 9,
+    "custody -> Pending": 21,
+    "combined -> Unknown": 9,
+    "combined -> Pending": 20,
+    "null -> Pending": 76
+   },
+   "moving": [
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_purge_and_disable_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_pause_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_subscription.c",
+     "function": "rd_kafka_resume_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "custody",
+     "unit": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateArray",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateBool",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateFalse",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNull",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateNumber",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateObject",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_CreateTrue",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_Print",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "cJSON.c",
+     "function": "cJSON_PrintUnformatted",
+     "to": "Unknown",
+     "facts": [
+      "k3:cjson_allocator_hooks"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_crash",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_dump",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka.c",
+     "function": "rd_kafka_share_fetch_reply_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_admin.c",
+     "function": "rd_kafka_ListConsumerGroupOffsets_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_assignment.c",
+     "function": "rd_kafka_assignment_partition_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_aux.c",
+     "function": "rd_kafka_topic_partition_result_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_add_logical",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_up",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_any_usable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_conn_closed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_consumer_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_disable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_feature_enable",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_features_set",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_handle_purge_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_idle_check",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_internal_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_needs_connection",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_ops_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_prepare_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_serve",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_api_versions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_nodename",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_set_state",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_broker_timeout_scan",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_brokers_add",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_send",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_broker.c",
+     "function": "rd_kafka_waitresp_find",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_callback",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_buf_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_connection_reset",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_buf.c",
+     "function": "rd_kafka_bufq_purge",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_cache_evict",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_fail",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_req_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_coord.c",
+     "function": "rd_kafka_coord_reqs_term",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_event.c",
+     "function": "rd_kafka_event_destroy",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_fetch_backoff",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_added_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_epoch",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_fetcher.c",
+     "function": "rd_kafka_broker_session_update_removed_partitions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_idempotence.c",
+     "function": "rd_kafka_idemp_request_pid_failed",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_metadata_refresh_consumer_topics",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_admin",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_metadata.c",
+     "function": "rd_kafka_parse_Metadata_update_topic",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_partition_leader_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_purge_ua_toppar_queues",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_by_id0",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_topic_partition_private_destroy",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_del",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_desired_unlink",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_start",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stop",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_fetch_stopped",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_next_offset_handle",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_offset_retry",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_partition.c",
+     "function": "rd_kafka_toppar_seek",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_MetadataRequest_resp_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetCommit_error",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_request.c",
+     "function": "rd_kafka_handle_OffsetFetch_err_action",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl.c",
+     "function": "rd_kafka_share_oauthbearer_set_token_failure",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_sasl_oauthbearer_oidc.c",
+     "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_client_new",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_sasl_scram.c",
+     "function": "rd_kafka_sasl_scram_recv",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_ssl.c",
+     "function": "rd_kafka_transport_ssl_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_send_get_telemetry_subscriptions",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_telemetry.c",
+     "function": "rd_kafka_telemetry_fsm_tmr_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_gauge",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unit_test_telemetry_sum",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdkafka_telemetry_decode.c",
+     "function": "unittest_telemetry_decode",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_transport.c",
+     "function": "rd_kafka_transport_connect",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "rdkafka_txnmgr.c",
+     "function": "rd_kafka_txn_coord_timer_cb",
+     "to": "Pending",
+     "facts": [
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "rdunittest_fetcher.c",
+     "function": "ut_op_destroy_free",
+     "to": "Pending",
+     "facts": [
+      "cl",
+      "k3:assignor_callback",
+      "k3:broker_monitor_callback",
+      "rk"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  }
+ },
+ "system": {
+  "static": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 211,
+    "Unknown": 243
+   },
+   "combined": {
+    "Safe": 65,
+    "Unknown": 385,
+    "Unsafe": 4
+   },
+   "safe_moves": {},
+   "moving": []
+  },
+  "A": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 209,
+    "Pending": 2,
+    "Unknown": 243
+   },
+   "combined": {
+    "Safe": 63,
+    "Pending": 2,
+    "Unknown": 385,
+    "Unsafe": 4
+   },
+   "safe_moves": {
+    "combined -> Pending": 2,
+    "null -> Pending": 2
+   },
+   "moving": [
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-fb": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 209,
+    "Pending": 2,
+    "Unknown": 243
+   },
+   "combined": {
+    "Safe": 63,
+    "Pending": 2,
+    "Unknown": 385,
+    "Unsafe": 4
+   },
+   "safe_moves": {
+    "combined -> Pending": 2,
+    "null -> Pending": 2
+   },
+   "moving": [
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-rk": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 209,
+    "Unknown": 245
+   },
+   "combined": {
+    "Safe": 63,
+    "Unknown": 387,
+    "Unsafe": 4
+   },
+   "safe_moves": {
+    "combined -> Unknown": 2,
+    "null -> Unknown": 2
+   },
+   "moving": [
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 209,
+    "Unknown": 245
+   },
+   "combined": {
+    "Safe": 63,
+    "Unknown": 387,
+    "Unsafe": 4
+   },
+   "safe_moves": {
+    "combined -> Unknown": 2,
+    "null -> Unknown": 2
+   },
+   "moving": [
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both-cross": {
+   "custody": {
+    "Safe": 95,
+    "Unknown": 349,
+    "Unsafe": 4
+   },
+   "null": {
+    "Safe": 209,
+    "Pending": 2,
+    "Unknown": 243
+   },
+   "combined": {
+    "Safe": 63,
+    "Pending": 2,
+    "Unknown": 385,
+    "Unsafe": 4
+   },
+   "safe_moves": {
+    "combined -> Pending": 2,
+    "null -> Pending": 2
+   },
+   "moving": [
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "combined",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_chunk.c",
+     "function": "flb_chunk_route_plugin_matches",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  }
+ },
+ "slice": {
+  "static": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 190,
+    "Unknown": 216
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {},
+   "moving": []
+  },
+  "A": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 174,
+    "Pending": 16,
+    "Unknown": 216
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {
+    "null -> Pending": 16
+   },
+   "moving": [
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-fb": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 174,
+    "Pending": 16,
+    "Unknown": 216
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {
+    "null -> Pending": 16
+   },
+   "moving": [
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-rk": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 174,
+    "Unknown": 232
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {
+    "null -> Unknown": 16
+   },
+   "moving": [
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 174,
+    "Unknown": 232
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {
+    "null -> Unknown": 16
+   },
+   "moving": [
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Unknown",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  },
+  "B-both-cross": {
+   "custody": {
+    "Safe": 52,
+    "Pending": 4,
+    "Unknown": 347,
+    "Unsafe": 1
+   },
+   "null": {
+    "Safe": 174,
+    "Pending": 16,
+    "Unknown": 216
+   },
+   "combined": {
+    "Safe": 31,
+    "Pending": 2,
+    "Unknown": 372,
+    "Unsafe": 1
+   },
+   "safe_moves": {
+    "null -> Pending": 16
+   },
+   "moving": [
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_instance_pre_run",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_rate_gate_maybe_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input.c",
+     "function": "flb_input_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_exit",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_pause",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    },
+    {
+     "part": "null",
+     "file": "flb_input_thread.c",
+     "function": "flb_input_thread_instance_resume",
+     "to": "Pending",
+     "facts": [
+      "fbp"
+     ]
+    }
+   ]
+  }
+ }
+}

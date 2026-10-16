@@ -1,0 +1,2697 @@
+{
+ "closure_declarations": {
+  "cmt_mpack_unpack_array": [
+   "invoked"
+  ],
+  "ctr_mpack_unpack_array": [
+   "invoked"
+  ],
+  "rd_list_destroy": [
+   "registry_invoked"
+  ],
+  "rd_list_clear": [
+   "registry_invoked"
+  ],
+  "pb_write": [
+   "registry_invoked"
+  ],
+  "pb_encode_varint": [
+   "registry_invoked"
+  ],
+  "unit_test_telemetry": [
+   "invoked"
+  ],
+  "rd_kafka_q_serve0": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_q_serve": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_q_serve_maybe_consume": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_q_pop_serve0": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_q_pop_serve": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_q_pop_serve_maybe_consume": [
+   "invoked",
+   "member_invoked"
+  ],
+  "rd_kafka_op_destroy": [
+   "member_invoked"
+  ],
+  "rd_kafka_op_new_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_op_req0": [
+   "member_invoked"
+  ],
+  "rd_kafka_op_req": [
+   "member_invoked"
+  ],
+  "rd_kafka_op_req2": [
+   "member_invoked"
+  ],
+  "rd_kafka_conf_set_background_event_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_dr_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_dr_msg_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_consume_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_rebalance_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_offset_commit_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_error_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_throttle_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_log_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_stats_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_oauthbearer_token_refresh_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_socket_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_connect_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_closesocket_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_open_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_resolve_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_conf_set_ssl_cert_verify_cb": [
+   "member_registered"
+  ],
+  "rd_kafka_consume_cb": [
+   "member_invoked"
+  ],
+  "rd_kafka_background_queue_serve": [
+   "member_invoked"
+  ],
+  "rd_kafka_oauthbearer_refresh_op": [
+   "member_invoked"
+  ],
+  "rd_kafka_poll_cb": [
+   "member_invoked"
+  ],
+  "rd_kafka_topic_partition_list_sort": [
+   "invoked"
+  ],
+  "flb_input_set_collector_time": [
+   "member_registered"
+  ],
+  "flb_input_set_collector_event": [
+   "member_registered"
+  ],
+  "flb_input_set_collector_socket": [
+   "member_registered"
+  ],
+  "bsearch": [
+   "invoked"
+  ],
+  "qsort": [
+   "invoked"
+  ],
+  "pthread_once": [
+   "invoked"
+  ]
+ },
+ "routes": {
+  "corpus": {
+   "null": {
+    "rows": 4921,
+    "null_verdicts": {
+     "Unknown": 2354,
+     "Safe": 2549,
+     "Unsafe": 18
+    },
+    "by_class_null_verdict": {
+     "fb-scope": {
+      "Safe": 2,
+      "Unknown": 4
+     },
+     "fb-stable": {
+      "Safe": 1
+     },
+     "premise:rk_no_plugin_library": {
+      "Unknown": 262,
+      "Unsafe": 2,
+      "Safe": 75
+     }
+    },
+    "by_class_combined_verdict": {
+     "fb-scope": {
+      "Unknown": 6
+     },
+     "fb-stable": {
+      "Safe": 1
+     },
+     "premise:rk_no_plugin_library": {
+      "Unknown": 334,
+      "Unsafe": 2,
+      "Safe": 3
+     }
+    },
+    "outer_sensitive_null_verdict": {
+     "Unknown": 266,
+     "Unsafe": 2,
+     "Safe": 78
+    },
+    "obligations": {
+     "premise:rk_no_plugin_library": 716,
+     "fb-stable": 2,
+     "fb-scope": 3
+    },
+    "safe_or_pending_rows": {
+     "fb-scope": [
+      {
+       "library": "fluent-bit-chunk",
+       "file": "flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-chunk",
+       "file": "flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw_local",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw_local`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      }
+     ],
+     "fb-stable": [
+      {
+       "library": "fluent-bit-chunk",
+       "file": "flb_input_chunk.c",
+       "function": "flb_chunk_route_plugin_matches",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "stable:flb_output_instance.p"
+       ]
+      }
+     ],
+     "premise:rk_no_plugin_library": [
+      {
+       "library": "librdkafka",
+       "file": "rdkafka.c",
+       "function": "rd_kafka_share_fetch_reply_op_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_share_fetch_reply_op_cb`'s null-deref preconditions: inferred quant null-deref #rk; inferred quant null-deref #rko",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_assignment.c",
+       "function": "rd_kafka_assignment_partition_stopped",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_assignment_partition_stopped`'s null-deref preconditions: inferred quant null-deref #rk; inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_add_logical",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_add_logical`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_any",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_any`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_any_up",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_any_up`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_any_usable",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_any_usable`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_conn_closed",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_conn_closed`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_consumer_serve",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_consumer_serve`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_feature_disable",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_feature_disable`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_feature_enable",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_feature_enable`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_features_set",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_features_set`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_handle_purge_queues",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_handle_purge_queues`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #rko",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_idle_check",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_idle_check`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_internal_serve",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_internal_serve`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_needs_connection",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_needs_connection`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_ops_serve",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_ops_serve`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_prepare_destroy",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_prepare_destroy`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_send",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_send`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_serve",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_serve`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_set_api_versions",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_set_api_versions`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_set_nodename",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_set_nodename`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_set_state",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_set_state`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_broker_timeout_scan",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_timeout_scan`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_brokers_add",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_brokers_add`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_send",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_send`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_broker.c",
+       "function": "rd_kafka_waitresp_find",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_waitresp_find`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_buf.c",
+       "function": "rd_kafka_buf_callback",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_buf_callback`'s null-deref preconditions: inferred quant null-deref #request",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_buf.c",
+       "function": "rd_kafka_buf_retry",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_buf_retry`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkbuf",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_buf.c",
+       "function": "rd_kafka_bufq_connection_reset",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_bufq_connection_reset`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #rkbufq",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_buf.c",
+       "function": "rd_kafka_bufq_purge",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_bufq_purge`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #rkbufq",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_coord.c",
+       "function": "rd_kafka_coord_cache_destroy",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_coord_cache_destroy`'s null-deref preconditions: inferred quant null-deref #cc",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_coord.c",
+       "function": "rd_kafka_coord_cache_evict",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_coord_cache_evict`'s null-deref preconditions: inferred quant null-deref #cc",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_coord.c",
+       "function": "rd_kafka_coord_req_fail",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_coord_req_fail`'s null-deref preconditions: inferred quant null-deref #creq",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_coord.c",
+       "function": "rd_kafka_coord_req_tmr_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_coord_req_tmr_cb`'s null-deref preconditions: inferred quant null-deref #rkts; inferred quant null-deref #arg",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_coord.c",
+       "function": "rd_kafka_coord_reqs_term",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_coord_reqs_term`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_fetcher.c",
+       "function": "rd_kafka_broker_fetch_backoff",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_fetch_backoff`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_fetcher.c",
+       "function": "rd_kafka_broker_session_update_added_partitions",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_session_update_added_partitions`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_fetcher.c",
+       "function": "rd_kafka_broker_session_update_epoch",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_session_update_epoch`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_fetcher.c",
+       "function": "rd_kafka_broker_session_update_partitions",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_session_update_partitions`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_fetcher.c",
+       "function": "rd_kafka_broker_session_update_removed_partitions",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_broker_session_update_removed_partitions`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_idempotence.c",
+       "function": "rd_kafka_idemp_request_pid_failed",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_idemp_request_pid_failed`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_metadata.c",
+       "function": "rd_kafka_metadata_refresh_consumer_topics",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_metadata_refresh_consumer_topics`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_metadata.c",
+       "function": "rd_kafka_parse_Metadata",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_parse_Metadata`'s null-deref preconditions: inferred quant null-deref #rkb; inferred quant null-deref #request; inferred quant null-deref #rkbuf",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_metadata.c",
+       "function": "rd_kafka_parse_Metadata_admin",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_parse_Metadata_admin`'s null-deref preconditions: inferred quant null-deref #rkb; inferred quant null-deref #rkbuf",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_metadata.c",
+       "function": "rd_kafka_parse_Metadata_update_topic",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_parse_Metadata_update_topic`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #mdt",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_partition_leader_destroy_free",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_partition_leader_destroy_free`'s null-deref preconditions: inferred quant null-deref #ptr",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_purge_ua_toppar_queues",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_purge_ua_toppar_queues`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_destroy`'s null-deref preconditions: inferred quant null-deref #rktpar",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy0",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_destroy0`'s null-deref preconditions: inferred quant null-deref #rktpar",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy_free",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_destroy_free`'s null-deref preconditions: inferred quant null-deref #ptr",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_find_by_id",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_find_by_id`'s null-deref preconditions: inferred quant null-deref #rktparlist",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_find_by_id0",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_find_by_id0`'s null-deref preconditions: inferred quant null-deref #rktparlist",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_find_idx_by_id",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_find_idx_by_id`'s null-deref preconditions: inferred quant null-deref #rktparlist",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_find_topic_by_id`'s null-deref preconditions: inferred quant null-deref #rktparlist",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_query_leaders_async",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_query_leaders_async`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb`'s null-deref preconditions: inferred quant null-deref #rko",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_private_destroy",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_topic_partition_private_destroy`'s null-deref preconditions: inferred quant null-deref #parpriv",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_desired_del",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_desired_del`'s null-deref preconditions: inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_desired_unlink",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_desired_unlink`'s null-deref preconditions: inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_fetch_start",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_fetch_start`'s null-deref preconditions: inferred quant null-deref #rktp; inferred quant null-deref #rko_orig",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_fetch_stop",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_fetch_stop`'s null-deref preconditions: inferred quant null-deref #rktp; inferred quant null-deref #rko_orig",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_fetch_stopped",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_fetch_stopped`'s null-deref preconditions: inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_next_offset_handle",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_next_offset_handle`'s null-deref preconditions: inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_offset_retry",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_offset_retry`'s null-deref preconditions: inferred quant null-deref #rktp",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_seek",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_toppar_seek`'s null-deref preconditions: inferred quant null-deref #rktp; inferred quant null-deref #rko_orig",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_request.c",
+       "function": "rd_kafka_MetadataRequest",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_MetadataRequest`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_request.c",
+       "function": "rd_kafka_MetadataRequest_resp_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_MetadataRequest_resp_cb`'s null-deref preconditions: inferred quant null-deref #rkb",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_sasl_scram.c",
+       "function": "rd_kafka_sasl_scram_client_new",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_sasl_scram_client_new`'s null-deref preconditions: inferred quant null-deref #rktrans",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_sasl_scram.c",
+       "function": "rd_kafka_sasl_scram_recv",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_sasl_scram_recv`'s null-deref preconditions: inferred quant null-deref #rktrans",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_ssl.c",
+       "function": "rd_kafka_transport_ssl_connect",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_transport_ssl_connect`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #rktrans",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_telemetry.c",
+       "function": "rd_kafka_send_get_telemetry_subscriptions",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_send_get_telemetry_subscriptions`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_telemetry.c",
+       "function": "rd_kafka_telemetry_fsm",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_telemetry_fsm`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_telemetry.c",
+       "function": "rd_kafka_telemetry_fsm_tmr_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_telemetry_fsm_tmr_cb`'s null-deref preconditions: inferred quant null-deref #rk",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_transport.c",
+       "function": "rd_kafka_transport_connect",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_transport_connect`'s null-deref preconditions: declared nonnull_member_scope(rd_kafka_broker_s, rkb_rk, rkb); inferred quant null-deref #rkb; inferred quant null-deref #sinx",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      },
+      {
+       "library": "librdkafka",
+       "file": "rdkafka_txnmgr.c",
+       "function": "rd_kafka_txn_coord_timer_cb",
+       "null": "Safe",
+       "null_scope": "conditional on `rd_kafka_txn_coord_timer_cb`'s null-deref preconditions: inferred quant null-deref #arg",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "premise:rk_no_plugin_library"
+       ]
+      }
+     ]
+    }
+   },
+   "custody": {
+    "rows": 4834,
+    "statuses": {
+     "Unknown": 3886,
+     "Safe": 939,
+     "Unsafe": 9
+    },
+    "premised_declarations": {
+     "P-RESULT-HOLDER-LAST-DROP": 3,
+     "P-RETAINED-PREDEFINED": 3,
+     "asserted_allocation": 7,
+     "assignor_callback": 1,
+     "broker_monitor_callback": 1,
+     "cjson_allocator_hooks": 2,
+     "cjson_list_invariant": 1,
+     "conf_property_writer": 18,
+     "literal_argument": 5,
+     "mk_event_descriptors": 4,
+     "nested_call_admission": 2,
+     "rk_no_plugin_library": 92,
+     "served_queue": 2,
+     "share_ack_batches_nonempty": 1,
+     "untracked_handback": 1
+    },
+    "by_class_status": {
+     "closure": {
+      "Unknown": 336,
+      "Safe": 5
+     },
+     "premise:P-RESULT-HOLDER-LAST-DROP": {
+      "Unknown": 58
+     },
+     "premise:P-RETAINED-PREDEFINED": {
+      "Unknown": 58
+     },
+     "premise:asserted_allocation": {
+      "Unknown": 165,
+      "Safe": 1
+     },
+     "premise:assignor_callback": {
+      "Unknown": 90,
+      "Safe": 2
+     },
+     "premise:broker_monitor_callback": {
+      "Unknown": 90,
+      "Safe": 2
+     },
+     "premise:cjson_allocator_hooks": {
+      "Unknown": 23,
+      "Safe": 9
+     },
+     "premise:cjson_list_invariant": {
+      "Unknown": 4,
+      "Safe": 1
+     },
+     "premise:conf_property_writer": {
+      "Unknown": 30
+     },
+     "premise:literal_argument": {
+      "Unknown": 5,
+      "Safe": 4
+     },
+     "premise:mk_event_descriptors": {
+      "Unknown": 8
+     },
+     "premise:nested_call_admission": {
+      "Unknown": 153,
+      "Safe": 7,
+      "Unsafe": 2
+     },
+     "premise:rk_no_plugin_library": {
+      "Unknown": 462,
+      "Safe": 21
+     },
+     "premise:served_queue": {
+      "Unknown": 16,
+      "Safe": 1
+     },
+     "premise:share_ack_batches_nonempty": {
+      "Unknown": 90,
+      "Safe": 2
+     },
+     "premise:untracked_handback": {
+      "Unknown": 8,
+      "Safe": 1
+     }
+    },
+    "obligations_declarations_rested_on": {
+     "premise:nested_call_admission": 200,
+     "closure": 497,
+     "premise:cjson_list_invariant": 5,
+     "premise:cjson_allocator_hooks": 32,
+     "premise:rk_no_plugin_library": 3654,
+     "premise:broker_monitor_callback": 92,
+     "premise:assignor_callback": 92,
+     "premise:asserted_allocation": 180,
+     "premise:P-RESULT-HOLDER-LAST-DROP": 60,
+     "premise:P-RETAINED-PREDEFINED": 60,
+     "premise:share_ack_batches_nonempty": 92,
+     "premise:served_queue": 17,
+     "premise:conf_property_writer": 31,
+     "premise:literal_argument": 9,
+     "premise:untracked_handback": 9,
+     "premise:mk_event_descriptors": 10
+    },
+    "safe_or_pending_rows": {
+     "closure": [
+      {
+       "unit": "rdkafka_event.c",
+       "function": "rd_kafka_event_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_oauthbearer_refresh_op",
+        "rd_kafka_op_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unit_test_telemetry_gauge",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unit_test_telemetry_sum",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unittest_telemetry_decode",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_op_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_oauthbearer_refresh_op",
+        "rd_kafka_op_destroy"
+       ]
+      }
+     ],
+     "premise:asserted_allocation": [
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_create_fetch_op_with_offset",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_op_new0"
+       ]
+      }
+     ],
+     "premise:assignor_callback": [
+      {
+       "unit": "rdkafka_event.c",
+       "function": "rd_kafka_event_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_cgrp_assignor_handle_Metadata_op"
+       ]
+      },
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_op_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_cgrp_assignor_handle_Metadata_op"
+       ]
+      }
+     ],
+     "premise:broker_monitor_callback": [
+      {
+       "unit": "rdkafka_event.c",
+       "function": "rd_kafka_event_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_broker_monitor_op_cb"
+       ]
+      },
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_op_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_broker_monitor_op_cb"
+       ]
+      }
+     ],
+     "premise:cjson_allocator_hooks": [
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateArray",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateBool",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateFalse",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateNull",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateNumber",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateObject",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_CreateTrue",
+       "status": "Safe",
+       "through": [
+        "cJSON_New_Item"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_Print",
+       "status": "Safe",
+       "through": [
+        "print"
+       ]
+      },
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_PrintUnformatted",
+       "status": "Safe",
+       "through": [
+        "print"
+       ]
+      }
+     ],
+     "premise:cjson_list_invariant": [
+      {
+       "unit": "cJSON.c",
+       "function": "cJSON_AddItemToArray",
+       "status": "Safe",
+       "through": [
+        "add_item_to_array"
+       ]
+      }
+     ],
+     "premise:literal_argument": [
+      {
+       "unit": "rdkafka_offset.c",
+       "function": "rd_kafka_open_cb_generic",
+       "status": "Safe",
+       "through": [
+        "fcntl"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_destroy0"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_destroy0"
+       ]
+      },
+      {
+       "unit": "mk_core/mk_utils.c",
+       "function": "mk_utils_worker_rename",
+       "status": "Safe",
+       "through": [
+        "prctl"
+       ]
+      }
+     ],
+     "premise:nested_call_admission": [
+      {
+       "unit": "cmt_encode_opentelemetry_batch.c",
+       "function": "empty_batches_create",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "ctr_encode_opentelemetry.c",
+       "function": "initialize_resource_spans",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "ctr_encode_opentelemetry.c",
+       "function": "initialize_scope_spans",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "ctr_encode_opentelemetry.c",
+       "function": "initialize_spans",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "ctr_encode_opentelemetry.c",
+       "function": "otlp_kvpair_list_initialize",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "cio_file_unix.c",
+       "function": "cio_file_native_compose_path",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "cio_file_unix.c",
+       "function": "cio_file_native_delete_by_path",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      }
+     ],
+     "premise:rk_no_plugin_library": [
+      {
+       "unit": "rdkafka.c",
+       "function": "rd_kafka_crash",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_crash",
+        "rd_kafka_dump0"
+       ]
+      },
+      {
+       "unit": "rdkafka.c",
+       "function": "rd_kafka_dump",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_dump0"
+       ]
+      },
+      {
+       "unit": "rdkafka_admin.c",
+       "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_AlterConsumerGroupOffsets_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_admin.c",
+       "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_DeleteConsumerGroupOffsets_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_admin.c",
+       "function": "rd_kafka_ListConsumerGroupOffsets_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_ListConsumerGroupOffsets_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_aux.c",
+       "function": "rd_kafka_topic_partition_result_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_result_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_event.c",
+       "function": "rd_kafka_event_destroy",
+       "status": "Safe",
+       "through": [
+        "oauthbearer_token_refresh_cb",
+        "rd_kafka_DeleteRecords_leaders_queried_cb",
+        "rd_kafka_ListOffsets_leaders_queried_cb",
+        "rd_kafka_admin_fanout_worker",
+        "rd_kafka_admin_worker",
+        "rd_kafka_broker_monitor_op_cb",
+        "rd_kafka_cgrp_assignor_handle_Metadata_op",
+        "rd_kafka_cgrp_consumer_handle_Metadata_op",
+        "rd_kafka_cgrp_handle_Metadata_op",
+        "rd_kafka_oauthbearer_refresh_op",
+        "rd_kafka_oauthbearer_unsecured_token",
+        "rd_kafka_offset_reset_op_cb",
+        "rd_kafka_offset_validate_op_cb",
+        "rd_kafka_oidc_token_client_credentials_refresh_cb",
+        "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+        "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+        "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+        "rd_kafka_op_destroy",
+        "rd_kafka_share_ack_commit_cb_register_op",
+        "rd_kafka_share_commit_async_fanout_op",
+        "rd_kafka_share_commit_sync_fanout_op",
+        "rd_kafka_share_fetch_fanout_op",
+        "rd_kafka_share_fetch_reply_op_cb",
+        "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+        "rd_kafka_txn_op_abort_transaction",
+        "rd_kafka_txn_op_abort_transaction_ack",
+        "rd_kafka_txn_op_ack_init_transactions",
+        "rd_kafka_txn_op_begin_abort",
+        "rd_kafka_txn_op_begin_commit",
+        "rd_kafka_txn_op_begin_transaction",
+        "rd_kafka_txn_op_commit_transaction",
+        "rd_kafka_txn_op_commit_transaction_ack",
+        "rd_kafka_txn_op_init_transactions",
+        "rd_kafka_txn_op_send_offsets_to_transaction"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_destroy0"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_destroy0"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_topic_partition_list_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_topic_partition_list_destroy"
+       ]
+      },
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_purge_and_disable_queues",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_q_purge0"
+       ]
+      },
+      {
+       "unit": "rdkafka_request.c",
+       "function": "rd_kafka_handle_OffsetCommit_error",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_err_action"
+       ]
+      },
+      {
+       "unit": "rdkafka_request.c",
+       "function": "rd_kafka_handle_OffsetFetch_err_action",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_err_action"
+       ]
+      },
+      {
+       "unit": "rdkafka_sasl.c",
+       "function": "rd_kafka_share_oauthbearer_set_token_failure",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_oauthbearer_set_token_failure"
+       ]
+      },
+      {
+       "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+       "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_oauthbearer_set_token_failure",
+        "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+       ]
+      },
+      {
+       "unit": "rdkafka_subscription.c",
+       "function": "rd_kafka_pause_partitions",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_toppars_pause_resume"
+       ]
+      },
+      {
+       "unit": "rdkafka_subscription.c",
+       "function": "rd_kafka_resume_partitions",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_toppars_pause_resume"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unit_test_telemetry_gauge",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unit_test_telemetry_sum",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdkafka_telemetry_decode.c",
+       "function": "unittest_telemetry_decode",
+       "status": "Safe",
+       "through": [
+        "unit_test_telemetry"
+       ]
+      },
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_op_destroy_free",
+       "status": "Safe",
+       "through": [
+        "oauthbearer_token_refresh_cb",
+        "rd_kafka_DeleteRecords_leaders_queried_cb",
+        "rd_kafka_ListOffsets_leaders_queried_cb",
+        "rd_kafka_admin_fanout_worker",
+        "rd_kafka_admin_worker",
+        "rd_kafka_broker_monitor_op_cb",
+        "rd_kafka_cgrp_assignor_handle_Metadata_op",
+        "rd_kafka_cgrp_consumer_handle_Metadata_op",
+        "rd_kafka_cgrp_handle_Metadata_op",
+        "rd_kafka_oauthbearer_refresh_op",
+        "rd_kafka_oauthbearer_unsecured_token",
+        "rd_kafka_offset_reset_op_cb",
+        "rd_kafka_offset_validate_op_cb",
+        "rd_kafka_oidc_token_client_credentials_refresh_cb",
+        "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+        "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+        "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+        "rd_kafka_op_destroy",
+        "rd_kafka_share_ack_commit_cb_register_op",
+        "rd_kafka_share_commit_async_fanout_op",
+        "rd_kafka_share_commit_sync_fanout_op",
+        "rd_kafka_share_fetch_fanout_op",
+        "rd_kafka_share_fetch_reply_op_cb",
+        "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+        "rd_kafka_txn_op_abort_transaction",
+        "rd_kafka_txn_op_abort_transaction_ack",
+        "rd_kafka_txn_op_ack_init_transactions",
+        "rd_kafka_txn_op_begin_abort",
+        "rd_kafka_txn_op_begin_commit",
+        "rd_kafka_txn_op_begin_transaction",
+        "rd_kafka_txn_op_commit_transaction",
+        "rd_kafka_txn_op_commit_transaction_ack",
+        "rd_kafka_txn_op_init_transactions",
+        "rd_kafka_txn_op_send_offsets_to_transaction"
+       ]
+      }
+     ],
+     "premise:served_queue": [
+      {
+       "unit": "rdkafka_partition.c",
+       "function": "rd_kafka_toppar_purge_and_disable_queues",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_q_purge0"
+       ]
+      }
+     ],
+     "premise:share_ack_batches_nonempty": [
+      {
+       "unit": "rdkafka_event.c",
+       "function": "rd_kafka_event_destroy",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_share_fetch_fanout_op"
+       ]
+      },
+      {
+       "unit": "rdunittest_fetcher.c",
+       "function": "ut_op_destroy_free",
+       "status": "Safe",
+       "through": [
+        "rd_kafka_share_fetch_fanout_op"
+       ]
+      }
+     ],
+     "premise:untracked_handback": [
+      {
+       "unit": "flb_input_chunk.c",
+       "function": "flb_input_chunk_get_name",
+       "status": "Safe",
+       "through": [
+        "flb_input_chunk_get_name"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "system": {
+   "null": {
+    "rows": 454,
+    "null_verdicts": {
+     "Unknown": 243,
+     "Safe": 211
+    },
+    "by_class_null_verdict": {
+     "fb-scope": {
+      "Safe": 4,
+      "Unknown": 8
+     },
+     "fb-stable": {
+      "Safe": 2,
+      "Unknown": 14
+     }
+    },
+    "by_class_combined_verdict": {
+     "fb-scope": {
+      "Unknown": 12
+     },
+     "fb-stable": {
+      "Safe": 2,
+      "Unknown": 14
+     }
+    },
+    "outer_sensitive_null_verdict": {
+     "Safe": 6,
+     "Unknown": 22
+    },
+    "obligations": {
+     "fb-stable": 16,
+     "fb-scope": 6
+    },
+    "safe_or_pending_rows": {
+     "fb-scope": [
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw_local",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw_local`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_append_raw_local",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_chunk_append_raw_local`'s null-deref preconditions: inferred quant null-deref #in",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_resume"
+       ]
+      }
+     ],
+     "fb-stable": [
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_chunk_route_plugin_matches",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "stable:flb_output_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-system",
+       "file": "src/flb_input_chunk.c",
+       "function": "flb_chunk_route_plugin_matches",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Safe",
+       "combined": "Safe",
+       "outer_dependencies": [
+        "stable:flb_output_instance.p"
+       ]
+      }
+     ]
+    }
+   },
+   "custody": {
+    "rows": 448,
+    "statuses": {
+     "Unknown": 349,
+     "Safe": 95,
+     "Unsafe": 4
+    },
+    "premised_declarations": {
+     "ingestion_active": 1,
+     "literal_argument": 3,
+     "mk_event_descriptors": 4,
+     "nested_call_admission": 1,
+     "synchronous_output_reachability": 1,
+     "untracked_handback": 1
+    },
+    "by_class_status": {
+     "closure": {
+      "Unknown": 3
+     },
+     "premise:literal_argument": {
+      "Unknown": 6,
+      "Unsafe": 2
+     },
+     "premise:mk_event_descriptors": {
+      "Unknown": 18
+     },
+     "premise:nested_call_admission": {
+      "Unknown": 58,
+      "Safe": 6,
+      "Unsafe": 4
+     },
+     "premise:untracked_handback": {
+      "Unknown": 22,
+      "Safe": 2
+     }
+    },
+    "obligations_declarations_rested_on": {
+     "premise:nested_call_admission": 68,
+     "closure": 3,
+     "premise:literal_argument": 8,
+     "premise:untracked_handback": 24,
+     "premise:mk_event_descriptors": 28
+    },
+    "safe_or_pending_rows": {
+     "premise:nested_call_admission": [
+      {
+       "unit": "src/flb_scheduler.c",
+       "function": "consume_byte",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_scheduler.c",
+       "function": "event_fd_consume_byte",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_scheduler.c",
+       "function": "consume_byte",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_scheduler.c",
+       "function": "event_fd_consume_byte",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_output.c",
+       "function": "flb_output_task_queue_enqueue",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_output.c",
+       "function": "flb_output_task_queue_enqueue",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      }
+     ],
+     "premise:untracked_handback": [
+      {
+       "unit": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_get_name",
+       "status": "Safe",
+       "through": [
+        "flb_input_chunk_get_name"
+       ]
+      },
+      {
+       "unit": "src/flb_input_chunk.c",
+       "function": "flb_input_chunk_get_name",
+       "status": "Safe",
+       "through": [
+        "flb_input_chunk_get_name"
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "slice": {
+   "null": {
+    "rows": 406,
+    "null_verdicts": {
+     "Safe": 190,
+     "Unknown": 216
+    },
+    "by_class_null_verdict": {
+     "fb-scope": {
+      "Unknown": 16,
+      "Safe": 22
+     },
+     "fb-stable": {
+      "Unknown": 30,
+      "Safe": 16
+     }
+    },
+    "by_class_combined_verdict": {
+     "fb-scope": {
+      "Unknown": 38
+     },
+     "fb-stable": {
+      "Unknown": 46
+     }
+    },
+    "outer_sensitive_null_verdict": {
+     "Unknown": 30,
+     "Safe": 22
+    },
+    "obligations": {
+     "fb-stable": 72,
+     "fb-scope": 78
+    },
+    "safe_or_pending_rows": {
+     "fb-scope": [
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_exit",
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_pre_run",
+        "flb_input_thread_instance_pre_run",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_plugin_pause",
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_plugin_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_plugin_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_pause"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_plugin_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_plugin_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_rate_gate_maybe_resume",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_exit",
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_pre_run",
+        "flb_input_thread_instance_pre_run",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_plugin_pause",
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_plugin_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_plugin_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_pause"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_plugin_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_plugin_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_rate_gate_maybe_resume",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pre_run"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pre_run"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      }
+     ],
+     "fb-stable": [
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_exit",
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_pre_run",
+        "flb_input_thread_instance_pre_run",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_plugin_pause",
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_rate_gate_maybe_resume",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_exit",
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_instance_pre_run",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_instance_pre_run`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_instance_pre_run",
+        "flb_input_thread_instance_pre_run",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_pause",
+        "flb_input_plugin_pause",
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_rate_gate_maybe_resume",
+       "null": "Safe",
+       "null_scope": "unconditional",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input.c",
+       "function": "flb_input_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_plugin_resume",
+        "flb_input_resume",
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_exit",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_exit`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_exit",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_pause",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_pause`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_pause",
+        "stable:flb_input_instance.p"
+       ]
+      },
+      {
+       "library": "fluent-bit-tail-pause",
+       "file": "src/flb_input_thread.c",
+       "function": "flb_input_thread_instance_resume",
+       "null": "Safe",
+       "null_scope": "conditional on `flb_input_thread_instance_resume`'s null-deref preconditions: declared nonnull_member_scope(flb_input_instance, p, ins); inferred quant null-deref #ins",
+       "custody": "Unknown",
+       "combined": "Unknown",
+       "outer_dependencies": [
+        "flb_input_thread_instance_resume",
+        "stable:flb_input_instance.p"
+       ]
+      }
+     ]
+    }
+   },
+   "custody": {
+    "rows": 404,
+    "statuses": {
+     "Unknown": 347,
+     "Safe": 52,
+     "Pending": 4,
+     "Unsafe": 1
+    },
+    "premised_declarations": {
+     "ingestion_active": 1,
+     "literal_argument": 2,
+     "mk_event_descriptors": 4,
+     "nested_call_admission": 1
+    },
+    "by_class_status": {
+     "closure": {
+      "Unknown": 11
+     },
+     "premise:ingestion_active": {
+      "Unknown": 2
+     },
+     "premise:literal_argument": {
+      "Unknown": 1,
+      "Safe": 1
+     },
+     "premise:mk_event_descriptors": {
+      "Unknown": 16
+     },
+     "premise:nested_call_admission": {
+      "Unknown": 55,
+      "Safe": 7
+     }
+    },
+    "obligations_declarations_rested_on": {
+     "premise:nested_call_admission": 62,
+     "premise:mk_event_descriptors": 16,
+     "premise:ingestion_active": 2,
+     "closure": 13,
+     "premise:literal_argument": 2
+    },
+    "safe_or_pending_rows": {
+     "premise:literal_argument": [
+      {
+       "unit": "plugins/in_tail/tail_scan.c",
+       "function": "flb_tail_scan_register_ignored_file_size",
+       "status": "Safe",
+       "through": [
+        "flb_hash_table_add"
+       ]
+      }
+     ],
+     "premise:nested_call_admission": [
+      {
+       "unit": "src/flb_input_thread.c",
+       "function": "flb_input_thread_collectors_signal_start",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_input_thread.c",
+       "function": "flb_input_thread_wait_until_is_ready",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_input_thread.c",
+       "function": "flb_input_thread_collectors_signal_start",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "src/flb_input_thread.c",
+       "function": "flb_input_thread_wait_until_is_ready",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "plugins/in_tail/tail.c",
+       "function": "consume_byte",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "plugins/in_tail/tail.c",
+       "function": "in_tail_pre_run",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      },
+      {
+       "unit": "plugins/in_tail/tail_multiline.c",
+       "function": "tail_mult_append",
+       "status": "Safe",
+       "through": [
+        "__errno_location"
+       ]
+      }
+     ]
+    }
+   }
+  }
+ }
+}
