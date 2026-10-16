@@ -219,6 +219,258 @@
       ]
     },
     {
+      "function": "mk_event_add",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "9abfe3729e91feb08b851445e0e83e14bc3cfa5e2466a2ddfb00a1ea48cac3e2",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "f05badb069be217bb6ec3343b35305ef591aea90a7be433781101d86fd89af66"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "f05badb069be217bb6ec3343b35305ef591aea90a7be433781101d86fd89af66",
+              "body_sha256": "0f89ae49bc383e5012c20f66a278f2b214d59eeb472ed481a7d41155f6d220d9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_channel_create",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "589f2b0bd92b09dae566fd3939375dbeee04a2e1eadcfc3511cdb58cf116bcfb",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "614f3f863448bf9984f70f9fb2015b2840129f7bb944e8ad240cf57ac581f70f"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "614f3f863448bf9984f70f9fb2015b2840129f7bb944e8ad240cf57ac581f70f",
+              "body_sha256": "6a074e26eb8ace2018f3f7642b73a04f56c80577e829513c144f5722dddd80f0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_channel_destroy",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "ca523a47a4f0fca8260c4e131393ab2a2e5225840cf9e1f59b41c846e16a39b6",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "b459da5339442541a58b61d1c77c56ab8b8b1abed497e509b97aa9b4950d1641"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "b459da5339442541a58b61d1c77c56ab8b8b1abed497e509b97aa9b4950d1641",
+              "body_sha256": "fb45e98477f4e7693f61ea732687ea28625fc466b4e8dfc5278f1263a07dd00a"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_del",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "96daa6f2ccb2e6ca5972d15ad3b78ca7bb28bd70297b625079916b8f84a945af",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "6334f75c42fdff5b53409b6848d255da8a40d91bef26c6593ae299206fe18a79"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "6334f75c42fdff5b53409b6848d255da8a40d91bef26c6593ae299206fe18a79",
+              "body_sha256": "830068f0de2d4454d96463f680b865fca3fe9430d5a2165d93e982827eaef1d4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_timeout_create",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "7f3d018731119527167718d01bc21f2af40cbe3346da5551e89229b12722bc96",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "dded58162af4e7d1216d36bd270ac3d073a8b86613be50eacf81b8cdcc13baa6"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "dded58162af4e7d1216d36bd270ac3d073a8b86613be50eacf81b8cdcc13baa6",
+              "body_sha256": "2876cedb08f5d99e607524a5c161c7d0bba34ae5aba6532f906e4506571602bd"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_timeout_destroy",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "0cb6e7b7eabe335702d51bef34061b8ba5add3d806f39670816097dcb38c09b9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "8478fa8cbdba68b17bc3cac070d8b5e7c349c52501865c378631464281691306"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "8478fa8cbdba68b17bc3cac070d8b5e7c349c52501865c378631464281691306",
+              "body_sha256": "1fd465aec3f966a464f33b6310a181a23d5a2872da90d1df537f6794aaee48c9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_event_wait",
+      "module": "monkey/event_loop.qv",
+      "contract_sha256": "71ff6949f549c0ca1eb99bf1dea5dff5724c6d105f6eb64635b089cd74af05f4",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_event.h",
+              "kind": "declaration",
+              "declaration_sha256": "9569eb8d752fdc658c2cd91899257ea6dd7a5a858bf4d082292051eab0101808"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_event.c",
+              "kind": "definition",
+              "declaration_sha256": "9569eb8d752fdc658c2cd91899257ea6dd7a5a858bf4d082292051eab0101808",
+              "body_sha256": "3a35c4885252b30262d0251e7cac944f9abf588811ac79e86e72cf93dbf280dc"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "mk_fifo_queue_destroy",
       "module": "monkey/intrusive_list.qv",
       "contract_sha256": "80d78ceb3d95ef4bd5e4ea82848e46b622d9ac3e3d7d70a1b8a726994d053155",

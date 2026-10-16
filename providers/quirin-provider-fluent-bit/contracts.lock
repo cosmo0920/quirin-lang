@@ -955,6 +955,114 @@
       ]
     },
     {
+      "function": "flb_input_set_collector_event",
+      "module": "fluent_bit/input_collector_registration.qv",
+      "contract_sha256": "c91af98cdfb58fa55a10905e286ae70d5b3e5abc9b295f773d99e23b1f0adff0",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "63125d8b08633d170f2ead0691af8f54ca5de5d8122803f334b3b5d5d26a0971"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "63125d8b08633d170f2ead0691af8f54ca5de5d8122803f334b3b5d5d26a0971",
+              "body_sha256": "608a02b2195d3e480499261035802ba4bb572d0c57684e20ac25733864fb02d7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_set_collector_socket",
+      "module": "fluent_bit/input_collector_registration.qv",
+      "contract_sha256": "3d8310ab19d84df2acf3c8b640ef8c85e89bbcc4ded32dba5ec5dd2b5115660b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "9044bdbf0d5b48beb4e7ae49886b25024ac6df01d99401c5079d8010a2bd553a"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "9044bdbf0d5b48beb4e7ae49886b25024ac6df01d99401c5079d8010a2bd553a",
+              "body_sha256": "ac1d7916bb1fb8912d6417ca7ba1920baaad4a09036e98b557a8ea16d10d303e"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "flb_input_set_collector_time",
+      "module": "fluent_bit/input_collector_registration.qv",
+      "contract_sha256": "ec8be39af77338827eeb5ce896fa4f53886904409bd223142b145544adc9d167",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/fluent-bit/flb_input.h",
+              "kind": "declaration",
+              "declaration_sha256": "ee83a188ea743412da893b47ecaecc4dbf6eef65bd84200769a6f7768ffbc43e"
+            },
+            {
+              "path": "src/flb_input.c",
+              "kind": "definition",
+              "declaration_sha256": "ee83a188ea743412da893b47ecaecc4dbf6eef65bd84200769a6f7768ffbc43e",
+              "body_sha256": "ca5de69458ab09ba75e794595cd06a420d45388d5c6249d2ca813ca796c9921b"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "flb_input_thread_instance_exit",
       "module": "fluent_bit/lib_engine_thread.qv",
       "contract_sha256": "3588cb3a99fa8c8ac1c39e138d9acf79883ccad12b11cf959bd3f84ee553629f",

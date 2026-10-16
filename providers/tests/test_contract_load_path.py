@@ -457,8 +457,10 @@ class LoadPathManifest(unittest.TestCase):
         # and MONKEY-VHOST-PROPERTY-CUSTODY (`monkey/string.qv`); this pin was
         # left stale by both (PROVIDER-LOAD-PATH-VIEW-PIN-STALE).
         # 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
+        # 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
+        # `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 61)
+        self.assertEqual(sum(len(view) for view in views.values()), 63)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the one bounds module, in its

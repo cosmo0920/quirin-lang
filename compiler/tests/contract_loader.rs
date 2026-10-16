@@ -91,7 +91,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
+    // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 63);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -1056,6 +1058,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     ] {
         old.insert_contract(name, ResourceFunctionContract::new([], R::None));
     }
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: Monkey's channel
+    // destroy (no removal: its condition is unstated) and wait, every
+    // parameter borrowed.
+    for name in ["mk_event_channel_destroy", "mk_event_wait"] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Card QR-PRINT-ROUTE-MATCHES-DECLARATION: cJSON's static `print` returns
     // a fresh `hooks->allocate` buffer or NULL.
     old.insert_contract(
@@ -1380,7 +1388,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
     // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 61);
+    // 61 -> 63 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION:
+    // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 63);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1643,7 +1653,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 130 -> 131: card NULL-TRIAGE-UNRESOLVED-PATHS adds `cfl/null_deref.qv`
     // (`cfl_list_size`'s result range; the crate's new bounds view, never
     // selected): resource-v1 rejects its one declaration.
-    assert_eq!(modules.len(), 131, "corpus module count");
+    // 131 -> 133: card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION adds
+    // `monkey/event_loop.qv` (seven Monkey event-loop operations) and
+    // `fluent_bit/input_collector_registration.qv` (three collector
+    // setters), entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 133, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1968,9 +1982,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // op-callback candidates of shape (b) in `librdkafka/client.qv`, each
     // stating its member-path states (two beside a KEEP hand-off), withheld
     // with the retaining declarations. Selection and rejected unchanged.
+    // 465 -> 475 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: seven
+    // Monkey event-loop operations (`monkey/event_loop.qv`, five withheld
+    // with the retaining declarations) and three Fluent Bit collector setters
+    // (`fluent_bit/input_collector_registration.qv`, withheld); 61 -> 63
+    // selected modules. Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 465, 314)
+        (63, 475, 314)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -2013,7 +2032,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (C04.19.5): 78 -> 80.
     // Card OP-CALLBACK-MEMBER-PATH-RELEASE: the eight member-path
     // declarations (C04.19.6): 80 -> 88.
-    assert_eq!(loaded.retaining().len(), 88);
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: three Monkey
+    // registrations (C04.14), two removals of one registration and three
+    // collector setters forwarded through an id (C04.19.3): 88 -> 96.
+    assert_eq!(loaded.retaining().len(), 96);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

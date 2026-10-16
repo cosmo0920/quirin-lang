@@ -584,6 +584,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_total_size",
         3,
     ),
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: the collector setters,
+    // each a registration forwarded through its returned id.
+    (
+        "fluent_bit/input_collector_registration.qv",
+        "flb_input_set_collector_time",
+        8,
+    ),
+    (
+        "fluent_bit/input_collector_registration.qv",
+        "flb_input_set_collector_event",
+        7,
+    ),
+    (
+        "fluent_bit/input_collector_registration.qv",
+        "flb_input_set_collector_socket",
+        7,
+    ),
     // Card W47-LOOP-OWNER-INSTANCE-FLOW: the observations the census needed,
     // each a marker plus its clauses (held clauses wrapped for review).
     ("fluent_bit/input_instance.qv", "flb_create", 2),
@@ -1917,6 +1934,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "observation_complete",
         8,
     ),
+    // Card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION: Monkey's event-loop
+    // operations (retentions, removals of one registration, the descriptor
+    // premise).
+    ("monkey/event_loop.qv", "mk_event_add", 8),
+    ("monkey/event_loop.qv", "mk_event_timeout_create", 8),
+    ("monkey/event_loop.qv", "mk_event_channel_create", 8),
+    ("monkey/event_loop.qv", "mk_event_del", 5),
+    ("monkey/event_loop.qv", "mk_event_timeout_destroy", 6),
+    ("monkey/event_loop.qv", "mk_event_channel_destroy", 7),
+    ("monkey/event_loop.qv", "mk_event_wait", 3),
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
     ("monkey/event_payload.qv", "cb_event_source_projection", 12),
@@ -2262,7 +2289,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // crate's `bounds-contracts.lock`, outside every resource view).
     // 130 -> 131 by card NULL-TRIAGE-UNRESOLVED-PATHS' `cfl/null_deref.qv`
     // (bounds contract v1, pinned in the cfl crate's new `bounds-contracts.lock`).
-    assert_eq!(sources.len(), 131, "unexpected contract corpus size");
+    // 131 -> 133 by card FB-EVENT-LOOP-RETENTION-AND-REGISTRATION's
+    // `monkey/event_loop.qv` and `fluent_bit/input_collector_registration.qv`.
+    assert_eq!(sources.len(), 133, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
