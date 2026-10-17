@@ -37,6 +37,11 @@ def Event.mayBind (root : Nat) : Event → Bool
 def cleanRoot (root : Nat) (events : List Event) : Bool :=
   events.all fun event => !event.mayBind root
 
+/-- Rule 5b still needs the independent never-bound closure. -/
+def admitsPointerReturn (neverBound : Bool) (root : Nat)
+    (events : List Event) : Bool :=
+  neverBound && cleanRoot root events
+
 /-- A checked, direct, exact read-only actual cannot mark its root. -/
 theorem checked_list_count_does_not_bind (root : Nat)
     (c : Certificate) (h : c.accepts = true) :
@@ -55,10 +60,24 @@ theorem checked_actual_preserves_decision (root : Nat) (events : List Event)
     cleanRoot root (.listCountActual root c :: events) = cleanRoot root events := by
   simp [cleanRoot, checked_list_count_does_not_bind root c h]
 
+theorem checked_actual_preserves_return (neverBound : Bool) (root : Nat)
+    (events : List Event) (c : Certificate) (h : c.accepts = true) :
+    admitsPointerReturn neverBound root (.listCountActual root c :: events) =
+      admitsPointerReturn neverBound root events := by
+  simp [admitsPointerReturn, checked_actual_preserves_decision root events c h]
+
+theorem a_bound_root_is_never_admitted (root : Nat) (events : List Event) :
+    admitsPointerReturn false root events = false := by
+  simp [admitsPointerReturn]
+
 /-- Any other call actual on the same root still refuses it. -/
 theorem other_call_still_refuses (root : Nat) (events : List Event) :
     cleanRoot root (.otherCallActual root :: events) = false := by
   simp [cleanRoot, Event.mayBind]
+
+theorem another_actual_blocks_the_return (root : Nat) (events : List Event) :
+    admitsPointerReturn true root (.otherCallActual root :: events) = false := by
+  simp [admitsPointerReturn, other_call_still_refuses]
 
 /-- A direct write still refuses it. -/
 theorem write_still_refuses (root : Nat) (events : List Event) :
