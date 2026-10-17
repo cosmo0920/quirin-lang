@@ -342,3 +342,47 @@ Chain rows that moved (first configuration; access / identity, base → tip):
 * `flb_input_collector_destroy`'s loop is read through
   `coll->instance->config`; reaching rule 12t there needs a pointer-read
   identity, which is part of the lifetime card's equality model (D3).
+
+## 8. Gate
+
+The standing gate and the provider gate ran as one exclusive hold of the
+shared heavy lock ([`scripts/gate-whole.sh`](scripts/gate-whole.sh),
+[`scripts/gate.sh`](scripts/gate.sh), [`scripts/finish-gate.sh`](scripts/finish-gate.sh);
+exits in [`gate/`](gate/), summary [`gate.json`](gate.json); logs
+`private/fblb/gate-NAME/` and `private/fblb/tests-NAME/` of this worktree).
+
+* **g1** (at `9645192af`, on `1474edaf1`): failed and stopped during the
+  provider tests. `cargo fmt --check` 1 (three spans in
+  `typed_field_access.rs`), clippy 101 (`manual_contains` at the new
+  `function_pointer_formals`), `run_test_binaries.py` 101: 10 tests in five
+  route-G files whose unreadable-declaration device was a function-pointer
+  declarator (§1). Fixed in `b0b6886cf`; no test was weakened.
+* **g2** (every code step at `7e69f17a8`, on `1474edaf1`): `cargo check`
+  0, submodule 0, fmt 0, clippy `--locked` 0; `run_test_binaries.py` 0:
+  509 units, 522 summaries, **8,206 passed**, 0 failed, 15 ignored, with no
+  rerun; both reevaluation probes 0; `check_lean_audits.py` 0, **334** Lean
+  audits (333 on main); the Python suite 1 before the matrix regeneration
+  (`test_the_derived_facts_are_recomputed_rather_than_carried`: the
+  committed matrix carried 333 audits), then `build_matrix.py --gate` 0 and
+  the suite **374 OK** (09b); `build_docs_index.py --check` 0. Provider gate
+  (providers/ is unchanged; run for the provider count the matrix needs):
+  package build and both verifies 0, `cargo check --locked` 0,
+  `contracts.py check` 0, **133** provider tests passed, 25 provider Python
+  tests OK, fmt and clippy 0.
+
+## 9. Combined arbiter after the rebase onto `1474edaf1`
+
+NONNULL-MEMBER-UNIFIED-QUALIFIER landed after the measurement of §4, so main
+`1474edaf1` (binary `a584e595…`) and the rebased tip `fc93831fc` (binary
+`424bcb19…`: the gated code plus records) were measured again on the three
+routes with the null property
+([`artifacts/runs-base-1474edaf1.json`](artifacts/runs-base-1474edaf1.json),
+[`artifacts/runs-after-1474edaf1.json`](artifacts/runs-after-1474edaf1.json)).
+Main's reports are byte-identical to `b157c9cba`'s (`33e139c0…`,
+`773dc40c…`, `e2b3d8d9…`) and the tip's to §4's (`4e3e56d8…`, `6eb4e990…`,
+`b900e299…`); the null rows equal §4's on every route
+([`scripts/compare.py`](scripts/compare.py): no status, leaf or null-row
+change in either pair). The movement of §4 stands at `1474edaf1`: corpus
+939 / 9 / 3,886 → 941 / 9 / 3,884, system 95 / 4 / 349 → 97 / 4 / 347, slice
+52 / 1 / 347 / 4 Pending unchanged; null 1,114 / 1,435 / 2,354 / 18,
+86 / 125 / 243 and 69 / 121 / 216 unchanged.
