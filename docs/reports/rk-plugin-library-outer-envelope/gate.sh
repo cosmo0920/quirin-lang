@@ -5,7 +5,7 @@ set -u
 part="$1"
 repo="$(cd "$(dirname "$0")/../../.." && pwd)"
 if [ "$part" = docs ]; then
-  out="$repo/private/rk-outer/gate-docs"
+  out="$repo/private/rk-outer/gate-docs-v2"
 else
   out="$repo/private/rk-outer/gate-$part-v3"
 fi
