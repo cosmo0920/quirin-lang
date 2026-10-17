@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "NONNULL-MEMBER-UNIFIED-QUALIFIER card gate on main b157c9cba, every code step at 4bdfc1353, scripts docs/reports/nonnull-member-unified-qualifier/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/nmuq/gate-g2 and private/nmuq/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 508 units, 521 summaries, 8,196 passed, 0 failed, 15 ignored, exit 0 (private/nmuq/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 333 audits passed (QCore.NullMemberQualifier added); docs part (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2, at 4bdfc1353; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 133 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 8196,
+  "note": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS card gate on base 1474edaf1, every code step at 7e69f17a8, scripts docs/reports/fb-loop-chain-blockers/scripts/gate-whole.sh, gate.sh and finish-gate.sh, one exclusive flock on the shared heavy lock held for the whole gate, logs private/fblb/gate-g2 of this worktree. cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 509 units, 522 summaries, 8,206 passed, 0 failed, 15 ignored, exit 0 (private/fblb/tests-g2), with no rerun; both reevaluation probes exit 0; check_lean_audits.py 334 audits passed (333 on main 1474edaf1; this card adds QCore.FunctionPointerDeclarators and its audit); provider gate (not required: providers/ is unchanged; run for the measured provider count build_matrix.py requires): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, cargo test in providers/ 133 passed / 0 failed, providers/tests 25 OK; python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c).",
+  "workspace_tests": 8206,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 333,
+  "lean_audits": 334,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6882,6 +6882,7 @@
    "AuditFloatPayloads.lean",
    "AuditFloatTypes.lean",
    "AuditFrameHelperTask.lean",
+   "AuditFunctionPointerDeclarators.lean",
    "AuditGenericNames.lean",
    "AuditGenericSelection.lean",
    "AuditGnuBuiltinReader.lean",
@@ -7099,7 +7100,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2a95816c91225047/docs/reports/nonnull-member-unified-qualifier/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2f7b1c49255cf884/docs/reports/fb-loop-chain-blockers/gate.json)"
  },
  "named_followups": [
   {

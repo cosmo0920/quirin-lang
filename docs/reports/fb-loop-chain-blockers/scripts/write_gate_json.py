@@ -15,7 +15,7 @@ import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
 REPORT = REPO / "docs/reports/fb-loop-chain-blockers"
-BASE = "b157c9cba"
+BASE = "1474edaf1"
 
 
 def main() -> int:
@@ -58,7 +58,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit {exits['04-tests']} "
         f"(private/fblb/tests-{name}), with no rerun; both reevaluation probes exit 0; "
-        f"check_lean_audits.py {lean.group(1)} audits passed (332 on main b157c9cba; this card adds QCore.FunctionPointerDeclarators and its audit); "
+        f"check_lean_audits.py {lean.group(1)} audits passed (333 on main 1474edaf1; this card adds QCore.FunctionPointerDeclarators and its audit); "
         "provider gate (not required: providers/ is unchanged; run for the measured provider count build_matrix.py requires): providers/package.py build and verify qcore.libevent and qcore.librdkafka 0 / 0 / 0, cargo check --locked in providers/ 0, providers/contracts.py check 0, "
         f"cargo test in providers/ {provider_passed} passed / {provider_failed} failed, "
         f"providers/tests {provider_python.group(1)} OK; python suite and docs index check per "
