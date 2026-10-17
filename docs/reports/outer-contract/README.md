@@ -265,7 +265,48 @@ renamed from `exactly_three_…` and re-audited), and adds the family
 
 ## 5. Gate
 
-GATE_SECTION
+The standing gate (g5) ran at `2ef0ae282` on main `94aef2d3b`, and the
+provider gate (pg6) ran at `effbb2b1f`. Between the two heads only the provider
+crate's contract index (`quirin-provider-fluent-bit/src/lib.rs`, outside the
+root workspace) and records changed. Every step ran under the heavy lock, with
+exits written to files and nothing piped ([gate.sh](scripts/gate.sh),
+[provider-gate.sh](scripts/provider-gate.sh),
+[finish-gate.sh](scripts/finish-gate.sh),
+[write_gate_json.py](scripts/write_gate_json.py); exits in [gate/](gate/),
+summary in [gate.json](gate.json)).
+
+| Step | Exit | Count |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 512 units, 525 summaries; 8,219 passed, 0 failed, 15 ignored (505 s inside the lock) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` (Lean 4.35.0) | 0 | 335 audits |
+| `cargo clean --profile dev` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 374 tests OK |
+| `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider: `cargo check` / `test` / `fmt` / `clippy` (`--locked --offline`) | 0 / 0 / 0 / 0 | 133 passed |
+| provider: `contracts.py check`, `package.py build`, `verify` ×5 | 0, 0, 0 ×5 | |
+| provider: `python3 -m unittest discover -s providers/tests` | 0 | 25 tests OK |
+
+After the records: `build_matrix.py . --gate gate.json`, then the Python
+suite and the docs index again, all exit 0.
+
+Earlier attempts are superseded:
+
+* g1 at `89c7b6e9a`: clippy flagged a complex type, and one test failed (the
+  contract-loader corpus count). Both are fixed.
+* g2 at `37c073917` and g3 at `0d635bfa7`: stopped for the rebases. g3's
+  Python suite showed the matrix and corpus-count updates were owed, and
+  those are now done.
+* g4 at `1ae102965`: stopped for the rebase onto `94aef2d3b`.
+* pg5 at `2ef0ae282`: the provider index test failed until `outer.qv` was
+  indexed.
+
+Logs: `private/oc/gate-g5/`, `private/oc/tests-gate-g5/`,
+`private/oc/provider-gate-pg6/`.
 
 ## 6. Ledger
 
