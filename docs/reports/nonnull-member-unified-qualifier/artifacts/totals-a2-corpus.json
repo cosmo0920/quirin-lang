@@ -1,0 +1,1053 @@
+{
+ "candidates_by_source_kind": {
+  "allocation": 16,
+  "formal": 2480,
+  "global": 1,
+  "lookup": 1,
+  "memory-field": 9968,
+  "null-literal": 121,
+  "other": 117,
+  "uncontracted-result": 508,
+  "uninitialized": 12
+ },
+ "checks_by_outcome": {
+  "candidate": 12644,
+  "excluded": 137,
+  "finding": 29,
+  "moved": 16886,
+  "proved": 61923
+ },
+ "custody": {
+  "Safe": 939,
+  "Unknown": 3886,
+  "Unsafe": 9,
+  "absent": 87
+ },
+ "member_declarations": {
+  "rd_kafka_cgrp_s.rkcg_rk": {
+   "clauses": {
+    "construction": "declared-assumption",
+    "stores": "validated"
+   },
+   "failures": [],
+   "host": "rd_kafka_cgrp_new",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 1,
+   "stores_not_proved": 0
+  },
+  "rd_kafka_topic_s.rkt_rk": {
+   "clauses": {
+    "construction": "declared-assumption",
+    "stores": "validated"
+   },
+   "failures": [],
+   "host": "rd_kafka_topic_new0",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 2,
+   "stores_not_proved": 0
+  },
+  "rd_kafka_topic_s.rkt_topic": {
+   "clauses": {
+    "construction": "declared-assumption",
+    "stores": "validated"
+   },
+   "failures": [],
+   "host": "rd_kafka_topic_new0",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 2,
+   "stores_not_proved": 0
+  },
+  "rd_kafka_toppar_s.rktp_rkt": {
+   "clauses": {
+    "construction": "declared-assumption",
+    "stores": "validated"
+   },
+   "failures": [],
+   "host": "rd_kafka_toppar_new0",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 2,
+   "stores_not_proved": 0
+  },
+  "rd_kafka_transport_s.rktrans_rkb": {
+   "clauses": {
+    "construction": "declared-assumption",
+    "stores": "validated"
+   },
+   "failures": [],
+   "host": "rd_kafka_transport_new",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 1,
+   "stores_not_proved": 0
+  }
+ },
+ "null": {
+  "Safe (conditional on its preconditions)": 1435,
+  "Safe (unconditional)": 1114,
+  "Unknown": 2354,
+  "Unsafe": 18
+ },
+ "report_sha256": "33e139c0e69a6926e51b1fd9bc37c9034cf8e65178e568501dea395e11ec369c",
+ "scope_declarations": {
+  "flb_input_instance_exit": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_instance_pre_run": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_pause": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_plugin_pause": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_plugin_resume": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_resume": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_thread_instance_exit": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_thread_instance_pause": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_thread_instance_pre_run": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "flb_input_thread_instance_resume": {
+   "entries": [
+    "nonnull_member(flb_input_instance, p, ins) where quant #scope [[scope]]"
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_ShareAcknowledgeRequest": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_active_toppar_add": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_active_toppar_del": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_buf_enq0": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_buf_retry": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_bufq_timeout_scan": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_conn_closed": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_connect": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_connect_auth": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_connect_done": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_connect_up": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_consumer_serve": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_destroy_final": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_feature_disable": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_feature_enable": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_features_set": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_fetch_backoff": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_fetch_toppars": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_handle_purge_queues": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_idle_check": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_internal_serve": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_needs_connection": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_produce_toppars": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_resolve": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_retry_bufs_move": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_serve": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_session_add_partition_to_toppars_in_session": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_session_remove_partition_from_toppars_in_session": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_session_reset": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_session_update_epoch": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_session_update_partitions": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_set_api_versions": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_set_nodename": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_set_state": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_share_fetch_session_clear": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_share_fetch_session_leave": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_share_rpc": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_share_session_toppar_add": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_timeout_scan": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_toppar_msgq_scan": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_broker_wakeup": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_buf_new_request0": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_buf_retry": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_bufq_connection_reset": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_bufq_dump": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_bufq_purge": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_dr_implicit_ack": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_features_check": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_fetch_reply_handle_partition_error": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_group_MemberMetadata_consumer_read": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_handle_Produce_metadata_update": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_idemp_request_pid_failed": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_msgbatch_handle_Produce_result": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_op_throttle_time": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_parse_Metadata_update_topic": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_recv": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_req_response": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_sasl_broker_init": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_sasl_broker_term": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_send": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_ssl_hmac": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_toppar_fetch_backoff": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_transport_connect": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_transport_ssl_connect": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafka_waitresp_find": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  },
+  "rd_kafkap_share_leader_changes_apply": {
+   "entries": [
+    "nonnull_member(rd_kafka_broker_s, rkb_rk, rkb) where quant #scope [[scope]]"
+   ],
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "in-force: every caller's actual is a call-precondition check"
+  }
+ },
+ "stable_declarations": {
+  "flb_filter_instance.p": {
+   "clauses": {
+    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+    "stores": "unexamined",
+    "whole-object": "declared-assumption"
+   },
+   "failures": [],
+   "fresh_object_stores": 0,
+   "host": "flb_filter_new",
+   "standing": "declared-assumption",
+   "stores_examined": 0,
+   "stores_not_proved": 0,
+   "whole_object_stores": 0
+  },
+  "flb_input_instance.p": {
+   "clauses": {
+    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+    "stores": "unexamined",
+    "whole-object": "declared-assumption"
+   },
+   "failures": [],
+   "fresh_object_stores": 0,
+   "host": "flb_input_new",
+   "standing": "declared-assumption",
+   "stores_examined": 0,
+   "stores_not_proved": 0,
+   "whole_object_stores": 0
+  },
+  "flb_output_instance.p": {
+   "clauses": {
+    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+    "stores": "unexamined",
+    "whole-object": "declared-assumption"
+   },
+   "failures": [],
+   "fresh_object_stores": 0,
+   "host": "flb_output_new",
+   "standing": "declared-assumption",
+   "stores_examined": 0,
+   "stores_not_proved": 0,
+   "whole_object_stores": 0
+  },
+  "flb_processor_instance.p": {
+   "clauses": {
+    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+    "stores": "unexamined",
+    "whole-object": "declared-assumption"
+   },
+   "failures": [],
+   "fresh_object_stores": 0,
+   "host": "flb_processor_instance_create",
+   "standing": "declared-assumption",
+   "stores_examined": 0,
+   "stores_not_proved": 0,
+   "whole_object_stores": 0
+  },
+  "rd_kafka_broker_s.rkb_rk": {
+   "clauses": {
+    "fresh-objects": "exempt: an initializer list writes an object no use held before it",
+    "stores": "validated",
+    "whole-object": "declared-assumption"
+   },
+   "failures": [],
+   "fresh_object_stores": 4,
+   "host": "rd_kafka_broker_add",
+   "premises": [
+    {
+     "name": "rk_no_plugin_library",
+     "statement": "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)"
+    }
+   ],
+   "standing": "partly-validated",
+   "stores_examined": 2,
+   "stores_not_proved": 0,
+   "whole_object_stores": 0
+  }
+ },
+ "withdrawn": []
+}

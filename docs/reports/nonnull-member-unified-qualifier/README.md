@@ -190,6 +190,43 @@ summaries are equal on all three routes.
 **Prediction against outcome.** As frozen except the respelled fold entries
 above; the custody reports did not move at all.
 
+### Combined arbiter after the rebase onto `b157c9cba`
+
+RETENTION-UNMATCHED-REMOVAL-POISONS landed meanwhile (rule 12t,
+`retained_by.rs`, libevent's `event_loop.qv` and its pins, the compiler's pin
+tests), so main `b157c9cba` (binary `main`, `e35cfc0c…`, built from an
+exported tree that reads main's own contracts) was measured against the
+rebased tip (binary `a2`, `8edc97de…`, built at `4bdfc1353`) on every route
+with the null property, under the shared lock
+([`combined.sh`](scripts/combined.sh); [totals](artifacts/),
+[comparison](artifacts/compare-combined.json)).
+
+| Route | Custody main → tip | Custody report | Null property |
+| --- | --- | --- | --- |
+| corpus | 939 / 9 / 3,886 → same | `33e139c0…` → **byte-identical** | 1,114 / 1,435 / 2,354 / 18 Unsafe → same |
+| system | 95 / 4 / 349 → same | `9dd0fb3e…` → `704f00a2…`: the export's tree root and the contract-source identities only | 86 / 125 / 243 → same |
+| slice | 52 / 1 / 347 / 4 Pending → same | `d77c87fb…` → `73a94bce…`: likewise | 69 / 121 / 216 → same |
+
+* With the export's root (`private/nmuq/main-src`) replaced by this
+  worktree's and `resource_contract_sources` / `inventory_sha256` removed
+  (they hash each contract's path and text), the system and slice reports are
+  equal.
+* **Null rows** are identical apart from the premise fields and the bounds
+  digest on all three routes; the same 404 corpus rows rest on the five plain
+  members and all list the premise (272 gain it); no other row's premises
+  change; the 76 scope records show the new spelling.
+* **No verdict changed.**
+
+The first main corpus run stopped at the libevent source pin: the export's
+`third_party/libevent` was a plain copy, so `git rev-parse` there answered this
+worktree's HEAD. With that directory made a local clone at the pinned
+`d82464a2`, the corpus route was rerun
+([`combined_corpus_retry.sh`](scripts/combined_corpus_retry.sh)); the first
+attempt is kept in `private/nmuq/attempt1/` and discarded. At the tip, `pin
+--bounds --check` is 0 for both crates and the whole tree at both revisions,
+`--verify-contracts` 0, and the whole-tree resource check reports the same
+not-in-force set as before (`private/nmuq/pin-check-a2/`).
+
 ## 6. Ledger
 
 [`update_ledger.py`](scripts/update_ledger.py): 790 → 789 on the base; on

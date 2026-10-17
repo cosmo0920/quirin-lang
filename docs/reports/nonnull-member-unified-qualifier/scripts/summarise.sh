@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# summarise.sh BEFORE AFTER -- NONNULL-MEMBER-UNIFIED-QUALIFIER: the per-route
-# totals (totals.py) of both runs and the row comparison (compare.py) into the
-# report's artifacts. Nothing piped into a recorded exit.
+# summarise.sh BEFORE AFTER [COMPARE_NAME] -- NONNULL-MEMBER-UNIFIED-QUALIFIER:
+# the per-route totals (totals.py) of both runs and the row comparison
+# (compare.py) into the report's artifacts (compare.json, or
+# COMPARE_NAME.json). Nothing piped into a recorded exit.
 set -u
-before="$1"; after="$2"
+before="$1"; after="$2"; name="${3:-compare}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 art="$here/../artifacts"
@@ -22,4 +23,4 @@ for run in runs:
         d = json.load(open(f"{art}/totals-{run}-{route}.json"))
         print(run, route, d["report_sha256"][:8], d["custody"], d["null"])
 PY
-python3 "$here/compare.py" "$before" "$after" "$art/compare.json"
+python3 "$here/compare.py" "$before" "$after" "$art/$name.json"

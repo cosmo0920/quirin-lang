@@ -202,6 +202,24 @@ def custody_route(before, after, route):
         result["difference_paths"] = diffs
         result["difference_leaves"] = sorted(collections.Counter(
             p.rsplit("/", 1)[-1].split("[")[0] for p in diffs).items())
+        # The combined arbiter measures main from an export under
+        # private/nmuq/main-src: its paths carry that root, and the
+        # contract-source identities (`resource_contract_sources`,
+        # `inventory_sha256`) hash path and text. With the root normalised
+        # and those identities removed, what remains must be nothing.
+        root = str(PRIVATE / "main-src")
+
+        def norm(value):
+            if isinstance(value, dict):
+                return {k: norm(v) for k, v in value.items()
+                        if k not in ("resource_contract_sources", "inventory_sha256")}
+            if isinstance(value, list):
+                return [norm(v) for v in value]
+            if isinstance(value, str):
+                return value.replace(root, str(REPO))
+            return value
+        rest = differences(norm(json.loads(bb)), norm(json.loads(ab)))
+        result["differences_beyond_root_and_contract_source_identities"] = rest
     return result
 
 
