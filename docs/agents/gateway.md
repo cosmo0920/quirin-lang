@@ -62,10 +62,12 @@ which is not a second authority.
     C11 7.1.3). The reported rows, the effective entry and the whole-unit
     `Safe` scope stay the selection alone, and a newly admitted helper publishes
     a summary only through the unchanged `observations_match_contract` gate.
-    **Do not admit an external-linkage definition**: a C99 `inline` definition
+    **Do not admit an external-linkage definition into this same-unit
+    derivation scope**: a C99 `inline` definition
     may be bypassed for the external one at any call (C11 6.7.4p7) and an
     external definition may be interposed, so its body need not be the body the
-    call runs (`mpack_*`, 86 leaves, stay refused). **Do not drop the reserved
+    call runs (`mpack_*`, 86 leaves, stay refused). Rule 4c states the separate
+    conditional cross-unit route. **Do not drop the reserved
     filter here**: it keeps glibc header bodies (`__bswap_*`) with the libc
     provider's decision; the card measured that they would validate
     `Borrowed -> None` and decide 599 leaves if admitted. Widening the scope
@@ -119,6 +121,29 @@ which is not a second authority.
     the own contract nowhere else (trust boundary 28).
     `QCore.SummaryValidationPremises`;
     [report](../reports/w47-summary-validation-protected-formals/README.md).
+
+<a id="constraint-4c"></a>
+
+4c. **An external W4 home summary crosses a unit only under an explicit
+    linked-program premise.** Card W44-CALLEE-CROSS-UNIT-SUMMARY adds an opt-in
+    `QCORE_CROSS_UNIT_LINK_MAP` for configured current and pinned audits. The
+    map's SHA-256 and its named function-to-home choices are retained in the
+    verdict assumptions. They assert that each external call resolves to that
+    one definition with compatible function type and calling convention in
+    the actual link and interposition environment; the compile database alone
+    cannot establish that assertion. A home must be a unique selected
+    main-source definition across every complete configured unit, externally
+    linkable with no static or inline declaration, have a Safe function row and
+    a validated W4 summary, and lack a declaration in force. The home raw,
+    marked and preprocessed source, request and environment identities are
+    retained; certificate issue and replay independently reconstruct the home
+    scope, re-run W4 and compare the exact summary before re-deriving the
+    caller. Imports use a separate inferred channel and yield to a caller's
+    own definition or a declared contract. Missing or ambiguous home,
+    incomplete census, failed replay or changed refutation table keeps the
+    call uncontracted. Checkpoint composition and contracts-only routes
+    refuse the opt-in mode. `QCore.CrossUnitSummary`;
+    [report](../reports/w44-cross-unit-summary/README.md).
 
 <a id="constraint-5"></a>
 

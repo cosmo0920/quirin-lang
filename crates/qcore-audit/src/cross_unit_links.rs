@@ -81,6 +81,7 @@ impl LinkMap {
             .collect()
     }
 
+    /// The unit named by the supplied resolution premise for this function.
     pub fn home_for(&self, function: &str) -> Option<&str> {
         self.homes.get(function).map(String::as_str)
     }

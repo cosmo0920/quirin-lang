@@ -43,6 +43,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 4 | [gateway](gateway.md#constraint-4) | A call into an internal C function is modeled only through a declared… |
 | 4a | [gateway](gateway.md#constraint-4a) | The W4 derivation scope is not the reported scope, and linkage decides what it may add. |
 | 4b | [gateway](gateway.md#constraint-4b) | A W4 summary is validated on the premises its function's reported row reads: the candidate is read as the function's own contract (protected formals) in a re-check. |
+| 4c | [gateway](gateway.md#constraint-4c) | A cross-unit W4 summary requires a named linked-program resolution premise, unique pinned home, two-sided replay and fail-closed import. |
 | 5 | [gateway](gateway.md#constraint-5) | The typed scalar-field whitelist's last premise — the base is a name this… |
 | 5a | [gateway](gateway.md#constraint-5a) | A fixed C sizeof/_Alignof query's operand-class marker is never a… |
 | 5b | [gateway](gateway.md#constraint-5b) | A return admits what a condition admits, and the difference escapes… |
