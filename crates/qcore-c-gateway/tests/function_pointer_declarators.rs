@@ -143,9 +143,8 @@ fn the_function_pointer_member_is_decided_as_before() {
     if !clang_available() {
         return;
     }
-    let store = row(
-        "void set_cb(struct fcoll *coll, int (*cb)(void *, int)) { coll->cb_collect = cb; }",
-    );
+    let store =
+        row("void set_cb(struct fcoll *coll, int (*cb)(void *, int)) { coll->cb_collect = cb; }");
     assert!(store.safe(), "{store:?}");
     assert!(store.unsupported.is_empty(), "{store:?}");
 }
@@ -164,9 +163,8 @@ fn stores_through_a_handed_formal_keep_their_base_route() {
     if !clang_available() {
         return;
     }
-    let init = row(
-        "void init(struct fcoll *coll) { ev_touch(coll); coll->id = 1; coll->seconds = 2; }",
-    );
+    let init =
+        row("void init(struct fcoll *coll) { ev_touch(coll); coll->id = 1; coll->seconds = 2; }");
     assert!(init.safe(), "{init:?}");
 }
 

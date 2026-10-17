@@ -348,7 +348,7 @@ fn substituting_a_dependency_identity_withdraws_the_discharged_arms() {
             "the read record gains a member the reader cannot resolve",
             &[(
                 "struct flb_storage_input {",
-                "struct flb_storage_input {\n    void (*hook)(int);",
+                "struct flb_storage_input {\n    void (*hook[1])(int);",
             )],
         ),
         (
@@ -819,7 +819,7 @@ fn a_certificate_resting_on_the_admission_is_rederived_from_source() {
         (
             "the record body gains an unreadable member",
             "struct g_conf { int mode;",
-            "struct g_conf { void (*hook)(int); int mode;",
+            "struct g_conf { void (*hook[1])(int); int mode;",
         ),
     ];
     for (label, from, to) in substitutions {

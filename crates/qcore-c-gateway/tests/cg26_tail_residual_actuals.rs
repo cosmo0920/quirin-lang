@@ -3,7 +3,9 @@
 //! (`docs/reports/cg26-tail-residual-actuals/`).
 //!
 //! Each body is put in a function whose lexical declarations the token reader
-//! cannot read (a function-pointer formal `int (*cb)(int)`), which is the
+//! cannot read (an array-of-function-pointers formal `int (*cb[1])(int)`; a
+//! plain function-pointer formal is read since card
+//! FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS), which is the
 //! state of 24 of the 34 corpus statements: there T4, T5 and T8 answer
 //! nothing. The callees are the production `printf` family from
 //! `quirin-provider-libc` (`fprintf`/`snprintf` declare
@@ -83,13 +85,13 @@ fn program(result: &UnrestrictedLegacyResult) -> Option<&LegacyProgramSummary> {
     }
 }
 
-/// `subject` with an unreadable formal list (`int (*cb)(int)`), or the same
+/// `subject` with an unreadable formal list (`int (*cb[1])(int)`), or the same
 /// statements in a readable one when `readable`.
 fn run(statements: &str, readable: bool) -> Run {
     let formals = if readable {
         "int c, int i"
     } else {
-        "int (*cb)(int), int c, int i"
+        "int (*cb[1])(int), int c, int i"
     };
     let text = format!(
         "{DECLARATIONS}\n{PROTOTYPES}\nvoid subject({formals}) {{ char b[16]; {statements} }}\n"

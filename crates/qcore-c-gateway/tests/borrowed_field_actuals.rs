@@ -708,7 +708,7 @@ fn a_certificate_resting_on_the_admission_is_rederived_from_the_declarations() {
         (
             "the record body gains a member the reader cannot read",
             "struct b_storage { int state;",
-            "struct b_storage { void (*hook)(int); int state;",
+            "struct b_storage { void (*hook[1])(int); int state;",
         ),
     ];
     for (label, from, to) in substitutions {

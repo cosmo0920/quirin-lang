@@ -1505,7 +1505,7 @@ impl FunctionTypes {
         protected_formals: &BTreeSet<String>,
     ) -> Self {
         let bound = bound_names(body, protected_formals);
-        let function_pointer_formals = parameters.iter().any(|text| *text == "(");
+        let function_pointer_formals = parameters.contains(&"(");
         let mut variables = BTreeMap::new();
         let mut elements = BTreeMap::new();
         let mut census = DeclCensus::default();
@@ -2188,10 +2188,7 @@ pub(crate) fn scalar_member_store_base<'a>(
     let [base, "-", ">", field, "=", right @ ..] = texts else {
         return None;
     };
-    if !is_name(base)
-        || !is_name(field)
-        || !types.may_bind(base)
-        || types.function_pointer_formals
+    if !is_name(base) || !is_name(field) || !types.may_bind(base) || types.function_pointer_formals
     {
         return None;
     }
@@ -3360,9 +3357,18 @@ mod tests {
     #[test]
     fn the_record_body_refusal_is_the_readers_answer() {
         let body = |source: &'static str| texts(source);
-        assert_eq!(record_body_refusal(&body("int a ; void ( * f ) ( int ) ;")), None);
-        assert_eq!(record_body_refusal(&body("int a ; int ( * f [ 2 ] ) ( void ) ;")), Some("("));
-        assert_eq!(record_body_refusal(&body("void ( * f ) ( int ) ; int b : 1 ;")), Some(":"));
+        assert_eq!(
+            record_body_refusal(&body("int a ; void ( * f ) ( int ) ;")),
+            None
+        );
+        assert_eq!(
+            record_body_refusal(&body("int a ; int ( * f [ 2 ] ) ( void ) ;")),
+            Some("(")
+        );
+        assert_eq!(
+            record_body_refusal(&body("void ( * f ) ( int ) ; int b : 1 ;")),
+            Some(":")
+        );
     }
 
     /// A function-pointer formal is a name of no committed type; the
@@ -3397,17 +3403,26 @@ mod tests {
         let statement = texts("p -> a = 1");
         let plain = types(&model, "struct r * p", "p = g ( ) ; p -> a = 1 ;");
         assert!(plain.may_bind("p"));
-        assert_eq!(scalar_member_store_base(&statement, &model, &plain), Some("p"));
+        assert_eq!(
+            scalar_member_store_base(&statement, &model, &plain),
+            Some("p")
+        );
         let with_formal = types(
             &model,
             "struct r * p , void ( * cb ) ( void )",
             "p = g ( ) ; p -> a = 1 ;",
         );
         assert!(with_formal.is_readable());
-        assert_eq!(scalar_member_store_base(&statement, &model, &with_formal), None);
+        assert_eq!(
+            scalar_member_store_base(&statement, &model, &with_formal),
+            None
+        );
         let with_member = types(&model, "struct s * p", "p = g ( ) ; p -> a = 1 ;");
         assert!(model.scalar_field("s", "a"));
-        assert_eq!(scalar_member_store_base(&statement, &model, &with_member), None);
+        assert_eq!(
+            scalar_member_store_base(&statement, &model, &with_member),
+            None
+        );
     }
 
     /// Every other parenthesised formal still refuses the function.

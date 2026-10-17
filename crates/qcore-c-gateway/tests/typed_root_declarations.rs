@@ -4,7 +4,9 @@
 //! nothing, and only ever at least as conservatively as the lexical closure.
 //!
 //! The lexical reader refuses every declaration of a function whose parameter
-//! list it cannot read; a function-pointer formal `int (*cb)(int)` is the
+//! list it cannot read; an array-of-function-pointers formal `int (*cb[1])(int)`
+//! (a plain function-pointer formal is read since card
+//! FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS) is the
 //! trigger these fixtures use, so each body is answered by the AST reader. The
 //! negative controls were written before the change and run at the base
 //! (`docs/reports/w47-typed-root-declaration-reader/`). Every test asserts the
@@ -159,7 +161,7 @@ fn assert_refused(prefix: &str, body: &str) {
     );
 }
 
-/// The lexical reader cannot read `int (*cb)(int)` and answers nothing for
+/// The lexical reader cannot read `int (*cb[1])(int)` and answers nothing for
 /// the whole function; the AST reader answers `b` never bound and not
 /// `may_bind`, so the pointer read is returned with a `NoOp` exit.
 #[test]
@@ -168,8 +170,8 @@ fn an_untouched_root_certifies_when_only_the_ast_answers() {
         return;
     }
     for body in [
-        "char *w(struct c_box *b, int (*cb)(int)) { return b->item->leaf->name; }",
-        "struct c_item *w(struct c_box *b, int (*cb)(int)) { return b->item; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { return b->item->leaf->name; }",
+        "struct c_item *w(struct c_box *b, int (*cb[1])(int)) { return b->item; }",
     ] {
         assert_eq!(outcome(body), safe(), "{body}");
     }
@@ -182,7 +184,7 @@ fn an_untouched_root_certifies_when_only_the_ast_answers() {
     // `("Unknown", ["unknown_alias:b"])`.
     assert_eq!(
         outcome(
-            "char *w(struct c_box *b, int (*cb)(int)) { int n = b->flag; c_use(n); \
+            "char *w(struct c_box *b, int (*cb[1])(int)) { int n = b->flag; c_use(n); \
              return b->item->leaf->name; }"
         ),
         safe()
@@ -190,7 +192,7 @@ fn an_untouched_root_certifies_when_only_the_ast_answers() {
     // The never-bound answer is unchanged: a custody position on `b` before
     // the read still refuses it (the path is refused there).
     let (status, keys) = outcome(
-        "char *w(struct c_box *b, int (*cb)(int)) { c_drop(b); int n = b->flag; c_use(n); \
+        "char *w(struct c_box *b, int (*cb[1])(int)) { c_drop(b); int n = b->flag; c_use(n); \
          return 0; }",
     );
     assert_ne!(status, "Safe", "{keys:?}");
@@ -219,23 +221,23 @@ fn a_bound_or_may_bind_root_keeps_the_refusal() {
     }
     for body in [
         // `&root`
-        "char *w(struct c_box *b, int (*cb)(int)) { struct c_box **pb = &b; return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { struct c_box **pb = &b; return b->item->leaf->name; }",
         // written from a call
-        "char *w(struct c_box *b, int (*cb)(int)) { b = c_make(1); return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { b = c_make(1); return b->item->leaf->name; }",
         // copied from a written root
-        "char *w(struct c_box *b, int (*cb)(int)) { struct c_box *a = c_make(1); b = a; return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { struct c_box *a = c_make(1); b = a; return b->item->leaf->name; }",
         // released at a custody position
-        "char *w(struct c_box *b, int (*cb)(int)) { c_drop(b); return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { c_drop(b); return b->item->leaf->name; }",
         // a `Borrowed` callee: never bound, but `may_bind`
-        "char *w(struct c_box *b, int (*cb)(int)) { c_hold(b); return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { c_hold(b); return b->item->leaf->name; }",
         // incremented
-        "char *w(struct c_box *b, int (*cb)(int)) { b++; return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { b++; return b->item->leaf->name; }",
     ] {
         assert_refused("", body);
     }
     assert_refused(
         "#define C_SET(p) p = c_make(1)",
-        "char *w(struct c_box *b, int (*cb)(int)) { C_SET(b); return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { C_SET(b); return b->item->leaf->name; }",
     );
 }
 
@@ -249,13 +251,13 @@ fn a_shadowed_root_keeps_the_refusal() {
     }
     assert_refused(
         "",
-        "char *w(struct c_box *b, int (*cb)(int)) { \
+        "char *w(struct c_box *b, int (*cb[1])(int)) { \
          { struct c_box *b = c_make(1); if (b) c_drop(b); } \
          return b->item->leaf->name; }",
     );
     assert_refused(
         "",
-        "char *w(struct c_box *b, int (*cb)(int)) { \
+        "char *w(struct c_box *b, int (*cb[1])(int)) { \
          { struct c_box *b = 0; (void)b; } \
          return b->item->leaf->name; }",
     );
@@ -273,13 +275,13 @@ fn a_redeclared_typedef_certifies_only_when_it_is_one_type() {
     assert_eq!(
         outcome_with(
             twice,
-            "char *w(c_box_t *b, int (*cb)(int)) { return b->item->leaf->name; }"
+            "char *w(c_box_t *b, int (*cb[1])(int)) { return b->item->leaf->name; }"
         ),
         safe()
     );
     assert_refused(
         "typedef struct c_box c_t;",
-        "char *w(c_t *b, int (*cb)(int)) { typedef struct c_leaf c_t; \
+        "char *w(c_t *b, int (*cb[1])(int)) { typedef struct c_leaf c_t; \
          return b->item->leaf->name; }",
     );
 }
@@ -320,15 +322,15 @@ fn an_unprototyped_definition_or_a_non_local_root_keeps_the_refusal() {
     }
     assert_refused(
         "",
-        "char *w(b, cb) struct c_box *b; int (*cb)(int); { return b->item->leaf->name; }",
+        "char *w(b, cb) struct c_box *b; int (*cb[1])(int); { return b->item->leaf->name; }",
     );
     assert_refused(
         "",
-        "char *w(struct c_box *b, int (*cb)(int)) { c_mystery(b); return b->item->leaf->name; }",
+        "char *w(struct c_box *b, int (*cb[1])(int)) { c_mystery(b); return b->item->leaf->name; }",
     );
     assert_refused(
         "struct c_box *c_global;",
-        "char *w(int (*cb)(int)) { return c_global->item->leaf->name; }",
+        "char *w(int (*cb[1])(int)) { return c_global->item->leaf->name; }",
     );
 }
 
@@ -342,16 +344,16 @@ fn an_assignment_operand_reads_the_ast_declared_local() {
     if !clang_available() {
         return;
     }
-    let local = "int w(struct c_box *b, int (*cb)(int)) { struct c_item *it; \
+    let local = "int w(struct c_box *b, int (*cb[1])(int)) { struct c_item *it; \
         if (!(it = b->item)) return 0; return 1; }";
     assert_eq!(
         outcome(local),
         ("Unknown", vec!["unknown_alias:it".to_owned()])
     );
     for body in [
-        "int w(struct c_box *b, int (*cb)(int)) { static struct c_item *it; \
+        "int w(struct c_box *b, int (*cb[1])(int)) { static struct c_item *it; \
          if (!(it = b->item)) return 0; return 1; }",
-        "int w(struct c_box *b, int (*cb)(int)) { struct c_item *it = 0; \
+        "int w(struct c_box *b, int (*cb[1])(int)) { struct c_item *it = 0; \
          { struct c_item *it; (void)it; } if (!(it = b->item)) return 0; return 1; }",
     ] {
         let (status, keys) = outcome(body);

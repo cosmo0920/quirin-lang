@@ -145,7 +145,7 @@ struct h_link { int kind; struct h_conf *conf; }; \
 struct h_env { int flags; struct h_link *link; }; \
 union h_view { struct h_ctx *ctx; int tag; }; \
 struct h_shady { int kind; union h_view *view; }; \
-struct h_hooked { void (*hook)(int); struct h_ctx *ctx; }; \
+struct h_hooked { void (*hook[1])(int); struct h_ctx *ctx; }; \
 struct h_holder { int kind; struct h_hooked *hooked; }; \
 struct h_deep { struct h_deep *next; struct h_ctx *ctx; }; \
 struct h_boxed { struct h_link *links[2]; }; \
@@ -403,7 +403,7 @@ fn a_certificate_resting_on_a_chain_is_rederived_from_source() {
         (
             "the intermediate link's record gains an unreadable member",
             "struct h_link { int kind;",
-            "struct h_link { void (*hook)(int); int kind;",
+            "struct h_link { void (*hook[1])(int); int kind;",
         ),
         (
             "the intermediate member becomes an array",
@@ -931,7 +931,7 @@ fn substituting_a_chain_link_withdraws_the_chain_admission() {
         (
             "the intermediate link's record gains an unreadable member",
             "struct cio_stream {",
-            "struct cio_stream {\n    void (*hook)(int);",
+            "struct cio_stream {\n    void (*hook[1])(int);",
         ),
         (
             "the intermediate member becomes _Atomic",
