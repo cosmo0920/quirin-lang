@@ -1692,7 +1692,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 134 -> 135: card OUTER-CONTRACT adds `fluent_bit/outer.qv`, an outer
     // contract v1 module (the crate's outer view, never selected):
     // resource-v1 rejects both loader declarations.
-    assert_eq!(modules.len(), 135, "corpus module count");
+    // 135 -> 136: RK-PLUGIN-LIBRARY-OUTER-ENVELOPE adds
+    // `librdkafka/outer.qv` (one outer-only loader declaration).
+    assert_eq!(modules.len(), 136, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -2034,9 +2036,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // unchanged.
     // 328 -> 330 rejected by card OUTER-CONTRACT: the two loader declarations
     // of `fluent_bit/outer.qv` (outer contract v1), likewise rejected.
+    // 330 -> 331 rejected by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE:
+    // `librdkafka/outer.qv`'s one outer-only loader declaration.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (64, 491, 330)
+        (64, 491, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
