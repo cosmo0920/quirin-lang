@@ -193,6 +193,20 @@ source, loaded environment). The home units are `librdkafka/lz4.c`,
 `chunkio/cio_file.c`. The premise remains conditional on the actual linked
 program; this source-only run does not independently verify linkage.
 
+| Imported symbol | Home unit | Raw source SHA-256 | Preprocessed source SHA-256 |
+| --- | --- | --- | --- |
+| `LZ4_sizeofState` | `librdkafka/lz4.c` | `05735e64eb218b11d1083bcacec349fe843899b9175c886257a5b607c42c8c6b` | `124b7edfe677040df03c59c41cce7bb6ec77f65e42ca3394baf95e72684b5992` |
+| `LZ4_sizeofStateHC` | `librdkafka/lz4hc.c` | `bca2cf3a014b21919da4fa92db5adbfbfc9aee2f0938107885a3a8f49a750aa8` | `e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57` |
+| `cio_file_hash` | `chunkio/cio_file.c` | `1c3eb285307108deb2b22c68cf282c0121619a35bbe36adc216f276d51925257` | `52c119f0c6397075b5971f4a6f34f9d35019e7b1f7f94007b3e3fea564082cc9` |
+| `rd_kafka_error_code` | `librdkafka/rdkafka_error.c` | `c76bbe7a43cfa10fc6f7355de406609520fc1adedb442f715f9f1402cd9a92fc` | `483203e400b8489df5b567f6a3ff79f63fce259975029376d690c1101a8489b4` |
+| `rd_kafka_error_destroy` | `librdkafka/rdkafka_error.c` | `c76bbe7a43cfa10fc6f7355de406609520fc1adedb442f715f9f1402cd9a92fc` | `483203e400b8489df5b567f6a3ff79f63fce259975029376d690c1101a8489b4` |
+
+Each has loaded home environment SHA-256
+`38c7cbfd4c3da02e73495465d2edf24ae9a5c97dc54c471a7b8f11a5c80a6038`
+in the AFTER sidecar. Certificate issuance and replay re-derive these values
+from their retained home witnesses, then re-derive the caller with the same
+map and imported summary.
+
 The configured AFTER system and slice routes both exited 0 under the same
 map and release binary. The system report (`private/w44xu/after-v2-system/`)
 has SHA-256

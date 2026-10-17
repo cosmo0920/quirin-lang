@@ -131,6 +131,12 @@ impl EntryProducts {
     }
 }
 
+type CrossUnitHomeScan = (
+    Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>,
+    Vec<(String, String)>,
+    bool,
+);
+
 impl CurrentAudit {
     /// First-phase W4 exports for a claimed home. The source and compilation
     /// options are read through the same configured request as the row.
@@ -140,14 +146,7 @@ impl CurrentAudit {
         expected_source: &Path,
         entry: &CompileEntry,
         links: &crate::cross_unit_links::LinkMap,
-    ) -> Result<
-        (
-            Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>,
-            Vec<(String, String)>,
-            bool,
-        ),
-        String,
-    > {
+    ) -> Result<CrossUnitHomeScan, String> {
         let file = expected_source
             .strip_prefix(&self.checkout)
             .map_err(|_| "cross-unit home lies outside checkout")?

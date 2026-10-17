@@ -121,17 +121,16 @@ impl LinkMap {
             let Some(candidates) = by_name.get(name) else {
                 continue;
             };
-            if let [(unit, candidate)] = candidates.as_slice() {
-                if unit == claimed_unit
-                    && defined_in
-                        .get(name)
-                        .is_some_and(|rows| rows == &[unit.clone()])
-                    && !loaded.functions().contains_key(name)
-                {
-                    imports.insert(name.clone(), candidate.contract.clone());
-                    identities.insert(name.clone(), candidate.home.import_identity());
-                    homes.push(candidate.home.clone());
-                }
+            if let [(unit, candidate)] = candidates.as_slice()
+                && unit == claimed_unit
+                && defined_in
+                    .get(name)
+                    .is_some_and(|rows| rows == std::slice::from_ref(unit))
+                && !loaded.functions().contains_key(name)
+            {
+                imports.insert(name.clone(), candidate.contract.clone());
+                identities.insert(name.clone(), candidate.home.import_identity());
+                homes.push(candidate.home.clone());
             }
         }
         environment.set_link_resolution_sha256(Some(self.digest.clone()));
