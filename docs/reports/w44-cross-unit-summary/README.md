@@ -79,7 +79,13 @@ pinned source `66910c10`, jobs 4, `/usr/bin/clang`, binary SHA-256
 `336609c835dad7762e3729bfc699af561a61d1704f318e2db0f6fbb57e145ff7`.
 All three route exits are 0. The system and slice invocation sidecars name
 the same checkouts, compile databases and selections used by this card's
-`scripts/measure.sh`. The BEFORE counts from the reports are:
+`scripts/measure.sh`.
+
+The BEFORE report SHA-256 values are corpus
+`fd731251a789cde595ff8f5d7b66bbe9cdf9424c7bb1c64bc7bbff51eeec1701`,
+system `1483b2aaad5b8eeec49a288998f46139b988e61581eac3b8a8aee650c76fc38b`,
+and slice `9c0ae577e27984b7b63339ca0dee1e8a8b7e256c3419232f3cd6da455e399afa`.
+The BEFORE counts from those reports are:
 
 | route | Safe | Pending | provisional Unsafe | Unknown | functions |
 | --- | ---: | ---: | ---: | ---: | ---: |

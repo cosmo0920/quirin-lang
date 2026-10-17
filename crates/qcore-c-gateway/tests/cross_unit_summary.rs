@@ -85,6 +85,20 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
     certificate.cross_unit_homes[0] = exports[0].home.clone();
     certificate.cross_unit_homes[0].environment_sha256 = "b".repeat(64);
     assert!(check_legacy_safety_certificate(&certificate).is_err());
+    certificate.cross_unit_homes[0] = exports[0].home.clone();
+    let mut identities = certificate.contracts.cross_unit_import_identities().clone();
+    identities
+        .get_mut("callee")
+        .expect("identity")
+        .raw_source_sha256 = "b".repeat(64);
+    certificate
+        .contracts
+        .set_cross_unit_import_identities(identities);
+    assert!(
+        check_legacy_safety_certificate(&certificate)
+            .unwrap_err()
+            .contains("identities differ")
+    );
 }
 
 #[test]
