@@ -172,6 +172,7 @@
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
         "librdkafka/null_deref.qv",
+        "librdkafka/outer.qv",
         "librdkafka/queue_destructor.qv",
         "librdkafka/refcount.qv",
         "librdkafka/topic_partition.qv",
@@ -189,7 +190,9 @@
       "bounds_view": [
         "librdkafka/null_deref.qv"
       ],
-      "outer_view": []
+      "outer_view": [
+        "librdkafka/outer.qv"
+      ]
     },
     {
       "name": "quirin-provider-cfl",

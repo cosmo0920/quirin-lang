@@ -61,8 +61,10 @@ class CanonicalCorpus(unittest.TestCase):
         # fluent_bit/teardown_destroy.qv in quirin-provider-fluent-bit (52 -> 53).
         # 134 -> 135: OUTER-CONTRACT's fluent_bit/outer.qv (an outer contract
         # v1 module) in quirin-provider-fluent-bit (53 -> 54).
-        self.assertEqual(len(modules), 135)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 81)
+        # 135 -> 136: RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv
+        # in qcore-provider-librdkafka (81 -> 82).
+        self.assertEqual(len(modules), 136)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 82)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 54)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

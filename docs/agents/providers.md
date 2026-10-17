@@ -455,4 +455,6 @@ Its pins live in the crate's `outer-contracts.lock`, written only by
 with the other locks by `pin --verify-contracts`; a loader whose pin is not in
 force covers nothing in the runtime projection and reaches every record.
 `quirin-provider-fluent-bit`'s outer view is `fluent_bit/outer.qv` (two pinned
-loaders). [Report](../reports/outer-contract/README.md).
+loaders), and `qcore-provider-librdkafka`'s is `librdkafka/outer.qv` (one pinned
+loader). [Reports](../reports/outer-contract/README.md) and
+[stage 2](../reports/rk-plugin-library-outer-envelope/README.md).

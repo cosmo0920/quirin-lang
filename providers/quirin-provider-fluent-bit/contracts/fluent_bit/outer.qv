@@ -26,21 +26,75 @@ module contract;
 // empty); each receives the config as its last formal, and everything the
 // loaded code is later handed is reachable from it.
 //
-// The envelope vouches for the four stable plugin descriptors the null
+// The envelope first vouches for the four stable plugin descriptors the null
 // property relies on (rules 14x/14y; FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE):
-// loaded code never stores into an instance's `p`. Every other closed-world
-// fact reachable from `#config` is uncovered, so a row resting on one is
-// `Unknown` in the runtime projection (rule 31).
+// loaded code never stores into an instance's `p`. It also states explicit
+// restrictions on a loaded plugin's use of exported librdkafka and cJSON:
+// callback registrations meet declared member candidates, internal members
+// are not directly modified, and allocator hooks are not changed. These are
+// human-reviewable conditions on outside code, not facts proved by the core.
+// Interceptor rd_list_t members have no member candidates and remain
+// uncovered; facts without a matching line remain Unknown (rule 31).
 
 extern fn flb_plugin_load(path: ptr<mut, u8>, ctx: ptr<mut, u8>, config: ptr<mut, u8>) -> i32
 contract {
     requires outer_contract_v1;
-    quant #outer [[contract]] flb_external_plugin, "a Fluent Bit plugin loaded from outside the build (a C shared object through flb_plugin_load or a Go plugin through flb_plugin_proxy_create) stores into no member of a struct flb_*_instance or struct flb_config that the core owns, registers callbacks only through the core's setters, reaches only the objects it is handed and the exported API (it forges no pointer), and calls core functions only under their published conditions";
+    quant #outer [[contract]] flb_external_plugin, "every Fluent Bit plugin loaded from outside the build (a C shared object through flb_plugin_load or a Go plugin through flb_plugin_proxy_create), including code it invokes, stores into no core-owned flb_*_instance or flb_config member; it reaches only handed objects and exported APIs and forges no pointer; when it uses librdkafka it registers rk_conf callbacks only through public setters and only when each callback meets that member's candidate contract, registers interceptors only through public setters, never directly stores into librdkafka internal members (including callback fields, op fields, broker and rule-14t links, queues and list links), invokes no non-public librdkafka symbol, and calls public APIs only under their published conditions; it calls cJSON_InitHooks nowhere and does not replace cJSON's global allocator hooks, neither mutates cJSON child, prev or next links directly nor passes malformed cJSON lists to an API call, and any allocator hooks installed before it loads satisfy cjson_allocator_hooks";
     quant #outer where #config in #loaded [[runtime]] when #result == 0;
     quant #outer #loaded: flb_input_instance.p |-> #kept;
     quant #outer #loaded: flb_output_instance.p |-> #kept;
     quant #outer #loaded: flb_filter_instance.p |-> #kept;
     quant #outer #loaded: flb_processor_instance.p |-> #kept;
+    quant #outer #loaded: rd_kafka_conf_s.background_event_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.closesocket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.connect_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.offset_commit_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.open_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.resolve_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.socket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.ssl.cert_verify_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.consume_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.dr_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.dr_msg_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.error_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.log_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.rebalance_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.sasl.oauthbearer.token_refresh_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.stats_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.throttle_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.background_event_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.closesocket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.connect_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.offset_commit_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.open_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.resolve_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.socket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.ssl.cert_verify_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.consume_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.dr_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.dr_msg_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.error_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.log_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.rebalance_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.stats_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.throttle_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_op_s.rko_op_cb |-> #kept;
+    quant #outer #loaded: rd_kafka_op_s.rko_type |-> #kept;
+    quant #outer #loaded: rd_kafka_broker_s.rkb_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_topic_s.rkt_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_topic_s.rkt_topic |-> #kept;
+    quant #outer #loaded: rd_kafka_toppar_s.rktp_rkt |-> #kept;
+    quant #outer #loaded: rd_kafka_cgrp_s.rkcg_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_transport_s.rktrans_rkb |-> #kept;
+    quant #outer #loaded: #premise rk_plugin_callback_closure;
+    quant #outer #loaded: #premise assignor_callback;
+    quant #outer #loaded: #premise broker_monitor_callback;
+    quant #outer #loaded: #premise conf_property_writer;
+    quant #outer #loaded: #premise share_ack_batches_nonempty;
+    quant #outer #loaded: #premise served_queue;
+    quant #outer #loaded: #premise cjson_list_invariant;
+    quant #outer #loaded: #premise cjson_allocator_hooks;
 };
 
 extern fn flb_plugin_proxy_create(dso_path: ptr<const, u8>, kind: i32, config: ptr<mut, u8>) -> ptr<mut, u8>

@@ -7656,7 +7656,7 @@ own anchor here.
     fold's `member_declarations` record. librdkafka's four plain
     declarations (`rd_kafka_toppar_s.rktp_rkt`, `rd_kafka_topic_s.rkt_rk`
     and `.rkt_topic`, `rd_kafka_cgrp_s.rkcg_rk`,
-    `rd_kafka_transport_s.rktrans_rkb`) name `rk_no_plugin_library` by the
+    `rd_kafka_transport_s.rktrans_rkb`) name `rk_plugin_callback_closure` by the
     census rule (`docs/reports/nonnull-member-unified-qualifier/`).
     **Do not** read a held or withdrawn member declaration, or label one
     `validated`. `QCore.NullTriage` (`member_invariant_holds`,
@@ -7776,7 +7776,7 @@ own anchor here.
     (`null_fold::add_dependencies`), lists it in `premises` and as
     `premise:NAME`. The fold's records list it. No decision reads it. A
     `quant null-deref` fact takes none. librdkafka's 67
-    `rd_kafka_broker_s.rkb_rk` declarations name `rk_no_plugin_library`:
+    `rd_kafka_broker_s.rkb_rk` declarations name `rk_plugin_callback_closure`:
     a store to the member is reachable from a function a plugin's callback
     may call (`docs/reports/librdkafka-plugin-premise-remainder/`).
     **Do not** list a premise on a row that rests on no premised fact, or
@@ -8326,8 +8326,13 @@ own anchor here.
     the projection is its own document. Fluent Bit (stage 1):
     `flb_external_plugin` on `flb_plugin_load` and `flb_plugin_proxy_create`,
     envelope the four stable `flb_*_instance.p`; librdkafka's
-    `rk_no_plugin_library` stays a premise until
-    `RK-PLUGIN-LIBRARY-OUTER-ENVELOPE`. **Do not** let the projection change a
+    `rk_plugin_callback_closure` replaces the retired no-library premise;
+    `rk_plugin_library` and the extended `flb_external_plugin` cover it in a
+    loaded scenario only where each pinned envelope stands and the named
+    outside-code conditions are reviewed. Both cover the relevant librdkafka
+    member and premise facts, including a condition forbidding loaded code
+    from changing cJSON allocator hooks; interceptor lists with no member
+    candidates remain uncovered. **Do not** let the projection change a
     static byte or verdict, read a fact a contract does not reach as covered,
     count an uncovered or unpinned fact as `Pending`, promote any row, or
     publish an outer `Pending` without its `NAME@DIGEST`.

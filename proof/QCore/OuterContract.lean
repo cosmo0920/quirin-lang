@@ -272,6 +272,26 @@ theorem reachability_over_approximates (g : Graph) (start : List String) (reach 
     | base hr => exact hstart _ hr
     | step _ hedge ih => exact hclosed _ ih _ hedge
 
+/-- The record-graph reader distinguishes primitive pointers from a pointer
+whose typedef pointee Clang has not classified. The latter must reach all. -/
+inductive PointerPointee where
+  | primitive
+  | record (tag : String)
+  | unclassified
+
+def PointerPointee.reach : PointerPointee → Reach
+  | .primitive => .records (fun _ => False)
+  | .record tag => .records (fun t => t = tag)
+  | .unclassified => .all
+
+theorem an_unclassified_pointer_reaches_every_record (tag : String) :
+    (PointerPointee.reach .unclassified).contains tag := by
+  trivial
+
+theorem a_primitive_pointer_reaches_no_record (tag : String) :
+    ¬ (PointerPointee.reach .primitive).contains tag := by
+  simp [PointerPointee.reach, Reach.contains]
+
 /-! ## The shared example -/
 
 /-- `crates/qcore-audit/tests/outer_projection.rs`: the contract covers
@@ -293,6 +313,32 @@ theorem projection_vectors_hold :
     runtime [exampleContract false] .safe [stableP] = .unknown ∧
     runtime [exampleContract true] .pending [] = .pending ∧
     runtime [] .safe [stableP, stableQ] = .safe := by
+  decide
+
+/-! ## RK-PLUGIN-LIBRARY-OUTER-ENVELOPE
+
+The second envelope and the strengthened Fluent Bit envelope each cover the
+callback-closure premise. A single unreviewed outside-code condition cannot
+cover the other loaded class, so the all-loaded scenario needs both. -/
+
+def rkCallbackFact : Fact := { key := "rk_plugin_callback_closure", tag := none }
+
+def rkLibraryContract : Contract where
+  name := "rk_plugin_library"
+  inForce := true
+  covers := fun key => key == "rk_plugin_callback_closure"
+  reaches := fun _ => true
+
+def fluentBitContract : Contract where
+  name := "flb_external_plugin"
+  inForce := true
+  covers := fun key => key == "flb_input_instance.p" || key == "rk_plugin_callback_closure"
+  reaches := fun _ => true
+
+theorem rk_callback_envelope_is_pending_with_both_loaded :
+    runtime [rkLibraryContract] .safe [rkCallbackFact] = .pending ∧
+    runtime [fluentBitContract] .safe [rkCallbackFact] = .pending ∧
+    runtime [rkLibraryContract, fluentBitContract] .safe [rkCallbackFact] = .pending := by
   decide
 
 end QCore.OuterContract

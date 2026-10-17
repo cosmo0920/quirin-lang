@@ -1,0 +1,13 @@
+{
+  "note": "RK-PLUGIN-LIBRARY-OUTER-ENVELOPE on base fa04aab0f, worktree-private logs in private/rk-outer/gate-standing-v3, gate-providers-v3, gate-docs; standing tests 512 units/525 summaries/8220 passed/0 failed/15 ignored; Lean 335 audits; provider Rust 133 passed, provider Python 25 and scripts Python 374 tests; every recorded step exited 0. Source pins and per-route arbiter exits are separately recorded in the card report.",
+  "workspace_tests": 8220,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 335,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
