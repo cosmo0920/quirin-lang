@@ -351,6 +351,9 @@ impl CurrentAudit {
     ) {
         self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
         self.cross_unit_homes.clear();
+        if let Some(assumptions) = self.assumptions.as_object_mut() {
+            assumptions.remove("cross_unit_link_resolution");
+        }
         self.refuted = table.clone();
         // Recorded before any unit, so a checkpoint's run-wide inputs carry
         // the table to the composer; `finish` replaces it with the section.

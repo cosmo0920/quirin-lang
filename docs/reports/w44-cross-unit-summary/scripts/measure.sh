@@ -14,7 +14,7 @@ repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/w44xu"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
-binary="$repo/target/release/quirin-audit"
+binary="${QCORE_W44_BINARY:-$repo/private/w44xu-target/release/quirin-audit}"
 sha256sum "$binary" > "$out/$name.binary.sha256"
 case ",$routes," in *,corpus,*)
   QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \

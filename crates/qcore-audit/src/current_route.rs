@@ -392,7 +392,7 @@ pub fn run_current_route_with_checkpoints(
                     .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
                     .flat_map(|products| products.unit_rows()),
             );
-            if !stopped && new_refutations == phases.applied {
+            if !stopped && promoted.len() == tasks.len() && new_refutations == phases.applied {
                 published = promoted;
             } else {
                 // A newly refuted declaration may have supported a home

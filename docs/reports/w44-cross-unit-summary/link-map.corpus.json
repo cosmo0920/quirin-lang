@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "premise": "For the selected linked program and each selected compilation configuration, every external call to cio_file_native_get_size resolves to the external definition in chunkio/cio_file_unix.c. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+  "symbols": [
+    {
+      "function": "cio_file_native_get_size",
+      "home_unit": "chunkio/cio_file_unix.c"
+    }
+  ]
+}
