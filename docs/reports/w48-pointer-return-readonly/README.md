@@ -15,6 +15,8 @@ pointer-return shape. The pinned `rdlist.h` defines the static inline
 `rd_list_cnt(const rd_list_t *rl)` with the sole statement
 `return rl->rl_cnt;`. This body reads its actual and does not write through
 it, retain it, or return a pointer.
+The pinned source file SHA-256 values are `9e820273…` for `rdlist.h` and
+`8ed0e410…` for `rdkafka_admin.c` in the `66910c10` source checkout.
 
 The current gateway's `position_pointer_root` refuses `rko` because the
 lexical and AST `may_bind` readers conservatively mark names in call actuals.
@@ -72,3 +74,59 @@ standard Lean axioms reported. The isolated release build
 `quirin-audit` SHA-256 is
 `e2bfb4d310d0ab062fb35bab327c2959760b3717fe9fe0679dae09aeeba8771c`.
 Full gate and arbiter results follow below.
+
+## Corpus arbiter and attribution
+
+The isolated W48 binary ran the pinned `66910c10` corpus with four jobs and
+typed-path parity enabled (`private/w48-pointer-return/tip-corpus-1/`, exit
+0, diagnostic SHA-256
+`ba2c53e1a67e018071c569e81d7a2c6521087033890bfc887165a02e6ac2ec92`).
+Against the shared exact-base run, verdicts moved **941 / 9 / 3,884 →
+952 / 9 / 3,873** (Safe / provisional Unsafe / Unknown): eleven Unknown →
+Safe, no other status move. The [attribution](artifacts/after/compare.json)
+finds exactly eleven removed `unmodeled call, aggregate or indirect access in
+return expression` leaves, no other leaf delta and zero same-status rows
+with changed diagnostics. The [run record](artifacts/after/run.json) fixes
+the source, profile, input and binary identity.
+
+All eleven moves are in `rdkafka_admin.c` and use the same checked source
+shape: one direct `rd_list_cnt(&formal->list_field)` actual, followed by a
+return of that list's `rl_elems` pointer. The six `rd_kafka_admin_result_ret_*`
+helpers are `topics`, `resources`, `groups`, `acl_results`, `acl_bindings`,
+and `delete_acl_result_responses`. Five direct accessors are
+`rd_kafka_ConfigEntry_synonyms`, `rd_kafka_ListOffsets_result_infos`,
+`rd_kafka_DescribeUserScramCredentials_result_descriptions`,
+`rd_kafka_AlterUserScramCredentials_result_responses`, and
+`rd_kafka_ElectLeadersResult_partitions`. The checked `rd_list_cnt` body is
+the included pinned `rdlist.h` definition with one scalar read; the actual
+is an address of a member under a formal, and the return is a read of that
+same list's pointer field. The rule omits only this actual from the two
+binding readers; the normal call obligations still discharge separately.
+
+The committed prediction expected three of the helpers and three public
+callers to move, possibly with `rd_kafka_ConfigResource_configs`. The
+arbiter instead admitted eleven direct bodies and **no callers**. The three
+ACL public callers still carry their `call to uncontracted function` leaf
+even though the helper body is now Safe. `ConfigResource_configs` still
+carries its return leaf: the typed return reader has no admitted plan for
+`config->config.rl_elems` (parity `new_admitted=false`). The earlier
+24-function closure was a hypothetical upper bound, not observed coverage.
+Neither residual was overridden by this rule.
+
+The refreshed [bottom-up plan](artifacts/after/plan.json.gz) has 260
+singly body-blocked Unknown functions (264 before), 2,228 candidate bodies
+(2,232 before), and an all-body hypothetical ceiling of 372, unchanged.
+Its no-extra-body closure rises from 0 same-unit / 8 cross-unit to 4 / 12.
+`cJSON_DetachItemViaPointer` remains the largest one-body candidate: six
+callers, seven own leaves in branch and indirect-access families. The
+[family leverage](artifacts/after/family.json) is archived for subsequent
+cards. These closure numbers are planning bounds; only the eleven measured
+status moves above are current Safe claims.
+
+## Remaining route and gate evidence
+
+The system and tail-pause slice before reports are the shared exact-base
+artifacts under `/tmp/qcore-rk-outer-base/private/rk-outer/measure-base/`:
+system 97 / 4 / 347 / 0 Pending (SHA-256 `1483b2aa…`), slice 52 / 1 /
+347 / 4 Pending (SHA-256 `9c0ae577…`). Their after runs and the full
+standing gate are queued under the coordinator's heavy-run lock.
