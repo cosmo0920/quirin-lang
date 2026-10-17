@@ -44,6 +44,13 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
         exports[0].contract.clone(),
     )]));
     environment.set_link_resolution_sha256(Some(digest));
+    assert!(analyze_prepared_translation_unit_with_cross_unit(
+        &caller,
+        "caller",
+        &environment,
+        &[],
+    )
+    .is_err());
     let result = analyze_prepared_translation_unit_with_cross_unit(
         &caller,
         "caller",
@@ -74,4 +81,30 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
             .unwrap_err()
             .contains("link premise differs")
     );
+}
+
+#[test]
+fn static_and_external_inline_are_not_exported() {
+    if !clang_available() {
+        return;
+    }
+    let requested = BTreeSet::from(["callee".to_owned()]);
+    for source in [
+        "static void callee(void) { return; }\n",
+        "inline void callee(void) { return; }\n",
+    ] {
+        let home = prepare_translation_unit(&C11TranslationUnit {
+            source,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let exports = export_cross_unit_homes(
+            &home,
+            &ResourceContracts::default(),
+            &requested,
+            &"a".repeat(64),
+        )
+        .expect("home analysis");
+        assert!(exports.is_empty(), "exported {source}");
+    }
 }
