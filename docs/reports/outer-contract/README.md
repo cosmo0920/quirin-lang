@@ -4,7 +4,8 @@ Card **OUTER-CONTRACT** (wave 48, round 31; card-high). Base: local `main`
 `94aef2d3b`. The card was first built and measured on `a423fca5d`, which
 differs from the design card's base `3f8f1a617` only in records. It was then
 rebased twice, each time measured again against main's own binary
-(section 3.4):
+(section 3.4); sections 3.1–3.3 are the first base's measurement, and
+their row lists are the final base's exactly:
 
 * onto `b157c9cba`, where RETENTION-UNMATCHED-REMOVAL-POISONS changed rule
   12t, the retention code and libevent's contracts;
@@ -199,7 +200,8 @@ The combined arbiter was run with [arbiter.sh](scripts/arbiter.sh) and
 | Base | Main's binary | Tip's binary (head) | Artifacts |
 | --- | --- | --- | --- |
 | `b157c9cba` | `401f4b8f…` | `4dbe1215…` (`6bb6ea5ab`) | [run-rebased.json](artifacts/run-rebased.json), [compare-rebased.json](artifacts/compare-rebased.json) |
-| `1474edaf1` (final) | `d7082915…` | `56fa40be…` (`b1bc87261`) | [run-final.json](artifacts/run-final.json), [compare-final.json](artifacts/compare-final.json) |
+| `1474edaf1` | `d7082915…` | `56fa40be…` (`b1bc87261`) | measured; superseded by the next row (the same result) |
+| `94aef2d3b` (final) | `82fe2ae9…` | `f5d3eb78…` (`2ef0ae282`) | [run-final.json](artifacts/run-final.json), [compare-final.json](artifacts/compare-final.json) |
 
 Main's binary ran on main's own tree, and the tip's binary ran with the
 projection. Every exit was 0, and each corpus `run.json` `binary_sha256`
@@ -207,12 +209,20 @@ matches its binary. On both bases the result is the first base's, row for row
 (the final base's digests are below; the `b157c9cba` ones are in its
 artifacts):
 
-* **Static scope:** identical. The system report (`ef4e8adf…`) and the slice
-  report (`1faa1013…`) are byte-identical. The corpus report (`33e139c0…` →
-  `efb100ed…`) is identical once the two new lists are removed (140 and 127
-  rows). The sidecars, the null rows (corpus `dbede5f2…`, system `1d8ffa55…`,
-  slice `c24c889a…`) and their summaries are byte-identical. Main's totals
-  equal the first base's.
+* **Static scope:** identical. The system report (`daa8ed82…`) and the slice
+  report (`5b54df5e…`) are byte-identical. The corpus report (`4e3e56d8…` →
+  `fd731251…`) is identical once the two new lists are removed (140 and 127
+  rows). The sidecars, the null rows (corpus `533727d2…`, system `91dd87b0…`,
+  slice `c24c889a…`) and their summaries are byte-identical. On the final
+  base, main's own custody totals are corpus 941 / 9 / 3,884 and system
+  97 / 4 / 347 (FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS); the null totals and
+  the slice are unchanged.
+* **Runtime scope on the final base, all loaded:**
+  * corpus custody 909 / 0 / 3,916 / 9 (the same 32 Safe → Unknown), null
+    2,386 / 1 / 2,516 / 18, combined 793 / 1 / 4,100 / 27;
+  * system custody 97 / 0 / 347 / 4, null 209 / 2 / 243 / 0, combined
+    63 / 2 / 385 / 4;
+  * slice null 174 / 16 / 216 / 0, custody and combined unchanged.
 * **Runtime scope:** the same tallies and the same moved rows on every route
   (the moved-row lists compare equal). The contract identity is unchanged.
 

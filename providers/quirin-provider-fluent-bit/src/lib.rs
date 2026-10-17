@@ -82,6 +82,10 @@ pub const CONTRACTS: &[(&str, &str)] = &[
         include_str!("../contracts/fluent_bit/null_deref.qv"),
     ),
     (
+        "fluent_bit/outer.qv",
+        include_str!("../contracts/fluent_bit/outer.qv"),
+    ),
+    (
         "fluent_bit/output_flush_id.qv",
         include_str!("../contracts/fluent_bit/output_flush_id.qv"),
     ),

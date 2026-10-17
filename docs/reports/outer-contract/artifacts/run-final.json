@@ -1,12 +1,12 @@
 {
- "main3": {
-  "binary_sha256": "d7082915e4358f022520d6c0ab89f1d0f0f38a2cff3f107ee07011673e2c4e8d",
-  "head": "1474edaf174958990608d0ea273cdba7d1a2da1e",
-  "corpus_run_binary_sha256": "d7082915e4358f022520d6c0ab89f1d0f0f38a2cff3f107ee07011673e2c4e8d",
+ "main4": {
+  "binary_sha256": "82fe2ae92686325c572a58830d00fdef2de6ed9a0ce8cfbf11f0c9a1c0be00a6",
+  "head": "94aef2d3b318a77f29f54b422d54eb38902251e7",
+  "corpus_run_binary_sha256": "82fe2ae92686325c572a58830d00fdef2de6ed9a0ce8cfbf11f0c9a1c0be00a6",
   "seconds": {
-   "corpus": "940.978",
-   "system": "235.275",
-   "slice": "174.835"
+   "corpus": "943.032",
+   "system": "228.071",
+   "slice": "174.461"
   },
   "exits": {
    "corpus": "0",
@@ -14,14 +14,14 @@
    "slice": "0"
   }
  },
- "tip3": {
-  "binary_sha256": "56fa40bee7cf502560143c5bd7b85b6a0623c5fb1db36bef421630c4cd39ba6e",
-  "head": "b1bc872612e0eec4aa3cce15808a188085a0028e",
-  "corpus_run_binary_sha256": "56fa40bee7cf502560143c5bd7b85b6a0623c5fb1db36bef421630c4cd39ba6e",
+ "tip4": {
+  "binary_sha256": "f5d3eb786aac73b7f53ab20532d9a048e50134bf8bf1ba6b0e36da641d148d61",
+  "head": "2ef0ae282b2515bd3a3b4c50d4e46bb60f994cb4",
+  "corpus_run_binary_sha256": "f5d3eb786aac73b7f53ab20532d9a048e50134bf8bf1ba6b0e36da641d148d61",
   "seconds": {
-   "corpus": "950.942",
-   "system": "232.713",
-   "slice": "177.877"
+   "corpus": "942.646",
+   "system": "228.851",
+   "slice": "175.078"
   },
   "exits": {
    "corpus": "0",
