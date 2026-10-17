@@ -105,6 +105,9 @@ pub fn run_current_route_with_checkpoints(
     checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
 ) -> Result<bool, String> {
     let cross_unit_links = LinkMap::load_selected()?;
+    if cross_unit_links.is_some() && route.mode.is_contracts_only() {
+        return Err("cross-unit imports require configured home and caller units".into());
+    }
     if cross_unit_links.is_some() && checkpoints.is_some() {
         return Err("cross-unit imports are not supported by checkpoint composition".into());
     }
@@ -360,17 +363,26 @@ pub fn run_current_route_with_checkpoints(
     if let Some(links) = &cross_unit_links {
         let mut exports = Vec::new();
         let mut definitions = Vec::new();
+        let mut census_complete = true;
         for task in &tasks {
             if let (Ok(expected_source), TaskInput::Configured(entry)) =
                 (&task.expected_source, task.input)
             {
-                let (found_exports, found_definitions) =
+                let (found_exports, found_definitions, complete) =
                     audit.export_cross_unit_home(task.library, expected_source, entry, links)?;
                 exports.extend(found_exports);
                 definitions.extend(found_definitions);
+                census_complete &= complete;
+            } else {
+                census_complete = false;
             }
         }
-        let (environment, homes) = links.select(exports, definitions, audit.contracts());
+        let (environment, homes) = if census_complete {
+            links.select(exports, definitions, audit.contracts())
+        } else {
+            println!("cross-unit import phase refused: incomplete definition census");
+            (audit.contracts().clone(), Vec::new())
+        };
         if !homes.is_empty() {
             audit.set_cross_unit(environment, homes, &links.premise);
             let mut promoted = Vec::new();

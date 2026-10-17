@@ -423,6 +423,7 @@ pub fn run(
         let mut exports = Vec::new();
         let mut definitions = Vec::new();
         let requested_names = links.requested();
+        let mut census_complete = true;
         for plan in &plans {
             for entry in &plan.selected {
                 let file = entry
@@ -444,6 +445,7 @@ pub fn run(
                     input: options.input,
                 };
                 let prepared = prepare_translation_unit(&unit);
+                census_complete &= prepared.inventory().is_complete();
                 definitions.extend(
                     prepared
                         .inventory()
@@ -466,7 +468,12 @@ pub fn run(
                 }
             }
         }
-        let (imported, homes) = links.select(exports, definitions, &held);
+        let (imported, homes) = if census_complete {
+            links.select(exports, definitions, &held)
+        } else {
+            println!("cross-unit import phase refused: incomplete definition census");
+            (held, Vec::new())
+        };
         if !homes.is_empty() {
             let units = steps
                 .iter()

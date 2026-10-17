@@ -144,6 +144,7 @@ impl CurrentAudit {
         (
             Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>,
             Vec<(String, String)>,
+            bool,
         ),
         String,
     > {
@@ -168,11 +169,13 @@ impl CurrentAudit {
             input: options.input,
         };
         let prepared = prepare_translation_unit(&unit);
+        let complete = prepared.inventory().is_complete();
+        let requested_names = links.requested();
         let definitions = prepared
             .inventory()
             .definitions()
             .iter()
-            .filter(|name| links.requested().contains(*name))
+            .filter(|name| requested_names.contains(*name))
             .map(|name| (unit_key.to_string(), name.clone()))
             .collect();
         let exports = if requested.is_empty() {
@@ -191,6 +194,7 @@ impl CurrentAudit {
                 .map(|export| (unit_key.to_string(), export))
                 .collect(),
             definitions,
+            complete,
         ))
     }
 
