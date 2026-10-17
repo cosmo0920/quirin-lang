@@ -86,6 +86,7 @@ import QCore.LiteralTailActual
 import QCore.DerivedResult
 import QCore.DerivedResultInference
 import QCore.CalleeSummaryScope
+import QCore.CrossUnitSummary
 import QCore.KindedCustody
 import QCore.CastReturnEscape
 import QCore.RefusedHandOnCustody

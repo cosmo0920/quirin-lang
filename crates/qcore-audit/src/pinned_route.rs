@@ -421,6 +421,8 @@ pub fn run(
     {
         let held = crate::refuted_contracts::with_table(&contracts, &applied);
         let mut exports = Vec::new();
+        let mut definitions = Vec::new();
+        let requested_names = links.requested();
         for plan in &plans {
             for entry in &plan.selected {
                 let file = entry
@@ -430,9 +432,6 @@ pub fn run(
                     .to_string_lossy();
                 let key = format!("{}/{file}", plan.library);
                 let requested = links.names_for(&key);
-                if requested.is_empty() {
-                    continue;
-                }
                 let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
                 let options = compiler_options(entry)?;
                 let unit = C11TranslationUnit {
@@ -445,19 +444,29 @@ pub fn run(
                     input: options.input,
                 };
                 let prepared = prepare_translation_unit(&unit);
-                exports.extend(
-                    qcore_c_gateway::legacy_c::export_cross_unit_homes(
-                        &prepared,
-                        &held,
-                        &requested,
-                        &links.digest,
-                    )?
-                    .into_iter()
-                    .map(|export| (key.clone(), export)),
+                definitions.extend(
+                    prepared
+                        .inventory()
+                        .definitions()
+                        .iter()
+                        .filter(|name| requested_names.contains(*name))
+                        .map(|name| (key.clone(), name.clone())),
                 );
+                if !requested.is_empty() {
+                    exports.extend(
+                        qcore_c_gateway::legacy_c::export_cross_unit_homes(
+                            &prepared,
+                            &held,
+                            &requested,
+                            &links.digest,
+                        )?
+                        .into_iter()
+                        .map(|export| (key.clone(), export)),
+                    );
+                }
             }
         }
-        let (imported, homes) = links.select(exports, &held);
+        let (imported, homes) = links.select(exports, definitions, &held);
         if !homes.is_empty() {
             let units = steps
                 .iter()

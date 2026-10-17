@@ -140,16 +140,19 @@ impl CurrentAudit {
         expected_source: &Path,
         entry: &CompileEntry,
         links: &crate::cross_unit_links::LinkMap,
-    ) -> Result<Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>, String> {
+    ) -> Result<
+        (
+            Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>,
+            Vec<(String, String)>,
+        ),
+        String,
+    > {
         let file = expected_source
             .strip_prefix(&self.checkout)
             .map_err(|_| "cross-unit home lies outside checkout")?
             .to_string_lossy();
         let unit_key = format!("{library}/{file}");
         let requested = links.names_for(&unit_key);
-        if requested.is_empty() {
-            return Ok(Vec::new());
-        }
         let bytes = std::fs::read(&entry.file).map_err(|error| error.to_string())?;
         crate::verify_pinned_bytes(&self.checkout, &self.revision, expected_source, &bytes)
             .map_err(UnitRefusal::into_reason)?;
@@ -165,16 +168,30 @@ impl CurrentAudit {
             input: options.input,
         };
         let prepared = prepare_translation_unit(&unit);
-        let exports = qcore_c_gateway::legacy_c::export_cross_unit_homes(
-            &prepared,
-            &self.contracts,
-            &requested,
-            &links.digest,
-        )?;
-        Ok(exports
-            .into_iter()
-            .map(|export| (unit_key.to_string(), export))
-            .collect())
+        let definitions = prepared
+            .inventory()
+            .definitions()
+            .iter()
+            .filter(|name| links.requested().contains(*name))
+            .map(|name| (unit_key.to_string(), name.clone()))
+            .collect();
+        let exports = if requested.is_empty() {
+            Vec::new()
+        } else {
+            qcore_c_gateway::legacy_c::export_cross_unit_homes(
+                &prepared,
+                &self.contracts,
+                &requested,
+                &links.digest,
+            )?
+        };
+        Ok((
+            exports
+                .into_iter()
+                .map(|export| (unit_key.to_string(), export))
+                .collect(),
+            definitions,
+        ))
     }
 
     pub fn new(checkout: &Path, profile: &LoadedProfile, manifest: &Path) -> Result<Self, String> {

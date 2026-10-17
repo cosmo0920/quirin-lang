@@ -87,6 +87,7 @@ impl LinkMap {
     pub fn select(
         &self,
         exports: impl IntoIterator<Item = (String, CrossUnitExport)>,
+        definitions: impl IntoIterator<Item = (String, String)>,
         loaded: &ResourceContracts,
     ) -> (
         ResourceContracts,
@@ -99,6 +100,12 @@ impl LinkMap {
                 .or_default()
                 .push((unit, export));
         }
+        let mut defined_in: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        for (unit, name) in definitions {
+            if self.homes.contains_key(&name) {
+                defined_in.entry(name).or_default().push(unit);
+            }
+        }
         let mut environment = loaded.clone();
         let mut imports = BTreeMap::<String, ResourceFunctionContract>::new();
         let mut homes = Vec::new();
@@ -107,7 +114,12 @@ impl LinkMap {
                 continue;
             };
             if let [(unit, candidate)] = candidates.as_slice() {
-                if unit == claimed_unit && !loaded.functions().contains_key(name) {
+                if unit == claimed_unit
+                    && defined_in
+                        .get(name)
+                        .is_some_and(|rows| rows == &[unit.clone()])
+                    && !loaded.functions().contains_key(name)
+                {
                     imports.insert(name.clone(), candidate.contract.clone());
                     homes.push(candidate.home.clone());
                 }
@@ -116,5 +128,54 @@ impl LinkMap {
         environment.set_link_resolution_sha256(Some(self.digest.clone()));
         environment.set_inferred_imports(imports);
         (environment, homes)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use qcore_c_gateway::legacy_c::{
+        C11TranslationUnit, LegacyFunctionScope, export_cross_unit_homes, prepare_translation_unit,
+    };
+
+    #[test]
+    fn selected_home_requires_complete_unique_definition_census() {
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        let base = ResourceContracts::default();
+        let map = LinkMap {
+            digest: "a".repeat(64),
+            premise: "All calls to callee resolve to this unit's external definition".into(),
+            homes: BTreeMap::from([("callee".into(), "lib/home.c".into())]),
+        };
+        let prepared = prepare_translation_unit(&C11TranslationUnit {
+            source: "void callee(void) { return; }\n",
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        });
+        let export = export_cross_unit_homes(&prepared, &base, &map.requested(), &map.digest)
+            .expect("export")
+            .pop()
+            .expect("Safe home");
+        let found = vec![("lib/home.c".into(), export.clone())];
+        let (environment, homes) = map.select(
+            found.clone(),
+            [("lib/home.c".into(), "callee".into())],
+            &base,
+        );
+        assert_eq!(homes.len(), 1);
+        assert!(environment.inferred_imports().contains_key("callee"));
+        let (_, ambiguous) = map.select(
+            found.clone(),
+            [
+                ("lib/home.c".into(), "callee".into()),
+                ("lib/other.c".into(), "callee".into()),
+            ],
+            &base,
+        );
+        assert!(ambiguous.is_empty());
+        let (_, missing) = map.select(found, [], &base);
+        assert!(missing.is_empty());
     }
 }

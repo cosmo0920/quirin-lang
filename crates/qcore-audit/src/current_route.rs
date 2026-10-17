@@ -359,19 +359,18 @@ pub fn run_current_route_with_checkpoints(
     let mut published = phases.results;
     if let Some(links) = &cross_unit_links {
         let mut exports = Vec::new();
+        let mut definitions = Vec::new();
         for task in &tasks {
             if let (Ok(expected_source), TaskInput::Configured(entry)) =
                 (&task.expected_source, task.input)
             {
-                exports.extend(audit.export_cross_unit_home(
-                    task.library,
-                    expected_source,
-                    entry,
-                    links,
-                )?);
+                let (found_exports, found_definitions) =
+                    audit.export_cross_unit_home(task.library, expected_source, entry, links)?;
+                exports.extend(found_exports);
+                definitions.extend(found_definitions);
             }
         }
-        let (environment, homes) = links.select(exports, audit.contracts());
+        let (environment, homes) = links.select(exports, definitions, audit.contracts());
         if !homes.is_empty() {
             audit.set_cross_unit(environment, homes, &links.premise);
             let mut promoted = Vec::new();
