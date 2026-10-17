@@ -65,6 +65,18 @@ audit `proof/AuditFunctionPointerDeclarators.lean`):
 function pointers keeps the access refusal; two rows state the base
 behaviour they were measured against).
 
+**Pinned tests updated deliberately.** Five route-G test files used a
+function-pointer declarator as their "the lexical reader cannot read this"
+device: `typed_root_declarations.rs` (23 sites) and
+`cg26_tail_residual_actuals.rs` (3) with a formal `int (*cb)(int)`, and the
+certificate-substitution tests of `o04_arms.rs` (3),
+`o04_constructor_caller.rs` (2) and `borrowed_field_actuals.rs` (1) with a
+member `void (*hook)(int);`. Gate g1 failed them (10 tests). Each now uses an
+array of function pointers (`int (*cb[1])(int)`, `void (*hook[1])(int);`),
+which the reader still refuses, so every test keeps its subject: the AST
+reader answering where the lexical one answers nothing, and a certificate
+refused when a record body becomes unreadable.
+
 ## 2. Census
 
 Scope: exactly the ledger entry's chain list (the lifetime card's
