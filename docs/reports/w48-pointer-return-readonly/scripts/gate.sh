@@ -26,9 +26,10 @@ step 03-clippy cargo clippy --all-targets -- -D warnings
 step 04-probe cargo run -p qcore-compiler --example reevaluation_probe
 step 05-followup cargo run -p qcore-compiler --example reevaluation_followup
 step 06-lean python3 scripts/check_lean_audits.py
-step 07-python python3 -m unittest discover -s scripts/tests
-step 08-index python3 scripts/build_docs_index.py --check
-step 09-clang clang --version
+step 07-matrix python3 docs/reports/remaining-d02/build_matrix.py .
+step 08-python python3 -m unittest discover -s scripts/tests
+step 09-index python3 scripts/build_docs_index.py --check
+step 10-clang clang --version
 python3 - "$out" <<'PY'
 from pathlib import Path
 import sys
