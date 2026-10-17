@@ -1705,7 +1705,7 @@ fn is_written_at(body: &[&str], index: usize) -> bool {
 /// since a contracted call can release, consume or reallocate through it. A
 /// formal the projection already protects is bound at entry. This is a syntactic
 /// over-approximation on purpose: naming too many bases only rejects more.
-fn bound_names(body: &[&str], protected_formals: &BTreeSet<String>) -> BTreeSet<String> {
+pub(crate) fn bound_names(body: &[&str], protected_formals: &BTreeSet<String>) -> BTreeSet<String> {
     // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): a static-duration
     // declaration's initialization is no write of the body.
     let masked = crate::storage_duration::mask_static_declarators(body);

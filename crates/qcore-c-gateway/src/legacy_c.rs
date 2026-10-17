@@ -3703,6 +3703,7 @@ fn build_function_cfg_unscoped(
         condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
+        readonly_list_count_certified: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),
         call_graph_components: std::cell::OnceCell::new(),
     };
@@ -4401,6 +4402,8 @@ struct Parser<'a> {
     typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,
     /// Card W47-TYPED-ROOT-DECLARATION-READER: the AST reader's answers.
     typed_root_declarations: std::cell::OnceCell<crate::typed_root_declarations::RootDeclarations>,
+    /// One exact header-body check per analysed function's translation unit.
+    readonly_list_count_certified: std::cell::OnceCell<bool>,
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): the callees the
     /// environment declares `resource_no_return()` for, read on first use.
     declared_no_return: std::cell::OnceCell<BTreeSet<String>>,

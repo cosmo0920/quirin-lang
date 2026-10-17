@@ -1,0 +1,2187 @@
+[
+ {
+  "family": "unsupported: indirect memory access is outside the resource projection",
+  "leaves": 9957,
+  "functions": 2352,
+  "direct": 244,
+  "bodies": 251,
+  "same_unit": 263,
+  "cross_unit": 282,
+  "cross_unit_rounds": {
+   "0": 260,
+   "1": 21,
+   "2": 1
+  },
+  "cross_unit_freed": [
+   "cJSON.c::cJSON_New_Item@0",
+   "cJSON.c::cJSON_free@0",
+   "cJSON.c::create_reference@0",
+   "cJSON.c::print_string@0",
+   "cJSON.c::suffix_object@0",
+   "chunkio.c::cio_set_log_callback@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cio_file_unix.c::cio_file_native_open@0",
+   "cio_stream.c::get_stream_path@0",
+   "cmt_cat.c::cat_histogram_values@0",
+   "cmt_cat.c::cat_summary_values@0",
+   "cmt_decode_msgpack.c::create_counter_instance@0",
+   "cmt_decode_msgpack.c::create_exp_histogram_instance@0",
+   "cmt_decode_msgpack.c::create_gauge_instance@0",
+   "cmt_decode_msgpack.c::create_histogram_instance@0",
+   "cmt_decode_msgpack.c::create_metric_instance@1",
+   "cmt_decode_msgpack.c::create_summary_instance@0",
+   "cmt_decode_msgpack.c::create_untyped_instance@0",
+   "cmt_decode_opentelemetry.c::decode_metric_unit@0",
+   "cmt_encode_prometheus.c::append_metric_value@0",
+   "cmt_encode_splunk_hec.c::format_context_common@0",
+   "cmt_filter.c::compare_fqname@0",
+   "cmt_filter.c::compare_label_keys@0",
+   "cmt_map.c::metric_release_storage@0",
+   "cmt_metric.c::cmt_metric_exp_hist_get_snapshot@0",
+   "cmt_metric.c::cmt_metric_exp_hist_snapshot_destroy@0",
+   "cmt_opts.c::cmt_opts_exit@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_attributes@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_events@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_name@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_parent_span_id@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_span_id@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_trace_id@0",
+   "ctr_encode_opentelemetry.c::otel_span_set_trace_state@0",
+   "ctr_id.c::ctr_id_create@1",
+   "ctr_id.c::ctr_id_set@0",
+   "ctr_link.c::ctr_link_set_attributes@0",
+   "ctr_link.c::ctr_link_set_trace_state@0",
+   "ctr_resource.c::ctr_resource_span_set_schema_url@0",
+   "ctr_scope.c::ctr_instrumentation_scope_create@0",
+   "ctr_scope.c::ctr_scope_span_set_schema_url@0",
+   "ctr_span.c::ctr_span_set_schema_url@0",
+   "ctr_span.c::ctr_span_set_trace_state@0",
+   "lz4.c::LZ4_prepareTable@0",
+   "lz4.c::LZ4_renormDictT@0",
+   "lz4.c::LZ4_resetStream_fast@0",
+   "lz4frame.c::LZ4F_freeCDict@0",
+   "lz4frame.c::LZ4F_freeCompressionContext@0",
+   "lz4frame.c::LZ4F_freeDecompressionContext@0",
+   "lz4frame.c::LZ4F_localSaveDict@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4HC_clearTables@0",
+   "lz4hc.c::LZ4_attach_HC_dictionary@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_continue@0",
+   "lz4hc.c::LZ4_compressHC2_limitedOutput_continue@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_core/mk_iov.c::mk_iov_consume@0",
+   "mk_core/mk_memory.c::mk_ptr_create@0",
+   "mk_core/mk_memory.c::mk_ptr_free@0",
+   "mk_core/mk_memory.c::mk_ptr_set@0",
+   "mk_server/mk_clock.c::mk_clock_headers_preset@0",
+   "mk_server/mk_http_parser.c::cb_copy_chunk@0",
+   "mk_server/mk_http_parser.c::request_set@0",
+   "mk_server/mk_lib.c::free_chunk_header@0",
+   "mk_server/mk_lib.c::mk_vhost_set_property@0",
+   "mk_server/mk_mimetype.c::mk_mimetype_find@0",
+   "mk_server/mk_stream.c::channel_write_in_file@0",
+   "mk_server/mk_utils.c::mk_buffer_cat@0",
+   "mk_server/mk_vhost.c::mk_vhost_map_handlers@0",
+   "nanopb/pb_common.c::pb_field_iter_begin@0",
+   "nanopb/pb_common.c::pb_field_iter_begin_const@1",
+   "nanopb/pb_common.c::pb_field_iter_begin_extension@1",
+   "nanopb/pb_common.c::pb_field_iter_begin_extension_const@2",
+   "nanopb/pb_decode.c::buf_read@0",
+   "nanopb/pb_decode.c::pb_dec_bool@0",
+   "nanopb/pb_encode.c::buf_write@0",
+   "nanopb/pb_encode.c::pb_enc_fixed_length_bytes@0",
+   "nanopb/pb_encode.c::pb_ostream_from_buffer@0",
+   "rdbase64.c::rd_base64_encode@0",
+   "rdbuf.c::extra_alloc@0",
+   "rdbuf.c::rd_buf_init@0",
+   "rdhdrhistogram.c::rd_hdr_iter_next@0",
+   "rdkafka.c::rd_kafka_log_print@0",
+   "rdkafka.c::rd_kafka_poll@0",
+   "rdkafka.c::rd_kafka_queue_poll@0",
+   "rdkafka.c::rd_kafka_queue_poll_callback@0",
+   "rdkafka.c::rd_kafka_share_ack_commit_cb_register_op@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka.c::rd_kafka_simple_consumer_add@0",
+   "rdkafka.c::rd_kafka_stats_emit_broker_reqs@0",
+   "rdkafka.c::rd_kafka_toppar_dump@0",
+   "rdkafka_admin.c::rd_kafka_AclBinding_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_init@1",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_broker@0",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_opaque@0",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_operation_timeout@0",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_request_timeout@0",
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_validate_only@0",
+   "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_response_set_error@0",
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_copy@0",
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_list_copy@1",
+   "rdkafka_admin.c::rd_kafka_ConfigResource_add_ConfigEntry@0",
+   "rdkafka_admin.c::rd_kafka_ConfigResource_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_member@0",
+   "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_DeleteGroup_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_DeleteTopic_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_ElectLeaders_result_result@0",
+   "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_MemberDescription_copy@0",
+   "rdkafka_admin.c::rd_kafka_MemberDescription_list_copy@1",
+   "rdkafka_admin.c::rd_kafka_NewPartitions_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_NewTopic_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_UserScramCredentailsDescription_set_error@0",
+   "rdkafka_admin.c::rd_kafka_UserScramCredentialAlteration_destroy_array@0",
+   "rdkafka_admin.c::rd_kafka_admin_request_op_result_cb_set@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_set_err0@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_set_err@1",
+   "rdkafka_assignment.c::rd_kafka_assignment_destroy@0",
+   "rdkafka_assignment.c::rd_kafka_assignment_init@0",
+   "rdkafka_assignor.c::rd_kafka_assignor_find@0",
+   "rdkafka_assignor.c::rd_kafka_assignors_term@0",
+   "rdkafka_assignor.c::ut_populate_internal_broker_metadata@0",
+   "rdkafka_assignor.c::ut_set_owned@0",
+   "rdkafka_aux.c::rd_kafka_group_result_copy@0",
+   "rdkafka_aux.c::rd_kafka_group_result_copy_opaque@1",
+   "rdkafka_aux.c::rd_kafka_topic_partition_result_destroy_array@0",
+   "rdkafka_broker.c::rd_kafka_broker_monitor_op_cb@0",
+   "rdkafka_broker.c::rd_kafka_broker_set_logname@0",
+   "rdkafka_broker.c::rd_kafka_broker_update_reconnect_backoff@0",
+   "rdkafka_broker.c::rd_kafka_broker_weight_usable@0",
+   "rdkafka_broker.c::rd_kafka_brokers_wait_state_change_async@0",
+   "rdkafka_buf.c::rd_kafka_buf_set_maker@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_consumer_is_new_assignment_different@1",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_consumer_reset@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_group_leader_reset@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_heartbeat@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_set_join_state@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_set_member_id@0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_start_max_poll_interval_timer@0",
+   "rdkafka_conf.c::rd_kafka_conf_flags2str@0",
+   "rdkafka_conf.c::rd_kafka_confval_disable@0",
+   "rdkafka_conf.c::rd_kafka_confval_init_int@0",
+   "rdkafka_conf.c::rd_kafka_confval_init_ptr@0",
+   "rdkafka_conf.c::rd_kafka_sw_str_sanitize_inplace@0",
+   "rdkafka_fetcher.c::rd_kafka_broker_session_update_added_partitions@0",
+   "rdkafka_fetcher.c::rd_kafka_broker_session_update_removed_partitions@0",
+   "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_destroy@0",
+   "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_set_topic@0",
+   "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_set_topic_cnt@0",
+   "rdkafka_idempotence.c::rd_kafka_idemp_drain_toppar@0",
+   "rdkafka_idempotence.c::rd_kafka_idemp_pid_timer_restart@0",
+   "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_destroy@0",
+   "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_dup@0",
+   "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_set@0",
+   "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_new@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_acknowledgement@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_broker_state_change@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_commit@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_consume@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_destroy@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_request_sent@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_response_received@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_send@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_thread_exit@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_thread_start@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptor_failed@0",
+   "rdkafka_interceptor.c::rd_kafka_interceptors_destroy@0",
+   "rdkafka_metadata.c::rd_kafka_metadata_partition_clear@0",
+   "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_dump@0",
+   "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_entry_by_id_cmp@0",
+   "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_wait_state_change_async@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_add@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_decommission@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_remove_from_metadata@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_set_down@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_set_rack@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_set_rtt@0",
+   "rdkafka_mock.c::rd_kafka_mock_broker_set_up@0",
+   "rdkafka_mock.c::rd_kafka_mock_clear_requests@0",
+   "rdkafka_mock.c::rd_kafka_mock_coordinator_set@0",
+   "rdkafka_mock.c::rd_kafka_mock_error_stack_find@0",
+   "rdkafka_mock.c::rd_kafka_mock_error_stack_next@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_delete_records@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_next_request_error@1",
+   "rdkafka_mock.c::rd_kafka_mock_partition_push_leader_response@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_set_follower@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_set_follower_wmarks@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_set_leader0@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_set_leader@0",
+   "rdkafka_mock.c::rd_kafka_mock_set_apiversion@0",
+   "rdkafka_mock.c::rd_kafka_mock_start_request_tracking@0",
+   "rdkafka_mock.c::rd_kafka_mock_stop_request_tracking@0",
+   "rdkafka_mock.c::rd_kafka_mock_telemetry_set_push_interval@0",
+   "rdkafka_mock.c::rd_kafka_mock_telemetry_set_requested_metrics@0",
+   "rdkafka_mock.c::rd_kafka_mock_topic_create@0",
+   "rdkafka_mock.c::rd_kafka_mock_topic_delete@0",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_member_assignment_set@0",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_rebalance_timer_restart@0",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_set_state@0",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_current_assignment_set@0",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_leave_static@1",
+   "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_returned_assignment_set@0",
+   "rdkafka_mock_handlers.c::rd_kafka_mock_msgset_est_record_size@0",
+   "rdkafka_mock_sharegrp.c::rd_kafka_mock_sgrp_record_release@0",
+   "rdkafka_msg.c::rd_kafka_msgq_enq_sorted@0",
+   "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_compress_gzip@0",
+   "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_compress_lz4@0",
+   "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_compress_snappy@0",
+   "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_compress_zstd@0",
+   "rdkafka_offset.c::rd_kafka_offset_file_close@0",
+   "rdkafka_offset.c::rd_kafka_offset_reset_op_cb@0",
+   "rdkafka_op.c::rd_kafka_op_call@0",
+   "rdkafka_op.c::rd_kafka_op_new_cb@0",
+   "rdkafka_op.c::rd_kafka_op_print@0",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_add_list@1",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_cmp@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_grow@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_init@1",
+   "rdkafka_partition.c::rd_kafka_topic_partition_set_metadata_from_rktp_stored@0",
+   "rdkafka_partition.c::rd_kafka_toppar_insert_msgq@0",
+   "rdkafka_partition.c::rd_kafka_toppar_reset_base_msgid@0",
+   "rdkafka_queue.c::rd_kafka_q_pop_serve_maybe_consume@0",
+   "rdkafka_queue.c::rd_kafka_q_serve_maybe_consume@0",
+   "rdkafka_queue.c::rd_kafka_queue_forward@0",
+   "rdkafka_queue.c::rd_kafka_queue_get_consumer@0",
+   "rdkafka_queue.c::rd_kafka_queue_get_main@0",
+   "rdkafka_queue.c::rd_kafka_queue_get_partition@0",
+   "rdkafka_queue.c::rd_kafka_queue_length@0",
+   "rdkafka_request.c::rd_kafka_ListOffsetRequest_parameters_make@0",
+   "rdkafka_request.c::rd_kafkap_Produce_reply_tags_destroy@0",
+   "rdkafka_request.c::rd_kafkap_leader_discovery_set_topic_cnt@0",
+   "rdkafka_request.c::rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers@0",
+   "rdkafka_sasl.c::rd_kafka_queue_get_sasl@0",
+   "rdkafka_sasl.c::rd_kafka_share_queue_get_sasl@1",
+   "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_init@0",
+   "rdkafka_sasl_oauthbearer.c::do_unittest_config_empty_value_should_fail@1",
+   "rdkafka_sasl_oauthbearer.c::do_unittest_config_value_with_quote_should_fail@1",
+   "rdkafka_sasl_oauthbearer.c::do_unittest_illegal_extension_keys_should_fail@0",
+   "rdkafka_sasl_oauthbearer.c::rd_kafka_oauthbearer_has_token@0",
+   "rdkafka_sasl_oauthbearer.c::rd_kafka_sasl_oauthbearer_token_free@0",
+   "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_H@0",
+   "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_conf_validate@0",
+   "rdkafka_sticky_assignor.c::ConsumerPair_cmp@0",
+   "rdkafka_sticky_assignor.c::PartitionMovements_init@1",
+   "rdkafka_sticky_assignor.c::sort_by_map_elem_val_toppar_list_cnt@0",
+   "rdkafka_sticky_assignor.c::ut_testConflictingPreviousAssignments@0",
+   "rdkafka_telemetry_decode.c::clear_unit_test_data@0",
+   "rdkafka_telemetry_decode.c::unit_test_telemetry_decoded_int64@0",
+   "rdkafka_telemetry_encode.c::calculate_connection_creation_rate@0",
+   "rdkafka_timer.c::rd_kafka_timer_schedule@0",
+   "rdkafka_timer.c::rd_kafka_timer_unschedule@0",
+   "rdkafka_topic.c::rd_kafka_topic_cmp_rkt@0",
+   "rdkafka_topic.c::rd_kafka_topic_set_state@0",
+   "rdkafka_transport.c::rd_kafka_transport_poll@0",
+   "rdkafka_transport.c::rd_kafka_transport_request_sent@0",
+   "rdkafka_txnmgr.c::rd_kafka_txn_coord_timer_start@0",
+   "rdkafka_txnmgr.c::rd_kafka_txn_schedule_register_partitions@0",
+   "rdkafka_txnmgr.c::rd_kafka_txns_init@0",
+   "rdlist.c::rd_list_cmp@0",
+   "rdlist.c::rd_list_dump@0",
+   "rdlist.c::rd_list_grow@0",
+   "rdlist.c::rd_list_init@1",
+   "rdmap.c::rd_map_alloc_buckets@0",
+   "rdmap.c::rd_map_init@0",
+   "rdmap.c::rd_map_iter_begin@0",
+   "rdstring.c::rd_strtup_dup@0",
+   "rdunittest_fetcher.c::ut_create_share_fetch_response_rko@0",
+   "rdxxhash.c::XXH32_digest@1",
+   "rdxxhash.c::XXH32_digest_endian@0",
+   "rdxxhash.c::XXH64_digest@1",
+   "rdxxhash.c::XXH64_digest_endian@0",
+   "snappy.c::init_snappy_decompressor@0",
+   "snappy.c::rd_kafka_snappy_free_env@0",
+   "snappy.c::rd_kafka_snappy_init_env@0",
+   "snappy.c::writer_set_expected_length@0"
+  ]
+ },
+ {
+  "family": "unknown_alias: unresolved resource identity `X`",
+  "leaves": 11162,
+  "functions": 2318,
+  "direct": 58,
+  "bodies": 184,
+  "same_unit": 62,
+  "cross_unit": 101,
+  "cross_unit_rounds": {
+   "0": 92,
+   "1": 9
+  },
+  "cross_unit_freed": [
+   "cJSON.c::cJSON_GetArrayItem@1",
+   "cJSON.c::cJSON_GetArraySize@0",
+   "cJSON.c::get_array_item@0",
+   "cio_chunk.c::cio_chunk_close_stream@0",
+   "cio_chunk.c::cio_chunk_get_content_size@0",
+   "cio_chunk.c::cio_chunk_get_real_size@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cio_chunk.c::cio_chunk_is_file@0",
+   "cio_chunk.c::cio_chunk_tx_begin@0",
+   "cio_chunk.c::cio_chunk_tx_rollback@0",
+   "cio_chunk.c::cio_chunk_unlock@0",
+   "cio_file.c::format_acl_error_message@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_count@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_negative_bucket@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_positive_bucket@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_sum@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_sum_set@0",
+   "cmt_decode_msgpack.c::unpack_exp_histogram_zero_count@0",
+   "cmt_decode_msgpack.c::unpack_histogram_bucket@0",
+   "cmt_decode_msgpack.c::unpack_histogram_count@0",
+   "cmt_decode_msgpack.c::unpack_metric_hash@0",
+   "cmt_decode_msgpack.c::unpack_metric_value_type@0",
+   "cmt_decode_msgpack.c::unpack_metric_value_uint64@0",
+   "cmt_decode_msgpack.c::unpack_summary_count@0",
+   "cmt_decode_msgpack.c::unpack_summary_quantile@0",
+   "cmt_decode_msgpack.c::unpack_summary_quantiles_set@0",
+   "cmt_decode_msgpack.c::unpack_summary_sum@0",
+   "cmt_encode_opentelemetry.c::get_context_arena@0",
+   "cmt_encode_opentelemetry_batch.c::request_data_point_count@0",
+   "cmt_encode_prometheus.c::metric_escape@0",
+   "cmt_encode_text.c::append_summary_metric_value@0",
+   "cmt_filter.c::metrics_check_label_value_existence@0",
+   "ctr_decode_msgpack.c::unpack_event_dropped_attributes_count@0",
+   "ctr_decode_msgpack.c::unpack_event_time_unix_nano@0",
+   "ctr_decode_msgpack.c::unpack_instrumentation_scope_dropped_attribute_count@0",
+   "ctr_decode_msgpack.c::unpack_link_dropped_attributes_count@0",
+   "ctr_decode_msgpack.c::unpack_resource_dropped_attributes_count@0",
+   "ctr_decode_msgpack.c::unpack_span_dropped_attributes_count@0",
+   "ctr_decode_msgpack.c::unpack_span_dropped_events_count@0",
+   "ctr_decode_msgpack.c::unpack_span_dropped_links_count@0",
+   "ctr_decode_msgpack.c::unpack_span_end_time_unix_nano@0",
+   "ctr_decode_msgpack.c::unpack_span_kind@0",
+   "ctr_decode_msgpack.c::unpack_span_start_time_unix_nano@0",
+   "ctr_decode_msgpack.c::unpack_span_status_code@0",
+   "flb_input_chunk.c::flb_input_chunk_set_up_down@0",
+   "lz4frame.c::LZ4F_optimalBSID@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_core/mk_rconf.c::mk_rconf_section_entry_add@0",
+   "mk_server/mk_config.c::mk_config_print_error_msg@0",
+   "mk_server/mk_fifo.c::mk_fifo_queue_destroy_all@0",
+   "mk_server/mk_fifo.c::mk_fifo_queue_id_destroy@0",
+   "mk_server/mk_net.c::net_plain_close@0",
+   "mk_server/mk_utils.c::mk_utils_gen_hash@0",
+   "mk_server/mk_vhost.c::mk_vhost_fdt_chain_lookup@0",
+   "rdbuf.c::rd_buf_get_segment_at_offset@0",
+   "rddl.c::rd_dl_close@0",
+   "rdkafka.c::rd_kafka_global_cnt_get@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_admin.c::rd_kafka_AclBinding_destroy@0",
+   "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_response_destroy@0",
+   "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_response_destroy_free@1",
+   "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_destroy@0",
+   "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_destroy_free@1",
+   "rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_destroy@0",
+   "rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_destroy_free@1",
+   "rdkafka_assignor.c::rd_kafka_assignor_cmp_str@0",
+   "rdkafka_assignor.c::rd_kafka_group_member_cmp@0",
+   "rdkafka_aux.c::rd_kafka_acl_result_destroy@0",
+   "rdkafka_aux.c::rd_kafka_acl_result_free@1",
+   "rdkafka_aux.c::rd_kafka_topic_partition_result_destroy@0",
+   "rdkafka_cert.c::rd_kafka_conf_ssl_passwd_cb@0",
+   "rdkafka_conf.c::rd_kafka_conf_prop_find@0",
+   "rdkafka_fetcher.c::rd_kafka_op_offset_cmp@0",
+   "rdkafka_offset.c::mk_esc_filename@0",
+   "rdkafka_op.c::rd_kafka_op_err_destroy@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_cmp@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_cmp_opaque@1",
+   "rdkafka_partition.c::rd_kafka_topic_partition_cmp_topic@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_get_current_leader_epoch@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_get_leader_epoch@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_not_regex@0",
+   "rdkafka_partition.c::rd_kafka_toppar_get0@0",
+   "rdkafka_range_assignor.c::rd_kafka_member_assigned_partitions_pair_cmp@0",
+   "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_ready@0",
+   "rdkafka_sasl_oauthbearer.c::check_oauthbearer_extension_value@0",
+   "rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_destroy@0",
+   "rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_list_destroy@1",
+   "rdkafka_timer.c::rd_kafka_timers_next@0",
+   "rdkafka_topic.c::rd_kafka_topic_info_topic_cmp@0",
+   "rdmap.c::rd_map_str_hash@0",
+   "snappy.c::append@0",
+   "snappy.c::exit_snappy_decompressor@1",
+   "snappy.c::get_hash_table@0",
+   "snappy.c::read_uncompressed_length@1",
+   "snappy.c::skip@0",
+   "snappy.c::varint_encode32@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in return expression",
+  "leaves": 213,
+  "functions": 164,
+  "direct": 55,
+  "bodies": 30,
+  "same_unit": 59,
+  "cross_unit": 68,
+  "cross_unit_rounds": {
+   "0": 63,
+   "1": 5
+  },
+  "cross_unit_freed": [
+   "cJSON.c::cJSON_GetErrorPtr@0",
+   "cJSON.c::cJSON_GetStringValue@0",
+   "cJSON.c::cJSON_malloc@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cmt_encode_opentelemetry.c::fetch_array_kvlist_entry@0",
+   "lz4.c::LZ4_NbCommonBytes@0",
+   "lz4.c::LZ4_slideInputBuffer@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_plugin.c::mk_plugin_time_now_human@0",
+   "nanopb/pb_decode.c::decode_pointer_field@0",
+   "rdhdrhistogram.c::rd_hdr_getCountAtIndex@0",
+   "rdkafka.c::rd_kafka_errno@0",
+   "rdkafka.c::rd_kafka_name@0",
+   "rdkafka.c::rd_kafka_outq_len@0",
+   "rdkafka.c::rd_kafka_path_is_dir@0",
+   "rdkafka.c::rd_kafka_purge_flags2str@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_responses@0",
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_name@0",
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_synonyms@0",
+   "rdkafka_admin.c::rd_kafka_ConfigResource_configs@0",
+   "rdkafka_admin.c::rd_kafka_CreateAcls_result_acls@1",
+   "rdkafka_admin.c::rd_kafka_DeleteAcls_result_responses@1",
+   "rdkafka_admin.c::rd_kafka_DescribeAcls_result_acls@1",
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_cluster_id@0",
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_controller@0",
+   "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials_result_descriptions@0",
+   "rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions@0",
+   "rdkafka_admin.c::rd_kafka_ElectLeaders_result_partitions@1",
+   "rdkafka_admin.c::rd_kafka_ListOffsets_result_infos@0",
+   "rdkafka_admin.c::rd_kafka_MemberDescription_assignment@0",
+   "rdkafka_admin.c::rd_kafka_TopicDescription_topic_id@0",
+   "rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_scramcredentialinfo@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_groups@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_resources@0",
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_topics@0",
+   "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least@0",
+   "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least_no_lock@0",
+   "rdkafka_broker.c::rd_kafka_broker_destroy_error@0",
+   "rdkafka_conf.c::rd_kafka_conf@0",
+   "rdkafka_conf.c::rd_kafka_conf_validate_single@0",
+   "rdkafka_conf.c::rd_kafka_confval_get_ptr@0",
+   "rdkafka_conf.c::rd_kafka_confval_get_str@0",
+   "rdkafka_error.c::rd_kafka_error_name@0",
+   "rdkafka_error.c::rd_kafka_error_string@0",
+   "rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos@0",
+   "rdkafka_metadata.c::rd_kafka_has_reliable_leader_epochs@1",
+   "rdkafka_mock.c::rd_kafka_mock_partition_find@0",
+   "rdkafka_mock.c::rd_kafka_mock_partition_next_leader_response@0",
+   "rdkafka_msg.c::rd_kafka_message_latency@0",
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_consistent@0",
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a@0",
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_murmur2@0",
+   "rdkafka_request.c::rd_kafka_AclBinding_request_size@0",
+   "rdkafka_request.c::rd_kafka_actions2str@0",
+   "rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_offsets@0",
+   "rdkafka_telemetry_encode.c::get_member_id@0",
+   "rdlist.c::rd_list_elem@0",
+   "rdmap.c::rd_map_elem_cmp@0",
+   "snappy.c::log2_floor@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in branch condition",
+  "leaves": 3429,
+  "functions": 1217,
+  "direct": 49,
+  "bodies": 51,
+  "same_unit": 51,
+  "cross_unit": 61,
+  "cross_unit_rounds": {
+   "0": 57,
+   "1": 3,
+   "2": 1
+  },
+  "cross_unit_freed": [
+   "cJSON.c::skip_utf8_bom@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cio_file.c::cio_file_is_up@0",
+   "cio_file_unix.c::cio_file_native_delete@0",
+   "cmt_decode_statsd.c::cmt_get_statsd_type@0",
+   "cmt_encode_influx.c::line_protocol_escape@0",
+   "cmt_encode_opentelemetry.c::compute_flat_scope_index@0",
+   "cmt_summary.c::cmt_summary_quantile_get_value@0",
+   "cmt_summary.c::cmt_summary_quantile_set@0",
+   "flb_input_chunk.c::flb_input_chunk_has_other_routes@0",
+   "flb_input_chunk.c::flb_input_chunk_prefers_physical_delete@0",
+   "flb_input_chunk.c::flb_input_chunk_safe_delete@0",
+   "lz4.c::LZ4_hashPosition@0",
+   "lz4.c::LZ4_initStream@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_fifo.c::mk_fifo_send@1",
+   "mk_server/mk_fifo.c::msg_write@0",
+   "mk_server/mk_http_parser.c::header_cmp@0",
+   "mk_server/mk_lib.c::mk_mq_send@2",
+   "mk_server/mk_net.c::net_plain_send_file@0",
+   "mk_server/mk_socket.c::mk_socket_set_nonblocking@0",
+   "mk_server/mk_user.c::mk_user_undo_uidgid@0",
+   "mk_server/mk_utils.c::mk_utils_gmt2utime@0",
+   "nanopb/pb_decode.c::pb_decode_svarint@0",
+   "nanopb/pb_decode.c::pb_skip_varint@0",
+   "nanopb/pb_encode.c::pb_get_encoded_size@0",
+   "rdkafka.c::rd_kafka_log_syslog@0",
+   "rdkafka.c::rd_kafka_set_logger@0",
+   "rdkafka.c::rd_kafka_set_thread_sysname@1",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka.c::rd_kafka_test_fatal_error@0",
+   "rdkafka_conf.c::rd_kafka_conf_finalize_oauthbearer_oidc_grant_type@0",
+   "rdkafka_feature.c::rd_kafka_ApiVersion_is_queryable@0",
+   "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_parse@0",
+   "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_partition_parse@0",
+   "rdkafka_mock.c::rd_kafka_mock_cluster_io_clear_events@0",
+   "rdkafka_mock.c::rd_kafka_mock_cluster_io_set_event@0",
+   "rdkafka_mock.c::rd_kafka_mock_cluster_io_set_events@0",
+   "rdkafka_mock.c::rd_kafka_mock_connection_set_blocking@1",
+   "rdkafka_mock_cgrp.c::validate_subscription@0",
+   "rdkafka_msg.c::rd_kafka_message_leader_epoch@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_set_offset@0",
+   "rdkafka_request.c::rd_kafkap_Produce_reply_tags_parse@0",
+   "rdkafka_request.c::rd_kafkap_Produce_reply_tags_partition_parse@0",
+   "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_assertion_get_algo_label@0",
+   "rdkafka_sticky_assignor.c::partitionCanParticipateInReassignment@0",
+   "rdkafka_telemetry.c::rd_kafka_filter_broker_by_GetTelemetrySubscription@0",
+   "rdkafka_telemetry_decode.c::unit_test_telemetry_decode_error@0",
+   "rdkafka_topic.c::rd_kafka_topic_info_cmp@0",
+   "rdkafka_txnmgr.c::rd_kafka_txn_state_transition_is_valid@0",
+   "rdlist.c::rd_list_get_int32@0",
+   "rdlist.c::rd_list_is_sorted@0",
+   "rdlist.c::rd_list_set_int32@0",
+   "rdrand.c::rd_rand_bytes@0",
+   "snappy.c::rd_kafka_snappy_uncompressed_length@0",
+   "tinycthread_extra.c::thrd_setname@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: callback `X` (from `X`) has no contract in force (callback-uncontracted)",
+  "leaves": 51,
+  "functions": 49,
+  "direct": 18,
+  "bodies": 3,
+  "same_unit": 18,
+  "cross_unit": 26,
+  "cross_unit_rounds": {
+   "0": 26
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cmt_decode_msgpack.c::unpack_basic_type_values@0",
+   "cmt_decode_msgpack.c::unpack_context@0",
+   "cmt_decode_msgpack.c::unpack_context_header@0",
+   "cmt_decode_msgpack.c::unpack_context_metrics@0",
+   "cmt_decode_msgpack.c::unpack_context_processing_section@0",
+   "cmt_decode_msgpack.c::unpack_meta_labels@0",
+   "cmt_decode_msgpack.c::unpack_meta_static_labels@0",
+   "cmt_decode_msgpack.c::unpack_metric_labels@0",
+   "ctr_decode_msgpack.c::unpack_context@0",
+   "ctr_decode_msgpack.c::unpack_resource@0",
+   "ctr_decode_msgpack.c::unpack_resource_span_scope_spans@0",
+   "ctr_decode_msgpack.c::unpack_resource_spans@0",
+   "ctr_decode_msgpack.c::unpack_scope_span_spans@0",
+   "ctr_decode_msgpack.c::unpack_span_events@0",
+   "ctr_decode_msgpack.c::unpack_span_links@0",
+   "ctr_decode_msgpack.c::unpack_span_status@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_feature.c::rd_kafka_ApiVersion_check@0",
+   "rdkafka_op.c::rd_kafka_op_req2@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` retains `X` in `X`, whose lifetime this body does not decide against it (retention-undecided)",
+  "leaves": 22,
+  "functions": 21,
+  "direct": 11,
+  "bodies": 0,
+  "same_unit": 11,
+  "cross_unit": 19,
+  "cross_unit_rounds": {
+   "0": 19
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue@0",
+   "flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue_log_routing@0",
+   "lz4.c::LZ4_compress_continue@0",
+   "lz4.c::LZ4_compress_limitedOutput_continue@0",
+   "lz4.c::LZ4_compress_limitedOutput_withState@0",
+   "lz4.c::LZ4_compress_withState@0",
+   "lz4frame.c::LZ4F_compressBlockHC_continue@0",
+   "lz4frame.c::LZ4F_compressBlock_continue@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_limitedOutput_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_limitedOutput_continue@0",
+   "lz4hc.c::LZ4_compressHC_limitedOutput_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: braced initializer, expression, or declaration is not modeled",
+  "leaves": 270,
+  "functions": 195,
+  "direct": 10,
+  "bodies": 9,
+  "same_unit": 10,
+  "cross_unit": 18,
+  "cross_unit_rounds": {
+   "0": 18
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cmt_histogram.c::cmt_histogram_buckets_default_create@0",
+   "lz4.c::LZ4_stream_t_alignment@0",
+   "lz4frame.c::LZ4F_returnErrorCode@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "lz4hc.c::LZ4_streamHC_t_alignment@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_partition.c::rd_kafka_toppar_pause@0",
+   "rdkafka_partition.c::rd_kafka_toppar_resume@0",
+   "rdkafka_request.c::rd_kafka_MetadataRequest@0",
+   "rdvarint.c::unittest_rdvarint@0",
+   "rdxxhash.c::XXH32_canonicalFromHash@0",
+   "rdxxhash.c::XXH64_canonicalFromHash@0"
+  ]
+ },
+ {
+  "family": "unsupported: unrecognized assignment destination",
+  "leaves": 290,
+  "functions": 157,
+  "direct": 6,
+  "bodies": 5,
+  "same_unit": 7,
+  "cross_unit": 15,
+  "cross_unit_rounds": {
+   "0": 14,
+   "1": 1
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cmt_encode_opentelemetry.c::append_attribute_to_data_point@1",
+   "cmt_encode_opentelemetry.c::append_attribute_to_exponential_histogram_data_point@0",
+   "cmt_encode_opentelemetry.c::append_attribute_to_histogram_data_point@0",
+   "cmt_encode_opentelemetry.c::append_attribute_to_numerical_data_point@0",
+   "cmt_encode_opentelemetry.c::append_attribute_to_summary_data_point@0",
+   "cmt_encode_opentelemetry.c::append_metric_to_scope_metrics@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdunittest_msgset_errors.c::ut_write_msgset_v2_header@0"
+  ]
+ },
+ {
+  "family": "unsupported: unsupported assignment expression",
+  "leaves": 809,
+  "functions": 180,
+  "direct": 5,
+  "bodies": 5,
+  "same_unit": 5,
+  "cross_unit": 13,
+  "cross_unit_rounds": {
+   "0": 13
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cmt_encode_text.c::append_histogram_metric_value@0",
+   "cmt_metric.c::cmt_metric_dec@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4HC_countBack@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_scheduler.c::_next_target@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka.c::rd_kafka_version_str@0"
+  ]
+ },
+ {
+  "family": "unsupported: store through `X` without an out-parameter contract",
+  "leaves": 234,
+  "functions": 126,
+  "direct": 5,
+  "bodies": 3,
+  "same_unit": 5,
+  "cross_unit": 13,
+  "cross_unit_rounds": {
+   "0": 13
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "cio_file.c::cio_file_content_copy@0",
+   "cio_memfs.c::cio_memfs_content_copy@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_vhost.c::mk_vhost_get@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_cgrp.c::rd_kafka_consumer_group_metadata_write@0",
+   "rdkafka_msg.c::rd_kafka_message_timestamp@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in loop condition",
+  "leaves": 102,
+  "functions": 84,
+  "direct": 5,
+  "bodies": 4,
+  "same_unit": 5,
+  "cross_unit": 13,
+  "cross_unit_rounds": {
+   "0": 13
+  },
+  "cross_unit_freed": [
+   "cJSON.c::buffer_skip_whitespace@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_utils.c::mk_utils_hex2int@0",
+   "rdkafka.c::rd_kafka_init_wait@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_assignor.c::rtrim@0",
+   "rdkafka_broker.c::rd_kafka_broker_ops_serve@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the registry holder `X` is not one this body tracks (callback-registry-undecided)",
+  "leaves": 100,
+  "functions": 68,
+  "direct": 5,
+  "bodies": 5,
+  "same_unit": 5,
+  "cross_unit": 13,
+  "cross_unit_rounds": {
+   "0": 13
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "nanopb/pb_encode.c::pb_encode_fixed32@0",
+   "nanopb/pb_encode.c::pb_encode_fixed64@0",
+   "nanopb/pb_encode.c::pb_encode_svarint@0",
+   "nanopb/pb_encode.c::pb_encode_tag@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdlist.c::rd_list_destroy_free@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: its body in this unit does not validate the declared callback clause (callback-withdrawn)",
+  "leaves": 7,
+  "functions": 7,
+  "direct": 5,
+  "bodies": 3,
+  "same_unit": 5,
+  "cross_unit": 13,
+  "cross_unit_rounds": {
+   "0": 13
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_sort_by_topic@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_sort_by_topic_id@0",
+   "rdkafka_queue.c::rd_kafka_q_pop@0",
+   "rdkafka_queue.c::rd_kafka_q_pop_serve@0",
+   "rdkafka_queue.c::rd_kafka_q_serve@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)",
+  "leaves": 7,
+  "functions": 7,
+  "direct": 4,
+  "bodies": 3,
+  "same_unit": 4,
+  "cross_unit": 12,
+  "cross_unit_rounds": {
+   "0": 12
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_error.c::rd_kafka_error_new@0",
+   "rdkafka_error.c::rd_kafka_error_new_fatal@0",
+   "rdkafka_error.c::rd_kafka_error_new_retriable@0",
+   "rdkafka_error.c::rd_kafka_error_new_txn_requires_abort@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled expression may mutate a formal resource identity",
+  "leaves": 105,
+  "functions": 57,
+  "direct": 2,
+  "bodies": 2,
+  "same_unit": 3,
+  "cross_unit": 11,
+  "cross_unit_rounds": {
+   "0": 10,
+   "1": 1
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "crc32c.c::gf2_matrix_square@1",
+   "crc32c.c::gf2_matrix_times@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "snappy.c::incremental_copy@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled increment or decrement expression",
+  "leaves": 240,
+  "functions": 128,
+  "direct": 2,
+  "bodies": 3,
+  "same_unit": 2,
+  "cross_unit": 10,
+  "cross_unit_rounds": {
+   "0": 10
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_lib.c::chunk_header@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_offset.c::rd_kafka_offset2str@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` with `X`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+  "leaves": 141,
+  "functions": 100,
+  "direct": 2,
+  "bodies": 1,
+  "same_unit": 2,
+  "cross_unit": 10,
+  "cross_unit_rounds": {
+   "0": 10
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_msg.c::rd_kafka_msgbatch_destroy@0",
+   "rdunittest_fetcher.c::ut_destroy_mock_queue@0"
+  ]
+ },
+ {
+  "family": "unsupported: C operator `X` requires type/operand analysis",
+  "leaves": 89,
+  "functions": 30,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4HC_rotatePattern@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a holder retaining `X` may outlive this function's frame (retention-undecided)",
+  "leaves": 23,
+  "functions": 14,
+  "direct": 1,
+  "bodies": 0,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_queue.c::rd_kafka_queue_new@0"
+  ]
+ },
+ {
+  "family": "unsupported: unlink by `X` of `X`, which this function has not published",
+  "leaves": 17,
+  "functions": 15,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_plugin.c::mk_plugin_exit_stages@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+  "leaves": 6,
+  "functions": 6,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_scheduler.c::mk_sched_workers_join@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` outside its declared literal-argument premise",
+  "leaves": 4,
+  "functions": 4,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_clear@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in switch expression",
+  "leaves": 3,
+  "functions": 3,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0",
+   "rdkafka_event.c::rd_kafka_event_name@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)",
+  "leaves": 3,
+  "functions": 3,
+  "direct": 1,
+  "bodies": 0,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cJSON.c::cJSON_AddItemReferenceToArray@0",
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the callback `X` is not a closed set of functions (unread form implicit BitCast) (callback-undecided)",
+  "leaves": 2,
+  "functions": 2,
+  "direct": 1,
+  "bodies": 1,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "mk_server/mk_http_thread.c::mk_http_thread_initialize_tls@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Released { nullable: false }], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Released { nullable: true }], result: None }; the declared contract governs every call site",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 1,
+  "bodies": 0,
+  "same_unit": 1,
+  "cross_unit": 9,
+  "cross_unit_rounds": {
+   "0": 9
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_mem_free@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: nullable resource `X` used by a non-null contract",
+  "leaves": 291,
+  "functions": 259,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+  "leaves": 254,
+  "functions": 193,
+  "direct": 0,
+  "bodies": 2,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` with slot `X`: the slot is neither `X`, a caller's slot passed through, nor NULL",
+  "leaves": 146,
+  "functions": 24,
+  "direct": 0,
+  "bodies": 5,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the registry holder `X` is not one this body names (callback-registry-undecided)",
+  "leaves": 136,
+  "functions": 46,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: loop re-acquisition: an earlier generation that may be live is still held",
+  "leaves": 77,
+  "functions": 63,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: use of `X` after its object moved or its parent changed (interior-borrow-ended)",
+  "leaves": 33,
+  "functions": 4,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: local declaration may shadow a formal resource identity",
+  "leaves": 29,
+  "functions": 19,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: discarded owned result of resource API `X`",
+  "leaves": 25,
+  "functions": 17,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: unmodeled call, aggregate or indirect access in do-while condition",
+  "leaves": 20,
+  "functions": 19,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: use of `X` after a possibly-final drop of its reference (reference-dropped)",
+  "leaves": 18,
+  "functions": 4,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: publication by `X` of `X`, which this function does not hold as one live object",
+  "leaves": 17,
+  "functions": 6,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: `X` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+  "leaves": 16,
+  "functions": 11,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call has an unmodeled formal address or borrowed expression",
+  "leaves": 16,
+  "functions": 13,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: resource call with a formal embedded in an unmodeled expression",
+  "leaves": 13,
+  "functions": 11,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` with `X`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)",
+  "leaves": 8,
+  "functions": 8,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X` with slot `X`: slot-move-undecided: the slot does not hold exactly one live identity this body alone holds",
+  "leaves": 8,
+  "functions": 4,
+  "direct": 0,
+  "bodies": 1,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the callback `X` is not a closed set of functions (null pointer constant) (callback-undecided)",
+  "leaves": 7,
+  "functions": 6,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled",
+  "leaves": 7,
+  "functions": 3,
+  "direct": 0,
+  "bodies": 1,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: for-loop clause with a call or grouping is not classified from its stripped spelling",
+  "leaves": 6,
+  "functions": 6,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: arguments do not match resource contract for `X`",
+  "leaves": 6,
+  "functions": 5,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: va_list protocol refused: `X` is not a plain local of the function's outermost block",
+  "leaves": 6,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: va_list protocol refused: a `X` operation under a conditional operator or an unevaluated operand",
+  "leaves": 6,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: va_list protocol refused: `X` may reach a function exit without `X`",
+  "leaves": 5,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection",
+  "leaves": 4,
+  "functions": 3,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: va_list protocol refused: `X` may be read after `X`, after being passed to a callee, or before `X`",
+  "leaves": 4,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the registry at `X` would take `X`, which this body cannot hand it (callback-element-custody-undecided)",
+  "leaves": 3,
+  "functions": 3,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: no registration is in force at `X` on every path (callback-registry-undecided)",
+  "leaves": 3,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 20617 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 2,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: callback `X` (from `X`) does not decide its own invocations: its own invocation of `X` does not decide: callback `X` (from `X`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)",
+  "leaves": 2,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: the callback `X` is not a closed set of functions (formal) (callback-undecided)",
+  "leaves": 2,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: custody through the volatile object `X` is outside the resource projection: its value may change asynchronously (rule 11h)",
+  "leaves": 2,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: call to `X`: it hands its parameter 2 to the callback only when `X`, and the calling body disagrees (the object is named again where the guard admits the result) (callback-handoff-unbranched)",
+  "leaves": 2,
+  "functions": 2,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 24345 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: publication by `X` of an object the projection cannot name (`X`)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: cast of a possibly tracked value to another carrier in return expression",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: va_list operation refused: a `X` in a controlling expression that is not `X`",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 20104 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 19875 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: tracked descriptor `X` read by a custody-neutral scalar route is outside the resource projection",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: publication of a tracked resource into the static-storage object `X` is outside the resource projection",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 20210 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 21474 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 20281 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 23559 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ },
+ {
+  "family": "unsupported: a reference taken at line 22828 may still be owed at this exit (reference-unbalanced)",
+  "leaves": 1,
+  "functions": 1,
+  "direct": 0,
+  "bodies": 0,
+  "same_unit": 0,
+  "cross_unit": 8,
+  "cross_unit_rounds": {
+   "0": 8
+  },
+  "cross_unit_freed": [
+   "cio_chunk.c::cio_chunk_hash@0",
+   "lz4frame.c::ctxTypeID_to_size@0",
+   "lz4hc.c::LZ4_compressHC2@0",
+   "lz4hc.c::LZ4_compressHC2_withStateHC@0",
+   "lz4hc.c::LZ4_compressHC@0",
+   "lz4hc.c::LZ4_compressHC_continue@0",
+   "lz4hc.c::LZ4_compressHC_withStateHC@0",
+   "rdkafka.c::rd_kafka_share_consumer_closed_err@0"
+  ]
+ }
+]

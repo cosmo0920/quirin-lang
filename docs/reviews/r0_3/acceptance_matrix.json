@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "OUTER-CONTRACT card gate on main 94aef2d3b (rebased from 3f8f1a617), every code step at 2ef0ae282, scripts docs/reports/outer-contract/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/oc/gate-g5 and private/oc/provider-gate-pg6 of this worktree. gate-g5: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 512 units, 525 summaries, 8,219 passed, 0 failed, 15 ignored, exit 0 (private/oc/tests-gate-g5); both reevaluation probes exit 0; check_lean_audits.py 335 audits passed (QCore.OuterContract added, QCore.ReasonCategory amended); docs part (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-pg6, at effbb2b1f; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 133 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 8219,
+  "note": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT card gate at d329c3171, outside sandbox on the isolated branch with preserved CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w48-target; all eleven steps of docs/reports/w48-pointer-return-readonly/scripts/gate.sh final-5 exited 0 (private/w48-pointer-return/gate-final-5). Rust runner: 512 units, 525 summaries, 8223 passed, 0 failed, 15 ignored. check_lean_audits.py: 336 passed. Python suite: 374 passed. Workspace submodule, fmt, clippy, reevaluation probe, followup, matrix regeneration, docs index and Clang version all exited 0. provider_tests=133 is carried from the prior OUTER-CONTRACT matrix gate at docs/reports/outer-contract/gate.json; W48 changed no provider package or provider-owned contract and did not rerun the provider gate. Earlier gate-final-1/-2 quota failures, gate-final-3 sandbox failures and gate-final-4 misplaced target symlink failures are preserved and explained in this report.",
+  "workspace_tests": 8223,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 335,
+  "lean_audits": 336,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6974,6 +6974,7 @@
    "AuditRawDirectiveLexing.lean",
    "AuditReachGatePosition.lean",
    "AuditReadLoan.lean",
+   "AuditReadOnlyActualFrame.lean",
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
@@ -7101,7 +7102,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abed64dfe3188dfef/docs/reports/outer-contract/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-pointer-return-readonly/gate.json)"
  },
  "named_followups": [
   {
@@ -11880,17 +11881,17 @@
   },
   {
    "id": "W48-BOTTOM-UP-RESIDUAL-PLAN",
-   "title": "The bottom-up plan's callees this card did not attempt, with what each would free",
-   "why": "Measured by W48-BOTTOM-UP-CALLEE-BODIES (scripts/bottom_up_plan.py on the AFTER corpus, main c85cb8806 + rule 12f, 648/9/4,177; artifacts/after/plan-after.txt): with every in-corpus callee body Safe, 418 Unknown functions are freed in one round, 338 of them waiting on exactly one body. Single-body yields are small (2,053 candidate bodies): LZ4_decompress_generic 12 (116 own leaves, several Clang-gap residuals), cJSON_New_Item 10 (hooks->allocate, an indirect callback: decision class 1), cmt_mpack_unpack_array and ctr_mpack_unpack_array 5 each (cross-unit, callbacks), rd_kafka_error_new_v 5 (va_list not a plain local, unresolved identities), LZ4_decompress_unsafe_generic 5, sds_cat_safe 4 (cfl_sds_cat_safe: decision class 2), the admin accessors (W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT, 24), LZ4_compress_HC_extStateHC 4, LZ4_compress_HC 4. Per family (scripts/family_leverage.py, the cross-unit baseline 6 included): indirect memory access 587, return expression 81, branch condition 56, unresolved identities 45, braced initializer 17, assignment destination 13, loop condition 12. DISCHARGE: per callee, its own blockers lifted soundly (a rule residual with Lean parity, or a derived and pinned body-checked contract), the corpus arbiter re-measured and this plan re-run.",
-   "source": "docs/reports/w48-bottom-up-callee-bodies/README.md",
-   "recorded_by": "W48-BOTTOM-UP-CALLEE-BODIES"
+   "title": "Measured bottom-up callee-body plan after the read-only call-actual lift",
+   "why": "Re-measured by W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT at base fa04aab0f plus the exact read-only rd_list_cnt actual frame (corpus 941/9/3884 -> 952/9/3873; report artifacts/after/plan.json.gz): 260 Unknown functions wait on exactly one in-corpus callee body, versus 264 before. The hypothetical all-body ceiling remains 372; the no-extra-body closure is 4 same-unit and 12 cross-unit, versus 0 and 8 before. There are 2,228 candidate bodies, versus 2,232. Largest single body is cJSON_DetachItemViaPointer: six callers, seven own leaves across branch and indirect-access effects. Other small single-body candidates and family counts are in the archived after plan and family files. These are hypothetical closures, not Safe verdicts. DISCHARGE: lift a callee's own blockers soundly with Rust/Lean parity or a pinned body-checked contract, then rerun the corpus arbiter and plan.",
+   "source": "docs/reports/w48-pointer-return-readonly/README.md",
+   "recorded_by": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT"
   },
   {
    "id": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT",
-   "title": "A pointer loaded through a formal and returned is refused once the formal's pointee address reaches a call (24 admin functions)",
-   "why": "Measured by W48-BOTTOM-UP-CALLEE-BODIES (scripts/return_reasons.py, leaf_set_leverage.py, predict_12f.py on main c85cb8806): librdkafka's rd_kafka_admin_result_ret_{topics,resources,groups,acl_results,acl_bindings,delete_acl_result_responses} and the accessors returning `(const T **) X->....rl_elems` refuse only at their return: rule 10k/5b's pointer-root premise (position_pointer_root) requires the root formal never bound and not `may_bind`, and the AST reader binds `rko` because `&rko->rko_u.admin_result.results` is taken and handed to rd_list_cnt (it binds the root of every `&` path and every name in a call's actuals; the fixture without the call is Safe). Lifting the return refusal of these 10 bodies frees 24 corpus functions (closure upper bound: the 10, then 14 public *_result_* callers). Not lifted: a Borrowed contract at that position does not say the callee stores nothing through the pointer (a Borrowed memcpy may copy a tracked pointer into the pointee, which the return would then hand out untracked). DISCHARGE: a read-only frame for the actual (for example rule 11e's bounds_frame_reads, declared and pinned for rd_list_cnt), read by the pointer-root premise with Lean parity, and the arbiter re-measured.",
-   "source": "docs/reports/w48-bottom-up-callee-bodies/README.md",
-   "recorded_by": "W48-BOTTOM-UP-CALLEE-BODIES"
+   "title": "Remaining admin pointer return and callee-summary refusals after an exact read-only call frame",
+   "why": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT checked the included rd_list_cnt(const rd_list_t *rl) body as the sole read `return rl->rl_cnt;`, then replayed lexical and AST binding readers while omitting only direct `rd_list_cnt(&formal->field[.field]*)` actuals. On pinned corpus 66910c10, 11 rdkafka_admin.c functions became Safe (six admin_result_ret_* helpers and five direct public accessors); every move removed one return-expression leaf, with no other changed diagnostic or Safe regression. System and tail-pause slice had zero movement across all 448 and 404 configuration rows. The old 24-function closure was an upper bound, not actual movement. rd_kafka_ConfigResource_configs still refuses its pointer return: the typed return plan does not admit `config->config.rl_elems`. Three public ACL result callers still refuse their uncontracted helper calls despite those helpers becoming Safe; other public helper callers need the same summary check. DISCHARGE: establish the remaining typed return and same-unit callee-summary premises without trusting a Borrowed mode as a read-only frame, with Lean parity and a fresh arbiter measurement.",
+   "source": "docs/reports/w48-pointer-return-readonly/README.md",
+   "recorded_by": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT"
   },
   {
    "id": "CG21-NORETURN-TYPED-ACTUAL-STATEMENTS",

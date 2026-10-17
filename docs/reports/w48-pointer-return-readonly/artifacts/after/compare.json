@@ -1,0 +1,122 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 3884,
+   "Safe": 941,
+   "Unsafe": 9
+  },
+  "after": {
+   "Unknown": 3873,
+   "Safe": 952,
+   "Unsafe": 9
+  }
+ },
+ "moves": [
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AlterUserScramCredentials_result_responses",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_synonyms",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DescribeUserScramCredentials_result_descriptions",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeadersResult_partitions",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ListOffsets_result_infos",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_bindings",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_acl_results",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_groups",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_resources",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_ret_topics",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 11
+ },
+ "same_status_functions_with_changed_diagnostics": 0,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -11
+ }
+}

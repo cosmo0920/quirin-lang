@@ -1257,6 +1257,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |
 
+| [w48-pointer-return-readonly](w48-pointer-return-readonly/README.md) | W48 pointer return through a read-only call actual |
+
 | [w48-qr-c-struct-import](w48-qr-c-struct-import/README.md) | W48-QR-C-STRUCT-IMPORT: importing a C struct into `.qr` |
 
 | [w48-qr-closures](w48-qr-closures/README.md) | W48-QR-CLOSURES: closures that capture into concurrent workers |
