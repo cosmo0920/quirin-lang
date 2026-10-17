@@ -103,8 +103,37 @@ promotions: export and caller replay can still refuse them. The report has
 10,249 `call to uncontracted function` leaves, but no typed parity stream,
 so the complete held-position-call census remains to be measured.
 
-AFTER measurement and full standing gate are pending the scheduled private
-heavy-run slot.
+The first configured AFTER corpus run (`private/w44xu/after/`, binary SHA-256
+`dc4a9da815462af7d474343af4a166c3acef9d39d060bf78dd7356bf945c3eba`)
+exited 0 on 2026-10-17 after 40m 50s. Its report SHA-256 was
+`9ef7c3799f095aa60b8a3614215302f48e117da940c16f6afa5e369935814242`;
+the typed parity stream held 3,472,780 records, SHA-256
+`f98df7162ce1c052c2b6433dc5b767fad762d4946180d0c85b81cbd57738b2a6`.
+The exact-base comparison (`private/w44xu/after-v1-diff.json`) aligned all
+4,834 functions and found **zero verdict or diagnostic-leaf changes**. The
+report did record all five home identities and the link premise, so admission
+and certificate replay completed; the zero gain was an implementation defect,
+not a link-map refusal.
+
+The defect was an environment rebuild in the gateway's ABI withdrawal pass:
+when an unrelated declared contract was withdrawn against a C declaration,
+it copied ordinary declarations but lost the separate inferred import channel
+and the caller-expected home/link identities. The checked-specification and
+two recursive W4 environments had the same preservation gap. Commit
+`f2e235135` carries all three pieces through each rebuild. A focused fixture
+now provokes an unrelated ABI withdrawal and replays both the imported home
+and Safe caller; focused recursive-environment checks cover both W4 routes.
+An isolated actual-source probe with the `cio_file.c` home and `cio_chunk.c`
+caller resolves `cio_chunk_hash` to Safe when the import survives, whereas the
+first corpus pass kept its uncontracted-call leaf. This is a route regression
+diagnosis, not published corpus coverage.
+
+The first run's 40m 50s and 2.2 GiB parity output are a material performance
+cost of the opt-in route's full second unit pass and home replay. A corrected
+AFTER corpus and the full standing gate remain queued. The 11 GiB private
+debug target cache was preserved at the ignored
+`/home/cosmo/Documents/GitHub/qcore-c/private/w44xu-target` to free `/tmp`;
+remaining gate commands set `CARGO_TARGET_DIR` to that path.
 
 The isolated AFTER binary build ran
 `cargo build --release -p qcore-audit --bin quirin-audit -j 4`, exit 0
