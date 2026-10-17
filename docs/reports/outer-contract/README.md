@@ -1,11 +1,19 @@
 # OUTER-CONTRACT: outer contracts and the runtime projection (stage 1)
 
 Card **OUTER-CONTRACT** (wave 48, round 31; card-high). Base: local `main`
-`b157c9cba`. The card was first built and measured on `a423fca5d`, which
+`1474edaf1`. The card was first built and measured on `a423fca5d`, which
 differs from the design card's base `3f8f1a617` only in records. It was then
-rebased onto `b157c9cba`, where RETENTION-UNMATCHED-REMOVAL-POISONS changed
-rule 12t, the retention code and libevent's contracts, and was measured again
-against main's own binary (section 3.4). This card implements the
+rebased twice, each time measured again against main's own binary
+(section 3.4):
+
+* onto `b157c9cba`, where RETENTION-UNMATCHED-REMOVAL-POISONS changed rule
+  12t, the retention code and libevent's contracts;
+* onto `1474edaf1`, where NONNULL-MEMBER-UNIFIED-QUALIFIER merged the member
+  clause into `nonnull_member(...) where quant #scope [[stable|scope]]` and
+  re-pinned the null views. The envelope covers facts by their key
+  (`stable:flb_*_instance.p`, unchanged), not by the clause's spelling.
+
+This card implements the
 design of [OUTER-CONTRACT-DESIGN](../outer-contract-design/README.md) as the
 user decided it. New gateway rule [31](../../agents/gateway.md#constraint-31);
 rule 13h is amended in place. Contract specification C04.20 and grammar G05g
@@ -179,21 +187,28 @@ plugins loaded, nothing vouches that loaded code leaves librdkafka's objects
 alone. Stage 2 (`RK-PLUGIN-LIBRARY-OUTER-ENVELOPE`) is what can make them
 Pending.
 
-### 3.4 After the rebase onto `b157c9cba`
+### 3.4 After the rebases
 
 The combined arbiter was run with [arbiter.sh](scripts/arbiter.sh) and
-[runs.py](scripts/runs.py) ([run-rebased.json](artifacts/run-rebased.json),
-[compare-rebased.json](artifacts/compare-rebased.json)). Main's binary
-`401f4b8f…` ran on main's own tree, and the rebased tip's binary `4dbe1215…`
-(head `6bb6ea5ab`) ran with the projection. Every exit was 0, and each corpus
-`run.json` `binary_sha256` matches its binary. The result is the first base's,
-row for row:
+[runs.py](scripts/runs.py), once per base:
+
+| Base | Main's binary | Tip's binary (head) | Artifacts |
+| --- | --- | --- | --- |
+| `b157c9cba` | `401f4b8f…` | `4dbe1215…` (`6bb6ea5ab`) | [run-rebased.json](artifacts/run-rebased.json), [compare-rebased.json](artifacts/compare-rebased.json) |
+| `1474edaf1` (final) | `d7082915…` | `56fa40be…` (`b1bc87261`) | [run-final.json](artifacts/run-final.json), [compare-final.json](artifacts/compare-final.json) |
+
+Main's binary ran on main's own tree, and the tip's binary ran with the
+projection. Every exit was 0, and each corpus `run.json` `binary_sha256`
+matches its binary. On both bases the result is the first base's, row for row
+(the final base's digests are below; the `b157c9cba` ones are in its
+artifacts):
 
 * **Static scope:** identical. The system report (`ef4e8adf…`) and the slice
   report (`1faa1013…`) are byte-identical. The corpus report (`33e139c0…` →
   `efb100ed…`) is identical once the two new lists are removed (140 and 127
-  rows). The sidecars, the null rows (`47994044…`, `7aed2c50…`, `515b39f5…`)
-  and their summaries are byte-identical. Main's totals equal the first base's.
+  rows). The sidecars, the null rows (corpus `dbede5f2…`, system `1d8ffa55…`,
+  slice `c24c889a…`) and their summaries are byte-identical. Main's totals
+  equal the first base's.
 * **Runtime scope:** the same tallies and the same moved rows on every route
   (the moved-row lists compare equal). The contract identity is unchanged.
 
@@ -263,7 +278,9 @@ the design card registered none. Registered:
 * **Artifacts:** [compare.json](artifacts/compare.json) and
   [run.json](artifacts/run.json) (first base),
   [compare-rebased.json](artifacts/compare-rebased.json) and
-  [run-rebased.json](artifacts/run-rebased.json) (rebased),
+  [run-rebased.json](artifacts/run-rebased.json) (`b157c9cba`),
+  [compare-final.json](artifacts/compare-final.json) and
+  [run-final.json](artifacts/run-final.json) (`1474edaf1`),
   [prediction.json](artifacts/prediction.json).
 * **Private outputs:** `private/oc/`, plus the slice runs in
   `/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/oc-tip/`.
