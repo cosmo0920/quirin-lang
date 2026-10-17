@@ -65,13 +65,13 @@ fn framed_root(words: &[&str], at: usize) -> Option<(usize, usize)> {
         return None;
     }
     let mut cursor = root + 3;
-    if !name(*words.get(cursor)?) {
+    if !name(words.get(cursor)?) {
         return None;
     }
     cursor += 1;
     while words.get(cursor) == Some(&".") {
         cursor += 1;
-        if !name(*words.get(cursor)?) {
+        if !name(words.get(cursor)?) {
             return None;
         }
         cursor += 1;
