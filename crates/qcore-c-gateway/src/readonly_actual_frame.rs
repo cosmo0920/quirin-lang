@@ -86,8 +86,9 @@ pub(crate) fn lexical_root_clear(
     function: &str,
     root: &str,
     protected_formals: &BTreeSet<String>,
+    body_certified: bool,
 ) -> bool {
-    if !certified(tokens) || protected_formals.contains(root) {
+    if !body_certified || protected_formals.contains(root) {
         return false;
     }
     let Some((start, _)) = find_function_body(tokens, function) else {
@@ -141,7 +142,13 @@ mod tests {
             return rko - > list . results . rl_elems ; }",
         );
         assert!(certified(&tokens));
-        assert!(lexical_root_clear(&tokens, "f", "rko", &BTreeSet::new()));
+        assert!(lexical_root_clear(
+            &tokens,
+            "f",
+            "rko",
+            &BTreeSet::new(),
+            certified(&tokens)
+        ));
     }
 
     #[test]
@@ -163,7 +170,7 @@ mod tests {
                 extra
             ));
             assert!(
-                !lexical_root_clear(&tokens, "f", "rko", &BTreeSet::new()),
+                !lexical_root_clear(&tokens, "f", "rko", &BTreeSet::new(), certified(&tokens)),
                 "other binding: {extra}"
             );
         }
@@ -178,7 +185,7 @@ mod tests {
                 actual
             ));
             assert!(
-                !lexical_root_clear(&tokens, "f", "rko", &BTreeSet::new()),
+                !lexical_root_clear(&tokens, "f", "rko", &BTreeSet::new(), certified(&tokens)),
                 "different actual: {actual}"
             );
         }

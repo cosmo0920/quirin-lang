@@ -168,6 +168,7 @@ impl Parser<'_> {
             condition_cycles: _,
             typed_place_origin,
             typed_root_declarations: _,
+            readonly_list_count_certified: _,
             declared_no_return: _,
             call_graph_components: _,
             cursor,

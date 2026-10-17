@@ -100,6 +100,9 @@ impl Parser<'_> {
                 &self.typed_path_function,
                 name,
                 &self.protected_formals,
+                *self
+                    .readonly_list_count_certified
+                    .get_or_init(|| crate::readonly_actual_frame::certified(self.tokens)),
             )
         {
             return false;
