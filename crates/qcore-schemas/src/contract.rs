@@ -661,9 +661,35 @@ pub struct ContractInclusionEvidence {
     pub inherited: BTreeMap<String, Vec<ContractInheritanceLink>>,
 }
 
+/// Independently expected home identity for one conditional cross-unit import.
+/// The audit derives this from its pinned configured home, and the caller's
+/// trust-context hash binds it separately from the certificate's home witness.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CrossUnitImportIdentity {
+    pub raw_source_sha256: String,
+    pub preprocessed_source_sha256: String,
+    pub scope_evidence_sha256: String,
+    pub analysis_request_sha256: String,
+    pub environment_sha256: String,
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceContracts {
     functions: BTreeMap<String, ResourceFunctionContract>,
+    /// Validated summaries imported from another translation unit.  These are
+    /// never declared contracts: a gateway certificate must carry and replay
+    /// the home body and the explicit link-resolution premise for each entry.
+    /// An empty map preserves the historical serialized environment.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    inferred_imports: BTreeMap<String, ResourceFunctionContract>,
+    /// Expected identities of those imports. Included in the caller's audit
+    /// trust hash, so a changed home cannot replay by changing its own digest.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    cross_unit_import_identities: BTreeMap<String, CrossUnitImportIdentity>,
+    /// SHA-256 of the caller-supplied linked-program resolution table. This
+    /// is a named assumption, bound into audit trust-context identity.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    link_resolution_sha256: Option<String>,
     // Exact trusted inputs travel with the environment into safety certificates.
     source_assumptions: BTreeMap<String, String>,
     /// Card CONTRACT-INHERIT: provenance of every selected module that used
@@ -718,6 +744,9 @@ impl ResourceContracts {
                 .into_iter()
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
+            inferred_imports: BTreeMap::new(),
+            cross_unit_import_identities: BTreeMap::new(),
+            link_resolution_sha256: None,
             source_assumptions: BTreeMap::new(),
             inclusion_evidence: BTreeMap::new(),
             pending_review: BTreeMap::new(),
@@ -736,6 +765,49 @@ impl ResourceContracts {
 
     pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
         self.functions.insert(name.into(), contract);
+    }
+
+    /// Install the contracts of independently replayable cross-unit imports.
+    /// The gateway certificate checker refuses a nonempty import map without
+    /// matching home evidence; this setter conveys no authority by itself.
+    pub fn set_inferred_imports(&mut self, imports: BTreeMap<String, ResourceFunctionContract>) {
+        self.inferred_imports = imports;
+    }
+
+    #[must_use]
+    pub fn inferred_imports(&self) -> &BTreeMap<String, ResourceFunctionContract> {
+        &self.inferred_imports
+    }
+
+    pub fn set_cross_unit_import_identities(
+        &mut self,
+        identities: BTreeMap<String, CrossUnitImportIdentity>,
+    ) {
+        self.cross_unit_import_identities = identities;
+    }
+
+    #[must_use]
+    pub fn cross_unit_import_identities(&self) -> &BTreeMap<String, CrossUnitImportIdentity> {
+        &self.cross_unit_import_identities
+    }
+
+    pub fn set_link_resolution_sha256(&mut self, digest: Option<String>) {
+        self.link_resolution_sha256 = digest;
+    }
+
+    #[must_use]
+    pub fn link_resolution_sha256(&self) -> Option<&str> {
+        self.link_resolution_sha256.as_deref()
+    }
+
+    /// Preserve the separately validated cross-unit import channel when a
+    /// gateway pass rebuilds an environment to withdraw ordinary declarations
+    /// or to prove a recursive component. The caller's certificate still
+    /// replays every imported home and its link-resolution premise.
+    pub fn carry_cross_unit_imports(&mut self, from: &Self) {
+        self.inferred_imports = from.inferred_imports.clone();
+        self.cross_unit_import_identities = from.cross_unit_import_identities.clone();
+        self.link_resolution_sha256 = from.link_resolution_sha256.clone();
     }
 
     /// Exact source inputs, declared as assumptions rather than verified facts.
@@ -931,7 +1003,12 @@ impl ResourceContracts {
     /// this returns).
     #[must_use]
     pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
-        let found = self.functions.get(name);
+        // A declared contract always wins, even if a redundant import was
+        // offered. The gateway refuses conflicting evidence at admission.
+        let found = self
+            .functions
+            .get(name)
+            .or_else(|| self.inferred_imports.get(name));
         crate::contract_consultation::note(name, found.is_some());
         found
     }

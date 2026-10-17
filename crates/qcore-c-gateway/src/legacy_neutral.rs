@@ -225,6 +225,7 @@ fn component_environment(
 ) -> ResourceContracts {
     let mut round = ResourceContracts::default();
     round.set_source_assumptions(environment.source_assumptions().clone());
+    round.carry_cross_unit_imports(environment);
     for (name, contract) in environment.functions() {
         if !component.contains(name) {
             round.insert_contract(name.clone(), contract.clone());
@@ -236,6 +237,40 @@ fn component_environment(
         }
     }
     round
+}
+
+#[cfg(test)]
+#[test]
+fn neutral_recursive_round_keeps_cross_unit_import() {
+    use qcore_schemas::contract::CrossUnitImportIdentity;
+    let identity = CrossUnitImportIdentity {
+        raw_source_sha256: "a".repeat(64),
+        preprocessed_source_sha256: "b".repeat(64),
+        scope_evidence_sha256: "c".repeat(64),
+        analysis_request_sha256: "d".repeat(64),
+        environment_sha256: "e".repeat(64),
+    };
+    let mut environment = ResourceContracts::default();
+    environment.set_inferred_imports(BTreeMap::from([(
+        "external".to_owned(),
+        ResourceFunctionContract::default(),
+    )]));
+    environment
+        .set_cross_unit_import_identities(BTreeMap::from([("external".to_owned(), identity)]));
+    environment.set_link_resolution_sha256(Some("f".repeat(64)));
+    let component = ["recursive".to_owned()];
+    let members = BTreeMap::from([(component[0].clone(), (Vec::new(), neutral_contract(0)))]);
+    let assumption = BTreeMap::from([(&component[0], Assumption::Neutral)]);
+    let round = component_environment(&component, &environment, &members, &assumption);
+    assert_eq!(round.inferred_imports(), environment.inferred_imports());
+    assert_eq!(
+        round.cross_unit_import_identities(),
+        environment.cross_unit_import_identities()
+    );
+    assert_eq!(
+        round.link_resolution_sha256(),
+        environment.link_resolution_sha256()
+    );
 }
 
 /// Validate one member's body against `N(m)` under the round's assumption,

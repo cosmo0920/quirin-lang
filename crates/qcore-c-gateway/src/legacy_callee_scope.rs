@@ -129,22 +129,28 @@ pub(crate) fn derivation_scope(
 /// refused here: the reader answers "not established", which keeps the call
 /// uncontracted.
 pub(crate) fn has_internal_linkage(tokens: &[Token], function: &str) -> bool {
+    definition_has_specifier(tokens, function, "static")
+        && !definition_has_specifier(tokens, function, "extern")
+}
+
+/// Conservative spelling check on a definition's own specifier sequence.
+/// This is not a whole-program linkage decision; cross-unit transport still
+/// requires an explicit linked-program resolution premise.
+pub(crate) fn definition_has_specifier(tokens: &[Token], function: &str, specifier: &str) -> bool {
     let Some((body_start, _)) = find_function_body(tokens, function) else {
         return false;
     };
     let Some(name_index) = definition_name_index(tokens, function, body_start) else {
         return false;
     };
-    let mut is_static = false;
     for token in tokens[..name_index].iter().rev() {
         match token.text.as_str() {
             ";" | "{" | "}" => break,
-            "static" => is_static = true,
-            "extern" => return false,
+            word if word == specifier => return true,
             _ => {}
         }
     }
-    is_static
+    false
 }
 
 /// The index of the name token whose parameter list closes at `body_start - 1`.

@@ -554,13 +554,7 @@ fn infer_contextual_component(
         RankedRoute::ZeroNonzero => recursion::prepare(tokens, component)?,
         RankedRoute::SignedThreshold => recursion::signed_rank::prepare(tokens, component)?,
     };
-    let mut lower = ResourceContracts::default();
-    lower.set_source_assumptions(environment.source_assumptions().clone());
-    for (name, contract) in environment.functions() {
-        if !component.contains(name) {
-            lower.insert_contract(name.clone(), contract.clone());
-        }
-    }
+    let mut lower = component_lower_environment(component, environment);
     let mut zeros = BTreeMap::new();
     // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the environment the zero
     // contexts are built in, kept for the re-check under the reported premises.
@@ -613,6 +607,21 @@ fn infer_contextual_component(
         published.insert(name.clone(), (contract, combined));
     }
     Some(published)
+}
+
+fn component_lower_environment(
+    component: &[String],
+    environment: &ResourceContracts,
+) -> ResourceContracts {
+    let mut lower = ResourceContracts::default();
+    lower.set_source_assumptions(environment.source_assumptions().clone());
+    lower.carry_cross_unit_imports(environment);
+    for (name, contract) in environment.functions() {
+        if !component.contains(name) {
+            lower.insert_contract(name.clone(), contract.clone());
+        }
+    }
+    lower
 }
 
 /// Infer one function's summary and validate it, or return `None`.

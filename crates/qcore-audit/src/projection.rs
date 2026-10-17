@@ -8,8 +8,10 @@ use crate::report::AuditReport;
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, LegacyCError, LegacyProgramSummary,
     PreparedTranslationUnit, SourceDefinitionInventory, SourceLineMap, UnrestrictedLegacyResult,
-    analyze_prepared_translation_unit, analyze_unrestricted_c11_with_inventory,
-    map_preprocessed_lines, validate_unrestricted_c11,
+    analyze_prepared_translation_unit, analyze_prepared_translation_unit_with_cross_unit,
+    analyze_unrestricted_c11_with_inventory,
+    analyze_unrestricted_c11_with_inventory_and_cross_unit, map_preprocessed_lines,
+    validate_unrestricted_c11,
 };
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::verdict::Verdict;
@@ -561,6 +563,53 @@ pub fn project_unit_into(
     counts: &mut AuditCounts,
     out: &mut String,
 ) -> Result<(), String> {
+    project_unit_into_with_cross_unit(
+        library,
+        file,
+        unit,
+        inventory,
+        contracts,
+        &[],
+        report,
+        counts,
+        out,
+    )
+}
+
+/// Pinned legacy projection with opt-in, replayable cross-unit homes.
+#[allow(clippy::too_many_arguments)]
+pub fn project_unit_into_with_cross_unit(
+    library: &str,
+    file: &str,
+    unit: &C11TranslationUnit<'_>,
+    inventory: &SourceDefinitionInventory,
+    contracts: &ResourceContracts,
+    run_homes: &[qcore_c_gateway::legacy_c::CrossUnitHomeEvidence],
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+    out: &mut String,
+) -> Result<(), String> {
+    let scoped = if run_homes.is_empty() {
+        None
+    } else {
+        let source = validate_unrestricted_c11(unit).ok();
+        Some(match source {
+            Some(source) => {
+                qcore_c_gateway::legacy_c::cross_unit_for_caller(&source, contracts, run_homes)
+            }
+            None => {
+                let mut environment = contracts.clone();
+                environment.set_inferred_imports(Default::default());
+                (environment, Vec::new())
+            }
+        })
+    };
+    let contracts = scoped
+        .as_ref()
+        .map_or(contracts, |(environment, _)| environment);
+    let homes = scoped
+        .as_ref()
+        .map_or(&[][..], |(_, homes)| homes.as_slice());
     record_inventory(inventory, counts);
     let source_functions = inventory.definitions();
     if source_functions.is_empty() {
@@ -599,12 +648,22 @@ pub fn project_unit_into(
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the unit's consultations,
     // recorded around its analysis alone (evidence; nothing reads it back).
     let recording = qcore_c_gateway::contract_dependencies::Recording::start();
-    let result = analyze_unrestricted_c11_with_inventory(
-        unit,
-        &source_functions[0],
-        contracts,
-        Some(inventory),
-    );
+    let result = if homes.is_empty() {
+        analyze_unrestricted_c11_with_inventory(
+            unit,
+            &source_functions[0],
+            contracts,
+            Some(inventory),
+        )
+    } else {
+        analyze_unrestricted_c11_with_inventory_and_cross_unit(
+            unit,
+            &source_functions[0],
+            contracts,
+            Some(inventory),
+            homes,
+        )
+    };
     let dependencies = recording.finish();
     // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
     // this unit is presented at. Derived only where there is a diagnostic to
@@ -699,6 +758,45 @@ pub fn project_prepared_unit_into(
     counts: &mut AuditCounts,
     out: &mut String,
 ) -> Result<(), String> {
+    project_prepared_unit_into_with_cross_unit(
+        library,
+        file,
+        prepared,
+        contracts,
+        &[],
+        certificate_context,
+        report,
+        counts,
+        out,
+    )
+}
+
+/// Prepared projection under a run-wide, opt-in cross-unit home table.
+#[allow(clippy::too_many_arguments)]
+pub fn project_prepared_unit_into_with_cross_unit(
+    library: &str,
+    file: &str,
+    prepared: &PreparedTranslationUnit,
+    contracts: &ResourceContracts,
+    run_homes: &[qcore_c_gateway::legacy_c::CrossUnitHomeEvidence],
+    certificate_context: PreparedAuditCertificateContext<'_>,
+    report: &mut AuditReport,
+    counts: &mut AuditCounts,
+    out: &mut String,
+) -> Result<(), String> {
+    let scoped = if run_homes.is_empty() {
+        None
+    } else {
+        prepared.preprocessed_source().ok().map(|source| {
+            qcore_c_gateway::legacy_c::cross_unit_for_caller(source, contracts, run_homes)
+        })
+    };
+    let contracts = scoped
+        .as_ref()
+        .map_or(contracts, |(environment, _)| environment);
+    let homes = scoped
+        .as_ref()
+        .map_or(&[][..], |(_, homes)| homes.as_slice());
     let PreparedAuditCertificateContext {
         compile_task_identity,
         source_profile_sha256,
@@ -761,7 +859,16 @@ pub fn project_prepared_unit_into(
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): recorded around the
     // analysis alone; the certificate recheck below runs outside it.
     let recording = qcore_c_gateway::contract_dependencies::Recording::start();
-    let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    let result = if homes.is_empty() {
+        analyze_prepared_translation_unit(prepared, &source_functions[0], contracts)
+    } else {
+        analyze_prepared_translation_unit_with_cross_unit(
+            prepared,
+            &source_functions[0],
+            contracts,
+            homes,
+        )
+    };
     let dependencies = recording.finish();
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {

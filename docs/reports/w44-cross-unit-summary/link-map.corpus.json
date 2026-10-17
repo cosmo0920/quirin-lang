@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+  "symbols": [
+    {
+      "function": "cio_file_hash",
+      "home_unit": "chunkio/cio_file.c"
+    },
+    {
+      "function": "LZ4_sizeofState",
+      "home_unit": "librdkafka/lz4.c"
+    },
+    {
+      "function": "LZ4_sizeofStateHC",
+      "home_unit": "librdkafka/lz4hc.c"
+    },
+    {
+      "function": "rd_kafka_error_code",
+      "home_unit": "librdkafka/rdkafka_error.c"
+    },
+    {
+      "function": "rd_kafka_error_destroy",
+      "home_unit": "librdkafka/rdkafka_error.c"
+    }
+  ]
+}

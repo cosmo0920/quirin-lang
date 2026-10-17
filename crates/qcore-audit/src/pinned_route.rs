@@ -10,7 +10,7 @@ use crate::current_route::{
     is_monkey_unit, monkey_source_root, source_weight, verify_monkey_source_copy,
 };
 use crate::parallel::run_ordered;
-use crate::projection::{AuditCounts, project_unit_into};
+use crate::projection::{AuditCounts, project_unit_into_with_cross_unit};
 use crate::report::AuditReport;
 use qcore_verification::cleanup_outcome::{CleanupCertificate, GuardedDeleteCertificate};
 use qcore_verification::counter_contract::CounterCertificate;
@@ -28,7 +28,8 @@ use crate::source_contract::{
 };
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, ResourceContracts, enumerate_source_definitions,
+    C11TranslationUnit, CrossUnitHomeEvidence, LegacyFunctionScope, ResourceContracts,
+    enumerate_source_definitions, prepare_translation_unit,
 };
 use qcore_contract::contract_loader::load_resource_contract_manifest;
 use qcore_contract::profile_loader::{LoadedProfile, load_audited_bundle, verify_pin};
@@ -75,6 +76,7 @@ pub fn run(
     contract_manifest: Option<&Path>,
     jobs: usize,
 ) -> Result<bool, String> {
+    let cross_unit_links = crate::cross_unit_links::LinkMap::load_selected()?;
     // Explicit process selection is checked before any expensive source audit.
     let source_contracts = source_contract_configuration()?;
     // Validate the external build input before running any expensive audit.
@@ -273,53 +275,56 @@ pub fn run(
     // when a body refutes its own declaration, phase two analyses every unit
     // again under the refutation table (each library's prelude context is
     // reused), and only then is every outcome folded, in step order.
-    let work = |step: Step<'_>, contracts: &ResourceContracts| match step {
-        Step::Prelude(index) => {
-            let plan = &plans[index];
-            let mut output = String::new();
-            // Publishes `None` if the prelude fails or panics, so a unit
-            // waiting on this library never blocks forever.
-            let publish = PublishOnDrop(&contexts[index]);
-            let result = prepare_library(plan, &source_contracts, &mut output)
-                .map(|context| publish.publish(context));
-            StepOutcome::Prelude { output, result }
-        }
-        Step::Unit(index, entry) => {
-            // Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: measurement only.
-            #[cfg(all(feature = "unit-timing", target_os = "linux"))]
-            let _timing = crate::unit_timing::Span::start(&entry.file);
-            let plan = &plans[index];
-            let mut output = String::new();
-            let result = match contexts[index].wait() {
-                // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the unit is
-                // analysed with the run's member facts installed.
-                Some(context) => {
-                    qcore_c_gateway::member_run_facts::scoped(run_facts.clone(), || {
-                        audit_unit(
-                            plan,
-                            context,
-                            entry,
-                            &revision,
-                            contracts,
-                            &source_contracts,
-                            &provider,
-                            &mut output,
-                        )
-                    })
-                }
-                // Unreachable in the fold: the prelude's own failure is
-                // consumed first and stops it.
-                None => Err(format!("{}: library prelude failed", plan.library)),
-            };
-            StepOutcome::Unit {
-                output,
-                result: Box::new(result),
+    let work =
+        |step: Step<'_>, contracts: &ResourceContracts, homes: &[CrossUnitHomeEvidence]| match step
+        {
+            Step::Prelude(index) => {
+                let plan = &plans[index];
+                let mut output = String::new();
+                // Publishes `None` if the prelude fails or panics, so a unit
+                // waiting on this library never blocks forever.
+                let publish = PublishOnDrop(&contexts[index]);
+                let result = prepare_library(plan, &source_contracts, &mut output)
+                    .map(|context| publish.publish(context));
+                StepOutcome::Prelude { output, result }
             }
-        }
-        Step::Finish(index) => StepOutcome::Finish(index),
-        Step::MonkeyGate => StepOutcome::MonkeyGate,
-        Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
-    };
+            Step::Unit(index, entry) => {
+                // Card DEEP-AST-TRANSPORTS-AND-WALL-TIME: measurement only.
+                #[cfg(all(feature = "unit-timing", target_os = "linux"))]
+                let _timing = crate::unit_timing::Span::start(&entry.file);
+                let plan = &plans[index];
+                let mut output = String::new();
+                let result = match contexts[index].wait() {
+                    // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (R1): the unit is
+                    // analysed with the run's member facts installed.
+                    Some(context) => {
+                        qcore_c_gateway::member_run_facts::scoped(run_facts.clone(), || {
+                            audit_unit(
+                                plan,
+                                context,
+                                entry,
+                                &revision,
+                                contracts,
+                                homes,
+                                &source_contracts,
+                                &provider,
+                                &mut output,
+                            )
+                        })
+                    }
+                    // Unreachable in the fold: the prelude's own failure is
+                    // consumed first and stops it.
+                    None => Err(format!("{}: library prelude failed", plan.library)),
+                };
+                StepOutcome::Unit {
+                    output,
+                    result: Box::new(result),
+                }
+            }
+            Step::Finish(index) => StepOutcome::Finish(index),
+            Step::MonkeyGate => StepOutcome::MonkeyGate,
+            Step::PlanningFailed(error) => StepOutcome::PlanningFailed(error),
+        };
     let stops = |outcome: &StepOutcome| match outcome {
         StepOutcome::Prelude { result, .. } => result.is_err(),
         StepOutcome::Unit { result, .. } => result.is_err(),
@@ -343,7 +348,7 @@ pub fn run(
         steps.clone(),
         jobs,
         Some(dispatch.clone()),
-        |step| work(step, &contracts),
+        |step| work(step, &contracts, &[]),
         |outcome| {
             let stop = stops(&outcome);
             outcomes.push(outcome);
@@ -388,7 +393,7 @@ pub fn run(
             units,
             jobs,
             Some(crate::parallel::heaviest_first(&weights)),
-            |(index, step)| (index, work(step, &held)),
+            |(index, step)| (index, work(step, &held, &[])),
             |(index, outcome)| {
                 let stop = stops(&outcome);
                 replaced.push((index, outcome));
@@ -407,6 +412,129 @@ pub fn run(
         }
         found
     };
+    // A link map is a declared program-resolution premise, never inferred
+    // from the corpus. Export homes under the refutation table actually
+    // applied, then re-run caller units with only uniquely named imports.
+    let mut cross_unit_premise = None;
+    if let Some(links) = &cross_unit_links
+        && outcomes.len() == steps.len()
+    {
+        let held = crate::refuted_contracts::with_table(&contracts, &applied);
+        let mut exports = Vec::new();
+        let mut definitions = Vec::new();
+        let requested_names = links.requested();
+        let mut census_complete = true;
+        for plan in &plans {
+            for entry in &plan.selected {
+                let file = entry
+                    .file
+                    .strip_prefix(&plan.source_root)
+                    .map_err(|_| "cross-unit home outside library root")?
+                    .to_string_lossy();
+                let key = format!("{}/{file}", plan.library);
+                let requested = links.names_for(&key);
+                let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
+                let options = compiler_options(entry)?;
+                let unit = C11TranslationUnit {
+                    source: &source,
+                    include_paths: options.include_paths,
+                    definitions: options.definitions,
+                    preprocessor_options: options.preprocessor_options,
+                    dialect: options.dialect,
+                    function_scope: LegacyFunctionScope::MainSourceDefinitions,
+                    input: options.input,
+                };
+                let prepared = prepare_translation_unit(&unit);
+                census_complete &= prepared.inventory().is_complete();
+                definitions.extend(
+                    prepared
+                        .inventory()
+                        .definitions()
+                        .iter()
+                        .filter(|name| requested_names.contains(*name))
+                        .map(|name| (key.clone(), name.clone())),
+                );
+                if !requested.is_empty() {
+                    exports.extend(
+                        qcore_c_gateway::legacy_c::export_cross_unit_homes(
+                            &prepared,
+                            &held,
+                            &requested,
+                            &links.digest,
+                        )?
+                        .into_iter()
+                        .map(|export| (key.clone(), export)),
+                    );
+                }
+            }
+        }
+        let (imported, homes) = if census_complete {
+            links.select(exports, definitions, &held)
+        } else {
+            println!("cross-unit import phase refused: incomplete definition census");
+            (held, Vec::new())
+        };
+        if !homes.is_empty() {
+            let units = steps
+                .iter()
+                .enumerate()
+                .filter(|(_, step)| matches!(step, Step::Unit(..)))
+                .map(|(index, step)| (index, step.clone()))
+                .collect::<Vec<_>>();
+            let unit_count = units.len();
+            let weights = units
+                .iter()
+                .map(|(_, step)| match step {
+                    Step::Unit(_, entry) => source_weight(entry),
+                    _ => 0,
+                })
+                .collect::<Vec<_>>();
+            let mut replaced = Vec::new();
+            let stopped = run_ordered(
+                units,
+                jobs,
+                Some(crate::parallel::heaviest_first(&weights)),
+                |(index, step)| (index, work(step, &imported, &homes)),
+                |(index, outcome)| {
+                    let stop = stops(&outcome);
+                    replaced.push((index, outcome));
+                    if stop { Err(()) } else { Ok(()) }
+                },
+            )
+            .is_err();
+            let new_table = crate::refuted_contracts::table(
+                &replaced
+                    .iter()
+                    .filter_map(|(_, outcome)| match outcome {
+                        StepOutcome::Unit { result, .. } => result.as_ref().as_ref().ok(),
+                        _ => None,
+                    })
+                    .flat_map(|products| products.report.unit_rows().iter().cloned())
+                    .collect::<Vec<_>>(),
+            );
+            if !stopped && replaced.len() == unit_count && new_table == applied {
+                for (index, outcome) in replaced {
+                    outcomes[index] = outcome;
+                }
+                cross_unit_premise = Some(serde_json::json!({
+                    "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
+                    "premise": links.premise,
+                    "map_sha256": links.digest,
+                    "imported": homes.iter().map(|home| serde_json::json!({
+                        "function": home.function,
+                        "home_unit": links.home_for(&home.function),
+                        "home_raw_source_sha256": home.input_identity.raw_source_sha256,
+                        "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
+                        "home_environment_sha256": home.environment_sha256,
+                    })).collect::<Vec<_>>(),
+                }));
+            } else {
+                println!(
+                    "cross-unit import phase refused: incomplete run or changed refutation table"
+                );
+            }
+        }
+    }
     for outcome in outcomes {
         match outcome {
             StepOutcome::Prelude { output, result } => {
@@ -481,6 +609,9 @@ pub fn run(
              compile_commands.json to run the C gateway projection"
         );
     }
+    if let Some(premise) = &cross_unit_premise {
+        report.record_cross_unit_premise(premise);
+    }
     // Card CG22-OP-CALLBACKS-AND-SERVED-QUEUES (rule 12n): the run's closure
     // of every invoked member, folded over the rows before anything is
     // published; it only demotes. The per-library console lines above are the
@@ -518,6 +649,9 @@ pub fn run(
     let refuted_section = crate::refuted_contracts::section(&applied, &report);
     println!("{}", crate::refuted_contracts::tally(&refuted_section));
     if let Some((sidecar, mut inputs)) = contract_sidecar {
+        if let Some(premise) = &cross_unit_premise {
+            inputs["cross_unit_link_resolution"] = premise.clone();
+        }
         inputs["pending_human_review"] = pending;
         inputs["contract_revision"] = revision_section;
         inputs["refuted_contracts"] = refuted_section;
@@ -954,6 +1088,7 @@ fn audit_unit(
     entry: &CompileEntry,
     revision: &str,
     contracts: &ResourceContracts,
+    homes: &[CrossUnitHomeEvidence],
     source_contracts: &SourceContractConfiguration,
     provider: &Mutex<()>,
     out: &mut String,
@@ -1254,12 +1389,13 @@ fn audit_unit(
             out,
         )?;
     }
-    project_unit_into(
+    project_unit_into_with_cross_unit(
         library,
         &file,
         &unit,
         &inventory,
         contracts,
+        homes,
         &mut report,
         &mut counts,
         out,

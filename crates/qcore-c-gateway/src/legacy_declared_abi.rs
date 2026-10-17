@@ -573,6 +573,7 @@ impl AbiAgreement {
         // declarations this unit does not withdraw stay in force.
         reduced.carry_side_declarations(contracts, |name| self.withdrawn.contains_key(name));
         reduced.set_source_assumptions(contracts.source_assumptions().clone());
+        reduced.carry_cross_unit_imports(contracts);
         Some(reduced)
     }
 

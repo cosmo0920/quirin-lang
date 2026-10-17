@@ -611,6 +611,14 @@ impl AuditReport {
         }
     }
 
+    /// The opt-in linked-program resolution premise conditions every unit
+    /// that was evaluated with imported cross-unit W4 summaries.
+    pub fn record_cross_unit_premise(&mut self, premise: &Value) {
+        for unit in &mut self.units {
+            unit["cross_unit_link_resolution"] = premise.clone();
+        }
+    }
+
     pub fn record_data_only(&mut self, library: &str, file: &str, error: Option<&LegacyCError>) {
         let reason = error.map(ToString::to_string);
         self.units.push(json!({
