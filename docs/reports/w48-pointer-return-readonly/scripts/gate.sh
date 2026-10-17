@@ -29,3 +29,13 @@ step 06-lean python3 scripts/check_lean_audits.py
 step 07-python python3 -m unittest discover -s scripts/tests
 step 08-index python3 scripts/build_docs_index.py --check
 step 09-clang clang --version
+python3 - "$out" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+results = {p.stem: int(p.read_text().strip()) for p in sorted(root.glob('*.exit'))}
+(root / 'summary.txt').write_text(''.join(f'{name} {status}\n' for name, status in results.items()))
+print((root / 'summary.txt').read_text(), end='')
+sys.exit(0 if all(status == 0 for status in results.values()) else 1)
+PY
