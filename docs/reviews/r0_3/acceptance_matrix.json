@@ -6753,7 +6753,7 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W44-CALLEE-CROSS-UNIT-SUMMARY isolated card gate at tip 2a5477516 (base fa04aab0f), script docs/reports/w44-cross-unit-summary/scripts/gate.sh, logs private/w44xu/gate-final-2 of this worktree: submodule 0; run_test_binaries.py 513 units, 526 summaries, 8,225 passed, 0 failed, 15 ignored, exit 0; fmt 0; clippy 0; reevaluation probe 0; reevaluation follow-up 0; check_lean_audits.py 336/336, exit 0; Python suite 374 OK, exit 0. The preceding gate-final-1 is retained: submodule0, Rust0, fmt0, clippy101 (three W44 style lints), probes0/0, Lean0, Python1 (stale matrix Lean count 335 instead of 336); all repaired before final-2. providers/ is unchanged, so provider_tests 133 is carried from OUTER-CONTRACT's provider gate and was not rerun. Clang 21.1.8 was present as recorded beside this file. Configured corpus exact-base 941 -> 944 Safe, no regressions; system and slice unchanged; report records the conditional link premise and refusals.",
+  "note": "W44 isolated gate: private/w44xu/gate-final-2, 8225 Rust passed and 336 Lean audits; stage 2 isolated gate: private/rk-outer/gate-standing-v3, gate-providers-v3 and gate-docs-v2, 8220 Rust passed, 335 Lean audits, 133 provider Rust and 25 provider Python passed, five packages verified and 374 docs tests passed. All isolated gate steps exited 0. Integrated gate and measurements are pending on this merged tree; each card report owns its exact-base evidence.",
   "workspace_tests": 8225,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
