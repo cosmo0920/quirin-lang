@@ -1934,6 +1934,9 @@ pub struct LegacySafetyCertificate {
     /// contracts already travel in `contracts`. The recheck re-derives this
     /// list independently and refuses a certificate that does not reproduce it.
     pub summaries: Vec<ResourceSummaryRecord>,
+    /// Home bodies and explicit link-map identities for imported W4 summaries.
+    /// Replay reconstructs their contracts before reanalysing this caller.
+    pub cross_unit_homes: Vec<CrossUnitHomeEvidence>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -2431,6 +2434,7 @@ pub fn analyze_unrestricted_c11_with_inventory(
         entry,
         contracts,
         source_functions,
+        &[],
     )
 }
 
@@ -2440,6 +2444,18 @@ pub fn analyze_prepared_translation_unit(
     prepared: &PreparedTranslationUnit,
     entry: &str,
     contracts: &ResourceContracts,
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    analyze_prepared_translation_unit_with_cross_unit(prepared, entry, contracts, &[])
+}
+
+/// Analyse a prepared caller with opt-in, independently replayable home
+/// evidence. The imported contracts must already be in `contracts`' separate
+/// inferred-import map and must match the evidence exactly.
+pub fn analyze_prepared_translation_unit_with_cross_unit(
+    prepared: &PreparedTranslationUnit,
+    entry: &str,
+    contracts: &ResourceContracts,
+    homes: &[CrossUnitHomeEvidence],
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
     let preprocessed_source = prepared
         .preprocessed_source()
@@ -2474,6 +2490,7 @@ pub fn analyze_prepared_translation_unit(
         entry,
         contracts,
         source_functions,
+        homes,
     )
 }
 
@@ -2508,7 +2525,11 @@ fn analyze_preprocessed_unrestricted_c11(
     entry: &str,
     contracts: &ResourceContracts,
     source_functions: Option<Vec<String>>,
+    homes: &[CrossUnitHomeEvidence],
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    cross_unit::check_imports(&preprocessed_source, contracts, homes).map_err(|reason| {
+        LegacyCError::ProductionParserRejected(format!("cross-unit import refused: {reason}"))
+    })?;
     let analysis = match analyze_legacy_c_translation_unit_selected_partial(
         &preprocessed_source,
         entry,
@@ -2658,6 +2679,7 @@ fn analyze_preprocessed_unrestricted_c11(
                 target_scope,
                 checked_functions,
                 summaries,
+                cross_unit_homes: homes.to_vec(),
             };
             check_legacy_safety_certificate(&certificate).map_err(|reason| {
                 LegacyCError::ProductionParserRejected(format!(
@@ -2737,12 +2759,11 @@ pub fn preprocess_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<Stri
 pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,
 ) -> Result<(), String> {
-    if !certificate.contracts.inferred_imports().is_empty() {
-        return Err(
-            "cross-unit imports lack independently replayed home and link-resolution evidence"
-                .into(),
-        );
-    }
+    cross_unit::check_imports(
+        &certificate.preprocessed_source,
+        &certificate.contracts,
+        &certificate.cross_unit_homes,
+    )?;
     crate::contract_loader::check_source_assumptions(&certificate.contracts)?;
     let target_names = match (
         &certificate.function_scope,
@@ -2995,6 +3016,13 @@ pub(crate) struct PartialTranslationUnitAnalysis {
 // Card W44-CORPUS-CALLEE-SUMMARIES: which definitions W4 derives summaries for.
 #[path = "legacy_callee_scope.rs"]
 pub(crate) mod callee_scope;
+
+#[path = "legacy_cross_unit.rs"]
+mod cross_unit;
+
+pub use cross_unit::{
+    CrossUnitExport, CrossUnitHomeEvidence, export_homes as export_cross_unit_homes,
+};
 
 // Card W45-FB-RETRY-LIFETIME: intrusive-container publication.
 #[path = "legacy_container_publication.rs"]
