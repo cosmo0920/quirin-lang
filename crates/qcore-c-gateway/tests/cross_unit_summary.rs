@@ -4,13 +4,75 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_c_gateway::legacy_c::{
-    C11TranslationUnit, LegacyFunctionScope, ResourceContracts, UnrestrictedLegacyResult,
-    analyze_prepared_translation_unit_with_cross_unit, check_legacy_safety_certificate,
-    export_cross_unit_homes, prepare_translation_unit,
+    AbiOutcome, C11TranslationUnit, LegacyFunctionScope, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_prepared_translation_unit_with_cross_unit,
+    check_legacy_safety_certificate, declared_abi_census, export_cross_unit_homes,
+    prepare_translation_unit,
 };
+use qcore_contract::contract_loader::load_resource_contract_sources;
 
 fn clang_available() -> bool {
     qcore_c_gateway::clang_command().is_ok()
+}
+
+#[test]
+fn unrelated_abi_withdrawal_preserves_replayed_import() {
+    if !clang_available() {
+        return;
+    }
+    let home = prepare_translation_unit(&C11TranslationUnit {
+        source: "void callee(void) { return; }\n",
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        ..Default::default()
+    });
+    let digest = "a".repeat(64);
+    let exports = export_cross_unit_homes(
+        &home,
+        &ResourceContracts::default(),
+        &BTreeSet::from(["callee".to_owned()]),
+        &digest,
+    )
+    .expect("home export");
+    assert_eq!(exports.len(), 1);
+    let mut environment = load_resource_contract_sources(&BTreeMap::from([(
+        "abi.qcore".to_owned(),
+        "module contract; extern fn k_alloc(size: usize) -> unit contract { requires resource_contract_v1; ensures normal resource_borrowed(size); ensures normal resource_return_none(); };".to_owned(),
+    )]))
+    .expect("loaded ABI fixture");
+    environment.set_inferred_imports(BTreeMap::from([(
+        "callee".to_owned(),
+        exports[0].contract.clone(),
+    )]));
+    environment.set_cross_unit_import_identities(BTreeMap::from([(
+        "callee".to_owned(),
+        exports[0].home.import_identity(),
+    )]));
+    environment.set_link_resolution_sha256(Some(digest));
+    let caller = prepare_translation_unit(&C11TranslationUnit {
+        source: "void *k_alloc(unsigned long size); void callee(void); void caller(void) { callee(); return; }\n",
+        function_scope: LegacyFunctionScope::MainSourceDefinitions,
+        ..Default::default()
+    });
+    assert!(
+        declared_abi_census(
+            caller.preprocessed_source().expect("caller source"),
+            &environment
+        )
+        .iter()
+        .any(|row| row.function == "k_alloc" && matches!(row.outcome, AbiOutcome::Withdrawn(_)))
+    );
+    let UnrestrictedLegacyResult::Safe(certificate) =
+        analyze_prepared_translation_unit_with_cross_unit(
+            &caller,
+            "caller",
+            &environment,
+            &[exports[0].home.clone()],
+        )
+        .expect("caller analysis")
+    else {
+        panic!("unrelated ABI withdrawal discarded the import");
+    };
+    check_legacy_safety_certificate(&certificate).expect("both bodies replay");
 }
 
 #[test]

@@ -93,4 +93,28 @@ theorem changed_environment_refuses {σ : Type} (definitions : List (Unit × Nam
   intro admission
   exact changed admission.2.2.2.2.1
 
+/-- ABI, checked-specification, and recursive W4 passes may rebuild the
+declared table. They must carry the separate imports and their independent
+caller-expected identities and link premise into that rebuilt environment. -/
+structure CallerEnvironment (σ : Type) where
+  declared : Name → Option σ
+  imports : List (Home σ)
+  expectedHomeDigest : Name → Option String
+  linkDigest : String
+
+def rebuildDeclared (environment : CallerEnvironment σ)
+    (kept : Name → Option σ) : CallerEnvironment σ :=
+  { declared := kept
+    imports := environment.imports
+    expectedHomeDigest := environment.expectedHomeDigest
+    linkDigest := environment.linkDigest }
+
+theorem rebuilt_environment_retains_import_evidence
+    (environment : CallerEnvironment σ) (kept : Name → Option σ) :
+    (rebuildDeclared environment kept).imports = environment.imports ∧
+    (rebuildDeclared environment kept).expectedHomeDigest =
+      environment.expectedHomeDigest ∧
+    (rebuildDeclared environment kept).linkDigest = environment.linkDigest := by
+  exact ⟨rfl, rfl, rfl⟩
+
 end QCore.CrossUnitSummary

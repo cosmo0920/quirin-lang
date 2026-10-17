@@ -800,6 +800,16 @@ impl ResourceContracts {
         self.link_resolution_sha256.as_deref()
     }
 
+    /// Preserve the separately validated cross-unit import channel when a
+    /// gateway pass rebuilds an environment to withdraw ordinary declarations
+    /// or to prove a recursive component. The caller's certificate still
+    /// replays every imported home and its link-resolution premise.
+    pub fn carry_cross_unit_imports(&mut self, from: &Self) {
+        self.inferred_imports = from.inferred_imports.clone();
+        self.cross_unit_import_identities = from.cross_unit_import_identities.clone();
+        self.link_resolution_sha256 = from.link_resolution_sha256.clone();
+    }
+
     /// Exact source inputs, declared as assumptions rather than verified facts.
     #[must_use]
     pub fn source_assumptions(&self) -> &BTreeMap<String, String> {

@@ -12,6 +12,38 @@ use crate::legacy_c::{
     LegacyProgramSummary, analyze_legacy_c_translation_unit, legacy_c_source_functions, tokenize,
 };
 
+#[test]
+fn ranked_recursive_lower_environment_keeps_cross_unit_import() {
+    use qcore_schemas::contract::CrossUnitImportIdentity;
+    let identity = CrossUnitImportIdentity {
+        raw_source_sha256: "a".repeat(64),
+        preprocessed_source_sha256: "b".repeat(64),
+        scope_evidence_sha256: "c".repeat(64),
+        analysis_request_sha256: "d".repeat(64),
+        environment_sha256: "e".repeat(64),
+    };
+    let mut environment = ResourceContracts::default();
+    environment.set_inferred_imports(BTreeMap::from([(
+        "external".to_owned(),
+        ResourceFunctionContract::default(),
+    )]));
+    environment
+        .set_cross_unit_import_identities(BTreeMap::from([("external".to_owned(), identity)]));
+    environment.set_link_resolution_sha256(Some("f".repeat(64)));
+    environment.insert_contract("recursive".to_owned(), ResourceFunctionContract::default());
+    let lower = component_lower_environment(&["recursive".to_owned()], &environment);
+    assert!(lower.functions().get("recursive").is_none());
+    assert_eq!(lower.inferred_imports(), environment.inferred_imports());
+    assert_eq!(
+        lower.cross_unit_import_identities(),
+        environment.cross_unit_import_identities()
+    );
+    assert_eq!(
+        lower.link_resolution_sha256(),
+        environment.link_resolution_sha256()
+    );
+}
+
 const Q_BASE: (&str, &str) = (
     "q_base.qcore",
     include_str!("../fixtures/contracts/q_base.qv"),
