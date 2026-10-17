@@ -105,3 +105,8 @@ so the complete held-position-call census remains to be measured.
 
 AFTER measurement and full standing gate are pending the scheduled private
 heavy-run slot.
+
+The isolated AFTER binary build ran
+`cargo build --release -p qcore-audit --bin quirin-audit -j 4`, exit 0
+(`private/w44xu/release-build.log`); binary SHA-256
+`dc4a9da815462af7d474343af4a166c3acef9d39d060bf78dd7356bf945c3eba`.
