@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
+  "premise": "For the selected linked program and each selected compilation configuration, every external call to each listed symbol has a compatible function type and calling convention and resolves to its listed external definition. This assertion requires the actual link and interposition environment; the source audit conditions its result on it.",
   "symbols": [
     {
       "function": "cio_file_hash",

@@ -370,14 +370,21 @@ impl CurrentAudit {
         &mut self,
         environment: ResourceContracts,
         homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
-        premise: &str,
+        links: &crate::cross_unit_links::LinkMap,
     ) {
         self.contracts = environment;
         self.cross_unit_homes = homes;
         self.assumptions["cross_unit_link_resolution"] = json!({
-            "premise": premise,
+            "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
+            "premise": links.premise,
             "map_sha256": self.contracts.link_resolution_sha256(),
-            "imported": self.cross_unit_homes.iter().map(|home| &home.function).collect::<Vec<_>>(),
+            "imported": self.cross_unit_homes.iter().map(|home| json!({
+                "function": home.function,
+                "home_unit": links.home_for(&home.function),
+                "home_raw_source_sha256": home.input_identity.raw_source_sha256,
+                "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
+                "home_environment_sha256": home.environment_sha256,
+            })).collect::<Vec<_>>(),
         });
     }
 

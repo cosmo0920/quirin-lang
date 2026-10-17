@@ -62,9 +62,10 @@ three call-only Unknown callers at the exact base; the
 [refusal control](link-map-refusal.json) names an absent home.
 
 The map is a **premise**, not evidence that a linker chose those definitions.
-It must describe the actual linked program and interposition environment for
-any conditional Safe result to apply. Source-only presence or uniqueness
-cannot establish that fact.
+It must describe the actual linked program, compatible call/definition types
+and calling conventions, and interposition environment for any conditional
+Safe result to apply. Source-only presence or uniqueness cannot establish
+those facts.
 
 ## Measurement
 

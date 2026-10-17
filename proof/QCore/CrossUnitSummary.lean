@@ -23,6 +23,8 @@ structure Home (σ : Type) where
 /-- A digest names the caller's explicit linked-program resolution premise. -/
 structure LinkPremise where
   digest : String
+  /-- Every call of this name resolves to that home with a compatible
+  function type and calling convention in the actual linked program. -/
   resolves : Name → Unit → Prop
 
 def uniqueHome (definitions : List (Unit × Name)) (h : Home σ) : Prop :=

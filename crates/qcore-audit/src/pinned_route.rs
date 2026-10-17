@@ -517,10 +517,12 @@ pub fn run(
                     outcomes[index] = outcome;
                 }
                 cross_unit_premise = Some(serde_json::json!({
+                    "scope": "conditional: each external call to an imported symbol resolves to its named home definition with compatible function type and calling convention in the actual link and interposition environment",
                     "premise": links.premise,
                     "map_sha256": links.digest,
                     "imported": homes.iter().map(|home| serde_json::json!({
                         "function": home.function,
+                        "home_unit": links.home_for(&home.function),
                         "home_raw_source_sha256": home.input_identity.raw_source_sha256,
                         "home_preprocessed_source_sha256": home.input_identity.preprocessed_source_sha256,
                         "home_environment_sha256": home.environment_sha256,

@@ -384,7 +384,7 @@ pub fn run_current_route_with_checkpoints(
             (audit.contracts().clone(), Vec::new())
         };
         if !homes.is_empty() {
-            audit.set_cross_unit(environment, homes, &links.premise);
+            audit.set_cross_unit(environment, homes, links);
             let mut promoted = Vec::new();
             let stopped = run_ordered(
                 tasks.clone(),

@@ -81,6 +81,10 @@ impl LinkMap {
             .collect()
     }
 
+    pub fn home_for(&self, function: &str) -> Option<&str> {
+        self.homes.get(function).map(String::as_str)
+    }
+
     /// Select only uniquely exported, exact home names. A missing or
     /// ambiguous home leaves its caller uncontracted. The map's claimed
     /// `home_unit` is never inferred from a name alone.
