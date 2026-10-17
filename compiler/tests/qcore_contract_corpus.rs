@@ -1690,9 +1690,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/null_deref.qv", "rd_kafka_outq_len", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_op_destroy", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_topic_name", 2),
-    // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
-    // 34 callback registrations, 8 kept members and 7 premises.
-    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 57),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a stable member, hosted
     // on the broker's constructor (the selector and one stable clause).
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1 on each of the 67 premised
@@ -1928,6 +1925,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "rd_kafkap_share_leader_changes_apply",
         3,
     ),
+    // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
+    // 34 callback registrations, 12 kept members and 8 premises.
+    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 57),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
     // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").
     (
