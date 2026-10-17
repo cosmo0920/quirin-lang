@@ -1,0 +1,88 @@
+{
+  "argv": [
+    "quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+    "--profile-directory",
+    "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/tail-pause-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/tmp/qcore-w48-bottom-up-next/private/w48-pointer-return/tip-slice-1/resource-diagnostics.json"
+  ],
+  "build_profile": "release",
+  "checkout": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+  "clang": {
+    "program": "/usr/lib/llvm-21/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+  },
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+  "configuration": null,
+  "configuration_sha256": null,
+  "contracts": {
+    "manifest": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+    "manifest_sha256": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a",
+    "selection": null,
+    "source": "profile_manifest"
+  },
+  "cwd": "/tmp/qcore-w48-bottom-up-next",
+  "environment": {
+    "QCORE_AUDIT_JOBS": null,
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "gateway_failures": false,
+  "jobs": {
+    "effective": 4,
+    "requested": 4,
+    "source": "command_line"
+  },
+  "mode": "configured",
+  "monkey_database": null,
+  "monkey_database_sha256": null,
+  "profile_directory": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit",
+  "reports": {
+    "binding_directory": null,
+    "monkey_source_report": null,
+    "report": "/tmp/qcore-w48-bottom-up-next/private/w48-pointer-return/tip-slice-1/resource-diagnostics.json"
+  },
+  "schema_version": 1,
+  "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
+  "selection": {
+    "description": "Card W47-TAIL-PAUSE-BINDINGS: the Fluent Bit in_tail pause/resume slice (input control, input worker, library start/stop and the in_tail plugin), audited as a separate slice over the unchanged fluent-bit profile at the export of 90978ac6a59e96d19621108f63e115eb4cd1c576 (tree 8d1f3cd78a00fcfb4095a39d3d0b3e7eaac80be4). Every distinct compilation configuration is kept, so the static and shared variants of the core files are separate units. Excluded explicitly: plugins/in_tail/tail_scan_glob.c and tail_scan_win32.c (textually included by tail_scan.c, never compiled on their own), plugins/in_tail/win32/*.c (MSVC only), and tests/runtime/in_tail.c (the recorded prepare route configures FLB_DEV without FLB_TESTS_RUNTIME, so the compile database has no record for it, and the fluent_bit library profile does not model the test harness). This file does not change the profile's audit.json 185-unit selection and claims nothing about concurrency.",
+    "groups": [
+      {
+        "files": [
+          "src/flb_input.c",
+          "src/flb_input_thread.c",
+          "src/flb_lib.c",
+          "plugins/in_tail/tail.c",
+          "plugins/in_tail/tail_config.c",
+          "plugins/in_tail/tail_db.c",
+          "plugins/in_tail/tail_dockermode.c",
+          "plugins/in_tail/tail_file.c",
+          "plugins/in_tail/tail_file_budget.c",
+          "plugins/in_tail/tail_fs_inotify.c",
+          "plugins/in_tail/tail_fs_stat.c",
+          "plugins/in_tail/tail_multiline.c",
+          "plugins/in_tail/tail_scan.c"
+        ],
+        "label": "fluent-bit-tail-pause",
+        "library": "fluent_bit"
+      }
+    ],
+    "name": "fluent-bit-tail-pause",
+    "path": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/tail-pause-selection.json",
+    "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
+    "sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af"
+  },
+  "source_revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+  "tool": "quirin-audit current",
+  "tool_version": "0.1.0"
+}

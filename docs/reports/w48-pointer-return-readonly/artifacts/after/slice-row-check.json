@@ -1,0 +1,17 @@
+{
+ "before": "/tmp/qcore-rk-outer-base/private/rk-outer/measure-base/slice/resource-diagnostics.json",
+ "after": "private/w48-pointer-return/tip-slice-1/resource-diagnostics.json",
+ "units": [
+  16,
+  16
+ ],
+ "configuration_rows": [
+  404,
+  404
+ ],
+ "row_projection_sha256": [
+  "ed0b54694742f8e491f0be7eea87c4a9fdf2c428090ac7afeec92f7dff5a454a",
+  "ed0b54694742f8e491f0be7eea87c4a9fdf2c428090ac7afeec92f7dff5a454a"
+ ],
+ "identical": true
+}

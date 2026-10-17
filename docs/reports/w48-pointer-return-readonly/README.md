@@ -15,8 +15,11 @@ pointer-return shape. The pinned `rdlist.h` defines the static inline
 `rd_list_cnt(const rd_list_t *rl)` with the sole statement
 `return rl->rl_cnt;`. This body reads its actual and does not write through
 it, retain it, or return a pointer.
-The pinned source file SHA-256 values are `9e820273…` for `rdlist.h` and
-`8ed0e410…` for `rdkafka_admin.c` in the `66910c10` source checkout.
+The pinned source file SHA-256 values are
+`9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025`
+for `rdlist.h` and
+`8ed0e410007040262668e3b7b83dacf69241a8184ba174e7d32ab1d9dd4b1179`
+for `rdkafka_admin.c` in the `66910c10` source checkout.
 
 The current gateway's `position_pointer_root` refuses `rko` because the
 lexical and AST `may_bind` readers conservatively mark names in call actuals.
@@ -123,10 +126,32 @@ callers, seven own leaves in branch and indirect-access families. The
 cards. These closure numbers are planning bounds; only the eleven measured
 status moves above are current Safe claims.
 
-## Remaining route and gate evidence
+## System and slice comparison
 
 The system and tail-pause slice before reports are the shared exact-base
 artifacts under `/tmp/qcore-rk-outer-base/private/rk-outer/measure-base/`:
-system 97 / 4 / 347 / 0 Pending (SHA-256 `1483b2aa…`), slice 52 / 1 /
-347 / 4 Pending (SHA-256 `9c0ae577…`). Their after runs and the full
-standing gate are queued under the coordinator's heavy-run lock.
+system 97 / 4 / 347 / 0 Pending (SHA-256
+`1483b2aaad5b8eeec49a288998f46139b988e61581eac3b8a8aee650c76fc38b`),
+slice 52 / 1 / 347 / 4 Pending (SHA-256
+`9c0ae577e27984b7b63339ca0dee1e8a8b7e256c3419232f3cd6da455e399afa`).
+The W48 binary's after system and slice runs both exited 0 under
+`private/w48-pointer-return/tip-system-1/` and `tip-slice-1/`. Their
+diagnostic SHA-256 values are `ee5da93803fd7a244f16096de2afa99e382cbf0a6087a0f93d9d8728f621f820`
+and `83a1d25514063508d06a89b76cf8180dd88257e96596a155373f8345cd0d5016`.
+Their invocation [system](artifacts/after/system-invocation.json) and
+[slice](artifacts/after/slice-invocation.json) sidecars retain the same
+prepared source checkout, compile database, four-job selection and source
+identity as the base. Full diagnostic files differ in checkout/report path
+metadata; `compare_configuration_rows.py` serializes every unit's file and
+every function's `(name, status, diagnostics)` in configuration order.
+The [system](artifacts/after/system-row-check.json) has 448/448 identical
+rows with projection SHA-256 `2b6fd51b…` on both sides; the
+[slice](artifacts/after/slice-row-check.json) has 404/404 with
+`ed0b5469…`. Both status and diagnostic movement are exactly zero. The
+legacy per-function [system](artifacts/after/system-compare.json) and
+[slice](artifacts/after/slice-compare.json) comparisons agree, but collapse
+configuration duplicates; the row checks are the coverage evidence.
+
+## Standing gate
+
+The full gate is queued under the coordinator's heavy-run lock.

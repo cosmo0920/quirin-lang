@@ -1,0 +1,83 @@
+{
+  "argv": [
+    "quirin-audit",
+    "current",
+    "--checkout",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+    "--profile-directory",
+    "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit",
+    "--compile-database",
+    "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+    "--selection",
+    "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/system-selection.json",
+    "--jobs",
+    "4",
+    "--report",
+    "/tmp/qcore-w48-bottom-up-next/private/w48-pointer-return/tip-system-1/resource-diagnostics.json"
+  ],
+  "build_profile": "release",
+  "checkout": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+  "clang": {
+    "program": "/usr/lib/llvm-21/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "version": "Ubuntu clang version 21.1.8 (6ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-21/bin"
+  },
+  "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+  "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+  "configuration": null,
+  "configuration_sha256": null,
+  "contracts": {
+    "manifest": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/../../../cycle19-resource-contracts.json",
+    "manifest_sha256": "75f29cdb3e54f1e5638bfcc619d0ac5a1b7ad425db87f75afeb647ce7a438d3a",
+    "selection": null,
+    "source": "profile_manifest"
+  },
+  "cwd": "/tmp/qcore-w48-bottom-up-next",
+  "environment": {
+    "QCORE_AUDIT_JOBS": null,
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "gateway_failures": false,
+  "jobs": {
+    "effective": 4,
+    "requested": 4,
+    "source": "command_line"
+  },
+  "mode": "configured",
+  "monkey_database": null,
+  "monkey_database_sha256": null,
+  "profile_directory": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit",
+  "reports": {
+    "binding_directory": null,
+    "monkey_source_report": null,
+    "report": "/tmp/qcore-w48-bottom-up-next/private/w48-pointer-return/tip-system-1/resource-diagnostics.json"
+  },
+  "schema_version": 1,
+  "scope": "invocation provenance of this run; not an input to any verdict. Preparation (the Clang CMake build and the Monkey inputs, including the C++ compiler) is recorded by quirin-audit prepare beside its outputs (build-provenance.json, qcore-monkey-inputs.json and prepare.json); resource analysis does not establish GCC equivalence or whole-library safety",
+  "selection": {
+    "description": "Card W45-FB-SYSTEM-SELECTION: the eight Fluent Bit engine, backlog and retry files of the system-coverage census (docs/plans/fluent-bit-system-coverage/README.md, FB-SYSTEM-CENSUS), audited as a separate slice over the unchanged fluent-bit profile. Every distinct compilation configuration is kept, so the static and shared variants of the core files are separate units. This file does not change the profile's audit.json 185-unit selection.",
+    "groups": [
+      {
+        "files": [
+          "plugins/in_storage_backlog/sb.c",
+          "src/flb_input_chunk.c",
+          "src/flb_storage.c",
+          "src/flb_task.c",
+          "src/flb_engine.c",
+          "src/flb_engine_dispatch.c",
+          "src/flb_scheduler.c",
+          "src/flb_output.c"
+        ],
+        "label": "fluent-bit-system",
+        "library": "fluent_bit"
+      }
+    ],
+    "name": "fluent-bit-system",
+    "path": "/tmp/qcore-w48-bottom-up-next/contract/profiles/fluent-bit/system-selection.json",
+    "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
+    "sha256": "d7e8ce764c8c45c8df11d33f3568a7a653c3281985028156229c43ab86cccdde"
+  },
+  "source_revision": "046accf6aded7906f66a1baf0202da349e521736",
+  "tool": "quirin-audit current",
+  "tool_version": "0.1.0"
+}
