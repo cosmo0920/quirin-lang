@@ -2,7 +2,8 @@
 
 Card W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT, base `fa04aab0f`.
 The committed prediction, implementation, and measured gate belong to this
-report. The before corpus must be rerun on this base before a movement claim.
+report. The before corpus was rerun on this exact base in a shared detached
+worktree before the prediction was committed.
 
 ## Source shape under review
 
@@ -35,6 +36,12 @@ compressed [bottom-up plan](artifacts/before/plan.json.gz), and
 [family leverage](artifacts/before/family.json) are archived here. The
 [committed prediction](PREDICTION.md) follows that
 measurement and precedes the rule code (`fcaad9ae1` before `6219f7d42`).
+The shared exact-base system and tail-pause slice reports also exited 0.
+Their invocation sidecars name the same prepared checkouts and compile
+databases used by this card's after script, four jobs, and selection SHA-256
+`d7e8ce76…` (system) and `11cc7e23…` (slice). Their profile-directory path
+points to the detached base checkout; the profile and selection files are
+byte-identical in this worktree.
 
 The current plan finds 264 Unknown functions waiting on exactly one
 in-corpus callee body, versus 338 in the earlier W48 report. Three remaining
@@ -60,4 +67,8 @@ Scoped preparation: `cargo check -p qcore-c-gateway -j2` exit 0; the three
 lexical frame fixtures and one AST direct/shadow/write fixture pass (0
 failures); `lake build QCore.ReadOnlyActualFrame` and
 `lake env lean AuditReadOnlyActualFrame.lean` exit 0, with only the three
-standard Lean axioms reported. Full gate and arbiter results follow below.
+standard Lean axioms reported. The isolated release build
+(`private/w48-pointer-return/tip-build-1/build.log`) exited 0; its
+`quirin-audit` SHA-256 is
+`e2bfb4d310d0ab062fb35bab327c2959760b3717fe9fe0679dae09aeeba8771c`.
+Full gate and arbiter results follow below.
