@@ -1,0 +1,1506 @@
+{
+ "card": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS",
+ "before": "private/fblb/base2-system/resource-diagnostics.json",
+ "after": "private/fblb/after4-system/resource-diagnostics.json",
+ "status_moves": {
+  "Unknown -> Safe": 2
+ },
+ "rows_trading_leaves": 34,
+ "null_moves": {},
+ "null_rows_changed": 0,
+ "moves": [
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cb_disable",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:723",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cb_disable",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:723",
+     "count": 1
+    }
+   ],
+   "added": []
+  }
+ ],
+ "trades": [
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_flush_timer_reset",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:329",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:341",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1328",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1329",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1455",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1484",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1485",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1486",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1572",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1576",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1589",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1592",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1613",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1620",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1624",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1625",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1629",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_flush_timer_reset",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:329",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:341",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1328",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1329",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1455",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1484",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1485",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1486",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1572",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1576",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1589",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1592",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1613",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1620",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1624",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1625",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_engine.c:1629",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "occurrence": 1,
+   "function": "tasks_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_engine_dispatch.c:297",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `route`, which this function has not published",
+     "origin": "src/flb_engine_dispatch.c:297",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "occurrence": 2,
+   "function": "tasks_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_engine_dispatch.c:297",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `route`, which this function has not published",
+     "origin": "src/flb_engine_dispatch.c:297",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_init_all",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_output.c:1857",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_output.c:1892",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:783",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:809",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:838",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:842",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:849",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:868",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:943",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_init_all",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_output.c:1857",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_output.c:1892",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:783",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:809",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:838",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:842",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:849",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:868",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:943",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_output.c:959",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:775",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:779",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:780",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:785",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:809",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:775",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_event_handler",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:589",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:593",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:606",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:611",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:612",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:613",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:617",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:618",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:620",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_request_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:289",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_retry_now",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:974",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_cb_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:658",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:664",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:665",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:673",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:685",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:686",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_coro_cb_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:714",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:879",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:883",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:884",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:889",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`",
+     "origin": "src/flb_scheduler.c:879",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:883",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:884",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:889",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:907",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:909",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `timer`, which this function has not published",
+     "origin": "src/flb_scheduler.c:909",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "flb_sched_timer_invalidate",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:896",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:898",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:900",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:901",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `timer`, which this function has not published",
+     "origin": "src/flb_scheduler.c:900",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:901",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 1,
+   "function": "schedule_request_now",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:134",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:146",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:775",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:779",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:780",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:785",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:809",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:775",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_event_handler",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:589",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:593",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:606",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:611",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:612",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:613",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:617",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:618",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:620",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_request_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:289",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_retry_now",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:974",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_cb_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:658",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:664",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:665",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:673",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:685",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:686",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_coro_cb_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:714",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:879",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:883",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:884",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:889",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`",
+     "origin": "src/flb_scheduler.c:879",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:883",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:884",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:889",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:907",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:909",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `timer`, which this function has not published",
+     "origin": "src/flb_scheduler.c:909",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "flb_sched_timer_invalidate",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `flb_sched_timer_cb_disable`",
+     "origin": "src/flb_scheduler.c:896",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:898",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:900",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_scheduler.c:901",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `timer`, which this function has not published",
+     "origin": "src/flb_scheduler.c:900",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `timer`",
+     "origin": "src/flb_scheduler.c:901",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_scheduler.c",
+   "occurrence": 2,
+   "function": "schedule_request_now",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:134",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_scheduler.c:146",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:715",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:716",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:819",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:820",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:867",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:868",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 1,
+   "function": "flb_task_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:918",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:919",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:715",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:716",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:819",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:820",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:867",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `evc`",
+     "origin": "src/flb_task.c:868",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:718",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:822",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `route`, which this function does not hold as one live object",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:870",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_task.c",
+   "occurrence": 2,
+   "function": "flb_task_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_task.c:918",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `route`",
+     "origin": "src/flb_task.c:919",
+     "count": 1
+    }
+   ],
+   "added": []
+  }
+ ],
+ "null": []
+}

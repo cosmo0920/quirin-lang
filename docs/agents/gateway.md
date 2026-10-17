@@ -355,8 +355,8 @@ reaches a bound or a branch.
     (`FunctionTypes::function_pointer_formals`).
     Without that, the card's first corpus run moved `cio_options_init`
     `Safe -> Unknown` (`memset(options, …)` then scalar stores the Clang
-    reading had decided). Other lexical routes with flow obligations (the W44
-    chain reading of a condition) are not so held; the precedence itself is
+    reading had decided). Other lexical routes with flow obligations (W43's typed
+    scalar statement, the W44 chain reading of a condition) are not so held; the precedence itself is
     `LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS`. Premise stated, not
     proved: a function pointer holds a code address, never an object the
     projection tracks. `QCore.FunctionPointerDeclarators`

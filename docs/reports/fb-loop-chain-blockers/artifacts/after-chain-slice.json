@@ -1,0 +1,7120 @@
+{
+ "card": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS",
+ "route": "slice-after",
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/fblb-census-after4/resource-diagnostics.json",
+ "report_sha256": "b900e299b0d0c57f3c162fa4eaa2be07100dc7a3899626a162566849d005f2ac",
+ "census_stream": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a2f7b1c49255cf884/private/fblb/census-after4-slice-census.jsonl",
+ "census_sha256": "511495c7a013ff71fb25e1b87bf9d15be81095d37184d57a1eaa0b5224045e5b",
+ "chains": {
+  "R1/R2 collectors and instances": [
+   "collector_create",
+   "collector_start",
+   "flb_input_set_collector_time",
+   "flb_input_set_collector_event",
+   "flb_input_set_collector_socket",
+   "flb_input_collector_start",
+   "flb_input_collectors_signal_start",
+   "flb_input_collectors_start",
+   "flb_input_thread_collectors_start",
+   "flb_input_collector_pause",
+   "flb_input_collector_resume",
+   "flb_input_collector_delete",
+   "flb_input_collector_destroy",
+   "flb_input_instance_destroy",
+   "flb_input_instance_exit",
+   "flb_input_exit_all",
+   "flb_input_thread_instance_exit",
+   "flb_input_thread_instance_init",
+   "input_thread",
+   "input_thread_instance_create",
+   "input_thread_instance_destroy",
+   "input_instance_channel_events_init"
+  ],
+  "R3 engine and library": [
+   "flb_engine_start",
+   "flb_engine_shutdown",
+   "flb_create",
+   "flb_destroy",
+   "flb_stop",
+   "flb_config_exit"
+  ],
+  "R4 output workers": [
+   "flb_output_thread_pool_create",
+   "flb_output_thread_pool_destroy",
+   "output_thread"
+  ],
+  "R6 scheduler": [
+   "flb_sched_create",
+   "flb_sched_destroy",
+   "flb_sched_timer_create",
+   "flb_sched_timer_cb_create",
+   "flb_sched_timer_coro_cb_create",
+   "flb_sched_timer_cb_disable",
+   "flb_sched_timer_cb_destroy",
+   "flb_sched_timer_destroy",
+   "flb_sched_timer_invalidate",
+   "flb_sched_timer_cleanup",
+   "flb_sched_request_create",
+   "flb_sched_request_destroy",
+   "flb_sched_request_invalidate",
+   "schedule_request_now",
+   "flb_sched_retry_now",
+   "flb_task_retry_destroy"
+  ]
+ },
+ "chain_functions_absent_from_route": [
+  "flb_config_exit",
+  "flb_engine_shutdown",
+  "flb_engine_start",
+  "flb_output_thread_pool_create",
+  "flb_output_thread_pool_destroy",
+  "flb_sched_create",
+  "flb_sched_destroy",
+  "flb_sched_request_create",
+  "flb_sched_request_destroy",
+  "flb_sched_request_invalidate",
+  "flb_sched_retry_now",
+  "flb_sched_timer_cb_create",
+  "flb_sched_timer_cb_destroy",
+  "flb_sched_timer_cb_disable",
+  "flb_sched_timer_cleanup",
+  "flb_sched_timer_coro_cb_create",
+  "flb_sched_timer_create",
+  "flb_sched_timer_destroy",
+  "flb_sched_timer_invalidate",
+  "flb_task_retry_destroy",
+  "output_thread",
+  "schedule_request_now"
+ ],
+ "totals": {
+  "rows": 50,
+  "rows_with_access_or_identity": 46,
+  "access_leaves": 190,
+  "identity_leaves": 124,
+  "status": {
+   "Unknown": 50
+  }
+ },
+ "rows": [
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "collector_create",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 3,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `MK_EVENT_ZERO`": 1,
+    "nullable resource `coll` used by a non-null contract": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19468,
+     "origin": "src/flb_input.c:2245",
+     "source": "coll->cb_collect  = cb;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "coll - > cb_collect = cb",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_collect",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 19469,
+     "origin": "src/flb_input.c:2246",
+     "source": "coll->instance    = ins;",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 19473,
+     "origin": "src/flb_input.c:2251",
+     "source": "coll->evl = thi->evl;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "coll - > evl = thi - > evl",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 19476,
+     "origin": "src/flb_input.c:2258",
+     "source": "coll->evl = config->evl;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "coll - > evl = config - > evl",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 19478,
+     "origin": "src/flb_input.c:2267",
+     "source": "mk_list_add(&coll->_head, &ins->collectors);",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 19479,
+     "origin": "src/flb_input.c:2269",
+     "source": "return coll;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "collector_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 2,
+   "other": {
+    "call to `mk_event_add` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)": 1,
+    "call to `mk_event_timeout_create` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19556,
+     "origin": "src/flb_input.c:2368",
+     "source": "mk_event_closesocket(coll->fd_event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( coll - > fd_event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "fd_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_delete",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 2,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20206,
+     "origin": "src/flb_input.c:3205",
+     "source": "if (flb_input_collector_pause(coll_id, in) < 0) {"
+    },
+    {
+     "kind": "access",
+     "line": 20209,
+     "origin": "src/flb_input.c:3210",
+     "source": "pthread_mutex_lock(&in->config->collectors_mutex);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "pthread_mutex_lock ( & in - > config - > collectors_mutex )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "collectors_mutex",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20210,
+     "origin": "src/flb_input.c:3211",
+     "source": "mk_list_del(&coll->_head);",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20211,
+     "origin": "src/flb_input.c:3212",
+     "source": "pthread_mutex_unlock(&in->config->collectors_mutex);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "pthread_mutex_unlock ( & in - > config - > collectors_mutex )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "collectors_mutex",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20212,
+     "origin": "src/flb_input.c:3214",
+     "source": "flb_free(coll);",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 1,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20165,
+     "origin": "src/flb_input.c:3146",
+     "source": "mk_event_timeout_destroy(config->evl, &coll->event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_timeout_destroy ( config - > evl , & coll - > event )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20169,
+     "origin": "src/flb_input.c:3150",
+     "source": "mk_event_del(config->evl, &coll->event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_del ( config - > evl , & coll - > event )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20171,
+     "origin": "src/flb_input.c:3153",
+     "source": "flb_free(coll);",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_pause",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 4,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 20186,
+     "origin": "src/flb_input.c:3181",
+     "source": "coll->fd_timer = -1;",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 20187,
+     "origin": "src/flb_input.c:3182",
+     "source": "mk_event_timeout_destroy(coll->evl, &coll->event);",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 20190,
+     "origin": "src/flb_input.c:3185",
+     "source": "ret = mk_event_del(coll->evl, &coll->event);",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20192,
+     "origin": "src/flb_input.c:3187",
+     "source": "flb_warn(\"[input] cannot disable event for %s\", in->name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 2 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20196,
+     "origin": "src/flb_input.c:3192",
+     "source": "coll->running = FLB_FALSE;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_resume",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 2,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20227,
+     "origin": "src/flb_input.c:3232",
+     "source": "flb_error(\"[input] cannot resume collector %s:%i, already running\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name , coll_id )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20231,
+     "origin": "src/flb_input.c:3238",
+     "source": "event = &coll->event;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "event = & coll - > event",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20238,
+     "origin": "src/flb_input.c:3248",
+     "source": "fd = mk_event_timeout_create(coll->evl, coll->seconds,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "fd = mk_event_timeout_create ( coll - > evl , coll - > seconds , coll - > nanoseconds , event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "seconds",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "nanoseconds",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20244,
+     "origin": "src/flb_input.c:3254",
+     "source": "coll->fd_timer = fd;",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20250,
+     "origin": "src/flb_input.c:3261",
+     "source": "ret = mk_event_add(coll->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_add ( coll - > evl , coll - > fd_event , 0 , 1 , event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "fd_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20255,
+     "origin": "src/flb_input.c:3266",
+     "source": "flb_error(\"[input] cannot disable/pause event for %s\", in->name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20259,
+     "origin": "src/flb_input.c:3271",
+     "source": "coll->running = FLB_TRUE;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19574,
+     "origin": "src/flb_input.c:2389",
+     "source": "flb_error(\"[input] error starting collector #%i: %s\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , coll_id , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collectors_signal_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_collector_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19995,
+     "origin": "src/flb_input.c:2900",
+     "source": "flb_error(\"input plugin '%s' is threaded\", flb_input_name(ins));"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collectors_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 0,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `flb_input_collectors_signal_start`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_signal_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20017,
+     "origin": "src/flb_input.c:2932",
+     "source": "flb_error(\"could not start collectors for threaded plugin '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 20023,
+     "origin": "src/flb_input.c:2939",
+     "source": "flb_error(\"could not start collectors for plugin '%s'\","
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 3,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_instance_exit`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19424,
+     "origin": "src/flb_input.c:2154",
+     "source": "p = ins->p;",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 19425,
+     "origin": "src/flb_input.c:2155",
+     "source": "if (!p) {",
+     "name": "p"
+    },
+    {
+     "kind": "identity",
+     "line": 19429,
+     "origin": "src/flb_input.c:2160",
+     "source": "flb_input_instance_destroy(ins);",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 25,
+   "identity_leaves": 9,
+   "other_leaves": 29,
+   "other": {
+    "call to `pthread_cond_destroy` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1,
+    "call to uncontracted function `flb_chunk_trace_context_destroy`": 1,
+    "call to uncontracted function `flb_config_map_destroy`": 5,
+    "call to uncontracted function `flb_engine_destroy_tasks`": 1,
+    "call to uncontracted function `flb_hash_table_destroy`": 4,
+    "call to uncontracted function `flb_input_chunk_ring_buffer_cleanup`": 1,
+    "call to uncontracted function `flb_input_ingress_destroy`": 1,
+    "call to uncontracted function `flb_input_rate_gate_timer_cancel`": 1,
+    "call to uncontracted function `flb_kv_release`": 4,
+    "call to uncontracted function `flb_metrics_destroy`": 1,
+    "call to uncontracted function `flb_processor_destroy`": 1,
+    "call to uncontracted function `flb_ring_buffer_destroy`": 1,
+    "call to uncontracted function `flb_storage_input_destroy`": 2,
+    "call to uncontracted function `flb_tls_destroy`": 1,
+    "call to uncontracted function `flb_uri_destroy`": 1,
+    "call to uncontracted function `pthread_mutex_destroy`": 2,
+    "unlink by `mk_list_del` of `ins`, which this function has not published": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18746,
+     "origin": "src/flb_input.c:1165",
+     "source": "flb_sds_destroy(ins->alias);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > alias )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "alias",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18748,
+     "origin": "src/flb_input.c:1169",
+     "source": "if (ins->host.uri) {",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 18751,
+     "origin": "src/flb_input.c:1173",
+     "source": "if (ins->host.name) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18752,
+     "origin": "src/flb_input.c:1174",
+     "source": "flb_sds_destroy(ins->host.name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . name )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18754,
+     "origin": "src/flb_input.c:1176",
+     "source": "if (ins->host.address) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18755,
+     "origin": "src/flb_input.c:1177",
+     "source": "flb_sds_destroy(ins->host.address);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . address )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "address",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18757,
+     "origin": "src/flb_input.c:1179",
+     "source": "if (ins->host.listen) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18758,
+     "origin": "src/flb_input.c:1180",
+     "source": "flb_sds_destroy(ins->host.listen);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . listen )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "listen",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18769,
+     "origin": "src/flb_input.c:1196",
+     "source": "flb_sds_destroy(ins->tls_vhost);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_vhost )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_vhost",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18772,
+     "origin": "src/flb_input.c:1200",
+     "source": "flb_sds_destroy(ins->tls_ca_path);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ca_path )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ca_path",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18775,
+     "origin": "src/flb_input.c:1204",
+     "source": "flb_sds_destroy(ins->tls_ca_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ca_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ca_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18778,
+     "origin": "src/flb_input.c:1208",
+     "source": "flb_sds_destroy(ins->tls_crt_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_crt_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_crt_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18781,
+     "origin": "src/flb_input.c:1212",
+     "source": "flb_sds_destroy(ins->tls_key_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_key_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_key_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18784,
+     "origin": "src/flb_input.c:1216",
+     "source": "flb_sds_destroy(ins->tls_crl_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_crl_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_crl_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18787,
+     "origin": "src/flb_input.c:1220",
+     "source": "flb_sds_destroy(ins->tls_key_passwd);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_key_passwd )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_key_passwd",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18790,
+     "origin": "src/flb_input.c:1224",
+     "source": "flb_sds_destroy(ins->tls_min_version);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_min_version )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_min_version",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18793,
+     "origin": "src/flb_input.c:1228",
+     "source": "flb_sds_destroy(ins->tls_max_version);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_max_version )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_max_version",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18796,
+     "origin": "src/flb_input.c:1232",
+     "source": "flb_sds_destroy(ins->tls_ciphers);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ciphers )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ciphers",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18798,
+     "origin": "src/flb_input.c:1236",
+     "source": "flb_sds_destroy(ins->tag);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tag )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tag",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18806,
+     "origin": "src/flb_input.c:1255",
+     "source": "cmt_destroy(ins->cmt);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "cmt_destroy ( ins - > cmt )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "cmt",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18824,
+     "origin": "src/flb_input.c:1281",
+     "source": "flb_free(ins->http_server_config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_free ( ins - > http_server_config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "http_server_config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18831,
+     "origin": "src/flb_input.c:1291",
+     "source": "ins->ht_log_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_log_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_log_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18835,
+     "origin": "src/flb_input.c:1296",
+     "source": "ins->ht_metric_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_metric_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_metric_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18839,
+     "origin": "src/flb_input.c:1301",
+     "source": "ins->ht_trace_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_trace_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_trace_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18843,
+     "origin": "src/flb_input.c:1306",
+     "source": "ins->ht_profile_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_profile_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_profile_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18846,
+     "origin": "src/flb_input.c:1311",
+     "source": "if (ins->ch_events[0] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18847,
+     "origin": "src/flb_input.c:1312",
+     "source": "mk_event_closesocket(ins->ch_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ch_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18849,
+     "origin": "src/flb_input.c:1315",
+     "source": "if (ins->ch_events[1] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18850,
+     "origin": "src/flb_input.c:1316",
+     "source": "mk_event_closesocket(ins->ch_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ch_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18852,
+     "origin": "src/flb_input.c:1319",
+     "source": "if (ins->ingress_queue_channels[0] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18853,
+     "origin": "src/flb_input.c:1320",
+     "source": "mk_event_closesocket(ins->ingress_queue_channels[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ingress_queue_channels [ 0 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18855,
+     "origin": "src/flb_input.c:1323",
+     "source": "if (ins->ingress_queue_channels[1] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18856,
+     "origin": "src/flb_input.c:1324",
+     "source": "mk_event_closesocket(ins->ingress_queue_channels[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ingress_queue_channels [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18874,
+     "origin": "src/flb_input.c:1353",
+     "source": "flb_free(ins);",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_exit",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to `flb_input_thread_instance_exit` whose declared contract awaits human review (awaiting-human-review)": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19412,
+     "origin": "src/flb_input.c:2139",
+     "source": "if (p->cb_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 19413,
+     "origin": "src/flb_input.c:2141",
+     "source": "p->cb_exit(ins->context, config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "p - > cb_exit ( ins - > context , config )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_event",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19508,
+     "origin": "src/flb_input.c:2308",
+     "source": "coll->fd_event = fd;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_socket",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19523,
+     "origin": "src/flb_input.c:2329",
+     "source": "coll->fd_event = fd;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_time",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 2,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19493,
+     "origin": "src/flb_input.c:2288",
+     "source": "coll->seconds     = seconds;",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 19494,
+     "origin": "src/flb_input.c:2289",
+     "source": "coll->nanoseconds = nanoseconds;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 0,
+   "unit": "src/flb_input.c",
+   "function": "input_instance_channel_events_init",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_event_loop_get`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18892,
+     "origin": "src/flb_input.c:1380",
+     "source": "ret = mk_event_channel_create(evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( evl , & ins - > ch_events [ 0 ] , & ins - > ch_events [ 1 ] , ins )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18897,
+     "origin": "src/flb_input.c:1385",
+     "source": "flb_error(\"could not create events channels for '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 18900,
+     "origin": "src/flb_input.c:1390",
+     "source": "flb_debug(\"[%s:%s] created event channels: read=%i write=%i\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , ins - > p - > name , flb_input_name ( ins ) , ins - > ch_events [ 0 ] , ins - > ch_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18901,
+     "origin": "src/flb_input.c:1399",
+     "source": "ins->event.type = FLB_ENGINE_EV_INPUT;",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "collector_create",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 3,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `MK_EVENT_ZERO`": 1,
+    "nullable resource `coll` used by a non-null contract": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19468,
+     "origin": "src/flb_input.c:2245",
+     "source": "coll->cb_collect  = cb;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "coll - > cb_collect = cb",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_collect",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 19469,
+     "origin": "src/flb_input.c:2246",
+     "source": "coll->instance    = ins;",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 19473,
+     "origin": "src/flb_input.c:2251",
+     "source": "coll->evl = thi->evl;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "coll - > evl = thi - > evl",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 19476,
+     "origin": "src/flb_input.c:2258",
+     "source": "coll->evl = config->evl;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "coll - > evl = config - > evl",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 19478,
+     "origin": "src/flb_input.c:2267",
+     "source": "mk_list_add(&coll->_head, &ins->collectors);",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 19479,
+     "origin": "src/flb_input.c:2269",
+     "source": "return coll;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "collector_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 2,
+   "other": {
+    "call to `mk_event_add` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)": 1,
+    "call to `mk_event_timeout_create` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19556,
+     "origin": "src/flb_input.c:2368",
+     "source": "mk_event_closesocket(coll->fd_event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( coll - > fd_event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "fd_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_delete",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 2,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20206,
+     "origin": "src/flb_input.c:3205",
+     "source": "if (flb_input_collector_pause(coll_id, in) < 0) {"
+    },
+    {
+     "kind": "access",
+     "line": 20209,
+     "origin": "src/flb_input.c:3210",
+     "source": "pthread_mutex_lock(&in->config->collectors_mutex);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "pthread_mutex_lock ( & in - > config - > collectors_mutex )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "collectors_mutex",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20210,
+     "origin": "src/flb_input.c:3211",
+     "source": "mk_list_del(&coll->_head);",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20211,
+     "origin": "src/flb_input.c:3212",
+     "source": "pthread_mutex_unlock(&in->config->collectors_mutex);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "pthread_mutex_unlock ( & in - > config - > collectors_mutex )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "collectors_mutex",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20212,
+     "origin": "src/flb_input.c:3214",
+     "source": "flb_free(coll);",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 1,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20165,
+     "origin": "src/flb_input.c:3146",
+     "source": "mk_event_timeout_destroy(config->evl, &coll->event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_timeout_destroy ( config - > evl , & coll - > event )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20169,
+     "origin": "src/flb_input.c:3150",
+     "source": "mk_event_del(config->evl, &coll->event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_del ( config - > evl , & coll - > event )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "Formal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20171,
+     "origin": "src/flb_input.c:3153",
+     "source": "flb_free(coll);",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_pause",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 4,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 20186,
+     "origin": "src/flb_input.c:3181",
+     "source": "coll->fd_timer = -1;",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 20187,
+     "origin": "src/flb_input.c:3182",
+     "source": "mk_event_timeout_destroy(coll->evl, &coll->event);",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 20190,
+     "origin": "src/flb_input.c:3185",
+     "source": "ret = mk_event_del(coll->evl, &coll->event);",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20192,
+     "origin": "src/flb_input.c:3187",
+     "source": "flb_warn(\"[input] cannot disable event for %s\", in->name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 2 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20196,
+     "origin": "src/flb_input.c:3192",
+     "source": "coll->running = FLB_FALSE;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_resume",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 2,
+   "other_leaves": 0,
+   "other": {},
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20227,
+     "origin": "src/flb_input.c:3232",
+     "source": "flb_error(\"[input] cannot resume collector %s:%i, already running\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name , coll_id )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20231,
+     "origin": "src/flb_input.c:3238",
+     "source": "event = &coll->event;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "event = & coll - > event",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20238,
+     "origin": "src/flb_input.c:3248",
+     "source": "fd = mk_event_timeout_create(coll->evl, coll->seconds,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "fd = mk_event_timeout_create ( coll - > evl , coll - > seconds , coll - > nanoseconds , event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "seconds",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "nanoseconds",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20244,
+     "origin": "src/flb_input.c:3254",
+     "source": "coll->fd_timer = fd;",
+     "name": "coll"
+    },
+    {
+     "kind": "access",
+     "line": 20250,
+     "origin": "src/flb_input.c:3261",
+     "source": "ret = mk_event_add(coll->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_add ( coll - > evl , coll - > fd_event , 0 , 1 , event )",
+      "chains": [
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "coll",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_collector",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "fd_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 20255,
+     "origin": "src/flb_input.c:3266",
+     "source": "flb_error(\"[input] cannot disable/pause event for %s\", in->name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 20259,
+     "origin": "src/flb_input.c:3271",
+     "source": "coll->running = FLB_TRUE;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19574,
+     "origin": "src/flb_input.c:2389",
+     "source": "flb_error(\"[input] error starting collector #%i: %s\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , coll_id , in - > name )",
+      "chains": [
+       {
+        "base": "in",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collectors_signal_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 1,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_collector_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19995,
+     "origin": "src/flb_input.c:2900",
+     "source": "flb_error(\"input plugin '%s' is threaded\", flb_input_name(ins));"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collectors_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 0,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `flb_input_collectors_signal_start`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_signal_start`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 20017,
+     "origin": "src/flb_input.c:2932",
+     "source": "flb_error(\"could not start collectors for threaded plugin '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 20023,
+     "origin": "src/flb_input.c:2939",
+     "source": "flb_error(\"could not start collectors for plugin '%s'\","
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_exit_all",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 3,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_instance_exit`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19424,
+     "origin": "src/flb_input.c:2154",
+     "source": "p = ins->p;",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 19425,
+     "origin": "src/flb_input.c:2155",
+     "source": "if (!p) {",
+     "name": "p"
+    },
+    {
+     "kind": "identity",
+     "line": 19429,
+     "origin": "src/flb_input.c:2160",
+     "source": "flb_input_instance_destroy(ins);",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 25,
+   "identity_leaves": 9,
+   "other_leaves": 29,
+   "other": {
+    "call to `pthread_cond_destroy` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1,
+    "call to uncontracted function `flb_chunk_trace_context_destroy`": 1,
+    "call to uncontracted function `flb_config_map_destroy`": 5,
+    "call to uncontracted function `flb_engine_destroy_tasks`": 1,
+    "call to uncontracted function `flb_hash_table_destroy`": 4,
+    "call to uncontracted function `flb_input_chunk_ring_buffer_cleanup`": 1,
+    "call to uncontracted function `flb_input_ingress_destroy`": 1,
+    "call to uncontracted function `flb_input_rate_gate_timer_cancel`": 1,
+    "call to uncontracted function `flb_kv_release`": 4,
+    "call to uncontracted function `flb_metrics_destroy`": 1,
+    "call to uncontracted function `flb_processor_destroy`": 1,
+    "call to uncontracted function `flb_ring_buffer_destroy`": 1,
+    "call to uncontracted function `flb_storage_input_destroy`": 2,
+    "call to uncontracted function `flb_tls_destroy`": 1,
+    "call to uncontracted function `flb_uri_destroy`": 1,
+    "call to uncontracted function `pthread_mutex_destroy`": 2,
+    "unlink by `mk_list_del` of `ins`, which this function has not published": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18746,
+     "origin": "src/flb_input.c:1165",
+     "source": "flb_sds_destroy(ins->alias);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > alias )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "alias",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18748,
+     "origin": "src/flb_input.c:1169",
+     "source": "if (ins->host.uri) {",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 18751,
+     "origin": "src/flb_input.c:1173",
+     "source": "if (ins->host.name) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18752,
+     "origin": "src/flb_input.c:1174",
+     "source": "flb_sds_destroy(ins->host.name);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . name )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18754,
+     "origin": "src/flb_input.c:1176",
+     "source": "if (ins->host.address) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18755,
+     "origin": "src/flb_input.c:1177",
+     "source": "flb_sds_destroy(ins->host.address);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . address )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "address",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18757,
+     "origin": "src/flb_input.c:1179",
+     "source": "if (ins->host.listen) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18758,
+     "origin": "src/flb_input.c:1180",
+     "source": "flb_sds_destroy(ins->host.listen);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > host . listen )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Dot"
+        ],
+        "member_class": "Unresolved",
+        "member": "listen",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18769,
+     "origin": "src/flb_input.c:1196",
+     "source": "flb_sds_destroy(ins->tls_vhost);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_vhost )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_vhost",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18772,
+     "origin": "src/flb_input.c:1200",
+     "source": "flb_sds_destroy(ins->tls_ca_path);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ca_path )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ca_path",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18775,
+     "origin": "src/flb_input.c:1204",
+     "source": "flb_sds_destroy(ins->tls_ca_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ca_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ca_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18778,
+     "origin": "src/flb_input.c:1208",
+     "source": "flb_sds_destroy(ins->tls_crt_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_crt_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_crt_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18781,
+     "origin": "src/flb_input.c:1212",
+     "source": "flb_sds_destroy(ins->tls_key_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_key_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_key_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18784,
+     "origin": "src/flb_input.c:1216",
+     "source": "flb_sds_destroy(ins->tls_crl_file);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_crl_file )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_crl_file",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18787,
+     "origin": "src/flb_input.c:1220",
+     "source": "flb_sds_destroy(ins->tls_key_passwd);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_key_passwd )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_key_passwd",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18790,
+     "origin": "src/flb_input.c:1224",
+     "source": "flb_sds_destroy(ins->tls_min_version);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_min_version )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_min_version",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18793,
+     "origin": "src/flb_input.c:1228",
+     "source": "flb_sds_destroy(ins->tls_max_version);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_max_version )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_max_version",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18796,
+     "origin": "src/flb_input.c:1232",
+     "source": "flb_sds_destroy(ins->tls_ciphers);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tls_ciphers )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tls_ciphers",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18798,
+     "origin": "src/flb_input.c:1236",
+     "source": "flb_sds_destroy(ins->tag);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_sds_destroy ( ins - > tag )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "tag",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18806,
+     "origin": "src/flb_input.c:1255",
+     "source": "cmt_destroy(ins->cmt);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "cmt_destroy ( ins - > cmt )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "cmt",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18824,
+     "origin": "src/flb_input.c:1281",
+     "source": "flb_free(ins->http_server_config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_free ( ins - > http_server_config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "http_server_config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18831,
+     "origin": "src/flb_input.c:1291",
+     "source": "ins->ht_log_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_log_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_log_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18835,
+     "origin": "src/flb_input.c:1296",
+     "source": "ins->ht_metric_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_metric_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_metric_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18839,
+     "origin": "src/flb_input.c:1301",
+     "source": "ins->ht_trace_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_trace_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_trace_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18843,
+     "origin": "src/flb_input.c:1306",
+     "source": "ins->ht_profile_chunks = NULL;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "ins - > ht_profile_chunks = ( ( void * ) 0 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ht_profile_chunks",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18846,
+     "origin": "src/flb_input.c:1311",
+     "source": "if (ins->ch_events[0] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18847,
+     "origin": "src/flb_input.c:1312",
+     "source": "mk_event_closesocket(ins->ch_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ch_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18849,
+     "origin": "src/flb_input.c:1315",
+     "source": "if (ins->ch_events[1] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18850,
+     "origin": "src/flb_input.c:1316",
+     "source": "mk_event_closesocket(ins->ch_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ch_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18852,
+     "origin": "src/flb_input.c:1319",
+     "source": "if (ins->ingress_queue_channels[0] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18853,
+     "origin": "src/flb_input.c:1320",
+     "source": "mk_event_closesocket(ins->ingress_queue_channels[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ingress_queue_channels [ 0 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18855,
+     "origin": "src/flb_input.c:1323",
+     "source": "if (ins->ingress_queue_channels[1] > 0) {",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 18856,
+     "origin": "src/flb_input.c:1324",
+     "source": "mk_event_closesocket(ins->ingress_queue_channels[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( ins - > ingress_queue_channels [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18874,
+     "origin": "src/flb_input.c:1353",
+     "source": "flb_free(ins);",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_exit",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 2,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to `flb_input_thread_instance_exit` whose declared contract awaits human review (awaiting-human-review)": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 19412,
+     "origin": "src/flb_input.c:2139",
+     "source": "if (p->cb_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 19413,
+     "origin": "src/flb_input.c:2141",
+     "source": "p->cb_exit(ins->context, config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "p - > cb_exit ( ins - > context , config )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_event",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19508,
+     "origin": "src/flb_input.c:2308",
+     "source": "coll->fd_event = fd;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_socket",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19523,
+     "origin": "src/flb_input.c:2329",
+     "source": "coll->fd_event = fd;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_collector_time",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 2,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `collector_create`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 19493,
+     "origin": "src/flb_input.c:2288",
+     "source": "coll->seconds     = seconds;",
+     "name": "coll"
+    },
+    {
+     "kind": "identity",
+     "line": 19494,
+     "origin": "src/flb_input.c:2289",
+     "source": "coll->nanoseconds = nanoseconds;",
+     "name": "coll"
+    }
+   ]
+  },
+  {
+   "unit_index": 1,
+   "unit": "src/flb_input.c",
+   "function": "input_instance_channel_events_init",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 1,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_event_loop_get`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18892,
+     "origin": "src/flb_input.c:1380",
+     "source": "ret = mk_event_channel_create(evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( evl , & ins - > ch_events [ 0 ] , & ins - > ch_events [ 1 ] , ins )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18897,
+     "origin": "src/flb_input.c:1385",
+     "source": "flb_error(\"could not create events channels for '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 18900,
+     "origin": "src/flb_input.c:1390",
+     "source": "flb_debug(\"[%s:%s] created event channels: read=%i write=%i\",",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , ins - > p - > name , flb_input_name ( ins ) , ins - > ch_events [ 0 ] , ins - > ch_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "SinglePointer",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18901,
+     "origin": "src/flb_input.c:1399",
+     "source": "ins->event.type = FLB_ENGINE_EV_INPUT;",
+     "name": "ins"
+    }
+   ]
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_collectors_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_collector_start`": 1
+   },
+   "leaves": []
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_exit",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 2,
+   "other_leaves": 1,
+   "other": {
+    "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17493,
+     "origin": "src/flb_input_thread.c:587",
+     "source": "if (thi == NULL) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17496,
+     "origin": "src/flb_input_thread.c:591",
+     "source": "memcpy(&tid, &thi->th->tid, sizeof(pthread_t));",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "memcpy ( & tid , & thi - > th - > tid , sizeof ( pthread_t ) )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_tp_thread",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "tid",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17497,
+     "origin": "src/flb_input_thread.c:593",
+     "source": "if (ins->p->cb_pre_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 17498,
+     "origin": "src/flb_input_thread.c:594",
+     "source": "ins->p->cb_pre_exit(ins->context, ins->config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "ins - > p - > cb_pre_exit ( ins - > context , ins - > config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_pre_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17501,
+     "origin": "src/flb_input_thread.c:601",
+     "source": "ret = flb_pipe_w(thi->ch_parent_events[1], &val, sizeof(val));",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17507,
+     "origin": "src/flb_input_thread.c:608",
+     "source": "flb_plg_debug(ins, \"thread exit instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17507,
+     "origin": "src/flb_input_thread.c:608",
+     "source": "flb_plg_debug(ins, \"thread exit instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_init",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 8,
+   "identity_leaves": 0,
+   "other_leaves": 5,
+   "other": {
+    "call to uncontracted function `flb_tp_thread_create`": 1,
+    "call to uncontracted function `flb_tp_thread_start`": 1,
+    "call to uncontracted function `input_thread_instance_create`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 1,
+    "call to uncontracted function `input_thread_instance_get_status`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 17522,
+     "origin": "src/flb_input_thread.c:631",
+     "source": "flb_plg_error(ins, \"could not register worker thread\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17522,
+     "origin": "src/flb_input_thread.c:631",
+     "source": "flb_plg_error(ins, \"could not register worker thread\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17533,
+     "origin": "src/flb_input_thread.c:645",
+     "source": "flb_plg_error(ins, \"unexpected error loading plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17533,
+     "origin": "src/flb_input_thread.c:645",
+     "source": "flb_plg_error(ins, \"unexpected error loading plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17537,
+     "origin": "src/flb_input_thread.c:649",
+     "source": "flb_plg_error(ins, \"could not initialize threaded plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17537,
+     "origin": "src/flb_input_thread.c:649",
+     "source": "flb_plg_error(ins, \"could not initialize threaded plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17541,
+     "origin": "src/flb_input_thread.c:653",
+     "source": "flb_plg_info(ins, \"thread instance initialized\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 3 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17541,
+     "origin": "src/flb_input_thread.c:653",
+     "source": "flb_plg_info(ins, \"thread instance initialized\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 3 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 14,
+   "identity_leaves": 10,
+   "other_leaves": 33,
+   "other": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `engine_handle_event`": 1,
+    "call to uncontracted function `flb_bucket_queue_create`": 1,
+    "call to uncontracted function `flb_bucket_queue_destroy`": 1,
+    "call to uncontracted function `flb_coro_resume`": 2,
+    "call to uncontracted function `flb_coro_thread_init`": 1,
+    "call to uncontracted function `flb_downstream_conn_event_resume`": 1,
+    "call to uncontracted function `flb_downstream_conn_pending_destroy_list`": 1,
+    "call to uncontracted function `flb_engine_evl_set`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_signal_wait`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_start`": 1,
+    "call to uncontracted function `flb_net_ctx_init`": 1,
+    "call to uncontracted function `flb_net_dns_ctx_set`": 1,
+    "call to uncontracted function `flb_net_dns_lookup_context_cleanup`": 1,
+    "call to uncontracted function `flb_notification_cleanup`": 1,
+    "call to uncontracted function `flb_notification_deliver`": 1,
+    "call to uncontracted function `flb_notification_receive`": 1,
+    "call to uncontracted function `flb_processor_init`": 1,
+    "call to uncontracted function `flb_sched_create`": 1,
+    "call to uncontracted function `flb_sched_ctx_set`": 1,
+    "call to uncontracted function `flb_sched_destroy`": 1,
+    "call to uncontracted function `flb_sched_event_handler`": 1,
+    "call to uncontracted function `flb_sched_timer_cb_create`": 1,
+    "call to uncontracted function `flb_sched_timer_cleanup`": 1,
+    "call to uncontracted function `flb_upstream_conn_pending_destroy_list`": 1,
+    "call to uncontracted function `handle_input_event`": 1,
+    "call to uncontracted function `handle_input_thread_event`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 1,
+    "call to uncontracted function `input_thread_instance_set_status`": 3,
+    "call to uncontracted function `mk_utils_worker_rename`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17330,
+     "origin": "src/flb_input_thread.c:333",
+     "source": "thi = (struct flb_input_thread_instance *) data;",
+     "name": "data"
+    },
+    {
+     "kind": "identity",
+     "line": 17331,
+     "origin": "src/flb_input_thread.c:334",
+     "source": "ins = thi->ins;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17332,
+     "origin": "src/flb_input_thread.c:335",
+     "source": "p = ins->p;",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 17335,
+     "origin": "src/flb_input_thread.c:341",
+     "source": "if (!sched) {",
+     "name": "sched"
+    },
+    {
+     "kind": "access",
+     "line": 17336,
+     "origin": "src/flb_input_thread.c:342",
+     "source": "flb_plg_error(ins, \"could not create thread scheduler\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17336,
+     "origin": "src/flb_input_thread.c:342",
+     "source": "flb_plg_error(ins, \"could not create thread scheduler\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17350,
+     "origin": "src/flb_input_thread.c:364",
+     "source": "thread_id = thi->th->id;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17351,
+     "origin": "src/flb_input_thread.c:365",
+     "source": "snprintf(tmp, sizeof(tmp) - 1, \"flb-in-%s-w%i\", ins->name, thread_id);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , ins - > name , thread_id )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17353,
+     "origin": "src/flb_input_thread.c:369",
+     "source": "ret = p->cb_init(ins, ins->config, ins->data);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = p - > cb_init ( ins , ins - > config , ins - > data )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_init",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "data",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17355,
+     "origin": "src/flb_input_thread.c:371",
+     "source": "flb_error(\"failed initialize input %s\", flb_input_name(ins));"
+    },
+    {
+     "kind": "identity",
+     "line": 17359,
+     "origin": "src/flb_input_thread.c:377",
+     "source": "ins->processor->notification_channel = ins->notification_channel;",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 17362,
+     "origin": "src/flb_input_thread.c:381",
+     "source": "flb_error(\"failed initialize processors for input %s\","
+    },
+    {
+     "kind": "access",
+     "line": 17366,
+     "origin": "src/flb_input_thread.c:387",
+     "source": "flb_plg_debug(ins, \"[thread init] initialization OK\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17366,
+     "origin": "src/flb_input_thread.c:387",
+     "source": "flb_plg_debug(ins, \"[thread init] initialization OK\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17370,
+     "origin": "src/flb_input_thread.c:396",
+     "source": "flb_error(\"could not retrieve collectors signal from parent thread on '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 17375,
+     "origin": "src/flb_input_thread.c:408",
+     "source": "if (p->cb_pre_run) {"
+    },
+    {
+     "kind": "access",
+     "line": 17376,
+     "origin": "src/flb_input_thread.c:409",
+     "source": "ret = p->cb_pre_run(ins, ins->config, ins->context);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = p - > cb_pre_run ( ins , ins - > config , ins - > context )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_pre_run",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17382,
+     "origin": "src/flb_input_thread.c:422",
+     "source": "flb_event_priority_live_foreach(event, evl_bktq, thi->evl, FLB_ENGINE_LOOP_MAX_ITER) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17406,
+     "origin": "src/flb_input_thread.c:451",
+     "source": "event->handler(event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "event - > handler ( event )",
+      "chains": [
+       {
+        "base": "event",
+        "base_kind": "AutomaticLocal",
+        "tag": "mk_event",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "handler",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17411,
+     "origin": "src/flb_input_thread.c:462",
+     "source": "if (connection->coroutine != NULL) {",
+     "name": "connection"
+    },
+    {
+     "kind": "identity",
+     "line": 17412,
+     "origin": "src/flb_input_thread.c:463",
+     "source": "flb_trace(\"[engine] resuming coroutine=%p\",",
+     "name": "connection"
+    },
+    {
+     "kind": "identity",
+     "line": 17413,
+     "origin": "src/flb_input_thread.c:466",
+     "source": "if (connection->event_coroutine != NULL) {",
+     "name": "connection"
+    },
+    {
+     "kind": "access",
+     "line": 17443,
+     "origin": "src/flb_input_thread.c:506",
+     "source": "if (ins->p->cb_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 17444,
+     "origin": "src/flb_input_thread.c:507",
+     "source": "ins->p->cb_exit(ins->context, ins->config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "ins - > p - > cb_exit ( ins - > context , ins - > config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread_instance_create",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 8,
+   "identity_leaves": 12,
+   "other_leaves": 10,
+   "other": {
+    "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1,
+    "call to uncontracted function `flb_tp_create`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 5,
+    "call to uncontracted function `mk_list_init`": 2,
+    "call to uncontracted function `pthread_mutex_init`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17264,
+     "origin": "src/flb_input_thread.c:240",
+     "source": "thi->ins = ins;",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 17265,
+     "origin": "src/flb_input_thread.c:241",
+     "source": "thi->config = ins->config;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "thi - > config = ins - > config",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17266,
+     "origin": "src/flb_input_thread.c:244",
+     "source": "thi->init_status = 0;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17271,
+     "origin": "src/flb_input_thread.c:255",
+     "source": "thi->evl = mk_event_loop_create(256);",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17272,
+     "origin": "src/flb_input_thread.c:256",
+     "source": "if (!thi->evl) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17276,
+     "origin": "src/flb_input_thread.c:262",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > ch_parent_events [ 0 ] , & thi - > ch_parent_events [ 1 ] , & thi - > event )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17281,
+     "origin": "src/flb_input_thread.c:267",
+     "source": "flb_error(\"could not initialize parent channels for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17285,
+     "origin": "src/flb_input_thread.c:272",
+     "source": "thi->event.type = FLB_ENGINE_EV_INPUT;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17286,
+     "origin": "src/flb_input_thread.c:275",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > ch_thread_events [ 0 ] , & thi - > ch_thread_events [ 1 ] , & thi - > event_local )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event_local",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17291,
+     "origin": "src/flb_input_thread.c:280",
+     "source": "flb_error(\"could not initialize parent channels for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17295,
+     "origin": "src/flb_input_thread.c:285",
+     "source": "thi->event_local.type = FLB_ENGINE_EV_THREAD_INPUT;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17296,
+     "origin": "src/flb_input_thread.c:287",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > notification_channels [ 0 ] , & thi - > notification_channels [ 1 ] , & thi - > notification_event )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "notification_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17301,
+     "origin": "src/flb_input_thread.c:292",
+     "source": "flb_error(\"could not create notification channel for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17305,
+     "origin": "src/flb_input_thread.c:300",
+     "source": "thi->notification_channels_initialized = FLB_TRUE;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17306,
+     "origin": "src/flb_input_thread.c:301",
+     "source": "thi->notification_event.type = FLB_ENGINE_EV_NOTIFICATION;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17307,
+     "origin": "src/flb_input_thread.c:303",
+     "source": "ins->notification_channel = thi->notification_channels[1];",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 17307,
+     "origin": "src/flb_input_thread.c:303",
+     "source": "ins->notification_channel = thi->notification_channels[1];",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17309,
+     "origin": "src/flb_input_thread.c:307",
+     "source": "if (!thi->tp) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17310,
+     "origin": "src/flb_input_thread.c:308",
+     "source": "flb_error(\"could not create thread pool on input instance '%s'\","
+    },
+    {
+     "kind": "identity",
+     "line": 17314,
+     "origin": "src/flb_input_thread.c:314",
+     "source": "return thi;",
+     "name": "thi"
+    }
+   ]
+  },
+  {
+   "unit_index": 2,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread_instance_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 6,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_tp_destroy`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17235,
+     "origin": "src/flb_input_thread.c:202",
+     "source": "thi->notification_channels_initialized = FLB_FALSE;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17238,
+     "origin": "src/flb_input_thread.c:206",
+     "source": "mk_event_loop_destroy(thi->evl);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "mk_event_loop_destroy ( thi - > evl )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17240,
+     "origin": "src/flb_input_thread.c:210",
+     "source": "if (thi->ch_parent_events[0] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17241,
+     "origin": "src/flb_input_thread.c:211",
+     "source": "mk_event_closesocket(thi->ch_parent_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_parent_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17243,
+     "origin": "src/flb_input_thread.c:213",
+     "source": "if (thi->ch_parent_events[1] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17244,
+     "origin": "src/flb_input_thread.c:214",
+     "source": "mk_event_closesocket(thi->ch_parent_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_parent_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17246,
+     "origin": "src/flb_input_thread.c:218",
+     "source": "if (thi->ch_thread_events[0] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17247,
+     "origin": "src/flb_input_thread.c:219",
+     "source": "mk_event_closesocket(thi->ch_thread_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_thread_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17249,
+     "origin": "src/flb_input_thread.c:221",
+     "source": "if (thi->ch_thread_events[1] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17250,
+     "origin": "src/flb_input_thread.c:222",
+     "source": "mk_event_closesocket(thi->ch_thread_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_thread_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17253,
+     "origin": "src/flb_input_thread.c:226",
+     "source": "flb_free(thi);",
+     "name": "thi"
+    }
+   ]
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_collectors_start",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 0,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_input_collector_start`": 1
+   },
+   "leaves": []
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_exit",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 2,
+   "other_leaves": 1,
+   "other": {
+    "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17493,
+     "origin": "src/flb_input_thread.c:587",
+     "source": "if (thi == NULL) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17496,
+     "origin": "src/flb_input_thread.c:591",
+     "source": "memcpy(&tid, &thi->th->tid, sizeof(pthread_t));",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "memcpy ( & tid , & thi - > th - > tid , sizeof ( pthread_t ) )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_tp_thread",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "tid",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17497,
+     "origin": "src/flb_input_thread.c:593",
+     "source": "if (ins->p->cb_pre_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 17498,
+     "origin": "src/flb_input_thread.c:594",
+     "source": "ins->p->cb_pre_exit(ins->context, ins->config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "ins - > p - > cb_pre_exit ( ins - > context , ins - > config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_pre_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17501,
+     "origin": "src/flb_input_thread.c:601",
+     "source": "ret = flb_pipe_w(thi->ch_parent_events[1], &val, sizeof(val));",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17507,
+     "origin": "src/flb_input_thread.c:608",
+     "source": "flb_plg_debug(ins, \"thread exit instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17507,
+     "origin": "src/flb_input_thread.c:608",
+     "source": "flb_plg_debug(ins, \"thread exit instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_init",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 8,
+   "identity_leaves": 0,
+   "other_leaves": 5,
+   "other": {
+    "call to uncontracted function `flb_tp_thread_create`": 1,
+    "call to uncontracted function `flb_tp_thread_start`": 1,
+    "call to uncontracted function `input_thread_instance_create`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 1,
+    "call to uncontracted function `input_thread_instance_get_status`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 17522,
+     "origin": "src/flb_input_thread.c:631",
+     "source": "flb_plg_error(ins, \"could not register worker thread\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17522,
+     "origin": "src/flb_input_thread.c:631",
+     "source": "flb_plg_error(ins, \"could not register worker thread\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17533,
+     "origin": "src/flb_input_thread.c:645",
+     "source": "flb_plg_error(ins, \"unexpected error loading plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17533,
+     "origin": "src/flb_input_thread.c:645",
+     "source": "flb_plg_error(ins, \"unexpected error loading plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17537,
+     "origin": "src/flb_input_thread.c:649",
+     "source": "flb_plg_error(ins, \"could not initialize threaded plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17537,
+     "origin": "src/flb_input_thread.c:649",
+     "source": "flb_plg_error(ins, \"could not initialize threaded plugin instance\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17541,
+     "origin": "src/flb_input_thread.c:653",
+     "source": "flb_plg_info(ins, \"thread instance initialized\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 3 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17541,
+     "origin": "src/flb_input_thread.c:653",
+     "source": "flb_plg_info(ins, \"thread instance initialized\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 3 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 14,
+   "identity_leaves": 10,
+   "other_leaves": 33,
+   "other": {
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "call to uncontracted function `engine_handle_event`": 1,
+    "call to uncontracted function `flb_bucket_queue_create`": 1,
+    "call to uncontracted function `flb_bucket_queue_destroy`": 1,
+    "call to uncontracted function `flb_coro_resume`": 2,
+    "call to uncontracted function `flb_coro_thread_init`": 1,
+    "call to uncontracted function `flb_downstream_conn_event_resume`": 1,
+    "call to uncontracted function `flb_downstream_conn_pending_destroy_list`": 1,
+    "call to uncontracted function `flb_engine_evl_set`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_signal_wait`": 1,
+    "call to uncontracted function `flb_input_thread_collectors_start`": 1,
+    "call to uncontracted function `flb_net_ctx_init`": 1,
+    "call to uncontracted function `flb_net_dns_ctx_set`": 1,
+    "call to uncontracted function `flb_net_dns_lookup_context_cleanup`": 1,
+    "call to uncontracted function `flb_notification_cleanup`": 1,
+    "call to uncontracted function `flb_notification_deliver`": 1,
+    "call to uncontracted function `flb_notification_receive`": 1,
+    "call to uncontracted function `flb_processor_init`": 1,
+    "call to uncontracted function `flb_sched_create`": 1,
+    "call to uncontracted function `flb_sched_ctx_set`": 1,
+    "call to uncontracted function `flb_sched_destroy`": 1,
+    "call to uncontracted function `flb_sched_event_handler`": 1,
+    "call to uncontracted function `flb_sched_timer_cb_create`": 1,
+    "call to uncontracted function `flb_sched_timer_cleanup`": 1,
+    "call to uncontracted function `flb_upstream_conn_pending_destroy_list`": 1,
+    "call to uncontracted function `handle_input_event`": 1,
+    "call to uncontracted function `handle_input_thread_event`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 1,
+    "call to uncontracted function `input_thread_instance_set_status`": 3,
+    "call to uncontracted function `mk_utils_worker_rename`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17330,
+     "origin": "src/flb_input_thread.c:333",
+     "source": "thi = (struct flb_input_thread_instance *) data;",
+     "name": "data"
+    },
+    {
+     "kind": "identity",
+     "line": 17331,
+     "origin": "src/flb_input_thread.c:334",
+     "source": "ins = thi->ins;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17332,
+     "origin": "src/flb_input_thread.c:335",
+     "source": "p = ins->p;",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 17335,
+     "origin": "src/flb_input_thread.c:341",
+     "source": "if (!sched) {",
+     "name": "sched"
+    },
+    {
+     "kind": "access",
+     "line": 17336,
+     "origin": "src/flb_input_thread.c:342",
+     "source": "flb_plg_error(ins, \"could not create thread scheduler\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17336,
+     "origin": "src/flb_input_thread.c:342",
+     "source": "flb_plg_error(ins, \"could not create thread scheduler\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 1 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17350,
+     "origin": "src/flb_input_thread.c:364",
+     "source": "thread_id = thi->th->id;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17351,
+     "origin": "src/flb_input_thread.c:365",
+     "source": "snprintf(tmp, sizeof(tmp) - 1, \"flb-in-%s-w%i\", ins->name, thread_id);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , ins - > name , thread_id )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "name",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17353,
+     "origin": "src/flb_input_thread.c:369",
+     "source": "ret = p->cb_init(ins, ins->config, ins->data);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = p - > cb_init ( ins , ins - > config , ins - > data )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_init",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "data",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17355,
+     "origin": "src/flb_input_thread.c:371",
+     "source": "flb_error(\"failed initialize input %s\", flb_input_name(ins));"
+    },
+    {
+     "kind": "identity",
+     "line": 17359,
+     "origin": "src/flb_input_thread.c:377",
+     "source": "ins->processor->notification_channel = ins->notification_channel;",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 17362,
+     "origin": "src/flb_input_thread.c:381",
+     "source": "flb_error(\"failed initialize processors for input %s\","
+    },
+    {
+     "kind": "access",
+     "line": 17366,
+     "origin": "src/flb_input_thread.c:387",
+     "source": "flb_plg_debug(ins, \"[thread init] initialization OK\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17366,
+     "origin": "src/flb_input_thread.c:387",
+     "source": "flb_plg_debug(ins, \"[thread init] initialization OK\");",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_log_check_level ( ins - > log_level , 4 )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Scalar",
+        "member": "log_level",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17370,
+     "origin": "src/flb_input_thread.c:396",
+     "source": "flb_error(\"could not retrieve collectors signal from parent thread on '%s'\","
+    },
+    {
+     "kind": "access",
+     "line": 17375,
+     "origin": "src/flb_input_thread.c:408",
+     "source": "if (p->cb_pre_run) {"
+    },
+    {
+     "kind": "access",
+     "line": 17376,
+     "origin": "src/flb_input_thread.c:409",
+     "source": "ret = p->cb_pre_run(ins, ins->config, ins->context);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = p - > cb_pre_run ( ins , ins - > config , ins - > context )",
+      "chains": [
+       {
+        "base": "p",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_pre_run",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17382,
+     "origin": "src/flb_input_thread.c:422",
+     "source": "flb_event_priority_live_foreach(event, evl_bktq, thi->evl, FLB_ENGINE_LOOP_MAX_ITER) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17406,
+     "origin": "src/flb_input_thread.c:451",
+     "source": "event->handler(event);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "event - > handler ( event )",
+      "chains": [
+       {
+        "base": "event",
+        "base_kind": "AutomaticLocal",
+        "tag": "mk_event",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "handler",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17411,
+     "origin": "src/flb_input_thread.c:462",
+     "source": "if (connection->coroutine != NULL) {",
+     "name": "connection"
+    },
+    {
+     "kind": "identity",
+     "line": 17412,
+     "origin": "src/flb_input_thread.c:463",
+     "source": "flb_trace(\"[engine] resuming coroutine=%p\",",
+     "name": "connection"
+    },
+    {
+     "kind": "identity",
+     "line": 17413,
+     "origin": "src/flb_input_thread.c:466",
+     "source": "if (connection->event_coroutine != NULL) {",
+     "name": "connection"
+    },
+    {
+     "kind": "access",
+     "line": 17443,
+     "origin": "src/flb_input_thread.c:506",
+     "source": "if (ins->p->cb_exit && ins->context) {"
+    },
+    {
+     "kind": "access",
+     "line": 17444,
+     "origin": "src/flb_input_thread.c:507",
+     "source": "ins->p->cb_exit(ins->context, ins->config);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "ins - > p - > cb_exit ( ins - > context , ins - > config )",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_plugin",
+        "steps": [
+         "Arrow",
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "cb_exit",
+        "base_cause": "Committed",
+        "tag_lost_step": 1,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "VoidPointer",
+        "member": "context",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ins",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread_instance_create",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 8,
+   "identity_leaves": 12,
+   "other_leaves": 10,
+   "other": {
+    "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1,
+    "call to uncontracted function `flb_tp_create`": 1,
+    "call to uncontracted function `input_thread_instance_destroy`": 5,
+    "call to uncontracted function `mk_list_init`": 2,
+    "call to uncontracted function `pthread_mutex_init`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17264,
+     "origin": "src/flb_input_thread.c:240",
+     "source": "thi->ins = ins;",
+     "name": "ins"
+    },
+    {
+     "kind": "access",
+     "line": 17265,
+     "origin": "src/flb_input_thread.c:241",
+     "source": "thi->config = ins->config;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": null,
+      "statement": "thi - > config = ins - > config",
+      "chains": [
+       {
+        "base": "ins",
+        "base_kind": "Formal",
+        "tag": "flb_input_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "config",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17266,
+     "origin": "src/flb_input_thread.c:244",
+     "source": "thi->init_status = 0;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17271,
+     "origin": "src/flb_input_thread.c:255",
+     "source": "thi->evl = mk_event_loop_create(256);",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17272,
+     "origin": "src/flb_input_thread.c:256",
+     "source": "if (!thi->evl) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17276,
+     "origin": "src/flb_input_thread.c:262",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > ch_parent_events [ 0 ] , & thi - > ch_parent_events [ 1 ] , & thi - > event )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17281,
+     "origin": "src/flb_input_thread.c:267",
+     "source": "flb_error(\"could not initialize parent channels for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17285,
+     "origin": "src/flb_input_thread.c:272",
+     "source": "thi->event.type = FLB_ENGINE_EV_INPUT;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17286,
+     "origin": "src/flb_input_thread.c:275",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > ch_thread_events [ 0 ] , & thi - > ch_thread_events [ 1 ] , & thi - > event_local )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "event_local",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17291,
+     "origin": "src/flb_input_thread.c:280",
+     "source": "flb_error(\"could not initialize parent channels for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17295,
+     "origin": "src/flb_input_thread.c:285",
+     "source": "thi->event_local.type = FLB_ENGINE_EV_THREAD_INPUT;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17296,
+     "origin": "src/flb_input_thread.c:287",
+     "source": "ret = mk_event_channel_create(thi->evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( thi - > evl , & thi - > notification_channels [ 0 ] , & thi - > notification_channels [ 1 ] , & thi - > notification_event )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "thi",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "AggregateValued",
+        "member": "notification_event",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 17301,
+     "origin": "src/flb_input_thread.c:292",
+     "source": "flb_error(\"could not create notification channel for %s\","
+    },
+    {
+     "kind": "identity",
+     "line": 17305,
+     "origin": "src/flb_input_thread.c:300",
+     "source": "thi->notification_channels_initialized = FLB_TRUE;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17306,
+     "origin": "src/flb_input_thread.c:301",
+     "source": "thi->notification_event.type = FLB_ENGINE_EV_NOTIFICATION;",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17307,
+     "origin": "src/flb_input_thread.c:303",
+     "source": "ins->notification_channel = thi->notification_channels[1];",
+     "name": "ins"
+    },
+    {
+     "kind": "identity",
+     "line": 17307,
+     "origin": "src/flb_input_thread.c:303",
+     "source": "ins->notification_channel = thi->notification_channels[1];",
+     "name": "thi"
+    },
+    {
+     "kind": "identity",
+     "line": 17309,
+     "origin": "src/flb_input_thread.c:307",
+     "source": "if (!thi->tp) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17310,
+     "origin": "src/flb_input_thread.c:308",
+     "source": "flb_error(\"could not create thread pool on input instance '%s'\","
+    },
+    {
+     "kind": "identity",
+     "line": 17314,
+     "origin": "src/flb_input_thread.c:314",
+     "source": "return thi;",
+     "name": "thi"
+    }
+   ]
+  },
+  {
+   "unit_index": 3,
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread_instance_destroy",
+   "chain": "R1/R2 collectors and instances",
+   "status": "Unknown",
+   "access_leaves": 5,
+   "identity_leaves": 6,
+   "other_leaves": 1,
+   "other": {
+    "call to uncontracted function `flb_tp_destroy`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 17235,
+     "origin": "src/flb_input_thread.c:202",
+     "source": "thi->notification_channels_initialized = FLB_FALSE;",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17238,
+     "origin": "src/flb_input_thread.c:206",
+     "source": "mk_event_loop_destroy(thi->evl);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "mk_event_loop_destroy ( thi - > evl )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": "flb_input_thread_instance",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17240,
+     "origin": "src/flb_input_thread.c:210",
+     "source": "if (thi->ch_parent_events[0] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17241,
+     "origin": "src/flb_input_thread.c:211",
+     "source": "mk_event_closesocket(thi->ch_parent_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_parent_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17243,
+     "origin": "src/flb_input_thread.c:213",
+     "source": "if (thi->ch_parent_events[1] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17244,
+     "origin": "src/flb_input_thread.c:214",
+     "source": "mk_event_closesocket(thi->ch_parent_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_parent_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17246,
+     "origin": "src/flb_input_thread.c:218",
+     "source": "if (thi->ch_thread_events[0] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17247,
+     "origin": "src/flb_input_thread.c:219",
+     "source": "mk_event_closesocket(thi->ch_thread_events[0]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_thread_events [ 0 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17249,
+     "origin": "src/flb_input_thread.c:221",
+     "source": "if (thi->ch_thread_events[1] > 0) {",
+     "name": "thi"
+    },
+    {
+     "kind": "access",
+     "line": 17250,
+     "origin": "src/flb_input_thread.c:222",
+     "source": "mk_event_closesocket(thi->ch_thread_events[1]);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "close ( thi - > ch_thread_events [ 1 ] )",
+      "chains": [
+       {
+        "base": "thi",
+        "base_kind": "Formal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 17253,
+     "origin": "src/flb_input_thread.c:226",
+     "source": "flb_free(thi);",
+     "name": "thi"
+    }
+   ]
+  },
+  {
+   "unit_index": 4,
+   "unit": "src/flb_lib.c",
+   "function": "flb_create",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 1,
+   "other_leaves": 7,
+   "other": {
+    "call to `flb_destroy` whose declared contract awaits human review (awaiting-human-review)": 1,
+    "call to `flb_stop` whose declared contract awaits human review (awaiting-human-review)": 1,
+    "call to uncontracted function `MK_EVENT_ZERO`": 1,
+    "call to uncontracted function `flb_config_exit`": 3,
+    "call to uncontracted function `flb_config_init`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 18416,
+     "origin": "src/flb_lib.c:174",
+     "source": "ctx->config = config;",
+     "name": "config"
+    },
+    {
+     "kind": "access",
+     "line": 18418,
+     "origin": "src/flb_lib.c:181",
+     "source": "ret = flb_pipe_create(config->ch_data);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = flb_pipe_create ( config - > ch_data )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "ch_data",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18431,
+     "origin": "src/flb_lib.c:196",
+     "source": "config->ch_evl = ctx->event_loop;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "config - > ch_evl = ctx - > event_loop",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ch_evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18440,
+     "origin": "src/flb_lib.c:209",
+     "source": "ret = mk_event_channel_create(config->ch_evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( config - > ch_evl , & config - > ch_notif [ 0 ] , & config - > ch_notif [ 1 ] , ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ch_evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ctx",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 4,
+   "unit": "src/flb_lib.c",
+   "function": "flb_destroy",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 2,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `flb_config_exit`": 1,
+    "call to uncontracted function `flb_engine_shutdown`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18458,
+     "origin": "src/flb_lib.c:237",
+     "source": "mk_event_del(ctx->event_loop, ctx->event_channel);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_del ( ctx - > event_loop , ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_loop",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18459,
+     "origin": "src/flb_lib.c:238",
+     "source": "flb_free(ctx->event_channel);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_free ( ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18461,
+     "origin": "src/flb_lib.c:242",
+     "source": "mk_event_loop_destroy(ctx->event_loop);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "mk_event_loop_destroy ( ctx - > event_loop )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_loop",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18463,
+     "origin": "src/flb_lib.c:246",
+     "source": "if (ctx->config->is_running == FLB_TRUE) {",
+     "name": "ctx"
+    },
+    {
+     "kind": "identity",
+     "line": 18468,
+     "origin": "src/flb_lib.c:258",
+     "source": "flb_free(ctx);",
+     "name": "ctx"
+    }
+   ]
+  },
+  {
+   "unit_index": 4,
+   "unit": "src/flb_lib.c",
+   "function": "flb_stop",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 0,
+   "other_leaves": 4,
+   "other": {
+    "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 2,
+    "call to uncontracted function `flb_cf_destroy`": 1,
+    "call to uncontracted function `flb_engine_exit`": 1
+   },
+   "leaves": []
+  },
+  {
+   "unit_index": 5,
+   "unit": "src/flb_lib.c",
+   "function": "flb_create",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 1,
+   "other_leaves": 7,
+   "other": {
+    "call to `flb_destroy` whose declared contract awaits human review (awaiting-human-review)": 1,
+    "call to `flb_stop` whose declared contract awaits human review (awaiting-human-review)": 1,
+    "call to uncontracted function `MK_EVENT_ZERO`": 1,
+    "call to uncontracted function `flb_config_exit`": 3,
+    "call to uncontracted function `flb_config_init`": 1
+   },
+   "leaves": [
+    {
+     "kind": "identity",
+     "line": 18416,
+     "origin": "src/flb_lib.c:174",
+     "source": "ctx->config = config;",
+     "name": "config"
+    },
+    {
+     "kind": "access",
+     "line": 18418,
+     "origin": "src/flb_lib.c:181",
+     "source": "ret = flb_pipe_create(config->ch_data);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = flb_pipe_create ( config - > ch_data )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "Unresolved",
+        "member": "ch_data",
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18431,
+     "origin": "src/flb_lib.c:196",
+     "source": "config->ch_evl = ctx->event_loop;",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentDestination",
+      "call_contracted": null,
+      "statement": "config - > ch_evl = ctx - > event_loop",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ch_evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18440,
+     "origin": "src/flb_lib.c:209",
+     "source": "ret = mk_event_channel_create(config->ch_evl,",
+     "census": {
+      "site": "LexicalGate",
+      "position": "AssignmentValue",
+      "call_contracted": false,
+      "statement": "ret = mk_event_channel_create ( config - > ch_evl , & config - > ch_notif [ 0 ] , & config - > ch_notif [ 1 ] , ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_config",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "ch_evl",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "config",
+        "base_kind": "AutomaticLocal",
+        "tag": null,
+        "steps": [
+         "Arrow",
+         "Subscript"
+        ],
+        "member_class": "NoMember",
+        "member": null,
+        "base_cause": "Committed",
+        "tag_lost_step": 0,
+        "base_never_bound": false
+       },
+       {
+        "base": "ctx",
+        "base_kind": "AutomaticLocal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "unit_index": 5,
+   "unit": "src/flb_lib.c",
+   "function": "flb_destroy",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 3,
+   "identity_leaves": 2,
+   "other_leaves": 2,
+   "other": {
+    "call to uncontracted function `flb_config_exit`": 1,
+    "call to uncontracted function `flb_engine_shutdown`": 1
+   },
+   "leaves": [
+    {
+     "kind": "access",
+     "line": 18458,
+     "origin": "src/flb_lib.c:237",
+     "source": "mk_event_del(ctx->event_loop, ctx->event_channel);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": false,
+      "statement": "mk_event_del ( ctx - > event_loop , ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_loop",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       },
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18459,
+     "origin": "src/flb_lib.c:238",
+     "source": "flb_free(ctx->event_channel);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "flb_free ( ctx - > event_channel )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_channel",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "access",
+     "line": 18461,
+     "origin": "src/flb_lib.c:242",
+     "source": "mk_event_loop_destroy(ctx->event_loop);",
+     "census": {
+      "site": "LexicalGate",
+      "position": "CallArgument",
+      "call_contracted": true,
+      "statement": "mk_event_loop_destroy ( ctx - > event_loop )",
+      "chains": [
+       {
+        "base": "ctx",
+        "base_kind": "Formal",
+        "tag": "flb_lib_ctx",
+        "steps": [
+         "Arrow"
+        ],
+        "member_class": "RecordPointer",
+        "member": "event_loop",
+        "base_cause": "Committed",
+        "tag_lost_step": null,
+        "base_never_bound": false
+       }
+      ]
+     }
+    },
+    {
+     "kind": "identity",
+     "line": 18463,
+     "origin": "src/flb_lib.c:246",
+     "source": "if (ctx->config->is_running == FLB_TRUE) {",
+     "name": "ctx"
+    },
+    {
+     "kind": "identity",
+     "line": 18468,
+     "origin": "src/flb_lib.c:258",
+     "source": "flb_free(ctx);",
+     "name": "ctx"
+    }
+   ]
+  },
+  {
+   "unit_index": 5,
+   "unit": "src/flb_lib.c",
+   "function": "flb_stop",
+   "chain": "R3 engine and library",
+   "status": "Unknown",
+   "access_leaves": 0,
+   "identity_leaves": 0,
+   "other_leaves": 4,
+   "other": {
+    "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 2,
+    "call to uncontracted function `flb_cf_destroy`": 1,
+    "call to uncontracted function `flb_engine_exit`": 1
+   },
+   "leaves": []
+  }
+ ]
+}

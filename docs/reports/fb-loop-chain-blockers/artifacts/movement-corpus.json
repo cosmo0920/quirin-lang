@@ -1,0 +1,3626 @@
+{
+ "card": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS",
+ "before": "private/fblb/base2/resource-diagnostics.json",
+ "after": "private/fblb/after4/resource-diagnostics.json",
+ "status_moves": {
+  "Unknown -> Safe": 2
+ },
+ "rows_trading_leaves": 104,
+ "null_moves": {},
+ "null_rows_changed": 0,
+ "moves": [
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_conn_pending_output",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "mk_server/mk_scheduler.c:740",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_scheduler.c:745",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_worker_cb_free",
+   "before": "Unknown",
+   "after": "Safe",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_scheduler.c:857",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `wcb`",
+     "origin": "mk_server/mk_scheduler.c:858",
+     "count": 1
+    }
+   ],
+   "added": []
+  }
+ ],
+ "trades": [
+  {
+   "unit": "chunkio.c",
+   "occurrence": 1,
+   "function": "cio_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:103",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:104",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:107",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:131",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:135",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:139",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:149",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:152",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `options`",
+     "origin": "chunkio.c:194",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "chunkio.c",
+   "occurrence": 1,
+   "function": "cio_qsort",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "chunkio.c:273",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "chunkio.c:273",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "chunkio.c:274",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "chunkio.c:274",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "chunkio.c",
+   "occurrence": 1,
+   "function": "qsort_stream",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "chunkio.c:246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "chunkio.c:253",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "chunkio.c:255",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `chunk`, which this function has not published",
+     "origin": "chunkio.c:246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `chunk`, which this function does not hold as one live object",
+     "origin": "chunkio.c:255",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmetrics.c",
+   "occurrence": 1,
+   "function": "cmt_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:53",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:59",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:68",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:78",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:79",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:80",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:81",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:82",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:83",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmetrics.c:87",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cmt_labels_create`",
+     "origin": "cmetrics.c:53",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_kvlist_create`",
+     "origin": "cmetrics.c:59",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_kvlist_create`",
+     "origin": "cmetrics.c:68",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:78",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:79",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:80",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:81",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:82",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "cmetrics.c:83",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cmt`",
+     "origin": "cmetrics.c:87",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmetrics.c",
+   "occurrence": 1,
+   "function": "cmt_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cmt`",
+     "origin": "cmetrics.c:133",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cmt`",
+     "origin": "cmetrics.c:137",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cmt`",
+     "origin": "cmetrics.c:141",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_counter.c",
+   "occurrence": 1,
+   "function": "cmt_counter_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_counter.c:59",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_counter.c:59",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_scope_metrics_entry",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_decode_opentelemetry.c:1872",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_decode_opentelemetry.c:1872",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "destroy_context_list",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_decode_opentelemetry.c:2069",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_del`",
+     "origin": "cmt_decode_opentelemetry.c:2069",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_basic_header",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_cloudwatch_emf.c:78",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_cloudwatch_emf.c:78",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_cloudwatch_emf.c:79",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_cloudwatch_emf.c:79",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_cloudwatch_emf.c",
+   "occurrence": 1,
+   "function": "pack_metric",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_cloudwatch_emf.c:320",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_cloudwatch_emf.c:320",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_cloudwatch_emf.c:321",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_cloudwatch_emf.c:321",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_influx.c:313",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_influx.c:313",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_influx.c:315",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_influx.c:315",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_context_metrics",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:512",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:513",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:514",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:515",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:516",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:517",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_msgpack.c",
+   "occurrence": 1,
+   "function": "pack_static_labels",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:445",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_msgpack.c:445",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_msgpack.c:446",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_msgpack.c:446",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "append_sample_to_metric",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_opentelemetry.c:3327",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_opentelemetry.c:3327",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_opentelemetry.c:3328",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_opentelemetry.c:3328",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "occurrence": 1,
+   "function": "add_static_labels",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_prometheus.c:232",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_prometheus.c:232",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_prometheus.c:233",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_prometheus.c:233",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "occurrence": 1,
+   "function": "format_metric_labels",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_splunk_hec.c:290",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_splunk_hec.c:290",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_splunk_hec.c:293",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_splunk_hec.c:293",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_encode_text.c",
+   "occurrence": 1,
+   "function": "format_metric",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_text.c:533",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_encode_text.c:533",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_encode_text.c:535",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_encode_text.c:535",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_exp_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_exp_histogram_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_exp_histogram.c:81",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_exp_histogram.c:81",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_filter.c",
+   "occurrence": 1,
+   "function": "cmt_filter",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ret`",
+     "origin": "cmt_filter.c:722",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_filter.c",
+   "occurrence": 1,
+   "function": "compare_label_keys",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:47",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:47",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:48",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:48",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `label`",
+     "origin": "cmt_filter.c:51",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `label`",
+     "origin": "cmt_filter.c:60",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_filter.c",
+   "occurrence": 1,
+   "function": "filter_context_fqname",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:570",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:570",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:571",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:571",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:584",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:584",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:585",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:585",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:597",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:597",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:598",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:598",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:610",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:610",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:611",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:611",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:623",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:623",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:624",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:624",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:636",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:636",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:637",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:637",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_filter.c",
+   "occurrence": 1,
+   "function": "filter_context_label_key",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:109",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:109",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:110",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:110",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:123",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:123",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:124",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:124",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:137",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:137",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:138",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:138",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:151",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:151",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:152",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:152",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:165",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:165",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:166",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:166",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:95",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `head`",
+     "origin": "cmt_filter.c:95",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "cmt_filter.c:96",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_filter.c:96",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_gauge.c",
+   "occurrence": 1,
+   "function": "cmt_gauge_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_gauge.c:59",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_gauge.c:59",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_histogram.c",
+   "occurrence": 1,
+   "function": "cmt_histogram_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_histogram.c:243",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_histogram.c:243",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_log.c",
+   "occurrence": 1,
+   "function": "cmt_log_print",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cmt`",
+     "origin": "cmt_log.c:44",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "occurrence": 1,
+   "function": "cmt_summary_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_summary.c:74",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_summary.c:74",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "cmt_untyped.c",
+   "occurrence": 1,
+   "function": "cmt_untyped_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "cmt_untyped.c:64",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_add`",
+     "origin": "cmt_untyped.c:64",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "create_export_service_request",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "ctr_encode_opentelemetry.c:1109",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`",
+     "origin": "ctr_encode_opentelemetry.c:1109",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "ctr_log.c",
+   "occurrence": 1,
+   "function": "ctr_log_print",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ctr`",
+     "origin": "ctr_log.c:41",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "ctraces.c",
+   "occurrence": 1,
+   "function": "ctr_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "ctraces.c:52",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "ctraces.c:53",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "ctraces.c:52",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `cfl_list_init`",
+     "origin": "ctraces.c:53",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_queue_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+     "origin": "mk_server/mk_fifo.c:158",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_fifo.c:158",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `q`",
+     "origin": "mk_server/mk_fifo.c:159",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_fifo.c:165",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_fifo.c:192",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `id`",
+     "origin": "mk_server/mk_fifo.c:194",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `q`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_fifo.c:192",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `q`",
+     "origin": "mk_server/mk_fifo.c:192",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "occurrence": 1,
+   "function": "mk_fifo_queue_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_fifo.c:216",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `q`, which this function has not published",
+     "origin": "mk_server/mk_fifo.c:216",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_header.c",
+   "occurrence": 1,
+   "function": "mk_header_prepare",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `in`",
+     "origin": "mk_server/mk_header.c:400",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `in`",
+     "origin": "mk_server/mk_header.c:401",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_http.c:798",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_range_set",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `in`",
+     "origin": "mk_server/mk_http.c:443",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_http.c",
+   "occurrence": 1,
+   "function": "mk_http_session_remove",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `handler`",
+     "origin": "mk_server/mk_http.c:1433",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "occurrence": 1,
+   "function": "http_parser_transfer_encoding_chunked",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "mk_server/mk_http_parser.c:565",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "mk_server/mk_http_parser.c:576",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tmp`",
+     "origin": "mk_server/mk_http_parser.c:597",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "mk_server/mk_http_parser.c:630",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "mk_server/mk_http_parser.c:658",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_http_send",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_lib.c:715",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_lib.c:724",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`",
+     "origin": "mk_server/mk_lib.c:728",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `req`",
+     "origin": "mk_server/mk_lib.c:732",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_lib.c:733",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_stream_in_raw`",
+     "origin": "mk_server/mk_lib.c:715",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_stream_in_raw`",
+     "origin": "mk_server/mk_lib.c:724",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_stream_in_raw`",
+     "origin": "mk_server/mk_lib.c:733",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_lib_worker",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_lib.c:156",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "occurrence": 1,
+   "function": "mk_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_lib.c:202",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_exit_all",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:552",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held",
+     "origin": "mk_server/mk_plugin.c:552",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_exit_stages",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:529",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:532",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:533",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unlink by `mk_list_del` of `st`, which this function has not published",
+     "origin": "mk_server/mk_plugin.c:532",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:123",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_load",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:174",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tmp`",
+     "origin": "mk_server/mk_plugin.c:174",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tmp`",
+     "origin": "mk_server/mk_plugin.c:176",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:187",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:193",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:208",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:212",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "mk_server/mk_plugin.c:213",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:221",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:222",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:228",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:229",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:235",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:236",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:242",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:243",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:249",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:250",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_plugin.c:256",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`",
+     "origin": "mk_server/mk_plugin.c:212",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:221",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:221",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:222",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:222",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:228",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:228",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:229",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:229",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:235",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:235",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:236",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:236",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:242",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:242",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:243",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:243",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:249",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:249",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `st`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:250",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `st`",
+     "origin": "mk_server/mk_plugin.c:250",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "publication by `mk_list_add` of `plugin`, which this function does not hold as one live object",
+     "origin": "mk_server/mk_plugin.c:256",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_load_all",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "mk_server/mk_plugin.c:443",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "occurrence": 1,
+   "function": "mk_plugin_preworker_calls",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `node`",
+     "origin": "mk_server/mk_plugin.c:637",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `node`",
+     "origin": "mk_server/mk_plugin.c:642",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_add_connection",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_scheduler.c:214",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_scheduler.c:215",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_scheduler.c:216",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_scheduler.c:217",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_event_read",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "mk_server/mk_scheduler.c:716",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "occurrence": 1,
+   "function": "mk_sched_worker_cb_add",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_scheduler.c:845",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `wcb`",
+     "origin": "mk_server/mk_scheduler.c:845",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "occurrence": 1,
+   "function": "mk_server_listen_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:209",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:210",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:211",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:212",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "occurrence": 1,
+   "function": "mk_server_loop_balancer",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:363",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:371",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:414",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "occurrence": 1,
+   "function": "mk_server_worker_loop",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:456",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:458",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`",
+     "origin": "mk_server/mk_server.c:458",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:466",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:508",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:512",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:515",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:528",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:534",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:546",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:559",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:568",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:572",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:579",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sched`",
+     "origin": "mk_server/mk_server.c:579",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:606",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:611",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "mk_server/mk_server.c:615",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "occurrence": 1,
+   "function": "mk_channel_stream_write",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:155",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:158",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:173",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:193",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "occurrence": 1,
+   "function": "mk_channel_write",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "mk_server/mk_stream.c:229",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:239",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:242",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:243",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:257",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `input`",
+     "origin": "mk_server/mk_stream.c:280",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "mk_server/mk_stream.c:285",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "occurrence": 1,
+   "function": "mk_stream_in_release",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `in`",
+     "origin": "mk_server/mk_stream.c:129",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_handler_free",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:747",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:748",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_handler_match",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:320",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:323",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:328",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h`",
+     "origin": "mk_server/mk_vhost.c:323",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`",
+     "origin": "mk_server/mk_vhost.c:328",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_map_handlers",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "mk_server/mk_vhost.c:584",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:585",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "occurrence": 1,
+   "function": "mk_vhost_read",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:515",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:516",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:517",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:521",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:535",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:542",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "mk_server/mk_vhost.c:554",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "loop re-acquisition: an earlier generation that may be live is still held",
+     "origin": "mk_server/mk_vhost.c:515",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `mk_list_init`",
+     "origin": "mk_server/mk_vhost.c:521",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:535",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_param`",
+     "origin": "mk_server/mk_vhost.c:542",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `h_handler`",
+     "origin": "mk_server/mk_vhost.c:554",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "decode_extension",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `extension`",
+     "origin": "nanopb/pb_decode.c:850",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:850",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_decode_inner",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:1015",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:1060",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:1065",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "nanopb/pb_decode.c:1122",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `iter`",
+     "origin": "nanopb/pb_decode.c:1122",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_decode_varint32_eof",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:177",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_make_string_substream",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `substream`",
+     "origin": "nanopb/pb_decode.c:368",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `substream`",
+     "origin": "nanopb/pb_decode.c:371",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:372",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_read",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:103",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:114",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:115",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:117",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "occurrence": 1,
+   "function": "pb_readbyte",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_decode.c:137",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_encode_submessage",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_encode.c:746",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "nanopb/pb_encode.c:756",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_encode.c:761",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_get_encoded_size",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `size`",
+     "origin": "nanopb/pb_encode.c:563",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_ostream_from_buffer",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "nanopb/pb_encode.c:78",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "occurrence": 1,
+   "function": "pb_write",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_encode.c:102",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `stream`",
+     "origin": "nanopb/pb_encode.c:87",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdaddr.c",
+   "occurrence": 1,
+   "function": "rd_getaddrinfo",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `svc`",
+     "origin": "rdaddr.c:189",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `svc`",
+     "origin": "rdaddr.c:190",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdaddr.c:204",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ais`",
+     "origin": "rdaddr.c:217",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdaddr.c:218",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cnt`",
+     "origin": "rdaddr.c:220",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ais`",
+     "origin": "rdaddr.c:234",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_set_logger",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka.c:417",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignors_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkas`",
+     "origin": "rdkafka_assignor.c:635",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkas`",
+     "origin": "rdkafka_assignor.c:637",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_random0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_broker.c:1486",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkb`",
+     "origin": "rdkafka_broker.c:1493",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unrecognized assignment destination",
+     "origin": "rdkafka_broker.c:1495",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "store through `*filtered_cnt` without an out-parameter contract",
+     "origin": "rdkafka_broker.c:1502",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_weighted",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkb`",
+     "origin": "rdkafka_broker.c:1557",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_broker.c:1559",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_buf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_set_maker",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_buf.c:540",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkbuf`",
+     "origin": "rdkafka_buf.c:542",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_conf_finalize",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tconf`",
+     "origin": "rdkafka_conf.c:4754",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tconf`",
+     "origin": "rdkafka_conf.c:4758",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tconf`",
+     "origin": "rdkafka_conf.c:4764",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tconf`",
+     "origin": "rdkafka_conf.c:4769",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgq_find_pos",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "store through `*cntp` without an out-parameter contract",
+     "origin": "rdkafka_msg.c:937",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "store through `*bytesp` without an out-parameter contract",
+     "origin": "rdkafka_msg.c:938",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_msg.c:943",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_msg.c:944",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rkm`",
+     "origin": "rdkafka_msg.c:944",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "unittest_msgq_order",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_msg.c:2088",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_writer_write_msg_v0_1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unrecognized assignment destination",
+     "origin": "rdkafka_msgset_writer.c:627",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_retry_msgq",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `retry_ms`",
+     "origin": "rdkafka_partition.c:1008",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_cmp",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_partition.c:3330",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `a`",
+     "origin": "rdkafka_partition.c:3334",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `b`",
+     "origin": "rdkafka_partition.c:3334",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:3342",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:3345",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_find0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:3479",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `i`",
+     "origin": "rdkafka_partition.c:3481",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_find_by_id0",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unsupported assignment expression",
+     "origin": "rdkafka_partition.c:3497",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:3501",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ret`",
+     "origin": "rdkafka_partition.c:3509",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_match",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:4402",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_partition.c:4403",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_sum",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_partition.c:4563",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_partition.c:4564",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `sum`",
+     "origin": "rdkafka_partition.c:4569",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_apply",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_queue.c:1234",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_queue.c:1236",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cnt`",
+     "origin": "rdkafka_queue.c:1239",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_queue.c:1250",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cnt`",
+     "origin": "rdkafka_queue.c:1252",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_cb_event_enable",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_queue.c:1177",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assign_ranges",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_range_assignor.c:362",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_range_assignor.c:385",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `partitions_to_assign`",
+     "origin": "rdkafka_range_assignor.c:396",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_range_assignor.c:397",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_range_assignor.c:398",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdkafka_range_assignor.c:401",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_cyrus_client_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_sasl_cyrus.c:537",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdkafka_sasl_cyrus.c:542",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_apply",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:462",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:465",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_cmp",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdlist.c:431",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:435",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_copy_to",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:503",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_deduplicate",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:408",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_find",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:362",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_find_duplicate",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:390",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_index",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:338",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `i`",
+     "origin": "rdlist.c:340",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_is_sorted",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:283",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_move",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `src`",
+     "origin": "rdlist.c:557",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_remove_cmp",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:201",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_remove_multi_cmp",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:221",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled increment or decrement expression",
+     "origin": "rdlist.c:224",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `cnt`",
+     "origin": "rdlist.c:228",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_set",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rl`",
+     "origin": "rdlist.c:160",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdlist.c",
+   "occurrence": 1,
+   "function": "rd_list_sort",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `rl`",
+     "origin": "rdlist.c:270",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdmap.c",
+   "occurrence": 1,
+   "function": "rd_map_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdmap.c:209",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdmap.c:210",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdmap.c:211",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "rdmap.c:212",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "rdstring.c",
+   "occurrence": 1,
+   "function": "rd_string_render",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "unrecognized assignment destination",
+     "origin": "rdstring.c:113",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unrecognized assignment destination",
+     "origin": "rdstring.c:139",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unsupported assignment expression",
+     "origin": "rdstring.c:140",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `tend`",
+     "origin": "rdstring.c:143",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `template`",
+     "origin": "rdstring.c:57",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unrecognized assignment destination",
+     "origin": "rdstring.c:93",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `te`",
+     "origin": "rdstring.c:104",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `t`",
+     "origin": "rdstring.c:96",
+     "count": 1
+    }
+   ]
+  }
+ ],
+ "null": []
+}

@@ -1,0 +1,1155 @@
+{
+ "card": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/fblb-base2/resource-diagnostics.json",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/fblb-after4/resource-diagnostics.json",
+ "status_moves": {},
+ "rows_trading_leaves": 34,
+ "null_moves": {},
+ "null_rows_changed": 0,
+ "moves": [],
+ "trades": [
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "collector_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2234",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:2250",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2267",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:2246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`",
+     "origin": "src/flb_input.c:2247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:2267",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "collector_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2351",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2362",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     "origin": "src/flb_input.c:2351",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to `mk_event_add` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     "origin": "src/flb_input.c:2362",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_collector_delete",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3211",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3211",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_collector_fd",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3288",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3291",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3308",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_collector_pause",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3182",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3185",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3181",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3182",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3185",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_collector_resume",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3245",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3246",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3256",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3257",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3257",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3258",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3259",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_instance_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:1330",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:1331",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_instance_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1809",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1873",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1954",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_net_property_check",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:1410",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:1417",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:389",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:461",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:488",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:560",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:625",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:630",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:648",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 1,
+   "function": "flb_input_plugin_property_check",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1476",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1483",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "collector_create",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2234",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:2250",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2267",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:2246",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to uncontracted function `MK_EVENT_ZERO`",
+     "origin": "src/flb_input.c:2247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:2267",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "collector_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2351",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:2362",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "call to `mk_event_timeout_create` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     "origin": "src/flb_input.c:2351",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "call to `mk_event_add` retains `event` in `coll - > evl`, whose lifetime this body does not decide against it (retention-undecided)",
+     "origin": "src/flb_input.c:2362",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_collector_delete",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3211",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3211",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_collector_fd",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3288",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3291",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:3308",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_collector_pause",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3182",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:3185",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3181",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3182",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3185",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_collector_resume",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3245",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3246",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3247",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3256",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `coll`",
+     "origin": "src/flb_input.c:3257",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3257",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3258",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input.c:3259",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_instance_destroy",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unsupported",
+     "description": "indirect memory access is outside the resource projection",
+     "origin": "src/flb_input.c:1330",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input.c:1331",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_instance_init",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1809",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1873",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1954",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_net_property_check",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:1410",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `ins`",
+     "origin": "src/flb_input.c:1417",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_new",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:389",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:461",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:488",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:560",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `instance`",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:625",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:630",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `plugin`",
+     "origin": "src/flb_input.c:648",
+     "count": 1
+    }
+   ],
+   "added": [
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_input.c:542",
+     "count": 1
+    },
+    {
+     "category": "unsupported",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "origin": "src/flb_input.c:580",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_input.c",
+   "occurrence": 2,
+   "function": "flb_input_plugin_property_check",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1476",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `p`",
+     "origin": "src/flb_input.c:1483",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "input_collector_fd",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input_thread.c:157",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 1,
+   "function": "input_thread",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:423",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:433",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:437",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:441",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:450",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:453",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:474",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:480",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:483",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "input_collector_fd",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `collector`",
+     "origin": "src/flb_input_thread.c:157",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "occurrence": 2,
+   "function": "input_thread",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:423",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:433",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:437",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:441",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:450",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:453",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:474",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:480",
+     "count": 1
+    },
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_input_thread.c:483",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "do_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_lib.c:978",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_input_set_test",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `i_ins`",
+     "origin": "src/flb_lib.c:377",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_output_set_http_test",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `o_ins`",
+     "origin": "src/flb_lib.c:408",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 1,
+   "function": "flb_output_set_test_with_ctx_callback",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `o_ins`",
+     "origin": "src/flb_lib.c:624",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "do_start",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `event`",
+     "origin": "src/flb_lib.c:978",
+     "count": 1
+    }
+   ],
+   "added": []
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_input_set_test",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `i_ins`",
+     "origin": "src/flb_lib.c:377",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_output_set_http_test",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `o_ins`",
+     "origin": "src/flb_lib.c:408",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "occurrence": 2,
+   "function": "flb_output_set_test_with_ctx_callback",
+   "before": "Unknown",
+   "after": "Unknown",
+   "removed": [],
+   "added": [
+    {
+     "category": "unknown_alias",
+     "description": "unresolved resource identity `o_ins`",
+     "origin": "src/flb_lib.c:624",
+     "count": 1
+    }
+   ]
+  }
+ ],
+ "null": []
+}
