@@ -53,6 +53,7 @@ pub mod null_tally;
 // Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the row fields and the
 // run's dependency section.
 pub mod callback_member_fold;
+pub mod cross_unit_links;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n, R1, F1): the member-facts
 // pre-pass of the pinned route.
 pub mod contract_dependencies;

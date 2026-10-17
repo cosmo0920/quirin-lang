@@ -126,6 +126,34 @@ pub fn export_homes(
     Ok(exports)
 }
 
+/// Restrict a run-wide import table to names with no definition in this
+/// caller's preprocessed unit. A header static always takes local precedence.
+pub fn for_caller(
+    preprocessed: &str,
+    run_environment: &ResourceContracts,
+    run_homes: &[CrossUnitHomeEvidence],
+) -> (ResourceContracts, Vec<CrossUnitHomeEvidence>) {
+    let (tokens, conditionals) = tokenize_with_conditionals(preprocessed);
+    let local = function_names(&tokens, &conditionals)
+        .definitions
+        .into_iter()
+        .collect::<BTreeSet<_>>();
+    let mut environment = run_environment.clone();
+    let homes = run_homes
+        .iter()
+        .filter(|home| !local.contains(&home.function))
+        .cloned()
+        .collect::<Vec<_>>();
+    let imports = environment
+        .inferred_imports()
+        .iter()
+        .filter(|(name, _)| !local.contains(*name))
+        .map(|(name, contract)| (name.clone(), contract.clone()))
+        .collect();
+    environment.set_inferred_imports(imports);
+    (environment, homes)
+}
+
 fn digest_environment(environment: &ResourceContracts) -> Result<String, String> {
     let bytes = serde_json::to_vec(environment).map_err(|error| error.to_string())?;
     Ok(qcore_schemas::sha256_hex(&bytes))

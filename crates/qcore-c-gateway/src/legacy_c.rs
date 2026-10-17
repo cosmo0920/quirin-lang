@@ -2402,6 +2402,17 @@ pub fn analyze_unrestricted_c11_with_inventory(
     contracts: &ResourceContracts,
     inventory: Option<&SourceDefinitionInventory>,
 ) -> Result<UnrestrictedLegacyResult, LegacyCError> {
+    analyze_unrestricted_c11_with_inventory_and_cross_unit(unit, entry, contracts, inventory, &[])
+}
+
+/// Inventory-preserving analysis with opt-in, replayable cross-unit homes.
+pub fn analyze_unrestricted_c11_with_inventory_and_cross_unit(
+    unit: &C11TranslationUnit<'_>,
+    entry: &str,
+    contracts: &ResourceContracts,
+    inventory: Option<&SourceDefinitionInventory>,
+    homes: &[CrossUnitHomeEvidence],
+) -> Result<UnrestrictedLegacyResult, LegacyCError> {
     let source_functions = match unit.function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => None,
         LegacyFunctionScope::MainSourceDefinitions => Some(inventory.map_or_else(
@@ -2434,7 +2445,7 @@ pub fn analyze_unrestricted_c11_with_inventory(
         entry,
         contracts,
         source_functions,
-        &[],
+        homes,
     )
 }
 
@@ -3022,6 +3033,7 @@ mod cross_unit;
 
 pub use cross_unit::{
     CrossUnitExport, CrossUnitHomeEvidence, export_homes as export_cross_unit_homes,
+    for_caller as cross_unit_for_caller,
 };
 
 // Card W45-FB-RETRY-LIFETIME: intrusive-container publication.

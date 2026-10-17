@@ -22,6 +22,7 @@ use serde_json::Value;
 use crate::compile_db::{
     CompileEntry, compile_entries, compiler_options_compatibility as compiler_options,
 };
+use crate::cross_unit_links::LinkMap;
 use crate::current::{CurrentAudit, EntryOutcome, distinct_configurations, select_configurations};
 use crate::evidence::EvidenceMode;
 use crate::parallel::run_ordered;
@@ -103,6 +104,10 @@ pub fn run_current_route_with_checkpoints(
     route: &CurrentRoute<'_>,
     checkpoints: Option<&crate::checkpoint_run::CheckpointOptions>,
 ) -> Result<bool, String> {
+    let cross_unit_links = LinkMap::load_selected()?;
+    if cross_unit_links.is_some() && checkpoints.is_some() {
+        return Err("cross-unit imports are not supported by checkpoint composition".into());
+    }
     let root = route
         .checkout
         .canonicalize()
@@ -351,7 +356,56 @@ pub fn run_current_route_with_checkpoints(
         },
     );
     audit.set_refuted_table(&phases.applied);
-    for (group, outcome) in phases.results {
+    let mut published = phases.results;
+    if let Some(links) = &cross_unit_links {
+        let mut exports = Vec::new();
+        for task in &tasks {
+            if let (Ok(expected_source), TaskInput::Configured(entry)) =
+                (&task.expected_source, task.input)
+            {
+                exports.extend(audit.export_cross_unit_home(
+                    task.library,
+                    expected_source,
+                    entry,
+                    links,
+                )?);
+            }
+        }
+        let (environment, homes) = links.select(exports, audit.contracts());
+        if !homes.is_empty() {
+            audit.set_cross_unit(environment, homes, &links.premise);
+            let mut promoted = Vec::new();
+            let stopped = run_ordered(
+                tasks.clone(),
+                route.jobs,
+                Some(dispatch.clone()),
+                |task| (task.group, evaluate_task(&audit, &task)),
+                |(group, outcome): (usize, EntryOutcome)| {
+                    let failed = outcome.result.is_err();
+                    promoted.push((group, outcome));
+                    if failed { Err(()) } else { Ok(()) }
+                },
+            )
+            .is_err();
+            let new_refutations = crate::refuted_contracts::table_from_rows(
+                promoted
+                    .iter()
+                    .filter_map(|(_, outcome)| outcome.result.as_ref().ok())
+                    .flat_map(|products| products.unit_rows()),
+            );
+            if !stopped && new_refutations == phases.applied {
+                published = promoted;
+            } else {
+                // A newly refuted declaration may have supported a home
+                // summary. Keep the already settled baseline phase instead.
+                audit.set_refuted_table(&phases.applied);
+                println!(
+                    "cross-unit import phase refused: incomplete run or changed refutation table"
+                );
+            }
+        }
+    }
+    for (group, outcome) in published {
         for header in &headers[printed_headers..=group] {
             println!("{header}");
         }

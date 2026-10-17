@@ -15,7 +15,7 @@ use serde_json::{Value, json};
 
 use crate::compile_db::{CompileEntry, EffectiveInput, compile_task_identity, compiler_options};
 use crate::evidence::EvidenceMode;
-use crate::projection::{AuditCounts, PreparedAuditCertificateContext, project_prepared_unit_into};
+use crate::projection::{AuditCounts, PreparedAuditCertificateContext};
 use crate::providers::ContractInput;
 use crate::report::{AuditReport, UnitRefusal};
 
@@ -94,6 +94,7 @@ pub struct CurrentAudit {
     /// facts the pre-pass read over the route's compile database, installed
     /// on every analysing thread, with its evidence section.
     member_prepass: Option<crate::member_prepass::Prepass>,
+    cross_unit_homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
 }
 
 /// One configuration's console lines and, unless it failed, its products.
@@ -131,6 +132,51 @@ impl EntryProducts {
 }
 
 impl CurrentAudit {
+    /// First-phase W4 exports for a claimed home. The source and compilation
+    /// options are read through the same configured request as the row.
+    pub fn export_cross_unit_home(
+        &self,
+        library: &str,
+        expected_source: &Path,
+        entry: &CompileEntry,
+        links: &crate::cross_unit_links::LinkMap,
+    ) -> Result<Vec<(String, qcore_c_gateway::legacy_c::CrossUnitExport)>, String> {
+        let file = expected_source
+            .strip_prefix(&self.checkout)
+            .map_err(|_| "cross-unit home lies outside checkout")?
+            .to_string_lossy();
+        let unit_key = format!("{library}/{file}");
+        let requested = links.names_for(&unit_key);
+        if requested.is_empty() {
+            return Ok(Vec::new());
+        }
+        let bytes = std::fs::read(&entry.file).map_err(|error| error.to_string())?;
+        crate::verify_pinned_bytes(&self.checkout, &self.revision, expected_source, &bytes)
+            .map_err(UnitRefusal::into_reason)?;
+        let source = std::str::from_utf8(&bytes).map_err(|error| error.to_string())?;
+        let options = compiler_options(entry)?;
+        let unit = C11TranslationUnit {
+            source,
+            include_paths: options.include_paths,
+            definitions: options.definitions,
+            preprocessor_options: options.preprocessor_options,
+            dialect: options.dialect,
+            function_scope: LegacyFunctionScope::MainSourceDefinitions,
+            input: options.input,
+        };
+        let prepared = prepare_translation_unit(&unit);
+        let exports = qcore_c_gateway::legacy_c::export_cross_unit_homes(
+            &prepared,
+            &self.contracts,
+            &requested,
+            &links.digest,
+        )?;
+        Ok(exports
+            .into_iter()
+            .map(|export| (unit_key.to_string(), export))
+            .collect())
+    }
+
     pub fn new(checkout: &Path, profile: &LoadedProfile, manifest: &Path) -> Result<Self, String> {
         Self::with_contracts(
             checkout,
@@ -258,6 +304,7 @@ impl CurrentAudit {
             sources: BTreeSet::new(),
             counts: AuditCounts::default(),
             member_prepass: None,
+            cross_unit_homes: Vec::new(),
         })
     }
 
@@ -286,10 +333,28 @@ impl CurrentAudit {
         table: &qcore_schemas::contract_refutation::RefutationTable,
     ) {
         self.contracts = crate::refuted_contracts::with_table(&self.loaded_contracts, table);
+        self.cross_unit_homes.clear();
         self.refuted = table.clone();
         // Recorded before any unit, so a checkpoint's run-wide inputs carry
         // the table to the composer; `finish` replaces it with the section.
         self.assumptions[crate::refuted_contracts::APPLIED_KEY] = json!({ "applied": table });
+    }
+
+    /// Install only homes replayed under the final refutation environment.
+    /// The linked-program claim is retained as an assumption in every row.
+    pub fn set_cross_unit(
+        &mut self,
+        environment: ResourceContracts,
+        homes: Vec<qcore_c_gateway::legacy_c::CrossUnitHomeEvidence>,
+        premise: &str,
+    ) {
+        self.contracts = environment;
+        self.cross_unit_homes = homes;
+        self.assumptions["cross_unit_link_resolution"] = json!({
+            "premise": premise,
+            "map_sha256": self.contracts.link_resolution_sha256(),
+            "imported": self.cross_unit_homes.iter().map(|home| &home.function).collect::<Vec<_>>(),
+        });
     }
 
     /// Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table later
@@ -515,11 +580,12 @@ impl CurrentAudit {
                 )?;
                 configuration["compile_task_identity"] =
                     serde_json::to_value(&identity).map_err(|error| error.to_string())?;
-                project_prepared_unit_into(
+                crate::projection::project_prepared_unit_into_with_cross_unit(
                     library,
                     &file,
                     &prepared,
                     &self.contracts,
+                    &self.cross_unit_homes,
                     PreparedAuditCertificateContext {
                         compile_task_identity: &identity,
                         source_profile_sha256: &self.source_profile_sha256,
