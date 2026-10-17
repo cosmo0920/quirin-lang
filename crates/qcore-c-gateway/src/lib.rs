@@ -233,6 +233,7 @@ pub mod outer_record_graph;
 // of each field dispatch and store, for the thread-entry census.
 pub mod typed_dispatch_census;
 // Card W47-TYPED-CONST-POINTER-VALUE (rule 10m).
+mod readonly_actual_frame;
 mod typed_const_pointer_value;
 mod typed_field_access;
 mod typed_root_declarations;

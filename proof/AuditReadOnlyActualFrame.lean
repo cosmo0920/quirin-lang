@@ -1,0 +1,7 @@
+import QCore.ReadOnlyActualFrame
+
+#print axioms QCore.ReadOnlyActualFrame.checked_list_count_does_not_bind
+#print axioms QCore.ReadOnlyActualFrame.uncertified_list_count_binds
+#print axioms QCore.ReadOnlyActualFrame.checked_actual_preserves_decision
+#print axioms QCore.ReadOnlyActualFrame.other_call_still_refuses
+#print axioms QCore.ReadOnlyActualFrame.write_still_refuses

@@ -172,6 +172,7 @@ import QCore.TypedAccessPathStatements
 import QCore.TypedAccessPathPositions
 import QCore.TypedAccessPathPositionResiduals
 import QCore.TypedRootDeclarations
+import QCore.ReadOnlyActualFrame
 import QCore.TypedConstPointerValue
 import QCore.LexicalClosureNestedAssignment
 import QCore.LoopOwner

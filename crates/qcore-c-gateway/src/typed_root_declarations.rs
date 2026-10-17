@@ -100,6 +100,29 @@ impl RootDeclarations {
         variadic_tails: &BTreeSet<String>,
         protected_formals: &BTreeSet<String>,
     ) -> Result<Self, Refusal> {
+        Self::read_with_frame(
+            source,
+            function,
+            enums,
+            contracts,
+            variadic_tails,
+            protected_formals,
+            false,
+        )
+    }
+
+    /// Recompute the same closure with the certified list-count actual
+    /// omitted from `may_bind`. The caller must check the callee body first;
+    /// a false certificate leaves the ordinary reader in force.
+    pub(crate) fn read_with_frame(
+        source: &str,
+        function: &Value,
+        enums: &EnumFacts,
+        contracts: &ResourceContracts,
+        variadic_tails: &BTreeSet<String>,
+        protected_formals: &BTreeSet<String>,
+        read_only_list_count: bool,
+    ) -> Result<Self, Refusal> {
         let body = children(function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")
@@ -134,6 +157,7 @@ impl RootDeclarations {
             enums,
             contracts,
             variadic_tails,
+            read_only_list_count,
             facts: &mut facts,
             ids: &mut ids,
             assignments: Vec::new(),
@@ -308,6 +332,7 @@ struct Walk<'a, 'f> {
     enums: &'a EnumFacts,
     contracts: &'a ResourceContracts,
     variadic_tails: &'a BTreeSet<String>,
+    read_only_list_count: bool,
     facts: &'f mut Facts,
     ids: &'f mut BTreeSet<String>,
     /// `(destination, values, place)` of every plain assignment and
@@ -451,6 +476,14 @@ impl<'a> Walk<'a, '_> {
         let name = callee_name(callee);
         let contract = name.and_then(|name| self.contracts.contract(name));
         for (index, actual) in actuals.iter().enumerate() {
+            if self.read_only_list_count
+                && name == Some("rd_list_cnt")
+                && actuals.len() == 1
+                && index == 0
+                && framed_list_actual(actual)
+            {
+                continue;
+            }
             let mut names = Vec::new();
             variables(actual, &mut names, false);
             for name in &names {
@@ -470,6 +503,34 @@ impl<'a> Walk<'a, '_> {
                 self.facts.mark(root, "custody-actual");
             }
         }
+    }
+}
+
+/// `&ROOT->field[.field]*` and no value computation inside the actual.
+fn framed_list_actual(actual: &Value) -> bool {
+    let Some(address) = strip_lvalue(actual) else {
+        return false;
+    };
+    if kind(address) != "UnaryOperator" || address["opcode"].as_str() != Some("&") {
+        return false;
+    }
+    let Some(mut place) = children(address).first().and_then(strip_lvalue) else {
+        return false;
+    };
+    let mut fields = 0;
+    loop {
+        if kind(place) != "MemberExpr" {
+            return false;
+        }
+        fields += 1;
+        let arrow = place["isArrow"].as_bool() == Some(true);
+        let Some(base) = children(place).first().and_then(strip_lvalue) else {
+            return false;
+        };
+        if arrow {
+            return fields > 0 && kind(base) == "DeclRefExpr" && is_object(base);
+        }
+        place = base;
     }
 }
 
@@ -615,6 +676,47 @@ contract { requires resource_contract_v1; ensures normal resource_released(b, no
 
     fn clang() -> bool {
         crate::clang_command().is_ok()
+    }
+
+    fn framed(body: &str) -> RootDeclarations {
+        let source = format!(
+            "struct inner {{ int rl_cnt; }}; \
+            struct outer {{ struct inner list; }}; \
+            int rd_list_cnt(const struct inner *rl) {{ return rl->rl_cnt; }} \
+            {body}"
+        );
+        let _scope = enter_source(&source, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("w").expect("typed index");
+        RootDeclarations::read_with_frame(
+            &index.source,
+            &index.function,
+            &index.enums,
+            &ResourceContracts::default(),
+            &BTreeSet::new(),
+            &BTreeSet::new(),
+            true,
+        )
+        .expect("answers")
+    }
+
+    #[test]
+    fn only_a_direct_exact_framed_call_loses_its_actual_binding() {
+        if !clang() {
+            return;
+        }
+        let direct = framed("int w(struct outer *b) { return rd_list_cnt(&b->list); }");
+        assert!(direct.ast_never_bound("b"));
+        assert!(!direct.may_bind("b"));
+
+        let written = framed("int w(struct outer *b) { rd_list_cnt(&b->list); b = 0; return 0; }");
+        assert!(written.may_bind("b"));
+
+        let indirect = framed(
+            "int w(struct outer *b) { \
+            int (*rd_list_cnt)(const struct inner *) = 0; \
+            return rd_list_cnt(&b->list); }",
+        );
+        assert!(indirect.may_bind("b"));
     }
 
     #[test]

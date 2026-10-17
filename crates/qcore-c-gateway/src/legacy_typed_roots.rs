@@ -76,14 +76,49 @@ impl Parser<'_> {
     /// Rules 10l and 10o: rule 5b's premise for a pointer handed out of the
     /// body.
     pub(super) fn position_pointer_root(&self, name: &str) -> bool {
-        if self.lexical_answers() {
-            return self.joined_never_bound(name)
+        let ordinary = if self.lexical_answers() {
+            self.joined_never_bound(name)
                 && !self.typed_types.may_bind(name)
-                && !self.typed_roots().names_may_bind(name);
+                && !self.typed_roots().names_may_bind(name)
+        } else {
+            self.position_never_bound(name)
+                && !self.typed_types.may_bind(name)
+                && !self.typed_roots().may_bind(name)
+        };
+        if ordinary {
+            return true;
         }
-        self.position_never_bound(name)
-            && !self.typed_types.may_bind(name)
-            && !self.typed_roots().may_bind(name)
+        // W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT: the only exception to
+        // the over-approximate `may_bind` is a direct call whose exact header
+        // body proves a read-only frame for its one address actual. Both
+        // readers are rerun with just that event removed. Every other binding
+        // cause, a missing body, or an unanswered AST remains a refusal.
+        if !self.formal_parameters.contains(name)
+            || !self.typed_bases.never_bound(name)
+            || !crate::readonly_actual_frame::lexical_root_clear(
+                self.tokens,
+                &self.typed_path_function,
+                name,
+                &self.protected_formals,
+            )
+        {
+            return false;
+        }
+        let Some(index) = self.typed_positions_index() else {
+            return false;
+        };
+        let Ok(framed) = RootDeclarations::read_with_frame(
+            &index.source,
+            &index.function,
+            &index.enums,
+            self.contracts,
+            &self.variadic_tails,
+            &self.protected_formals,
+            true,
+        ) else {
+            return false;
+        };
+        framed.ast_never_bound(name) && !framed.may_bind(name)
     }
 
     /// Rule 10l: an assignment operand's destination is a declared local.
