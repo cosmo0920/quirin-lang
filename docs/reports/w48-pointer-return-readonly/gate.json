@@ -1,0 +1,13 @@
+{
+  "note": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT card gate at d329c3171, outside sandbox on the isolated branch with preserved CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w48-target; all eleven steps of docs/reports/w48-pointer-return-readonly/scripts/gate.sh final-5 exited 0 (private/w48-pointer-return/gate-final-5). Rust runner: 512 units, 525 summaries, 8223 passed, 0 failed, 15 ignored. check_lean_audits.py: 336 passed. Python suite: 374 passed. Workspace submodule, fmt, clippy, reevaluation probe, followup, matrix regeneration, docs index and Clang version all exited 0. provider_tests=133 is carried from the prior OUTER-CONTRACT matrix gate at docs/reports/outer-contract/gate.json; W48 changed no provider package or provider-owned contract and did not rerun the provider gate. Earlier gate-final-1/-2 quota failures, gate-final-3 sandbox failures and gate-final-4 misplaced target symlink failures are preserved and explained in this report.",
+  "workspace_tests": 8223,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 336,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

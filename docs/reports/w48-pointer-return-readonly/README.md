@@ -154,4 +154,68 @@ configuration duplicates; the row checks are the coverage evidence.
 
 ## Standing gate
 
-The full gate is queued under the coordinator's heavy-run lock.
+The first full-gate attempt (`private/w48-pointer-return/gate-final-1/`)
+stopped on a `/tmp` disk quota error before it could record step exits. A
+second attempt (`gate-final-2/`) recorded sandbox submodule exit 128, then
+the Rust test build hit the same quota after 51 seconds; neither attempt
+supports a test verdict. The worktree's 13 GiB `target` was moved intact to
+`/home/cosmo/Documents/GitHub/qcore-c/private/w48-target` with the
+coordinator's approval. A worktree `target` symlink resolves paths already
+embedded in compiled test executables; `CARGO_TARGET_DIR` sends subsequent
+builds to the preserved directory. No build output or failed-run log was
+deleted. This storage location is the sole exception to the card's isolated
+worktree output convention.
+
+The sandboxed third attempt (`gate-final-3/`) completed every step. It
+recorded submodule 128 because this sandbox cannot write the common Git
+metadata; the coordinator ran the exact submodule command outside the
+sandbox with exit 0. Rust test-binary runner exit 101 covered 512 units and
+525 summaries: 8,080 passed, 143 failed, 15 ignored. All 143 failures
+are classified from the named test logs: 92 sanitized native execution
+failures (90 print LeakSanitizer's ptrace fatal error; two assert an exit
+code from a sanitized child), 35 missing CLI executables from paths
+embedded before target relocation, 15 process-confinement permission or
+`unshare` denials, and one new parser-field declaration-order fixture.
+The target symlink resolves the 35 path failures, and a focused CLI test
+passed after it was added. The parser field classification was repaired,
+then its focused test passed. Clippy's two explicit-auto-deref diagnostics
+were repaired and a focused full-target Clippy check passed. The sandbox's
+remaining steps recorded fmt 0, probe 0, followup 0, Lean audits 0,
+matrix regeneration 0, Python suite 0, documentation index 0, and Clang
+version 0. The 92 sanitizer and 15 confinement results require the full
+gate outside this sandbox; no sanitizer or test was weakened.
+
+The first outside-sandbox run (`gate-final-4/`) recorded step exits
+0 / 101 / 0 / 0 / 0 / 0 / 0 / 0 / 0 / 0 / 0 in the order of
+`scripts/gate.sh`. Its Rust runner recorded 512 units and 525 summaries:
+8,219 passed, four failed, 15 ignored. All four failures were in the
+audit-plugin example harness. Its compiled `CARGO_BIN_EXE` path referred to
+the worktree `target`, but the first symlink attempt had landed *inside* a
+small directory recreated by the prior gate, leaving that path unresolved.
+The small directory was preserved at
+`private/w48-pointer-return/misplaced-target-dir`; the worktree `target`
+was replaced with the symlink to the relocated build directory for the
+gate. The symlink was preserved afterwards as
+`private/w48-pointer-return/final-target-link`. The focused
+four-test harness then passed with exit 0.
+
+The fifth full gate ran outside the sandbox from the repaired code commit
+`d329c3171` with the relocated target and **all eleven steps exited 0**:
+submodule, Rust test binaries, fmt, Clippy, reevaluation probe, followup,
+Lean audits, matrix regeneration, Python suite, documentation index, and
+Clang version. Its private logs and per-step exits are under
+`private/w48-pointer-return/gate-final-5/`; `summary.txt` records the exit
+vector. The Rust runner covered 512 units and 525 summaries with **8,223
+passed, 0 failed, 15 ignored**. Lean passed **336/336** audits, including
+the new read-only actual frame audit. The Python suite passed **374** tests.
+The recorded Clang banner is `Ubuntu clang version 21.1.8 (6ubuntu1)`.
+The [gate record](gate.json) pins these figures and the adjacent
+`clang-version.txt` / `clang-version.exit` record its presence. W48 made
+no provider package or provider-owned contract change, so the matrix's
+`provider_tests=133` is explicitly carried from the previous
+`OUTER-CONTRACT` gate, not presented as a fresh provider run. The
+[acceptance matrix](../../reviews/r0_3/acceptance_matrix.json) was
+regenerated against this gate record after the final exits. Its committed
+matrix validator was then rerun separately: `python3 -m unittest discover
+-s scripts/tests` exited 0 with 374 tests (`gate-final-5/post-matrix-python.log`
+and `.exit`).

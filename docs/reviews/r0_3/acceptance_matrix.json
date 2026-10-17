@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "OUTER-CONTRACT card gate on main 94aef2d3b (rebased from 3f8f1a617), every code step at 2ef0ae282, scripts docs/reports/outer-contract/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/oc/gate-g5 and private/oc/provider-gate-pg6 of this worktree. gate-g5: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 512 units, 525 summaries, 8,219 passed, 0 failed, 15 ignored, exit 0 (private/oc/tests-gate-g5); both reevaluation probes exit 0; check_lean_audits.py 335 audits passed (QCore.OuterContract added, QCore.ReasonCategory amended); docs part (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-pg6, at effbb2b1f; providers/ unchanged since when named apart): cargo check --locked 0, cargo test 133 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 8219,
+  "note": "W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT card gate at d329c3171, outside sandbox on the isolated branch with preserved CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w48-target; all eleven steps of docs/reports/w48-pointer-return-readonly/scripts/gate.sh final-5 exited 0 (private/w48-pointer-return/gate-final-5). Rust runner: 512 units, 525 summaries, 8223 passed, 0 failed, 15 ignored. check_lean_audits.py: 336 passed. Python suite: 374 passed. Workspace submodule, fmt, clippy, reevaluation probe, followup, matrix regeneration, docs index and Clang version all exited 0. provider_tests=133 is carried from the prior OUTER-CONTRACT matrix gate at docs/reports/outer-contract/gate.json; W48 changed no provider package or provider-owned contract and did not rerun the provider gate. Earlier gate-final-1/-2 quota failures, gate-final-3 sandbox failures and gate-final-4 misplaced target symlink failures are preserved and explained in this report.",
+  "workspace_tests": 8223,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 335,
+  "lean_audits": 336,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6974,6 +6974,7 @@
    "AuditRawDirectiveLexing.lean",
    "AuditReachGatePosition.lean",
    "AuditReadLoan.lean",
+   "AuditReadOnlyActualFrame.lean",
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
@@ -7101,7 +7102,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abed64dfe3188dfef/docs/reports/outer-contract/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-pointer-return-readonly/gate.json)"
  },
  "named_followups": [
   {
