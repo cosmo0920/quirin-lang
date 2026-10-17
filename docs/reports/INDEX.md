@@ -1119,6 +1119,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w44-corpus-callee-summaries](w44-corpus-callee-summaries/README.md) | W44-CORPUS-CALLEE-SUMMARIES: why corpus callees get no summary, and the one route gap closed |
 
+| [w44-cross-unit-summary](w44-cross-unit-summary/README.md) | W44-CALLEE-CROSS-UNIT-SUMMARY |
+
 | [w44-indirect-call-argument-access](w44-indirect-call-argument-access/README.md) | W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in call actuals |
 
 | [w44-indirect-chain-access](w44-indirect-chain-access/README.md) | W44-INDIRECT-CHAIN-ACCESS: typed record-pointer member chains |
@@ -1290,6 +1292,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
 
 | [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
+
+| [w48-w44-rk-integration](w48-w44-rk-integration/README.md) | W48, W44 and outer-contract stage 2 integration |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

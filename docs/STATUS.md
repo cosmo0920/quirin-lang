@@ -39,6 +39,18 @@ fact. The route refuses missing or ambiguous homes and keeps unresolved
 caller obligations Unknown. These are card-local conditional measurements;
 the table below retains its separately pinned baseline.
 
+The merged [W48/W44/outer stage 2 integration](reports/w48-w44-rk-integration/README.md)
+at `ad526b58` measured the W44 link-map assumption together with both loaded
+outer envelopes. Static custody on the 66910c10 corpus is **955 Safe / 9
+provisional Unsafe / 3,870 Unknown** over 4,834 functions: W48's 11 and
+W44's three Safe promotions compose without a regression. The all-loaded
+runtime custody view is **923 Safe / 32 Pending / 3,870 Unknown / 9
+provisional Unsafe**. Those same 32 stage 2 rows await review of the loaded
+plugin classes; no new Safe row adds a runtime Pending move. System's 448
+rows and tail-pause slice's 404 rows retain their previous status and
+diagnostic projections. This conditional merged measurement does not replace
+the default W48 count or certify a particular link or plugin deployment.
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.

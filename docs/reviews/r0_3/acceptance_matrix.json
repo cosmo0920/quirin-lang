@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W44 isolated gate: private/w44xu/gate-final-2, 8225 Rust passed and 336 Lean audits; stage 2 isolated gate: private/rk-outer/gate-standing-v3, gate-providers-v3 and gate-docs-v2, 8220 Rust passed, 335 Lean audits, 133 provider Rust and 25 provider Python passed, five packages verified and 374 docs tests passed. All isolated gate steps exited 0. Integrated gate and measurements are pending on this merged tree; each card report owns its exact-base evidence.",
-  "workspace_tests": 8225,
+  "note": "Merged W48/W44/RK stage 2 source tip ad526b5871c8cd05596c63d110932923431915d7; merge commits W48 44e6701d6, W44 868bbcc0f, RK d882f6e00; full standing gate private/w44xu/gate-final-integration-2: 513 units/526 summaries, 8230 Rust passed/0 failed/15 ignored, 337 Lean audits, 374 Python tests, all eight steps exit 0. The first integration attempt is retained with a stale matrix Lean-count failure. Provider tree is byte-identical to stage 2 tip a0ec4b37a; its passing gate-providers-v3 supplies 133 Rust tests, 25 Python tests and five verified packages. Integrated corpus, system and slice audits all exit 0 with exact row comparisons in private/w48-w44-rk-integration/; the report records counts and assumptions.",
+  "workspace_tests": 8230,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 336,
+  "lean_audits": 337,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -7103,7 +7103,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w44-cross-unit-summary/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-w44-rk-integration/gate.json)"
  },
  "named_followups": [
   {
