@@ -30,7 +30,10 @@ arbiter run at exact base `fa04aab0f`. Its `run.json` records pinned source
 `66910c10`, release binary SHA-256 `336609c8…`, `--jobs 4`, and exit 0.
 The diagnostic digest is `fd731251…`, 941 / 9 / 3,884. A byte-exact copy and
 the bottom-up plan derived from it are kept in this worktree's ignored
-`private/w48bu-next/`. The [committed prediction](PREDICTION.md) follows that
+`private/w48bu-next/`. The shared [run record](artifacts/before/shared-run.json),
+compressed [bottom-up plan](artifacts/before/plan.json.gz), and
+[family leverage](artifacts/before/family.json) are archived here. The
+[committed prediction](PREDICTION.md) follows that
 measurement and precedes the rule code (`fcaad9ae1` before `6219f7d42`).
 
 The current plan finds 264 Unknown functions waiting on exactly one
