@@ -34,6 +34,8 @@ The corrected system and tail-pause slice routes also exited 0 (`private/rk-oute
 
 The first docs Python gate exited 1 on a missed canonical-module count pin: `scripts/tests/test_contract_corpus.py` still expected 135 modules and 81 `qcore-provider-*` modules after the new outer module made them 136 and 82. Its 374-test log is retained in `private/rk-outer/gate-docs-attempt-1/`. After updating both intentional counts, all 374 docs Python tests and the docs index check exit 0 in `private/rk-outer/gate-docs/`.
 
+The first full standing attempt under `private/rk-outer/gate-standing/` hit the `/tmp` disk quota while the test runner wrote `build.stdout.jsonl`; its tests exited 1 and later Clippy/probe/Lean steps could not be completed reliably (some exit files could not be written). It is retained as incomplete infrastructure evidence, not a contract result or green gate. The worktree's generated `target` was moved intact to ignored `private/rk-outer-target` outside `/tmp`, and the worktree `target` symlink resolves to that directory, including the embedded reevaluation example binaries. The gate script sets `CARGO_TARGET_DIR` there and writes fresh standing/provider attempts to `gate-standing-v2/` and `gate-providers-v2/`.
+
 The baseline all-loaded corpus gave the following closed-world dependency census for its 32 custody Unknown rows. Counts overlap because one row can have several facts. Each matching line is present on **both** defining envelopes in the final candidate:
 
 | Fact in the baseline rows | Rows | Envelope and review condition |

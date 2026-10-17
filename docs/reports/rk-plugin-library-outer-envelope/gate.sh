@@ -4,10 +4,15 @@
 set -u
 part="$1"
 repo="$(cd "$(dirname "$0")/../../.." && pwd)"
-out="$repo/private/rk-outer/gate-$part"
+if [ "$part" = docs ]; then
+  out="$repo/private/rk-outer/gate-docs"
+else
+  out="$repo/private/rk-outer/gate-$part-v2"
+fi
 mkdir -p "$out"
 cd "$repo" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
+export CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/rk-outer-target
 failed=0
 step() {
   local label="$1"; shift
