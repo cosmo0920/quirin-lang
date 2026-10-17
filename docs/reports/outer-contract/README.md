@@ -1,7 +1,7 @@
 # OUTER-CONTRACT: outer contracts and the runtime projection (stage 1)
 
 Card **OUTER-CONTRACT** (wave 48, round 31; card-high). Base: local `main`
-`1474edaf1`. The card was first built and measured on `a423fca5d`, which
+`94aef2d3b`. The card was first built and measured on `a423fca5d`, which
 differs from the design card's base `3f8f1a617` only in records. It was then
 rebased twice, each time measured again against main's own binary
 (section 3.4):
@@ -12,6 +12,10 @@ rebased twice, each time measured again against main's own binary
   clause into `nonnull_member(...) where quant #scope [[stable|scope]]` and
   re-pinned the null views. The envelope covers facts by their key
   (`stable:flb_*_instance.p`, unchanged), not by the clause's spelling.
+* onto `94aef2d3b`, where FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS taught the
+  gateway's lexical reader to read function-pointer members and formals
+  (rule 5g). The reach is read from Clang's AST by its own reader, which
+  already gives a function pointer no data edge, so it is not affected.
 
 This card implements the
 design of [OUTER-CONTRACT-DESIGN](../outer-contract-design/README.md) as the
@@ -255,7 +259,7 @@ GATE_SECTION
 
 ## 6. Ledger
 
-`named_followups` went from 793 to 796 on main `1474edaf1` (792 to 795 on the first base, 794 to 797 on `b157c9cba`)
+`named_followups` went from 794 to 797 on main `94aef2d3b` (792 to 795 on the first base, 794 to 797 on `b157c9cba`, 793 to 796 on `1474edaf1`)
 ([update_ledger.py](scripts/update_ledger.py); idempotent;
 `dimensions.named_followups` equals the list length). No entry was retired:
 the design card registered none. Registered:
