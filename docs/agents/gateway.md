@@ -1164,6 +1164,22 @@ refusal stays.
     (trust boundary 28), and that a never-bound root reaches no tracked
     place (P2's premise). `QCore.TypedAccessPathPositions`;
     [report](../reports/w47-access-path-positions/README.md).
+    **Amendment (W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT):** the pointer
+    return premise may omit one call-actual occurrence from `may_bind` only
+    when the same unit contains the exact
+    `int rd_list_cnt(const rd_list_t *rl) { return rl->rl_cnt; }` body and
+    the call resolves directly to that `FunctionDecl` with its sole actual
+    exactly `&ROOT->member[.member]*`. The body establishes a read-only
+    frame for that actual; a `Borrowed` custody mode alone does not. The
+    lexical and AST readers each replay `may_bind` with only those exact
+    occurrences omitted. The root must remain a unique formal, never bound
+    by the custody closure, not protected at entry, and unnamed by every
+    other binding event. An absent or altered body, indirect call, changed
+    actual, other write/address/call, or unanswered AST refuses. The call's
+    own contract or validated summary remains an independent obligation.
+    `QCore.ReadOnlyActualFrame` models the event exclusion and return
+    decision; source extraction and Rust–Lean correspondence remain the
+    stated premises. [Report](../reports/w48-pointer-return-readonly/README.md).
     Amended by [rule 11d](#constraint-11d): (3)'s pointer read on roots that
     are eligible chain roots is left to the flow, which reads each only as
     untracked (a tracked root refuses); an address actual and (2)'s return
@@ -1202,6 +1218,10 @@ refusal stays.
     proved: faithful Clang extraction (trust boundary 28), and that the Rust
     loop returns a seeded, settled set. `QCore.TypedRootDeclarations`;
     [report](../reports/w47-typed-root-declaration-reader/README.md).
+    Rule 10k's checked read-only call actual is the sole narrower
+    pointer-return answer: the ordinary `may_bind` answers remain unchanged
+    for every other position and the AST closure is recomputed with only
+    that framed event omitted, never simply overridden by a lexical answer.
 
 <a id="constraint-10m"></a>
 
@@ -1324,6 +1344,9 @@ refusal stays.
     faithful Clang extraction (trust boundary 28), and that the Rust loops
     return seeded, settled sets. `QCore.LexicalClosureNestedAssignment`;
     [report](../reports/w47-lexical-closure-nested-assignment/README.md).
+    Rule 10k's checked read-only actual is an explicit exception to the
+    pointer-root `may_bind` over-approximation; the joined never-bound
+    closure and every other lexical/AST binding remain required.
 
 <a id="constraint-10p"></a>
 
