@@ -227,3 +227,33 @@ No requested home was admitted in the system selection, so it did not install
 a link premise. The slice console records `cross-unit import phase refused:
 incomplete definition census`; it kept the phase-one result without a link
 premise. Both are explicit fail-closed no-gain cases.
+
+## Standing gate
+
+The first full gate (`private/w44xu/gate-final-1/`, head `d4f652bf5`)
+ran every step and retained its failures: submodule 0; Rust binary runner 0
+(513 units, 526 summaries, 8,225 passed, 0 failed, 15 ignored); format 0;
+Clippy 101; reevaluation probe 0; reevaluation follow-up 0; Lean audits 0
+(336 audits); Python unit tests 1 (373 passed, one failed of 374). Clippy
+found three new W44 style lints (one complex return type, one collapsible
+condition, one cloned reference used as a slice); the Python matrix test
+found a stale derived `validation.lean_audits` value, 335 rather than 336.
+Commit `2a5477516` fixes the lints and regenerates the matrix with the
+measured 8,225 Rust passes and 336 Lean audit files. Focused Clippy and the
+27 matrix-section tests then exited 0. The first gate is not represented as
+green; its logs and exit files remain private under that directory.
+
+The authoritative rerun (`private/w44xu/gate-final-2/`, head `2a5477516`)
+exited 0 with every step 0: `git submodule update --init --recursive`,
+`python3 scripts/run_test_binaries.py` (513 units, 526 summaries, 8,225
+passed, 0 failed, 15 ignored), `cargo fmt --all -- --check`,
+`cargo clippy --all-targets -- -D warnings`, both reevaluation examples,
+`python3 scripts/check_lean_audits.py` (336/336), and
+`python3 -m unittest discover -s scripts/tests` (374 OK). Private step logs,
+exits and the test runner's per-unit logs are under that gate directory and
+`private/test-binaries/20261017T100339Z-3960034/`. The committed
+[`gate.json`](gate.json), [`gate/exits.txt`](gate/exits.txt) and Clang version
+recording bind these counts to the card; `build_matrix.py` accepted that gate
+record and regenerated the matrix, and its focused 27 tests passed. The
+provider workspace is untouched, so its prior 133-test result is explicitly
+carried rather than rerun for this card.
