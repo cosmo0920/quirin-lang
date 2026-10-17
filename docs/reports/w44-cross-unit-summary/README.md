@@ -129,8 +129,7 @@ first corpus pass kept its uncontracted-call leaf. This is a route regression
 diagnosis, not published corpus coverage.
 
 The first run's 40m 50s and 2.2 GiB parity output are a material performance
-cost of the opt-in route's full second unit pass and home replay. A corrected
-AFTER corpus and the full standing gate remain queued. The 11 GiB private
+cost of the opt-in route's full second unit pass and home replay. The 11 GiB private
 debug target cache was preserved at the ignored
 `/home/cosmo/Documents/GitHub/qcore-c/private/w44xu-target` to free `/tmp`;
 remaining gate commands set `CARGO_TARGET_DIR` to that path.
@@ -139,3 +138,78 @@ The isolated AFTER binary build ran
 `cargo build --release -p qcore-audit --bin quirin-audit -j 4`, exit 0
 (`private/w44xu/release-build.log`); binary SHA-256
 `dc4a9da815462af7d474343af4a166c3acef9d39d060bf78dd7356bf945c3eba`.
+
+The corrected release build (`private/w44xu/release-build-v2.log`) exited 0;
+its binary SHA-256 is
+`bb5d47fc875bca4f4afa40c17fc8c4bd1c0c3632dd1bc87532f10ad8d4a6f866`.
+The configured AFTER corpus (`private/w44xu/after-v2/`,
+`private/w44xu/after-v2-parity.jsonl`) exited 0 with pinned source
+`66910c10`, four jobs and `/usr/bin/clang`, from 09:00:17 to 09:43:19 UTC
+on 2026-10-17 (43m 02s). The report SHA-256 is
+`84b26545b3fcc25c483467ea0b64bf0ad6ce941f530376aca61e80e94de6d04d`;
+3,472,478 typed parity records have SHA-256
+`b9a6932b35798c29878bd69175bff3bb552a88b2816ca11a56fae55d1153f35e`.
+The exact-base diff is `private/w44xu/after-v2-diff.json` (compare exit 0).
+All 4,834 functions align:
+
+| BEFORE → AFTER | Functions |
+| --- | ---: |
+| Safe → Safe | 941 |
+| Unknown → Safe | 3 |
+| Unknown → Unknown | 3,881 |
+| provisional Unsafe → provisional Unsafe | 9 |
+
+The three promotions are `librdkafka/lz4frame.c::ctxTypeID_to_size`
+(its `LZ4_sizeofState` and `LZ4_sizeofStateHC` call leaves clear),
+`librdkafka/rdkafka.c::rd_kafka_share_consumer_closed_err`
+(`rd_kafka_error_code` and `rd_kafka_error_destroy`), and
+`chunkio/cio_chunk.c::cio_chunk_hash` (`cio_file_hash`). Their AFTER rows
+have no diagnostics and name their imported summaries among their contract
+dependencies. There is no Safe or provisional Unsafe regression.
+
+In all, 41 rows change diagnostic leaves: the three promotions and 38
+still-Unknown rows. The latter expose deeper caller-local obligations once
+a pinned callee effect is available. Across the corpus, 56 uncontracted-call
+leaves clear. For example,
+`librdkafka/rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_response_merge`
+replaces its `rd_kafka_error_destroy` call leaf with unresolved `error`
+identity and a nullable-resource/non-null-contract leaf; and
+`librdkafka/rdkafka_admin.c::rd_kafka_AclBinding_destroy` replaces the call
+leaf with indirect memory access outside the resource projection.
+`librdkafka/lz4frame.c::LZ4F_compressBegin_usingCDict` loses two calls to
+`ctxTypeID_to_size` yet remains Unknown on its other leaves. Aggregate added
+leaves are 23 unresolved `error` identities, 14 indirect accesses, one
+nullable-resource/non-null-contract and three unmodeled formal-resource
+mutations. Every such row remains Unknown; clearing a callee leaf neither
+suppresses those obligations nor promotes the row.
+
+The selected link map's raw SHA-256 is
+`ddd0576cde87a5782f1fe0b9c4ce4efad4042b1ee54a483a471a3576f0698e7e`.
+Each AFTER unit's `cross_unit_link_resolution` retains that digest, the
+explicit linked-program resolution/type/calling-convention/interposition
+premise and the five imported home identities (raw source, preprocessed
+source, loaded environment). The home units are `librdkafka/lz4.c`,
+`librdkafka/lz4hc.c`, `librdkafka/rdkafka_error.c` and
+`chunkio/cio_file.c`. The premise remains conditional on the actual linked
+program; this source-only run does not independently verify linkage.
+
+The configured AFTER system and slice routes both exited 0 under the same
+map and release binary. The system report (`private/w44xu/after-v2-system/`)
+has SHA-256
+`9a2355ab25cb55bd395cf0b8f8e9a13a2f3584ada82b9b7189dabe390a76e4b7`;
+the slice report (`private/w44xu/after-v2-slice/`) has SHA-256
+`dfd963d0bd9767fb4f75f0eba5afb7fae52d06547eb364edaa95b92d8aebe25d`.
+The respective typed parity streams have SHA-256
+`a601a3447f0eb2bf591e5de2e839ed67f213a293e0539cf98c2c55501c403b4e`
+and `555abf393f24905c30f5e2010f2f616342c22bfe303e2e1d9265d1544632f2b6`.
+Exact-base comparisons in `private/w44xu/after-v2-system-diff.json` and
+`private/w44xu/after-v2-slice-diff.json` align 448 and 404 function rows.
+System remains 97 Safe / 0 Pending / 4 provisional Unsafe / 347 Unknown;
+slice remains 52 / 4 / 1 / 347. Neither route has a verdict or diagnostic-leaf
+change. The selected-command order is pinned; the comparator uses its
+occurrence index for duplicate source paths, since the import trust context
+changes the full compile-configuration blob between BEFORE and AFTER.
+No requested home was admitted in the system selection, so it did not install
+a link premise. The slice console records `cross-unit import phase refused:
+incomplete definition census`; it kept the phase-one result without a link
+premise. Both are explicit fail-closed no-gain cases.

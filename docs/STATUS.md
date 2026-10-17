@@ -28,6 +28,17 @@ authority; history belongs in [increment records](development/increments/README.
 
 ## Coverage
 
+The isolated [W44-CALLEE-CROSS-UNIT-SUMMARY](reports/w44-cross-unit-summary/README.md)
+run on base `fa04aab0f` measured an opt-in, conditional linked-program
+premise over five pinned external Safe home functions. Its corrected 66910c10
+corpus arbiter moved 941 → 944 Safe and 3,884 → 3,881 Unknown among 4,834
+functions, with 9 provisional Unsafe unchanged and no regression. The map
+claim about actual link resolution, compatible types and calling conventions,
+and interposition is an explicit result assumption, not a source-derived
+fact. The route refuses missing or ambiguous homes and keeps unresolved
+caller obligations Unknown. These are card-local conditional measurements;
+the table below retains its separately pinned baseline.
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.

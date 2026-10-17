@@ -10,14 +10,16 @@ import sys
 def rows(path):
     document = json.loads(pathlib.Path(path).read_text())
     result = {}
+    occurrences = collections.Counter()
     for unit in document["units"]:
         for function in unit.get("functions", []):
-            key = (unit.get("library"), unit.get("file"), function["function"])
-            # The pinned report uses one selected command per source path;
-            # configured duplicate commands are distinct units and are kept
-            # by their compile-task identity in their report configuration.
-            if key in result:
-                key += (json.dumps(unit.get("compile_configuration"), sort_keys=True),)
+            name = (unit.get("library"), unit.get("file"), function["function"])
+            # The system/slice selections repeat some source paths for a
+            # second compile task. The imported-home trust context changes
+            # compile_configuration, so align those repeated rows by their
+            # stable selected-command order instead of that changing digest.
+            key = name + (occurrences[name],)
+            occurrences[name] += 1
             result[key] = function
     return result
 
