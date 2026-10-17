@@ -140,7 +140,10 @@ which is not a second authority.
     in the caller's audit trust context; certificate issue and replay reconstruct the home
     scope, re-run W4 and compare the exact summary before re-deriving the
     caller. Imports use a separate inferred channel and yield to a caller's
-    own definition or a declared contract. Missing or ambiguous home,
+    own definition or a declared contract. ABI, checked-specification and
+    recursive-summary environment rebuilds must retain that import channel,
+    the caller-expected home identities and the link-map digest; dropping any
+    of them invalidates a candidate Safe replay. Missing or ambiguous home,
     incomplete census, failed replay or changed refutation table keeps the
     call uncontracted. Checkpoint composition and contracts-only routes
     refuse the opt-in mode. `QCore.CrossUnitSummary`;
