@@ -111,6 +111,9 @@ fn words(text: &str) -> Vec<String> {
 }
 
 fn read_type(spelling: &str) -> TypeReading {
+    if spelling.trim().is_empty() {
+        return TypeReading::Universal("the parameter has no readable type".to_owned());
+    }
     if spelling.contains("(unnamed") || spelling.contains("(anonymous") {
         return TypeReading::Universal(format!(
             "`{spelling}` names an anonymous record by location"
@@ -144,7 +147,28 @@ fn read_type(spelling: &str) -> TypeReading {
         }
     }
     if records.is_empty() {
-        TypeReading::Nothing
+        // Clang does not always attach `desugaredQualType` to a parameter
+        // whose spelling is a typedef pointer (rd_kafka_conf_t * is one
+        // audited example). A pointer we cannot classify may carry a record;
+        // treating it as scalar would make the runtime projection miss every
+        // fact on that record. Only primitive pointees are known empty.
+        const PRIMITIVES: [&str; 20] = [
+            "char", "signed", "unsigned", "short", "long", "int", "float", "double", "_Bool",
+            "bool", "size_t", "ssize_t", "uint8_t", "uint16_t", "uint32_t", "uint64_t", "int8_t",
+            "int16_t", "int32_t", "int64_t",
+        ];
+        if tokens.iter().any(|token| token == "*")
+            && !tokens
+                .iter()
+                .filter(|token| token.as_str() != "*")
+                .all(|token| PRIMITIVES.contains(&token.as_str()))
+        {
+            TypeReading::Universal(format!(
+                "`{spelling}` is a pointer with an unclassified pointee"
+            ))
+        } else {
+            TypeReading::Nothing
+        }
     } else {
         TypeReading::Records(records)
     }

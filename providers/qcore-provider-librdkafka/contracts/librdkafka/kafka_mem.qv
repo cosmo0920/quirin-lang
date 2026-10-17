@@ -207,12 +207,12 @@ contract {
 // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER (USER DECISION 2026-10-15, "Yes,
 // list it"): the dump's queue-length reads (rd_kafka_q_len) take and drop a
 // forwarded queue's reference, whose final drop may run an interceptor or
-// rk_conf.log_cb, so the declaration names P-RK-NO-PLUGIN-LIBRARY (re-pinned
+// rk_conf.log_cb, so the declaration names P-RK-PLUGIN-CALLBACK-CLOSURE (re-pinned
 // at 66910c10 and 046accf6).
 extern fn rd_kafka_dump0(fp: ptr<mut, u8>, rk: ptr<mut, u8>, locks: i32) -> unit
 contract {
     requires resource_contract_v1;
-    requires resource_premise(rk_no_plugin_library, "P-RK-NO-PLUGIN-LIBRARY (user decision 2026-10-14, U2): no plugin.library.paths is configured, so no library outside the run (rd_kafka_plugin_new's dlsym conf_init) registers a callback or an interceptor into a conf, and every rk_conf callback a call may run, the log callback rd_kafka_log_buf calls included, is one the run registers or a stated default, each declared (OP-APP-RK-CALLBACKS-VIA-POLL-CB)");
+    requires resource_premise(rk_plugin_callback_closure, "P-RK-PLUGIN-CALLBACK-CLOSURE: in the static scope every rk_conf callback a call may run, including rd_kafka_log_buf's log callback, is a run registration or a stated default with a declared candidate; with loaded external code, extra registrations depend on the applicable pinned rk_plugin_library and flb_external_plugin outer envelopes (OP-APP-RK-CALLBACKS-VIA-POLL-CB, C04.20)");
     ensures normal resource_borrowed(fp);
     ensures normal resource_borrowed(rk);
     ensures normal resource_borrowed(locks);

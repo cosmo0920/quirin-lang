@@ -903,7 +903,7 @@
     {
       "function": "rd_kafka_AlterConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "66791b84653340e422eb6472356de30e50d3ce541cfb1e7f03863447aceabb7c",
+      "contract_sha256": "601ca2e95f010082c59e41cc7f782d99534105e51b9254e60aa06d70449990b1",
       "identities": [
         {
           "reviewed_at": [
@@ -994,7 +994,7 @@
     {
       "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "25821fbf8d826d342bb50af827591bf1e85617fb7b19d7ed6c590eb1910af268",
+      "contract_sha256": "483153da65d9e400123728a1a77550809f7455175db68f282f50e7ed2b7b0534",
       "identities": [
         {
           "reviewed_at": [
@@ -1026,7 +1026,7 @@
     {
       "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "ef4433abbef7bfb035b2e8fda944681ee0ee037eb8cad13231a96aca5eb35f06",
+      "contract_sha256": "5d72aaa45086b5973d95eaa8f6039e21276a25df4fa4b0af4f6922b186caa250",
       "identities": [
         {
           "reviewed_at": [
@@ -1053,7 +1053,7 @@
     {
       "function": "rd_kafka_ListConsumerGroupOffsets_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "56c8cabce123ddb271366c8d5660bbb4cd833e8a0d71abdaef78a91ce01383e3",
+      "contract_sha256": "024e3cd43fe76e06305e3e8ffbcd2f836ddf366993a78dce96836974436d4ab3",
       "identities": [
         {
           "reviewed_at": [
@@ -1085,7 +1085,7 @@
     {
       "function": "rd_kafka_ListOffsets_leaders_queried_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "46f70d2342caba2b4197f0df1370e592e4d8d5b7db6cf98dd4b0f32dc3df457b",
+      "contract_sha256": "689351e202582fa57c7c9df5176004e6542e9803cdf890a231bf5cbb3e6711a1",
       "identities": [
         {
           "reviewed_at": [
@@ -1262,7 +1262,7 @@
     {
       "function": "rd_kafka_admin_fanout_worker",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "ab64f8542b8c22ef9695a3919dbe86d41996cc08fe56347e5f76d880a30cd001",
+      "contract_sha256": "014b1cd6e549376411deff38affed14f5011e4229aa43ada6dd13d91c4c6976a",
       "identities": [
         {
           "reviewed_at": [
@@ -1375,7 +1375,7 @@
     {
       "function": "rd_kafka_admin_worker",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "4b7e071310f207e4a9f771393e23cce153a737d607f58aa8b96d3acdc5b7cb76",
+      "contract_sha256": "f78fcb86293a21be7c7202821fde16777db9e06b5b04f4923a4973cb79bfac88",
       "identities": [
         {
           "reviewed_at": [
@@ -1466,7 +1466,7 @@
     {
       "function": "rd_kafka_background_queue_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "37c06ab7f35ebe0289cf692e7005b2e70d2c4ce5987efee4d5255f5982481b01",
+      "contract_sha256": "2bd6baeb9a638c483d12b20b93379423eec4ca93793bc6b263c3c2855bfb6630",
       "identities": [
         {
           "reviewed_at": [
@@ -1493,7 +1493,7 @@
     {
       "function": "rd_kafka_broker_monitor_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "fa1bdc1b2fa0fe4c387d21f24fac57d0afcb806eca3f6a4a13088a0e14dd8806",
+      "contract_sha256": "909f9205a0e65f58be3387aca965813f736bd43b504ddd67f3dd1c747ff1134f",
       "identities": [
         {
           "reviewed_at": [
@@ -1520,7 +1520,7 @@
     {
       "function": "rd_kafka_cgrp_assignor_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "4c2fea1633aa784b32b91f6b2c2b3c3d7359e76d42fb52871270fa51aca2ba9e",
+      "contract_sha256": "672d8043f1ed847c20e33a97d5ba6335ef8a31fc64fa806bb99930dadd90f70e",
       "identities": [
         {
           "reviewed_at": [
@@ -1547,7 +1547,7 @@
     {
       "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0be2aaacbaeb3efab6c6dc3fbeb3a45321aa312e461b5c268babdd089519553a",
+      "contract_sha256": "abe0fb016133565f319249f9e6b3017789bd610827fa7e6e90c6cfe9dedd1aae",
       "identities": [
         {
           "reviewed_at": [
@@ -1574,7 +1574,7 @@
     {
       "function": "rd_kafka_cgrp_handle_Metadata_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "53727cd26fbfcf99f90be2471b9bd9d92bdeda89355927c5e9d3c13653929eb4",
+      "contract_sha256": "4afaabbfb6852218b6bdc5cacf4a295a7c257a15c8bc417f691b9740b3136d8a",
       "identities": [
         {
           "reviewed_at": [
@@ -1601,7 +1601,7 @@
     {
       "function": "rd_kafka_cgrp_op_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "a2be41272ba0b6859e4b3113dbc5c0a5c616bedbe8845ff2f4ddc8a5bc20f666",
+      "contract_sha256": "49233c68fb71c0d3f25dc309be27b7782aa2d4552c880f37357b76e8921d1da1",
       "identities": [
         {
           "reviewed_at": [
@@ -1633,7 +1633,7 @@
     {
       "function": "rd_kafka_conf_new",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e6b33389ca72ff50ef727bbb7776a96639e7b35849df622d58aafaa303c575a8",
+      "contract_sha256": "9d0ca5ce580709c385f3fd26d81d3153c7812a9955c76538d86e78a2a829eedc",
       "identities": [
         {
           "reviewed_at": [
@@ -1665,7 +1665,7 @@
     {
       "function": "rd_kafka_conf_set_background_event_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "06d04d2b0363987a324659b64f2aa48b6ba00a458793738e656311fc4db2a1f3",
+      "contract_sha256": "071f514db7e7d6319332a579a9408c494195fa9c08b381223107f1a49ebe799d",
       "identities": [
         {
           "reviewed_at": [
@@ -1697,7 +1697,7 @@
     {
       "function": "rd_kafka_conf_set_closesocket_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3c5b83f10bdde52eb2ac27dd60fd32fe55b645fd8d4843bd2f64bd8baa520130",
+      "contract_sha256": "bc19865d88b8bc2e0ec5b7529d14db087e057944853c97bcdb7b496b39f98446",
       "identities": [
         {
           "reviewed_at": [
@@ -1729,7 +1729,7 @@
     {
       "function": "rd_kafka_conf_set_connect_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "8d3e671acb81f1c79d0bfc78ed6d5269b0c654be574b06b27b285f17070b421e",
+      "contract_sha256": "2e67ddcab7f4a47601ff1959c698ce020f760aa5b795e1a652aa19677b682af3",
       "identities": [
         {
           "reviewed_at": [
@@ -1761,7 +1761,7 @@
     {
       "function": "rd_kafka_conf_set_consume_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f1726928416286962d6748c4aa97143c2416db5217b60160d5e518788bb818bf",
+      "contract_sha256": "f4736abc9501beab769e42552ad469e561a4365b135e330d00dfa95808ebda48",
       "identities": [
         {
           "reviewed_at": [
@@ -1793,7 +1793,7 @@
     {
       "function": "rd_kafka_conf_set_dr_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0e36c940d2f2abc5cfbfe17e94cd7207f58196490d06b32971df3bf240afa2f6",
+      "contract_sha256": "49aae88d549421579c0e17a07ad6ad291c3360c607da9c2727593af8660ae08d",
       "identities": [
         {
           "reviewed_at": [
@@ -1825,7 +1825,7 @@
     {
       "function": "rd_kafka_conf_set_dr_msg_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "19526b15d1f298c15a466f9e970076f5bb23fe65c909e813483b475c144a4e4d",
+      "contract_sha256": "e642ef0674eaf6245d740665230310f92463c247ff2cae0bbcb4b57c585f9d0c",
       "identities": [
         {
           "reviewed_at": [
@@ -1857,7 +1857,7 @@
     {
       "function": "rd_kafka_conf_set_error_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "79b9553dee7f56c79dfe7f7cf5c8d39525565ab8cc88d24e518e73bbf818cbbf",
+      "contract_sha256": "3121f32a4bdcf7c6ea27f7a4c55f29139676bada6c801d53a01aa86faea23c12",
       "identities": [
         {
           "reviewed_at": [
@@ -1889,7 +1889,7 @@
     {
       "function": "rd_kafka_conf_set_log_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0d1d5e1863ef1fcb3bd673ff8363486f7236a3eb835724bc3270cdd7871a8df9",
+      "contract_sha256": "d1c710b425508746cefeb2978ee4404f9a84543799b22f453d4862a85aac8eca",
       "identities": [
         {
           "reviewed_at": [
@@ -1921,7 +1921,7 @@
     {
       "function": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "69a3a33742c0f77bc5e0036b8c9f21f01aca368e30b871b87c81c32eb3538482",
+      "contract_sha256": "1f94fece69ceef1f41506a31d08bb9fd61dab6c00a04bdb3f23e2d0f6be2f609",
       "identities": [
         {
           "reviewed_at": [
@@ -1953,7 +1953,7 @@
     {
       "function": "rd_kafka_conf_set_offset_commit_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2f90778222da27cf28e97b755fc3f7109f53113027f54462c8bff26541207427",
+      "contract_sha256": "361feceff73e32b5557c6d97b3f164e038c6377f8cbe19db070ecf42f2616407",
       "identities": [
         {
           "reviewed_at": [
@@ -1985,7 +1985,7 @@
     {
       "function": "rd_kafka_conf_set_open_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "932ee08d07dc9735cee1260bef8fe82406f31e77e0bb00dc08642e0f17b370c4",
+      "contract_sha256": "537fbd226f650490d739d615ca1b17a28f86833432a38b2dfb58b052a6a0d450",
       "identities": [
         {
           "reviewed_at": [
@@ -2017,7 +2017,7 @@
     {
       "function": "rd_kafka_conf_set_rebalance_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3a47f18651c8759744d62c2e8cd4418b837764c2572f0d1eb2fa124d037d53f2",
+      "contract_sha256": "8206ac8a9c9a22953a8d66552f2f6f644fdfe589517d3294a77f7ee440f5c9fa",
       "identities": [
         {
           "reviewed_at": [
@@ -2049,7 +2049,7 @@
     {
       "function": "rd_kafka_conf_set_resolve_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "659cf1a00d84a5ec0985fed7ec32acf1be0062bba47788a8493a9514ea63adb0",
+      "contract_sha256": "e0624ac31d60b0e2593766b79270594a7ddf7b7aca40bdb39377905e7a40b388",
       "identities": [
         {
           "reviewed_at": [
@@ -2081,7 +2081,7 @@
     {
       "function": "rd_kafka_conf_set_socket_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "be9a215d11b5a4d436bf23cbd4aac51db461734642f1a47c3ca5659dc74bec24",
+      "contract_sha256": "7b647e68460329d3433317be76eee779d29b11ea36f8c9778efee9d286655fe2",
       "identities": [
         {
           "reviewed_at": [
@@ -2113,7 +2113,7 @@
     {
       "function": "rd_kafka_conf_set_ssl_cert_verify_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "9d8ceb9e233c8187caf52a8e8abf522a1d8610476238433188337c12beb17bb1",
+      "contract_sha256": "d3498f513a3093e3e2a2bb4a18c2bdd6cd37d3227e31aa0ac237440728f01823",
       "identities": [
         {
           "reviewed_at": [
@@ -2145,7 +2145,7 @@
     {
       "function": "rd_kafka_conf_set_stats_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "a08115fca6b87e256c17224818741bc45685044c3fd2adc2a97e969bfa8753e2",
+      "contract_sha256": "8cd0100c127ea9b5c91180de22d5b7d024569a476020497d500fa50d06043bcb",
       "identities": [
         {
           "reviewed_at": [
@@ -2177,7 +2177,7 @@
     {
       "function": "rd_kafka_conf_set_throttle_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f59910abaf1534eee8bc0053504c32cb7a3fb1812406a73ac224bb6cb7f852a4",
+      "contract_sha256": "75fbbc2a76f7d76d1f4bc5a72d01b7cbad55988b7ff028e30621de0fe6a59c91",
       "identities": [
         {
           "reviewed_at": [
@@ -2241,7 +2241,7 @@
     {
       "function": "rd_kafka_consume_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "84f8debb67293f16a1d76af53c2cfd71704842688c6b8d49daafb0da70323223",
+      "contract_sha256": "423177917a5242729149177e263d8d43c5494c41f66c8d93646a36ec67a750c4",
       "identities": [
         {
           "reviewed_at": [
@@ -2268,7 +2268,7 @@
     {
       "function": "rd_kafka_crash",
       "module": "librdkafka/memory.qv",
-      "contract_sha256": "f8965057436e32434272c29d38bba1eeec02c443ca57171ba46f0d1e3240d1a3",
+      "contract_sha256": "2a78126973d31fbb02cafe5897512cab14ea25eafb6511a226c2c15f28aa7f8b",
       "identities": [
         {
           "reviewed_at": [
@@ -2300,7 +2300,7 @@
     {
       "function": "rd_kafka_dump0",
       "module": "librdkafka/kafka_mem.qv",
-      "contract_sha256": "30c42fafe0841d3c5d714cb6ad78e62a54eba812b9c9281a3bf8c8c7f77de9e7",
+      "contract_sha256": "b896a8679ba0729d745563926bdca6f98584f05d77b6b6be5418e6d5bc93d4f4",
       "identities": [
         {
           "reviewed_at": [
@@ -2327,7 +2327,7 @@
     {
       "function": "rd_kafka_enq_once_trigger",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f41c0ed74f9baca030f7d7bf218c00efaf31541797742dc78dfc48e22ecb44a2",
+      "contract_sha256": "03c62be7ccb454e3eb5f46b6838b60cea4e0abc0ce4660e27df15602500a4de9",
       "identities": [
         {
           "reviewed_at": [
@@ -2354,7 +2354,7 @@
     {
       "function": "rd_kafka_err_action",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "793bfdffa14be721fc0bd38e097cc6d9d57b44c05fa4d96bc35ff004c6de0d2e",
+      "contract_sha256": "b19a995e20476f9dcbf2fac05d2c03ac35d10c5f69a06b8eade24d3457e6f672",
       "identities": [
         {
           "reviewed_at": [
@@ -2610,7 +2610,7 @@
     {
       "function": "rd_kafka_mock_cluster_op_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "08ca098fa3bf44d436efc0fce690c58f0e0b4f7c8f2b392db5a259051836455c",
+      "contract_sha256": "d2edfa9ed2b7a38194d297e38bfcd7a9a9107c1eb83e6f7edbe9dada25d44872",
       "identities": [
         {
           "reviewed_at": [
@@ -2637,7 +2637,7 @@
     {
       "function": "rd_kafka_oauthbearer_refresh_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "567e690be51480f6a775ff6329fc1122f399a0582a1134977f077411cabd99cf",
+      "contract_sha256": "3d5f43cc8e3f74b5f80c303f6132b7d65f249d186fb20aa9c40263a919f0799f",
       "identities": [
         {
           "reviewed_at": [
@@ -2664,7 +2664,7 @@
     {
       "function": "rd_kafka_oauthbearer_set_token_failure",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "14e774ea2ad2733a0fdba0fdf830965273be56086fb5c3e1e4d184ff2fd95933",
+      "contract_sha256": "9a1aadd4d6df644e27514a64cab042acbacfc8155a9636e1f93fa0517456b89f",
       "identities": [
         {
           "reviewed_at": [
@@ -2696,7 +2696,7 @@
     {
       "function": "rd_kafka_oauthbearer_unsecured_token",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e5e3e4c3bff5a2f146ca5338e5be2025c0252912d97e58282dcee8c46043f0df",
+      "contract_sha256": "e7d12c26fdd9732695f23651a65759f1678bff8cb811c1f80ddc221fa1f06ea9",
       "identities": [
         {
           "reviewed_at": [
@@ -2728,7 +2728,7 @@
     {
       "function": "rd_kafka_offset_reset_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "74091343fc92fbfd6592d4cdbbab763b8974eb85f8b34ff0fd7027ef0bb50009",
+      "contract_sha256": "d0aa15cbe304f6e290bb12d7bc954ea762ca00de16a44fb2db8fdba84fc8127b",
       "identities": [
         {
           "reviewed_at": [
@@ -2755,7 +2755,7 @@
     {
       "function": "rd_kafka_offset_validate_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "37f8fddd8355eb0fa2c558ed17eb9624903f0feca8d3d64b71790c41525534d1",
+      "contract_sha256": "60b02f81dc522b515607f029863a692d2cdbd57ccb069a8c2bc21c0ea3ecf159",
       "identities": [
         {
           "reviewed_at": [
@@ -2782,7 +2782,7 @@
     {
       "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f0d2a237bd3ecf9dafbedee1ce215fafe9eec7074152e569ad2ea5df4d7336f3",
+      "contract_sha256": "3913d2f718a5096123bea5312dc7a2f21e72290dc5dbb6a0028798f6a4c7a051",
       "identities": [
         {
           "reviewed_at": [
@@ -2814,7 +2814,7 @@
     {
       "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "7f35b1e71b152c8ad34664a24c0c750d6747a4fabb72d50c0b32079e7719c618",
+      "contract_sha256": "9360ba7e8600bae58af01efdb5bf28331ab72afdeb1ee6be40fa780d68ba717c",
       "identities": [
         {
           "reviewed_at": [
@@ -2846,7 +2846,7 @@
     {
       "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b93ea38534cc4155e91d178f3ca2b3b8330ed01f6c31d50c7ef6866ff3a38751",
+      "contract_sha256": "c626cb05dad4b9401d8002619444f47f34bfd61bf0cf1c20baf921b2cf6359d4",
       "identities": [
         {
           "reviewed_at": [
@@ -2878,7 +2878,7 @@
     {
       "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d3756507af6a84145ee052c98dbf348cc1221fc2d10a5b8bf6c9674f9d1c056b",
+      "contract_sha256": "7c2958d20502e04d16e29bcbc90389c73a9fd2c994ea7e6bf81e336ae10cd9e0",
       "identities": [
         {
           "reviewed_at": [
@@ -2910,7 +2910,7 @@
     {
       "function": "rd_kafka_op_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "caf21b8001771c90a153f6669257ce48c9a358dcba0eaeae52a28aa296cfed68",
+      "contract_sha256": "dd1752a28561d797e7f52d4ebaca89ea137be73cceb4084dd2d0d5cf9c6a556e",
       "identities": [
         {
           "reviewed_at": [
@@ -3006,7 +3006,7 @@
     {
       "function": "rd_kafka_op_req",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f97dda33acb2f4c7a50337981ebc4f7451eecf2fcb1d80bbd1bcdc06eba52053",
+      "contract_sha256": "58c76fce2c2e88899bdad4b20a79764ec3749be4e2100de950e89c294d785cbb",
       "identities": [
         {
           "reviewed_at": [
@@ -3038,7 +3038,7 @@
     {
       "function": "rd_kafka_op_req0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "be9ffc7450dae777c417ae60e51fdce128a6d6604b84ca280c57223554654649",
+      "contract_sha256": "b671dd7d2af713712bee28df7338a6687a972988d4c70a4f6d5d08dbe581164f",
       "identities": [
         {
           "reviewed_at": [
@@ -3070,7 +3070,7 @@
     {
       "function": "rd_kafka_op_req2",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "ea30445232c08c737e2b76167d064167e184c93ad408d807434a3fb79e919532",
+      "contract_sha256": "14abd0d53260d3e2bb53e6d7d2f138410d6ba7b2544dd107c7354137eaa71b82",
       "identities": [
         {
           "reviewed_at": [
@@ -3102,7 +3102,7 @@
     {
       "function": "rd_kafka_poll_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "c83adaf3febcffcb140a77645f62e1e00fd8f65090e8890abb264ac636a45c7c",
+      "contract_sha256": "7742531eecae1a9cdd9b4d180d4dae3c72f86d03d828c0fa02bc061fc0ab7488",
       "identities": [
         {
           "reviewed_at": [
@@ -3139,7 +3139,7 @@
     {
       "function": "rd_kafka_q_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "7f9353f387d5e54537d9307c98e370ea3c1d0fa46e2f9b5c9951f2ee76738380",
+      "contract_sha256": "3e0ff2a3d58455e659846bd32e34a167f378c93092e353b07258c062c3720c03",
       "identities": [
         {
           "reviewed_at": [
@@ -3166,7 +3166,7 @@
     {
       "function": "rd_kafka_q_destroy_owner",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "86e555daa52ed5c4ccbb430497654f8e35dad70b2cf7c0ff5e20d7a4da2d8b92",
+      "contract_sha256": "48c747ae3e20a51576b122f83a0aa40e9c670a78f4f84199b0f110a2b02bc84f",
       "identities": [
         {
           "reviewed_at": [
@@ -3279,7 +3279,7 @@
     {
       "function": "rd_kafka_q_pop_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "602db26eaa95ba3f4a94a57633f803f01d422face0e26499c418738b0c9d2681",
+      "contract_sha256": "d5c44a3fcc9cd28398f3a4f66eac402feedab76893a10b70806c31c2bd4531e0",
       "identities": [
         {
           "reviewed_at": [
@@ -3311,7 +3311,7 @@
     {
       "function": "rd_kafka_q_pop_serve0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "0a6c8a630b2834a26e664033539bc9f35d6ff5afeb5e01f6c43d366dc97a84cd",
+      "contract_sha256": "a5319070ea1c17e67fe8956ebbd8fa3804625393e9acdade4c7665ec71bd6c7e",
       "identities": [
         {
           "reviewed_at": [
@@ -3338,7 +3338,7 @@
     {
       "function": "rd_kafka_q_pop_serve_maybe_consume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "105d87c09b68f69b95cd6391136040f4afbc63320646d6641cf1a12eb057f7ea",
+      "contract_sha256": "38a4ef0e588b2843bb4af481706992e112d6c01ffeb3d94763827adba8bb798d",
       "identities": [
         {
           "reviewed_at": [
@@ -3370,7 +3370,7 @@
     {
       "function": "rd_kafka_q_purge0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "67233c77b89e014f0beecde850f950e83dc37815ffcf9b8575bdedf3a6edb2e1",
+      "contract_sha256": "3d3f178f5a3adf113d4c3f3eb748d45f20c16c6bb94ad19c033250a7fb7ce743",
       "identities": [
         {
           "reviewed_at": [
@@ -3402,7 +3402,7 @@
     {
       "function": "rd_kafka_q_serve",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "02b973060623a6a166de81ae4ccd71b61f64c8dc8a73831a7246be7ed232f76b",
+      "contract_sha256": "30510cc665037e4cf142928102dcc1ad747408d8c4a98f5351d93b0b24a16e1d",
       "identities": [
         {
           "reviewed_at": [
@@ -3434,7 +3434,7 @@
     {
       "function": "rd_kafka_q_serve0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "7f5816e1fefc362db648616cb2e7d21ede1b3b1cf2f4676b52efffb4d946d0a0",
+      "contract_sha256": "0268716837eda7eb9f4ed22cceee7a8ef8740d898c766e8bf224611f39c5accf",
       "identities": [
         {
           "reviewed_at": [
@@ -3461,7 +3461,7 @@
     {
       "function": "rd_kafka_q_serve_maybe_consume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "920d0944bb0ad06bcc25007317392697a3a1f0a817e9cd961fd8145e756d0eb9",
+      "contract_sha256": "064cf645c1c2638ae02f4d6c1ddfa7b09f37ce1f77102e0981b883e1dabd30c0",
       "identities": [
         {
           "reviewed_at": [
@@ -3493,7 +3493,7 @@
     {
       "function": "rd_kafka_q_wait_result",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "07354f23cfbfe5bd8eec4f31c0948c665900ead22fcb73c18f0cb72776f1ca7e",
+      "contract_sha256": "9441388d0cbb1913cb2ac3efb2e868c899ee22abef17ec82b9d5493110ec8efb",
       "identities": [
         {
           "reviewed_at": [
@@ -3557,7 +3557,7 @@
     {
       "function": "rd_kafka_share_ack_commit_cb_register_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "ebfbb9a56308f3196faadda761f7e923ffc85c989dcf9c931b6c0fb740eda155",
+      "contract_sha256": "7b489c237055db8f20fe25b4a130373b81f2db610858e4ac8a8bb25c1118ef76",
       "identities": [
         {
           "reviewed_at": [
@@ -3584,7 +3584,7 @@
     {
       "function": "rd_kafka_share_commit_async_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f96b5f876f3fe333ffe998e728069412c2b4557614a67c14bd980b1f08e92ad3",
+      "contract_sha256": "54dcd355082979e2e9baba0941b0a73bb6c81d4cd4b2b0131f495cc02b4b7eee",
       "identities": [
         {
           "reviewed_at": [
@@ -3611,7 +3611,7 @@
     {
       "function": "rd_kafka_share_commit_sync_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "cc414899c1fcff93804e97463e446d77cc5878d57dad1a0ad4f9e83153cb0151",
+      "contract_sha256": "cc6c582dfa0a3fab0ba41dbc7026d31579e403ff19ca8317b9e89be9012f4bd8",
       "identities": [
         {
           "reviewed_at": [
@@ -3638,7 +3638,7 @@
     {
       "function": "rd_kafka_share_fetch_fanout_op",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "59da263a325654d89bae739643d429328899af9c6dac5ecbf81d5f20ae2318dd",
+      "contract_sha256": "9639c483a8d8595dfe4b2a422c575f321e9299a9e7b625f5578ba51d002e29f9",
       "identities": [
         {
           "reviewed_at": [
@@ -3670,7 +3670,7 @@
     {
       "function": "rd_kafka_share_fetch_reply_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6df2c261541c7b8ef9217dbba567f70b8ae78a996880ca722e5a581ef9969c40",
+      "contract_sha256": "8bd2bab6292a28a26815639bf661a9064e7d12b824d7a3eae3dfb7d7d642bc65",
       "identities": [
         {
           "reviewed_at": [
@@ -3697,7 +3697,7 @@
     {
       "function": "rd_kafka_topic_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "81b4e83a3a99331f339ff0e35f5189b3755646d6e848b3234c6f24c623abb65e",
+      "contract_sha256": "8f45219bce7f0b1a503735737943125ef33d03dd79f591162b61e73ed1d6e11e",
       "identities": [
         {
           "reviewed_at": [
@@ -3751,7 +3751,7 @@
     {
       "function": "rd_kafka_topic_partition_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "f4964b3dea8b8be5ce5e98798d2d37bbf19a9f7c37a6636935411207d68fa00a",
+      "contract_sha256": "ec9df010f7f6c1608ece160eb4b4bf36a8a5c02dbf25f65e9a9f701b3f3c9833",
       "identities": [
         {
           "reviewed_at": [
@@ -3805,7 +3805,7 @@
     {
       "function": "rd_kafka_topic_partition_list_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "e53a853cc41bb219f3b3efe251140de37dad6f36fbdcf3c07cbe145bf0b28745",
+      "contract_sha256": "27712d7d8e84b833b728488cebca5561b7418557c4b381416975ab2833d6c7f8",
       "identities": [
         {
           "reviewed_at": [
@@ -3837,7 +3837,7 @@
     {
       "function": "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5a26e5287f698a6ca65d699bf6edd47ab57db4ecfe588cab0a29c489c8a45f5e",
+      "contract_sha256": "68ddf491c073d3c16229aae3911da1ad2cbd57972338fc0ecd3523b522e6b5d2",
       "identities": [
         {
           "reviewed_at": [
@@ -3901,7 +3901,7 @@
     {
       "function": "rd_kafka_topic_partition_result_destroy",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "dcc2992920779dcf4cd2a8a704a3f7e71d9ce1a9ce6db7bda5052bda05ecdcdf",
+      "contract_sha256": "c278d501e81e51b67c53ba871a21723af21071a7c2e76dced6f7bd84985bc03b",
       "identities": [
         {
           "reviewed_at": [
@@ -3933,7 +3933,7 @@
     {
       "function": "rd_kafka_toppar_desired_add",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d694d2d583e88427795e9112de64695cdb2806e5a2c7bc3911e96534e91dec54",
+      "contract_sha256": "c3e6db96c60ff5b14d31c3f2329418ef1f34d52f0b9fe0b97bbf618ac0c916fd",
       "identities": [
         {
           "reviewed_at": [
@@ -3997,7 +3997,7 @@
     {
       "function": "rd_kafka_toppar_destroy0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5ef31c249030905dcb3290c341eae955675bf2248c8e9cac558a819275249d0b",
+      "contract_sha256": "6db467983575da0db0524ae5a7e8a3cd5ea141a41ab88d78bcffcf2f8bd583a6",
       "identities": [
         {
           "reviewed_at": [
@@ -4024,7 +4024,7 @@
     {
       "function": "rd_kafka_toppar_fetch_backoff",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "1250b579527a615e4e75417d1c37e077fab2901e52094349024197d92a688b6b",
+      "contract_sha256": "b823f67363758f8e1fd6e1c5d4ccf72f91b8e2d7a28823551b71542105f644ab",
       "identities": [
         {
           "reviewed_at": [
@@ -4083,7 +4083,7 @@
     {
       "function": "rd_kafka_toppar_get2",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "2497ff4f96de7d72983f54d2bb8588ec499ab5e4d183cd4849978595e90c9a4c",
+      "contract_sha256": "49b09090aa1b5409afa97150ec0a027e9cc9546a8d26c07285a77dc9ba63a299",
       "identities": [
         {
           "reviewed_at": [
@@ -4115,7 +4115,7 @@
     {
       "function": "rd_kafka_toppar_get_avail",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "09c757754ba13edee6fa5c579825ed68373134526f09717c1807d051af76b686",
+      "contract_sha256": "334f018d9e1d12ec69ba9acb72a17bf087d8ed4e7414d8672b01392b0f28c54a",
       "identities": [
         {
           "reviewed_at": [
@@ -4201,7 +4201,7 @@
     {
       "function": "rd_kafka_toppar_new0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "8ac1536317fbdf890c83be59602de6e4fe09cb3b983d1ca4f9b1e4b090d01bb6",
+      "contract_sha256": "14faf4e29195a49df9508e953cc03a536174ee3ca885cbb16e8bcb6e83c2ade5",
       "identities": [
         {
           "reviewed_at": [
@@ -4233,7 +4233,7 @@
     {
       "function": "rd_kafka_toppars_pause_resume",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5f2981a908e86d359e38805a44b296a7d22811c1ae20887441c773b4e474a005",
+      "contract_sha256": "fcbb69833e83ff8153f24574c34b24357de4cb664f40d63f74cbdd5866db3839",
       "identities": [
         {
           "reviewed_at": [
@@ -4265,7 +4265,7 @@
     {
       "function": "rd_kafka_txn_op_abort_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "8a280a3486fa85bba89df3a83994be798f1d6125191305acb5a818a81d2188de",
+      "contract_sha256": "0de23b93dbc6437a8c605f638cc04862c15936b835097b8109b9113bcbfbfa1e",
       "identities": [
         {
           "reviewed_at": [
@@ -4292,7 +4292,7 @@
     {
       "function": "rd_kafka_txn_op_abort_transaction_ack",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "7c7a5508e107af269f58472c5fd16a0250c65b4d447f4b9340ccde609398e641",
+      "contract_sha256": "adab9cfb98ca08d529992ce794a84f1a297d829f10f68e95d56ef54c96622ff2",
       "identities": [
         {
           "reviewed_at": [
@@ -4319,7 +4319,7 @@
     {
       "function": "rd_kafka_txn_op_ack_init_transactions",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "1e5b4a6aa90e8d12576aac5da4f578efa4865b915cc9bf00e0aede7696544612",
+      "contract_sha256": "2a764a5cfe0465590a8ed2cb7d0f832cf1df9be0466f92e3a284c3d292741807",
       "identities": [
         {
           "reviewed_at": [
@@ -4346,7 +4346,7 @@
     {
       "function": "rd_kafka_txn_op_begin_abort",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5cb273194f21f9d8b82838565b2a62fe2d3452577debcfea2da71d3c8c857c0b",
+      "contract_sha256": "d668e5520d1dc0f427f7bd9a3adfea6bb5e117be9d7ac2f850f68db392df62e0",
       "identities": [
         {
           "reviewed_at": [
@@ -4373,7 +4373,7 @@
     {
       "function": "rd_kafka_txn_op_begin_commit",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "53af47062eeab13d1611e2f850625c498f258aa5714974c14dbd24ef41791d18",
+      "contract_sha256": "ed4f59a8560259851035bd912413eee0d80118e71df17404480587a55add141b",
       "identities": [
         {
           "reviewed_at": [
@@ -4400,7 +4400,7 @@
     {
       "function": "rd_kafka_txn_op_begin_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "aacc499784f82d969f7d774deed87460b352cda698543c498093bf38c0d4eabd",
+      "contract_sha256": "f26756ed745b2263650ee5731490d606810870415cafbfd7a622b69cc7ac625c",
       "identities": [
         {
           "reviewed_at": [
@@ -4427,7 +4427,7 @@
     {
       "function": "rd_kafka_txn_op_commit_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "56ea2f39c65aa4a3fe6fbd6b06f9fcdc96de60c8d2943dc24c42c4765b5390fa",
+      "contract_sha256": "11df3bb1e43cd9c78aa99d7809bd473ca6e2c79a6c0e0786a1990c05d371981e",
       "identities": [
         {
           "reviewed_at": [
@@ -4454,7 +4454,7 @@
     {
       "function": "rd_kafka_txn_op_commit_transaction_ack",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "d4d1573a78d2045fe8e38f6df999ba43f22d0ced878b1c7bd9adf1c282f5f240",
+      "contract_sha256": "513d2ebfbd0d568414c3a26bc9787d8e174d21d493d0748040d8a0be4128ee57",
       "identities": [
         {
           "reviewed_at": [
@@ -4481,7 +4481,7 @@
     {
       "function": "rd_kafka_txn_op_init_transactions",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "5d966f4f62ab600b32517262e41a9dd14acbd38793826c5b9a394637254ed959",
+      "contract_sha256": "eca45a1554c9b35e8f1ac0a75ec2329add8bd3a14f01269daabcffd2ae493002",
       "identities": [
         {
           "reviewed_at": [
@@ -4508,7 +4508,7 @@
     {
       "function": "rd_kafka_txn_op_send_offsets_to_transaction",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "a4f33a4afafe32a90cf52b37264275c446d664d2abe730801d38246396801963",
+      "contract_sha256": "623e7f6b24e59891aae9d115d0abcf30c3f57b1575408ab28d3c729f52bc6499",
       "identities": [
         {
           "reviewed_at": [
@@ -4862,7 +4862,7 @@
     {
       "function": "unit_test_telemetry",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "3a1fe61a49fee1c21c4449fd3a1d9a2be3fdb3e56fe556f4a83aa16a42781fc5",
+      "contract_sha256": "8fc616a003ee09a6904102e822a02ed92e774c8d896bfcea01ad41f9224cc416",
       "identities": [
         {
           "reviewed_at": [
@@ -4916,7 +4916,7 @@
     {
       "function": "ut_create_mock_toppar",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "aebb370546342a295d47b0fdc150b27ab23eef347a8b2067be11116827929cf8",
+      "contract_sha256": "2baf58fbb9e2a3bc1f7e782b2cf1657dbba21f1a7d5735d9c4c018ffa73e9224",
       "identities": [
         {
           "reviewed_at": [
@@ -4943,7 +4943,7 @@
     {
       "function": "ut_destroy_mock_queue",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "6475b7a1f9c5fd9df4544dd7a263488454620eef2701e85ea5093e480442f7c2",
+      "contract_sha256": "89c6aef9ac8a353394fdb232ff3c9d3715acccdd04b26e776dd476f61e0a8767",
       "identities": [
         {
           "reviewed_at": [

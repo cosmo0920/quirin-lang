@@ -8,7 +8,7 @@
     {
       "function": "flb_plugin_load",
       "module": "fluent_bit/outer.qv",
-      "contract_sha256": "25842f49bbec37468c7058bc0790e9cd4bb9a91c7f0e509937c9a0363f8db75d",
+      "contract_sha256": "b576dbe7c2dc6a6e6d6f5cb37398b2d0a6e3ea2722d3f605977d85b499b30b92",
       "identities": [
         {
           "reviewed_at": [

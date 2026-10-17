@@ -713,7 +713,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // in `outer-contracts.lock`): the defining loader's selector, header,
     // runtime condition and four envelope lines; the citing loader's selector,
     // header and runtime condition.
-    ("fluent_bit/outer.qv", "flb_plugin_load", 7),
+    ("fluent_bit/outer.qv", "flb_plugin_load", 57),
     ("fluent_bit/outer.qv", "flb_plugin_proxy_create", 3),
     (
         "fluent_bit/output_flush_id.qv",
@@ -1690,6 +1690,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/null_deref.qv", "rd_kafka_outq_len", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_op_destroy", 2),
     ("librdkafka/null_deref.qv", "rd_kafka_topic_name", 2),
+    // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
+    // 34 callback registrations, 8 kept members and 7 premises.
+    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 57),
     // Card NULL-MEMBER-INVARIANT-SCOPE (rule 14x): a stable member, hosted
     // on the broker's constructor (the selector and one stable clause).
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: +1 on each of the 67 premised
@@ -2413,7 +2416,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 134 -> 135 by card OUTER-CONTRACT's `fluent_bit/outer.qv`, the first
     // outer contract v1 module (pinned in `outer-contracts.lock`, outside
     // every resource and bounds view).
-    assert_eq!(sources.len(), 135, "unexpected contract corpus size");
+    // 135 -> 136 by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE's librdkafka/outer.qv.
+    assert_eq!(sources.len(), 136, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");
@@ -2555,7 +2559,7 @@ fn contract_surface_is_pinned_as_structured_clauses() {
 /// premise support"): every corpus module's named premises read through the
 /// contract format, whatever its vocabulary, and the Quirin model contract
 /// `rd_kafka_q_destroy_final` (outside every resource view, in no lock) names
-/// P-RK-NO-PLUGIN-LIBRARY.
+/// P-RK-PLUGIN-CALLBACK-CLOSURE.
 #[test]
 fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premise() {
     let mut premised = std::collections::BTreeMap::new();
@@ -2573,7 +2577,7 @@ fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premi
     )];
     assert_eq!(
         model.iter().map(|p| p.name.as_str()).collect::<Vec<_>>(),
-        ["rk_no_plugin_library"]
+        ["rk_plugin_callback_closure"]
     );
     for function in ["rd_kafka_crash", "rd_kafka_dump0"] {
         let module = if function == "rd_kafka_crash" {
@@ -2584,7 +2588,7 @@ fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premi
         assert!(
             premised[&(module.to_owned(), function.to_owned())]
                 .iter()
-                .any(|p| p.name == "rk_no_plugin_library"),
+                .any(|p| p.name == "rk_plugin_callback_closure"),
             "{function}"
         );
     }
@@ -2607,7 +2611,7 @@ fn every_module_reads_its_premises_and_the_model_contract_names_the_plugin_premi
         assert!(
             premised[&("librdkafka/null_deref.qv".to_owned(), function.to_owned())]
                 .iter()
-                .any(|p| p.name == "rk_no_plugin_library"),
+                .any(|p| p.name == "rk_plugin_callback_closure"),
             "{function}"
         );
     }

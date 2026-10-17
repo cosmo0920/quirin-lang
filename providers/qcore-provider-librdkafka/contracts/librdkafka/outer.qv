@@ -1,0 +1,72 @@
+module contract;
+
+// RK-PLUGIN-LIBRARY-OUTER-ENVELOPE. The loader body was read at 66910c10
+// and 046accf6: it opens path, resolves conf_init, passes conf, and returns
+// RD_KAFKA_RESP_ERR_NO_ERROR only after conf_init succeeds (or for a duplicate).
+// A plugin may register callbacks and interceptors through the public API.
+// This is an assumption about that loaded code, not a claim that no library is
+// loaded. Interceptor lists have no member-candidate contracts, and cJSON
+// allocator hooks are public. The hooks are covered only by the explicit
+// condition that a loaded library does not call cJSON_InitHooks or replace
+// its global hooks; interceptor lists have no member-candidate contracts.
+
+extern fn rd_kafka_plugin_new(conf: ptr<mut, u8>, path: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: u64) -> i32
+contract {
+    requires outer_contract_v1;
+    quant #outer [[contract]] rk_plugin_library, "every library named by plugin.library.paths, including code it invokes, registers rk_conf callbacks only through public setters and only when each callback meets that member's candidate contract; it registers interceptors only through public setters; it calls cJSON_InitHooks nowhere and does not replace cJSON's global allocator hooks; it neither mutates cJSON child, prev or next links directly nor passes malformed cJSON lists to an API call; it never directly stores into librdkafka internal members (including callback fields, op fields, broker and rule-14t links, queues and list links); it neither modifies nor causes modification of flb_input_instance.p, flb_output_instance.p, flb_filter_instance.p or flb_processor_instance.p; it invokes no non-public librdkafka symbol and calls public APIs only under their published conditions; any allocator hooks installed before this library loads satisfy cjson_allocator_hooks";
+    quant #outer where #conf in #loaded [[runtime]] when #result == 0;
+    quant #outer #loaded: rd_kafka_conf_s.background_event_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.closesocket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.connect_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.offset_commit_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.open_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.resolve_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.socket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.ssl.cert_verify_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.consume_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.dr_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.dr_msg_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.error_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.log_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.rebalance_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.sasl.oauthbearer.token_refresh_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.stats_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.throttle_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.background_event_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.closesocket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.connect_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.offset_commit_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.open_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.resolve_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.socket_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.ssl.cert_verify_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.consume_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.dr_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.dr_msg_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.error_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.log_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.rebalance_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.stats_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.throttle_cb |-> #registered;
+    quant #outer #loaded: rd_kafka_op_s.rko_op_cb |-> #kept;
+    quant #outer #loaded: rd_kafka_op_s.rko_type |-> #kept;
+    quant #outer #loaded: rd_kafka_broker_s.rkb_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_topic_s.rkt_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_topic_s.rkt_topic |-> #kept;
+    quant #outer #loaded: rd_kafka_toppar_s.rktp_rkt |-> #kept;
+    quant #outer #loaded: rd_kafka_cgrp_s.rkcg_rk |-> #kept;
+    quant #outer #loaded: rd_kafka_transport_s.rktrans_rkb |-> #kept;
+    quant #outer #loaded: flb_input_instance.p |-> #kept;
+    quant #outer #loaded: flb_output_instance.p |-> #kept;
+    quant #outer #loaded: flb_filter_instance.p |-> #kept;
+    quant #outer #loaded: flb_processor_instance.p |-> #kept;
+    quant #outer #loaded: #premise rk_plugin_callback_closure;
+    quant #outer #loaded: #premise assignor_callback;
+    quant #outer #loaded: #premise broker_monitor_callback;
+    quant #outer #loaded: #premise conf_property_writer;
+    quant #outer #loaded: #premise share_ack_batches_nonempty;
+    quant #outer #loaded: #premise served_queue;
+    quant #outer #loaded: #premise cjson_list_invariant;
+    quant #outer #loaded: #premise cjson_allocator_hooks;
+};

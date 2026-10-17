@@ -61,3 +61,39 @@ fn a_void_pointer_or_an_undefined_record_reaches_every_record() {
         Reach::All { .. }
     ));
 }
+
+#[test]
+fn an_unclassified_typedef_pointer_reaches_all_but_primitive_pointers_do_not() {
+    let source = r"
+        typedef struct rd_kafka_conf_s rd_kafka_conf_t;
+        struct rd_kafka_conf_s { int level; };
+        typedef unsigned long size_t;
+        int load(rd_kafka_conf_t *conf, char *path, size_t *length,
+                 const volatile char * restrict banner) { return conf != 0; }
+    ";
+    let graph = graph(source);
+    assert!(matches!(
+        graph.reach_of_type("rd_kafka_conf_t *"),
+        Reach::All { .. }
+    ));
+    match graph.reach_of_parameter("load", 0) {
+        Reach::All { .. } => {}
+        Reach::Records(tags) => assert!(tags.contains("rd_kafka_conf_s")),
+    }
+    assert_eq!(
+        graph.reach_of_parameter("load", 1),
+        Reach::Records(Default::default())
+    );
+    assert_eq!(
+        graph.reach_of_parameter("load", 2),
+        Reach::Records(Default::default())
+    );
+    assert_eq!(
+        graph.reach_of_parameter("load", 3),
+        Reach::Records(Default::default())
+    );
+    assert_eq!(
+        graph.reach_of_type("const volatile char * restrict"),
+        Reach::Records(Default::default())
+    );
+}
