@@ -59,9 +59,11 @@ class CanonicalCorpus(unittest.TestCase):
         # quirin-provider-fluent-bit (51 -> 52).
         # 133 -> 134: FB-TEARDOWN-DESTROY-DECLARATIONS's
         # fluent_bit/teardown_destroy.qv in quirin-provider-fluent-bit (52 -> 53).
-        self.assertEqual(len(modules), 134)
+        # 134 -> 135: OUTER-CONTRACT's fluent_bit/outer.qv (an outer contract
+        # v1 module) in quirin-provider-fluent-bit (53 -> 54).
+        self.assertEqual(len(modules), 135)
         self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 81)
-        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 53)
+        self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 54)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
 

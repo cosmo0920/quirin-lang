@@ -240,7 +240,7 @@ GATE_SECTION
 
 ## 6. Ledger
 
-`named_followups` went from 794 to 797 on main `b157c9cba` (792 to 795 on the first base)
+`named_followups` went from 793 to 796 on main `1474edaf1` (792 to 795 on the first base, 794 to 797 on `b157c9cba`)
 ([update_ledger.py](scripts/update_ledger.py); idempotent;
 `dimensions.named_followups` equals the list length). No entry was retired:
 the design card registered none. Registered:
