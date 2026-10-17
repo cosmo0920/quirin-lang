@@ -6,7 +6,9 @@ use std::fs;
 use std::path::Path;
 
 use qcore_c_gateway::legacy_c::CrossUnitExport;
-use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract};
+use qcore_schemas::contract::{
+    CrossUnitImportIdentity, ResourceContracts, ResourceFunctionContract,
+};
 use serde::Deserialize;
 
 /// Opt-in path to a human-supplied link assertion. Unset means the old
@@ -113,6 +115,7 @@ impl LinkMap {
         }
         let mut environment = loaded.clone();
         let mut imports = BTreeMap::<String, ResourceFunctionContract>::new();
+        let mut identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
         let mut homes = Vec::new();
         for (name, claimed_unit) in &self.homes {
             let Some(candidates) = by_name.get(name) else {
@@ -126,12 +129,14 @@ impl LinkMap {
                     && !loaded.functions().contains_key(name)
                 {
                     imports.insert(name.clone(), candidate.contract.clone());
+                    identities.insert(name.clone(), candidate.home.import_identity());
                     homes.push(candidate.home.clone());
                 }
             }
         }
         environment.set_link_resolution_sha256(Some(self.digest.clone()));
         environment.set_inferred_imports(imports);
+        environment.set_cross_unit_import_identities(identities);
         (environment, homes)
     }
 }

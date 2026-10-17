@@ -43,6 +43,10 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
         "callee".to_owned(),
         exports[0].contract.clone(),
     )]));
+    environment.set_cross_unit_import_identities(BTreeMap::from([(
+        "callee".to_owned(),
+        exports[0].home.import_identity(),
+    )]));
     environment.set_link_resolution_sha256(Some(digest));
     assert!(
         analyze_prepared_translation_unit_with_cross_unit(&caller, "caller", &environment, &[],)
@@ -78,6 +82,9 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
             .unwrap_err()
             .contains("link premise differs")
     );
+    certificate.cross_unit_homes[0] = exports[0].home.clone();
+    certificate.cross_unit_homes[0].environment_sha256 = "b".repeat(64);
+    assert!(check_legacy_safety_certificate(&certificate).is_err());
 }
 
 #[test]

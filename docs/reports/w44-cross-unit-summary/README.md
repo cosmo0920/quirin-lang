@@ -48,7 +48,10 @@ second phase, or a changed refutation table, leaves the first-phase results
 in force. Checkpoint composition refuses this opt-in mode.
 
 Imports live in a separate inferred channel, with the map digest in the
-environment. Caller-local definitions take precedence. Before issuing a Safe
+environment. The caller environment also carries independently expected
+home source/request and environment digests; its audit trust-context hash
+therefore binds the home identity separately from the certificate's retained
+home witness. Caller-local definitions take precedence. Before issuing a Safe
 certificate, the gateway reconstructs the home's raw, line-marked and
 preprocessed source scope and its request digest, checks the loaded home
 environment digest, re-runs W4 over the home, and compares the exact derived

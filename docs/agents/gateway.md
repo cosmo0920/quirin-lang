@@ -136,7 +136,8 @@ which is not a second authority.
     linkable with no static or inline declaration, have a Safe function row and
     a validated W4 summary, and lack a declaration in force. The home raw,
     marked and preprocessed source, request and environment identities are
-    retained; certificate issue and replay independently reconstruct the home
+    retained both as a home witness and as independently expected identities
+    in the caller's audit trust context; certificate issue and replay reconstruct the home
     scope, re-run W4 and compare the exact summary before re-deriving the
     caller. Imports use a separate inferred channel and yield to a caller's
     own definition or a declared contract. Missing or ambiguous home,

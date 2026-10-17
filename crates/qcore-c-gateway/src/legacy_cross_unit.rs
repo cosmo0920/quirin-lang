@@ -7,7 +7,9 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_schemas::contract::{ResourceContracts, ResourceFunctionContract};
+use qcore_schemas::contract::{
+    CrossUnitImportIdentity, ResourceContracts, ResourceFunctionContract,
+};
 
 use super::{
     AnalysisStatus, CCompilerDialect, LegacyCertificateInputIdentity, LegacyCertificateRequest,
@@ -39,6 +41,18 @@ pub struct CrossUnitExport {
     pub contract: ResourceFunctionContract,
 }
 
+impl CrossUnitHomeEvidence {
+    pub fn import_identity(&self) -> CrossUnitImportIdentity {
+        CrossUnitImportIdentity {
+            raw_source_sha256: self.input_identity.raw_source_sha256.clone(),
+            preprocessed_source_sha256: self.input_identity.preprocessed_source_sha256.clone(),
+            scope_evidence_sha256: self.input_identity.scope_evidence_sha256.clone(),
+            analysis_request_sha256: self.input_identity.analysis_request_sha256.clone(),
+            environment_sha256: self.environment_sha256.clone(),
+        }
+    }
+}
+
 /// Derive only requested home summaries from a prepared, main-source unit.
 /// A returned record is independently validated by W4 and its own row is
 /// Safe. The caller must still establish unique home and linked resolution.
@@ -53,6 +67,7 @@ pub fn export_homes(
     }
     if prepared.function_scope() != LegacyFunctionScope::MainSourceDefinitions
         || !environment.inferred_imports().is_empty()
+        || !environment.cross_unit_import_identities().is_empty()
         || !sha256_spelling(link_resolution_sha256)
     {
         return Err(
@@ -151,6 +166,13 @@ pub fn for_caller(
         .map(|(name, contract)| (name.clone(), contract.clone()))
         .collect();
     environment.set_inferred_imports(imports);
+    let identities = environment
+        .cross_unit_import_identities()
+        .iter()
+        .filter(|(name, _)| !local.contains(*name))
+        .map(|(name, identity)| (name.clone(), identity.clone()))
+        .collect();
+    environment.set_cross_unit_import_identities(identities);
     (environment, homes)
 }
 
@@ -168,12 +190,16 @@ pub(super) fn check_imports(
     contracts: &ResourceContracts,
     homes: &[CrossUnitHomeEvidence],
 ) -> Result<(), String> {
-    if homes.is_empty() && contracts.inferred_imports().is_empty() {
+    if homes.is_empty()
+        && contracts.inferred_imports().is_empty()
+        && contracts.cross_unit_import_identities().is_empty()
+    {
         return Ok(());
     }
     let (caller_tokens, caller_conditionals) = tokenize_with_conditionals(caller_source);
     let caller_definitions = function_names(&caller_tokens, &caller_conditionals).definitions;
     let mut validated = BTreeMap::<String, ResourceFunctionContract>::new();
+    let mut validated_identities = BTreeMap::<String, CrossUnitImportIdentity>::new();
     for home in homes {
         if !sha256_spelling(&home.link_resolution_sha256) {
             return Err(format!(
@@ -199,7 +225,9 @@ pub(super) fn check_imports(
                 home.function
             ));
         }
-        if !home.environment.inferred_imports().is_empty() {
+        if !home.environment.inferred_imports().is_empty()
+            || !home.environment.cross_unit_import_identities().is_empty()
+        {
             return Err(format!(
                 "cross-unit `{}` home depends on another imported summary",
                 home.function
@@ -285,9 +313,13 @@ pub(super) fn check_imports(
         {
             return Err(format!("cross-unit `{}` has multiple homes", home.function));
         }
+        validated_identities.insert(home.function.clone(), home.import_identity());
     }
     if &validated != contracts.inferred_imports() {
         return Err("cross-unit imported contracts differ from replayed homes".into());
+    }
+    if &validated_identities != contracts.cross_unit_import_identities() {
+        return Err("cross-unit imported home identities differ from replayed homes".into());
     }
     Ok(())
 }

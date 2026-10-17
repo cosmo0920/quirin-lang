@@ -661,6 +661,18 @@ pub struct ContractInclusionEvidence {
     pub inherited: BTreeMap<String, Vec<ContractInheritanceLink>>,
 }
 
+/// Independently expected home identity for one conditional cross-unit import.
+/// The audit derives this from its pinned configured home, and the caller's
+/// trust-context hash binds it separately from the certificate's home witness.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CrossUnitImportIdentity {
+    pub raw_source_sha256: String,
+    pub preprocessed_source_sha256: String,
+    pub scope_evidence_sha256: String,
+    pub analysis_request_sha256: String,
+    pub environment_sha256: String,
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceContracts {
     functions: BTreeMap<String, ResourceFunctionContract>,
@@ -670,6 +682,10 @@ pub struct ResourceContracts {
     /// An empty map preserves the historical serialized environment.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     inferred_imports: BTreeMap<String, ResourceFunctionContract>,
+    /// Expected identities of those imports. Included in the caller's audit
+    /// trust hash, so a changed home cannot replay by changing its own digest.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    cross_unit_import_identities: BTreeMap<String, CrossUnitImportIdentity>,
     /// SHA-256 of the caller-supplied linked-program resolution table. This
     /// is a named assumption, bound into audit trust-context identity.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -729,6 +745,7 @@ impl ResourceContracts {
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
             inferred_imports: BTreeMap::new(),
+            cross_unit_import_identities: BTreeMap::new(),
             link_resolution_sha256: None,
             source_assumptions: BTreeMap::new(),
             inclusion_evidence: BTreeMap::new(),
@@ -760,6 +777,18 @@ impl ResourceContracts {
     #[must_use]
     pub fn inferred_imports(&self) -> &BTreeMap<String, ResourceFunctionContract> {
         &self.inferred_imports
+    }
+
+    pub fn set_cross_unit_import_identities(
+        &mut self,
+        identities: BTreeMap<String, CrossUnitImportIdentity>,
+    ) {
+        self.cross_unit_import_identities = identities;
+    }
+
+    #[must_use]
+    pub fn cross_unit_import_identities(&self) -> &BTreeMap<String, CrossUnitImportIdentity> {
+        &self.cross_unit_import_identities
     }
 
     pub fn set_link_resolution_sha256(&mut self, digest: Option<String>) {
