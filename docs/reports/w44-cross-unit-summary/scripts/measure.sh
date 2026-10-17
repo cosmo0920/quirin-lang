@@ -14,8 +14,11 @@ repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/w44xu"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
-binary="${QCORE_W44_BINARY:-$repo/private/w44xu-target/release/quirin-audit}"
+binary="$repo/target/release/quirin-audit"
 sha256sum "$binary" > "$out/$name.binary.sha256"
+if [ -n "${QCORE_CROSS_UNIT_LINK_MAP:-}" ]; then
+  sha256sum "$QCORE_CROSS_UNIT_LINK_MAP" > "$out/$name.link-map.sha256"
+fi
 case ",$routes," in *,corpus,*)
   QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \
     "$out/$name" 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 \

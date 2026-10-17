@@ -3,7 +3,7 @@
   "premise": "Refusal control: this claimed home unit is absent from the selected source set and must produce no imported summary.",
   "symbols": [
     {
-      "function": "cio_file_native_get_size",
+      "function": "cio_file_hash",
       "home_unit": "chunkio/nonexistent-home.c"
     }
   ]

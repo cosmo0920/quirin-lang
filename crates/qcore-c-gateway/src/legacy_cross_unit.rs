@@ -98,7 +98,7 @@ pub fn export_homes(
         if !requested.contains(name)
             || !names.contains(name)
             || callee_scope::has_internal_linkage(&tokens, name)
-            || callee_scope::definition_has_specifier(&tokens, name, "inline")
+            || linkage_sensitive_declaration(&tokens, name)
             || !result
                 .summary
                 .functions
@@ -241,7 +241,7 @@ pub(super) fn check_imports(
         }
         let (tokens, _) = tokenize_with_conditionals(&home.preprocessed_source);
         if callee_scope::has_internal_linkage(&tokens, &home.function)
-            || callee_scope::definition_has_specifier(&tokens, &home.function, "inline")
+            || linkage_sensitive_declaration(&tokens, &home.function)
         {
             return Err(format!(
                 "cross-unit `{}` home is static or inline",
@@ -290,4 +290,32 @@ pub(super) fn check_imports(
         return Err("cross-unit imported contracts differ from replayed homes".into());
     }
     Ok(())
+}
+
+/// A prior file-scope declaration may confer internal or C99 inline semantics
+/// even when the definition's own specifiers omit them. Reject both spellings
+/// anywhere in the unit's file-scope declarations for this name.
+fn linkage_sensitive_declaration(tokens: &[super::Token], function: &str) -> bool {
+    let mut braces = 0usize;
+    for (index, token) in tokens.iter().enumerate() {
+        match token.text.as_str() {
+            "{" => braces += 1,
+            "}" => braces = braces.saturating_sub(1),
+            _ => {}
+        }
+        if braces != 0
+            || token.text != function
+            || tokens.get(index + 1).map(|next| next.text.as_str()) != Some("(")
+        {
+            continue;
+        }
+        for earlier in tokens[..index].iter().rev() {
+            match earlier.text.as_str() {
+                ";" | "{" | "}" => break,
+                "static" | "inline" | "__inline" | "__inline__" => return true,
+                _ => {}
+            }
+        }
+    }
+    false
 }

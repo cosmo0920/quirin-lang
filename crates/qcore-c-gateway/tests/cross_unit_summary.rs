@@ -44,13 +44,10 @@ fn home_and_caller_replay_and_missing_evidence_refuses() {
         exports[0].contract.clone(),
     )]));
     environment.set_link_resolution_sha256(Some(digest));
-    assert!(analyze_prepared_translation_unit_with_cross_unit(
-        &caller,
-        "caller",
-        &environment,
-        &[],
-    )
-    .is_err());
+    assert!(
+        analyze_prepared_translation_unit_with_cross_unit(&caller, "caller", &environment, &[],)
+            .is_err()
+    );
     let result = analyze_prepared_translation_unit_with_cross_unit(
         &caller,
         "caller",
@@ -92,6 +89,8 @@ fn static_and_external_inline_are_not_exported() {
     for source in [
         "static void callee(void) { return; }\n",
         "inline void callee(void) { return; }\n",
+        "static void callee(void); void callee(void) { return; }\n",
+        "inline void callee(void); void callee(void) { return; }\n",
     ] {
         let home = prepare_translation_unit(&C11TranslationUnit {
             source,
