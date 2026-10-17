@@ -248,3 +248,30 @@ and their router rows. Spec C04.18 ("Bounds contract v1": any kind) and C09.3
 the decision verbatim); grammar G05 (placement), G05e (pointer) and G05f
 (rewritten: `member_clause`, `member_qualifier`, every diagnostic);
 `contract/README.md`'s clause-ownership row.
+
+## 8. Gate
+
+Gate **g2** ([gate.json](gate.json), exits in [gate/](gate/), logs
+`private/nmuq/gate-g2/` and `private/nmuq/provider-gate-g2/`). Every code step
+ran at `4bdfc1353`, the tip rebased onto `b157c9cba`, each under the shared
+flock ([`gate.sh`](scripts/gate.sh), [`provider-gate.sh`](scripts/provider-gate.sh),
+[`write_gate_json.py`](scripts/write_gate_json.py), [`finish-gate.sh`](scripts/finish-gate.sh)).
+
+| Step | Exit | Result |
+| --- | --- | --- |
+| `cargo check --workspace --all-targets`, submodule, `cargo fmt --check`, `clippy --locked --all-targets -D warnings` | 0, 0, 0, 0 | |
+| `run_test_binaries.py` | 0 | 508 units, 521 summaries, **8,196 passed, 0 failed, 15 ignored** (`private/nmuq/tests-gate-g2/`); no rerun |
+| both reevaluation probes | 0, 0 | |
+| `check_lean_audits.py` | 0 | **333** audits under Lean 4.35.0 |
+| provider gate | 0 each | `cargo check --locked`, `cargo test` 133 passed / 0 failed, fmt, clippy on `providers/`; `contracts.py check`; package build and verify of all five packages; providers Python 25 OK |
+| Python suite (08), docs index check (09) | 1, 0 | before the matrix regeneration (`test_the_derived_facts_are_recomputed_rather_than_carried`: the committed matrix's 332 Lean audits); kept in [gate/docs-attempt-1/](gate/docs-attempt-1/) |
+| `build_matrix.py . --gate gate.json` (09a), Python suite (09b), docs index (10b) and its check (10c) | 0, 0, 0, 0 | 374 tests OK |
+
+Clang: [`gate/clang-version.txt`](gate/clang-version.txt). The bold rule-id
+duplicate check is empty; no conflict markers.
+
+Gate **g1** ran at `d62be618c` (on `3f8f1a617`, the same code): every code
+step 0 (8,193 passed, 0 failed, 15 ignored; 333 Lean audits) and the provider
+gate 0 (`private/nmuq/gate-g1/`, `private/nmuq/provider-gate-g1/`). Main then
+moved with RETENTION-UNMATCHED-REMOVAL-POISONS, whose pin tests overlap this
+card's, so g2 replaces it.
