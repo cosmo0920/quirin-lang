@@ -664,6 +664,12 @@ pub struct ContractInclusionEvidence {
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ResourceContracts {
     functions: BTreeMap<String, ResourceFunctionContract>,
+    /// Validated summaries imported from another translation unit.  These are
+    /// never declared contracts: a gateway certificate must carry and replay
+    /// the home body and the explicit link-resolution premise for each entry.
+    /// An empty map preserves the historical serialized environment.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    inferred_imports: BTreeMap<String, ResourceFunctionContract>,
     // Exact trusted inputs travel with the environment into safety certificates.
     source_assumptions: BTreeMap<String, String>,
     /// Card CONTRACT-INHERIT: provenance of every selected module that used
@@ -718,6 +724,7 @@ impl ResourceContracts {
                 .into_iter()
                 .map(|(name, kind)| (name.into(), ResourceFunctionContract::from(kind)))
                 .collect(),
+            inferred_imports: BTreeMap::new(),
             source_assumptions: BTreeMap::new(),
             inclusion_evidence: BTreeMap::new(),
             pending_review: BTreeMap::new(),
@@ -736,6 +743,21 @@ impl ResourceContracts {
 
     pub fn insert_contract(&mut self, name: impl Into<String>, contract: ResourceFunctionContract) {
         self.functions.insert(name.into(), contract);
+    }
+
+    /// Install the contracts of independently replayable cross-unit imports.
+    /// The gateway certificate checker refuses a nonempty import map without
+    /// matching home evidence; this setter conveys no authority by itself.
+    pub fn set_inferred_imports(
+        &mut self,
+        imports: BTreeMap<String, ResourceFunctionContract>,
+    ) {
+        self.inferred_imports = imports;
+    }
+
+    #[must_use]
+    pub fn inferred_imports(&self) -> &BTreeMap<String, ResourceFunctionContract> {
+        &self.inferred_imports
     }
 
     /// Exact source inputs, declared as assumptions rather than verified facts.
@@ -931,7 +953,9 @@ impl ResourceContracts {
     /// this returns).
     #[must_use]
     pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
-        let found = self.functions.get(name);
+        // A declared contract always wins, even if a redundant import was
+        // offered. The gateway refuses conflicting evidence at admission.
+        let found = self.functions.get(name).or_else(|| self.inferred_imports.get(name));
         crate::contract_consultation::note(name, found.is_some());
         found
     }

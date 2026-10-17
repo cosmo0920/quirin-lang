@@ -2737,6 +2737,12 @@ pub fn preprocess_unrestricted_c11(unit: &C11TranslationUnit<'_>) -> Result<Stri
 pub fn check_legacy_safety_certificate(
     certificate: &LegacySafetyCertificate,
 ) -> Result<(), String> {
+    if !certificate.contracts.inferred_imports().is_empty() {
+        return Err(
+            "cross-unit imports lack independently replayed home and link-resolution evidence"
+                .into(),
+        );
+    }
     crate::contract_loader::check_source_assumptions(&certificate.contracts)?;
     let target_names = match (
         &certificate.function_scope,
