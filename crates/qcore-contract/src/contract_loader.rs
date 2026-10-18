@@ -645,7 +645,8 @@ struct LoadedDeclaration {
     /// Card VERDICT-CONTRACT-DEPENDENCIES: every named premise the
     /// declaration states (`requires resource_premise(NAME, "STATEMENT");`),
     /// in clause order, followed by its literal-argument premises rendered as
-    /// premises. Read by no consumer that decides a verdict.
+    /// premises. This metadata list decides no verdict; C04.21's scoped
+    /// atoms/recognized snapshot clause are separately parsed structured data.
     premises: Vec<DeclaredPremise>,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
@@ -870,6 +871,7 @@ pub fn load_resource_contract_sources(
                 || pending.contains_key(&decl.name)
                 || contracts.relational().contains_key(&decl.name)
                 || contracts.retaining().contains_key(&decl.name)
+                || contracts.guarded_retaining().contains_key(&decl.name)
             {
                 return Err(format!("{context}: duplicate function contract"));
             }
@@ -1246,13 +1248,30 @@ pub fn declared_no_return_callees(
 /// consumer agreement between every inherited declaration and its parent.
 /// Evidence for a module the environment does not retain is refused.
 pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), String> {
+    contracts.validate_lifetime_partition()?;
+    for name in contracts.pin_mismatch().keys() {
+        if contracts.functions().contains_key(name)
+            || contracts.relational().contains_key(name)
+            || contracts.retaining().contains_key(name)
+            || contracts.guarded_retaining().contains_key(name)
+        {
+            return Err(format!(
+                "`{name}` is both in force and withheld for a pin mismatch"
+            ));
+        }
+    }
+    if !contracts.inferred_lifetimes().is_empty() {
+        return Err("inferred lifetime effects require independent same-unit derivation, not contract input assumptions".into());
+    }
     if !contracts.source_assumptions().is_empty() {
         let loaded = load_resource_contract_sources(contracts.source_assumptions())?;
         if loaded.functions() != &crate::contract_revision::in_force_before_pins(contracts)?
             || loaded.pending_review() != contracts.pending_review()
             || loaded.declared_revisions() != contracts.declared_revisions()
             || loaded.relational() != &declared_relational(contracts)
-            || loaded.retaining() != &declared_retaining(contracts)
+            || loaded.retaining() != &declared_retaining(contracts, false)
+            || loaded.guarded_retaining() != &declared_retaining(contracts, true)
+            || loaded.declared_guarded() != contracts.declared_guarded()
         {
             return Err("resource contracts differ from their declared source assumptions".into());
         }
@@ -1310,10 +1329,13 @@ fn declared_relational(
 /// withheld for their pin included.
 fn declared_retaining(
     contracts: &ResourceContracts,
+    guarded: bool,
 ) -> BTreeMap<String, qcore_schemas::retained_by::RetainingContract> {
     contracts
         .retaining()
         .iter()
+        .chain(contracts.guarded_retaining())
+        .filter(|(_, contract)| contract.is_condition_bearing() == guarded)
         .map(|(name, contract)| (name.clone(), contract.clone()))
         .chain(
             contracts
@@ -1323,6 +1345,7 @@ fn declared_retaining(
                     withheld
                         .retaining
                         .clone()
+                        .filter(|retaining| retaining.is_condition_bearing() == guarded)
                         .map(|retaining| (name.clone(), retaining))
                 }),
         )
@@ -1603,6 +1626,41 @@ fn load_function_in(
     // narrower vocabulary, and only a marked one may name a C struct.
     if decl.c_ffi.is_some() {
         return load_ffi_function(decl);
+    }
+    let lifetime = crate::local_condition::read(decl)?;
+    if !lifetime.bindings.is_empty()
+        || !lifetime.registered.is_empty()
+        || !lifetime.blocks.is_empty()
+    {
+        if decl.parameters.iter().any(|p| p.usage.is_some()) {
+            return Err(
+                "local-condition-signature: usage annotations are not a resource-v1 ABI".into(),
+            );
+        }
+        let base = crate::local_condition::without_local(decl, None)?;
+        let mut loaded = load_function_in(&base, aliases)?;
+        if loaded.relational.is_some() || loaded.ffi.is_some() {
+            return Err(
+                "local-condition-contract: incompatible conditional ABI or return disposition"
+                    .into(),
+            );
+        }
+        for block in &lifetime.blocks {
+            for clause in &block.clauses {
+                if let qcore_schemas::loop_lifetime::LocalClause::Prerequisite(text) = clause {
+                    // Existing obligation readers remain the authority for inner
+                    // syntax. This validation grants no premise to the caller.
+                    let checked = crate::local_condition::without_local(decl, Some(text))?;
+                    load_function_in(&checked, aliases)?;
+                }
+            }
+        }
+        let mut retaining = loaded.retaining.take().unwrap_or_else(|| {
+            qcore_schemas::retained_by::RetainingContract::custody_only(loaded.contract.clone())
+        });
+        retaining.lifetime = Some(lifetime);
+        loaded.retaining = Some(retaining);
+        return Ok(loaded);
     }
     let clauses = &decl
         .function_contract

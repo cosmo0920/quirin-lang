@@ -1302,6 +1302,9 @@ pub struct LegacyFunctionSummary {
     /// null-dereference property proves it. Empty for every function that
     /// made no such reading.
     pub null_premises: Vec<crate::null_premise::NullPremise>,
+    /// Exact outgoing registrations; Safe is conditional on their attributed
+    /// protocol and every dependent caller's lifetime obligations.
+    pub lifetime_effects: BTreeSet<crate::loop_lifetime_summary::ForwardedLifetime>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

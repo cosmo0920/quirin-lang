@@ -727,6 +727,15 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                         // Card OUTER-CONTRACT: the expression starts at
                         // `#outer`, so `quant` re-renders it as written.
                         SourceContractClauseKind::QuantOuter => "quant".to_owned(),
+                        SourceContractClauseKind::QuantConditionBinding => "quant".into(),
+                        SourceContractClauseKind::QuantConditionBlock { negated, .. } => {
+                            if *negated {
+                                "quant not".into()
+                            } else {
+                                "quant".into()
+                            }
+                        }
+                        SourceContractClauseKind::QuantRegistered => "quant registered".into(),
                     };
                     (introducer, clause.value.expression_source.clone())
                 })

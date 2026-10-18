@@ -389,6 +389,8 @@ import QCore.MemberPrepassRoutes
 import QCore.RetentionPath
 import QCore.RegistrationById
 import QCore.FunctionPointerDeclarators
+import QCore.LocalCondition
+import QCore.LoopLifetimeSummary
 import QCore.OuterContract
 import QCore.OuterListCandidates
 

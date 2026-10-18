@@ -70,9 +70,8 @@ fn record_bounds(
     }
     let custody = summary_of(result);
     for name in functions {
-        let custody = custody
-            .and_then(|summary| summary.functions.get(name))
-            .map(|function| custody_value(function.status));
+        let own = custody.and_then(|summary| summary.functions.get(name));
+        let custody = own.map(|function| custody_value(function.status));
         let (row, identity, bounds) = match &analysed {
             Ok(report) => match report.row(name) {
                 Some(row) => (
@@ -107,15 +106,15 @@ fn record_bounds(
             custody,
             bounds,
         );
-        report.record_bounds(serde_json::json!({
-            "library": library,
-            "file": file,
-            "function": name,
-            "custody": custody.map(BoundsVerdict::as_str),
-            "bounds": row,
-            "identity": identity,
-            "combined": combined.as_str(),
-        }));
+        let mut row = serde_json::json!({
+            "library": library, "file": file, "function": name,
+            "custody": custody.map(BoundsVerdict::as_str), "bounds": row,
+            "identity": identity, "combined": combined.as_str(),
+        });
+        if let Some(scope) = own.and_then(qcore_c_gateway::loop_lifetime_summary::body_scope) {
+            row["lifetime_scope"] = scope.into();
+        }
+        report.record_bounds(row);
     }
 }
 
@@ -371,6 +370,9 @@ fn record_null(
             "identity": identity,
             "combined": combined.as_str(),
         });
+        if let Some(scope) = function.and_then(qcore_c_gateway::loop_lifetime_summary::body_scope) {
+            row["lifetime_scope"] = scope.into();
+        }
         if !premises.is_empty() {
             row["custody_null_premises"] = serde_json::Value::Array(premises);
         }

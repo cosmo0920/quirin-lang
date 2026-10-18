@@ -19,6 +19,7 @@ pub mod contract_revision;
 pub mod digest;
 pub mod handoff;
 pub mod identity;
+pub mod loop_lifetime;
 pub mod mechanism;
 pub mod member_path;
 pub mod obligation;

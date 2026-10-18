@@ -42,6 +42,11 @@ contract {
     ensures normal resource_borrowed(nanoseconds);
     ensures normal resource_borrowed(config);
     ensures normal resource_callback_member_registered(#id, flb_input_collector.cb_collect, cb_collect) where #id = #result in ins.collectors;
+    // S3: exact self-record lifetime footprint, shared by all collector kinds.
+    // Unchecked registration/store closure is a named DeclaredAssumption;
+    // this line neither equates evl to config/worker loops nor discharges
+    // caller release obligations, and does not assert a checked thread join.
+    quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;
     ensures normal resource_return_none();
 };
 

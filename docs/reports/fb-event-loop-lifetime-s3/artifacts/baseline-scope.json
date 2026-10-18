@@ -1,0 +1,14 @@
+{
+  "before_source": "913a72a916242165ed0dc586fd1affdb3093fd65",
+  "before_binary_sha256": "2dc2cef4e0b39e1ee48061d9c17cfc4261c71e904820d0ec37f36ed6683d8431",
+  "integration_base": "e8b9ff07defe4c6375b1547ce2016c68a8ded98c",
+  "production_and_test_diff_paths": [
+    "compiler/tests/qcore_contract_corpus.rs",
+    "crates/qcore-audit/tests/outer_projection.rs",
+    "providers/qcore-provider-librdkafka/contracts.json",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+    "providers/qcore-provider-librdkafka/outer-contracts.lock"
+  ],
+  "diff_sha256": "e2c1f80f2d61717f754c8f0beebba0560006795f1cb5e02003082bacccd41f25",
+  "boundary": "Frozen lexical three-route results are reused explicitly. No analyzer or proof changes intervene before S3; the RK outer text/inventory/lock correction affects runtime projection, excluded from static resource contract selection. The final composed measurement contains both S3 and that correction; it is not an isolated S3 runtime experiment."
+}

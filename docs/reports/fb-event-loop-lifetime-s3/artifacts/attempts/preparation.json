@@ -1,0 +1,537 @@
+[
+  {
+    "step": "audit-check-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/audit-check-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e192f4fcded91f05bc9b9650462231eab98e4cedef4e168c8edb07af620a909a"
+  },
+  {
+    "step": "audit-check-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/audit-check-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "2397994f05fb0ded8aff7bcf4c6f5f56aed4fbc3f77f49b482f40284fda96675"
+  },
+  {
+    "step": "audit-check-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/audit-check-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "bc2015b7fba3015936e90d5a7768fe46f3f485e015f391e07759fe7ab259a513"
+  },
+  {
+    "step": "audit-check-7",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/audit-check-7.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6858d0ccbc3cfe073eb0f5024fda6517206e7faf7eed1943451ef823dacade45"
+  },
+  {
+    "step": "audit-fold-tests-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/audit-fold-tests-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "b9ae26973d0cc2123802db59ba8c651c29cfc68fd7218966ebfa64986a656941"
+  },
+  {
+    "step": "cache-tests-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/cache-tests-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "61af3be4edc5ae19df301cfa3117d934f199e1efa5214a9f5a740d8a44b56f71"
+  },
+  {
+    "step": "cache-tests-4",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/cache-tests-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "14816ce6a52db106a2300100ada3f4d05a55e5e1d5ad1015ac25277a8a465286"
+  },
+  {
+    "step": "clippy-fix-1",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/clippy-fix-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "3f1a5f58aa8ebb464213c9959cf428529100945db5865c8318399a0d62038191",
+    "archived_log": "clippy-fix-1.log.gz"
+  },
+  {
+    "step": "clippy-fix-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/clippy-fix-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "ca233acb64ed55a9a91f8fe02e3890766dc214ed92675b8da3ecae00e1dfd84b"
+  },
+  {
+    "step": "clippy-full-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/clippy-full-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "71f6324420b8ae1ed30133b59dac6671242ed0fb0093bde9bdaa0240b290ea77"
+  },
+  {
+    "step": "forwarding-tests-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/forwarding-tests-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "ad2a4830d8e131bdb67e5e5c2282bb7df8704ac3ca0fae1ecd72dd39f8cc6dc1"
+  },
+  {
+    "step": "initial-check",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/initial-check.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "b0e9b000ad264b653215583c0cf11215711831043e46c6b802c0736f65d4a410"
+  },
+  {
+    "step": "lean-local-1",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "0d385b65c5420ed8355b8211c40eddb14ef1bd347c4c78bc8c779acca8fd29f3",
+    "archived_log": "lean-local-1.log.gz"
+  },
+  {
+    "step": "lean-local-2",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "0d385b65c5420ed8355b8211c40eddb14ef1bd347c4c78bc8c779acca8fd29f3",
+    "archived_log": "lean-local-2.log.gz"
+  },
+  {
+    "step": "lean-local-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-local-4",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-local-audit-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-audit-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "769834e642ed2fcb86fb666a0aa0d1dc4e7d320ff821fb5937db37fb8f076c43"
+  },
+  {
+    "step": "lean-local-audit-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-local-audit-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e8e8e27529d46f02175b7d55e372e41b0b6a33fa143c78fca824fa2f08df31e2"
+  },
+  {
+    "step": "lean-standing-1",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-standing-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "9d1279336acfc0a13533cee62d026ca1a102a46f7ff61903f24f296ebd8e5460",
+    "archived_log": "lean-standing-1.log.gz"
+  },
+  {
+    "step": "lean-standing-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-standing-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-1",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6ad2cdab9246db5f36055bb18284c7a4824fc781f6b6a6fae74c7d91dc67c910",
+    "archived_log": "lean-summary-1.log.gz"
+  },
+  {
+    "step": "lean-summary-2",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "22c81b5b8658aa9af2b02855394c01a79890382226503df3a7a427a3dd6fb350",
+    "archived_log": "lean-summary-2.log.gz"
+  },
+  {
+    "step": "lean-summary-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-4",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-5",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-5.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-6",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-6.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-7",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-7.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "step": "lean-summary-audit-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-audit-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "35fd186fa0476ffc01de8a65a839590538429097b5256f38ddb6c32c0a10dd90"
+  },
+  {
+    "step": "lean-summary-audit-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-audit-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "c53da20d509c7029084fd93615e9fcf5b1fec23d1c4fa908f93989b57a10c6d8"
+  },
+  {
+    "step": "lean-summary-audit-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-summary-audit-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "c53da20d509c7029084fd93615e9fcf5b1fec23d1c4fa908f93989b57a10c6d8"
+  },
+  {
+    "step": "lean-version-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/lean-version-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+  },
+  {
+    "step": "loader-tests-10",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-10.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "2f1bba102ca95aa8d27817e36c4a56813085102d90ede4f4cb9f2d1670405392"
+  },
+  {
+    "step": "loader-tests-2",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "534e02c0fc15b5e9040d2b96171c9f50354fb3fa5de787f061bc7e738d1d7c1e",
+    "archived_log": "loader-tests-2.log.gz"
+  },
+  {
+    "step": "loader-tests-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "66831306ad945ce6910ce316a9e6bfef286ef10ac6b32fecc3e7367b2005c54d"
+  },
+  {
+    "step": "loader-tests-4",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "08380ff5f40cae4f851e52c81f0aa6df151248492a0fe26189de69fc7fcf2b41",
+    "archived_log": "loader-tests-4.log.gz"
+  },
+  {
+    "step": "loader-tests-6",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-6.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "2ee2aaa620ba3dd5386cc2d75356bd3d14cda99f10db738daaca2532e7d00ca2"
+  },
+  {
+    "step": "loader-tests-7",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-7.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "d0a7b2580f5c94411f734ea274253bf1e725ee351ee7f73f11cbeabc9be61e3f",
+    "archived_log": "loader-tests-7.log.gz"
+  },
+  {
+    "step": "loader-tests-8",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-8.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "864e6d55a9ef3b3e08cc29b131803bfb3d7328d1fd94c91406f784fd60e2b9da"
+  },
+  {
+    "step": "loader-tests-9",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/loader-tests-9.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "777601ad90502b32a43f7b84e4290b62f07a9d86715ab581937c8bc827b7ca11",
+    "archived_log": "loader-tests-9.log.gz"
+  },
+  {
+    "step": "model-tests-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/model-tests-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "f486c9607060a48b232c96f0cb6cd9a9bde22514ae03f933c6bb2f86bd211461"
+  },
+  {
+    "step": "model-tests-5",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/model-tests-5.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "1517957268929e267dacfd0884b6939c8452d9fce95f384b1776d6b208865ba6"
+  },
+  {
+    "step": "model-tests",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/model-tests.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6e3ae3dad53efb3e79516b1716967131b402b9d60180606a75fe4fce7fe61de2"
+  },
+  {
+    "step": "parser-loader-tests",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/parser-loader-tests.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e73d34e9d312143847bb29ced95ccce6b550668ea294fd1d119c9bd1662f1c4f"
+  },
+  {
+    "step": "parser-tests",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/parser-tests.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "27ae34fe9525bff9730a43c3899b161f00b909e54db1ec645a1c317f90ff2732"
+  },
+  {
+    "step": "pin-time-corpus",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/pin-time-corpus.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6dec65917b99d1b2bed4b030784dbd0af8772706a8ff46eb7a8105955ac25079"
+  },
+  {
+    "step": "pin-time-slice",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/pin-time-slice.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "e3094f81c2ef7c58c19aa5d99327088c3a5e8961acddbeb4df0015c7daca1236"
+  },
+  {
+    "step": "pin-time-system",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/pin-time-system.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "983dec7f5cddc10c7f52010c1e817858413c3ceb11fd47dd458eb7bc72234ed3"
+  },
+  {
+    "step": "provider-check-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/provider-check-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "f700ede4f8cf11985f2680d53f0fcfdc29d42871611af35f06dceed8cb783f6f"
+  },
+  {
+    "step": "provider-sync-1",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/provider-sync-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "fea8dd9663fcaa8951d60a08bd53f16ee840a4a50bce022668e207578938f500",
+    "archived_log": "provider-sync-1.log.gz"
+  },
+  {
+    "step": "provider-sync-2",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/provider-sync-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "fea8dd9663fcaa8951d60a08bd53f16ee840a4a50bce022668e207578938f500",
+    "archived_log": "provider-sync-2.log.gz"
+  },
+  {
+    "step": "provider-sync-3",
+    "exit": 1,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/provider-sync-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "fe407a6852bffa0c08b28e674faf6b3db745336c0c0984189a30fbc21644eb9e",
+    "archived_log": "provider-sync-3.log.gz"
+  },
+  {
+    "step": "provider-sync-4",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/provider-sync-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "f700ede4f8cf11985f2680d53f0fcfdc29d42871611af35f06dceed8cb783f6f"
+  },
+  {
+    "step": "source-q021-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-q021-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "cc770f5fc522a6c123bd8f574841ea2c996a5ffcf275371da065c38771c18773"
+  },
+  {
+    "step": "source-tests-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "d2c8c505b7c2e20d466454471ea57900fc337401ac3e231de19a1e023e79ea9b"
+  },
+  {
+    "step": "source-tests-10",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-10.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "2f2300def38b0038451682eb4acaceee6d96a0bee4f0f7c6f29c9d9a215a9ff3"
+  },
+  {
+    "step": "source-tests-11",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-11.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "1ece8fd60badebddb00c670613ef74cfb2fdee91f056f80ed09b39c251ac84b3"
+  },
+  {
+    "step": "source-tests-12",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-12.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6e01ffb6eb1fc4aa61364089b5189843f0dfcbf9c3a243a133297cc899664fee"
+  },
+  {
+    "step": "source-tests-13",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-13.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "7959715ba31e9eba2bdac30801b6a9c1b75708c0d38c8919702ce22549491649"
+  },
+  {
+    "step": "source-tests-15",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-15.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "d896dac127d6bbfb04751a045d98d6a217ecec0dadbca7a4db775e446c413bec",
+    "archived_log": "source-tests-15.log.gz"
+  },
+  {
+    "step": "source-tests-17",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-17.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "f7e8a814d40c9b34243d6d47d39e4f7696a9068ba7bd226e64d1cbfda9757362",
+    "archived_log": "source-tests-17.log.gz"
+  },
+  {
+    "step": "source-tests-18",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-18.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6fba664d80e76ec8689236e683d438505ab15467b8a895c86ad98f3ffe97f91a"
+  },
+  {
+    "step": "source-tests-2",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "254cf20ab737aa638cf1a9aed84c4df75507dee5c32b10d820080756925f126e"
+  },
+  {
+    "step": "source-tests-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "7bcb1618a3feeacf071b9076378fec063fa436496228a17a1c38d22ba0f486e2"
+  },
+  {
+    "step": "source-tests-4",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "b088f279e2910a3741c4fc99ecbb3c3fbe8800b0e09ee9a63c6f47efc2b585d3"
+  },
+  {
+    "step": "source-tests-5",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-5.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "b5a654e55930875a8d14354279eab29e1a3ae04fbe4e14ef303351e57467396e"
+  },
+  {
+    "step": "source-tests-6",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-6.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "6a668e32a696b288535ec992b38cbceae8b37bd8c17aaa45cfe1619cbdfac6f4"
+  },
+  {
+    "step": "source-tests-7",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-7.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "bd0434144cb4005308c569ca45e20d6fea94d83427835330b118b3ae98ece290"
+  },
+  {
+    "step": "source-tests-8",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-8.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "97109b6c131ebf233c34571d33c5c6af5796067b8d0e8e084b6e512fc0445725"
+  },
+  {
+    "step": "source-tests-9",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-tests-9.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "8e65690291f8380b8abd6728246b03a83625afadbd4f130c894ad18dc32f129c"
+  },
+  {
+    "step": "summary-tests-1",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/summary-tests-1.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "227f8e41e76ee0f7a8bf46c84ad5b928bb1935a02a469a394611dc2548543d28"
+  },
+  {
+    "step": "summary-tests-2",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/summary-tests-2.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "b3dd2b3d5afbbcf202a6c92ca3928b98d54545038e1dbc8b25ffae361138ca40",
+    "archived_log": "summary-tests-2.log.gz"
+  },
+  {
+    "step": "summary-tests-3",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/summary-tests-3.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "5c1fb70a8d1b6e817418fbbeea1eb33a462c52321835b863d2fd6626e27ac157"
+  },
+  {
+    "step": "summary-tests-4",
+    "exit": 101,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/summary-tests-4.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "8d8d550d7930e8c6c59de2f98c71e59be508ec69f4b6c8d53c9e14333c8a59b5",
+    "archived_log": "summary-tests-4.log.gz"
+  },
+  {
+    "step": "summary-tests-5",
+    "exit": 0,
+    "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/summary-tests-5.log",
+    "scope": "preparation snapshots; not the final source gate",
+    "log_sha256": "2bc35e29bedd6c703ff302686b9695ed99e8e30a8214f73eac075632352f8b59"
+  }
+]

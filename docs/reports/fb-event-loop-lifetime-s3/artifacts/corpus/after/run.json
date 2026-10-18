@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+    "pinned",
+    "--jobs",
+    "4",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+    "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/monkey-source.json",
+    "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.json"
+  ],
+  "source_commit": "66910c10",
+  "binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+  "environment": {
+    "QCORE_CLANG": "/usr/bin/clang",
+    "QCORE_CHUNKIO_PACKAGE": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "QCORE_SOURCE_CONTRACTS": "unset",
+    "QCORE_RETURN_CENSUS": "unset",
+    "QCORE_AUDIT_JOBS": "4"
+  },
+  "start": "2026-10-18T11:57:20.405310+00:00",
+  "exit": 0,
+  "end": "2026-10-18T12:48:47.258985+00:00"
+}

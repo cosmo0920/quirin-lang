@@ -1,0 +1,454 @@
+{
+  "meaning": "Source observation, not a verdict or protocol validation. Existing RunMemberFacts policy opens every closure when any relevant run unit is unread.",
+  "route": "corpus",
+  "before": {
+    "units": 1444,
+    "read": 987,
+    "rounds": 2,
+    "unread": {},
+    "unread_reasons": {},
+    "scope": {
+      "dropped": {},
+      "entries": 14,
+      "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "held": 100,
+      "meaning": "every exclusion of the profile's member-facts-scope.json, re-verified against this run's own sources (rule 12n): a tokens-absent exclusion holds when the unit's raw text, every file Clang resolves for it under its own command and the generator sources the entry names name no final token and every unresolved include is one the entry names as generated; a not-linked exclusion holds when the named link lines link the archive and not the wrapper. A dropped exclusion's unit is preprocessed and read like any other unit, and opens every member when it cannot be read"
+    }
+  },
+  "after": {
+    "units": 1444,
+    "read": 1059,
+    "rounds": 4,
+    "unread": {
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql-parser_lex.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql-parser_lex.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql_parser.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql_parser.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_lex.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_lex.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_parser.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_parser.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_lex.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_lex.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c": "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c'",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c:31:10: fatal error: 'luajit.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_base.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_base.c:33:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_bit.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_bit.c:24:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_buffer.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_buffer.c:349:10: fatal error: 'lj_libdef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c:399:10: fatal error: 'lj_libdef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_ffi.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_ffi.c:33:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_io.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_io.c:26:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c:37:10: fatal error: 'luajit.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_math.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_math.c:196:10: fatal error: 'lj_libdef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_os.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_os.c:287:10: fatal error: 'lj_libdef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_string.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_string.c:24:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_table.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_table.c:21:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bc.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bc.c:13:10: fatal error: 'lj_bcdef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_crecord.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_crecord.c:23:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_dispatch.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_dispatch.c:20:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_err.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_err.c:16:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ffrecord.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ffrecord.c:19:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_fold.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_fold.c:2521:10: fatal error: 'lj_folddef.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_profile.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_profile.c:23:10: fatal error: 'luajit.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_record.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_record.c:22:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_state.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_state.c:31:10: fatal error: 'luajit.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/luajit.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/luajit.c:18:10: fatal error: 'luajit.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/ripser-1.2.1/ripser.cpp": "a unit that is not C (`cpp`)",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/plugins/processor_sql/parser/sql_parser.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/plugins/processor_sql/parser/sql_parser.c:12:10: fatal error: 'processor-sql_parser.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_dump.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_dump.c:30:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/fluent-bit.c": "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/fluent-bit.c:36:",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/record_accessor/flb_ra_parser.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/record_accessor/flb_ra_parser.c:27:10: fatal error: 'ra_parser.h' file not found",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/simdutf/flb_simdutf_connector.cpp": "a unit that is not C (`cpp`)",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/stream_processor/parser/flb_sp_parser.c": "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/stream_processor/parser/flb_sp_parser.c:34:10: fatal error: 'sql_parser.h' file not found"
+    },
+    "unread_reasons": {
+      "a unit that is not C (`cpp`)": 2,
+      "its preprocessing failed: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-g": 14,
+      "its preprocessing failed: In file included from /home/cosmo/Documents/GitHub/qco": 13,
+      "its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/": 7
+    },
+    "scope": {
+      "dropped": {
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql-parser_lex.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/plugins/processor_sql/parser/processor-sql_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_lex.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/record_accessor/ra_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_lex.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/src/stream_processor/parser/sql_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_asm.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_fold.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_lib.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/buildvm_peobj.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_aux.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_base.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_bit.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_buffer.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_debug.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_ffi.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_init.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_io.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_jit.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_math.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_os.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_package.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_string.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lib_table.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_alloc.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_api.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_asm.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_assert.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bc.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcread.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_bcwrite.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_buf.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_carith.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccall.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ccallback.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cconv.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cdata.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_char.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_clib.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_cparse.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_crecord.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ctype.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_debug.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_dispatch.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_err.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ffrecord.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_func.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gc.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_gdbjit.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_ir.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lex.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_lib.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_load.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_mcode.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_meta.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_obj.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_dce.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_fold.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_loop.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_mem.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_narrow.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_sink.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_opt_split.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_parse.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_prng.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_profile.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_record.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_serialize.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_snap.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_state.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_str.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strfmt_num.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_strscan.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_tab.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_trace.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_udata.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmevent.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/lj_vmmath.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/luajit.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/plugins/processor_sql/parser/sql_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_dump.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/fluent-bit.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/record_accessor/flb_ra_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/stream_processor/parser/flb_sp_parser.c": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)"
+      },
+      "entries": 14,
+      "evidence_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "held": 12,
+      "meaning": "every exclusion of the profile's member-facts-scope.json, re-verified against this run's own sources (rule 12n): a tokens-absent exclusion holds when the unit's raw text, every file Clang resolves for it under its own command and the generator sources the entry names name no final token and every unresolved include is one the entry names as generated; a not-linked exclusion holds when the named link lines link the archive and not the wrapper. A dropped exclusion's unit is preprocessed and read like any other unit, and opens every member when it cannot be read"
+    }
+  },
+  "added_tokens": [
+    "event",
+    "evl",
+    "flb_input_collector"
+  ],
+  "removed_tokens": [],
+  "dropped_scope_trigger_counts": {
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/luajit-7152e154/src/host/minilua.c names a token of the pre-pass (`event`)": 77,
+    "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/include/fluent-bit/flb_config.h names a token of the pre-pass (`event`, `evl`)": 11
+  },
+  "changed_closures": {
+    "rd_kafka_s.rk_share_consumer.share_acknowledgement_commit_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_op_s.rko_u.offset_commit.cb": {
+      "before": {
+        "candidates": [
+          "rd_kafka_coord_rkb_monitor_cb",
+          "rd_kafka_decommissioned_broker_thread_join",
+          "rd_kafka_offset_broker_commit_cb",
+          "rd_kafka_txn_coord_monitor_cb"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.background_event_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.throttle_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_op_s.rko_serve": {
+      "before": {
+        "candidates": [
+          "rd_kafka_cgrp_op_serve",
+          "rd_kafka_mock_cluster_op_serve",
+          "rd_kafka_poll_cb",
+          "rd_kafka_toppar_op_serve"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.stats_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_op_s.rko_op_cb": {
+      "before": {
+        "candidates": [
+          "rd_kafka_DeleteRecords_leaders_queried_cb",
+          "rd_kafka_ListOffsets_leaders_queried_cb",
+          "rd_kafka_admin_fanout_worker",
+          "rd_kafka_admin_worker",
+          "rd_kafka_broker_monitor_op_cb",
+          "rd_kafka_cgrp_assignor_handle_Metadata_op",
+          "rd_kafka_cgrp_consumer_handle_Metadata_op",
+          "rd_kafka_cgrp_handle_Metadata_op",
+          "rd_kafka_oauthbearer_refresh_op",
+          "rd_kafka_offset_reset_op_cb",
+          "rd_kafka_offset_validate_op_cb",
+          "rd_kafka_share_ack_commit_cb_register_op",
+          "rd_kafka_share_commit_async_fanout_op",
+          "rd_kafka_share_commit_sync_fanout_op",
+          "rd_kafka_share_fetch_fanout_op",
+          "rd_kafka_share_fetch_reply_op_cb",
+          "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb",
+          "rd_kafka_txn_op_abort_transaction",
+          "rd_kafka_txn_op_abort_transaction_ack",
+          "rd_kafka_txn_op_ack_init_transactions",
+          "rd_kafka_txn_op_begin_abort",
+          "rd_kafka_txn_op_begin_commit",
+          "rd_kafka_txn_op_begin_transaction",
+          "rd_kafka_txn_op_commit_transaction",
+          "rd_kafka_txn_op_commit_transaction_ack",
+          "rd_kafka_txn_op_init_transactions",
+          "rd_kafka_txn_op_send_offsets_to_transaction"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.error_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "consume_ctx.consume_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.consume_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.dr_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.sasl.oauthbearer.token_refresh_cb": {
+      "before": {
+        "candidates": [
+          "oauthbearer_token_refresh_cb",
+          "rd_kafka_oauthbearer_unsecured_token",
+          "rd_kafka_oidc_token_client_credentials_refresh_cb",
+          "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+          "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+          "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.rebalance_cb": {
+      "before": {
+        "candidates": [],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_op_s.rko_u.terminated.cb": {
+      "before": {
+        "candidates": [
+          "rd_kafka_coord_rkb_monitor_cb",
+          "rd_kafka_decommissioned_broker_thread_join",
+          "rd_kafka_offset_broker_commit_cb",
+          "rd_kafka_txn_coord_monitor_cb"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.dr_msg_cb": {
+      "before": {
+        "candidates": [
+          "cb_kafka_msg"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    },
+    "rd_kafka_s.rk_conf.log_cb": {
+      "before": {
+        "candidates": [
+          "cb_kafka_logger",
+          "rd_kafka_log_print"
+        ],
+        "closed": true
+      },
+      "after": {
+        "closed": false,
+        "open": [
+          "36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')"
+        ]
+      }
+    }
+  },
+  "protocol_counts": {
+    "callers": 34,
+    "protocols": 1,
+    "refused": 638,
+    "summaries": 1058
+  },
+  "protocol_standing": [
+    {
+      "host": "flb_input_set_collector_time",
+      "protocol": {
+        "binder": "coll",
+        "holder": [
+          "evl"
+        ],
+        "interior": [
+          "event"
+        ],
+        "record": "flb_input_collector"
+      },
+      "standing_kind": [
+        "DeclaredAssumption"
+      ],
+      "premise": "loop-protocol-unchecked:flb_input_collector.event",
+      "unchecked_reason_count": 19870
+    }
+  ],
+  "exercised_existing_controls": [
+    "member_run_facts::tests::a_registration_reads_the_setters_actuals_at_every_call (unread unit opens closure)",
+    "member_prepass_routes::the_no_build_route_decides_over_the_runs_set (broken relevant source opens every member)",
+    "QCore.AppRkCallbacks runDecisionVectors (open closure refuses)"
+  ],
+  "followup": "S3-PREPASS-UNREAD-GRAPH-ISOLATION; only independently proved source/include/layout/alias/exposure noninterference or readable inputs may restore the affected closure"
+}

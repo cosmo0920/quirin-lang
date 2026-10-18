@@ -394,6 +394,7 @@ struct SourceContext {
     dialect: CCompilerDialect,
     request: LegacyCertificateRequest,
     ast: OnceCell<Option<Rc<AstIndex>>>,
+    lifetime_source: LifetimeSourceCache,
 }
 
 impl SourceContext {
@@ -660,6 +661,7 @@ pub(crate) fn enter_source(
             dialect,
             request,
             ast: OnceCell::new(),
+            lifetime_source: LifetimeSourceCache::default(),
         }))
     }))
 }
@@ -704,6 +706,82 @@ pub(crate) fn definition_ast(function: &str) -> Option<Value> {
         });
         let definition = definitions.next()?;
         definitions.next().is_none().then_some(definition)
+    })
+}
+
+type LifetimeSourceResult = Result<crate::loop_lifetime_source::SourceFacts, String>;
+#[derive(Default)]
+struct LifetimeSourceCache {
+    // One entry bounds retained memory. This object belongs to one exact
+    // source/frontend scope and is recreated for independent replay.
+    entry: RefCell<Option<(String, LifetimeSourceResult)>>,
+}
+impl LifetimeSourceCache {
+    fn get_or_read(
+        &self,
+        key: String,
+        read: impl FnOnce() -> LifetimeSourceResult,
+    ) -> LifetimeSourceResult {
+        if let Some((old, value)) = self.entry.borrow().as_ref()
+            && old == &key
+        {
+            return value.clone();
+        }
+        let value = read();
+        self.entry.replace(Some((key, value.clone())));
+        value
+    }
+}
+fn lifetime_source_dependencies(
+    contracts: &qcore_schemas::contract::ResourceContracts,
+) -> Result<String, String> {
+    use qcore_schemas::contract::ResourceParameterMode;
+    // SourceFacts reads retaining holder/retention/removal declarations and
+    // effective Released parameter modes (including imported/inferred modes).
+    // Ordinary declarations override imports, exactly as contract() does.
+    let mut effective = contracts.inferred_imports().clone();
+    effective.extend(contracts.functions().clone());
+    effective.retain(|_, contract| {
+        contract
+            .parameters
+            .iter()
+            .any(|mode| matches!(mode, ResourceParameterMode::Released { .. }))
+    });
+    serde_json::to_vec(&(
+        contracts.source_assumptions(),
+        contracts.retaining(),
+        contracts.guarded_retaining(),
+        contracts.declared_guarded(),
+        effective,
+    ))
+    .map(|bytes| qcore_schemas::sha256_hex(&bytes))
+    .map_err(|error| error.to_string())
+}
+
+/// S3 local prerequisites rederive their typed call/branch evidence from the
+/// retained analyzed source and exact frontend request, including on certificate
+/// replay. Ambient run facts are not a proof input for this bounded route.
+pub(crate) fn current_lifetime_source(
+    contracts: &qcore_schemas::contract::ResourceContracts,
+) -> Result<crate::loop_lifetime_source::SourceFacts, String> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow
+            .as_ref()
+            .ok_or("no retained analyzed source context")?;
+        let unit = C11TranslationUnit {
+            source: &context.source,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            input: context.request.input.clone(),
+            ..C11TranslationUnit::default()
+        };
+        let key = lifetime_source_dependencies(contracts)?;
+        context.lifetime_source.get_or_read(key, || {
+            crate::loop_lifetime_source::read_unit(&context.source, &unit, contracts)
+        })
     })
 }
 
@@ -820,6 +898,12 @@ pub(crate) struct IndirectCallUnit<'a> {
 }
 
 impl IndirectCallUnit<'_> {
+    /// S3 call evidence is tied to this exact preprocessed source, beyond
+    /// its per-function token identity. The run records configuration too.
+    pub(crate) fn source_sha256(&self) -> String {
+        qcore_schemas::sha256_hex(self.source.as_bytes())
+    }
+
     /// The unique body Clang read for `name`.
     pub(crate) fn function(&self, name: &str) -> Option<&Value> {
         match self.ast.functions.get(name)?.as_slice() {
@@ -2218,5 +2302,225 @@ mod tests {
         assert!(plan(union, "s->v = t->v").is_none());
         let pointer = "typedef enum { A } e_t; typedef e_t *ep_t; struct S { ep_t p; }; int f(struct S *s, ep_t q) { s->p = q; return 0; }";
         assert!(plan(pointer, "s->p = q").is_none());
+    }
+}
+
+#[cfg(test)]
+mod lifetime_cache_tests {
+    use super::*;
+    use qcore_schemas::contract::{
+        ResourceContracts, ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
+    };
+    use qcore_schemas::retained_by::RetainingContract;
+    #[test]
+    fn failures_are_cached_and_dependency_changes_retry() {
+        let cache = LifetimeSourceCache::default();
+        assert!(
+            cache
+                .get_or_read("a".into(), || Err("typed source failed".into()))
+                .is_err()
+        );
+        assert!(
+            cache
+                .get_or_read("a".into(), || panic!(
+                    "a failure must not be replaced by fallback"
+                ))
+                .is_err()
+        );
+        assert!(
+            cache
+                .get_or_read("b".into(), || Ok(Default::default()))
+                .is_ok()
+        );
+    }
+    #[test]
+    fn source_classification_dependencies_include_effective_release_and_retaining_maps() {
+        let mut env = ResourceContracts::default();
+        let original = lifetime_source_dependencies(&env).unwrap();
+        let release = ResourceFunctionContract::new(
+            [ResourceParameterMode::Released { nullable: true }],
+            ResourceReturnMode::None,
+        );
+        let borrowed = ResourceFunctionContract::new(
+            [ResourceParameterMode::Borrowed],
+            ResourceReturnMode::None,
+        );
+        env.insert_contract("release", release.clone());
+        let declared_release = lifetime_source_dependencies(&env).unwrap();
+        assert_ne!(original, declared_release);
+        env.insert_contract("release", borrowed.clone());
+        assert_eq!(original, lifetime_source_dependencies(&env).unwrap());
+        env.set_inferred_imports(BTreeMap::from([("imported_release".into(), release)]));
+        assert_ne!(original, lifetime_source_dependencies(&env).unwrap());
+        env.insert_contract("imported_release", borrowed.clone());
+        assert_eq!(
+            original,
+            lifetime_source_dependencies(&env).unwrap(),
+            "declared borrowing masks the imported release"
+        );
+        env.insert_retaining("retainer", RetainingContract::custody_only(borrowed));
+        assert_ne!(original, lifetime_source_dependencies(&env).unwrap());
+        let before_text = lifetime_source_dependencies(&env).unwrap();
+        env.set_source_assumptions(BTreeMap::from([(
+            "new.qv".into(),
+            "changed evidence".into(),
+        )]));
+        assert_ne!(before_text, lifetime_source_dependencies(&env).unwrap());
+    }
+    #[test]
+    fn cached_source_reclassifies_after_declared_imported_and_retaining_changes() {
+        use crate::loop_lifetime_source::OperationKind;
+        use qcore_schemas::retained_by::{Retention, RetentionHolder};
+        let _scope = enter_source(
+            "struct obj { int value; }; void primitive(void *, void *); void f(struct obj *p, struct obj *h) { primitive(p, h); }",
+            CCompilerDialect::C11,
+            None,
+        );
+        let borrowed = ResourceFunctionContract::new(
+            [ResourceParameterMode::Borrowed; 2],
+            ResourceReturnMode::None,
+        );
+        let release = ResourceFunctionContract::new(
+            [
+                ResourceParameterMode::Released { nullable: true },
+                ResourceParameterMode::Borrowed,
+            ],
+            ResourceReturnMode::None,
+        );
+        let mut env = ResourceContracts::default();
+        assert!(
+            current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .is_empty()
+        );
+        env.insert_contract("primitive", release.clone());
+        assert_eq!(
+            current_lifetime_source(&env).unwrap().functions["f"].operations[0].kind,
+            OperationKind::Release
+        );
+        env.insert_contract("primitive", borrowed.clone());
+        assert!(
+            current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .is_empty()
+        );
+        env.set_inferred_imports(BTreeMap::from([("primitive".into(), release)]));
+        assert!(
+            current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .is_empty(),
+            "ordinary declaration masks an import"
+        );
+        let mut retained = RetainingContract::custody_only(borrowed.clone());
+        retained.retentions.push(Retention {
+            retained: 0,
+            holder: RetentionHolder::Parameter { index: 1 },
+            guard: None,
+        });
+        env.insert_retaining("primitive", retained);
+        let facts = current_lifetime_source(&env).unwrap();
+        assert!(
+            facts.functions["f"]
+                .operations
+                .iter()
+                .any(|op| op.kind == OperationKind::Register)
+        );
+        env.insert_retaining("primitive", RetainingContract::custody_only(borrowed));
+        assert!(
+            !current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .iter()
+                .any(|op| op.kind == OperationKind::Register)
+        );
+    }
+    #[test]
+    fn guarded_map_masking_and_withdrawal_invalidate_imported_release_classification() {
+        use crate::loop_lifetime_source::OperationKind;
+        use qcore_schemas::loop_lifetime::{ConditionBinding, LoopLifetimeContract};
+        let _scope = enter_source(
+            "struct obj { int value; }; void primitive(void *); void f(struct obj *p) { primitive(p); }",
+            CCompilerDialect::C11,
+            None,
+        );
+        let mut env = ResourceContracts::default();
+        let released = ResourceFunctionContract::new(
+            [ResourceParameterMode::Released { nullable: true }],
+            ResourceReturnMode::None,
+        );
+        env.set_inferred_imports(BTreeMap::from([("primitive".into(), released)]));
+        assert_eq!(
+            current_lifetime_source(&env).unwrap().functions["f"].operations[0].kind,
+            OperationKind::Release
+        );
+        let mut guarded = RetainingContract::custody_only(ResourceFunctionContract::new(
+            [ResourceParameterMode::Borrowed],
+            ResourceReturnMode::None,
+        ));
+        guarded.lifetime = Some(LoopLifetimeContract {
+            bindings: vec![ConditionBinding {
+                name: "c".into(),
+                parameter: 0,
+                members: vec!["value".into()],
+            }],
+            ..Default::default()
+        });
+        env.insert_retaining("primitive", guarded);
+        assert!(env.contract("primitive").is_none());
+        assert!(
+            current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .is_empty()
+        );
+        env.withdraw_declaration("primitive");
+        assert!(env.lifetime_contract("primitive").is_none());
+        assert!(env.has_guarded_interface("primitive"));
+        assert!(
+            current_lifetime_source(&env).unwrap().functions["f"]
+                .operations
+                .is_empty()
+        );
+        let mut fresh = ResourceContracts::default();
+        fresh.set_inferred_imports(env.inferred_imports().clone());
+        assert_eq!(
+            current_lifetime_source(&fresh).unwrap().functions["f"].operations[0].kind,
+            OperationKind::Release
+        );
+    }
+    #[test]
+    fn source_configurations_and_independent_replay_get_fresh_cache_scopes() {
+        let _outer = enter_source("void f(void) {}", CCompilerDialect::C11, None);
+        let original = ANALYSED_SOURCE.with(|cell| {
+            let scope = cell.borrow();
+            let scope = scope.as_ref().unwrap();
+            scope
+                .lifetime_source
+                .get_or_read("k".into(), || Ok(Default::default()))
+                .unwrap();
+            (scope.source_sha256.clone(), scope.frontend_sha256.clone())
+        });
+        for (source, definitions) in [
+            ("void g(void) {}", vec![]),
+            ("void f(void) {}", vec!["S3_CONFIG=1".into()]),
+            ("void f(void) {}", vec![]),
+        ] {
+            let request = LegacyCertificateRequest {
+                include_paths: vec![],
+                definitions,
+                preprocessor_options: vec![],
+                input: Default::default(),
+            };
+            let _fresh = enter_source(source, CCompilerDialect::C11, Some(&request));
+            ANALYSED_SOURCE.with(|cell| {
+                let scope = cell.borrow();
+                let scope = scope.as_ref().unwrap();
+                assert!(scope.lifetime_source.entry.borrow().is_none());
+                if source.contains("g(") {
+                    assert_ne!(scope.source_sha256, original.0);
+                }
+                if !request.definitions.is_empty() {
+                    assert_ne!(scope.frontend_sha256, original.1);
+                }
+            });
+        }
     }
 }

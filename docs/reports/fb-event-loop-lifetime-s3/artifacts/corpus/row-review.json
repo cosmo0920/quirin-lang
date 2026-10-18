@@ -1,0 +1,2241 @@
+[
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_committed",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23964,
+        "origin": "rdkafka.c:5432"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_consume0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_s.rk_conf.rebalance_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23732,
+        "origin": "rdkafka.c:5045"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)",
+        "line": 23732,
+        "origin": "rdkafka.c:5045"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_consume_callback0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_consume_cb` (from `rd_kafka_consume_cb`) does not decide its own invocations: its own invocation of `consume_ctx.consume_cb` does not decide: the callbacks stored there are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open) (callback-own-invocation-refused)",
+        "line": 23682,
+        "origin": "rdkafka.c:4970"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)",
+        "line": 23682,
+        "origin": "rdkafka.c:4970"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_consume_cb",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23664,
+        "origin": "rdkafka.c:4942"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23670,
+        "origin": "rdkafka.c:4952"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_consumer_close0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23868,
+        "origin": "rdkafka.c:5288"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_poll_cb`: the callbacks stored in `rd_kafka_s.rk_conf.rebalance_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23871,
+        "origin": "rdkafka.c:5292"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23874,
+        "origin": "rdkafka.c:5295"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_poll_cb`: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted)",
+        "line": 23871,
+        "origin": "rdkafka.c:5292"
+      }
+    ],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_memberid",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24590,
+        "origin": "rdkafka.c:6313"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_offsets_for_times",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_s.rk_conf.rebalance_cb` does not decide: the callbacks stored there are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open) (callback-own-invocation-refused)",
+        "line": 24222,
+        "origin": "rdkafka.c:5785"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)",
+        "line": 24222,
+        "origin": "rdkafka.c:5785"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_poll_cb",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_consume_cb`: the callbacks stored in `consume_ctx.consume_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24253,
+        "origin": "rdkafka.c:5843"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24325,
+        "origin": "rdkafka.c:5970"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24358,
+        "origin": "rdkafka.c:6012"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24412,
+        "origin": "rdkafka.c:6093"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `rko`",
+        "line": 24253,
+        "origin": "rdkafka.c:5843"
+      }
+    ],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_query_watermark_offsets",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_s.rk_conf.rebalance_cb` does not decide: the callbacks stored there are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open) (callback-own-invocation-refused)",
+        "line": 24107,
+        "origin": "rdkafka.c:5622"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_q_serve`: callback `rd_kafka_poll_cb` (from `rd_kafka_poll_cb`) does not decide its own invocations: its own invocation of `rd_kafka_op_s.rko_u.offset_commit.cb` does not decide: callback `rd_kafka_coord_rkb_monitor_cb` (from `rd_kafka_op_s.rko_u.offset_commit.cb`) has no contract in force (callback-uncontracted) (callback-own-invocation-refused)",
+        "line": 24107,
+        "origin": "rdkafka.c:5622"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_seek_partitions",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23597,
+        "origin": "rdkafka.c:4842"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23607,
+        "origin": "rdkafka.c:4857"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_commit_sync",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23383,
+        "origin": "rdkafka.c:4486"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_AlterConfigsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22037,
+        "origin": "rdkafka_admin.c:3299"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_AlterUserScramCredentialsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24166,
+        "origin": "rdkafka_admin.c:6377"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_ConsumerGroupDescribeResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 25792,
+        "origin": "rdkafka_admin.c:8680"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_CreateAclsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23495,
+        "origin": "rdkafka_admin.c:5481"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_CreatePartitionsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21660,
+        "origin": "rdkafka_admin.c:2684"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_CreateTopicsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21370,
+        "origin": "rdkafka_admin.c:2187"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DeleteAclsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24421,
+        "origin": "rdkafka_admin.c:6746"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DeleteGroupsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23019,
+        "origin": "rdkafka_admin.c:4802"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DeleteTopicsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21490,
+        "origin": "rdkafka_admin.c:2397"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeAclsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23621,
+        "origin": "rdkafka_admin.c:5675"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeClusterResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26408,
+        "origin": "rdkafka_admin.c:9548"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeConfigsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22390,
+        "origin": "rdkafka_admin.c:3875"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeConsumerGroupsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 25633,
+        "origin": "rdkafka_admin.c:8472"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeTopicsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26218,
+        "origin": "rdkafka_admin.c:9286"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23817,
+        "origin": "rdkafka_admin.c:5926"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_ElectLeadersResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26581,
+        "origin": "rdkafka_admin.c:9803"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_IncrementalAlterConfigsResponse_parse",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22158,
+        "origin": "rdkafka_admin.c:3496"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_admin_common_worker_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20499,
+        "origin": "rdkafka_admin.c:735"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_admin_fanout_worker",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20860,
+        "origin": "rdkafka_admin.c:1447"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "rd_kafka_admin_handle_response",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20560,
+        "origin": "rdkafka_admin.c:921"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_admin.c",
+      "ut_ListConsumerGroups_response_merge",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26701,
+        "origin": "rdkafka_admin.c:10003"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26705,
+        "origin": "rdkafka_admin.c:10008"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26710,
+        "origin": "rdkafka_admin.c:10015"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26721,
+        "origin": "rdkafka_admin.c:10033"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26725,
+        "origin": "rdkafka_admin.c:10038"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26730,
+        "origin": "rdkafka_admin.c:10045"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26742,
+        "origin": "rdkafka_admin.c:10065"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26746,
+        "origin": "rdkafka_admin.c:10070"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26750,
+        "origin": "rdkafka_admin.c:10075"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26755,
+        "origin": "rdkafka_admin.c:10082"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26765,
+        "origin": "rdkafka_admin.c:10100"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26770,
+        "origin": "rdkafka_admin.c:10106"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26774,
+        "origin": "rdkafka_admin.c:10111"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26779,
+        "origin": "rdkafka_admin.c:10118"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26789,
+        "origin": "rdkafka_admin.c:10136"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26793,
+        "origin": "rdkafka_admin.c:10141"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26797,
+        "origin": "rdkafka_admin.c:10146"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 26802,
+        "origin": "rdkafka_admin.c:10153"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_background.c",
+      "rd_kafka_background_queue_serve",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20149,
+        "origin": "rdkafka_background.c:99"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_cgrp.c",
+      "rd_kafka_cgrp_metadata_refresh",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21766,
+        "origin": "rdkafka_cgrp.c:2682"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_cgrp.c",
+      "rd_kafka_cgrp_op_handle_OffsetCommit",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22841,
+        "origin": "rdkafka_cgrp.c:4548"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22851,
+        "origin": "rdkafka_cgrp.c:4568"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_cgrp.c",
+      "rd_kafka_cgrp_op_serve",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24345,
+        "origin": "rdkafka_cgrp.c:7382"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24469,
+        "origin": "rdkafka_cgrp.c:7563"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_cgrp.c",
+      "rd_kafka_cgrp_terminate0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23742,
+        "origin": "rdkafka_cgrp.c:6359"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_cgrp.c",
+      "rd_kafka_consumer_group_metadata",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 24590,
+        "origin": "rdkafka_cgrp.c:7784"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_event.c",
+      "rd_kafka_event_destroy",
+      0
+    ],
+    "before": "Safe",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `rkev`",
+        "line": 19714,
+        "origin": "rdkafka_event.c:112"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19714,
+        "origin": "rdkafka_event.c:112"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_build_response_rko",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20908,
+        "origin": "rdkafka_fetcher.c:1099"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_fetch_reply_handle",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21264,
+        "origin": "rdkafka_fetcher.c:1782"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21267,
+        "origin": "rdkafka_fetcher.c:1786"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_fetch_reply_handle_partition",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21140,
+        "origin": "rdkafka_fetcher.c:1568"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20807,
+        "origin": "rdkafka_fetcher.c:923"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20827,
+        "origin": "rdkafka_fetcher.c:950"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20259,
+        "origin": "rdkafka_metadata.c:166"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20268,
+        "origin": "rdkafka_metadata.c:180"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "rd_kafka_mock_cluster_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 23390,
+        "origin": "rdkafka_mock.c:3285"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "rd_kafka_mock_topic_set_error",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22828,
+        "origin": "rdkafka_mock.c:2493"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_msg.c",
+      "rd_kafka_message_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20564,
+        "origin": "rdkafka_msg.c:1290"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_offset.c",
+      "rd_kafka_commit_queue",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20410,
+        "origin": "rdkafka_offset.c:473"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20069,
+        "origin": "rdkafka_op.c:589"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_err_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20233,
+        "origin": "rdkafka_op.c:908"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_error_destroy",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20241,
+        "origin": "rdkafka_op.c:921"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_error_reply",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20195,
+        "origin": "rdkafka_op.c:832"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_handle",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20359,
+        "origin": "rdkafka_op.c:1117"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_reply",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20184,
+        "origin": "rdkafka_op.c:807"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_req",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_req0`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20220,
+        "origin": "rdkafka_op.c:881"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_req0`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)",
+        "line": 20220,
+        "origin": "rdkafka_op.c:881"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_op.c",
+      "rd_kafka_op_req2",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_req`: the callbacks stored in `rd_kafka_op_s.rko_serve` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20227,
+        "origin": "rdkafka_op.c:896"
+      }
+    ],
+    "removed": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_req`: callback `rd_kafka_toppar_op_serve` (from `rd_kafka_op_s.rko_serve`) has no contract in force (callback-uncontracted)",
+        "line": 20227,
+        "origin": "rdkafka_op.c:896"
+      }
+    ],
+    "dependency_change": false
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_topic_partition_list_query_leaders_async",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22462,
+        "origin": "rdkafka_partition.c:4214"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_op_filter",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19885,
+        "origin": "rdkafka_queue.c:365"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_purge_outdated_messages",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20089,
+        "origin": "rdkafka_queue.c:702"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20103,
+        "origin": "rdkafka_queue.c:718"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_fix_offsets",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20480,
+        "origin": "rdkafka_queue.c:1287"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_purge0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19800,
+        "origin": "rdkafka_queue.c:238"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_purge_toppar_version",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19834,
+        "origin": "rdkafka_queue.c:288"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_serve_rkmessages",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20152,
+        "origin": "rdkafka_queue.c:792"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20185,
+        "origin": "rdkafka_queue.c:846"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20196,
+        "origin": "rdkafka_queue.c:861"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_serve_share_rkmessages",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20267,
+        "origin": "rdkafka_queue.c:975"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_wait_result",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20434,
+        "origin": "rdkafka_queue.c:1208"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_request.c",
+      "rd_kafka_handle_Metadata",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 22066,
+        "origin": "rdkafka_request.c:2792"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_request.c",
+      "rd_kafka_op_handle_OffsetFetch",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21246,
+        "origin": "rdkafka_request.c:1427"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21270,
+        "origin": "rdkafka_request.c:1461"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_subscription.c",
+      "rd_kafka_assignment",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19762,
+        "origin": "rdkafka_subscription.c:333"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_subscription.c",
+      "rd_kafka_rebalance_protocol",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19741,
+        "origin": "rdkafka_subscription.c:303"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19745,
+        "origin": "rdkafka_subscription.c:309"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_subscription.c",
+      "rd_kafka_subscription",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19782,
+        "origin": "rdkafka_subscription.c:361"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_handle_AddOffsetsToTxn",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21150,
+        "origin": "rdkafka_txnmgr.c:1761"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21243,
+        "origin": "rdkafka_txnmgr.c:1923"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_handle_TxnOffsetCommit",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 21076,
+        "origin": "rdkafka_txnmgr.c:1634"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_req0",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20445,
+        "origin": "rdkafka_txnmgr.c:442"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_cumulative",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20288,
+        "origin": "rdunittest_fetcher.c:1137"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20289,
+        "origin": "rdunittest_fetcher.c:1138"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_empty",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20226,
+        "origin": "rdunittest_fetcher.c:1047"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_gaps",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20216,
+        "origin": "rdunittest_fetcher.c:1028"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_multi_entry",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20251,
+        "origin": "rdunittest_fetcher.c:1086"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_multi_partition",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20190,
+        "origin": "rdunittest_fetcher.c:991"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_ack_mapping_single_partition",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20158,
+        "origin": "rdunittest_fetcher.c:946"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_all_acquired",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_disjoint_ranges",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_empty_queue",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_no_ranges",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_partial_range",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_range_beyond_messages",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "unittest_filter_sparse_offsets",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_fetcher.c",
+      "ut_op_destroy_free",
+      0
+    ],
+    "before": "Safe",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unknown_alias",
+        "description": "unresolved resource identity `ptr`",
+        "line": 19644,
+        "origin": "rdunittest_fetcher.c:115"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19644,
+        "origin": "rdunittest_fetcher.c:115"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_all_error_types_with_valid",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20392,
+        "origin": "rdunittest_msgset_errors.c:1382"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20400,
+        "origin": "rdunittest_msgset_errors.c:1395"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20410,
+        "origin": "rdunittest_msgset_errors.c:1416"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20418,
+        "origin": "rdunittest_msgset_errors.c:1433"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20428,
+        "origin": "rdunittest_msgset_errors.c:1454"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20436,
+        "origin": "rdunittest_msgset_errors.c:1471"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_all_errors",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20307,
+        "origin": "rdunittest_msgset_errors.c:1236"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20314,
+        "origin": "rdunittest_msgset_errors.c:1247"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20321,
+        "origin": "rdunittest_msgset_errors.c:1258"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_all_success",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20257,
+        "origin": "rdunittest_msgset_errors.c:1153"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_crc_error_share_consumer",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19861,
+        "origin": "rdunittest_msgset_errors.c:491"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_decompression_error_share_consumer",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19927,
+        "origin": "rdunittest_msgset_errors.c:602"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_mixed_crc_success_decomp",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20112,
+        "origin": "rdunittest_msgset_errors.c:914"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20119,
+        "origin": "rdunittest_msgset_errors.c:925"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20127,
+        "origin": "rdunittest_msgset_errors.c:939"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_mixed_magic_success_crc_success",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20181,
+        "origin": "rdunittest_msgset_errors.c:1032"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20188,
+        "origin": "rdunittest_msgset_errors.c:1043"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20196,
+        "origin": "rdunittest_msgset_errors.c:1057"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20203,
+        "origin": "rdunittest_msgset_errors.c:1068"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_mixed_success_crc_success",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20038,
+        "origin": "rdunittest_msgset_errors.c:788"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20047,
+        "origin": "rdunittest_msgset_errors.c:807"
+      },
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 20054,
+        "origin": "rdunittest_msgset_errors.c:820"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  },
+  {
+    "key": [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_unsupported_magic_share_consumer",
+      0
+    ],
+    "before": "Unknown",
+    "after": "Unknown",
+    "added": [
+      {
+        "category": "unsupported",
+        "description": "call to `rd_kafka_op_destroy`: the callbacks stored in `rd_kafka_op_s.rko_op_cb` are not a closed set of functions (36 unit(s) of the run may name it but were not read (first: /home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S: its preprocessing failed: clang: error: no such file or directory: '/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/lib/luajit-cmake/lj_vm.S')) (callback-member-open)",
+        "line": 19985,
+        "origin": "rdunittest_msgset_errors.c:702"
+      }
+    ],
+    "removed": [],
+    "dependency_change": true
+  }
+]

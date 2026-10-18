@@ -436,6 +436,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-event-loop-cross-function-lifetime](fb-event-loop-cross-function-lifetime/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: census and design (records-only landing) |
 
+| [fb-event-loop-lifetime-s3](fb-event-loop-lifetime-s3/README.md) | FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 |
+
 | [fb-event-loop-retention](fb-event-loop-retention/README.md) | FB-EVENT-LOOP-RETENTION-AND-REGISTRATION |
 
 | [fb-loop-chain-blockers](fb-loop-chain-blockers/README.md) | FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: the access and identity blockers on the event-loop chains |

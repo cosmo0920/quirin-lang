@@ -1236,7 +1236,7 @@
     {
       "function": "flb_input_set_collector_time",
       "module": "fluent_bit/input_collector_registration.qv",
-      "contract_sha256": "ec8be39af77338827eeb5ce896fa4f53886904409bd223142b145544adc9d167",
+      "contract_sha256": "1d0099a4c0a4d818cebd8fdb4054894c910557d84afa86cfa1fc54306b855534",
       "identities": [
         {
           "reviewed_at": [

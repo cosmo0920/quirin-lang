@@ -18,3 +18,5 @@ import QCore.BodyClauseStanding
 #print axioms QCore.BodyClauseStanding.the_validated_only_rollup_is_a_subset
 #print axioms QCore.BodyClauseStanding.coverage_vectors_hold
 #print axioms QCore.BodyClauseStanding.clause_standing_vectors_hold
+
+#print axioms QCore.BodyClauseStanding.legacy_evidence_never_validates_a_lifetime_protocol

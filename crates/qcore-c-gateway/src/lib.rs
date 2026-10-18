@@ -91,6 +91,8 @@ pub mod member_path_check;
 /// bounded path reading behind it, through the unit's static helpers.
 pub mod member_path_reading;
 // Card OP-APP-RK-CALLBACKS-VIA-POLL-CB (rule 12n): the run's member facts.
+pub mod loop_lifetime_source;
+pub mod loop_lifetime_summary;
 pub mod member_run_facts;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure
 // decisions are here, the G hooks in `legacy_slot_move_borrow.rs`.

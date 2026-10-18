@@ -4223,6 +4223,37 @@ one of the two values (`outer-envelope-value`); no repeated envelope key
 written (`text_sha256`), and the pin (`quirin-audit pin --outer`) binds it to
 the loader's body.
 
+## G05h. Local condition and registered-lifetime clauses
+
+Card FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME S3, C04.21. These alternatives
+extend `resource_clause`; the resource vocabulary selector stays unconditional.
+
+```ebnf
+condition_binding = "quant", "#", IDENT, "=", "(", "#", IDENT, ".",
+                    member_path, "!=", "0", ")", ";" ;
+condition_block = "quant", ["not"], "#", IDENT, "in", "{",
+                  local_clause, {local_clause}, "}", ":", "[[", "local", "]]", ";" ;
+local_clause = "requires", local_prerequisite, ";" | registered_clause ;
+local_prerequisite = named_premise
+  | "resource_loop_owner", "(", IDENT, ",", ("read" | "mutate"), ")"
+  | "resource_thread_sync", "(", IDENT, [",", IDENT], ",",
+      ("cond_wait" | "cond_timedwait" | "cond_signal" | "cond_init" | "cond_destroy" | "join"), ")"
+  | "resource_lifecycle", "(", IDENT, ",", ("start" | "stop" | "destroy"), ")" ;
+registered_clause = "quant", "registered", "#", IDENT, ":", IDENT, ".",
+                    member_path, MAPS_TO, IDENT, ".", member_path, ";" ;
+```
+
+The binding root is a depth-one pointer formal of the host declaration; the
+source reader must prove the final member is a nonvolatile integer. Both
+registered paths must use the same record. Bindings are unique and used; one block per polarity is accepted. No implicit/free
+record binder escapes a registered clause. The parser rejects nested blocks,
+empty blocks, other attributes and unsupported inner clauses; each local
+clause is limited to 64 KiB and each member path to 64 segments. Existing
+prerequisite loaders validate their arguments rather than accepting opaque
+text. Current source discharge for active prerequisites is the exact guarded
+named-entry-premise subset; other active obligations remain Unknown. These
+local contexts are distinct from G05g's runtime/static outer scenarios.
+
 ## G06. Observation predicate grammar
 
 ```ebnf

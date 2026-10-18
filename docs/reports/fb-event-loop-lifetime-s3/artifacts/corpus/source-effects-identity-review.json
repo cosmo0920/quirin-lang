@@ -1,0 +1,263 @@
+{
+  "meaning": "Comparison-only checkout/derived resource_contracts obligation-ID normalization, all raw values retained. All remaining scalar changes are SHA256 identity cascades. Unchanged summary/task field structure and every other scalar independently compared; raw task/evidence/witness/bounds records remain archived.",
+  "derived_obligation_id_values": [
+    {
+      "raw": "resource_contracts:de2ad25808ca05526430e2fc",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:de2ad25808ca05526430e2fc",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:de2ad25808ca05526430e2fc",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:01425a9a225908d88bc4d4a4",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:01425a9a225908d88bc4d4a4",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:01425a9a225908d88bc4d4a4",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:f90716bd17411f9483aa3880",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:f90716bd17411f9483aa3880",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:f90716bd17411f9483aa3880",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:851a6900c80afca955b9e91a",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:851a6900c80afca955b9e91a",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:851a6900c80afca955b9e91a",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:cafc767f984cf0e83aa69664",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:cafc767f984cf0e83aa69664",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:cafc767f984cf0e83aa69664",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:879b20013b91c6c9dbda98ef",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:879b20013b91c6c9dbda98ef",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    },
+    {
+      "raw": "resource_contracts:879b20013b91c6c9dbda98ef",
+      "canonical": "resource_contracts:$OBLIGATION_ID"
+    }
+  ],
+  "changed_leaves": [
+    {
+      "path": [
+        "results",
+        16,
+        "evidence",
+        "unit",
+        "build_digest"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        16,
+        "import_identity",
+        "configuration_digest"
+      ],
+      "before": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+      "after": "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033"
+    },
+    {
+      "path": [
+        "results",
+        16,
+        "import_identity",
+        "helpers",
+        "cio_error_reset",
+        "configuration_digest"
+      ],
+      "before": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+      "after": "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033"
+    },
+    {
+      "path": [
+        "results",
+        16,
+        "task",
+        "contract_sources",
+        "qcore:boolean-field-import:v1"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        16,
+        "task",
+        "unit",
+        "build_digest"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        16,
+        "witness",
+        "task_digest"
+      ],
+      "before": "bc89329c94cac691dcc1187d93144d0655b0667228f0ba63935d11d4e3a65da4",
+      "after": "5e8aeb91bf9a42d774dd45afbf197c33cfe4a68bc1181b01e694926621889e94"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "evidence",
+        "unit",
+        "build_digest"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "import_identity",
+        "configuration_digest"
+      ],
+      "before": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+      "after": "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "import_identity",
+        "helpers",
+        "cio_error_reset",
+        "configuration_digest"
+      ],
+      "before": "7c26050f56684009f0645d681ef06c695286e5dda2d5327bef1e32d83c1c3dc1",
+      "after": "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "task",
+        "contract_sources",
+        "qcore:boolean-field-import:v1"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "task",
+        "unit",
+        "build_digest"
+      ],
+      "before": "5f5330dedadfbb666ed4795c6bab814f6b0be2e2ae6cb151ee25997d505c7ec6",
+      "after": "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335"
+    },
+    {
+      "path": [
+        "results",
+        24,
+        "witness",
+        "task_digest"
+      ],
+      "before": "8421c4ac9f5c70047c7abf50c420822e42d410fcca32319e80d703c2caecc869",
+      "after": "56222f09590a215402229f99977250d5277f9dcf6b03b9d7e59f6bbf1076e6e8"
+    },
+    {
+      "path": [
+        "results",
+        63,
+        "evidence",
+        "unit",
+        "build_digest"
+      ],
+      "before": "98caad76c2c16df793b3253600d2f45f0fa9d4140c487f3a9b870aac467448f0",
+      "after": "a73e0b79fd8a54bd296bf12248515cad319eabea8966b6c73e962b555920daed"
+    },
+    {
+      "path": [
+        "results",
+        63,
+        "import_identity",
+        "configuration_digest"
+      ],
+      "before": "23658245f2765d294023f5d2cfe2aa2a96ab708272152c7aa4ac577b3f8ea12a",
+      "after": "b742153f49125d33916f57d0fc29f6dee4185c6806249adc8af6f3a05130b8e0"
+    },
+    {
+      "path": [
+        "results",
+        63,
+        "task",
+        "contract_sources",
+        "qcore:boolean-field-import:v1"
+      ],
+      "before": "98caad76c2c16df793b3253600d2f45f0fa9d4140c487f3a9b870aac467448f0",
+      "after": "a73e0b79fd8a54bd296bf12248515cad319eabea8966b6c73e962b555920daed"
+    },
+    {
+      "path": [
+        "results",
+        63,
+        "task",
+        "unit",
+        "build_digest"
+      ],
+      "before": "98caad76c2c16df793b3253600d2f45f0fa9d4140c487f3a9b870aac467448f0",
+      "after": "a73e0b79fd8a54bd296bf12248515cad319eabea8966b6c73e962b555920daed"
+    },
+    {
+      "path": [
+        "results",
+        63,
+        "witness",
+        "task_digest"
+      ],
+      "before": "ae3f21759964e721f715522a3504a7d3d735dac9e93d968079caf9f61aa448da",
+      "after": "8dec8aecd6fb4c598a3e861d2010d009bd032c3cbad807f8f43bc01d18ace4e9"
+    }
+  ],
+  "non_identity_scalar_changes": []
+}

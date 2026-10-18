@@ -57,14 +57,14 @@ inductive ClauseKind where
   | parameter | result | borrowedResult | referenceResult | container | countedUser
   | retention | guard | holderReset | slotMove | outDerived | reference | exitClass
   | premise | variadicTail | noReturn | callback | callbackChecked | arm | memberState
-  | unreadable
+  | unreadable | lifetimeProtocol
   deriving DecidableEq, Repr
 
 def allKinds : List ClauseKind :=
   [.parameter, .result, .borrowedResult, .referenceResult, .container, .countedUser,
    .retention, .guard, .holderReset, .slotMove, .outDerived, .reference, .exitClass,
    .premise, .variadicTail, .noReturn, .callback, .callbackChecked, .arm, .memberState,
-   .unreadable]
+   .unreadable, .lifetimeProtocol]
 
 /-- The clauses of the custody projection. -/
 def ClauseKind.custody : ClauseKind → Bool
@@ -129,6 +129,10 @@ theorem a_structural_check_never_covers_a_formal (e : Evidence)
   cases e <;> simp_all [Evidence.structural, covers]
 
 /-- No evidence covers these clauses. -/
+theorem legacy_evidence_never_validates_a_lifetime_protocol (e : Evidence) :
+    covers e .lifetimeProtocol = false := by
+  cases e <;> rfl
+
 theorem nothing_covers_these_clauses (e : Evidence) :
     covers e .container = false ∧ covers e .countedUser = false ∧
       covers e .retention = false ∧ covers e .holderReset = false ∧
@@ -354,6 +358,7 @@ def ClauseKind.spelling : ClauseKind → String
   | .arm => "arm"
   | .memberState => "memberState"
   | .unreadable => "unreadable"
+  | .lifetimeProtocol => "lifetimeProtocol"
 
 def Evidence.spelling : Evidence → String
   | .w4 => "W4"

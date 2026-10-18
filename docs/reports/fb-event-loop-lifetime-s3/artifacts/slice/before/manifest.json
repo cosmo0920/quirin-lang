@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/resource-diagnostics.json",
+    "sha256": "ff6c81e87dda0d66e04259d828f69fce96a96a40d7be3bc62991fde609ad9242",
+    "bytes": 1693375
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/resource-diagnostics.contracts.json",
+    "sha256": "730cced15373cbe33f2c22d5c510cdbfff85eb385f732c44a8110c531d0c9b64",
+    "bytes": 1559436
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/slice-null.jsonl",
+    "bytes": 1460997,
+    "sha256": "e7fdef95bfa6873da40cddecece1370cb77c155cfb8648374543e066bab349e5"
+  },
+  "slice-null.summary.json": {
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "4f765339b3ef087cc3d47ec9231eb7960393d2c1c5dd927c22d3a09f489faa49"
+  },
+  "slice-outer.json": {
+    "source": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/tip-slice-1/slice-outer.json",
+    "bytes": 90412,
+    "sha256": "9dd863d27f02834ff6a6037f56ae6133dc48562752e9e809ad0f293a97591f11"
+  }
+}

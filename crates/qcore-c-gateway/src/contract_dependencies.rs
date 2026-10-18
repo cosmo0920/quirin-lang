@@ -53,6 +53,10 @@ use crate::legacy_c::{LegacyCfg, LegacyInstruction, LegacyProgramSummary};
 /// [`UnitRecord::body_outcomes`].
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct UnitRecord {
+    /// S3 source member/stability facts, per analyzed function. Evidence only;
+    /// runtime projection treats each as a closed-world fact needing coverage.
+    pub lifetime_members: BTreeMap<String, BTreeSet<String>>,
+    pub lifetime_prerequisites: BTreeMap<String, BTreeSet<String>>,
     /// Per function, every name its work looked up.
     pub functions: BTreeMap<String, Consulted>,
     /// Per function, every identifier its body spells in a stream a CFG
@@ -85,6 +89,27 @@ pub struct UnitRecord {
 
 /// Card **CG22-OP-CALLBACKS-AND-SERVED-QUEUES** (rule 12n): record the unit's
 /// function-pointer member facts (outside every hypothetical analysis).
+/// Record source facts a scoped lifetime call actually used.
+pub(crate) fn lifetime_evidence(function: &str, members: BTreeSet<String>) {
+    with_evidence(|record| {
+        record
+            .lifetime_members
+            .entry(function.to_owned())
+            .or_default()
+            .extend(members)
+    });
+}
+
+pub(crate) fn lifetime_entry_evidence(function: &str, prerequisites: BTreeSet<String>) {
+    with_evidence(|record| {
+        record
+            .lifetime_prerequisites
+            .entry(function.to_owned())
+            .or_default()
+            .extend(prerequisites)
+    });
+}
+
 pub fn member_evidence(facts: crate::callback_member_closure::MemberFacts) {
     with_evidence(|record| record.callback_members = Some(facts));
 }
@@ -146,6 +171,11 @@ impl UnitRecord {
 /// summaries whose own dependencies were added.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct RowDependencies {
+    /// S3 member/stability facts, including inferred summaries' dependencies.
+    pub lifetime_members: BTreeSet<String>,
+    pub lifetime_prerequisites: BTreeSet<String>,
+    pub lifetime_effects: BTreeSet<crate::loop_lifetime_summary::ForwardedLifetime>,
+    pub lifetime_roots: BTreeSet<String>,
     /// Declarations in force at the consultation.
     pub declarations: BTreeSet<String>,
     /// Declarations held (awaiting review, or a pin mismatch).
@@ -414,6 +444,8 @@ fn in_force(environment: &ResourceContracts, name: &str) -> bool {
     environment.functions().contains_key(name)
         || environment.relational().contains_key(name)
         || environment.retaining().contains_key(name)
+        || environment.guarded_retaining().contains_key(name)
+        || environment.inferred_lifetimes().contains_key(name)
 }
 
 /// Whether `environment` holds `name` for a human act.
@@ -592,7 +624,27 @@ pub fn row_dependencies(
                         .null_premises
                         .extend(consulted.null_premises.iter().cloned());
                 }
+                if let Some(members) = record.lifetime_members.get(&current) {
+                    dependencies
+                        .lifetime_members
+                        .extend(members.iter().cloned());
+                }
+                if let Some(prerequisites) = record.lifetime_prerequisites.get(&current) {
+                    dependencies
+                        .lifetime_prerequisites
+                        .extend(prerequisites.iter().cloned());
+                }
                 if let Some(row) = summary.functions.get(&current) {
+                    dependencies
+                        .lifetime_effects
+                        .extend(row.lifetime_effects.iter().cloned());
+                    for effect in &row.lifetime_effects {
+                        if let crate::loop_lifetime_summary::Root::Formal { scope, .. } =
+                            &effect.registration.object.root
+                        {
+                            dependencies.lifetime_roots.insert(scope.clone());
+                        }
+                    }
                     dependencies.null_premises.extend(
                         row.null_premises
                             .iter()
@@ -666,6 +718,7 @@ pub(crate) fn withdrawn_between(
         .keys()
         .chain(before.relational().keys())
         .chain(before.retaining().keys())
+        .chain(before.guarded_retaining().keys())
         .filter(|name| !in_force(after, name))
         .cloned()
         .collect::<BTreeSet<_>>();

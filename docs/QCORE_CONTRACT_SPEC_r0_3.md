@@ -894,7 +894,7 @@ contract {
 
 **Loading.** Total-or-reject (C04). `NAME` is a lowercase identifier (`[a-z][a-z0-9_]*`) and `STATEMENT` one plain string literal, not blank, with no escape and no control character; a second premise of the same name on one declaration, any other argument shape, and the clause under `ensures` each reject the **whole module**. A declaration MAY carry several premises of distinct names. The grammar is [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1).
 
-**Meaning.** The premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. It is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
+**Meaning.** An ordinary unconditional premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. The only S3 exceptions are the scoped prerequisite atoms and the exact recognized entry-snapshot premise specified by C04.21; those are semantic obligations with explicitly attributed assumptions, not unconditional facts inferred from English prose. They do not change any custody mode. Premise metadata is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
 
 **Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
 
@@ -1669,6 +1669,75 @@ an in-force covered fact is Pending, never Safe. `QCore.OuterListCandidates`
 models the distinct identities, pin gate, lifecycle obligation and non-promotion;
 Rust/model correspondence and source review remain rule-28 premises.
 
+
+### C04.21. Local conditional prerequisites and registered lifetimes
+
+S3 (`FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`) accepts an explicit read-only
+binding to a host pointer formal's integer member path and scoped blocks:
+
+```qcore
+quant #threaded = (#ins.is_threaded != 0);
+quant #threaded in { requires resource_premise(worker_protocol, "The worker protocol holds"); }: [[local]];
+quant not #threaded in { requires resource_loop_owner(ins, mutate); }: [[local]];
+quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;
+```
+
+A positive block requires `C ⇒ R`; its complement requires `¬C ⇒ R`.
+Unknown leaves both alternatives feasible. At a caller/use boundary an inner
+`requires` remains an obligation, never a fact minted by the annotation.
+A body may use its own declared conditional entry prerequisite after matching
+the predicate, substituted object/member path, polarity, and entry-to-use
+snapshot. The current source consumer discharges named entry premises only;
+active owner/thread/lifecycle obligations without their own proof remain
+Unknown. Entry reuse additionally requires the explicit unconditional
+named premise `resource_premise(s3_condition_snapshot_stable, "Every member read by this function's condition bindings preserves its entry value until each guarded use.")`.
+Its absence is not replaced by an absence-of-writes inference. The premise
+and guarded obligations remain qualified dependencies and runtime outer facts;
+existing loaded-code envelopes do not automatically cover them. Mutation, intervening calls, ambiguous object identity and unsupported
+control prevent snapshot correspondence. Local branch facts leave no global
+premise; exported contracts preserve their conditional caller obligations.
+
+A scoped named prerequisite is an atomic proposition, not an interpretation
+of its English statement. Its identity is the retained contract-evidence bundle,
+name and exact statement together with the fully substituted condition object,
+member chain and polarity. The two declarations must belong to the same checked
+environment; equal name/text in unrelated evidence does not supply a fact.
+The alias spelling itself is declaration-local and is not predicate identity.
+Matching a body's declared conditional entry atom supplies only the implication
+at that same object and condition, with entry-to-use stability separately
+required. Its truth is assumed under that body's explicit requires; every
+external caller still owes the implication. The exact reserved snapshot name
+and statement above assert stability of that function's own condition-bound
+member reads until use; they assert no holder equality, thread join or
+unconditional runtime condition. Every such assumption remains in source/pin,
+scoped dependency and loaded-code evidence.
+
+The first surface permits only existing named, loop-owner, thread-sync and
+lifecycle prerequisites, and registered-lifetime clauses inside a block.
+Nested local blocks, other attributes, conditional custody/ensures/review
+clauses and a conditional vocabulary selector refuse. `resource_contract_v1`
+remains unconditional. Unaware consumers withhold the entire condition-bearing
+contract through an exclusive guarded table, including raw legacy effect
+prepasses. Guarded mixtures with existing callback, reference, handoff and
+other structured effects currently refuse use until their body/effect
+consumers can preserve the guard. An unconditional registered-type assertion does not change the
+ordinary custody/callback clauses; clause-grained readers may retain those
+clauses without using the separate lifetime assertion. Every use of that
+assertion for forwarding records its named assumption and effects.
+The source-language checker still refuses unchecked nonempty contracts (Q021).
+
+A registered clause names one record's interior and holder paths. Its binder
+is local to the clause; it cannot supply a free object to an outer condition.
+Run-wide source checking distinguishes validated, withdrawn, and explicitly
+unresolved declarations. Custody/W4 agreement does not validate this clause.
+A conditional type protocol requires a checked relation between each record
+and the hosting instance; a host formal's flag never governs every record of
+a type. Holder equalities are derived from checked stores and named stability
+premises, not declared by the condition. May registrations/releases remain in
+summaries; a release is checked before later callee postconditions, must
+endings require all feasible exits, poison survives unmatched removals, and
+only the record's own holder ending ends a poisoned registration. Unread
+source, missing homes/correlations and unproved endings withhold admission.
 
 ## C05. Manifests and immutable assumptions
 

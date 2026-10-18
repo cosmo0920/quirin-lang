@@ -603,14 +603,30 @@ pub(crate) fn dialect_of(entry: &CompileEntry) -> qcore_c_gateway::legacy_c::CCo
 /// compile command is one the gateway reads (the analysis's input), and
 /// otherwise from the text its recorded command preprocesses (`-E -P`).
 pub fn read_facts(entry: &CompileEntry) -> Result<MemberFacts, String> {
+    read_facts_in(entry, None)
+}
+
+fn read_facts_in(
+    entry: &CompileEntry,
+    lifetime: Option<&ResourceContracts>,
+) -> Result<MemberFacts, String> {
+    let read = |source: &str, unit: &C11TranslationUnit<'_>| -> Result<MemberFacts, String> {
+        let mut facts = read_unit(source, unit)?;
+        if let Some(contracts) = lifetime {
+            facts.lifetime_source = Some(qcore_c_gateway::loop_lifetime_source::read_unit(
+                source, unit, contracts,
+            )?);
+        }
+        Ok(facts)
+    };
     let source = fs::read_to_string(&entry.file).map_err(|error| error.to_string())?;
     if let Ok(unit) = c_unit(entry, &source)
         && let Ok(preprocessed) = qcore_c_gateway::legacy_c::preprocess_unrestricted_c11(&unit)
     {
-        return read_unit(&preprocessed, &unit);
+        return read(&preprocessed, &unit);
     }
     let preprocessed = preprocess_own(entry, &["-E", "-P"])?;
-    read_unit(
+    read(
         &preprocessed,
         &C11TranslationUnit {
             source: &preprocessed,
@@ -640,7 +656,33 @@ pub fn run(
         .into_values()
         .flatten()
         .collect::<BTreeSet<_>>();
-    if members.is_empty() {
+    let lifetime = contracts
+        .lifetime_declarations()
+        .filter_map(|(_, d)| d.lifetime.as_ref())
+        .collect::<Vec<_>>();
+    let mut lifetime_tokens = BTreeSet::new();
+    for declared in &lifetime {
+        for p in declared
+            .registered
+            .iter()
+            .chain(declared.blocks.iter().flat_map(|b| {
+                b.clauses.iter().filter_map(|c| {
+                    if let qcore_schemas::loop_lifetime::LocalClause::Registered(p) = c {
+                        Some(p)
+                    } else {
+                        None
+                    }
+                })
+            }))
+        {
+            lifetime_tokens.insert(p.record.clone());
+            lifetime_tokens.extend(p.interior.iter().chain(&p.holder).cloned());
+        }
+        for b in &declared.bindings {
+            lifetime_tokens.extend(b.members.iter().cloned());
+        }
+    }
+    if members.is_empty() && lifetime.is_empty() {
         return None;
     }
     let declared = crate::callback_member_fold::declared_stores(contracts);
@@ -731,7 +773,7 @@ pub fn run(
         let mut units = read.values().cloned().collect::<Vec<_>>();
         units.push(declarations.clone());
         let views = units.iter().collect::<Vec<_>>();
-        tokens = BTreeSet::new();
+        tokens = lifetime_tokens.clone();
         for member in &members {
             tokens.extend(closure_tokens(&views, member));
         }
@@ -808,7 +850,12 @@ pub fn run(
             selected,
             jobs,
             None,
-            |index| (index, read_facts(&entries[index])),
+            |index| {
+                (
+                    index,
+                    read_facts_in(&entries[index], (!lifetime.is_empty()).then_some(contracts)),
+                )
+            },
             |result| {
                 results.push(result);
                 Ok::<(), ()>(())
@@ -881,6 +928,13 @@ pub fn run(
             "dropped": dropped,
         },
     });
+    let mut section = section;
+    if !lifetime.is_empty() {
+        section["lifetime_protocols"] = serde_json::to_value(
+            qcore_c_gateway::loop_lifetime_summary::run_evidence(&facts, contracts),
+        )
+        .expect("S3 lifetime evidence contains only JSON-compatible fields");
+    }
     Some(Prepass { facts, section })
 }
 

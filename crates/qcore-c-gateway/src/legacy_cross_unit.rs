@@ -110,7 +110,8 @@ pub fn export_homes(
     let mut exports = Vec::new();
     for record in result.summaries {
         let name = &record.function;
-        if !requested.contains(name)
+        if !record.lifetime_effects.is_empty()
+            || !requested.contains(name)
             || !names.contains(name)
             || callee_scope::has_internal_linkage(&tokens, name)
             || linkage_sensitive_declaration(&tokens, name)
@@ -307,6 +308,12 @@ pub(super) fn check_imports(
                 home.function
             ));
         };
+        if !record.lifetime_effects.is_empty() || !row.lifetime_effects.is_empty() {
+            return Err(format!(
+                "cross-unit `{}` has lifetime effects without retained import support",
+                home.function
+            ));
+        }
         if validated
             .insert(home.function.clone(), record.contract.clone())
             .is_some()

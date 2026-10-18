@@ -1,0 +1,672 @@
+{
+  "meaning": "Frozen schema 18 semantic checkpoint, not the final publishable compatibility state. Both S3 and user-directed RK outer scope correction are composed. Final cumulative schema 19 gate/packages/audits remain assigned to detach before push.",
+  "implementation": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "invocation_head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+  "integration_base": "e8b9ff07d",
+  "baseline_implementation": "913a72a916242165ed0dc586fd1affdb3093fd65",
+  "binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+  "baseline_binary_sha256": "2dc2cef4e0b39e1ee48061d9c17cfc4261c71e904820d0ec37f36ed6683d8431",
+  "routes": {
+    "corpus": {
+      "invocation": {
+        "head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+        "binary": "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+        "command": [
+          "/usr/bin/python3",
+          "/tmp/qcore-fb-lifetime-s3/scripts/run_pinned_audit.py",
+          "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus",
+          "66910c10",
+          "--inputs-root",
+          "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19",
+          "--jobs",
+          "4"
+        ],
+        "jobs": 4,
+        "source_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "link_map": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+        "environment": {
+          "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+          "QCORE_CROSS_UNIT_LINK_MAP": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+          "QCORE_NULL_PROPERTY": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus-null.jsonl",
+          "QCORE_OUTER_PROJECTION": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus-outer.json",
+          "QCORE_SOURCE_CONTRACTS": "unset",
+          "QCORE_RETURN_CENSUS": "unset"
+        },
+        "started": "2026-10-18T11:57:20.332469+00:00",
+        "exit": 0,
+        "ended": "2026-10-18T12:48:47.268837+00:00"
+      },
+      "static_custody_before": {
+        "Unknown": 3862,
+        "Safe": 963,
+        "Unsafe": 9
+      },
+      "static_custody_after": {
+        "Unknown": 3864,
+        "Safe": 961,
+        "Unsafe": 9
+      },
+      "strict_row_comparison": {
+        "selected_rows": 4834,
+        "changed_full_rows": 96,
+        "changed_status_or_full_diagnostics": 89,
+        "raw_full_row_record": "full-row-differences.json.gz"
+      },
+      "null_rows": 4921,
+      "null_property_dicts_identical": true,
+      "runtime_scenarios": {
+        "all": {
+          "before": {
+            "custody": {
+              "Pending": 32,
+              "Safe": 931,
+              "Unknown": 3862,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 163,
+              "Safe": 2386,
+              "Unknown": 2354,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 33,
+              "Safe": 808,
+              "Unknown": 4053,
+              "Unsafe": 27
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 30,
+              "Safe": 931,
+              "Unknown": 3864,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 162,
+              "Safe": 2386,
+              "Unknown": 2355,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 30,
+              "Safe": 808,
+              "Unknown": 4056,
+              "Unsafe": 27
+            }
+          }
+        },
+        "flb_external_plugin": {
+          "before": {
+            "custody": {
+              "Pending": 32,
+              "Safe": 931,
+              "Unknown": 3862,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 163,
+              "Safe": 2386,
+              "Unknown": 2354,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 33,
+              "Safe": 808,
+              "Unknown": 4053,
+              "Unsafe": 27
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 30,
+              "Safe": 931,
+              "Unknown": 3864,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 163,
+              "Safe": 2386,
+              "Unknown": 2354,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 31,
+              "Safe": 808,
+              "Unknown": 4055,
+              "Unsafe": 27
+            }
+          }
+        },
+        "rk_plugin_library": {
+          "before": {
+            "custody": {
+              "Pending": 32,
+              "Safe": 931,
+              "Unknown": 3862,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 163,
+              "Safe": 2386,
+              "Unknown": 2354,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 33,
+              "Safe": 808,
+              "Unknown": 4053,
+              "Unsafe": 27
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 30,
+              "Safe": 931,
+              "Unknown": 3864,
+              "Unsafe": 9
+            },
+            "null": {
+              "Pending": 162,
+              "Safe": 2386,
+              "Unknown": 2355,
+              "Unsafe": 18
+            },
+            "combined": {
+              "Pending": 30,
+              "Safe": 808,
+              "Unknown": 4056,
+              "Unsafe": 27
+            }
+          }
+        }
+      },
+      "outer_inventory": {
+        "contracts": [
+          {
+            "name": "flb_external_plugin",
+            "identity": "flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9",
+            "in_force": true
+          },
+          {
+            "name": "rk_plugin_library",
+            "identity": "rk_plugin_library@0c309c2cb0ca67354f3276bf1ed1a8de797d5b64630a5f3f1e542c7371b43575",
+            "in_force": true
+          }
+        ],
+        "loaders": [
+          {
+            "loader": "flb_plugin_load",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "flb_plugin_proxy_create",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "rd_kafka_plugin_new",
+            "contract": "rk_plugin_library",
+            "pin_hold": null
+          }
+        ]
+      }
+    },
+    "system": {
+      "invocation": {
+        "head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+        "binary": "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+        "command": [
+          "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+          "--profile-directory",
+          "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit/system-selection.json",
+          "--jobs",
+          "4",
+          "--report",
+          "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/resource-diagnostics.json"
+        ],
+        "jobs": 4,
+        "source_head": "046accf6aded7906f66a1baf0202da349e521736",
+        "link_map": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+        "environment": {
+          "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+          "QCORE_CROSS_UNIT_LINK_MAP": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+          "QCORE_NULL_PROPERTY": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/system-null.jsonl",
+          "QCORE_OUTER_PROJECTION": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/system/system-outer.json",
+          "QCORE_SOURCE_CONTRACTS": "unset",
+          "QCORE_RETURN_CENSUS": "unset"
+        },
+        "started": "2026-10-18T12:48:47.336150+00:00",
+        "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-production/compile_commands.json",
+        "compile_database_sha256": "2475e6374b14152538463f35a3457ffa98fbe30b2639d5df916ef9a216cb6876",
+        "selection": "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit/system-selection.json",
+        "selection_sha256": "d7e8ce764c8c45c8df11d33f3568a7a653c3281985028156229c43ab86cccdde",
+        "exit": 0,
+        "ended": "2026-10-18T12:55:30.764421+00:00"
+      },
+      "static_custody_before": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "static_custody_after": {
+        "Unknown": 345,
+        "Safe": 99,
+        "Unsafe": 4
+      },
+      "strict_row_comparison": {
+        "selected_rows": 448,
+        "changed_full_rows": 4,
+        "changed_status_or_full_diagnostics": 0,
+        "raw_full_row_record": "full-row-differences.json.gz"
+      },
+      "null_rows": 454,
+      "null_property_dicts_identical": true,
+      "runtime_scenarios": {
+        "all": {
+          "before": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 2,
+              "Safe": 209,
+              "Unknown": 243,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 63,
+              "Unknown": 385,
+              "Unsafe": 4
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 0,
+              "Safe": 209,
+              "Unknown": 245,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 0,
+              "Safe": 63,
+              "Unknown": 387,
+              "Unsafe": 4
+            }
+          }
+        },
+        "flb_external_plugin": {
+          "before": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 2,
+              "Safe": 209,
+              "Unknown": 243,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 63,
+              "Unknown": 385,
+              "Unsafe": 4
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 2,
+              "Safe": 209,
+              "Unknown": 243,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 63,
+              "Unknown": 385,
+              "Unsafe": 4
+            }
+          }
+        },
+        "rk_plugin_library": {
+          "before": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 2,
+              "Safe": 209,
+              "Unknown": 243,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 63,
+              "Unknown": 385,
+              "Unsafe": 4
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 0,
+              "Safe": 99,
+              "Unknown": 345,
+              "Unsafe": 4
+            },
+            "null": {
+              "Pending": 0,
+              "Safe": 209,
+              "Unknown": 245,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 0,
+              "Safe": 63,
+              "Unknown": 387,
+              "Unsafe": 4
+            }
+          }
+        }
+      },
+      "outer_inventory": {
+        "contracts": [
+          {
+            "name": "flb_external_plugin",
+            "identity": "flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9",
+            "in_force": true
+          },
+          {
+            "name": "rk_plugin_library",
+            "identity": "rk_plugin_library@0c309c2cb0ca67354f3276bf1ed1a8de797d5b64630a5f3f1e542c7371b43575",
+            "in_force": true
+          }
+        ],
+        "loaders": [
+          {
+            "loader": "flb_plugin_load",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "flb_plugin_proxy_create",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "rd_kafka_plugin_new",
+            "contract": "rk_plugin_library",
+            "pin_hold": null
+          }
+        ]
+      }
+    },
+    "slice": {
+      "invocation": {
+        "head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+        "binary": "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+        "binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+        "command": [
+          "/tmp/qcore-fb-lifetime-s3/target/release/quirin-audit",
+          "current",
+          "--checkout",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source",
+          "--profile-directory",
+          "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit",
+          "--compile-database",
+          "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+          "--selection",
+          "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit/tail-pause-selection.json",
+          "--jobs",
+          "4",
+          "--report",
+          "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.json"
+        ],
+        "jobs": 4,
+        "source_head": "34155955e4962a56d94eb23c03a002880899a0d1",
+        "link_map": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+        "link_map_sha256": "3a0424cf3f447211ce8bf78679c396428ffed62ade14a75b99526ac9ddd1156d",
+        "environment": {
+          "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang",
+          "QCORE_CROSS_UNIT_LINK_MAP": "/tmp/qcore-fb-lifetime-s3/docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+          "QCORE_NULL_PROPERTY": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/slice-null.jsonl",
+          "QCORE_OUTER_PROJECTION": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/slice-outer.json",
+          "QCORE_SOURCE_CONTRACTS": "unset",
+          "QCORE_RETURN_CENSUS": "unset"
+        },
+        "started": "2026-10-18T12:55:30.831041+00:00",
+        "compile_database": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json",
+        "compile_database_sha256": "faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157",
+        "selection": "/tmp/qcore-fb-lifetime-s3/contract/profiles/fluent-bit/tail-pause-selection.json",
+        "selection_sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af",
+        "exit": 0,
+        "ended": "2026-10-18T13:01:09.587523+00:00"
+      },
+      "static_custody_before": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "static_custody_after": {
+        "Unknown": 346,
+        "Safe": 53,
+        "Pending": 4,
+        "Unsafe": 1
+      },
+      "strict_row_comparison": {
+        "selected_rows": 404,
+        "changed_full_rows": 8,
+        "changed_status_or_full_diagnostics": 0,
+        "raw_full_row_record": "full-row-differences.json.gz"
+      },
+      "null_rows": 406,
+      "null_property_dicts_identical": true,
+      "runtime_scenarios": {
+        "all": {
+          "before": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 16,
+              "Safe": 174,
+              "Unknown": 216,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 0,
+              "Safe": 174,
+              "Unknown": 232,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          }
+        },
+        "flb_external_plugin": {
+          "before": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 16,
+              "Safe": 174,
+              "Unknown": 216,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 16,
+              "Safe": 174,
+              "Unknown": 216,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          }
+        },
+        "rk_plugin_library": {
+          "before": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 16,
+              "Safe": 174,
+              "Unknown": 216,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          },
+          "after": {
+            "custody": {
+              "Pending": 4,
+              "Safe": 53,
+              "Unknown": 346,
+              "Unsafe": 1
+            },
+            "null": {
+              "Pending": 0,
+              "Safe": 174,
+              "Unknown": 232,
+              "Unsafe": 0
+            },
+            "combined": {
+              "Pending": 2,
+              "Safe": 31,
+              "Unknown": 372,
+              "Unsafe": 1
+            }
+          }
+        }
+      },
+      "outer_inventory": {
+        "contracts": [
+          {
+            "name": "flb_external_plugin",
+            "identity": "flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9",
+            "in_force": true
+          },
+          {
+            "name": "rk_plugin_library",
+            "identity": "rk_plugin_library@0c309c2cb0ca67354f3276bf1ed1a8de797d5b64630a5f3f1e542c7371b43575",
+            "in_force": true
+          }
+        ],
+        "loaders": [
+          {
+            "loader": "flb_plugin_load",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "flb_plugin_proxy_create",
+            "contract": "flb_external_plugin",
+            "pin_hold": null
+          },
+          {
+            "loader": "rd_kafka_plugin_new",
+            "contract": "rk_plugin_library",
+            "pin_hold": null
+          }
+        ]
+      }
+    }
+  },
+  "new_followups": [
+    "S3-RUNTIME-PROTOCOL-ENVELOPE-IDENTITY",
+    "LOCAL-CONDITION-STRUCTURED-EFFECT-CONSUMERS",
+    "S3-PREPASS-UNREAD-GRAPH-ISOLATION"
+  ],
+  "artifact_review": {
+    "corpus": "96 changed fullrows,89 diagnostic changes entirely librdkafka callback-closure exposure and 7 dependency-only rows; 2 Safe\u2192Unknown wrappers, zero lifetime promotions. All other changed family fields reviewed in retained field/prepass/cross-unit/source-effect records.",
+    "system": "448 custody rows and full diagnostics unchanged; 4 raw review-hold checkout-path changes. Other config/source/scope fields checked with explicit environment identity mapping.",
+    "slice": "404 custody rows and full diagnostics unchanged; 8 raw review-hold checkout-path changes. Two flb_input.c configurations add the protocol clause with an EMPTY body-evidence list, explicitly uncovered.",
+    "source_effects": "17 SHA256 scalar changes and derived resource_contracts obligation-ID changes across 3 results, all other normalized values/structure equal.",
+    "runtime": "RK-only and all null Pending\u2192Unknown 1/2/16 and combined 1/2/0; FLB-only zero. Additional corpus 2 custody + 2 combined moved records disappear because their static bodies becomeUnknown. Digest-only reason changes retained separately."
+  }
+}

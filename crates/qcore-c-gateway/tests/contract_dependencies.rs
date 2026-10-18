@@ -134,6 +134,7 @@ fn row(function: &str, applied: &[&str]) -> LegacyFunctionSummary {
         counted_users: Vec::new(),
         refutations: Vec::new(),
         null_premises: Vec::new(),
+        lifetime_effects: BTreeSet::new(),
     }
 }
 

@@ -1,0 +1,9 @@
+[
+  {
+    "command": "python3 docs/reports/fb-event-loop-lifetime-s3/scripts/review_configured.py slice",
+    "exit": 1,
+    "log": "private/fb-lifetime-s3/configured-review-slice-1.log",
+    "reason": "First postprocessing assertion expected unchanged body-evidence tables; actual new S3 protocol clause is present with empty evidence in 2 slice configurations. Explicitly reviewed and classified, not validated by W4.",
+    "corrected_command_same": "explicit uncovered-clause check added; configured-review-slice-2.log exits 0"
+  }
+]

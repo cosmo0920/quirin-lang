@@ -1,0 +1,391 @@
+{
+  "meaning": "Comparison-only digest normalization; complete raw projections and changes remain archived. A reason change is not silently treated as a verdict change.",
+  "route": "system",
+  "null_property_dicts_identical": true,
+  "scenarios": {
+    "all": {
+      "digest_only_changes": [],
+      "other_changed_moves": [
+        {
+          "key": [
+            "combined",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            0
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "combined",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            1
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "null",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            0
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "outer-uncovered: stable:flb_output_instance.p is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+            ],
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "null",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            1
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `flb_external_plugin@545119edfb1834a4b51d5a0003ca18acb648775b28c197b673ef6638662490f9` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)",
+              "outer-uncovered: stable:flb_output_instance.p is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+            ],
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        }
+      ],
+      "added_moves": [],
+      "removed_moves": [],
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      }
+    },
+    "flb_external_plugin": {
+      "digest_only_changes": [],
+      "other_changed_moves": [],
+      "added_moves": [],
+      "removed_moves": [],
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      }
+    },
+    "rk_plugin_library": {
+      "digest_only_changes": [],
+      "other_changed_moves": [
+        {
+          "key": [
+            "combined",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            0
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "combined",
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "combined",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            1
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "combined",
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "null",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            0
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 0,
+            "part": "null",
+            "reasons": [
+              "outer-uncovered: stable:flb_output_instance.p is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+            ],
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        },
+        {
+          "key": [
+            "null",
+            "fluent-bit-system",
+            "src/flb_input_chunk.c",
+            "flb_chunk_route_plugin_matches",
+            1
+          ],
+          "before": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "rests on outer contract `rk_plugin_library@881233254b57b87e68bc40c1b1bd19a5d01660e4d56c7e36a5f623396a734cfe` through stable:flb_output_instance.p (runtime projection, rule 31; outer-contract)"
+            ],
+            "runtime": "Pending",
+            "static": "Safe"
+          },
+          "after": {
+            "file": "src/flb_input_chunk.c",
+            "function": "flb_chunk_route_plugin_matches",
+            "library": "fluent-bit-system",
+            "occurrence": 1,
+            "part": "null",
+            "reasons": [
+              "outer-uncovered: stable:flb_output_instance.p is reachable from code `rk_plugin_library` loads and no envelope line covers it (runtime projection, rule 31)"
+            ],
+            "runtime": "Unknown",
+            "static": "Safe"
+          }
+        }
+      ],
+      "added_moves": [],
+      "removed_moves": [],
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 99,
+          "Unknown": 345,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 0,
+          "Safe": 209,
+          "Unknown": 245,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 0,
+          "Safe": 63,
+          "Unknown": 387,
+          "Unsafe": 4
+        }
+      }
+    }
+  }
+}

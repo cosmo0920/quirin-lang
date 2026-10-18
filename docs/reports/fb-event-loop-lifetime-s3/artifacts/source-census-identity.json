@@ -1,0 +1,5 @@
+{
+  "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/preparation/source-census.json",
+  "sha256": "a281e5b235a4c53300fcddaafe56b0cc1c042ccb503eb53486f8e3688ea7e148",
+  "meaning": "Preparation lexical source census, not a protocol validation or verdict baseline."
+}

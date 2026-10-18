@@ -356,6 +356,9 @@ fn source_contract_clauses_cannot_be_bypassed_by_supplied_semantics() {
         "requires true;",
         "ensures normal true;",
         "quant normal wall_clock <= 5;",
+        "quant registered #coll: collector.event |-> collector.evl;",
+        "quant #threaded = (#ins.is_threaded != 0);",
+        "quant #threaded in { requires true; }: [[local]];",
     ] {
         let text = format!("fn main() -> i32 contract {{ {clause} }} {{ return 0; }}");
         let source = typed(&text);

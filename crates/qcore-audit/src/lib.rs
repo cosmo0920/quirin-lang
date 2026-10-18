@@ -916,3 +916,5 @@ pub fn load_library_selections(path: &Path) -> Result<Vec<LibrarySelection>, Str
 
 /// Read-only binary checkpoint inspector.
 pub mod dump_checkpoint_cli;
+
+mod loop_lifetime_fold;

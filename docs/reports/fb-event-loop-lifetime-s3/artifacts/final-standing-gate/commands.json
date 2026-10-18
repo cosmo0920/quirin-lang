@@ -1,0 +1,114 @@
+{
+  "tested_head": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "implementation_source": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "host_access": true,
+  "cache": "/home/cosmo/Documents/GitHub/qcore-c/private/fb-lifetime-s3-target",
+  "build_jobs": 2,
+  "root_python_and_index": "due after final matrix reconciliation",
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/clang-version.log"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "private/fb-lifetime-s3/gate-host-3/test-binaries"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/rust-tests.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-3/lean.log"
+    }
+  ],
+  "rust": {
+    "passed": 8307,
+    "failed": 0,
+    "ignored": 15,
+    "units": 516,
+    "summaries": 529
+  },
+  "lean_audits": 341
+}

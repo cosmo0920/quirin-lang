@@ -112,8 +112,26 @@ pub fn row_field(dependencies: &RowDependencies) -> Value {
     if !dependencies.null_premises.is_empty() {
         field[NULL_PREMISES_KEY] = names(&dependencies.null_premises);
     }
+    if !dependencies.lifetime_members.is_empty() {
+        field[LIFETIME_MEMBERS_KEY] = names(&dependencies.lifetime_members);
+    }
+    if !dependencies.lifetime_prerequisites.is_empty() {
+        field[LIFETIME_PREREQUISITES_KEY] = names(&dependencies.lifetime_prerequisites);
+    }
+    if !dependencies.lifetime_effects.is_empty() {
+        field[LIFETIME_EFFECTS_KEY] = serde_json::to_value(&dependencies.lifetime_effects)
+            .expect("lifetime effects contain only JSON data");
+        field[LIFETIME_ROOTS_KEY] = names(&dependencies.lifetime_roots);
+    }
     field
 }
+
+pub const LIFETIME_ROOTS_KEY: &str = "lifetime_roots";
+pub const LIFETIME_EFFECTS_KEY: &str = "lifetime_effects";
+pub const LIFETIME_PREREQUISITES_KEY: &str = "lifetime_prerequisites";
+
+/// S3 member/stability facts. Loaded code must be covered by a kept envelope.
+pub const LIFETIME_MEMBERS_KEY: &str = "lifetime_members";
 
 /// The row field's key of the named null premises (rule 14n).
 pub const NULL_PREMISES_KEY: &str = "null_premises";
@@ -261,7 +279,11 @@ pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
                 })
             }));
     }
-    for (name, retaining) in contracts.retaining() {
+    for (name, retaining) in contracts
+        .retaining()
+        .iter()
+        .chain(contracts.guarded_retaining())
+    {
         if retaining
             .retentions
             .iter()

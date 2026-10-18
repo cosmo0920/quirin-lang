@@ -295,14 +295,52 @@ pub struct RetainingContract {
     /// removals of one registration, in clause order. Omitted when empty.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub removals: Vec<Removal>,
+    /// S3 scoped prerequisites and record-type lifetime protocols. Consumers
+    /// without a scoped discharge must refuse, never use only custody modes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lifetime: Option<crate::loop_lifetime::LoopLifetimeContract>,
 }
 
 impl RetainingContract {
+    /// A condition-bearing declaration is visible only to the S3 consumer.
+    #[must_use]
+    pub fn is_condition_bearing(&self) -> bool {
+        self.lifetime
+            .as_ref()
+            .is_some_and(|l| !l.bindings.is_empty() || !l.blocks.is_empty())
+    }
+    /// An initially empty side declaration, withheld from the function map.
+    #[must_use]
+    pub fn custody_only(contract: ResourceFunctionContract) -> Self {
+        Self {
+            contract,
+            retentions: Vec::new(),
+            resets: Vec::new(),
+            slot_moves: Vec::new(),
+            derived_outs: Vec::new(),
+            references: Vec::new(),
+            references_withdrawn: false,
+            callbacks: Vec::new(),
+            callbacks_withdrawn: false,
+            discriminant: None,
+            arms: Vec::new(),
+            arms_withdrawn: false,
+            constructed: Default::default(),
+            constructed_withdrawn: false,
+            handoff: None,
+            member_paths: Vec::new(),
+            member_paths_withdrawn: false,
+            path_retentions: Vec::new(),
+            removals: Vec::new(),
+            lifetime: None,
+        }
+    }
     /// Whether the declaration retains a pointer or resets a holder (rule
     /// 12t's own clauses), as opposed to carrying only slot clauses.
     #[must_use]
     pub fn retains(&self) -> bool {
-        !self.retentions.is_empty()
+        self.lifetime.is_some()
+            || !self.retentions.is_empty()
             || !self.resets.is_empty()
             || !self.path_retentions.is_empty()
             || !self.removals.is_empty()

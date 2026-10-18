@@ -110,6 +110,15 @@ impl ViewDeclaration {
                     SourceContractClauseKind::QuantDeref => "quant deref".into(),
                     SourceContractClauseKind::QuantLive => "quant live".into(),
                     SourceContractClauseKind::QuantOuter => "quant".into(),
+                    SourceContractClauseKind::QuantConditionBinding => "quant".into(),
+                    SourceContractClauseKind::QuantConditionBlock { negated, .. } => {
+                        if *negated {
+                            "quant not".into()
+                        } else {
+                            "quant".into()
+                        }
+                    }
+                    SourceContractClauseKind::QuantRegistered => "quant registered".into(),
                 },
                 expression: clause.value.expression_source.trim().to_owned(),
             })

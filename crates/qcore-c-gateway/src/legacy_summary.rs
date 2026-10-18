@@ -235,11 +235,15 @@ impl CustodyDerivation {
             .filter(|(name, _)| !self.conflicts.contains_key(*name))
             .filter(|(name, _)| !self.self_dependent.contains(*name))
             .map(|(name, contract)| {
-                ResourceSummaryRecord::new(
+                let mut record = ResourceSummaryRecord::new(
                     name.clone(),
                     ContractTrust::InferredValidated,
                     contract.clone(),
-                )
+                );
+                if let Some(lifetime) = self.environment.inferred_lifetimes().get(name) {
+                    record.lifetime_effects = lifetime.effects.clone();
+                }
+                record
             })
             .collect()
     }
@@ -280,7 +284,8 @@ pub(crate) fn derive_custody_summaries(
     let declared = |name: &String| {
         contracts.contract(name).is_some()
             || contracts.relational_contract(name).is_some()
-            || contracts.retaining_contract(name).is_some()
+            || contracts.retaining().contains_key(name)
+            || contracts.has_guarded_interface(name)
     };
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
@@ -295,7 +300,9 @@ pub(crate) fn derive_custody_summaries(
                 // Card CALLEE-RETENTION-CLASS1 (rule 12t): a retaining
                 // declaration is never replaced by an inference, which would
                 // read its retained pointer as borrowed.
-                if contracts.retaining_contract(&name).is_some() {
+                if contracts.retaining().contains_key(&name)
+                    || contracts.has_guarded_interface(&name)
+                {
                     continue;
                 }
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a declared
@@ -360,6 +367,29 @@ pub(crate) fn derive_custody_summaries(
                             }
                         }
                         derivation.inferred.insert(name, contract);
+                    }
+                    None if let Some(lifetime) =
+                        infer_lifetime_summary(tokens, &name, &derivation.environment) =>
+                    {
+                        if let Some(declared) = contracts.contract(&name)
+                            && declared.custody_projection() != lifetime.contract
+                        {
+                            derivation.conflicts.insert(
+                                name.clone(),
+                                (lifetime.contract.clone(), declared.clone()),
+                            );
+                            continue;
+                        }
+                        // A custody declaration cannot erase source-derived
+                        // outgoing registrations. Keep its custody comparison,
+                        // but route calls through the richer retained effect.
+                        derivation
+                            .inferred
+                            .insert(name.clone(), lifetime.contract.clone());
+                        derivation
+                            .environment
+                            .insert_inferred_lifetime(name, lifetime);
+                        installed = true;
                     }
                     // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): the
                     // exit-specific route, after every ordinary one.
@@ -616,6 +646,14 @@ fn component_lower_environment(
     let mut lower = ResourceContracts::default();
     lower.set_source_assumptions(environment.source_assumptions().clone());
     lower.carry_cross_unit_imports(environment);
+    // Preserve guarded interface identity even when its active declaration
+    // was withdrawn; no ordinary recursive summary may erase it.
+    lower.carry_guarded_identities(environment);
+    for (name, declaration) in environment.guarded_retaining() {
+        if !component.contains(name) {
+            lower.insert_retaining(name.clone(), declaration.clone());
+        }
+    }
     for (name, contract) in environment.functions() {
         if !component.contains(name) {
             lower.insert_contract(name.clone(), contract.clone());
@@ -630,12 +668,69 @@ fn infer_validated_summary(
     function: &str,
     environment: &ResourceContracts,
 ) -> Option<ResourceFunctionContract> {
+    if !qcore_core::local_condition::ordinary_publication_allowed(
+        environment.has_guarded_interface(function),
+        true,
+    ) {
+        return None;
+    }
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the inference's lookups
     // are `function`'s consultations.
     crate::contract_dependencies::within(function, || {
         infer_live_entry_summary(tokens, function, environment)
             .or_else(|| infer_removed_wrapper(tokens, function, environment))
             .or_else(|| infer_derived_result(tokens, function, environment))
+    })
+}
+
+/// Bounded S3 inference. Custody is borrowed/none, but its outgoing records
+/// are retained in the schema record and a separate environment map. The
+/// ordinary W4 route keeps refusing these bodies, so unaware consumers cannot
+/// erase effects by reading a borrow-only function contract.
+fn infer_lifetime_summary(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+) -> Option<qcore_schemas::loop_lifetime::InferredLifetimeSummary> {
+    if !qcore_core::local_condition::ordinary_publication_allowed(
+        environment.has_guarded_interface(function),
+        true,
+    ) {
+        return None;
+    }
+    let parameters = function_parameters(tokens, function)?;
+    let cfg = build_function_cfg(tokens, function, environment).ok()?;
+    let borrowed = probe_contract(
+        &parameters,
+        &vec![false; parameters.len()],
+        &vec![false; parameters.len()],
+    );
+    let entry = EntryCustody::build(&cfg, &parameters, &borrowed)?;
+    let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
+    if summary.status != AnalysisStatus::Safe
+        || !summary.diagnostics.is_empty()
+        || summary.lifetime_effects.is_empty()
+    {
+        return None;
+    }
+    let candidate = propose_contract(&entry, &observations)?;
+    if !candidate
+        .parameters
+        .iter()
+        .all(|p| matches!(p, ResourceParameterMode::Borrowed))
+        || candidate.result != ResourceReturnMode::None
+    {
+        return None;
+    }
+    let effects = summary.lifetime_effects.iter().cloned().collect();
+    let mut custody_projection = summary;
+    custody_projection.lifetime_effects.clear();
+    if !observations_match_contract(&candidate, &entry, &custody_projection, &observations) {
+        return None;
+    }
+    Some(qcore_schemas::loop_lifetime::InferredLifetimeSummary {
+        contract: candidate,
+        effects,
     })
 }
 
@@ -715,7 +810,10 @@ fn infer_cfg_summary(
         if bind_unresolved_formals(&mut bound, parameters, &summary) {
             continue;
         }
-        if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
+        if summary.status != AnalysisStatus::Safe
+            || !summary.diagnostics.is_empty()
+            || !summary.lifetime_effects.is_empty()
+        {
             return None;
         }
         // The binding pattern is stable, so read the modes off the settled
@@ -1261,7 +1359,10 @@ pub(crate) fn observations_match_contract(
     observations: &[ExitObservation],
 ) -> bool {
     // (1) A summary is only as good as the analysis that produced it.
-    if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
+    if summary.status != AnalysisStatus::Safe
+        || !summary.diagnostics.is_empty()
+        || !summary.lifetime_effects.is_empty()
+    {
         return false;
     }
     // Card W45-CONTAINER-ROOT-REACH: a body that took custody of an element of

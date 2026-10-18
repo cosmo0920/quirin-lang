@@ -482,6 +482,7 @@ impl AbiAgreement {
             .keys()
             .chain(contracts.relational().keys())
             .chain(contracts.retaining().keys())
+            .chain(contracts.guarded_retaining().keys())
             .map(String::as_str)
             .collect::<BTreeSet<_>>();
         if names.is_empty() {
