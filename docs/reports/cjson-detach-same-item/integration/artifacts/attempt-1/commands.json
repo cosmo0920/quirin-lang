@@ -1,0 +1,56 @@
+{
+  "cwd": "/home/cosmo/Documents/GitHub/qcore-c",
+  "tested_merge": "040616ad741702efb424aae5f8e78bb8af3eb6c3",
+  "kind": "documentation-only integration closeout; exact native gate adopted from card",
+  "started_utc": "2026-10-18T16:56:33.145740+00:00",
+  "steps": [
+    {
+      "name": "tree-equality",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "b957267156f31d5f1397225ca45a80753dacfc9f",
+        "040616ad741702efb424aae5f8e78bb8af3eb6c3"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.002,
+      "private_log": "/home/cosmo/Documents/GitHub/qcore-c/private/cjson-detach-integration/closeout-1/tree-equality.log"
+    },
+    {
+      "name": "semantic-source-equality",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+        "HEAD",
+        "--",
+        "crates",
+        "compiler",
+        "providers",
+        "proof",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.002,
+      "private_log": "/home/cosmo/Documents/GitHub/qcore-c/private/cjson-detach-integration/closeout-1/semantic-source-equality.log"
+    },
+    {
+      "name": "reconciliation",
+      "command": [
+        "python3",
+        "scripts/reconciliation_sweep.py",
+        ".",
+        "--since",
+        "1543259f0",
+        "--check",
+        "docs/reports/cjson-detach-same-item/integration/reconciliation.json"
+      ],
+      "exit": 1,
+      "elapsed_seconds": 0.284,
+      "private_log": "/home/cosmo/Documents/GitHub/qcore-c/private/cjson-detach-integration/closeout-1/reconciliation.log"
+    }
+  ]
+}

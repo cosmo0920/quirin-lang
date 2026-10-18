@@ -1,0 +1,39 @@
+{
+  "card_tip": "b957267156f31d5f1397225ca45a80753dacfc9f",
+  "integration_base": "94b3267f36a1d4a84c20f75226da836430f627b3",
+  "merge": "040616ad741702efb424aae5f8e78bb8af3eb6c3",
+  "gated_measured_source": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "whole_tree_identical": true,
+  "equality_command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "b957267156f31d5f1397225ca45a80753dacfc9f",
+    "040616ad741702efb424aae5f8e78bb8af3eb6c3"
+  ],
+  "equality_exit": 0,
+  "measurement_worktree": "/tmp/qcore-detach-same-item",
+  "gate": "../gate.json",
+  "private_evidence_root": "/tmp/qcore-detach-same-item/private/detach-same-item",
+  "immutable_binary": "/tmp/qcore-detach-same-item/private/detach-same-item/quirin-audit-detach-9bfe86a41",
+  "binary_sha256": "9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06",
+  "clang_provenance": "Actual Clang21.1.8 was recorded by gate-host-4 in /tmp/qcore-detach-same-item at the gated source. This integration adopts that exact-tree gate; it does not claim a fresh root Clang/native run.",
+  "counts": {
+    "rust_passed": 8325,
+    "rust_failed": 0,
+    "rust_ignored": 15,
+    "rust_units": 518,
+    "rust_summaries": 531,
+    "lean_audits": 342,
+    "post_matrix_python": 374,
+    "provider_rust": 133,
+    "provider_python": 25,
+    "verified_packages": 5
+  },
+  "audit_exits": {
+    "corpus": 0,
+    "system": 0,
+    "slice": 0
+  },
+  "integration_changes": "Documentation receipt and reconciliation only; no analyzer/proof/provider/matrix change and no second card increment."
+}

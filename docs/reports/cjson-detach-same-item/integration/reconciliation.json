@@ -1,0 +1,164 @@
+{
+  "cards": [
+    "fb-event-loop-lifetime-s3",
+    "lexical-routes-typed-fallbacks",
+    "rk-outer-loader-scope",
+    "rk-plugin-interceptor-candidates",
+    "w48-batch2-rk-integration",
+    "w48-bottom-up-batch2",
+    "w48-w44-rk-integration",
+    "rk-plugin-library-outer-envelope",
+    "w44-cross-unit-summary",
+    "w48-pointer-return-readonly",
+    "cjson-detach-same-item"
+  ],
+  "verify_applied": true,
+  "note": "Bounded integration reconciliation from1543259f0 inclusive through merge040616ad741702efb424aae5f8e78bb8af3eb6c3. This is not a wave close. Cumulative unpublished schema19 compatibility is closed by the exact gated/measured detach source; historical checkpoints retain their evidence.",
+  "verdicts": {
+    "lexical-routes-typed-fallbacks#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Applied by the predecessor RK/S3 integration receipt, preserved here. Detach now closes cumulative schema19 compatibility while retaining the frozen original-envelope lexical checkpoint and both lexical residuals. The current STATUS assertion follows the cumulative detach gate rather than the superseded S3 total; the predecessor record is frozen.",
+      "verify": [
+        {
+          "file": "docs/reports/fb-event-loop-lifetime-s3/README.md",
+          "contains": "This measures the composed S3 and RK scope correction"
+        },
+        {
+          "file": "docs/reports/lexical-routes-typed-fallbacks/README.md",
+          "contains": "frozen original-envelope identities"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "LEXICAL-SCALAR-NOOP-ALIAS-READ"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "LEXICAL-TYPED-TAIL-APPEND-ACTUAL-IDENTITY"
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "8,325 core Rust passed"
+        },
+        {
+          "file": "docs/development/increments/wave-48-part9.md",
+          "contains": "RK-OUTER-LOADER-SCOPE"
+        }
+      ]
+    },
+    "cjson-detach-same-item#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "One unpublished schema19 event retained with cumulative final gate and package receipt; no historical schema18 archive rewritten.",
+      "verify": [
+        {
+          "file": "crates/qcore-schemas/README.md",
+          "contains": "compatibility event; neither creates a separate version 20 release."
+        },
+        {
+          "file": "crates/qcore-schemas/README.md",
+          "contains": "RetainingContract.lifetime: Option<LoopLifetimeContract>"
+        },
+        {
+          "file": "crates/qcore-schemas/README.md",
+          "contains": "ResourceSummaryRecord.lifetime_effects: Vec<loop_lifetime::ForwardedLifetime>"
+        },
+        {
+          "file": "crates/qcore-schemas/README.md",
+          "contains": "ResourceReturnMode::Removed { parameter, nullable }"
+        },
+        {
+          "file": "docs/reports/cjson-detach-same-item/gate.json",
+          "contains": "all five schema19 packages rebuilt/verified"
+        }
+      ]
+    },
+    "cjson-detach-same-item#for-the-integrator#2": {
+      "verdict": "applied",
+      "note": "Exact-tree merge preserves S3 guarded lifetime/replay and the checked Removed rule, including explicit carrier rejection, representation assumption and separate membership.",
+      "verify": [
+        {
+          "file": "crates/qcore-contract/tests/detach_same_item_clause.rs",
+          "contains": "removed_result_cannot_erase_conditional_or_registered_lifetime_effects"
+        },
+        {
+          "file": "docs/reports/cjson-detach-same-item/README.md",
+          "contains": "The physical template remains conditional DeclaredAssumption."
+        },
+        {
+          "file": "crates/qcore-schemas/README.md",
+          "contains": "Caller membership is checked; no fresh"
+        }
+      ]
+    },
+    "cjson-detach-same-item#for-the-integrator#3": {
+      "verdict": "applied",
+      "note": "Corrected RK scope and exact clause pin preserved. Approved detach decision, measured plan and all three follow-ons are current; historical predictions preserved.",
+      "verify": [
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "34 callback registrations, 8 kept members and 8 premises."
+        },
+        {
+          "file": "compiler/tests/qcore_contract_corpus.rs",
+          "contains": "(\"librdkafka/outer.qv\", \"rd_kafka_plugin_new\", 81)"
+        },
+        {
+          "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+          "absent": "flb_input_instance.p |-> #kept"
+        },
+        {
+          "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+          "absent": "flb_output_instance.p |-> #kept"
+        },
+        {
+          "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+          "absent": "flb_filter_instance.p |-> #kept"
+        },
+        {
+          "file": "providers/qcore-provider-librdkafka/contracts/librdkafka/outer.qv",
+          "absent": "flb_processor_instance.p |-> #kept"
+        },
+        {
+          "file": "docs/STATUS.md",
+          "contains": "258 single-body waits / 2,223 candidate bodies / 363 hypothetical ceiling"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "DETACH-LOOKUP-MEMBERSHIP"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "DETACH-RESULT-WRAPPER-COMPOSITION"
+        },
+        {
+          "file": "docs/reviews/r0_3/acceptance_matrix.json",
+          "contains": "DETACH-LIST-REPRESENTATION-CLOSURE"
+        }
+      ]
+    },
+    "cjson-detach-same-item#for-the-integrator#4": {
+      "verdict": "applied",
+      "note": "Exact full tree of the gated/measured card retained at merge; immutable binary/source/worktree provenance recorded. Only this integration receipt and reconciliation are added afterward.",
+      "verify": [
+        {
+          "file": "docs/reports/cjson-detach-same-item/integration/receipt.json",
+          "contains": "whole_tree_identical"
+        },
+        {
+          "file": "docs/reports/cjson-detach-same-item/integration/README.md",
+          "contains": "No duplicate full gate is required for this equal tree."
+        }
+      ]
+    }
+  },
+  "no_section": {
+    "w48-w44-rk-integration": "Checked original completed integration receipt: no integrator-addressed section; its baseline/gate and default-versus-conditional distinctions remain frozen.",
+    "w48-bottom-up-batch2": "Checked four ledger amendments and completed combined gate receipt; no separate integrator-addressed section. Open traversal/source-correspondence residuals are retained.",
+    "rk-plugin-interceptor-candidates": "Checked rule31/C04.20.1 amendments and narrowed static-list tracker; report has no sweep-recognized integrator-addressed section. Runtime inventory remains unchanged by later RK scope correction.",
+    "w48-batch2-rk-integration": "Checked completed combined gate/artifact receipt; no outstanding integrator-addressed section. Later measurements preserve this historical checkpoint.",
+    "fb-event-loop-lifetime-s3": "Checked completed semantic checkpoint and three precise registered residuals; no integrator-addressed section. Cumulative schema19 compatibility remains an explicit requirement with detach, not discharged here.",
+    "rk-outer-loader-scope": "This receipt owns the RK correction, exact runtime comparison and adopted S3 gate; no separate integrator-addressed section. Reach precision is registered; final cumulative schema19 checks remain pending.",
+    "rk-plugin-library-outer-envelope": "Checked stage2 integration receipt inherited from1543259f0: runtime32 Pending checkpoint remains historical; this correction supersedes four RK kept promises without rewriting that archive. No integrator-addressed section.",
+    "w44-cross-unit-summary": "Checked completed source-home/link-map integration receipt inherited from1543259f0 and later six-home extension. Link/type/calling convention/interposition assumptions remain explicit; no integrator-addressed section.",
+    "w48-pointer-return-readonly": "Checked completed scalar read-only actual-frame integration receipt inherited from1543259f0; pinned direct-return improvements remain historical. No integrator-addressed section."
+  }
+}
