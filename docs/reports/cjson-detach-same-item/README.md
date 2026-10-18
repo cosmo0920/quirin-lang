@@ -141,3 +141,30 @@ entry, matching source declaration order. The repair keeps exact equality,
 adds the explicit parent/item/result modes and retains every declaration.
 The new detach controls all pass. This entire failed attempt is retained;
 final validation follows another frozen source checkpoint.
+
+## Superseding the first production refusal
+
+The complete first frozen `0091c0a4d` sequence exits 0 on all routes and keeps
+all statuses/diagnostics, all 5,781 null dictionaries and every runtime moved
+record unchanged. It nevertheless withdraws the detach declaration in its
+defining cJSON unit. These complete raw/comparison artifacts remain in
+`artifacts/attempt-0091`; they are not the final conformance evidence.
+
+Exact preprocessing under the recorded production compile command reproduces
+`Err("parent-record")` in the new actual-input frame control at `6bc8509c3`
+(exit 101, `actual-frame-before-1`). The macro-expanded signature is ordinary
+`cJSON * ... (cJSON *parent, cJSON * const item)`; the physical frame/null
+normalization is correct. The shared typed reader deliberately classifies a
+typedef that defines its aggregate as opaque. The older fixture used a direct
+`struct` pointer and missed this distinction.
+
+The bounded repair resolves only a unique complete named nonunion defining
+struct alias in detach's local formal view. Shared classification stays opaque;
+original source/signature and certificate replay inputs remain unchanged.
+Anonymous/union/pointer/conflicting aliases, ambiguous tags, const pointees,
+volatile/atomic/deeper pointers and malformed frames still refuse. The exact
+full preprocessed production unit plus the extracted retained frame now pass
+(`actual-frame-after-1`), as do all seven caller/native/replay controls using a
+defining-typedef fixture. No abstract transfer rule or representation assumption
+changed; the existing Lean model applies with this explicit extraction boundary.
+A final cumulative standing/provider/release/measurement checkpoint follows.

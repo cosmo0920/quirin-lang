@@ -1,11 +1,11 @@
 #ifndef DETACH_IMPL_H
 #define DETACH_IMPL_H
-struct DetachNode {
+typedef struct DetachNode {
     struct DetachNode *prev;
     struct DetachNode *next;
     struct DetachNode *child;
-};
-static struct DetachNode *dt_detach(struct DetachNode *parent, struct DetachNode * const item)
+} DetachNode;
+static DetachNode *dt_detach(DetachNode *parent, DetachNode * const item)
 {
     if ((parent == 0) || (item == 0) || (item != parent->child && item->prev == 0))
     {

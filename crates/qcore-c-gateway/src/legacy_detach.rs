@@ -252,7 +252,17 @@ fn physical_body(
         {
             return Err("qualified-pointee");
         }
-        normalized_parameters.extend_from_slice(&group[..=star]);
+        // cJSON defines its named struct and alias together. The shared
+        // classifier intentionally leaves that alias opaque. Resolve only a
+        // direct, unique, complete named nonunion struct for this exact frame;
+        // the original source/signature remain the certificate input.
+        if let [alias] = &group[..star]
+            && let Some(tag) = model.defining_struct_alias(alias)
+        {
+            normalized_parameters.extend(["struct", tag, "*"]);
+        } else {
+            normalized_parameters.extend_from_slice(&group[..=star]);
+        }
         match &group[star + 1..] {
             ["const", name] | [name] if super::is_identifier(name) => {
                 normalized_parameters.push(name)
@@ -356,6 +366,11 @@ mod tests {
     fn complete_physical_unlink_frame_accepts_renaming_and_cjson_null_spelling() {
         for source in [
             BODY.to_owned(),
+            BODY.replace("DetachNode *parent,", "struct DetachNode *parent,")
+                .replace(
+                    "DetachNode * const item)",
+                    "struct DetachNode * const item)",
+                ),
             BODY.replace("parent", "owner").replace("item", "entry"),
             BODY.replace(" 0", " ((void*)0)"),
         ] {
@@ -370,12 +385,46 @@ mod tests {
     fn exact_cjson_defining_struct_alias_frame_is_checked() {
         let fixture = include_str!("../tests/fixtures/detach-same-item/cjson_actual_frame.h");
         let actual = match std::env::var("QCORE_DETACH_PRODUCTION_INPUT") {
-            Ok(path) => std::fs::read_to_string(path).expect("explicit production input is readable"),
+            Ok(path) => {
+                std::fs::read_to_string(path).expect("explicit production input is readable")
+            }
             Err(std::env::VarError::NotPresent) => fixture.to_owned(),
             Err(error) => panic!("invalid production input path: {error}"),
         };
-        let result = physical_body(&super::super::tokenize(&actual), "cJSON_DetachItemViaPointer", &contract());
+        let result = physical_body(
+            &super::super::tokenize(&actual),
+            "cJSON_DetachItemViaPointer",
+            &contract(),
+        );
         assert!(result.is_ok(), "actual cJSON frame: {result:?}");
+        for bad in [
+            fixture.replace("typedef struct cJSON", "typedef struct"),
+            fixture.replace("typedef struct cJSON", "typedef union cJSON"),
+            fixture.replace("} cJSON;", "} cJSONStruct; typedef struct cJSON *cJSON;"),
+            format!("{fixture}\ntypedef int cJSON;\n"),
+            format!("{fixture}\nstruct cJSON {{ int other; }};\n"),
+            fixture.replace("cJSON *parent", "const cJSON *parent"),
+            fixture.replace("* const item", "* volatile item"),
+            fixture.replace("* const item", "* _Atomic item"),
+            fixture.replace("* const item", "**item"),
+            fixture.replace("struct cJSON *prev;", "struct cJSON * volatile prev;"),
+            fixture.replace("struct cJSON *prev;", "_Atomic(struct cJSON *) prev;"),
+            fixture.replace("item->next = ((void*)0);", "parent->next = ((void*)0);"),
+        ] {
+            assert_ne!(
+                bad, fixture,
+                "negative control must mutate the exact retained spelling"
+            );
+            assert!(
+                physical_body(
+                    &super::super::tokenize(&bad),
+                    "cJSON_DetachItemViaPointer",
+                    &contract()
+                )
+                .is_err(),
+                "{bad}"
+            );
+        }
     }
 
     #[test]
@@ -401,10 +450,7 @@ mod tests {
             BODY.replace("* const item)", "* volatile item)"),
             BODY.replace("* const item)", "* _Atomic item)"),
             BODY.replace("* const item)", "**item)"),
-            BODY.replace(
-                "struct DetachNode *parent,",
-                "const struct DetachNode *parent,",
-            ),
+            BODY.replace("DetachNode *parent,", "const DetachNode *parent,"),
             BODY.replace("return item;", "parent->child = item; return item;"),
         ] {
             assert!(

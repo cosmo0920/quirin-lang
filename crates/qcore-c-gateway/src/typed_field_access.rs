@@ -598,6 +598,26 @@ impl TypedAccessModel {
         self.typedefs.contains_key(name)
     }
 
+    /// The sole named struct a direct defining typedef denotes. This is a
+    /// narrow source-frame view, not a change to the shared classifier: that
+    /// classifier deliberately keeps defining aggregates opaque. Anonymous,
+    /// union, pointer, conflicting aliases and incomplete/ambiguous tags refuse.
+    pub(crate) fn defining_struct_alias(&self, alias: &str) -> Option<&str> {
+        let Some(Some(TypedefTarget::Aggregate(head))) = self.typedefs.get(alias) else {
+            return None;
+        };
+        let mut words = head.split_ascii_whitespace();
+        if words.next()? != "struct" {
+            return None;
+        }
+        let tag = words.next()?;
+        if words.next().is_some() {
+            return None;
+        }
+        let record = self.records.get(tag)?;
+        (record.complete && record.definitions == 1 && !record.union_tag).then_some(tag)
+    }
+
     /// Whether this unit declares `name` at file scope, as far as the same
     /// declaration reader will read it. Card **BASE-TYPE-READER-CENSUS**;
     /// census-only.
@@ -1097,8 +1117,10 @@ impl TypedAccessModel {
                     // — the scalar no-op rule, the borrowable/single-pointer/
                     // `void *` member sets, the chain walker, the declared
                     // types of locals — therefore decides byte-identically to
-                    // the tree before that card. Only
-                    // [`Self::is_non_pointer_object`] reads the new target.
+                    // the tree before that card. `is_non_pointer_object`
+                    // reads its object classification; the separate bounded
+                    // `defining_struct_alias` frame view reads its named tag
+                    // without changing this shared opaque answer.
                     Some(Some(TypedefTarget::Aggregate(head))) => {
                         note_opaque!(
                             note,
