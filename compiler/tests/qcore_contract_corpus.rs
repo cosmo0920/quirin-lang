@@ -1196,9 +1196,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // condition `while (item != NULL)` precedes every dereference, and the
     // three call sites do reach the null path.
     ("librdkafka/cjson.qv", "cJSON_Delete", 3),
-    // Checked same-item detach: marker, explicit representation premise,
-    // live parent, checked removed item and the same identity as result.
-    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 5),
     // Card W45-CALLEE-CASCADE-RESIDUAL: the node constructor (`:241-250`):
     // marker, borrowed hook table, an owned nullable result.
     // Card VERDICT-CONTRACT-PREMISE-ANNOTATIONS: `requires resource_premise(cjson_allocator_hooks, ...)`
@@ -1220,6 +1217,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the allocator-hooks premise, three borrowed formals, an owned nullable
     // result.
     ("librdkafka/cjson.qv", "print", 6),
+    // Checked same-item detach: marker, explicit representation premise,
+    // live parent, checked removed item and the same identity as result.
+    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 5),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic

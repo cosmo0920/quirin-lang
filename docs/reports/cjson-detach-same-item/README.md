@@ -129,3 +129,15 @@ extents carry no offset or length. No Rust suite count follows from that
 failed build. Submodules, recorded Clang, fmt and both reevaluation examples
 exit 0; all 342 full Lean audits pass with the pinned toolchain. The complete
 attempt remains retained; a repaired source checkpoint and full gate follow.
+
+Standing attempt `gate-host-2` at `ac47d08ba` runs all 518 units / 531
+summaries: 8,321 passed, 3 failed, 15 ignored. All remaining standing steps,
+including Clippy and 342 Lean audits, exit 0. The three test failures expose
+incomplete deliberate declaration pin migrations: the independent production
+mode table needs the same-item Removed entry; the selected v1 declaration
+total increases 491 to 492 (64 modules / 331 rejected unchanged); and the
+five-clause ordered corpus tuple belongs after the existing cJSON `print`
+entry, matching source declaration order. The repair keeps exact equality,
+adds the explicit parent/item/result modes and retains every declaration.
+The new detach controls all pass. This entire failed attempt is retained;
+final validation follows another frozen source checkpoint.
