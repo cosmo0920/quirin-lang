@@ -1,0 +1,18 @@
+[
+  {
+    "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-slice-final/resource-diagnostics.json",
+    "archive": "resource-diagnostics.json.gz"
+  },
+  {
+    "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-slice-final/resource-diagnostics.contracts.json",
+    "archive": "resource-diagnostics.contracts.json.gz"
+  },
+  {
+    "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-slice-final/resource-diagnostics.chunk-contracts.json",
+    "archive": "resource-diagnostics.chunk-contracts.json.gz"
+  },
+  {
+    "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-slice-final/resource-diagnostics.source-effects.json",
+    "archive": "resource-diagnostics.source-effects.json.gz"
+  }
+]

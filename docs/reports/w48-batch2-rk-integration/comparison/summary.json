@@ -1,0 +1,824 @@
+{
+  "corpus": {
+    "w48_custody_rows": 4834,
+    "w48_status_and_full_diagnostics_identical": true,
+    "static_custody_counts": {
+      "Unknown": 3866,
+      "Safe": 959,
+      "Unsafe": 9
+    },
+    "rk_null_rows": 4921,
+    "null_property_rows_identical": true,
+    "custody_row_changes": [
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "crc32c.c",
+          "function": "gf2_matrix_square",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [
+              {
+                "id": 2,
+                "kind": "element-access",
+                "line": 2949,
+                "origin": "crc32c.c:159",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:square"
+                ],
+                "subject": "square"
+              },
+              {
+                "id": 3,
+                "kind": "element-access",
+                "line": 2949,
+                "origin": "crc32c.c:159",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:mat"
+                ],
+                "subject": "mat"
+              }
+            ],
+            "function": "gf2_matrix_square",
+            "property": "c.null.deref.v1",
+            "reasons": [
+              "null-deref-candidate"
+            ],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Unknown"
+          }
+        },
+        "after": {
+          "combined": "Unknown",
+          "custody": "Safe",
+          "file": "crc32c.c",
+          "function": "gf2_matrix_square",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [
+              {
+                "id": 2,
+                "kind": "element-access",
+                "line": 2949,
+                "origin": "crc32c.c:159",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:square"
+                ],
+                "subject": "square"
+              },
+              {
+                "id": 3,
+                "kind": "element-access",
+                "line": 2949,
+                "origin": "crc32c.c:159",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:mat"
+                ],
+                "subject": "mat"
+              }
+            ],
+            "function": "gf2_matrix_square",
+            "property": "c.null.deref.v1",
+            "reasons": [
+              "null-deref-candidate"
+            ],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Unknown"
+          }
+        }
+      },
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "crc32c.c",
+          "function": "gf2_matrix_times",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [
+              {
+                "id": 2,
+                "kind": "dereference",
+                "line": 2939,
+                "origin": "crc32c.c:145",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:mat"
+                ],
+                "subject": "mat"
+              }
+            ],
+            "function": "gf2_matrix_times",
+            "property": "c.null.deref.v1",
+            "reasons": [
+              "null-deref-candidate"
+            ],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Unknown"
+          }
+        },
+        "after": {
+          "combined": "Unknown",
+          "custody": "Safe",
+          "file": "crc32c.c",
+          "function": "gf2_matrix_times",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "31db594e54ebcdb2bb8dc68900c3b3a624ede9311c4b6e59454b61a6aa6c1c19"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [
+              {
+                "id": 2,
+                "kind": "dereference",
+                "line": 2939,
+                "origin": "crc32c.c:145",
+                "outcome": "candidate",
+                "sources": [
+                  "formal:mat"
+                ],
+                "subject": "mat"
+              }
+            ],
+            "function": "gf2_matrix_times",
+            "property": "c.null.deref.v1",
+            "reasons": [
+              "null-deref-candidate"
+            ],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Unknown"
+          }
+        }
+      },
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        },
+        "after": {
+          "combined": "Safe",
+          "custody": "Safe",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        }
+      },
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC2",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC2",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        },
+        "after": {
+          "combined": "Safe",
+          "custody": "Safe",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC2",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC2",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        }
+      }
+    ],
+    "combined_row_changes": [
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        },
+        "after": {
+          "combined": "Safe",
+          "custody": "Safe",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        }
+      },
+      {
+        "before": {
+          "combined": "Unknown",
+          "custody": "Unknown",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC2",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC2",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        },
+        "after": {
+          "combined": "Safe",
+          "custody": "Safe",
+          "file": "lz4hc.c",
+          "function": "LZ4_compressHC2",
+          "identity": {
+            "contracts_sha256": "bc5da52060a4aa7c4f1b8707d66ba427b6979142d205fcf3707f1071680ac879",
+            "model_version": "qcore.null.model.v1",
+            "resource_contracts_sha256": "da8535acae673a50f4f8758d5e1f740896747aee78c5a5aa0f26d9a649d43b95",
+            "source_sha256": "e2bfb7000cac814cd1623d3cdbe580517cdf40ef9479e461dde692d92b169e57"
+          },
+          "library": "librdkafka",
+          "null": {
+            "assumptions": [],
+            "checks": [],
+            "function": "LZ4_compressHC2",
+            "property": "c.null.deref.v1",
+            "reasons": [],
+            "returns_non_null": false,
+            "scope": "unconditional",
+            "triage": null,
+            "verdict": "Safe"
+          }
+        }
+      }
+    ],
+    "runtime_scenarios": {
+      "all": {
+        "before": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 927,
+            "Unknown": 3866,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 808,
+            "Unknown": 4053,
+            "Unsafe": 27
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 228
+      },
+      "flb_external_plugin": {
+        "before": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 927,
+            "Unknown": 3866,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 808,
+            "Unknown": 4053,
+            "Unsafe": 27
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 228
+      },
+      "rk_plugin_library": {
+        "before": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 32,
+            "Safe": 927,
+            "Unknown": 3866,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          },
+          "combined": {
+            "Pending": 33,
+            "Safe": 808,
+            "Unknown": 4053,
+            "Unsafe": 27
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 228
+      }
+    }
+  },
+  "system": {
+    "w48_custody_rows": 448,
+    "w48_status_and_full_diagnostics_identical": true,
+    "static_custody_counts": {
+      "Unknown": 347,
+      "Safe": 97,
+      "Unsafe": 4
+    },
+    "rk_null_rows": 454,
+    "null_property_rows_identical": true,
+    "custody_row_changes": [],
+    "combined_row_changes": [],
+    "runtime_scenarios": {
+      "all": {
+        "before": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 4
+      },
+      "flb_external_plugin": {
+        "before": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 4
+      },
+      "rk_plugin_library": {
+        "before": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 4
+      }
+    }
+  },
+  "slice": {
+    "w48_custody_rows": 404,
+    "w48_status_and_full_diagnostics_identical": true,
+    "static_custody_counts": {
+      "Unknown": 347,
+      "Safe": 52,
+      "Pending": 4,
+      "Unsafe": 1
+    },
+    "rk_null_rows": 406,
+    "null_property_rows_identical": true,
+    "custody_row_changes": [],
+    "combined_row_changes": [],
+    "runtime_scenarios": {
+      "all": {
+        "before": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 16
+      },
+      "flb_external_plugin": {
+        "before": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 16
+      },
+      "rk_plugin_library": {
+        "before": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "after": {
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          },
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          }
+        },
+        "moved_rows_identical": true,
+        "moved_count": 16
+      }
+    }
+  }
+}

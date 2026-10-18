@@ -88,6 +88,21 @@ these are not Safe verdicts. Detach remains undecided. This conditional static
 custody measurement retains the actual-link/type/calling-convention/interposition
 premise and does not replace the default table or add a runtime/null claim.
 
+The fresh [W48 batch 2 / RK integration](reports/w48-batch2-rk-integration/README.md)
+at `854920e3e` confirms those four custody gains compose with the interceptor
+inventory: corpus **959 Safe / 9 provisional Unsafe / 3,866 Unknown**;
+all-loaded runtime custody **927 Safe / 32 Pending / 3,866 Unknown / 9
+provisional Unsafe**. System and slice retain every custody status and full
+diagnostic over 448/404 configuration rows. All 4,921/454/406 null-property
+result objects remain unchanged against the RK checkpoint. The two LZ4
+wrappers also become combined custody/null Safe; both matrix helpers remain
+combined Unknown. All three loader pins and the exact 14-list/14-alias
+inventory are in force, with no new runtime Pending move, no Pending-to-Safe
+promotion and no certified deployment membership. All three fresh audits and
+full-field artifact comparisons exit 0. This is conditional evidence under
+the six-home link map and loaded outer envelopes; the default table retains
+its separately pinned scope.
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.
@@ -265,18 +280,18 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest completed validation is [W48 bottom-up batch 2](reports/w48-bottom-up-batch2/gate.json)
-on semantic source `78751c611`: **8,235 core Rust passed, 0 failed, 15 ignored
-over 513 units / 526 summaries; 337 Lean audits; 374 root Python tests**.
+The latest completed validation is the [W48 batch 2 / RK integration](reports/w48-batch2-rk-integration/gate.json)
+on merged source `854920e3e`: **8,240 core Rust passed, 0 failed, 15 ignored
+over 513 units / 526 summaries; 338 Lean audits; 374 root Python tests**.
 The complete standing gate is one clean full-suite invocation on that source:
 submodules, formatting, Clippy with warnings denied, both reevaluation probes,
 documentation index and Clang checks also exit 0. Builds omit debug symbols and
-incremental caches after a retained disk-exhausted compilation; debug assertions
-and test controls are unchanged. The report retains that failed compilation,
-early focused failures and the earlier pre-tightening gate separately.
-Clang 21.1.8 was recorded in this worktree. Provider sources are byte-identical
-to stage 2; its 133-test provider measurement is explicitly borrowed, and no
-fresh provider-package run is claimed here.
+incremental caches; debug assertions and test controls are unchanged. Earlier
+isolated-card failures and the integration's sandbox-restricted attempt are
+retained separately; the complete host-access reruns pass. Clang 21.1.8 was
+recorded in this worktree. A fresh provider gate passes **133 Rust tests,
+0 failed, 1 ignored; 25 Python tests**, workspace check/format/Clippy,
+contract inventory check and build/verification of **all five packages**.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

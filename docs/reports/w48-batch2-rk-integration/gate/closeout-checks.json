@@ -1,0 +1,63 @@
+{
+  "measured_source": "854920e3e12a86c34231d4b46fa42918e29044ca",
+  "audits": {
+    "corpus": 0,
+    "system": 0,
+    "slice": 0
+  },
+  "comparisons": {
+    "duplicate_preserving_custody_null_runtime": 0,
+    "candidate_selection": 0,
+    "full_five_artifact_diff": 0,
+    "corpus_full_field_review": 0,
+    "configured_full_field_review": 0
+  },
+  "matrix_regeneration": {
+    "exit": 0,
+    "named_followups": 797,
+    "lean_audits": 338,
+    "gate": "docs/reports/w48-batch2-rk-integration/gate.json"
+  },
+  "docs_index_regeneration_exit": 0,
+  "fresh_archives": {
+    "exit": 0,
+    "files_verified": 35,
+    "method": "decompress every manifest entry; compare byte length and SHA-256"
+  },
+  "residual_sweep": {
+    "exit": 0,
+    "broader_unregistered_names": 192,
+    "names_originating_in_selected_card_reports": 0,
+    "private_log": "private/w48-batch2-rk-integration/reconciliation-residuals-global.json"
+  },
+  "python_post_matrix": {
+    "exit": 0,
+    "tests": 374,
+    "private_log": "private/w48-batch2-rk-integration/closeout/python-post-matrix.log"
+  },
+  "docs-index": {
+    "command": [
+      "python3",
+      "scripts/build_docs_index.py",
+      "--check"
+    ],
+    "exit": 0
+  },
+  "diff-check": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0
+  },
+  "staged-diff-check": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit": 0
+  }
+}

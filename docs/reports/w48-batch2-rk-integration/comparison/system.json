@@ -1,0 +1,147 @@
+{
+  "w48_custody_rows": 448,
+  "w48_status_and_full_diagnostics_identical": true,
+  "static_custody_counts": {
+    "Unknown": 347,
+    "Safe": 97,
+    "Unsafe": 4
+  },
+  "rk_null_rows": 454,
+  "null_property_rows_identical": true,
+  "custody_row_changes": [],
+  "combined_row_changes": [],
+  "runtime_scenarios": {
+    "all": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "moved_rows_identical": true,
+      "moved_count": 4
+    },
+    "flb_external_plugin": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "moved_rows_identical": true,
+      "moved_count": 4
+    },
+    "rk_plugin_library": {
+      "before": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "after": {
+        "custody": {
+          "Pending": 0,
+          "Safe": 97,
+          "Unknown": 347,
+          "Unsafe": 4
+        },
+        "null": {
+          "Pending": 2,
+          "Safe": 209,
+          "Unknown": 243,
+          "Unsafe": 0
+        },
+        "combined": {
+          "Pending": 2,
+          "Safe": 63,
+          "Unknown": 385,
+          "Unsafe": 4
+        }
+      },
+      "moved_rows_identical": true,
+      "moved_count": 4
+    }
+  }
+}

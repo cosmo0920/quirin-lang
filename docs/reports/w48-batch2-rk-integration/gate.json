@@ -1,0 +1,13 @@
+{
+  "note": "Fresh merged source 854920e3e12a86c34231d4b46fa42918e29044ca; W48 merge 654e2b7ee, RK merge 854920e3e. Standing private/w48-bottom-up-batch2/gate-integration-combined-1: all ten steps exit0, 513 units/526 summaries,8240 Rust passed/0failed/15ignored,338 Lean,374 Python. Fresh private/w48-batch2-rk-integration/gate-providers-1: all twelve steps exit0,133 provider Rust passed/0failed/1ignored,25 Python,5 packages built and verified. Earlier sandbox failure retained at gate-integration-w48-1; corrected full W48 gate at gate-integration-w48-2 passes every step. Clang bytes are the invocation recorded by this main-checkout standing gate. Measurement details are in docs/reports/w48-batch2-rk-integration/README.md.",
+  "workspace_tests": 8240,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "lean_audits": 338,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -1259,6 +1259,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
 
+| [w48-batch2-rk-integration](w48-batch2-rk-integration/README.md) | W48 batch 2 and RK interceptor candidate integration |
+
 | [w48-bottom-up-batch2](w48-bottom-up-batch2/README.md) | W48 bottom-up batch 2 |
 
 | [w48-bottom-up-callee-bodies](w48-bottom-up-callee-bodies/README.md) | W48-BOTTOM-UP-CALLEE-BODIES: the bottom-up plan, and one body family lifted |

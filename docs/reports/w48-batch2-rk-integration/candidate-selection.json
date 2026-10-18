@@ -1,0 +1,32 @@
+{
+  "corpus": {
+    "aliases": 14,
+    "callback_lists": 14,
+    "candidate_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+    "candidate_source_pins_in_force": true,
+    "held_loaders": [],
+    "meaning": "runtime review restrictions; no deployment membership certified",
+    "outer_loaders_in_force": 3,
+    "static_invocation_support": false
+  },
+  "slice": {
+    "aliases": 14,
+    "callback_lists": 14,
+    "candidate_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+    "candidate_source_pins_in_force": true,
+    "held_loaders": [],
+    "meaning": "runtime review restrictions; no deployment membership certified",
+    "outer_loaders_in_force": 3,
+    "static_invocation_support": false
+  },
+  "system": {
+    "aliases": 14,
+    "callback_lists": 14,
+    "candidate_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+    "candidate_source_pins_in_force": true,
+    "held_loaders": [],
+    "meaning": "runtime review restrictions; no deployment membership certified",
+    "outer_loaders_in_force": 3,
+    "static_invocation_support": false
+  }
+}

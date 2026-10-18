@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; tested implementation d899486b47a582707d015a070c9e83e82a99a5a4; worktree-private logs in private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; standing tests 513 units/526 summaries/8235 passed/0 failed/15 ignored; Lean 338 audits; provider Rust 133 passed, provider Python 25 and scripts Python 374 tests; every required final gate step exited 0; corrected diagnostic attempts remain in the report. Source pins and per-route arbiter exits are separately recorded in the card report.",
-  "workspace_tests": 8235,
+  "note": "Fresh merged source 854920e3e12a86c34231d4b46fa42918e29044ca; W48 merge 654e2b7ee, RK merge 854920e3e. Standing private/w48-bottom-up-batch2/gate-integration-combined-1: all ten steps exit0, 513 units/526 summaries,8240 Rust passed/0failed/15ignored,338 Lean,374 Python. Fresh private/w48-batch2-rk-integration/gate-providers-1: all twelve steps exit0,133 provider Rust passed/0failed/1ignored,25 Python,5 packages built and verified. Earlier sandbox failure retained at gate-integration-w48-1; corrected full W48 gate at gate-integration-w48-2 passes every step. Clang bytes are the invocation recorded by this main-checkout standing gate. Measurement details are in docs/reports/w48-batch2-rk-integration/README.md.",
+  "workspace_tests": 8240,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 338,
@@ -7104,7 +7104,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/rk-plugin-interceptor-candidates/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-batch2-rk-integration/gate.json)"
  },
  "named_followups": [
   {
