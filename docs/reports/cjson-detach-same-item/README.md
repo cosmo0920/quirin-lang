@@ -1,13 +1,17 @@
 # Checked same-item detach
 
-Work in progress from `e8b9ff07defe4c6375b1547ce2016c68a8ded98c`.
-The user chose checked same-item transfer on 2026-10-18.
-[The frozen prediction](PREDICTION.md) precedes implementation.
+The user chose checked same-item transfer on 2026-10-18. The implementation
+starts from `e8b9ff07defe4c6375b1547ce2016c68a8ded98c` and is integrated onto
+`94b3267f36a1d4a84c20f75226da836430f627b3`.
+[The frozen prediction](PREDICTION.md) precedes implementation. Dated checkpoint
+sections below retain their original pending statements; final receipts supersede
+those statements without changing the frozen prediction.
 
 The C body does not establish membership merely by accepting a non-NULL item.
 Checked containment, physical list representation, identity-preserving return
-and the no-transfer NULL path are separate obligations. Measurements and gates
-are pending; no verdict or coverage change is claimed by this preparation.
+and the no-transfer NULL path are separate obligations. Final gates and all
+three measurements pass; production custody counts do not improve. The actual
+declaration remains conditional and all six wrappers remain Unknown.
 
 The implementation adds `resource_return_removed(item, nullable)` paired with
 `resource_removed(item, parent, nullable)` and `resource_owned(parent,
@@ -33,6 +37,9 @@ singleton's self prev. It assumes no concurrent link writer. It supplies
 neither membership nor the conclusion of the unlink. The premise remains a
 DeclaredAssumption in every dependent verdict and certificate. No runtime
 envelope is expanded; absent a covering envelope it is runtime Unknown.
+
+A nonmember input that rewires links is a violated API/precondition example,
+not an upstream defect claim. The source body alone does not prove membership.
 
 The initial adapter deliberately refuses a null/unproven parent, even though
 the C API accepts null parent. It also refuses whole-return and passed-result
@@ -144,11 +151,21 @@ final validation follows another frozen source checkpoint.
 
 ## Superseding the first production refusal
 
+The first complete green standing gate at `0091c0a4d` records **518 units /
+531 summaries, 8,324 passed / 0 failed / 15 ignored**, 342 Lean audits and
+zero exits for every standing step run there. Its fresh provider gate records
+133 Rust / 0 failed / 1 ignored, 25 Python, all five builds/verifications and
+zero exits throughout. Its release exits 0, SHA-256
+`a8f3c85800d0469cac5ef43f9a00245ac3695d52f2cd28ff8691a4409eb5dcd4`.
+The final actual-source regression adds one root Rust test, making the later
+final standing total 8,325. Root Python and matrix closeout follow final
+measurement rather than being borrowed from either checkpoint.
+
 The complete first frozen `0091c0a4d` sequence exits 0 on all routes and keeps
 all statuses/diagnostics, all 5,781 null dictionaries and every runtime moved
 record unchanged. It nevertheless withdraws the detach declaration in its
 defining cJSON unit. These complete raw/comparison artifacts remain in
-`artifacts/attempt-0091`; they are not the final conformance evidence.
+`artifacts/attempt-0091`; they do not establish the repaired production adapter connection.
 
 Exact preprocessing under the recorded production compile command reproduces
 `Err("parent-record")` in the new actual-input frame control at `6bc8509c3`
@@ -168,3 +185,224 @@ full preprocessed production unit plus the extracted retained frame now pass
 defining-typedef fixture. No abstract transfer rule or representation assumption
 changed; the existing Lean model applies with this explicit extraction boundary.
 A final cumulative standing/provider/release/measurement checkpoint follows.
+
+
+## Final validation and compatibility receipt
+
+The final analyzer/proof source is `9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe`.
+The actual-input regression at `6bc8509c3` retains its exit-101 failure; the
+bounded repair and all qualifier/alias/frame negatives pass. No source change
+follows the final standing gate. The retained commands and raw outputs are in
+[final standing evidence](artifacts/final-standing-gate/commands.json),
+[provider evidence](artifacts/provider-gate/commands.json) and
+[release evidence](artifacts/release/commands.json). Private originals are under
+`/tmp/qcore-detach-same-item/private/detach-same-item/` in `gate-host-4`,
+`provider-gate-2` and `release-2`.
+
+The host-access standing gate exits 0: **518 units / 531 summaries, 8,325 Rust
+passed / 0 failed / 15 ignored**, fmt, Clippy with warnings denied, both
+reevaluation examples, initialized submodules and **342 placeholder-free Lean
+audits** using pinned Lean 4.35.0. The actual gate records Clang 21.1.8 in this
+worktree. The fresh provider workspace gate exits 0: **133 Rust passed / 0
+failed / 1 ignored**, **25 Python**, check, fmt, Clippy, contract sync/check,
+and all five provider package build/verify pairs. The provider conformance
+workspace depends on the changed gateway, so its suite is rerun rather than
+borrowed from `0091c0a4d`; all five newly verified package manifests/digests
+happen to reproduce that earlier checkpoint exactly.
+
+This closes one unpublished **schema 19** compatibility event: the exhaustive
+`ResourceReturnMode::Removed` addition, S3's public
+`RetainingContract.lifetime: Option<LoopLifetimeContract>`, and
+`ResourceSummaryRecord.lifetime_effects: Vec<ForwardedLifetime>`. Exhaustive
+matches and old Rust struct literals must migrate even though S3's absent-field
+wire encoding is preserved by defaults. The schema README names all three
+migrations and distinguishes wire compatibility from Rust source compatibility;
+all active dependencies, locks and five packages use 19. S3's frozen schema-18
+measurements remain historical semantic evidence, superseded for publishable
+compatibility by this cumulative source and gate.
+
+The release build exits 0 with `-j3`. Its immutable private binary is
+`private/detach-same-item/quirin-audit-detach-9bfe86a41`, SHA-256
+`9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06`.
+The first frozen `0091c0a4d` binary and complete all-three-route refusal sequence
+are preserved separately under `artifacts/attempt-0091`, including their
+standing/provider/release receipts. They are not silently replaced by final
+measurements.
+
+Before the final corpus audit, the new release completes the actual defining-unit
+integration control with the exact production database, profile, 64-module
+trusted bundle and six-home map. This selects **one unit after whole-database
+member setup**, not one Clang invocation. The jobs-1 attempt was cleanly
+cancelled through its verified exclusive captured process group (exit 130);
+the fresh jobs-4 run changes only worker count and output paths and exits 0.
+Both attempts, input hashes and raw module aliases are in
+[the control receipt](artifacts/actual-unit-control/completed-jobs4/checked-control.json).
+The production declaration is **pinned-in-force / DeclaredAssumption**, with
+zero failed or withdrawn units, one unvalidated unit, zero validated units,
+four dependent rows and zero dependent Safe rows. The named representation
+premise is active. This establishes the production reader connection, not
+unconditional C conformance, membership, a production Safe body or runtime
+coverage. No bound, assertion, closure policy or native sanitizer was disabled.
+
+## Final corpus and all seven body outcomes
+
+The final `measure-final-2` corpus exits 0 against the completed S3/RK baseline:
+**961 Safe / 3,864 Unknown / 9 provisional Unsafe**, identical over all 4,834
+selected custody rows. This implements the checked transfer without claiming
+six promotions. The production declaration is pinned-in-force with its exact
+`detach_list_representation` premise: four dependent rows, zero Safe rows,
+zero failed/withdrawn units, one unvalidated unit and zero validated units.
+The physical template remains conditional DeclaredAssumption. The ordinary
+callee projection is still Unknown.
+
+[The complete seven-body records](artifacts/seven-body-review.json.gz) retain
+both sides, all diagnostics, locations and dependency carriers. Every row below
+is Unknown before and after; no caller is counted as discharged.
+
+| Function | Final refusal / obligation |
+| --- | --- |
+| `cJSON_DetachItemViaPointer` | Ordinary projection has 11 leaves: three branch/aggregate refusals, six indirect accesses and two unresolved `item` identities. Conditional physical-template evidence is separate. |
+| `cJSON_DetachItemFromArray` | Nested `get_array_item` inside the modeled call remains unsupported; exact membership and removed-result transport are not supplied by a borrowed lookup. |
+| `cJSON_DetachItemFromObject` | Unsupported whole-return expression; same-item custody and membership must survive result transport. |
+| `cJSON_DetachItemFromObjectCaseSensitive` | The same unsupported whole-return boundary, independently retained. |
+| `cJSON_DeleteItemFromArray` | Nested `cJSON_DetachItemFromArray` inside `cJSON_Delete` remains unsupported. |
+| `cJSON_DeleteItemFromObject` | Nested `cJSON_DetachItemFromObject` remains unsupported. |
+| `cJSON_DeleteItemFromObjectCaseSensitive` | Nested `cJSON_DetachItemFromObjectCaseSensitive` remains unsupported. |
+
+Exactly four full corpus rows change: the callee's ordinary diagnostics grow
+7 to 11, and the three direct wrappers exchange uncontracted-detach leaves for
+the nested lookup/whole-return refusals above. The other 4,830 full rows are
+identical. The callee and three direct wrappers explicitly consult the new
+declaration. Aggregate diagnostic counts consequently gain two unsupported
+and two unresolved-alias leaves; this is not a new validated violation.
+
+[The full artifact review](artifacts/corpus/review-findings.json) retains raw
+and normalized keys and complete changed records. Monkey/source and chunk
+artifacts are identical after explicit checkout normalization. All 64 normalized
+contract-module keys agree; only CJSON module text changes, with its intentional
+pin/count/lock/declaration additions. Six conditional-home environment identities
+change across 185 units (1,110 raw fields), with the same six sidecar changes.
+One empty lifetime-summary key is renamed in both prepass/evidence carriers;
+no lifetime effect is erased. All three source-effect payloads are identical
+after the finite published build/configuration/task/witness/obligation identity
+mapping (29 raw changed fields); their full raw evidence is retained.
+
+Every one of the 4,921 corpus null dictionaries, custody/combined verdicts,
+all three runtime scenario count sets and complete moved-row records is
+unchanged. Runtime all-loaded custody stays **931 Safe / 30 Pending / 3,864
+Unknown / 9 provisional Unsafe**. The outer selection's complete objects agree
+after explicit checkout-prefix normalization; no envelope or candidate inventory
+is widened. Static custody, null/combined, loaded-runtime projection, conditional
+model proof and native fixture observations remain distinct evidence scopes.
+
+The fresh [before](artifacts/before-plan.json.gz) and
+[after](artifacts/after-plan.json.gz) plans give **260 → 258 single-body waits,
+2,224 → 2,223 candidate bodies, hypothetical ceiling 365 → 363**, with no-extra-
+body same-unit/cross-unit closure **4 / 4 → 4 / 4**. These are planning-model
+counts. Two wrappers leave the call-only census for unsupported return effects;
+the array wrapper now waits on `get_array_item`. No body or caller becomes Safe.
+The former six-caller detach hypothesis is therefore not realized by the
+ownership vocabulary alone. `get_array_item` now has three hypothetical closure
+rows, and `rd_kafka_log_buf` leads the remaining table at four; neither number
+proves membership, usable summary transport or a Safe promotion.
+
+## Final configured routes, provenance and closeout
+
+All three final audits exit 0 with four workers and the unchanged six-home map:
+
+| Route | Safe | Unknown | Pending | Provisional Unsafe | Selected custody rows |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Corpus `66910c10` | 961 | 3,864 | 0 | 9 | 4,834 |
+| System `046accf6` | 99 | 345 | 0 | 4 | 448 |
+| Slice **actual `34155955e4962a56d94eb23c03a002880899a0d1`** | 53 | 346 | 4 | 1 | 404 |
+
+The [system](artifacts/system/review-findings.json) and
+[slice](artifacts/slice/review-findings.json) preserve all statuses and full
+diagnostics. Their four/eight raw changed rows contain only module checkout
+paths in existing review holds, preserving two compile configurations per
+function. Complete compile/dependency/inventory changes are retained (45/48
+finite metadata fields), alongside the new loaded detach premise and intentional
+pin/lock/count/module additions. Neither configured selection consults the
+detach declaration in a selected function, so no selected-body validation is
+claimed. Configured Monkey/source output is absent on both sides and explicitly
+marked absent; the other four artifact families are archived and compared.
+All 64 normalized module keys agree, with only CJSON text changed; all source-
+effect payloads are unchanged. All **4,921 + 454 + 406 = 5,781 null dictionaries**,
+static combined verdicts, every loaded-runtime scenario and complete moved-row
+record agree. Raw source/contract paths and duplicates remain available.
+
+The completed S3/RK baseline is reused, with no new before audit: analyzer/proof
+`d0a48bfd612e875254e72a4852e6930e718159cf`, measurement HEAD
+`14dfc6aac79070f3c1d946e22c1247addf7978e8`, immutable binary SHA
+`f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974`.
+Its private outputs are
+`/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/{corpus,system,slice}`;
+[baseline provenance](artifacts/baseline-provenance.json) records the integration
+base and public S3 source. The final output root is
+`/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-2`, with
+corpus primary nested under `corpus/corpus`. Each route's `after/after-hashes.json`
+binds source `9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe` and both running/immutable
+binary SHA `9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06`
+after completion. Only report/tracking changes follow that measured source.
+
+[Measurement commands/exits](artifacts/final-measurements/commands.json) record
+2,922.387 / 402.801 / 333.651 seconds for corpus/system/slice, each exit 0.
+Native invocations, stdout/stderr and all five artifact families are retained;
+[comparison commands/exits](artifacts/final-review/commands.json) bind the
+read-only full-row/field/key/null/runtime review and fresh replan. One post-audit
+recorder initially expected the configured sidecar's optional top-level premise
+field; corpus stores it on the declaration instead. The recorder setup failure
+and repair are disclosed in `artifacts/route-recorder-setup.json`; binary/hash
+assertions and native audit exit 0 are unchanged. Matrix, root Python and index
+closeout receipts follow under `artifacts/closeout`.
+
+The closeout regenerates the acceptance matrix with the cumulative schema-19
+[gate](gate.json), then runs **374 root Python tests, all passing**, after that
+final matrix. Documentation-index generation/check and `git diff --check` exit
+0. The ledger is **802 → 805**, marks the detach decision approved/implemented,
+retains the fresh **258 / 2,223 / 363; closure4/4** plan, and registers the three
+follow-ons below. Exactly one newest increment is added to wave-48 part9, which
+remains **30,979 bytes**, below32KiB; no rotation is needed. The actual Clang
+recording beside this gate is copied from this same worktree/source gate-host-4,
+not borrowed from another report. These report/tracking changes do not alter
+the frozen analyzer/proof/binary measured above.
+
+## Follow-ons
+
+The checked transfer decision is approved and implemented; the remaining work
+below does not reopen that ownership decision.
+
+- `DETACH-LOOKUP-MEMBERSHIP`: derive exact child identity and membership from a
+  checked lookup frame, including the NULL/missing-key/index branches and
+  invalidating writes. Borrowed-from provenance alone must never populate the
+  containing-owner relation.
+- `DETACH-RESULT-WRAPPER-COMPOSITION`: transport an existing removed identity
+  through whole-return and nested-call wrappers, preserving parent custody,
+  membership prerequisites, result aliases, NULL branches and the named
+  representation premise in the summary and independent replay. Ordinary W4
+  inference or a fresh-result route must not erase those effects.
+- `DETACH-LIST-REPRESENTATION-CLOSURE`: independently establish the named
+  concrete/list relation and its frame/lifetime requirements where stronger
+  source assurance is claimed. The current declaration remains conditional;
+  the physical-template check neither establishes caller membership nor turns
+  the still-unprojected production body into a Safe function. Runtime coverage
+  needs an actual covering envelope rather than a static-model theorem.
+
+## For the integrator
+
+1. Preserve one unpublished schema-19 event covering Removed and S3's two public
+   fields, with this cumulative gate/package receipt as the compatibility
+   closeout. S3's frozen schema-18 evidence remains a dated semantic checkpoint.
+2. Preserve S3's guarded partition, lifetime effects and independent replay,
+   plus the explicit rejection of condition/lifetime carriers around Removed
+   results until that composition has its own checked rule. Keep the physical
+   representation premise DeclaredAssumption, caller membership separate and
+   same-result identity intact; no ordinary W4 or fresh-result erasure.
+3. Keep the RK loader's corrected eight kept members/81 total clauses; no
+   Fluent Bit instance promises belong on `rd_kafka_plugin_new`. Retain the
+   current implemented detach decision, final measured plan and all three
+   residual trackers. Historical predictions keep their dated statements.
+4. Retain the exact gated/measured source and frozen binary provenance when
+   merging the card's report/status/ledger/increment/matrix amendments. Equal
+   figures need no duplicate full gate. A later semantic change needs a fresh
+   gate and measurement rather than implicit adoption of this frozen receipt.

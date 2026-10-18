@@ -1,0 +1,14 @@
+{
+  "attempts": [
+    {
+      "step": "write preparation plan",
+      "exit": 1,
+      "error": "NameError: json was not imported in plan-writing shell script; runner file written but plan absent"
+    },
+    {
+      "step": "launch preparation runner",
+      "exit": 1,
+      "error": "FileNotFoundError: private/detach-same-item/prepare-plan.json absent; no submodule/build/test step launched"
+    }
+  ]
+}

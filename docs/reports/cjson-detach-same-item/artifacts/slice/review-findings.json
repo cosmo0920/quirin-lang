@@ -1,0 +1,16 @@
+{
+  "reviewed_source": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "selected_custody_rows": 404,
+  "all_statuses_and_full_diagnostics_identical": true,
+  "changed_raw_full_rows": 8,
+  "row_changes": "Only module checkout-prefix paths in existing review_holds; all eight complete rows equal after explicit checkout normalization. flb_input_instance_exit, flb_create, flb_input and flb_service_set each retain two compile configurations.",
+  "diagnostics_metadata": "48 finite fields:16units each gain resource-contract source dependencies in compile_task_identity/dependencies plus inventory digest.",
+  "contracts_metadata": "12 precise differences: one empty lifetime-summary key rename in both carriers, loaded detach premise/pin/lock/count/list additions, CJSON module text only. No selected detach-dependent row and no body-validation claim.",
+  "normalized_contract_keys": 64,
+  "source_effect_payload_changes": 0,
+  "null_rows": 406,
+  "null_property_dicts_identical": true,
+  "all_static_combined_and_runtime_scenarios_and_moved_rows_identical": true,
+  "outer_selection": "Complete objects equal after the two explicit checkout-prefix normalizations.",
+  "monkey_source": "Not emitted by configured route; explicit absence retained in both manifests."
+}

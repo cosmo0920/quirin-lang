@@ -1,0 +1,191 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "provider-check",
+      "command": [
+        "cargo",
+        "check",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.174,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/provider-check.log"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 404.106,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/provider-tests.log"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 3.896,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/provider-fmt.log"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 14.874,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/provider-clippy.log"
+    },
+    {
+      "name": "contracts-sync",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 14.302,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/contracts-sync.log"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 14.154,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/contracts-check.log"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 13.892,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/provider-python.log"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "private/detach-same-item/gate-providers-2/packages",
+        "--target-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 15.895,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/package-build.log"
+    },
+    {
+      "name": "verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/detach-same-item/gate-providers-2/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.117,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/verify-qcore.chunkio.log"
+    },
+    {
+      "name": "verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/detach-same-item/gate-providers-2/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.1,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/verify-qcore.cmetrics.log"
+    },
+    {
+      "name": "verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/detach-same-item/gate-providers-2/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.093,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/verify-qcore.ctraces.log"
+    },
+    {
+      "name": "verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/detach-same-item/gate-providers-2/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.1,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/verify-qcore.libevent.log"
+    },
+    {
+      "name": "verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/detach-same-item/gate-providers-2/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.107,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-providers-2/verify-qcore.librdkafka.log"
+    }
+  ]
+}

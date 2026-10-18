@@ -1,0 +1,44 @@
+{
+  "meaning": "Finite build/configuration/obligation/witness identity correspondence; raw artifacts and all differences retained.",
+  "reviewed": [
+    {
+      "index": 16,
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_is_locked",
+      "exact_mapping": {
+        "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335": "25bb9290d6ec78ca7d8b38044d501aa169fbe3f782388189913134cda821d728",
+        "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033": "577d75d1b07c0e52a4ec29afccff6def91a67bd076f0026558974d0d312a2404",
+        "5e8aeb91bf9a42d774dd45afbf197c33cfe4a68bc1181b01e694926621889e94": "0db4ada2b38897124ed093a382464888fb9b6d972b09cfffc475b6da534bc714",
+        "resource_contracts:851a6900c80afca955b9e91a": "resource_contracts:55928481f315cc0f8d2cf428"
+      },
+      "complete_payload_equal_after_mapping": true
+    },
+    {
+      "index": 24,
+      "library": "chunkio",
+      "file": "cio_chunk.c",
+      "function": "cio_chunk_unlock",
+      "exact_mapping": {
+        "16bb59d17a3eb8ddfab1fa45c93904ae49e307bd59fc35488d08e14b7d47e335": "25bb9290d6ec78ca7d8b38044d501aa169fbe3f782388189913134cda821d728",
+        "6de93190aabe0b86c4afea448b8f66ad21a927cd305266f82d70c67f87a3d033": "577d75d1b07c0e52a4ec29afccff6def91a67bd076f0026558974d0d312a2404",
+        "56222f09590a215402229f99977250d5277f9dcf6b03b9d7e59f6bbf1076e6e8": "5e28c279f87ec49718d96c5d064851d6cbf063a2d35eee1c1064c14e531e9c0a",
+        "resource_contracts:cafc767f984cf0e83aa69664": "resource_contracts:d84f4d86414c9616f24ce203"
+      },
+      "complete_payload_equal_after_mapping": true
+    },
+    {
+      "index": 63,
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_release_lock",
+      "exact_mapping": {
+        "a73e0b79fd8a54bd296bf12248515cad319eabea8966b6c73e962b555920daed": "59d59621be8581c91ee3641e694ea7a6389ff90ea1fb5272cd47f498fa7a791b",
+        "b742153f49125d33916f57d0fc29f6dee4185c6806249adc8af6f3a05130b8e0": "66980e80cbce6ee098f4c7e43ea29e5c5a5b50af9a160837f2aee5895fb1b221",
+        "8dec8aecd6fb4c598a3e861d2010d009bd032c3cbad807f8f43bc01d18ace4e9": "d6511f7810d3bb6a73e16e71af105df7fefe78193efba7e55307d916c197631c",
+        "resource_contracts:879b20013b91c6c9dbda98ef": "resource_contracts:2f4b018ee7043d53a10bd971"
+      },
+      "complete_payload_equal_after_mapping": true
+    }
+  ]
+}

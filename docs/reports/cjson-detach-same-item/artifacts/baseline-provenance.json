@@ -1,0 +1,10 @@
+{
+  "integrator_base": "94b3267f36a1d4a84c20f75226da836430f627b3",
+  "baseline_semantic_source": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "baseline_measurement_head": "14dfc6aac79070f3c1d946e22c1247addf7978e8",
+  "baseline_binary": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/quirin-audit-s3",
+  "baseline_binary_sha256": "f5ca84194827defe0c5dc36f59d7424ccf1e91eb252e324e0e2d5c458eedd974",
+  "baseline_outputs": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1",
+  "baseline_public_report": "docs/reports/fb-event-loop-lifetime-s3/README.md",
+  "meaning": "Completed S3/RK-corrected baseline reused; no before audit rerun. Final base adds docs/ledger only."
+}

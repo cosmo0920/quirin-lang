@@ -1,0 +1,30 @@
+{
+  "before": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.json",
+  "after": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/slice/resource-diagnostics.json",
+  "functions": 404,
+  "transitions": [
+    {
+      "before": "Pending",
+      "after": "Pending",
+      "count": 4
+    },
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 53
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 346
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 1
+    }
+  ],
+  "removed_leaves": [],
+  "added_leaves": [],
+  "changed": []
+}

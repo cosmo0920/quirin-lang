@@ -1,0 +1,49 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/resource-diagnostics.json",
+    "sha256": "9eef8b88dd88fc9c425321cc9ed447e65b1da007a1573f9dccdc2e7055910a97",
+    "bytes": 1698722
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/resource-diagnostics.chunk-contracts.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/resource-diagnostics.source-effects.json",
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/resource-diagnostics.contracts.json",
+    "sha256": "4ecce2433022a457f2b4f0af735bd990ace3e96a74aff6c7f01f09318275e356",
+    "bytes": 7078325
+  },
+  "static_custody_counts": {
+    "Unknown": 345,
+    "Safe": 99,
+    "Unsafe": 4
+  },
+  "system-null.jsonl": {
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/system-null.jsonl",
+    "bytes": 1444109,
+    "sha256": "3bf21e0d67c2e3f88349bba37a1dc3752b931fd8796ab78d88ec14183350a5ae"
+  },
+  "system-null.summary.json": {
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/system-null.summary.json",
+    "bytes": 64362,
+    "sha256": "3b6f7952527929102b032a1c9c944c3c6615006f6ff560105871e83886931b0f"
+  },
+  "system-outer.json": {
+    "source": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-1/system/system-outer.json",
+    "bytes": 67214,
+    "sha256": "3da71969e3d3812cefc71fb0a49aca3272456bf781ee136baad2fdbab09ff066"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "first_corpus_recorder_exit": 1,
+  "error": "KeyError: contract_premises",
+  "meaning": "Post-audit hash/count recorder assumed the configured contract sidecar shape; corpus keeps the exact premise on its declaration instead. Native audit exit remains0.",
+  "repair": "Optional top-level field recorded absent; exact active declaration and its declared representation premise retained and manually checked. Hash assertions unchanged.",
+  "second_corpus_recorder_exit": 0
+}

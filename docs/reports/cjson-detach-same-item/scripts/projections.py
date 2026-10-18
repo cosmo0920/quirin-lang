@@ -19,6 +19,18 @@ def rows(path):
     return result
 
 
+def normalize_checkout(value):
+    if isinstance(value, str):
+        return value.replace('/tmp/qcore-fb-lifetime-s3', '$CHECKOUT').replace('/tmp/qcore-detach-same-item', '$CHECKOUT')
+    if isinstance(value, list):
+        return [normalize_checkout(x) for x in value]
+    if isinstance(value, dict):
+        result = {normalize_checkout(k): normalize_checkout(v) for k, v in value.items()}
+        assert len(result) == len(value), 'checkout normalization collision'
+        return result
+    return value
+
+
 def main():
     base, tip = map(Path, sys.argv[1:3])
     route = sys.argv[3]
@@ -65,6 +77,11 @@ def main():
             "changed_moves": [{"key": k, "before": aa[k], "after": bb[k]}
                               for k in aa.keys() & bb.keys() if aa[k] != bb[k]],
         }
+    other = {k: {"before": left.get(k), "after": right.get(k)}
+             for k in left.keys() | right.keys()
+             if k not in {"static", "scenarios"} and left.get(k) != right.get(k)}
+    assert all(normalize_checkout(v["before"]) == normalize_checkout(v["after"])
+               for v in other.values()), "unexplained outer selection change"
     result = {
         "route": route, "null_rows": len(before), "changed_null_row_fields": dict(fields),
         "property_transitions": properties,
@@ -73,9 +90,8 @@ def main():
         "null_property_dicts_identical": all(before[k]["null"] == after[k]["null"] for k in before),
         "static_outer_before": left["static"], "static_outer_after": right["static"],
         "runtime_scenarios": scenarios,
-        "other_outer_changes": {k: {"before": left.get(k), "after": right.get(k)}
-                                for k in left.keys() | right.keys()
-                                if k not in {"static", "scenarios"} and left.get(k) != right.get(k)},
+        "other_outer_changes": other,
+        "other_outer_complete_equality_after_explicit_checkout_normalization": True,
     }
     (out / "projection-comparison.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({"route": route, "null_rows": len(before), "changed_fields": dict(fields),

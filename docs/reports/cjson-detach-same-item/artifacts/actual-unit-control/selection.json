@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "name": "cjson-detach-defining-unit-control",
+  "description": "Bounded actual defining-unit control for the prior same-item-detach withdrawal; no corpus coverage claim.",
+  "groups": [
+    {
+      "library": "librdkafka",
+      "label": "cjson-detach-control",
+      "files": [
+        "lib/librdkafka-2.15.0/src/cJSON.c"
+      ]
+    }
+  ]
+}

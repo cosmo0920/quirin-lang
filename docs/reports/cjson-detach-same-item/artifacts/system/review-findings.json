@@ -1,0 +1,16 @@
+{
+  "reviewed_source": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "selected_custody_rows": 448,
+  "all_statuses_and_full_diagnostics_identical": true,
+  "changed_raw_full_rows": 4,
+  "row_changes": "Only module checkout-prefix paths in existing review_holds on flb_storage_create and flb_output_exit, two compile configurations each; duplicates retained.",
+  "diagnostics_metadata": "45 finite fields:15units each gain new resource-contract source dependencies in compile_task_identity/dependencies plus inventory digest.",
+  "contracts_metadata": "12 precise differences: one empty lifetime-summary key rename in both carriers, loaded detach premise/pin/lock/count/list additions, CJSON module text only. No selected detach-dependent row and no body-validation claim.",
+  "normalized_contract_keys": 64,
+  "source_effect_payload_changes": 0,
+  "null_rows": 454,
+  "null_property_dicts_identical": true,
+  "all_static_combined_and_runtime_scenarios_and_moved_rows_identical": true,
+  "outer_selection": "Complete objects equal after the two explicit checkout-prefix normalizations.",
+  "monkey_source": "Not emitted by configured route; explicit absence retained in both manifests."
+}

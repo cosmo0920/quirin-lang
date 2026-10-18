@@ -1,0 +1,43 @@
+{
+  "observed_at_utc": "2026-10-18T16:38:39.846317+00:00",
+  "route": "corpus",
+  "source_head": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "tracked_docs_only_changes": [
+    "docs/reports/cjson-detach-same-item/README.md"
+  ],
+  "binaries": {
+    "/tmp/qcore-detach-same-item/target/release/quirin-audit": "9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06",
+    "/tmp/qcore-detach-same-item/private/detach-same-item/quirin-audit-detach-9bfe86a41": "9f10a5bbf704eb3c56af4c2e6c6c6ebe78e761cd4b7208937701c2a5295c3f06"
+  },
+  "exit": 0,
+  "static_custody_counts": {
+    "Unknown": 3864,
+    "Safe": 961,
+    "Unsafe": 9
+  },
+  "detach_declaration": {
+    "bodies": {
+      "failed_by": [],
+      "failed_units": 0,
+      "unvalidated_units": 1,
+      "validated_by": [],
+      "validated_units": 0,
+      "withdrawn_units": 0
+    },
+    "body_standing": "declared-assumption",
+    "contract_sha256": "878f8103527c43da2a5bb91d56ba60cd6b9e221a3dfb41723de90c36a94268ad",
+    "mode": "pinned",
+    "module": "/tmp/qcore-detach-same-item/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "premises": [
+      {
+        "name": "detach_list_representation",
+        "origin": "declared",
+        "statement": "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call"
+      }
+    ],
+    "rows": 4,
+    "safe_rows": 0,
+    "status": "pinned-in-force"
+  },
+  "detach_premises": null
+}
