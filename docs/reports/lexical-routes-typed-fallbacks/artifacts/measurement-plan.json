@@ -1,0 +1,21 @@
+{
+  "original_prediction_source": "654e2b7eed72374b02ea39ef41059f7a9149b776",
+  "prediction_original_commit": "1f9e306a0",
+  "prediction_rebased_commit": "52c2ac78a",
+  "measurement_base": "854920e3e12a86c34231d4b46fa42918e29044ca",
+  "baseline_status": "awaiting integrator fresh combined corpus/system/slice outputs; no baseline measurement claimed yet",
+  "baseline_reuse": "Exact measured base revision will be reused from parent worktree with binary/map/input provenance; it is not a fresh measurement in this card worktree.",
+  "selection": {
+    "corpus": "66910c10, pinned185-unit route",
+    "system": "contract/profiles/fluent-bit/system-selection.json",
+    "slice": "contract/profiles/fluent-bit/tail-pause-selection.json"
+  },
+  "link_map": "docs/reports/w48-bottom-up-batch2/link-map.corpus.json",
+  "additional_properties": [
+    "QCORE_NULL_PROPERTY",
+    "QCORE_OUTER_PROJECTION"
+  ],
+  "tip_runs": "scripts/measure.sh corpus|system|slice RUN MAP, jobs4, separate fresh private directories",
+  "gate": "scripts/gate.sh RUN, full no-fail-fast runner with host access, jobs3 compile, task-private assigned cache",
+  "provider_boundary": "No provider sources are changed by this card. If a provider count is quoted it must explicitly name the combined-base provider gate as borrowed."
+}

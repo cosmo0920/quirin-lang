@@ -1,0 +1,31 @@
+{
+  "source_head": "c82973656",
+  "unit_command": "cargo test -p qcore-c-gateway --lib scalar_precedence --test scalar_precedence --test scalar_member_store --test function_pointer_declarators --test bound_untracked_roots -- --nocapture",
+  "unit_exit": 0,
+  "unit_tests": 2,
+  "unit_note": "The global scalar_precedence filter selected the two unit controls and zero integration cases; the integration measurement below has no filter.",
+  "integration_command": "cargo test -p qcore-c-gateway --test scalar_precedence --test scalar_member_store --test function_pointer_declarators --test bound_untracked_roots -- --nocapture",
+  "integration_exit": 0,
+  "integration_tests": 34,
+  "integration_breakdown": {
+    "bound_untracked_roots": 9,
+    "function_pointer_declarators": 5,
+    "scalar_member_store": 13,
+    "scalar_precedence": 7
+  },
+  "raw_logs": "private/lexical-typed/focused-final",
+  "standalone_lean": {
+    "command": "cd proof && lake env lean QCore/ScalarPrecedence.lean",
+    "exit": 0,
+    "warnings": 0,
+    "registered_theorems": 9,
+    "log": "/tmp/lexical-lean10.log"
+  },
+  "profiles": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "3"
+  }
+}
