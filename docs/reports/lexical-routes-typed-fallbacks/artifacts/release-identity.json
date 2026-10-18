@@ -1,0 +1,10 @@
+{
+  "source_head": "913a72a916242165ed0dc586fd1affdb3093fd65",
+  "command": "CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target CARGO_PROFILE_RELEASE_DEBUG=0 CARGO_INCREMENTAL=0 CARGO_BUILD_JOBS=3 cargo build --release -p qcore-audit --bin quirin-audit",
+  "exit": 0,
+  "binary": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/release-913a72a91/quirin-audit",
+  "binary_sha256": "2dc2cef4e0b39e1ee48061d9c17cfc4261c71e904820d0ec37f36ed6683d8431",
+  "cache_binary_sha256": "2dc2cef4e0b39e1ee48061d9c17cfc4261c71e904820d0ec37f36ed6683d8431",
+  "build_log": "/tmp/qcore-lexical-typed-precedence/private/lexical-typed/release-913a72a91/build.log",
+  "validation_boundary": "Gate2 full Rust8250/0/15,Lean339,Python374 passed but Clippy failed on a test-only unused field. Finaltestfix focused11/11 and Clippy pass. Clean fullgate3 remains due after parent exact-base baseline; no final card-completion claim."
+}
