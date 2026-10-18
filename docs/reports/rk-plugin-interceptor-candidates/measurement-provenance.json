@@ -1,0 +1,197 @@
+{
+  "assumptions": [
+    "declared resource/bounds contracts and selected source profiles remain trusted premises",
+    "W44 linked-program resolution, compatible types/calling conventions and interposition premise",
+    "outer statements and neutral callback/context-lifetime restrictions require human deployment review",
+    "candidate inventory is runtime-only and establishes no static list invocation closure"
+  ],
+  "binary_sha256": "d70ac523d158772d350470125215ba1afb31ee417f5d2bda4c769cf5321b9f13",
+  "bounds": "the selected generic custody/null models and configured selections; no general bounds, object-liveness or C-body safety claim",
+  "checked_paths": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates",
+    "compiler",
+    "providers",
+    "contract",
+    "scripts",
+    "proof",
+    "third_party"
+  ],
+  "cross_unit_map_sha256": "ddd0576cde87a5782f1fe0b9c4ce4efad4042b1ee54a483a471a3576f0698e7e",
+  "gated_implementation_source": "d899486b47a582707d015a070c9e83e82a99a5a4",
+  "implementation_paths_changed_since_gate": [],
+  "measured_repository_source": "2a609d3ace0ceb0c057b66886afa845cb8dc1176",
+  "measurement_path": "/tmp/qcore-rk-interceptor-candidates/private/rk-interceptor-candidates/measure-tip-final-v1",
+  "routes": {
+    "corpus": {
+      "artifacts": {
+        "corpus-null.jsonl": {
+          "baseline_sha256": "718918832b184277be2863b88869d3f6a3be5f5f4f51216c96ebf482c8c6c14d",
+          "bytes_identical_to_baseline": true,
+          "sha256": "718918832b184277be2863b88869d3f6a3be5f5f4f51216c96ebf482c8c6c14d"
+        },
+        "corpus-outer.json": {
+          "baseline_sha256": "748b0af44fd46b033b1aa1b306ce363be21e099267c6603d466850a1332f7dea",
+          "bytes_identical_to_baseline": false,
+          "sha256": "7559a2667547f0170cbaf13877307cec1db6283bb2700a3e5acae77364564102"
+        },
+        "corpus/monkey-source.json": {
+          "baseline_sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+          "bytes_identical_to_baseline": true,
+          "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11"
+        },
+        "corpus/resource-diagnostics.chunk-contracts.json": {
+          "baseline_sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+          "bytes_identical_to_baseline": true,
+          "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484"
+        },
+        "corpus/resource-diagnostics.contracts.json": {
+          "baseline_sha256": "6cff04b33941cfb85166d3ba7728f706451ccfcb21f63317e2c609ab66a20360",
+          "bytes_identical_to_baseline": false,
+          "sha256": "7a4d25650787e9f0a5ab5f8328ff18a3ecb033ff07d957e94d0674bec01dc5d3"
+        },
+        "corpus/resource-diagnostics.json": {
+          "baseline_sha256": "3fa493342bc6790eaa363d8cc440db03a2192b7da9bae5caa58fdd1c5bb89972",
+          "bytes_identical_to_baseline": false,
+          "sha256": "d2e751d070a2f5234c02a237afeeb3c225df24a918866d59ff4d5d995c691ec6"
+        },
+        "corpus/resource-diagnostics.source-effects.json": {
+          "baseline_sha256": "39ff15812af2eab7b28beea8188ed091c01fef9bf165fe707f35231283a132ba",
+          "bytes_identical_to_baseline": false,
+          "sha256": "a459ed25aecc53159c7a77ad51971ea14512ee4b9c4a9a58fd3c0aebde47ae8f"
+        }
+      },
+      "exit": 0,
+      "null_model_versions": [
+        "qcore.null.model.v1"
+      ],
+      "outer_rule": "31",
+      "outer_schema_version": 1,
+      "profile_pin_role": "pinned corpus",
+      "resource_schema_version": 1,
+      "resource_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "selection": null,
+      "source_profile": {
+        "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+        "schema_version": "1",
+        "source_set": "fluent-bit",
+        "trust": "declared source-set assumptions, not verified upstream behavior"
+      },
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+    },
+    "slice": {
+      "artifacts": {
+        "slice-null.jsonl": {
+          "baseline_sha256": "b25ca7f3e118c6e6f81a7c80854fae4a890afea0e71e2883099e528c5559c672",
+          "bytes_identical_to_baseline": true,
+          "sha256": "b25ca7f3e118c6e6f81a7c80854fae4a890afea0e71e2883099e528c5559c672"
+        },
+        "slice-outer.json": {
+          "baseline_sha256": "c0ec9e2a89e9cae7c918ed8d07b6ef81d96c3d05925e5f68393228ebee8c3203",
+          "bytes_identical_to_baseline": false,
+          "sha256": "25689bd0035d1f69d20c35aff4dd5d3782c0eafc738194667f48620cb723289a"
+        },
+        "slice/resource-diagnostics.chunk-contracts.json": {
+          "baseline_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "bytes_identical_to_baseline": true,
+          "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+        },
+        "slice/resource-diagnostics.contracts.json": {
+          "baseline_sha256": "75f9605cea50c0b8cc24a0a511168b2d179d9add732afd81b51595f32eb6d5dc",
+          "bytes_identical_to_baseline": false,
+          "sha256": "e8baff0a3d8bf024c02c66d76526dcef41cd5c7090972e96ea408784482b4f23"
+        },
+        "slice/resource-diagnostics.json": {
+          "baseline_sha256": "7773f0e6eb44abc803a6063ea3495d69d000c6bb43ebb11ee6f4be5bfe518079",
+          "bytes_identical_to_baseline": false,
+          "sha256": "77adf1bcd62e5130fd6c28850099bc653e5797f09826d46463a86d8037c5fe92"
+        },
+        "slice/resource-diagnostics.source-effects.json": {
+          "baseline_sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+          "bytes_identical_to_baseline": true,
+          "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+        }
+      },
+      "exit": 0,
+      "null_model_versions": [
+        "qcore.null.model.v1"
+      ],
+      "outer_rule": "31",
+      "outer_schema_version": 1,
+      "profile_pin_role": "historical reference only; historical file digests and construct witnesses are not admitted",
+      "resource_schema_version": 1,
+      "resource_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "selection": {
+        "name": "fluent-bit-tail-pause",
+        "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
+        "sha256": "11cc7e23b6e3e11a3b1b4443b51f2f4e12920a505e5a636ed586646b21f4d0af"
+      },
+      "source_profile": {
+        "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+        "schema_version": "1",
+        "source_set": "fluent-bit",
+        "trust": "declared source-set assumptions, not verified upstream behavior"
+      },
+      "source_revision": "34155955e4962a56d94eb23c03a002880899a0d1"
+    },
+    "system": {
+      "artifacts": {
+        "system-null.jsonl": {
+          "baseline_sha256": "27382571f1ac4694ba0683cbb82f93071b9d6854f8f89138accf764cb816c16c",
+          "bytes_identical_to_baseline": true,
+          "sha256": "27382571f1ac4694ba0683cbb82f93071b9d6854f8f89138accf764cb816c16c"
+        },
+        "system-outer.json": {
+          "baseline_sha256": "85cf8a93170176d97ca825468d391673dc3612b41f894cd60f898c2cc2e05620",
+          "bytes_identical_to_baseline": false,
+          "sha256": "602fdf330de9cdb5df72d4d1214f27d3c7bf56258d329aaa40984c9d3cf2d37b"
+        },
+        "system/resource-diagnostics.chunk-contracts.json": {
+          "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "bytes_identical_to_baseline": true,
+          "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+        },
+        "system/resource-diagnostics.contracts.json": {
+          "baseline_sha256": "b94c5a6ea934d60737e9da966f5d0b643d6cb31757b032f409f6bc25f632ebfd",
+          "bytes_identical_to_baseline": false,
+          "sha256": "04b477bdb7a211e94aa612b275750c6c4ee8602d3c42066a5e8bcce4ed085d57"
+        },
+        "system/resource-diagnostics.json": {
+          "baseline_sha256": "477d22031729a195c964e74cdc5181d56cd7586e663599831622cc06016ed71a",
+          "bytes_identical_to_baseline": false,
+          "sha256": "15dfacf35c14ddad699992a311e6693b31869fbc017bf5f60ac0fac5b9b68629"
+        },
+        "system/resource-diagnostics.source-effects.json": {
+          "baseline_sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+          "bytes_identical_to_baseline": true,
+          "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+        }
+      },
+      "exit": 0,
+      "null_model_versions": [
+        "qcore.null.model.v1"
+      ],
+      "outer_rule": "31",
+      "outer_schema_version": 1,
+      "profile_pin_role": "historical reference only; historical file digests and construct witnesses are not admitted",
+      "resource_schema_version": 1,
+      "resource_scope": "generic resource projection; separate chunk/callback source profiles are not certificates here; an admitted scalar access through a pointer decides custody only, never bounds, alignment, or the liveness or nullness of an object the projection does not track; an index or pointer traversal (a stepped pointer, a moved index, a typed read in a loop condition) decides custody, use after release and invalid release only: no bounds claim; an indexed collection's element ranges decide which indices owe a release, never that an index is inside the allocation; a typed read handed to a borrowed or data-tail call actual (a scalar, a pointer read, a sub-object address) decides its base's custody only, never the liveness of an object a read pointer names",
+      "selection": {
+        "name": "fluent-bit-system",
+        "scope": "an explicit unit choice over the unchanged source profile; it is not a verdict dependency, and a selected file without a compilation record stays in the denominator as Unknown",
+        "sha256": "d7e8ce764c8c45c8df11d33f3568a7a653c3281985028156229c43ab86cccdde"
+      },
+      "source_profile": {
+        "pin.fluent-bit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+        "profile_digest": "37309028f4fa1d50682829be2cbca880931a1a65d57b47d1fccb78a9b74965f3",
+        "schema_version": "1",
+        "source_set": "fluent-bit",
+        "trust": "declared source-set assumptions, not verified upstream behavior"
+      },
+      "source_revision": "046accf6aded7906f66a1baf0202da349e521736"
+    }
+  }
+}

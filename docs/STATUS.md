@@ -60,7 +60,18 @@ lifetime. The completed standing/provider gate has 8,235 root Rust tests,
 338 Lean audits, 133 provider Rust tests, 374 script tests and 25 provider
 Python tests, with all five packages verified. Static list invocation remains
 unsupported; membership of a deployed callback in the review class is not
-inferred. Fresh three-route measurements are still in progress on this card.
+inferred. Fresh corpus/system/slice measurements at `2a609d3ac` retain every
+static status and runtime status: corpus runtime custody remains 923 Safe /
+32 Pending / 3,870 Unknown / 9 provisional Unsafe. All complete null artifacts
+are byte-identical; static artifact differences are recorded provenance and
+derived identity changes. The baseline is the primary integration observation
+at `ad526b58`, whose implementation/inputs are unchanged at this card's base
+`1543259f0`; it is explicitly reused, not a fresh base run. The actual source
+revisions are corpus 66910c10, system 046accf6 and slice 34155955 (the slice's
+six interceptor files match the reviewed bytes). All three loader pins and
+the exact candidate digest are in force on every route. Ledger entry
+`RK-PLUGIN-INTERCEPTOR-CANDIDATES` narrows to
+`RK-INTERCEPTOR-STATIC-LIST-CLOSURE`; the source-derived closure remains open.
 
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)

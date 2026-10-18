@@ -2,8 +2,10 @@
 
 Base `1543259f0e32c8a003a9062e7de7f59a42dd4519`. [Prediction](PREDICTION.md)
 was committed at `d623c3670`, with the runtime-only representation amendment at
-`78c6af225`, before implementation. This report will record the completed
-measurements and gates; the card is still in progress.
+`78c6af225`, before implementation. The runtime candidate surface is complete:
+all required gates and fresh corpus/system/slice runs passed. As predicted,
+static verdicts and runtime verdicts are unchanged. Static list closure remains
+the named follow-on below.
 
 The candidate inventory distinguishes 14 `rd_kafka_conf_s.interceptors` lists,
 their 14 `rd_kafka_s.rk_conf` aliases and their method union arms. It pins exact
@@ -63,8 +65,8 @@ loader rejects unsupported schema/modes, ambiguous list identities, absent or
 unbound inventories and unsafe source paths; mismatched reviewed bytes hold the
 citing outer loader. Runtime metadata includes the full inventory and source-pin
 standing. The inventory is host load-path metadata beside the outer lock;
-the executable provider protocol is unchanged. Loading the inventory does not register a static callback type or
-candidate closure. Both defining outer modules were deliberately re-pinned at
+the executable provider protocol is unchanged. Loading the inventory does not
+register a static callback type or candidate closure. Both defining outer modules were deliberately re-pinned at
 both source revisions; their clause expectations change from 57 to 85 while
 the proxy citation remains three clauses and the resource module count remains
 136.
@@ -91,8 +93,8 @@ compatible-type/calling-convention and interposition premise; its SHA-256 is
 The corpus uses source 66910c10, the configured system uses 046accf6 and
 the tail-pause slice uses `34155955e4962a56d94eb23c03a002880899a0d1`.
 The slice's six relevant source files exactly match the reviewed byte set;
-this does not assert equality of the entire source revision. Runtime envelopes require review of the deployed plugin
-class. These are separate assumptions and do not certify a deployment.
+this does not assert equality of the entire source revision. Runtime envelopes
+require review of the deployed plugin class. These are separate assumptions and do not certify a deployment.
 
 The 32 baseline runtime custody Pending rows were read individually. Their
 current reasons are existing cJSON, librdkafka callback/queue premises or
@@ -100,11 +102,89 @@ ordinary callback run-set/stated facts; none carries an interceptor-list
 run-set fact. They motivate review of the outer class but are not a promised
 promotion target for this runtime-only inventory.
 
-Fresh tip measurements are still pending. The
-reproducible commands are [measure.sh](measure.sh), [gate.sh](gate.sh),
-[compare.py](compare.py), [summarize.py](summarize.py) and
-[write_gate.py](write_gate.py). Worktree-private outputs live under
-`private/rk-interceptor-candidates/`.
+## Fresh measurements and comparison
+
+Fresh runs at repository checkpoint
+`2a609d3ace0ceb0c057b66886afa845cb8dc1176` all exited zero. The gated
+implementation is `d899486b47a582707d015a070c9e83e82a99a5a4`; the intervening
+changes are records and measurement helpers, with no implementation, provider,
+contract, proof or audit-input difference. The binary SHA-256 is
+`d70ac523d158772d350470125215ba1afb31ee417f5d2bda4c769cf5321b9f13`.
+[Measurement provenance](measurement-provenance.json) retains exact source
+profiles, scope statements, model versions, source revisions and artifact
+hashes. The configured profile's old pin remains a historical reference; each
+configured run names its actual checkout revision separately.
+
+Every static custody status and every null/combined status is identical on all
+three selections. All 5,781 complete null JSONL rows are byte-identical. The
+[per-row comparison](comparison-summary.json) records no new/removed runtime
+move, changed status pair or changed reason fact in any of the three scenarios
+(all loaded, Fluent-Bit-only, rdkafka-only), after normalizing only the outer
+contract identity hashes in reasons. The existing moved-row records remain
+228 on the corpus, four on the system and 16 on the slice per scenario.
+No newly moved row requires a new body reading. The same 32 corpus custody
+rows remain Pending; no Pending is promoted to Safe.
+
+The following counts are identical before and after this card. Each property
+keeps its own denominator, including repeated compilation configurations and
+Unknown/Pending rows. Unsafe is provisional within this model and is not an
+upstream defect claim.
+
+| Selection | Property | Rows | Static S / P / U / provisional Unsafe | Runtime S / P / U / provisional Unsafe |
+|---|---|---:|---|---|
+| corpus | custody | 4,834 | 955 / 0 / 3,870 / 9 | 923 / 32 / 3,870 / 9 |
+| corpus | null | 4,921 | 2,549 / 0 / 2,354 / 18 | 2,386 / 163 / 2,354 / 18 |
+| corpus | combined | 4,921 | 839 / 0 / 4,055 / 27 | 806 / 33 / 4,055 / 27 |
+| system | custody | 448 | 97 / 0 / 347 / 4 | 97 / 0 / 347 / 4 |
+| system | null | 454 | 211 / 0 / 243 / 0 | 209 / 2 / 243 / 0 |
+| system | combined | 454 | 65 / 0 / 385 / 4 | 63 / 2 / 385 / 4 |
+| slice | custody | 404 | 52 / 4 / 347 / 1 | 52 / 4 / 347 / 1 |
+| slice | null | 406 | 190 / 0 / 216 / 0 | 174 / 16 / 216 / 0 |
+| slice | combined | 406 | 31 / 2 / 372 / 1 | 31 / 2 / 372 / 1 |
+
+[Selection checks](candidate-selection.json) confirm the exact inventory digest
+in force, 14 lists/14 aliases, static invocation support disabled and all three
+loader pins in force (the two definitions plus the Fluent Bit proxy citation)
+on every route. This is a checked review surface, not review of an installed
+plugin's callback bodies.
+
+The canonical five-artifact comparison was run with `--full`.
+[Raw diff](artifact-diff.json.gz) and [artifact review](artifact-summary.json)
+retain raw source keys alongside normalized comparisons: 64 modules on both
+sides, 60 raw key prefix moves, no normalization collision and no changed module
+text. All 185 corpus resource units differ only in the cross-unit home
+**environment identities**; function statuses and diagnostic facts are unchanged.
+Their raw/preprocessed home source hashes and link map are unchanged. Environment
+hashes bind serialized contract source provenance (`legacy_cross_unit`), so
+checkout prefixes change those identities. Three source-effect rows
+(`cio_chunk_is_locked`, `cio_chunk_unlock`, `flb_input_chunk_release_lock`)
+change cwd-bound configuration and derived task/evidence identities only;
+`boolean_source` explicitly binds the process cwd. Their source/profile/compiler,
+claims and path bounds are unchanged. The configured reports similarly change
+contract-source dependency/inventory identities and review-hold module prefixes
+only. Their complete contract sidecars are equal after checkout-prefix mapping;
+all other diagnostic data are equal. [Artifact hashes](measurement-provenance.json) retain these provenance
+differences explicitly. Chunk artifacts, configured source-effect
+artifacts and all null artifacts are byte-identical. The preceding baseline
+archives are not re-pinned.
+
+Reproduction from this worktree uses:
+
+```sh
+export CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target
+bash docs/reports/rk-plugin-interceptor-candidates/measure.sh "$PWD" "$CARGO_TARGET_DIR/release/quirin-audit" tip-final-v1
+python3 docs/reports/rk-plugin-interceptor-candidates/compare.py /home/cosmo/Documents/GitHub/qcore-c/private/w48-w44-rk-integration/measure-combined private/rk-interceptor-candidates/measure-tip-final-v1 private/rk-interceptor-candidates/compare-final.json
+python3 docs/reports/rk-plugin-interceptor-candidates/summarize.py private/rk-interceptor-candidates/compare-final.json docs/reports/rk-plugin-interceptor-candidates/comparison-summary.json
+python3 docs/reports/rk-plugin-interceptor-candidates/check_selection.py private/rk-interceptor-candidates/measure-tip-final-v1 docs/reports/rk-plugin-interceptor-candidates/candidate-selection.json
+```
+
+The retained run outputs are under
+`/tmp/qcore-rk-interceptor-candidates/private/rk-interceptor-candidates/measure-tip-final-v1/`;
+the baseline primary remains at the path in `baseline-provenance.json`.
+Use a new output name for another measurement. The canonical comparator reads
+the private gzip copies of the baseline's five raw artifacts in
+`private/rk-interceptor-candidates/baseline-artifacts/`; [review_artifacts.py](review_artifacts.py)
+checks the complete diff and both configured reports without changing a verdict.
 
 ## Validation
 
@@ -120,7 +200,25 @@ Provider Rust passed 133 tests and provider Python passed 25; the script suite
 passed 374 tests and the generated documentation index check passed. Every
 required final gate step exited zero; [gate.json](gate.json) records the counts
 and exact implementation commit. The derived acceptance matrix was regenerated
-with these gate observations.
+with these gate observations. The final pin harness
+[pin.sh](pin.sh) recorded nine zero exits (pin/check for each outer provider at
+each reviewed revision, then `pin --verify-contracts`); the final contract sync
+also exited zero. Logs are under `private/rk-interceptor-candidates/pins-lifetime/`
+and `contracts-sync-lifetime.log`.
+
+| Command | Exit | Retained log directory |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | `gate-standing-final/submodule.*` |
+| `gate.sh standing-pre -final` | 0 | `gate-standing-final/` |
+| `gate.sh standing-tests -final` | 0 | `gate-standing-final/test-binaries/` |
+| `gate.sh providers-pre -final` | 0 | `gate-providers-final/` |
+| `gate.sh providers-tests -final` | 0 | `gate-providers-final/` |
+| `gate.sh docs -final` | 0 | `gate-docs-final/` |
+
+The `gate.sh` path is `docs/reports/rk-plugin-interceptor-candidates/gate.sh`;
+all relative log directories above are beneath this card's worktree-private
+`private/rk-interceptor-candidates/`. Formatting, Clippy and provider checks are
+not inferred from the test count; their separate exit files are retained.
 
 ## Gate diagnostics retained
 
@@ -154,7 +252,7 @@ claiming the runtime review surface discharges it.
 
 ## Follow-ons
 
-`RK-INTERCEPTOR-STATIC-LIST-CLOSURE`: static interceptor list invocation remains unsupported: a list/element/union-arm
-closure and candidate composition need their own sound rule. Callbacks that free
+`RK-INTERCEPTOR-STATIC-LIST-CLOSURE`: static interceptor list invocation remains
+unsupported: a list/element/union-arm closure and candidate composition need their own sound rule. Callbacks that free
 or retain opaque state or transfer ownership do not meet this card's neutral
 candidate and remain unsupported. No deployed callback has been certified.

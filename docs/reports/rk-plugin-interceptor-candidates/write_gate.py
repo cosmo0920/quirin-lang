@@ -55,7 +55,7 @@ def main():
     clang = (standing / "clang-version.txt").read_text().splitlines()[0]
     observed_source = (standing / "head-standing-tests").read_text().strip()
     note = (
-        f"RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; final source {observed_source}; worktree-private logs in "
+        f"RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; tested implementation {observed_source}; worktree-private logs in "
         "private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; "
         f"standing tests {totals.group(1)} units/{totals.group(2)} summaries/"
         f"{totals.group(3)} passed/{totals.group(4)} failed/{totals.group(5)} ignored; "
