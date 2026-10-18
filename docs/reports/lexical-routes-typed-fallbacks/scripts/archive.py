@@ -22,13 +22,13 @@ ARTIFACTS = {
 }
 
 
-def archive(path, destination, corpus):
+def archive(path, destination, route):
     destination.mkdir(parents=True, exist_ok=False)
     fingerprints = {}
     for stem, name in ARTIFACTS.items():
         source = path if stem == "diagnostics" else path.parent / name
         if not source.is_file():
-            if corpus:
+            if route == "corpus":
                 raise FileNotFoundError(source)
             fingerprints[stem] = {"present": False}
             continue
@@ -46,10 +46,24 @@ def archive(path, destination, corpus):
         for row in unit["functions"]:
             counts[row["status"]] = counts.get(row["status"], 0) + 1
     fingerprints["static_custody_counts"] = counts
-    for name in ("head", "run.json", "invocation.json", "binary.sha256", "link-map.sha256"):
+    for name in ("head", "run.json", "invocation.json", f"{route}-invocation.json",
+                 "binary.sha256", "link-map.sha256", f"{route}.exit"):
         source = next((p / name for p in (path.parent, path.parent.parent) if (p / name).is_file()), None)
         if source is not None:
             (destination / name).write_bytes(source.read_bytes())
+    # Keep the independent null-property and runtime projections alongside
+    # custody, without treating either projection's coverage as custody Safe.
+    for name in (f"{route}-null.jsonl", f"{route}-null.summary.json", f"{route}-outer.json"):
+        source = next((p / name for p in (path.parent, path.parent.parent) if (p / name).is_file()), None)
+        if source is None:
+            if name.endswith("-null.summary.json"):
+                fingerprints[name] = {"present": False, "optional_derived_summary": True}
+                continue
+            raise FileNotFoundError(f"missing required projection: {name} beside {path}")
+        data = source.read_bytes()
+        (destination / f"{name}.gz").write_bytes(gzip.compress(data, mtime=0))
+        fingerprints[name] = {"source": str(source), "bytes": len(data),
+                              "sha256": hashlib.sha256(data).hexdigest()}
     (destination / "manifest.json").write_text(json.dumps(fingerprints, indent=2) + "\n")
 
 
@@ -60,8 +74,8 @@ def main():
         raise ValueError("route must be corpus, system or slice")
     out = REPORT / "artifacts" / route
     out.mkdir(parents=True, exist_ok=False)
-    archive(before, out / "before", route == "corpus")
-    archive(after, out / "after", route == "corpus")
+    archive(before, out / "before", route)
+    archive(after, out / "after", route)
     compared = subprocess.run(
         [sys.executable, str(REPO / "docs/reports/w44-cross-unit-summary/scripts/compare.py"), str(before), str(after)],
         capture_output=True, check=True,

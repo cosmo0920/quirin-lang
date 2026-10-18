@@ -1,0 +1,13 @@
+{
+  "note": "LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS clean standing gate3 at bd12e15e3f49dd384f0595b1cd18499aaf08094e; analyzer/proof/test source unchanged since 913a72a916242165ed0dc586fd1affdb3093fd65. All ten commands exited 0: 514 units/527 summaries, 8250 passed/0 failed/15 ignored; 339 Lean audits; 374 Python tests. Actual commands/exits/private logs are in artifacts/final-standing-gate/commands.json. Earlier failed gates are retained. Provider count 133 is explicitly borrowed from the integrator fresh combined base 854920e3e provider gate, /home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/gate-providers-1 (133 Rust/0 failed/1 ignored,25 Python,all five packages verified); provider-owned sources are unchanged here. Corpus/system/slice tip repin remains pending at this gate receipt.",
+  "workspace_tests": 8250,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 339,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
