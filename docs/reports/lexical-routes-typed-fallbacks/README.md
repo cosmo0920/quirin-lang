@@ -51,6 +51,14 @@ new null premise. All 23 pin/certificate-focused cases pass. The original gate,
 latent third assertion's failed focused replay, and exact reasons remain under
 [attempts](artifacts/attempts/first-standing-gate/explanation.json) and private logs.
 
+The second full gate passes all **8,250 Rust tests / 0 failed / 15 ignored**
+(514 units / 527 summaries), **339 Lean audits / 374 Python tests**, but retains
+Clippy exit 101: amending the old pin left its diagnostic helper field unread.
+The fix strengthens the Safe helper to require no diagnostics; all 11 focused
+null/certificate controls and Clippy with warnings denied then pass. There is
+no production code change. [The second attempt](artifacts/attempts/second-standing-gate/explanation.json)
+is retained separately. A clean final full gate remains required.
+
 A fresh final standing gate and corpus/system/slice measurements are pending;
 no completion claim is made by this draft. Raw logs are worktree-private under
 `private/lexical-typed/`.

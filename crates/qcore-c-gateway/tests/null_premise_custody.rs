@@ -96,6 +96,7 @@ fn assert_safe_on(source: &str, variables: &[&str]) {
         AnalysisStatus::Safe,
         "{source}\n{outcome:?}"
     );
+    assert!(outcome.descriptions.is_empty(), "{source}\n{outcome:?}");
     let mut named = outcome
         .premises
         .iter()
