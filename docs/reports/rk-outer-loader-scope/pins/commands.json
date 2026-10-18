@@ -1,0 +1,65 @@
+[
+  {
+    "name": "corpus-pin",
+    "argv": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/quirin-audit-854920e3e",
+      "pin",
+      "--outer",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "corpus-check",
+    "argv": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/quirin-audit-854920e3e",
+      "pin",
+      "--outer",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka",
+      "--check"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "system-pin",
+    "argv": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/quirin-audit-854920e3e",
+      "pin",
+      "--outer",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "system-check",
+    "argv": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/quirin-audit-854920e3e",
+      "pin",
+      "--outer",
+      "--source-root",
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+      "--crate",
+      "qcore-provider-librdkafka",
+      "--check"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "verify",
+    "argv": [
+      "/home/cosmo/Documents/GitHub/qcore-c/private/w48-batch2-rk-integration/quirin-audit-854920e3e",
+      "pin",
+      "--verify-contracts"
+    ],
+    "exit": 0
+  }
+]

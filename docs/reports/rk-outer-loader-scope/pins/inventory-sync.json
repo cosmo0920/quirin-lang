@@ -1,0 +1,37 @@
+[
+  {
+    "provider": "qcore.chunkio",
+    "crate": "qcore-provider-chunkio",
+    "contracts": 46,
+    "includes": 0,
+    "inventory_sha256": "192a6393327138fa5cfc1efd1d965f9173e0e1e197c93575d79f0f65bc32c111"
+  },
+  {
+    "provider": "qcore.cmetrics",
+    "crate": "qcore-provider-cmetrics",
+    "contracts": 5,
+    "includes": 0,
+    "inventory_sha256": "39db29d6eb160062b3faad9e446c6ff6d842b726e4901537523ce19ea095c441"
+  },
+  {
+    "provider": "qcore.ctraces",
+    "crate": "qcore-provider-ctraces",
+    "contracts": 1,
+    "includes": 0,
+    "inventory_sha256": "586d457d2f6b9c33baaf4071d1234ae7775a0eee760df1a52a9cde866c53fb14"
+  },
+  {
+    "provider": "qcore.libevent",
+    "crate": "qcore-provider-libevent",
+    "contracts": 19,
+    "includes": 1,
+    "inventory_sha256": "1198ecc82e2499a627bb6b65857271da853b00888e2894753ff5469f424e1a58"
+  },
+  {
+    "provider": "qcore.librdkafka",
+    "crate": "qcore-provider-librdkafka",
+    "contracts": 11,
+    "includes": 2,
+    "inventory_sha256": "4a530f521248620b93cc0d15f87bfe8a1b64fad9d9bc1a4a2b758ee723712465"
+  }
+]
