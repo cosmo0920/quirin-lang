@@ -5,6 +5,7 @@ out="$repo/private/w48-bottom-up-batch2/gate-${1:?fresh run name}"
 [ ! -e "$out" ] || exit 2
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
+export CARGO_BUILD_JOBS=4
 export CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/w48-bottom-up-batch2-target
 git rev-parse HEAD > "$out/head"
 step() {

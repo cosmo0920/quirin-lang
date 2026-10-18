@@ -27,6 +27,27 @@ system|slice)
     prepared=/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep
     selection=tail-pause-selection.json
   fi
+  python3 - "$out" "$binary" "$prepared" "$selection" "$repo" <<'PYINV'
+from pathlib import Path
+import hashlib, json, os, subprocess, sys
+out, binary, prepared, selection, repo = map(Path, sys.argv[1:])
+checkout = prepared/'fluent-bit-clang-source'
+database = prepared/'fluent-bit-clang-production/compile_commands.json'
+selected = repo/'contract/profiles/fluent-bit'/selection
+record = {
+    'head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+    'binary': str(binary), 'binary_sha256': hashlib.sha256(binary.read_bytes()).hexdigest(),
+    'checkout': str(checkout),
+    'source_head': subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip(),
+    'compile_database': str(database), 'compile_database_sha256': hashlib.sha256(database.read_bytes()).hexdigest(),
+    'selection': str(selected), 'selection_sha256': hashlib.sha256(selected.read_bytes()).hexdigest(),
+    'profile_directory': str(repo/'contract/profiles/fluent-bit'), 'jobs': 4,
+    'QCORE_CLANG': os.environ['QCORE_CLANG'],
+    'QCORE_CROSS_UNIT_LINK_MAP': os.environ['QCORE_CROSS_UNIT_LINK_MAP'],
+    'link_map_sha256': hashlib.sha256(Path(os.environ['QCORE_CROSS_UNIT_LINK_MAP']).read_bytes()).hexdigest(),
+}
+(out/'invocation.json').write_text(json.dumps(record, indent=2)+'\n')
+PYINV
   "$binary" current \
     --checkout "$prepared/fluent-bit-clang-source" \
     --profile-directory "$repo/contract/profiles/fluent-bit" \
