@@ -12627,11 +12627,11 @@
    "recorded_by": "FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS"
   },
   {
-   "id": "RK-PLUGIN-INTERCEPTOR-CANDIDATES",
-   "title": "Define candidate contracts for librdkafka plugin interceptor list registrations before claiming a closed runtime registration set",
-   "why": "RK-PLUGIN-LIBRARY-OUTER-ENVELOPE defines paired reviewable outer envelopes but leaves the interceptor rd_list_t members uncovered: the static callback registry has no candidate contracts for those members, so a C04.20 #registered line would overclaim. DISCHARGE: read the public interceptor setters, list member identities, callback signatures and runtime registration conditions at both audited source revisions; define and pin candidate contracts for every member whose closure can be stated; add #registered lines only where the outer statement names a human-checkable restriction; keep unsupported members Unknown; remeasure corpus, system and slice and read every newly moved row with static verdicts unchanged.",
-   "source": "docs/reports/rk-plugin-library-outer-envelope/README.md",
-   "recorded_by": "RK-PLUGIN-LIBRARY-OUTER-ENVELOPE"
+   "id": "RK-INTERCEPTOR-STATIC-LIST-CLOSURE",
+   "title": "Read exact interceptor list element and method-union candidate closure at static invocations",
+   "why": "Narrowed by RK-PLUGIN-INTERCEPTOR-CANDIDATES. Its runtime-only source-pinned inventory defines 14 exact rd_kafka_conf_s interceptor lists and their 14 rd_kafka_s.rk_conf aliases with distinct rd_kafka_interceptor_method_s union arms, signatures, successful registration/lifecycle restrictions, borrowed neutral-custody callbacks and code/opaque lifetime premises. These are human review restrictions and do not establish static closure or type a list as a function pointer; rule 12n still refuses these invocations. Stateful freeing/retaining/transferring callbacks do not meet the neutral candidate. DISCHARGE: a sound source-derived list/element/union-arm closure over all registration and invocation sites, including aliasing, copying, teardown and lifetime, with candidate effect composition, matching Rust/Lean evidence, corpus/system/slice measurement and every moved row read. Missing or unsupported registrations remain Unknown and runtime review alone never makes a static Safe result.",
+   "source": "docs/reports/rk-plugin-interceptor-candidates/README.md",
+   "recorded_by": "RK-PLUGIN-INTERCEPTOR-CANDIDATES"
   },
   {
    "id": "FLB-LIB-HOST-OUTER-CALLER",

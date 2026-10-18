@@ -1,0 +1,26 @@
+{
+  "declared_base": "1543259f0e32c8a003a9062e7de7f59a42dd4519",
+  "primary_measured_source": "ad526b5871c8cd05596c63d110932923431915d7",
+  "observation": "reused primary integration baseline, not a fresh run",
+  "primary_path": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-w44-rk-integration/measure-combined",
+  "checked_paths": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates",
+    "compiler",
+    "providers",
+    "contract",
+    "scripts",
+    "proof",
+    "third_party"
+  ],
+  "changed_paths": [],
+  "primary_binary_sha256": "e93676faa20557c1dae09a12880c06292a60a2bcf523780f192fd8a80c3cc5f9",
+  "link_map_sha256": "ddd0576cde87a5782f1fe0b9c4ce4efad4042b1ee54a483a471a3576f0698e7e",
+  "routes": [
+    "corpus",
+    "system",
+    "slice"
+  ],
+  "assumptions": "same pinned/configured source inputs and W44 linked-program resolution/type/calling-convention/interposition premise; runtime envelopes remain conditional on review"
+}

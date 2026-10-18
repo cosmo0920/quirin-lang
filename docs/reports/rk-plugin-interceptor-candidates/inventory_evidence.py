@@ -26,6 +26,9 @@ for root, identity in zip(sys.argv[1:], data['reviewed_identities']):
         files[Path(path).name] = content.decode()
     assert 'method->ic_opaque = ic_opaque;' in files['rdkafka_interceptor.c']
     assert 'method->u.generic = func;' in files['rdkafka_interceptor.c']
+    method_record = files['rdkafka_interceptor.c'].split('} rd_kafka_interceptor_method_t;', 1)[0]
+    arms = set(re.findall(r'rd_kafka_interceptor_f_(on_\w+)_t', method_record))
+    assert arms == {candidate['callback_member'].split('.')[-1] for candidate in data['candidates']}
     records = []
     for candidate in data['candidates']:
         arm = candidate['callback_member'].split('.')[-1]
@@ -41,5 +44,5 @@ for root, identity in zip(sys.argv[1:], data['reviewed_identities']):
             assert 'assert(!rk->rk_initialized)' in body
             assert 'RD_KAFKA_INTERCEPTOR_REJECT_IF_SHARE(rk)' in body
         records.append({'list': candidate['list_member'], 'union_arm': candidate['callback_member'], 'setter': candidate['setter'], 'signature': candidate['callback_signature'], 'lifecycle': candidate['lifecycle'], 'registration_lifetime': candidate['registration_lifetime'], 'source_pins': 'match'})
-    results.append({'revision': revision, 'sources': len(files), 'candidates': records})
+    results.append({'revision': revision, 'sources': len(files), 'candidates': records, 'excluded_non_callback_list': 'rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations'})
 print(json.dumps({'inventory_sha256': hashlib.sha256(inventory.read_bytes()).hexdigest(), 'audited': results}, indent=2))

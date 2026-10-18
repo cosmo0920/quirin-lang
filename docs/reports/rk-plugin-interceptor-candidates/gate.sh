@@ -7,7 +7,7 @@ case "$part" in standing-*) group=standing;; providers-*) group=providers;; *) g
 out="$repo/private/rk-interceptor-candidates/gate-$group${2:-}"
 mkdir -p "$out"
 cd "$repo" || exit 2
-export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
+export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0
 export CARGO_TARGET_DIR=/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target
 failed=0
 step() {

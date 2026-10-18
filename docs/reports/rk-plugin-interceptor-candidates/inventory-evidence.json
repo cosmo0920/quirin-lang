@@ -131,7 +131,8 @@
           "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         }
-      ]
+      ],
+      "excluded_non_callback_list": "rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations"
     },
     {
       "revision": "046accf6aded7906f66a1baf0202da349e521736",
@@ -263,7 +264,8 @@
           "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         }
-      ]
+      ],
+      "excluded_non_callback_list": "rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations"
     }
   ]
 }

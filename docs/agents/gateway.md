@@ -8331,8 +8331,8 @@ own anchor here.
     loaded scenario only where each pinned envelope stands and the named
     outside-code conditions are reviewed. Both cover the relevant librdkafka
     member and premise facts, including a condition forbidding loaded code
-    from changing cJSON allocator hooks; interceptor lists with no member
-    candidates remain uncovered. **Do not** let the projection change a
+    from changing cJSON allocator hooks; interceptor lists require separately
+    pinned runtime candidates before a `#registered` envelope may cover them. **Do not** let the projection change a
     static byte or verdict, read a fact a contract does not reach as covered,
     count an uncovered or unpinned fact as `Pending`, promote any row, or
     publish an outer `Pending` without its `NAME@DIGEST`.
