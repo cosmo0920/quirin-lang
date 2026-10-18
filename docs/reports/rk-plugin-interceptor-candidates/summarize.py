@@ -33,6 +33,7 @@ for route, detail in comparison.items():
     summary[route] = {'static_before': detail['static_before'], 'static_after': detail['static_after'],
                        'custody_static_statuses_identical': detail['custody_static_statuses_identical'],
                        'null_static_statuses_identical': detail['null_static_statuses_identical'],
+                       'null_complete_rows_identical': detail['null_complete_rows_identical'],
                        'scenarios': scenarios}
     assert detail['custody_static_statuses_identical'] and detail['null_static_statuses_identical'], route
 Path(sys.argv[2]).write_text(json.dumps(summary, indent=2, sort_keys=True)+'\n')

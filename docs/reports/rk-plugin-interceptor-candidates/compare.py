@@ -29,8 +29,12 @@ def custody_statuses(directory, route):
     ]
 
 
+def null_rows(directory, route):
+    return [json.loads(line) for line in (directory / f"{route}-null.jsonl").read_text().splitlines()]
+
+
 def null_statuses(directory, route):
-    rows = [json.loads(line) for line in (directory / f"{route}-null.jsonl").read_text().splitlines()]
+    rows = null_rows(directory, route)
     return [
         (row["library"], row["file"], row["function"], row["custody"], row["null"]["verdict"], row["combined"])
         for row in rows
@@ -77,6 +81,7 @@ def main():
             "static_after": right["static"],
             "custody_static_statuses_identical": custody_statuses(base, route) == custody_statuses(tip, route),
             "null_static_statuses_identical": null_statuses(base, route) == null_statuses(tip, route),
+            "null_complete_rows_identical": null_rows(base, route) == null_rows(tip, route),
             "scenarios": scenarios,
         }
     destination.write_text(json.dumps(comparison, indent=2, sort_keys=True) + "\n")
