@@ -713,7 +713,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // in `outer-contracts.lock`): the defining loader's selector, header,
     // runtime condition and four envelope lines; the citing loader's selector,
     // header and runtime condition.
-    ("fluent_bit/outer.qv", "flb_plugin_load", 57),
+    ("fluent_bit/outer.qv", "flb_plugin_load", 85),
     ("fluent_bit/outer.qv", "flb_plugin_proxy_create", 3),
     (
         "fluent_bit/output_flush_id.qv",
@@ -1927,7 +1927,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
     // 34 callback registrations, 12 kept members and 8 premises.
-    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 57),
+    ("librdkafka/outer.qv", "rd_kafka_plugin_new", 85),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
     // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").
     (

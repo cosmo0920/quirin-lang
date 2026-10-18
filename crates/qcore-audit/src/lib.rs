@@ -46,6 +46,7 @@ pub mod contract_pin;
 pub mod contract_revision;
 pub mod null_fold;
 // Card OUTER-CONTRACT (rule 31): the runtime projection.
+pub mod outer_candidates;
 pub mod outer_selection;
 // Card NULL-MEMBER-INVARIANT-SCOPE (gateway rules 14x-14z).
 pub mod null_member_scope_fold;

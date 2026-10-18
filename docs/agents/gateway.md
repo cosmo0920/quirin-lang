@@ -8347,3 +8347,19 @@ own anchor here.
     `crates/qcore-c-gateway/tests/outer_record_graph.rs`,
     `crates/qcore-audit/tests/outer_projection.rs`;
     [report](../reports/outer-contract/README.md).
+
+    Runtime list candidates (`RK-PLUGIN-INTERCEPTOR-CANDIDATES`, C04.20.1)
+    are a separate versioned `outer-candidates.json` inventory, bound by
+    its exact digest in the defining outer statement and exact reviewed
+    source bytes. The generic `qcore_audit::outer_candidates` loader keeps
+    list/element/union-arm/signature identities distinct, rejects missing,
+    malformed, ambiguous or unbound inventories, and holds citing loaders
+    on a source mismatch. Its neutral-custody and success/lifecycle
+    restrictions are premises for human review of loaded callbacks and
+    their transitive calls, never effects inferred from signatures. The
+    runtime record carries the inventory and standing. It does not enter
+    rule 12n's static registry: list invocation remains unsupported and
+    Unknown. No list is coerced to a function pointer and no union-arm
+    closure is inferred. An in-force covered runtime fact remains Pending.
+    `QCore.OuterListCandidates`; `outer_candidates`' Rust tests;
+    [report](../reports/rk-plugin-interceptor-candidates/README.md).

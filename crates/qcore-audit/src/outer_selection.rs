@@ -267,7 +267,29 @@ pub fn select_for_route(
             let manifest =
                 load_contract_load_path_manifest(&load_path).map_err(|error| error.to_string())?;
             let (mut contracts, modules) = load_views(&manifest)?;
-            let (pins, sites) = apply_outer_pins(&mut contracts, &manifest, source_root)?;
+            let (mut pins, sites) = apply_outer_pins(&mut contracts, &manifest, source_root)?;
+            pins["list_candidates"] =
+                crate::outer_candidates::apply(&mut contracts, &manifest, source_root)?;
+            if let Some(outcomes) = pins["outcomes"].as_array_mut() {
+                for outcome in outcomes {
+                    if let Some(hold) = outcome["loader"]
+                        .as_str()
+                        .and_then(|name| contracts.loaders.get(name))
+                        .and_then(|loader| loader.pin_hold.as_ref())
+                    {
+                        outcome["standing"] = json!("not-in-force");
+                        outcome["reason"] = json!(hold.reason);
+                        outcome["detail"] = json!(hold.detail);
+                    }
+                }
+            }
+            let held = contracts
+                .loaders
+                .values()
+                .filter(|loader| loader.pin_hold.is_some())
+                .count();
+            pins["held"] = json!(held);
+            pins["in_force"] = json!(contracts.loaders.len() - held);
             let record = json!({
                 "path": load_path,
                 "sha256": sha256_hex(&fs::read(&load_path).map_err(|e| e.to_string())?),

@@ -389,5 +389,6 @@ import QCore.RetentionPath
 import QCore.RegistrationById
 import QCore.FunctionPointerDeclarators
 import QCore.OuterContract
+import QCore.OuterListCandidates
 
 /-! The executable formal core of QCore-C revision 0.1. -/
