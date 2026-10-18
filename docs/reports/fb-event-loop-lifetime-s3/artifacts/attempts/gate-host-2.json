@@ -1,0 +1,48 @@
+{
+  "head": "535ad5a66018b5f25026856b9256cafe4320cf1f",
+  "host_access": true,
+  "complete_gate": false,
+  "steps": [
+    {
+      "step": "clang-version",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/clang-version.log"
+    },
+    {
+      "step": "clippy",
+      "exit": 101,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/clippy.log",
+      "archived_log": "gate-host-2-clippy.log.gz"
+    },
+    {
+      "step": "fmt",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/fmt.log"
+    },
+    {
+      "step": "lean",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/lean.log"
+    },
+    {
+      "step": "reevaluation-followup",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/reevaluation-followup.log"
+    },
+    {
+      "step": "reevaluation-probe",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/reevaluation-probe.log"
+    },
+    {
+      "step": "rust-tests",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/rust-tests.log"
+    },
+    {
+      "step": "submodules",
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-host-2/submodules.log"
+    }
+  ]
+}

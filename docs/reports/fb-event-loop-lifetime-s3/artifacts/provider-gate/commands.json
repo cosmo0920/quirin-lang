@@ -1,0 +1,162 @@
+{
+  "tested_head": "d0a48bfd612e875254e72a4852e6930e718159cf",
+  "host_access": true,
+  "provider_rust": {
+    "passed": 133,
+    "failed": 0,
+    "ignored": 1,
+    "summaries": 43
+  },
+  "provider_python": 25,
+  "steps": [
+    {
+      "name": "contracts-sync",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/contracts-sync.log"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/contracts-check.log"
+    },
+    {
+      "name": "provider-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/provider-tests.log"
+    },
+    {
+      "name": "provider-fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/provider-fmt.log"
+    },
+    {
+      "name": "provider-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "providers/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/provider-clippy.log"
+    },
+    {
+      "name": "provider-python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "providers/tests"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/provider-python.log"
+    },
+    {
+      "name": "package-build",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "build",
+        "--output",
+        "private/fb-lifetime-s3/gate-providers-1/packages",
+        "--target-dir",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/fb-lifetime-s3-target"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/package-build.log"
+    },
+    {
+      "name": "verify-qcore.chunkio",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/fb-lifetime-s3/gate-providers-1/packages/qcore.chunkio"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/verify-qcore.chunkio.log"
+    },
+    {
+      "name": "verify-qcore.cmetrics",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/fb-lifetime-s3/gate-providers-1/packages/qcore.cmetrics"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/verify-qcore.cmetrics.log"
+    },
+    {
+      "name": "verify-qcore.ctraces",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/fb-lifetime-s3/gate-providers-1/packages/qcore.ctraces"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/verify-qcore.ctraces.log"
+    },
+    {
+      "name": "verify-qcore.libevent",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/fb-lifetime-s3/gate-providers-1/packages/qcore.libevent"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/verify-qcore.libevent.log"
+    },
+    {
+      "name": "verify-qcore.librdkafka",
+      "command": [
+        "python3",
+        "providers/package.py",
+        "verify",
+        "private/fb-lifetime-s3/gate-providers-1/packages/qcore.librdkafka"
+      ],
+      "exit": 0,
+      "private_log": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/gate-providers-1/verify-qcore.librdkafka.log"
+    }
+  ]
+}

@@ -1,8 +1,14 @@
-# FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3 implementation brief
+# FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME: S3
 
-Preparation base: `654e2b7eed72374b02ea39ef41059f7a9149b776`; implementation rebased onto `854920e3e`.
-Branch: `codex/fb-lifetime-s3`, isolated at `/tmp/qcore-fb-lifetime-s3`.
-This preparation is not a completed implementation or a measured safety gain.
+The implementation supports scoped conditional prerequisites and exact
+same-unit forwarding of declared registration obligations, with independent
+certificate replay. Conditional record correlation and whole-program threaded
+teardown remain unresolved; syntax alone never supplies either proof.
+
+Preparation base: `654e2b7eed72374b02ea39ef41059f7a9149b776`; integration
+base: `e8b9ff07d`; frozen analyzer/proof source: `d0a48bfd6`. Branch:
+`codex/fb-lifetime-s3`, isolated at `/tmp/qcore-fb-lifetime-s3`.
+Fresh production measurements and final record reconciliation are pending.
 
 The task is the existing ledger entry `FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`:
 implement the user's S3 declared lifetime protocols after the access/identity
@@ -31,7 +37,7 @@ and boundaries discussed before implementation. It records the authorized direct
 conditions nor local prerequisites are assumed true. This feature is
 separate from C04.20 outer-contract static/runtime scenarios.
 
-The proposed host is the existing pinned `flb_input_set_collector_time`
+The production host is the existing pinned `flb_input_set_collector_time`
 declaration in `fluent_bit/input_collector_registration.qv`; that declaration
 already establishes the record via the checked `collector_create` helper.
 The new line is inside its existing contract, beside the id-forwarding line:
@@ -52,7 +58,7 @@ host's revision pin and a dedicated protocol clause/evidence kind; W4 custody
 evidence does not validate it. There is no standalone module-level `quant`
 grammar promise and no new custody declaration for `collector_create`.
 
-The conditional equality also names the existing explicit rule-10p premise
+Any future conditional equality must also name the existing explicit rule-10p premise
 that the threaded flag is immutable after initialization. Source has both
 initialization and a `threaded` property-setter write; absence of writes is
 not proved. Any writer outside that premise prevents the equality from
@@ -91,15 +97,30 @@ footprint-lifting coverage, admitted releases having no live registration,
 unproven equality ending nothing, poisoned-record preservation until destroy,
 fold demotion, validated-declaration equivalence, withdrawn-declaration
 non-use and premise attribution to every dependent verdict. Shared Rust/Lean
-decision and trace vectors bind the executable model to its proof.
+decision and trace vectors bind the executable model to its proof. Numeric
+model identifiers do not prove production canonicalization: exact typed source,
+condition/member identity, formal-to-actual substitution and stable object/value
+snapshots remain explicit extraction premises. The source route rechecks its
+bounded evidence and refuses unsupported correspondence.
 
 ## Measurement and completion
 
-[PREDICTION.md](PREDICTION.md) is committed before implementation. The coordinator’s exact historical `854920e3e` baseline artifacts cover
-corpus `66910c10`, system `046accf6` and slice `34155955e4962a56d94eb23c03a002880899a0d1` ; the immediate S3 baseline will be the merged lexical integration, with comparisons recording exact binary/source identities, jobs, exits and worktree-private
-logs. Read every moved row. Null-property parity and no unexplained Safe
-regressions are required. Do not turn the unjoined teardown readings into
-validated upstream defects or claim deployments satisfy declared premises.
+[PREDICTION.md](PREDICTION.md) preserves the original pre-code prediction;
+later direction and integration changes are dated addenda. The immediate before
+observation is the frozen lexical `913a72a91` measurement, explicitly reused,
+covering corpus `66910c10`, system `046accf6` and slice
+`34155955e4962a56d94eb23c03a002880899a0d1`. The final composition also contains
+the user's RK envelope correction. [The exact source-boundary record](artifacts/baseline-scope.json)
+retains the lexical-to-integration-base diff: no analyzer or proof change, only
+the outer text/inventory/lock correction and its tests/count. Outer vocabulary
+is excluded from static resource selection; runtime changes still require
+per-row attribution. This is not an isolated S3 runtime experiment. Historical
+`854920e3e` measurements remain cumulative evidence, not a fresh immediate base.
+
+Final source/binary/input identities, jobs, exits, complete row changes and
+private logs accompany the fresh composed routes. Every moved row is read.
+No unjoined teardown reading becomes a validated upstream defect, and no
+measurement claims deployments satisfy its declared premises.
 
 The full standing gate in `docs/agents/validation.md` is required; provider
 changes also require their packaging/conformance gate. Heavy work waits for
@@ -121,8 +142,8 @@ two holder stores, four registration sites (start/resume, two arms each), two
 matching pause removals and two destroy removals at `flb_config.evl`.
 This lexical census is source observation, not protocol validation or a
 verdict baseline. Submodule initialization completed exit 0 at
-`d82464a277d0f42703702c4dfd9af6af38595a83`. No gate has run on this
-preparation branch; no standing-gate completion is claimed.
+`d82464a277d0f42703702c4dfd9af6af38595a83`. These preparation observations
+are separate from the final gates and production verdict measurements.
 
 `FB-UNJOINED-TEARDOWN-READINGS` remains a reading under rules 10q/C5.
 `W47-LOOP-OWNER-UNDECLARABLE-OPERATIONS` is not discharged by a lifetime
@@ -162,7 +183,9 @@ ordering: destroy-before-release can discharge an exact concrete holder;
 release-before-destroy and lifted-footprint prefixes cannot.
 
 New lifetime members and qualified guarded/protocol assumptions are dependency
-and runtime outer facts. Existing envelopes are unchanged. Protocol identifiers
+and runtime outer facts. S3 adds no envelope coverage. The composed tree
+separately removes the four unrelated Fluent Bit promises from the RK envelope,
+as directed by the user. Protocol identifiers
 containing source digests are not expressible by current `#premise NAME` and
 therefore remain runtime Unknown; a follow-on must define a reviewable outer
 identity/envelope surface before these facts gain runtime coverage. This is

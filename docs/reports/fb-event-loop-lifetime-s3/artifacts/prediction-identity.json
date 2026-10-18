@@ -1,0 +1,8 @@
+{
+  "original_blob_sha256": "13e92d14c4d260a3e0fcdb407716d86d674dbf86a455716fd1bb720db3dbea01",
+  "original_bytes": 1734,
+  "preserved_as_unchanged_prefix": true,
+  "later_addenda_are_separate": true,
+  "rebased_pre_code_commit": "f9b90c7ecd9181c59e2a239ea5244c0e62c09348",
+  "original_pre_code_commit": "3e996137e9e31ecebe046949593978773821a61c"
+}
