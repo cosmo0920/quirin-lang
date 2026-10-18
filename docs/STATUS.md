@@ -51,6 +51,17 @@ rows and tail-pause slice's 404 rows retain their previous status and
 diagnostic projections. This conditional merged measurement does not replace
 the default W48 count or certify a particular link or plugin deployment.
 
+The [interceptor candidate inventory](reports/rk-plugin-interceptor-candidates/README.md)
+adds a runtime review surface for 14 distinct librdkafka callback lists and
+14 client-configuration aliases, pinned to exact source bytes at both audited
+revisions. Both defining outer statements bind its digest and explicitly
+require neutral custody, valid registration lifecycle and callback/context
+lifetime. The completed standing/provider gate has 8,235 root Rust tests,
+338 Lean audits, 133 provider Rust tests, 374 script tests and 25 provider
+Python tests, with all five packages verified. Static list invocation remains
+unsupported; membership of a deployed callback in the review class is not
+inferred. Fresh three-route measurements are still in progress on this card.
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.

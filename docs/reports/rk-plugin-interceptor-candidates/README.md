@@ -62,7 +62,8 @@ Its exact digest appears in both defining human-review statements. The generic
 loader rejects unsupported schema/modes, ambiguous list identities, absent or
 unbound inventories and unsafe source paths; mismatched reviewed bytes hold the
 citing outer loader. Runtime metadata includes the full inventory and source-pin
-standing. Loading the inventory does not register a static callback type or
+standing. The inventory is host load-path metadata beside the outer lock;
+the executable provider protocol is unchanged. Loading the inventory does not register a static callback type or
 candidate closure. Both defining outer modules were deliberately re-pinned at
 both source revisions; their clause expectations change from 57 to 85 while
 the proxy citation remains three clauses and the resource module count remains
