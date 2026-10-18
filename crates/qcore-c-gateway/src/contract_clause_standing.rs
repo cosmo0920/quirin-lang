@@ -112,11 +112,13 @@ pub enum ClauseKind {
     MemberState,
     /// The retained text could not be reread: a clause nothing covers.
     Unreadable,
+    /// S3 condition bindings, scoped prerequisites and registered footprints.
+    LifetimeProtocol,
 }
 
 impl ClauseKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 21] = [
+    pub const ALL: [Self; 22] = [
         Self::Parameter,
         Self::Result,
         Self::BorrowedResult,
@@ -138,6 +140,7 @@ impl ClauseKind {
         Self::Arm,
         Self::MemberState,
         Self::Unreadable,
+        Self::LifetimeProtocol,
     ];
 
     /// The spelling the shared vectors use (`QCore.BodyClauseStanding`).
@@ -165,6 +168,7 @@ impl ClauseKind {
             Self::Arm => "arm",
             Self::MemberState => "memberState",
             Self::Unreadable => "unreadable",
+            Self::LifetimeProtocol => "lifetimeProtocol",
         }
     }
 
@@ -426,6 +430,23 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
         return Vec::new();
     };
     let mut clauses = contract_clauses(&declared.contract, false);
+    if let Some(lifetime) = &declared.lifetime {
+        for binding in &lifetime.bindings {
+            clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
+                format!("quant #{} = (#{}.{} != 0)", binding.name, binding.parameter, binding.members.join("."))));
+        }
+        for protocol in &lifetime.registered {
+            clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
+                format!("quant registered #{}: {}.{} |-> {}.{}", protocol.binder, protocol.record, protocol.interior.join("."), protocol.record, protocol.holder.join("."))));
+        }
+        for block in &lifetime.blocks {
+            for clause in &block.clauses {
+                clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
+                    format!("quant {}#{} in {{ {:?} }}: [[local]]", if block.guard.negated {"not "} else {""}, block.guard.condition, clause)));
+            }
+        }
+    }
+
     for retention in &declared.retentions {
         let holder = match retention.holder {
             RetentionHolder::Parameter { index } => format!("#{index}"),
@@ -846,6 +867,7 @@ mod tests {
                 member_paths_withdrawn: false,
                 path_retentions: Vec::new(),
                 removals: Vec::new(),
+                        lifetime: None,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

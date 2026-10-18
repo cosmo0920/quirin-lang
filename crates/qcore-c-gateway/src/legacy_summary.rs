@@ -280,7 +280,7 @@ pub(crate) fn derive_custody_summaries(
     let declared = |name: &String| {
         contracts.contract(name).is_some()
             || contracts.relational_contract(name).is_some()
-            || contracts.retaining_contract(name).is_some()
+            || contracts.retaining().contains_key(name)
     };
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
@@ -295,7 +295,7 @@ pub(crate) fn derive_custody_summaries(
                 // Card CALLEE-RETENTION-CLASS1 (rule 12t): a retaining
                 // declaration is never replaced by an inference, which would
                 // read its retained pointer as borrowed.
-                if contracts.retaining_contract(&name).is_some() {
+                if contracts.retaining().contains_key(&name) {
                     continue;
                 }
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a declared

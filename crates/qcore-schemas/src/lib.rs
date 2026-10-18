@@ -20,6 +20,7 @@ pub mod digest;
 pub mod handoff;
 pub mod identity;
 pub mod mechanism;
+pub mod loop_lifetime;
 pub mod member_path;
 pub mod obligation;
 pub mod plugin;

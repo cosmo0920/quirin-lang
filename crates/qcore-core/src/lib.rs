@@ -41,6 +41,7 @@ pub mod index_quant;
 pub mod inference;
 pub mod io_emit;
 pub mod library_custody;
+pub mod local_condition;
 pub mod module_imports;
 pub mod mutex_c_emit;
 // Card NULL-SAFETY-PROPERTY (gateway rules 14k-14p).

@@ -1066,7 +1066,18 @@ impl ResourceContracts {
     /// The retaining declaration of `name`, if it has one.
     #[must_use]
     pub fn retaining_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
-        let found = self.retaining.get(name);
+        // Legacy consumers cannot discharge local prerequisites. The S3
+        // source adapter reads `lifetime_contract` explicitly instead.
+        let found = self.retaining.get(name).filter(|c| c.lifetime.is_none());
+        crate::contract_consultation::note(name, found.is_some());
+        found
+    }
+
+    /// S3 declarations are withheld from legacy custody/callback consumers.
+    /// Reading this table is not evidence that its guarded obligations hold.
+    #[must_use]
+    pub fn lifetime_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
+        let found = self.retaining.get(name).filter(|c| c.lifetime.is_some());
         crate::contract_consultation::note(name, found.is_some());
         found
     }

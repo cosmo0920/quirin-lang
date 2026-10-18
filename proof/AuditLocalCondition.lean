@@ -1,0 +1,10 @@
+import QCore.LocalCondition
+#print axioms QCore.LocalCondition.unknown_never_waives_a_prerequisite
+#print axioms QCore.LocalCondition.active_never_assumes_a_prerequisite
+#print axioms QCore.LocalCondition.inactive_waives_only_its_own_prerequisite
+#print axioms QCore.LocalCondition.unknown_covers_every_concrete_branch
+#print axioms QCore.LocalCondition.an_unknown_undischarged_prerequisite_refuses
+#print axioms QCore.LocalCondition.a_join_fact_was_established_on_both_paths
+#print axioms QCore.LocalCondition.no_common_fact_leaves_no_join_facts
+#print axioms QCore.LocalCondition.an_unmatched_instance_is_unresolved
+#print axioms QCore.LocalCondition.shared_vectors_hold

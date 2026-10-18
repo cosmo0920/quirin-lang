@@ -289,6 +289,12 @@ impl Parser<'_> {
         call_index: usize,
         function: &str,
     ) -> Option<LegacyInstruction> {
+        if self.contracts.lifetime_contract(function).is_some() {
+            return Some(LegacyInstruction::Unknown {
+                description: format!("lifetime-precondition-undischarged: {function}: scoped condition/protocol requires run-wide discharge"),
+                writes: self.refused_writes(texts),
+            });
+        }
         let declaration = self.contracts.retaining_contract(function)?.clone();
         let refuse = |this: &Self, description: String| LegacyInstruction::Unknown {
             description,
