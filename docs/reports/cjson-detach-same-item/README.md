@@ -84,6 +84,13 @@ failure before Lean launched, and `lean-3` a successful detach module compile
 followed by a missing private dependency. The isolated private dependency
 layout in `lean-4` fixes that setup; no assertion or linter was disabled.
 
+Compile-only consumer checks also pass before integration: `cargo check
+--locked --offline -p qcore-audit -j1` and the corresponding
+`-p qcore-compiler --tests -j1` each exit 0. Commands and logs are in
+`private/detach-same-item/{audit-check-1,compiler-check-1}` in this worktree.
+These checks establish this checkpoint's compile compatibility only; the
+cumulative S3/schema-19 gate remains pending.
+
 The cumulative unpublished schema 19 event covers both S3's two new public
 struct fields and this exhaustive result variant. Existing absent-field wire
 bytes remain compatible for S3 defaults; Rust struct literals and exhaustive
