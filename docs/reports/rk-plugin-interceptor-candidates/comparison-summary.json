@@ -1,0 +1,575 @@
+{
+  "corpus": {
+    "custody_static_statuses_identical": true,
+    "null_complete_rows_identical": true,
+    "null_static_statuses_identical": true,
+    "scenarios": {
+      "all": {
+        "after_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "after_moved_rows": 228,
+        "before_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "before_moved_rows": 228,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "flb_external_plugin": {
+        "after_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "after_moved_rows": 228,
+        "before_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "before_moved_rows": 228,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "rk_plugin_library": {
+        "after_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "after_moved_rows": 228,
+        "before_counts": {
+          "combined": {
+            "Pending": 33,
+            "Safe": 806,
+            "Unknown": 4055,
+            "Unsafe": 27
+          },
+          "custody": {
+            "Pending": 32,
+            "Safe": 923,
+            "Unknown": 3870,
+            "Unsafe": 9
+          },
+          "null": {
+            "Pending": 163,
+            "Safe": 2386,
+            "Unknown": 2354,
+            "Unsafe": 18
+          }
+        },
+        "before_moved_rows": 228,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      }
+    },
+    "static_after": {
+      "combined": {
+        "Pending": 0,
+        "Safe": 839,
+        "Unknown": 4055,
+        "Unsafe": 27
+      },
+      "custody": {
+        "Pending": 0,
+        "Safe": 955,
+        "Unknown": 3870,
+        "Unsafe": 9
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 2549,
+        "Unknown": 2354,
+        "Unsafe": 18
+      }
+    },
+    "static_before": {
+      "combined": {
+        "Pending": 0,
+        "Safe": 839,
+        "Unknown": 4055,
+        "Unsafe": 27
+      },
+      "custody": {
+        "Pending": 0,
+        "Safe": 955,
+        "Unknown": 3870,
+        "Unsafe": 9
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 2549,
+        "Unknown": 2354,
+        "Unsafe": 18
+      }
+    }
+  },
+  "slice": {
+    "custody_static_statuses_identical": true,
+    "null_complete_rows_identical": true,
+    "null_static_statuses_identical": true,
+    "scenarios": {
+      "all": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 16,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 16,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "flb_external_plugin": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 16,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 16,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "rk_plugin_library": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 16,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 31,
+            "Unknown": 372,
+            "Unsafe": 1
+          },
+          "custody": {
+            "Pending": 4,
+            "Safe": 52,
+            "Unknown": 347,
+            "Unsafe": 1
+          },
+          "null": {
+            "Pending": 16,
+            "Safe": 174,
+            "Unknown": 216,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 16,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      }
+    },
+    "static_after": {
+      "combined": {
+        "Pending": 2,
+        "Safe": 31,
+        "Unknown": 372,
+        "Unsafe": 1
+      },
+      "custody": {
+        "Pending": 4,
+        "Safe": 52,
+        "Unknown": 347,
+        "Unsafe": 1
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 190,
+        "Unknown": 216,
+        "Unsafe": 0
+      }
+    },
+    "static_before": {
+      "combined": {
+        "Pending": 2,
+        "Safe": 31,
+        "Unknown": 372,
+        "Unsafe": 1
+      },
+      "custody": {
+        "Pending": 4,
+        "Safe": 52,
+        "Unknown": 347,
+        "Unsafe": 1
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 190,
+        "Unknown": 216,
+        "Unsafe": 0
+      }
+    }
+  },
+  "system": {
+    "custody_static_statuses_identical": true,
+    "null_complete_rows_identical": true,
+    "null_static_statuses_identical": true,
+    "scenarios": {
+      "all": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 4,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 4,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "flb_external_plugin": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 4,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 4,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      },
+      "rk_plugin_library": {
+        "after_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "after_moved_rows": 4,
+        "before_counts": {
+          "combined": {
+            "Pending": 2,
+            "Safe": 63,
+            "Unknown": 385,
+            "Unsafe": 4
+          },
+          "custody": {
+            "Pending": 0,
+            "Safe": 97,
+            "Unknown": 347,
+            "Unsafe": 4
+          },
+          "null": {
+            "Pending": 2,
+            "Safe": 209,
+            "Unknown": 243,
+            "Unsafe": 0
+          }
+        },
+        "before_moved_rows": 4,
+        "changed_reason_facts": [],
+        "changed_status_pairs": [],
+        "new_runtime_moves": [],
+        "removed_runtime_moves": []
+      }
+    },
+    "static_after": {
+      "combined": {
+        "Pending": 0,
+        "Safe": 65,
+        "Unknown": 385,
+        "Unsafe": 4
+      },
+      "custody": {
+        "Pending": 0,
+        "Safe": 97,
+        "Unknown": 347,
+        "Unsafe": 4
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 211,
+        "Unknown": 243,
+        "Unsafe": 0
+      }
+    },
+    "static_before": {
+      "combined": {
+        "Pending": 0,
+        "Safe": 65,
+        "Unknown": 385,
+        "Unsafe": 4
+      },
+      "custody": {
+        "Pending": 0,
+        "Safe": 97,
+        "Unknown": 347,
+        "Unsafe": 4
+      },
+      "null": {
+        "Pending": 0,
+        "Safe": 211,
+        "Unknown": 243,
+        "Unsafe": 0
+      }
+    }
+  }
+}

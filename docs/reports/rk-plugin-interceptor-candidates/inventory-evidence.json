@@ -1,0 +1,283 @@
+{
+  "inventory_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
+  "audited": [
+    {
+      "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "sources": 6,
+      "candidates": [
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_set",
+          "union_arm": "u.on_conf_set",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
+          "signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_dup",
+          "union_arm": "u.on_conf_dup",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_destroy",
+          "union_arm": "u.on_conf_destroy",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_new",
+          "union_arm": "u.on_new",
+          "setter": "rd_kafka_conf_interceptor_add_on_new",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_destroy",
+          "union_arm": "u.on_destroy",
+          "setter": "rd_kafka_interceptor_add_on_destroy",
+          "signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_send",
+          "union_arm": "u.on_send",
+          "setter": "rd_kafka_interceptor_add_on_send",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_acknowledgement",
+          "union_arm": "u.on_acknowledgement",
+          "setter": "rd_kafka_interceptor_add_on_acknowledgement",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_consume",
+          "union_arm": "u.on_consume",
+          "setter": "rd_kafka_interceptor_add_on_consume",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_commit",
+          "union_arm": "u.on_commit",
+          "setter": "rd_kafka_interceptor_add_on_commit",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_request_sent",
+          "union_arm": "u.on_request_sent",
+          "setter": "rd_kafka_interceptor_add_on_request_sent",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_response_received",
+          "union_arm": "u.on_response_received",
+          "setter": "rd_kafka_interceptor_add_on_response_received",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_thread_start",
+          "union_arm": "u.on_thread_start",
+          "setter": "rd_kafka_interceptor_add_on_thread_start",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_thread_exit",
+          "union_arm": "u.on_thread_exit",
+          "setter": "rd_kafka_interceptor_add_on_thread_exit",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_broker_state_change",
+          "union_arm": "u.on_broker_state_change",
+          "setter": "rd_kafka_interceptor_add_on_broker_state_change",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        }
+      ],
+      "excluded_non_callback_list": "rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations"
+    },
+    {
+      "revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "sources": 6,
+      "candidates": [
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_set",
+          "union_arm": "u.on_conf_set",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
+          "signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_dup",
+          "union_arm": "u.on_conf_dup",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_conf_destroy",
+          "union_arm": "u.on_conf_destroy",
+          "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_new",
+          "union_arm": "u.on_new",
+          "setter": "rd_kafka_conf_interceptor_add_on_new",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
+          "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_destroy",
+          "union_arm": "u.on_destroy",
+          "setter": "rd_kafka_interceptor_add_on_destroy",
+          "signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_send",
+          "union_arm": "u.on_send",
+          "setter": "rd_kafka_interceptor_add_on_send",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_acknowledgement",
+          "union_arm": "u.on_acknowledgement",
+          "setter": "rd_kafka_interceptor_add_on_acknowledgement",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_consume",
+          "union_arm": "u.on_consume",
+          "setter": "rd_kafka_interceptor_add_on_consume",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_commit",
+          "union_arm": "u.on_commit",
+          "setter": "rd_kafka_interceptor_add_on_commit",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_request_sent",
+          "union_arm": "u.on_request_sent",
+          "setter": "rd_kafka_interceptor_add_on_request_sent",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_response_received",
+          "union_arm": "u.on_response_received",
+          "setter": "rd_kafka_interceptor_add_on_response_received",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_thread_start",
+          "union_arm": "u.on_thread_start",
+          "setter": "rd_kafka_interceptor_add_on_thread_start",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_thread_exit",
+          "union_arm": "u.on_thread_exit",
+          "setter": "rd_kafka_interceptor_add_on_thread_exit",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        },
+        {
+          "list": "rd_kafka_conf_s.interceptors.on_broker_state_change",
+          "union_arm": "u.on_broker_state_change",
+          "setter": "rd_kafka_interceptor_add_on_broker_state_change",
+          "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
+          "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
+          "source_pins": "match"
+        }
+      ],
+      "excluded_non_callback_list": "rd_kafka_conf_s.interceptors.config holds rd_strtup_t configuration values, not public interceptor callback registrations"
+    }
+  ],
+  "configured_slice": {
+    "revision": "34155955e4962a56d94eb23c03a002880899a0d1",
+    "sources": {
+      "lib/librdkafka-2.15.0/src/rdkafka_interceptor.c": "f6bdee517cbc9d21a13cdc461daf23a02f2baeeb05fede6488f3651843111834",
+      "lib/librdkafka-2.15.0/src/rdkafka_interceptor.h": "f87ddba2f1b1c71ac6800fcbfe5b183285056ca8e337f87018d6f427477d5694",
+      "lib/librdkafka-2.15.0/src/rdkafka_conf.h": "66b50a23015293089970cc5ace148ca62757d752607cb0533aaf26a8d8f64e27",
+      "lib/librdkafka-2.15.0/src/rdkafka.h": "33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f",
+      "lib/librdkafka-2.15.0/src/rdlist.h": "9e820273add1503102190cd59586e78c674265bdd869a065519b1a9e072ae025",
+      "lib/librdkafka-2.15.0/src/rdlist.c": "179c025751cdcdbe2f59abe21b29bfa5efca1b1a018b3f51228af509a7206f9c"
+    },
+    "standing": "all six exact source files match the reviewed byte set; this is not equality of the entire source revision"
+  }
+}

@@ -1,0 +1,854 @@
+{
+  "canonical_diff_sha256": "3d379ffc56ad92921d2d3dc174036b2a3885f1d625a01a1018fcd9b646ea4988",
+  "configured_routes": {
+    "slice": {
+      "all_other_resource_diagnostic_data_identical": true,
+      "compile_configurations_changed_identity_only": [
+        {
+          "file": "src/flb_input.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "ae3ebcb67e4d2b74172f9e2464c3b55c82c40e3fcf3c775d35d5b416998a190a": "0ce32412054b09cc1874b93e7178951f39b1b9ae5f5138555631ab1d4daa7b62"
+          },
+          "unit_index": 0
+        },
+        {
+          "file": "src/flb_input.c",
+          "identity_changes": {
+            "2571ca6c43e3928e44b2b55e5c6fc84a0fc4ec9d543d5f89108d18f2dc3cb0f4": "6c385d21db17e93322e7b040e83fd1e3c6e9b03219661cf08ab45dc336bbc975",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 1
+        },
+        {
+          "file": "src/flb_input_thread.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "abd968686f337c41689ce93d6d1c89ba3917fecdf4afd8dbf74a729cab54fbcf": "6ded3df6b4ed1b9110b658b52f03b30fae27d92115784702d6acd7f6475dec2b"
+          },
+          "unit_index": 2
+        },
+        {
+          "file": "src/flb_input_thread.c",
+          "identity_changes": {
+            "0a2eaa1f70438e28e79f7ba88796e90338a78b4c948c355748878569d942445e": "9ac253d5b40e1d3defe6d2b03a6910a96375d389c1422e42525e8fb587eb12b2",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 3
+        },
+        {
+          "file": "src/flb_lib.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "9dd85173d5195f0c19210fda177715bdaed8e03a5bc3e49cd0e9b90c907036ec": "1f10c96421cf4bccf0c43225028d645814beb9b4cb9b59a0d822bb987e1fadce"
+          },
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_lib.c",
+          "identity_changes": {
+            "37841100000e835ad4279f75dd65529d54306f45769e6007793c1f109e740f47": "1d288439d50837c0d93f5ea672a0574f640a91127d48c4f101af0e7fd7a0162d",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 5
+        },
+        {
+          "file": "plugins/in_tail/tail.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "e6bbe02011fbfe1c805df00b0532983f1bb7a00a22e810fe78b43b8051f77bc1": "284424c919517cc802452a82d269427481b3b2e5a871698b1b17d7100f6fb91a"
+          },
+          "unit_index": 6
+        },
+        {
+          "file": "plugins/in_tail/tail_config.c",
+          "identity_changes": {
+            "154d6e84c3d53c41def4180d858d7ac00639ad5e34d12ea93a8d9abd1e60f43e": "cf84a6725e669c6c74614ba04ae3ca73902c2b3cad84f81d9e29746854b9d75c",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 7
+        },
+        {
+          "file": "plugins/in_tail/tail_db.c",
+          "identity_changes": {
+            "2b58c6b4b0658b38ac760184ce341e8882c47d7e87ee38981715d409ab0bc1a0": "97bb41b8a99dcb8657abaaa95b21bb59c5876340f32ad527ad7ca2e6f935901c",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 8
+        },
+        {
+          "file": "plugins/in_tail/tail_dockermode.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "e7fe2d52f04ea36ddb6595b09a75036666765900b15faa1447b052b19d823eea": "34b4d6a4505805d97352e4aa0717c292cfe2312611715dade4fec5caa75f2d68"
+          },
+          "unit_index": 9
+        },
+        {
+          "file": "plugins/in_tail/tail_file.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "a729a1007b35fa156aa0bd0f50122d3cf22eb08bcd165dad697134c9f754cc1c": "922ed49a221a0db25382e9d3972cde2c22336d581df060ddbe7052bf95bd3ca1"
+          },
+          "unit_index": 10
+        },
+        {
+          "file": "plugins/in_tail/tail_file_budget.c",
+          "identity_changes": {
+            "0607145f0878d55b951137c1439241d1439df24d2eb59478c4ae463b4ed2b215": "83ef1be62a0a3c4bd4b0bbb6369d61819f38ef004f5eb942fae76520b965d683",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 11
+        },
+        {
+          "file": "plugins/in_tail/tail_fs_inotify.c",
+          "identity_changes": {
+            "565f87c472dcb9953cd46ca3e38ddf4df9fa6e02640b762442d50f3293733c30": "4e2ed7a8997ca4fdd5d8d2e3fedef37868bb15ba7b85dd39709ad5d860068836",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 12
+        },
+        {
+          "file": "plugins/in_tail/tail_fs_stat.c",
+          "identity_changes": {
+            "16773a90c8b07b9e074512fd7d953004ceb5b8b76e6ab5d5f06c02ac48c8e754": "dc61902b1461621fa446ecbcb6711963c88223f7c62149bb08c3413d64ef703b",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 13
+        },
+        {
+          "file": "plugins/in_tail/tail_multiline.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "d4b18db1aa945f443f448525d285565af756f30b42ab3f0bd276b1698b61b657": "3c7da7b694598c58bbbaca710e16db273eab33be506f11f044e08ff5950b5f97"
+          },
+          "unit_index": 14
+        },
+        {
+          "file": "plugins/in_tail/tail_scan.c",
+          "identity_changes": {
+            "0a42dfb5a2bc9426ac576ac8907eee625b57ddf75699abb338c2fbaa310d20d7": "ba55b642d1027c3e54a26a7a7032daef3c5a559612c556ffc739e5cfc260d515",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 15
+        }
+      ],
+      "full_contract_sidecar_identical_after_checkout_prefix_only": true,
+      "raw_contract_keys": {
+        "after": [
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+          "qcore-provider-libevent:monkey/memory.qv",
+          "qcore-provider-librdkafka:librdkafka/memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+        ],
+        "before": [
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+          "qcore-provider-libevent:monkey/memory.qv",
+          "qcore-provider-librdkafka:librdkafka/memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+        ]
+      },
+      "resource_diagnostic_units": 16,
+      "review_hold_module_prefix_only": [
+        {
+          "file": "src/flb_input.c",
+          "function": "flb_input_instance_exit",
+          "unit_index": 0
+        },
+        {
+          "file": "src/flb_input.c",
+          "function": "flb_input_instance_exit",
+          "unit_index": 1
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_create",
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_input",
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_service_set",
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_create",
+          "unit_index": 5
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_input",
+          "unit_index": 5
+        },
+        {
+          "file": "src/flb_lib.c",
+          "function": "flb_service_set",
+          "unit_index": 5
+        }
+      ]
+    },
+    "system": {
+      "all_other_resource_diagnostic_data_identical": true,
+      "compile_configurations_changed_identity_only": [
+        {
+          "file": "plugins/in_storage_backlog/sb.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "e8b1bddfd4e70a7039fc7ff6f2235993d06b871d7dc03362b65e12d14345c86f": "681872349a75f51b478edf559d63a1e213205a01d412a07d4b4572642817c039"
+          },
+          "unit_index": 0
+        },
+        {
+          "file": "src/flb_input_chunk.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "b9ef51e48608657f2942bfeb7438736f875ca45ffae40b78c751d63ca09416de": "152b2d57d08ada3321222638f6cec9bdb6cf5d7d415357b7dc822c0550516f7f"
+          },
+          "unit_index": 1
+        },
+        {
+          "file": "src/flb_input_chunk.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "cb601e4eb3a6c0d7e5650e87349cb4181aa36c542edd82012c52d9979edf974c": "f5464dcedd9468b243b40d529f5755ec369932eea87883ee2c6240a0efa41909"
+          },
+          "unit_index": 2
+        },
+        {
+          "file": "src/flb_storage.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "ab96b212a09d3072854189f21a9b3ac993006ce10dfec6a182674e91eb93d1d5": "631d229b692515a5666448aee854ff38d5a6267b7cf4af6f69cb89286ab3fa67"
+          },
+          "unit_index": 3
+        },
+        {
+          "file": "src/flb_storage.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "a7f1e2919dca24e370752e025f792df3afc2502bce2f09ab6b6d35c7842aa842": "4ef83107860d3754de78d6b456f588ff19afae541814727930c4706a88d42cf5"
+          },
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_task.c",
+          "identity_changes": {
+            "0e5eb3e4de49210ba990ad9561ef5dd80d8df32525efcb0a6e4af99eb8c9554f": "202b835b8a756f24d5b00f08382c25939488081a96ceca7105a6a80e5a12cccc",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 5
+        },
+        {
+          "file": "src/flb_task.c",
+          "identity_changes": {
+            "64433222a6fbb4067d54ee08fd52b6787f456f25295f5a54d6c4b659276216fd": "dd61aeff9fca14859623712bf080406480ca0b67f186e483cc5aac0ce4cede72",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 6
+        },
+        {
+          "file": "src/flb_engine.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "e7335c95b7fa84d5b1fa9b048908fe0557fe852017ab4d75069507869ab9bf8e": "f7023120a596656dd564c8fab4ce547664c2d9d6375394fbca1bcb35fe8a420d"
+          },
+          "unit_index": 7
+        },
+        {
+          "file": "src/flb_engine.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "7b697cffa7faa6d17ca8aab9883028423408179fb84def48304fd0a407d2ff43": "a687f7b235630d71647ad572e69d9ae55c96912120cf43eea2a83e2ea7c62d70"
+          },
+          "unit_index": 8
+        },
+        {
+          "file": "src/flb_engine_dispatch.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "d1ed759be26b5ebd84e6041b6a9b1cd41c0cf88f9e52a4364aa167d577844b92": "6bd24911b5fa43d23a503654b8168520b6710c681ca604c03f1f1643ff541323"
+          },
+          "unit_index": 9
+        },
+        {
+          "file": "src/flb_engine_dispatch.c",
+          "identity_changes": {
+            "71810b66ab40920b757f398d7ca7409232af60554970497dc24e58f85b4fc7ff": "74ca6289ea337810a339b4e38535a631bf3e0dc95b90c079f3e3b62b792ce57e",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 10
+        },
+        {
+          "file": "src/flb_scheduler.c",
+          "identity_changes": {
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95",
+            "8c6a7932d194a00f68d8fc1734997f1a1b0a5e0d5058ff0616d7f0440cb42bd6": "b3ad0f462fefed2f0ed78529142039db52b7b31b2c9a8e6bb82132703d0fd46c"
+          },
+          "unit_index": 11
+        },
+        {
+          "file": "src/flb_scheduler.c",
+          "identity_changes": {
+            "08b9847375c9f626692a11e78628cbea3c1906892c7659372d79e225768415ca": "310e1ae0a949b462c7207f47562a23408a92ca3ffb7e865dd5c1635e217500c9",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 12
+        },
+        {
+          "file": "src/flb_output.c",
+          "identity_changes": {
+            "5ef05beb12a223fba0ae1264c83d196d1533fe96ce45061cfa4d0c2f48dac4bb": "f605c0fd4fc5a95cf4e1617a4c21782d1900482f9e80c42ad2c584161c37e640",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 13
+        },
+        {
+          "file": "src/flb_output.c",
+          "identity_changes": {
+            "4438f2f34c2f79b2389526c731ff16f28e9f7dcfd918cce99e922cb6482f318c": "7c20de14795ddc1339bf3b26bd68b4ae616e401abb0a64a05627632051a9bc50",
+            "740d0fe5957272cc28e7206d39529d62a00178bea58a1c1ed7d82ef93c8382dc": "758133f3e8774ba7a01c5b12bf5a4ef8751c0f181292bfbd9ab669155f809a95"
+          },
+          "unit_index": 14
+        }
+      ],
+      "full_contract_sidecar_identical_after_checkout_prefix_only": true,
+      "raw_contract_keys": {
+        "after": [
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+          "/tmp/qcore-rk-interceptor-candidates/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+          "qcore-provider-libevent:monkey/memory.qv",
+          "qcore-provider-librdkafka:librdkafka/memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+        ],
+        "before": [
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+          "/home/cosmo/Documents/GitHub/qcore-c/contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+          "qcore-provider-libevent:monkey/memory.qv",
+          "qcore-provider-librdkafka:librdkafka/memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+          "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+        ]
+      },
+      "resource_diagnostic_units": 15,
+      "review_hold_module_prefix_only": [
+        {
+          "file": "src/flb_storage.c",
+          "function": "flb_storage_create",
+          "unit_index": 3
+        },
+        {
+          "file": "src/flb_storage.c",
+          "function": "flb_storage_create",
+          "unit_index": 4
+        },
+        {
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "unit_index": 13
+        },
+        {
+          "file": "src/flb_output.c",
+          "function": "flb_output_exit",
+          "unit_index": 14
+        }
+      ]
+    }
+  },
+  "contract_sidecar_changed_keys": [
+    "contract_dependencies",
+    "contract_revision",
+    "cross_unit_link_resolution",
+    "pending_human_review"
+  ],
+  "cross_unit_home_environment_identities": {
+    "b6d976c4bed56d1a202f432e108e0bb84598da66e1c07f56ec630ae35880f617": "6daab85c535a31b6d3daab3f2d6fba744a54dc8f8b966eaee76ce61d795771d3"
+  },
+  "diagnostic_units": {
+    "after": 185,
+    "before": 185,
+    "changed_cross_unit_environment_identity_only": 185,
+    "changed_function_statuses_or_diagnostics": 0
+  },
+  "meaning": "raw verdicts compared before provenance normalization; no checker output modified",
+  "normalized_modules": {
+    "added": 0,
+    "after": 64,
+    "before": 64,
+    "changed_texts": 0,
+    "collisions_after": [],
+    "collisions_before": [],
+    "removed": 0
+  },
+  "other_artifact_rows": {
+    "chunk-contracts": {
+      "backend_teardown": {
+        "added": 0,
+        "after": 21,
+        "before": 21,
+        "changed": 0,
+        "removed": 0
+      },
+      "results": {
+        "added": 0,
+        "after": 96,
+        "before": 96,
+        "changed": 0,
+        "removed": 0
+      }
+    },
+    "source": {
+      "callbacks": {
+        "added": 0,
+        "after": 3,
+        "before": 3,
+        "changed": 0,
+        "removed": 0
+      },
+      "wrappers": {
+        "added": 0,
+        "after": 15,
+        "before": 15,
+        "changed": 0,
+        "removed": 0
+      }
+    },
+    "source-effects": {
+      "results": {
+        "added": 0,
+        "after": 96,
+        "before": 96,
+        "changed": 3,
+        "removed": 0
+      }
+    }
+  },
+  "raw_contract_source_keys": {
+    "after": [
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "/tmp/qcore-rk-interceptor-candidates/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "qcore-provider-libevent:monkey/memory.qv",
+      "qcore-provider-librdkafka:librdkafka/memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+    ],
+    "before": [
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/event_loop.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/logging.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/string.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-cfl/contracts/cfl/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_collector_registration.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/teardown_destroy.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dirent.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/dlfcn.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/errno.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/math.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/memory.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/process.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/pthread_sync.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/regex.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/socket.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdio.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/stdlib.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/string.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/sys_stat.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/threads.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/time.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-libc/contracts/libc/unistd.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+      "/home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../../providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
+      "qcore-provider-libevent:monkey/memory.qv",
+      "qcore-provider-librdkafka:librdkafka/memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_memory.qv",
+      "quirin-provider-fluent-bit:fluent_bit/resource_string.qv"
+    ]
+  },
+  "raw_key_counts": {
+    "added": 60,
+    "after": 64,
+    "before": 64,
+    "removed": 60
+  },
+  "source_effect_rows_reviewed": [
+    {
+      "changed_fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "classification": "cwd/configuration and derived task/evidence identities; all other fields equal",
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_is_locked"
+      ]
+    },
+    {
+      "changed_fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "classification": "cwd/configuration and derived task/evidence identities; all other fields equal",
+      "key": [
+        "chunkio",
+        "cio_chunk.c",
+        "cio_chunk_unlock"
+      ]
+    },
+    {
+      "changed_fields": [
+        "bounds",
+        "evidence",
+        "import_identity",
+        "task",
+        "witness"
+      ],
+      "classification": "cwd/configuration and derived task/evidence identities; all other fields equal",
+      "key": [
+        "fluent-bit-chunk",
+        "flb_input_chunk.c",
+        "flb_input_chunk_release_lock"
+      ]
+    }
+  ]
+}

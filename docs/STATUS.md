@@ -51,6 +51,28 @@ rows and tail-pause slice's 404 rows retain their previous status and
 diagnostic projections. This conditional merged measurement does not replace
 the default W48 count or certify a particular link or plugin deployment.
 
+The [interceptor candidate inventory](reports/rk-plugin-interceptor-candidates/README.md)
+adds a runtime review surface for 14 distinct librdkafka callback lists and
+14 client-configuration aliases, pinned to exact source bytes at both audited
+revisions. Both defining outer statements bind its digest and explicitly
+require neutral custody, valid registration lifecycle and callback/context
+lifetime. The completed standing/provider gate has 8,235 root Rust tests,
+338 Lean audits, 133 provider Rust tests, 374 script tests and 25 provider
+Python tests, with all five packages verified. Static list invocation remains
+unsupported; membership of a deployed callback in the review class is not
+inferred. Fresh corpus/system/slice measurements at `2a609d3ac` retain every
+static status and runtime status: corpus runtime custody remains 923 Safe /
+32 Pending / 3,870 Unknown / 9 provisional Unsafe. All complete null artifacts
+are byte-identical; static artifact differences are recorded provenance and
+derived identity changes. The baseline is the primary integration observation
+at `ad526b58`, whose implementation/inputs are unchanged at this card's base
+`1543259f0`; it is explicitly reused, not a fresh base run. The actual source
+revisions are corpus 66910c10, system 046accf6 and slice 34155955 (the slice's
+six interceptor files match the reviewed bytes). All three loader pins and
+the exact candidate digest are in force on every route. Ledger entry
+`RK-PLUGIN-INTERCEPTOR-CANDIDATES` narrows to
+`RK-INTERCEPTOR-STATIC-LIST-CLOSURE`; the source-derived closure remains open.
+
 The isolated [W48 bottom-up batch 2](reports/w48-bottom-up-batch2/README.md)
 on exact base `1543259f0`, semantic source `78751c611`, extends the conditional
 map to six homes and admits checked scalar-read/discarded formal self-steps.

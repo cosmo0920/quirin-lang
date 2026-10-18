@@ -5,16 +5,44 @@ module contract;
 // RD_KAFKA_RESP_ERR_NO_ERROR only after conf_init succeeds (or for a duplicate).
 // A plugin may register callbacks and interceptors through the public API.
 // This is an assumption about that loaded code, not a claim that no library is
-// loaded. Interceptor lists have no member-candidate contracts, and cJSON
-// allocator hooks are public. The hooks are covered only by the explicit
-// condition that a loaded library does not call cJSON_InitHooks or replace
-// its global hooks; interceptor lists have no member-candidate contracts.
+// loaded. Interceptor list candidates are the separately pinned runtime-only
+// outer-candidates.json inventory; static list invocation stays unsupported.
+// Public cJSON allocator hooks are covered only by the explicit condition
+// that loaded code does not call cJSON_InitHooks or replace the global hooks.
 
 extern fn rd_kafka_plugin_new(conf: ptr<mut, u8>, path: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: u64) -> i32
 contract {
     requires outer_contract_v1;
-    quant #outer [[contract]] rk_plugin_library, "every library named by plugin.library.paths, including code it invokes, registers rk_conf callbacks only through public setters and only when each callback meets that member's candidate contract; it registers interceptors only through public setters; it calls cJSON_InitHooks nowhere and does not replace cJSON's global allocator hooks; it neither mutates cJSON child, prev or next links directly nor passes malformed cJSON lists to an API call; it never directly stores into librdkafka internal members (including callback fields, op fields, broker and rule-14t links, queues and list links); it neither modifies nor causes modification of flb_input_instance.p, flb_output_instance.p, flb_filter_instance.p or flb_processor_instance.p; it invokes no non-public librdkafka symbol and calls public APIs only under their published conditions; any allocator hooks installed before this library loads satisfy cjson_allocator_hooks";
+    quant #outer [[contract]] rk_plugin_library, "every library named by plugin.library.paths, including code it invokes, registers rk_conf callbacks only through public setters and only when each callback meets that member's candidate contract; it registers interceptors only through the public setters, with success result zero and each exact list/union-arm candidate in outer-candidates:5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147; every registered interceptor and all code it invokes meets that inventory's neutral custody restriction (all pointer arguments borrowed, no release, retention, ownership transfer or global custody effects, scalar resource handles borrowed too, and every local acquisition balanced before return); registered callback code and opaque contexts remain valid through the last possible invocation, including destruction and copied on_new registrations; configuration interceptors are installed on a live configuration and client interceptors only from on_new before initialization completes, never on share consumers; it calls cJSON_InitHooks nowhere and does not replace cJSON's global allocator hooks; it neither mutates cJSON child, prev or next links directly nor passes malformed cJSON lists to an API call; it never directly stores into librdkafka internal members (including callback fields, op fields, broker and rule-14t links, queues and list links); it neither modifies nor causes modification of flb_input_instance.p, flb_output_instance.p, flb_filter_instance.p or flb_processor_instance.p; it invokes no non-public librdkafka symbol and calls public APIs only under their published conditions; any allocator hooks installed before this library loads satisfy cjson_allocator_hooks";
     quant #outer where #conf in #loaded [[runtime]] when #result == 0;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_conf_set |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_conf_set |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_conf_dup |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_conf_dup |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_conf_destroy |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_conf_destroy |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_new |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_new |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_destroy |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_destroy |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_send |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_send |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_acknowledgement |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_acknowledgement |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_consume |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_consume |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_commit |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_commit |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_request_sent |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_request_sent |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_response_received |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_response_received |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_thread_start |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_thread_start |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_thread_exit |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_thread_exit |-> #registered;
+    quant #outer #loaded: rd_kafka_conf_s.interceptors.on_broker_state_change |-> #registered;
+    quant #outer #loaded: rd_kafka_s.rk_conf.interceptors.on_broker_state_change |-> #registered;
     quant #outer #loaded: rd_kafka_conf_s.background_event_cb |-> #registered;
     quant #outer #loaded: rd_kafka_conf_s.closesocket_cb |-> #registered;
     quant #outer #loaded: rd_kafka_conf_s.connect_cb |-> #registered;
