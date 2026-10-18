@@ -164,8 +164,7 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
         .enumerate()
         .map(|(i, p)| (p.name.value.as_str(), (i, p.type_source.as_str())))
         .collect::<BTreeMap<_, _>>();
-    let mut out = LoopLifetimeContract::default();
-    out.entry_snapshot_stable = contract.clauses.iter().any(|c| {
+    let entry_snapshot_stable = contract.clauses.iter().any(|c| {
         c.value.kind == SourceContractClauseKind::Requires
             && named_prerequisite(&c.value.expression_source).as_ref()
                 == Some(&(
@@ -173,6 +172,10 @@ pub fn read(decl: &SourceDeclaration) -> Result<LoopLifetimeContract, String> {
                     SNAPSHOT_PREMISE_STATEMENT.into(),
                 ))
     });
+    let mut out = LoopLifetimeContract {
+        entry_snapshot_stable,
+        ..Default::default()
+    };
     let mut names = BTreeSet::new();
     for c in &contract.clauses {
         if c.value.kind == SourceContractClauseKind::QuantConditionBinding {
@@ -305,10 +308,8 @@ pub(crate) fn without_local(
             };
             rendered.push(format!("{prefix} {};", c.value.expression_source));
         }
-        if !keep_local {
-            if let Some(extra) = extra {
-                rendered.push(format!("requires {extra};"));
-            }
+        if !keep_local && let Some(extra) = extra {
+            rendered.push(format!("requires {extra};"));
         }
         let parameters = decl
             .parameters

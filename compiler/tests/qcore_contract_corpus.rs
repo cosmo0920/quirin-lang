@@ -2509,7 +2509,10 @@ fn contract_surface_is_pinned_as_structured_clauses() {
                         | SourceContractClauseKind::QuantNullDeref
                         | SourceContractClauseKind::QuantDeref
                         | SourceContractClauseKind::QuantLive
-                        | SourceContractClauseKind::QuantOuter => {}
+                        | SourceContractClauseKind::QuantOuter
+                        | SourceContractClauseKind::QuantConditionBinding
+                        | SourceContractClauseKind::QuantConditionBlock { .. }
+                        | SourceContractClauseKind::QuantRegistered => {}
                         SourceContractClauseKind::Ensures(selector)
                         | SourceContractClauseKind::Quant(selector) => match selector {
                             SourceContractExitSelector::Normal => has_normal = true,
