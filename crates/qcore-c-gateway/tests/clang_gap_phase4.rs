@@ -348,12 +348,14 @@ fn k06_derived_results_have_no_offset_or_length() {
         DerivedExtent::Exact | DerivedExtent::Interior | DerivedExtent::Borrowed => (),
     };
     extents(DerivedExtent::Exact);
-    // And the result modes are exactly these four.
+    // The fifth mode preserves an existing removed item; like the other
+    // modes, it adds no offset or length to the derived extent vocabulary.
     let modes = |mode: ResourceReturnMode| match mode {
         ResourceReturnMode::None
         | ResourceReturnMode::Owned { .. }
         | ResourceReturnMode::Reallocated { .. }
-        | ResourceReturnMode::Derived { .. } => (),
+        | ResourceReturnMode::Derived { .. }
+        | ResourceReturnMode::Removed { .. } => (),
     };
     modes(ResourceReturnMode::None);
     let parameters = |mode: ResourceParameterMode| match mode {

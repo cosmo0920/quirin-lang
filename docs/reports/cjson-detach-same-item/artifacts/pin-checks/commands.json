@@ -1,0 +1,114 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "7ec98abdc654a2e3a387ce2505de9ef611e61f31",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "corpus-pin",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/debug/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.792,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/corpus-pin.log"
+    },
+    {
+      "name": "corpus-check",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/debug/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.677,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/corpus-check.log"
+    },
+    {
+      "name": "system-pin",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/debug/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.68,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/system-pin.log"
+    },
+    {
+      "name": "system-check",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/debug/quirin-audit",
+        "pin",
+        "--source-root",
+        "/home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source",
+        "--crate",
+        "qcore-provider-librdkafka",
+        "--function",
+        "cJSON_DetachItemViaPointer",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.672,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/system-check.log"
+    },
+    {
+      "name": "verify",
+      "command": [
+        "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target/debug/quirin-audit",
+        "pin",
+        "--verify-contracts"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 1.429,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/verify.log"
+    },
+    {
+      "name": "contracts-sync",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "sync"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 14.266,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/contracts-sync.log"
+    },
+    {
+      "name": "contracts-check",
+      "command": [
+        "python3",
+        "providers/contracts.py",
+        "check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 14.028,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/pins-cumulative-1/contracts-check.log"
+    }
+  ]
+}

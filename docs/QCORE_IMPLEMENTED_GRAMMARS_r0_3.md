@@ -3558,6 +3558,7 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
     "(", IDENT, ",", IDENT, ",", nullability, ")"
   | "resource_return_none", "(", ")"
   | "resource_return_owned", "(", nullability, ")"
+  | "resource_return_removed", "(", IDENT, ",", nullability, ")"
   | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
   | "resource_no_return", "(", ")"   (* card CG21, contract spec C04.3.3 *)
   | counted_user_predicate
@@ -3693,6 +3694,15 @@ The named premise `requires resource_premise(NAME, "STATEMENT");` (card VERDICT-
 The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
 
 The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker`, `clause_revision_marker` and `return_code_disposition` wrappings, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
+
+`resource_return_removed(item, n)` (C04.3.5) names a matching
+`resource_removed(item, parent, n)` parameter and a distinct nonnull owned
+parent, with matching nullability and mutable depth-one heap pointer types.
+Every other parameter is borrowed; richer effect/clause families and variadic
+tails are refused. The result retains the item's identity. The physical-body
+reader additionally requires the exact explicit `detach_list_representation`
+premise and complete bounded list layout/unlink frame; neither its syntax nor
+its premise establishes caller membership.
 
 ## G05a. Contract inclusion and inheritance
 

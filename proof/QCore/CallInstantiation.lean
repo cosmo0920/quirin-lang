@@ -54,6 +54,7 @@ inductive ResultClass where
   | derived
   | owned
   | reallocated
+  | removed
   deriving DecidableEq, Repr
 
 inductive Use where
@@ -98,12 +99,16 @@ def accept (s : Standing) (r : ResultClass) (identity : Bool) (u : Use) : Decisi
       | _ => .returnedAlias
     | .passed =>
       if identity && r == .none then .accept
-      else if r != .reallocated then .accept
+      else if r != .reallocated && r != .removed then .accept
       else .passedReallocation
     | .testedSplit => .accept
 
 /-- `ACCEPTANCE_VECTORS` of `call_instantiation.rs`, row by row. -/
 def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision) := [
+  (.declared, .removed, false, .stored, .accept),
+  (.declared, .removed, false, .passed, .passedReallocation),
+  (.declared, .removed, false, .returned, .returnedAlias),
+  (.declared, .removed, false, .discarded, .custodyResult),
   (.declared, .none, true, .tested, .accept),
   (.validated, .none, false, .tested, .accept),
   (.validated, .derived, true, .tested, .accept),

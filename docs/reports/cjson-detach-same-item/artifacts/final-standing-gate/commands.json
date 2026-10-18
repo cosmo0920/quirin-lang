@@ -1,0 +1,119 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.026,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/submodules.log"
+    },
+    {
+      "name": "clang-version",
+      "command": [
+        "/usr/lib/llvm-21/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.015,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/clang-version.log"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py",
+        "--jobs",
+        "4",
+        "--log-dir",
+        "private/detach-same-item/gate-host-4/test-binaries"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 529.434,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/rust-tests.log"
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 3.695,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/fmt.log"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 58.898,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/clippy.log"
+    },
+    {
+      "name": "reevaluation-probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.069,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/reevaluation-probe.log"
+    },
+    {
+      "name": "reevaluation-followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.403,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/reevaluation-followup.log"
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py",
+        "--jobs",
+        "2"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 37.214,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/gate-host-4/lean.log"
+    }
+  ]
+}

@@ -305,6 +305,16 @@ fn result_clause(contract: &ResourceFunctionContract, function_map: bool) -> Cla
             },
             format!("resource_return_owned({})", nullability(nullable, kind)),
         ),
+        ResourceReturnMode::Removed {
+            parameter,
+            nullable,
+        } => (
+            ClauseKind::Result,
+            format!(
+                "resource_return_removed(#{parameter}, {})",
+                nullability(nullable, kind)
+            ),
+        ),
         ResourceReturnMode::Reallocated {
             parameter,
             nullable,

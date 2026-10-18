@@ -387,3 +387,34 @@ contract {
     ensures normal resource_borrowed(hooks);
     ensures normal resource_return_owned(nullable);
 };
+
+// ## Card CJSON-DETACH-SAME-ITEM (user decision 2026-10-18)
+//
+// Success returns the SAME item after unlinking it. There is no allocation.
+// NULL item returns NULL without a transfer. This bounded contract requires a
+// known live nonnull parent and an item whose exact owner is independently
+// checked at the call. Borrowed-from provenance and a nonnull prev do not
+// establish membership. The C guard does not establish it either: passing a
+// foreign nonnull item can rewire a different list. Such inputs do not meet
+// this contract, and unproven membership remains Unknown.
+//
+// The complete body at cJSON.c:2243-2277 must match the checked unlink template
+// and a complete same-record child/next/prev layout in its defining unit.
+// The representation relation below is explicitly assumed, not inferred from
+// that pattern. It preserves cJSON's unusual first.prev = tail convention,
+// including singleton and two-node cases. The check never marks the premise
+// as validated; every dependent verdict/certificate retains it. No outer
+// envelope is expanded to cover this premise.
+//
+// This conservative surface does not claim the API's accepted null-parent
+// inputs; an unproved/null parent refuses. On admitted nonnull-item inputs,
+// exact caller containment and representation ensure the body's success arm.
+// The same item becomes directly owned; all other children stay in parent.
+extern fn cJSON_DetachItemViaPointer(parent: ptr<mut, u8>, item: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(detach_list_representation, "For this removed-result declaration, the live parent represents exactly its owned children by a finite acyclic child and next chain; child is NULL precisely when the chain is empty, each nonfirst child's prev is its predecessor, the first child's prev is the last child, chain child identities are pairwise distinct, every non-NULL next or prev target is a live child of that same parent, the last child's next is NULL, the parent is not a child, and no concurrent writer mutates these links during the call");
+    ensures normal resource_owned(parent, nonnull);
+    ensures normal resource_removed(item, parent, nullable);
+    ensures normal resource_return_removed(item, nullable);
+};

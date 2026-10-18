@@ -325,9 +325,9 @@ impl ResultDuty {
             // Card W43-LIBC-RESULT-ALIAS: a derived result owns nothing, so it
             // places no custody duty on the caller.
             ResourceReturnMode::None | ResourceReturnMode::Derived { .. } => Self::Absent,
-            ResourceReturnMode::Owned { .. } | ResourceReturnMode::Reallocated { .. } => {
-                Self::Produced
-            }
+            ResourceReturnMode::Owned { .. }
+            | ResourceReturnMode::Reallocated { .. }
+            | ResourceReturnMode::Removed { .. } => Self::Produced,
         }
     }
 }

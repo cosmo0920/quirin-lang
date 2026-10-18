@@ -1,0 +1,74 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "matrix",
+      "command": [
+        "python3",
+        "docs/reports/remaining-d02/build_matrix.py",
+        ".",
+        "--gate",
+        "docs/reports/cjson-detach-same-item/gate.json"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.071,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/closeout-1/matrix.log"
+    },
+    {
+      "name": "docs-index",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.056,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/closeout-1/docs-index.log"
+    },
+    {
+      "name": "docs-index-check",
+      "command": [
+        "python3",
+        "scripts/build_docs_index.py",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.058,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/closeout-1/docs-index-check.log"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 26.545,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/closeout-1/python.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.023,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/closeout-1/diff-check.log"
+    }
+  ]
+}

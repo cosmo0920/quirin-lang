@@ -1441,6 +1441,7 @@ pub(super) fn census(
                 ResourceReturnMode::Owned { .. } => "owned",
                 ResourceReturnMode::Reallocated { .. } => "reallocated",
                 ResourceReturnMode::Derived { .. } => "derived",
+                ResourceReturnMode::Removed { .. } => "removed",
             }),
         });
     }

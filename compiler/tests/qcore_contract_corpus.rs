@@ -1217,6 +1217,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the allocator-hooks premise, three borrowed formals, an owned nullable
     // result.
     ("librdkafka/cjson.qv", "print", 6),
+    // Checked same-item detach: marker, explicit representation premise,
+    // live parent, checked removed item and the same identity as result.
+    ("librdkafka/cjson.qv", "cJSON_DetachItemViaPointer", 5),
     // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
     // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
     // marker, borrowed formals, a variadic data tail for the two variadic
@@ -1926,7 +1929,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     // RK-PLUGIN-LIBRARY-OUTER-ENVELOPE: selector, definition, runtime guard,
-    // 34 callback registrations, 12 kept members and 8 premises.
+    // 34 callback registrations, 8 kept members and 8 premises.
     ("librdkafka/outer.qv", "rd_kafka_plugin_new", 81),
     // Card LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: 6 -> 7, the model contract names
     // `rk_no_plugin_library` (user decision 2026-10-15, "Add premise support").

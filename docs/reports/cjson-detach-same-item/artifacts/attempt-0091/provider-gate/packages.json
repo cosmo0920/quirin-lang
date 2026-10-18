@@ -1,0 +1,297 @@
+{
+  "qcore.librdkafka": {
+    "plugin_id": "qcore.librdkafka",
+    "package_version": "0.1.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "1250d0433ae2a04bbf8d6ce1eed9bcabf7f6c9a4e0d1c18aaecc2eb610ca58bf",
+    "targets": [
+      {
+        "library": "librdkafka",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts",
+      "concurrency"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.unsupported_assertions.v1",
+    "lean_theorem_family": "QCore.Concurrency"
+  },
+  "qcore.libevent": {
+    "plugin_id": "qcore.libevent",
+    "package_version": "0.2.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "85e716999281e28ccd4cdbe1bcc52af62701bea7bfd92106401daf0f8a321862",
+    "targets": [
+      {
+        "library": "libevent",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts",
+      "event_traces",
+      "concurrency",
+      "observation_hooks"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.reactor_callback_program.v1",
+    "lean_theorem_family": "QCore.EventDriven"
+  },
+  "qcore.ctraces": {
+    "plugin_id": "qcore.ctraces",
+    "package_version": "0.1.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "6681318c21cb018c90c2505c0782f78a0490f9e0c9ec58948948ee44f5131270",
+    "targets": [
+      {
+        "library": "ctraces",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.unsupported_assertions.v1",
+    "lean_theorem_family": "QCore.Resource"
+  },
+  "qcore.cmetrics": {
+    "plugin_id": "qcore.cmetrics",
+    "package_version": "0.2.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "5b69020f9950ca99beb7561d3f3f838b81c194b0d1360e16a9a334587c51edb9",
+    "targets": [
+      {
+        "library": "cmetrics",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "gnu11",
+          "gnu17",
+          "gnu99",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.boolean_field_contract.v2",
+    "lean_theorem_family": "QCore.ChunkSource"
+  },
+  "qcore.chunkio": {
+    "plugin_id": "qcore.chunkio",
+    "package_version": "0.13.0",
+    "protocol_versions": [
+      1
+    ],
+    "evidence_versions": [
+      1,
+      2
+    ],
+    "entrypoint": {
+      "kind": "executable",
+      "path": "provider"
+    },
+    "package_digest": "2acf939a189c8b4511149235f3ba7eec33c787ea7df9dc44bef54aeefd44633b",
+    "targets": [
+      {
+        "library": "chunkio",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "*"
+        ],
+        "dialects": [
+          "c11",
+          "gnu11",
+          "gnu17",
+          "gnu99",
+          "qcore"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      },
+      {
+        "library": "fluent_bit",
+        "revisions": [
+          "*"
+        ],
+        "profiles": [
+          "qcore.c_boolean_field_contract.v2",
+          "qcore.c_boolean_field_contract.v3",
+          "qcore.c_counter_contract.v1"
+        ],
+        "dialects": [
+          "c11",
+          "gnu11",
+          "gnu17",
+          "gnu99"
+        ],
+        "platforms": [
+          "*"
+        ],
+        "backends": [
+          "*"
+        ]
+      }
+    ],
+    "capabilities": [
+      "resource_contracts",
+      "chunk_lifecycle",
+      "translation_unit_projection"
+    ],
+    "required_foreign_summaries": [],
+    "required_observation_hooks": [],
+    "filesystem_inputs": [],
+    "network_access": false,
+    "limits": {
+      "timeout_ms": 5000,
+      "memory_bytes": 268435456,
+      "output_bytes": 4194304
+    },
+    "trust_class": "first_party",
+    "certificate_checker": "qcore.boolean_field_contract.v2",
+    "lean_theorem_family": "QCore.ChunkSource"
+  }
+}

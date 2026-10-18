@@ -1,0 +1,148 @@
+{
+  "before": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.json",
+  "after": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-2/corpus/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 961
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3864
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unsupported",
+      "call to uncontracted function `cJSON_DetachItemViaPointer`",
+      3
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unknown_alias",
+      "unresolved resource identity `item`",
+      2
+    ],
+    [
+      "unsupported",
+      "indirect memory access is outside the resource projection",
+      2
+    ],
+    [
+      "unsupported",
+      "nested call `get_array_item` inside a modeled call is outside the resource projection",
+      1
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in return expression",
+      2
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_DetachItemFromArray",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `cJSON_DetachItemViaPointer`",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "nested call `get_array_item` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_DetachItemFromObject",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `cJSON_DetachItemViaPointer`",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in return expression",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_DetachItemFromObjectCaseSensitive",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `cJSON_DetachItemViaPointer`",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in return expression",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "cJSON.c",
+        "cJSON_DetachItemViaPointer",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [],
+      "added_leaves": [
+        [
+          "unknown_alias",
+          "unresolved resource identity `item`",
+          2
+        ],
+        [
+          "unsupported",
+          "indirect memory access is outside the resource projection",
+          2
+        ]
+      ]
+    }
+  ]
+}

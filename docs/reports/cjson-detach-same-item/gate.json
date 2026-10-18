@@ -1,0 +1,13 @@
+{
+  "note": "CJSON-DETACH-SAME-ITEM cumulative schema19 at analyzer/proof9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe on integration base94b3267f36a1d4a84c20f75226da836430f627b3. Host standing gate4:518units/531summaries,8325passed/0failed/15ignored;342Lean;374rootPython after final matrix regeneration. Fresh provider gate2:133Rust/0failed/1ignored,25Python,all five schema19 packages rebuilt/verified. Final release9f10a5bb all3audits exit0; custody unchanged, all5781null dictionaries and runtime moved records identical. Production detach stays conditional DeclaredAssumption, not Validated/bodySafe. Earlier failures, superseded0091 withdrawal and cancelled jobs1 control retained. Actual Clang recording copied from this same worktree/source gate-host-4, not another report.",
+  "workspace_tests": 8325,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 342,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

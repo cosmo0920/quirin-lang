@@ -1,0 +1,396 @@
+{
+  "reviewed_source": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "path_inventory": {
+    "diagnostics": {
+      "present": true,
+      "paths": [
+        {
+          "path": [
+            "diagnostic_counts",
+            "unknown_alias"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "diagnostic_counts",
+            "unsupported"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "cross_unit_link_resolution",
+            "imported",
+            "*",
+            "home_environment_sha256"
+          ],
+          "count": 1110
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "contract_body_evidence",
+            "unvalidated"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "diagnostic_counts",
+            "unknown_alias"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "diagnostic_counts",
+            "unsupported"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "functions",
+            "*",
+            "contract_dependencies",
+            "declarations"
+          ],
+          "count": 4
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "functions",
+            "*",
+            "diagnostics",
+            "*",
+            "description"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "functions",
+            "*",
+            "diagnostics"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "units",
+            "*",
+            "reason"
+          ],
+          "count": 1
+        }
+      ]
+    },
+    "source": {
+      "present": true,
+      "paths": []
+    },
+    "chunk-contracts": {
+      "present": true,
+      "paths": []
+    },
+    "source-effects": {
+      "present": true,
+      "paths": [
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:55928481f315cc0f8d2cf428"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:851a6900c80afca955b9e91a"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "evidence",
+            "coverage",
+            "*"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "evidence",
+            "unit",
+            "build_digest"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "import_identity",
+            "configuration_digest"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "import_identity",
+            "helpers",
+            "cio_error_reset",
+            "configuration_digest"
+          ],
+          "count": 2
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "task",
+            "contract_sources",
+            "qcore:boolean-field-import:v1"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "task",
+            "obligations",
+            "*",
+            "obligation_id"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "task",
+            "unit",
+            "build_digest"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "witness",
+            "task_digest"
+          ],
+          "count": 3
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:cafc767f984cf0e83aa69664"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:d84f4d86414c9616f24ce203"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:2f4b018ee7043d53a10bd971"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "results",
+            "*",
+            "bounds",
+            "resource_contracts:879b20013b91c6c9dbda98ef"
+          ],
+          "count": 1
+        }
+      ]
+    },
+    "contracts": {
+      "present": true,
+      "paths": [
+        {
+          "path": [
+            "callback_members",
+            "lifetime_protocols",
+            "evidence",
+            "summaries",
+            "76a6c29e19b17225fe00d8248879709359c61d35cdd7a1bb0a697ec7f9c3834a"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "callback_members",
+            "lifetime_protocols",
+            "evidence",
+            "summaries",
+            "b4678aee91d6e763ee7574cedee4f1acd45a42a7d30a27bed73c56067c07b7c2"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "callback_members",
+            "prepass",
+            "lifetime_protocols",
+            "summaries",
+            "76a6c29e19b17225fe00d8248879709359c61d35cdd7a1bb0a697ec7f9c3834a"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "callback_members",
+            "prepass",
+            "lifetime_protocols",
+            "summaries",
+            "b4678aee91d6e763ee7574cedee4f1acd45a42a7d30a27bed73c56067c07b7c2"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_dependencies",
+            "counts",
+            "declarations_consulted"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_dependencies",
+            "counts",
+            "declared_assumption"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_dependencies",
+            "declarations",
+            "cJSON_DetachItemViaPointer"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "contracts",
+            "cJSON_DetachItemViaPointer"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "counts",
+            "pinned"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "counts",
+            "pinned_in_force"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "locks",
+            "$CHECKOUT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts.lock",
+            "sha256"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "locks",
+            "$CHECKOUT/providers/qcore-provider-librdkafka/contracts.lock",
+            "sha256"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "contract_revision",
+            "pinned_in_force"
+          ],
+          "count": 1
+        },
+        {
+          "path": [
+            "cross_unit_link_resolution",
+            "imported",
+            "*",
+            "home_environment_sha256"
+          ],
+          "count": 6
+        },
+        {
+          "path": [
+            "sources",
+            "$CHECKOUT/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv"
+          ],
+          "count": 1
+        }
+      ]
+    }
+  },
+  "conclusions": {
+    "all_custody_statuses_identical": true,
+    "changed_full_rows": 4,
+    "three_caller_refusals": "Nested get_array_item in the array wrapper; unsupported whole return in both object wrappers. No membership manufactured.",
+    "callee_ordinary_projection": "Three branch/aggregate refusals plus six indirect accesses and two unresolved item identities (eleven leaves), distinct from the conditional physical-template adapter.",
+    "metadata": "1110 unit-home environment fingerprint changes (six homes across185units), six matching sidecar home changes; one empty lifetime-summary key renames in both prepass/evidence carriers; CJSON declaration/body/pin/count/lock additions only.",
+    "source_and_chunk_artifacts": "Identical after explicit checkout normalization; raw archives retained.",
+    "source_effects": "All three complete payloads equal after finite published build/config/task/witness/obligation identity correspondence;29 raw fields differ.",
+    "contracts": "All64 normalized module keys equal; raw aliases retained; CJSON only changed module text.",
+    "null_and_combined": "All4921 null dictionaries and every static/property verdict identical.",
+    "runtime": "All scenario counts and full moved-row records identical."
+  }
+}

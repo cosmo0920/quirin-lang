@@ -1,0 +1,50 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.json",
+    "sha256": "777545c06954123cc28dea83b3170c90cc9934fc082af73faaaddd3adac43f9d",
+    "bytes": 1693429
+  },
+  "source": {
+    "present": false
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.chunk-contracts.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.source-effects.json",
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "bytes": 385
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/resource-diagnostics.contracts.json",
+    "sha256": "1a4d098b4be3b199cefb73e5190cc83b5c62425199693079e9bef5458a3691f4",
+    "bytes": 7050538
+  },
+  "static_custody_counts": {
+    "Unknown": 346,
+    "Safe": 53,
+    "Pending": 4,
+    "Unsafe": 1
+  },
+  "slice-null.jsonl": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/slice-null.jsonl",
+    "bytes": 1460997,
+    "sha256": "e7fdef95bfa6873da40cddecece1370cb77c155cfb8648374543e066bab349e5"
+  },
+  "slice-null.summary.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/slice-null.summary.json",
+    "bytes": 64487,
+    "sha256": "4f765339b3ef087cc3d47ec9231eb7960393d2c1c5dd927c22d3a09f489faa49"
+  },
+  "slice-outer.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/slice/slice-outer.json",
+    "bytes": 88679,
+    "sha256": "415af856c7d3bd5ae7807865a8f51fbbf1e2df9ffe10f56ffc7e9bd46814bb4f"
+  }
+}

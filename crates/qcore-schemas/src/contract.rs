@@ -56,6 +56,13 @@ pub enum ResourceReturnMode {
     Owned {
         nullable: bool,
     },
+    /// The exact item restored from its checked owner is returned. This is
+    /// the same identity, never a fresh allocation or an interior borrow.
+    /// Requires a matching `Removed` parameter and a non-null owned parent.
+    Removed {
+        parameter: usize,
+        nullable: bool,
+    },
     /// On success the result replaces `parameter`; on failure the old resource
     /// remains live. A nullable result therefore requires path refinement
     /// before the replacement can be treated as complete.

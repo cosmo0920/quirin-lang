@@ -1,0 +1,31 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "source": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "meaning": "Read-only exhaustive field/key review of the retained superseded checkpoint; no audit rerun. Source-effects optional presence remains explicit.",
+  "steps": [
+    {
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/review_precise.py",
+        "attempt-0091/corpus"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/review_precise.py",
+        "attempt-0091/system"
+      ],
+      "exit": 0
+    },
+    {
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/review_precise.py",
+        "attempt-0091/slice"
+      ],
+      "exit": 0
+    }
+  ]
+}

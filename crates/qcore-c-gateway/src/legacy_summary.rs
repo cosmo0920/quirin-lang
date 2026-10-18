@@ -135,7 +135,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{
-    ContractTrust, DerivedExtent, ResourceContracts, ResourceFunctionContract,
+    ContractTrust, DerivedExtent, ResourceContracts, ResourceFunctionContract, ResourceKind,
     ResourceParameterMode, ResourceReturnMode, ResourceSummaryRecord,
 };
 
@@ -1402,7 +1402,13 @@ pub(crate) fn observations_match_contract(
                 .enumerate()
                 .all(|(index, mode)| {
                     reallocated == Some(index)
-                        || parameter_matches(mode, observation.parameters[index])
+                        || if matches!(contract.result, ResourceReturnMode::Removed { parameter, .. } if parameter == index) {
+                            match observation.returned {
+                                ReturnedValue::Null => observation.parameters[index] == Some(SiteDisposition::Absent),
+                                ReturnedValue::Site { .. } => observation.parameters[index] == Some(SiteDisposition::Escaped),
+                                _ => false,
+                            }
+                        } else { parameter_matches(mode, observation.parameters[index]) }
                 })
             && out_slots_match(contract, observation, &parameter_sites)
             && result_matches(contract, entry, observation, &parameter_sites)
@@ -1531,6 +1537,27 @@ fn result_matches(
                 observation.returned,
                 ReturnedValue::None | ReturnedValue::Null
             ) && observation.pending_replacements.is_empty()
+        }
+        ResourceReturnMode::Removed {
+            parameter,
+            nullable,
+        } => {
+            observation.pending_replacements.is_empty()
+                && match observation.returned {
+                    ReturnedValue::Null => nullable,
+                    ReturnedValue::Site {
+                        site,
+                        nullable: observed_nullable,
+                        disposition,
+                        kind,
+                    } => {
+                        entry.parameter_sites.get(parameter).copied().flatten() == Some(site)
+                            && disposition == SiteDisposition::Escaped
+                            && kind == ResourceKind::Heap
+                            && (nullable || !observed_nullable)
+                    }
+                    _ => false,
+                }
         }
         ResourceReturnMode::Owned { nullable } => match observation.returned {
             // Returning nothing is only consistent with a nullable result.

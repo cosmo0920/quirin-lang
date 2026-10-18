@@ -202,7 +202,9 @@ pub(crate) fn escapes_only_fresh_custody(result: ResourceReturnMode) -> bool {
         // Card W43-LIBC-RESULT-ALIAS: returning a pointer derived from an
         // argument escapes an alias of that argument's object, not fresh
         // custody, so it is refused by name exactly as a reallocation is.
-        ResourceReturnMode::Reallocated { .. } | ResourceReturnMode::Derived { .. } => false,
+        ResourceReturnMode::Reallocated { .. }
+        | ResourceReturnMode::Derived { .. }
+        | ResourceReturnMode::Removed { .. } => false,
     }
 }
 

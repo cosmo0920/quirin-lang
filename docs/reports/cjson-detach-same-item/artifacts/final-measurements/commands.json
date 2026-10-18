@@ -1,0 +1,51 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "9bfe86a4115c4a7e3e4fb0de93c2e037ef5fcfbe",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "corpus",
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/measure.py",
+        "corpus",
+        "private/detach-same-item/measure-final-2/corpus"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 2922.387,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-2/corpus.log"
+    },
+    {
+      "name": "system",
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/measure.py",
+        "system",
+        "private/detach-same-item/measure-final-2/system"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 402.801,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-2/system.log"
+    },
+    {
+      "name": "slice",
+      "command": [
+        "python3",
+        "docs/reports/cjson-detach-same-item/scripts/measure.py",
+        "slice",
+        "private/detach-same-item/measure-final-2/slice"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 333.651,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/measure-final-2/slice.log"
+    }
+  ]
+}

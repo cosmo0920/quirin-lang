@@ -1,0 +1,34 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "tested_head": "6bc8509c3e1c6dadd25a4713601f3a992cfa4820",
+  "host_access": true,
+  "environment": {
+    "CARGO_TARGET_DIR": "/home/cosmo/Documents/GitHub/qcore-c/private/detach-same-item-target",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "QCORE_CLANG": "/usr/lib/llvm-21/bin/clang"
+  },
+  "steps": [
+    {
+      "name": "actual-frame",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "qcore-c-gateway",
+        "--lib",
+        "detach_route::tests::exact_cjson_defining_struct_alias_frame_is_checked",
+        "-j1",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 101,
+      "elapsed_seconds": 29.151,
+      "private_log": "/tmp/qcore-detach-same-item/private/detach-same-item/actual-frame-before-1/actual-frame.log"
+    }
+  ]
+}

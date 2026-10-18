@@ -1,0 +1,8 @@
+{
+  "environment": {
+    "QCORE_DETACH_PRODUCTION_INPUT": "/tmp/qcore-detach-same-item/private/detach-same-item/production-preprocess-1/cJSON.i"
+  },
+  "input_sha256": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276",
+  "input_command_record": "/tmp/qcore-detach-same-item/private/detach-same-item/production-preprocess-1/command.json",
+  "meaning": "Explicit actual production input; metadata recorded after completed control, unchanged input bytes"
+}

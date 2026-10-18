@@ -1,0 +1,7 @@
+{
+  "preprocessed_input": "/tmp/qcore-detach-same-item/private/detach-same-item/production-preprocess-1/cJSON.i",
+  "preprocessed_sha256": "6b08e1a928efe8cca7049921e2d2367fc5bdbd5a301f198ec659e924d41d0276",
+  "fixture_sha256": "d4b54c206b3551fb6870657b8ac7ef689b84ba594ba38f056de50e8aa77e800d",
+  "source_commit": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "method": "Exact preprocessed record typedef and complete function signature/body; unrelated declarations omitted"
+}

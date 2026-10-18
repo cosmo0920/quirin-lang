@@ -1,0 +1,13 @@
+{
+  "cwd": "/tmp/qcore-detach-same-item",
+  "command": [
+    "python3",
+    "docs/reports/w48-bottom-up-callee-bodies/scripts/bottom_up_plan.py",
+    "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.json",
+    "private/detach-same-item/plan-s3-baseline.json",
+    "--top",
+    "20"
+  ],
+  "exit": 0,
+  "meaning": "Read-only fresh S3 baseline replan; no production audit repeated."
+}

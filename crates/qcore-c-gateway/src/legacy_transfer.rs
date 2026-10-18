@@ -899,7 +899,8 @@ impl EntryCustody {
             result_nullable: match contract.result {
                 ResourceReturnMode::None => false,
                 ResourceReturnMode::Owned { nullable }
-                | ResourceReturnMode::Reallocated { nullable, .. } => nullable,
+                | ResourceReturnMode::Reallocated { nullable, .. }
+                | ResourceReturnMode::Removed { nullable, .. } => nullable,
                 // Card W43-RESULT-ALIAS-RETURNED (amending W43-LIBC-RESULT-ALIAS,
                 // which answered `None` here): a derived result escapes
                 // nothing, so no escape consults this flag.
@@ -4873,6 +4874,30 @@ pub(super) fn apply_contract_call(
     kinds: &BTreeMap<usize, ResourceKind>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
+    // A restored result needs exact membership before any parameter effect.
+    // Snapshot its binding now, including when the destination aliases an actual.
+    let restored = if let ResourceReturnMode::Removed {
+        parameter,
+        nullable,
+    } = contract.result
+    {
+        match super::detach_route::prepare(
+            function,
+            line,
+            called,
+            arguments,
+            contract,
+            parameter,
+            nullable,
+            state,
+            diagnostics,
+        ) {
+            Some(pointer) => Some(pointer),
+            None => return,
+        }
+    } else {
+        None
+    };
     // Card W43-LIBC-RESULT-ALIAS: a derived pointer owns nothing, so no
     // custody-bearing parameter effect is ever applied through one. Each such
     // position is skipped below; the one accusable shape (an interior pointer
@@ -4954,6 +4979,14 @@ pub(super) fn apply_contract_call(
     // essential when the destination aliases a consumed/reallocated argument.
     for (index, mode) in contract.parameters.iter().copied().enumerate() {
         let source = arguments.get(index).and_then(Option::as_deref);
+        if matches!(contract.result, ResourceReturnMode::Removed { parameter, .. } if parameter == index)
+            && restored
+                .as_ref()
+                .is_some_and(|pointer| pointer.targets.is_empty())
+        {
+            // Checked null item: no removal, no ownership transfer.
+            continue;
+        }
         if derived_positions.contains(&index) {
             continue;
         }
@@ -5085,6 +5118,16 @@ pub(super) fn apply_contract_call(
     }
 
     match contract.result {
+        ResourceReturnMode::Removed { .. } => {
+            if let (Some(destination), Some(pointer)) = (destination, restored) {
+                if is_indirect_place(destination) {
+                    report_unsupported_contract(function, line, called, diagnostics);
+                    mark_unresolved_effect(state, &pointer);
+                } else {
+                    state.pointers.insert(destination.to_owned(), pointer);
+                }
+            }
+        }
         ResourceReturnMode::None => {
             // The result carries no custody, so the destination holds no
             // resource afterwards. Dropping the binding — rather than leaving

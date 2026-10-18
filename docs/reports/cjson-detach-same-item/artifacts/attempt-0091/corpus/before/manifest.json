@@ -1,0 +1,52 @@
+{
+  "diagnostics": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.json",
+    "sha256": "8fa72c3a13534c2646dfbc8ba3582e3d5220b6f64650a254d768510f31f9bb7d",
+    "bytes": 13563164
+  },
+  "source": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/monkey-source.json",
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "bytes": 1665950
+  },
+  "chunk-contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.chunk-contracts.json",
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "bytes": 4186178
+  },
+  "source-effects": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.source-effects.json",
+    "sha256": "da2ead755e7cc03136e5a5a044f15fb066ccea02a714b4eaeee2cbd352992d20",
+    "bytes": 118505
+  },
+  "contracts": {
+    "present": true,
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus/resource-diagnostics.contracts.json",
+    "sha256": "ec49e41ff43bf24bb04ec6a03edb88e5ddc73af35498bcbf62736bf25e5e2009",
+    "bytes": 7289326
+  },
+  "static_custody_counts": {
+    "Unknown": 3864,
+    "Safe": 961,
+    "Unsafe": 9
+  },
+  "corpus-null.jsonl": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus-null.jsonl",
+    "bytes": 22321545,
+    "sha256": "0ba7d71a9d71b3e89501b1d6172a6f4f85b96baa908591ad4d4de81d734b4fb1"
+  },
+  "corpus-null.summary.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus-null.summary.json",
+    "bytes": 64899,
+    "sha256": "57814e6bde9d65462d3e68cbb318a4d0de9ace4955106aaf0655c46fc60187bf"
+  },
+  "corpus-outer.json": {
+    "source": "/tmp/qcore-fb-lifetime-s3/private/fb-lifetime-s3/measure-final-1/corpus/corpus-outer.json",
+    "bytes": 669852,
+    "sha256": "79ff1fd25a5c403bfaefa1cf8dbb7113d50edab4168dbacb6af7b96e219cd997"
+  }
+}

@@ -1098,6 +1098,24 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "mk_event_loop_destroy",
         ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
     );
+    // Checked same-item detach deliberately extends the production mode table:
+    // the result restores item (formal 1) from parent (formal 0), never fresh.
+    old.insert_contract(
+        "cJSON_DetachItemViaPointer",
+        ResourceFunctionContract::new(
+            [
+                P::Owned { nullable: false },
+                P::Removed {
+                    owner_parameter: 0,
+                    nullable: true,
+                },
+            ],
+            R::Removed {
+                parameter: 1,
+                nullable: true,
+            },
+        ),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -2038,9 +2056,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // of `fluent_bit/outer.qv` (outer contract v1), likewise rejected.
     // 330 -> 331 rejected by RK-PLUGIN-LIBRARY-OUTER-ENVELOPE:
     // `librdkafka/outer.qv`'s one outer-only loader declaration.
+    // Checked same-item detach adds one v1 declaration to the existing cJSON
+    // module: 491 -> 492; selected modules and rejected declarations unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (64, 491, 331)
+        (64, 492, 331)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
