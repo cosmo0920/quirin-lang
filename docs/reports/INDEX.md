@@ -508,6 +508,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [lean-proof-integrity](lean-proof-integrity/README.md) | Lean proof integrity and Lean 4.34 warning cleanup |
 
+| [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
+
 | [librdkafka-plugin-premise](librdkafka-plugin-premise/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: the plugin premise on every dependent declaration |
 
 | [librdkafka-plugin-premise-remainder](librdkafka-plugin-premise-remainder/README.md) | LIBRDKAFKA-PLUGIN-PREMISE-REMAINDER: the plugin premise on member facts, the crash path and a model contract |
