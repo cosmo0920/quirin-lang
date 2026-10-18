@@ -1605,14 +1605,22 @@ fn load_function_in(
         return load_ffi_function(decl);
     }
     let lifetime = crate::local_condition::read(decl)?;
-    if !lifetime.bindings.is_empty() || !lifetime.registered.is_empty() || !lifetime.blocks.is_empty() {
+    if !lifetime.bindings.is_empty()
+        || !lifetime.registered.is_empty()
+        || !lifetime.blocks.is_empty()
+    {
         if decl.parameters.iter().any(|p| p.usage.is_some()) {
-            return Err("local-condition-signature: usage annotations are not a resource-v1 ABI".into());
+            return Err(
+                "local-condition-signature: usage annotations are not a resource-v1 ABI".into(),
+            );
         }
         let base = crate::local_condition::without_local(decl, None)?;
         let mut loaded = load_function_in(&base, aliases)?;
         if loaded.relational.is_some() || loaded.ffi.is_some() {
-            return Err("local-condition-contract: incompatible conditional ABI or return disposition".into());
+            return Err(
+                "local-condition-contract: incompatible conditional ABI or return disposition"
+                    .into(),
+            );
         }
         for block in &lifetime.blocks {
             for clause in &block.clauses {
@@ -1624,8 +1632,9 @@ fn load_function_in(
                 }
             }
         }
-        let mut retaining = loaded.retaining.take().unwrap_or_else(||
-            qcore_schemas::retained_by::RetainingContract::custody_only(loaded.contract.clone()));
+        let mut retaining = loaded.retaining.take().unwrap_or_else(|| {
+            qcore_schemas::retained_by::RetainingContract::custody_only(loaded.contract.clone())
+        });
         retaining.lifetime = Some(lifetime);
         loaded.retaining = Some(retaining);
         return Ok(loaded);

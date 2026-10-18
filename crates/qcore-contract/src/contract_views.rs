@@ -112,7 +112,11 @@ impl ViewDeclaration {
                     SourceContractClauseKind::QuantOuter => "quant".into(),
                     SourceContractClauseKind::QuantConditionBinding => "quant".into(),
                     SourceContractClauseKind::QuantConditionBlock { negated, .. } => {
-                        if *negated { "quant not".into() } else { "quant".into() }
+                        if *negated {
+                            "quant not".into()
+                        } else {
+                            "quant".into()
+                        }
                     }
                     SourceContractClauseKind::QuantRegistered => "quant registered".into(),
                 },

@@ -44,6 +44,9 @@ pub struct LocalBlock {
 /// nothing of condition/lifetime protocols must see an uncontracted callee.
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct LoopLifetimeContract {
+    /// Explicit named assumption; never inferred from absence of local writes.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub entry_snapshot_stable: bool,
     pub bindings: Vec<ConditionBinding>,
     pub blocks: Vec<LocalBlock>,
     pub registered: Vec<RegisteredProtocol>,

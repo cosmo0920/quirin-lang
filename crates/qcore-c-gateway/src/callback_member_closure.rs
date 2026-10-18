@@ -388,6 +388,11 @@ pub enum OpaqueTarget {
 /// One unit's facts.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemberFacts {
+    /// S3 source facts, read only when a selected declaration carries a
+    /// lifetime protocol or scoped prerequisites. Historical environments
+    /// without S3 keep their serialized facts unchanged.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub lifetime_source: Option<crate::loop_lifetime_source::SourceFacts>,
     /// `TAG.PATH` (or `?.NAME` when the record is not read) -> stored values.
     pub stores: BTreeMap<String, BTreeSet<Flow>>,
     /// Callee -> position -> function-pointer actuals.

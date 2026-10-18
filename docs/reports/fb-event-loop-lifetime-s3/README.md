@@ -27,9 +27,7 @@ lifetime-protocol clauses. Unsupported inner clauses reject the module.
 `quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;`.
 
 [LOCAL-CONDITIONS-DESIGN.md](LOCAL-CONDITIONS-DESIGN.md) preserves the design
-and boundaries discussed before implementation. Its outstanding-choice text
-records that earlier checkpoint; this paragraph records the instruction to
-proceed. Equalities remain derived-only under D3, and neither unknown
+and boundaries discussed before implementation. It records the authorized direction and the remaining evidence boundaries. Equalities remain derived-only under D3, and neither unknown
 conditions nor local prerequisites are assumed true. This feature is
 separate from C04.20 outer-contract static/runtime scenarios.
 
@@ -66,8 +64,9 @@ The registered footprint is keyed by record/interior and holder path. Every
 registration and store site in the run must be checked. A contradiction
 withdraws the declaration; a site that cannot be checked makes its use an
 explicit named declared premise. An open or empty candidate set cannot
-validate the footprint. Allocation-site candidates establish coverage and
-disjointness only: overlapping candidates never establish runtime identity.
+validate the footprint. Allocation-site candidates establish candidate coverage only; runtime
+identity or disjointness needs its own checked evidence. Overlapping
+candidates never establish runtime identity.
 
 The summary preserves may-registration effects and under-approximates must
 removal/destroy effects on all exits. Substitution must preserve root identity;
@@ -96,9 +95,8 @@ decision and trace vectors bind the executable model to its proof.
 
 ## Measurement and completion
 
-[PREDICTION.md](PREDICTION.md) is committed before implementation. Capture
-fresh corpus `66910c10`, system `046accf6` and slice `90978ac6` baselines and
-comparisons with exact binary/source identities, jobs, exits and worktree-private
+[PREDICTION.md](PREDICTION.md) is committed before implementation. Reuse the coordinator’s exact `854920e3e` baseline artifacts for
+corpus `66910c10`, system `046accf6` and slice `90978ac6` and capture after comparisons with exact binary/source identities, jobs, exits and worktree-private
 logs. Read every moved row. Null-property parity and no unexplained Safe
 regressions are required. Do not turn the unjoined teardown readings into
 validated upstream defects or claim deployments satisfy declared premises.

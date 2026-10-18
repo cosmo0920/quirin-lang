@@ -1670,6 +1670,53 @@ models the distinct identities, pin gate, lifecycle obligation and non-promotion
 Rust/model correspondence and source review remain rule-28 premises.
 
 
+### C04.21. Local conditional prerequisites and registered lifetimes
+
+S3 (`FB-EVENT-LOOP-CROSS-FUNCTION-LIFETIME`) accepts an explicit read-only
+binding to a host pointer formal's integer member path and scoped blocks:
+
+```qcore
+quant #threaded = (#ins.is_threaded != 0);
+quant #threaded in { requires resource_premise(worker_protocol, "The worker protocol holds"); }: [[local]];
+quant not #threaded in { requires resource_loop_owner(ins, mutate); }: [[local]];
+quant registered #coll: flb_input_collector.event |-> flb_input_collector.evl;
+```
+
+A positive block requires `C ⇒ R`; its complement requires `¬C ⇒ R`.
+Unknown leaves both alternatives feasible. At a caller/use boundary an inner
+`requires` remains an obligation, never a fact minted by the annotation.
+A body may use its own declared conditional entry prerequisite after matching
+the predicate, substituted object/member path, polarity, and entry-to-use
+snapshot. The current source consumer discharges named entry premises only;
+active owner/thread/lifecycle obligations without their own proof remain
+Unknown. Entry reuse additionally requires the explicit unconditional
+named premise `resource_premise(s3_condition_snapshot_stable, "Every member read by this function's condition bindings preserves its entry value until each guarded use.")`.
+Its absence is not replaced by an absence-of-writes inference. The premise
+and guarded obligations remain qualified dependencies and runtime outer facts;
+existing loaded-code envelopes do not automatically cover them. Mutation, intervening calls, ambiguous object identity and unsupported
+control prevent snapshot correspondence. Local branch facts leave no global
+premise; exported contracts preserve their conditional caller obligations.
+
+The first surface permits only existing named, loop-owner, thread-sync and
+lifecycle prerequisites, and registered-lifetime clauses inside a block.
+Nested local blocks, other attributes, conditional custody/ensures/review
+clauses and a conditional vocabulary selector refuse. `resource_contract_v1`
+remains unconditional. Unaware consumers withhold the entire scoped contract.
+The source-language checker still refuses unchecked nonempty contracts (Q021).
+
+A registered clause names one record's interior and holder paths. Its binder
+is local to the clause; it cannot supply a free object to an outer condition.
+Run-wide source checking distinguishes validated, withdrawn, and explicitly
+unresolved declarations. Custody/W4 agreement does not validate this clause.
+A conditional type protocol requires a checked relation between each record
+and the hosting instance; a host formal's flag never governs every record of
+a type. Holder equalities are derived from checked stores and named stability
+premises, not declared by the condition. May registrations/releases remain in
+summaries; a release is checked before later callee postconditions, must
+endings require all feasible exits, poison survives unmatched removals, and
+only the record's own holder ending ends a poisoned registration. Unread
+source, missing homes/correlations and unproved endings withhold admission.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

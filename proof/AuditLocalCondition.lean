@@ -8,3 +8,8 @@ import QCore.LocalCondition
 #print axioms QCore.LocalCondition.no_common_fact_leaves_no_join_facts
 #print axioms QCore.LocalCondition.an_unmatched_instance_is_unresolved
 #print axioms QCore.LocalCondition.shared_vectors_hold
+
+#print axioms QCore.LocalCondition.contradictory_facts_never_discharge_a_condition
+#print axioms QCore.LocalCondition.leaving_scope_never_exports_a_fresh_fact
+
+#print axioms QCore.LocalCondition.a_matching_conditional_entry_precondition_discharges_the_body_use

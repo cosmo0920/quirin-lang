@@ -471,7 +471,7 @@ mod tests {
                 member_paths_withdrawn: false,
                 path_retentions: Vec::new(),
                 removals: Vec::new(),
-                        lifetime: None,
+                lifetime: None,
             },
         );
         contracts.insert_retaining(
@@ -503,7 +503,7 @@ mod tests {
                 member_paths_withdrawn: false,
                 path_retentions: Vec::new(),
                 removals: Vec::new(),
-                        lifetime: None,
+                lifetime: None,
             },
         );
         contracts

@@ -432,17 +432,40 @@ pub fn declaration_clauses(environment: &ResourceContracts, name: &str) -> Vec<C
     let mut clauses = contract_clauses(&declared.contract, false);
     if let Some(lifetime) = &declared.lifetime {
         for binding in &lifetime.bindings {
-            clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
-                format!("quant #{} = (#{}.{} != 0)", binding.name, binding.parameter, binding.members.join("."))));
+            clauses.push(Clause::new(
+                ClauseKind::LifetimeProtocol,
+                format!(
+                    "quant #{} = (#{}.{} != 0)",
+                    binding.name,
+                    binding.parameter,
+                    binding.members.join(".")
+                ),
+            ));
         }
         for protocol in &lifetime.registered {
-            clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
-                format!("quant registered #{}: {}.{} |-> {}.{}", protocol.binder, protocol.record, protocol.interior.join("."), protocol.record, protocol.holder.join("."))));
+            clauses.push(Clause::new(
+                ClauseKind::LifetimeProtocol,
+                format!(
+                    "quant registered #{}: {}.{} |-> {}.{}",
+                    protocol.binder,
+                    protocol.record,
+                    protocol.interior.join("."),
+                    protocol.record,
+                    protocol.holder.join(".")
+                ),
+            ));
         }
         for block in &lifetime.blocks {
             for clause in &block.clauses {
-                clauses.push(Clause::new(ClauseKind::LifetimeProtocol,
-                    format!("quant {}#{} in {{ {:?} }}: [[local]]", if block.guard.negated {"not "} else {""}, block.guard.condition, clause)));
+                clauses.push(Clause::new(
+                    ClauseKind::LifetimeProtocol,
+                    format!(
+                        "quant {}#{} in {{ {:?} }}: [[local]]",
+                        if block.guard.negated { "not " } else { "" },
+                        block.guard.condition,
+                        clause
+                    ),
+                ));
             }
         }
     }
@@ -867,7 +890,7 @@ mod tests {
                 member_paths_withdrawn: false,
                 path_retentions: Vec::new(),
                 removals: Vec::new(),
-                        lifetime: None,
+                lifetime: None,
             },
         );
         let clauses = declaration_clauses(&environment, "keep");

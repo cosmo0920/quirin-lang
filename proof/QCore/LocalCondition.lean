@@ -37,7 +37,7 @@ def reading (g : Guard) (facts : List Fact) : Truth :=
 def join (left right : List Fact) : List Fact :=
   left.filter (fun f => right.contains f)
 
-def scoped (outer : List Fact) (localFact : Fact) : List Fact :=
+def enterScope (outer : List Fact) (localFact : Fact) : List Fact :=
   outer ++ [localFact]
 
 theorem unknown_never_waives_a_prerequisite (discharged : Bool) :
@@ -75,10 +75,32 @@ theorem an_unmatched_instance_is_unresolved (g : Guard) (facts : List Fact)
     apply List.eq_nil_iff_forall_not_mem.mpr
     intro f hf
     have hf' := List.mem_filter.mp hf
-    have roots : g.root = f.root := by
-      simpa [exact, Bool.and_eq_true, beq_iff_eq] using (Bool.and_eq_true.mp hf'.2).2
-    exact h f hf'.1 roots.symm
+    have matched := hf'.2
+    simp only [exact, Bool.and_eq_true, beq_iff_eq] at matched
+    exact h f hf'.1 matched.2.symm
   simp [reading, empty]
+
+theorem contradictory_facts_never_discharge_a_condition (binder root : Nat) (negated : Bool) :
+    reading ⟨binder, root, negated⟩ [⟨binder, root, true⟩, ⟨binder, root, false⟩] = .unknown := by
+  simp [reading, matching, exact]
+
+def leaveScope (outer : List Fact) (_inner : List Fact) : List Fact := outer
+
+theorem leaving_scope_never_exports_a_fresh_fact
+    (outer : List Fact) (localFact : Fact) (fresh : localFact ∉ outer) :
+    localFact ∉ leaveScope outer (enterScope outer localFact) := by
+  simpa [leaveScope] using fresh
+
+/-- Ordinary Hoare entry reasoning: the source adapter must separately prove
+exact condition/predicate identity and entry-to-call snapshot correspondence.
+An annotation at the external caller supplies no such proof. -/
+theorem a_matching_conditional_entry_precondition_discharges_the_body_use
+    (entryCondition currentCondition required : Bool)
+    (sameSnapshot : entryCondition = currentCondition)
+    (entryRequires : entryCondition = true → required = true) :
+    currentCondition = true → required = true := by
+  intro active
+  exact entryRequires (sameSnapshot.trans active)
 
 def vectors : List (Truth × Bool × Bool) := [
   (.yes, false, false), (.yes, true, true),

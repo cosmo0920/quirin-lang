@@ -289,13 +289,67 @@ impl Parser<'_> {
         call_index: usize,
         function: &str,
     ) -> Option<LegacyInstruction> {
-        if self.contracts.lifetime_contract(function).is_some() {
-            return Some(LegacyInstruction::Unknown {
-                description: format!("lifetime-precondition-undischarged: {function}: scoped condition/protocol requires run-wide discharge"),
-                writes: self.refused_writes(texts),
-            });
-        }
-        let declaration = self.contracts.retaining_contract(function)?.clone();
+        let declaration = if let Some(scoped) = self.contracts.lifetime_contract(function).cloned()
+        {
+            let lifetime = scoped
+                .lifetime
+                .as_ref()
+                .expect("lifetime lookup requires a scoped declaration");
+            let mut depth = 0usize;
+            let end = texts
+                .iter()
+                .enumerate()
+                .skip(call_index + 1)
+                .find_map(|(at, text)| {
+                    match *text {
+                        "(" => depth += 1,
+                        ")" => {
+                            depth = depth.checked_sub(1)?;
+                            if depth == 0 {
+                                return Some(at);
+                            }
+                        }
+                        _ => {}
+                    }
+                    None
+                });
+            let call_tokens = end
+                .and_then(|end| texts.get(call_index..=end))
+                .map(|ts| ts.iter().map(|t| (*t).to_owned()).collect::<Vec<_>>());
+            let ready = call_tokens
+                .ok_or_else(|| "unread call token span".to_owned())
+                .and_then(|spelled| {
+                    crate::loop_lifetime_source::ready_at_source_call(
+                        &self.typed_path_function,
+                        function,
+                        tokens.get(call_index).map_or(0, |t| t.line),
+                        &spelled,
+                        lifetime,
+                        self.contracts,
+                    )
+                });
+            match ready {
+                Ok(members) => {
+                    crate::contract_dependencies::lifetime_evidence(
+                        &self.typed_path_function,
+                        members,
+                    );
+                    let mut applied = scoped;
+                    applied.lifetime = None;
+                    applied
+                }
+                Err(why) => {
+                    return Some(LegacyInstruction::Unknown {
+                        description: format!(
+                            "lifetime-precondition-undischarged: {function}: {why}"
+                        ),
+                        writes: self.refused_writes(texts),
+                    });
+                }
+            }
+        } else {
+            self.contracts.retaining_contract(function)?.clone()
+        };
         let refuse = |this: &Self, description: String| LegacyInstruction::Unknown {
             description,
             writes: this.refused_writes(texts),

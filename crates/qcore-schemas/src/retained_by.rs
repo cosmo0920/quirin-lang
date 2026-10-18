@@ -306,12 +306,26 @@ impl RetainingContract {
     #[must_use]
     pub fn custody_only(contract: ResourceFunctionContract) -> Self {
         Self {
-            contract, retentions: Vec::new(), resets: Vec::new(), slot_moves: Vec::new(),
-            derived_outs: Vec::new(), references: Vec::new(), references_withdrawn: false,
-            callbacks: Vec::new(), callbacks_withdrawn: false, discriminant: None,
-            arms: Vec::new(), arms_withdrawn: false, constructed: Default::default(),
-            constructed_withdrawn: false, handoff: None, member_paths: Vec::new(),
-            member_paths_withdrawn: false, path_retentions: Vec::new(), removals: Vec::new(), lifetime: None,
+            contract,
+            retentions: Vec::new(),
+            resets: Vec::new(),
+            slot_moves: Vec::new(),
+            derived_outs: Vec::new(),
+            references: Vec::new(),
+            references_withdrawn: false,
+            callbacks: Vec::new(),
+            callbacks_withdrawn: false,
+            discriminant: None,
+            arms: Vec::new(),
+            arms_withdrawn: false,
+            constructed: Default::default(),
+            constructed_withdrawn: false,
+            handoff: None,
+            member_paths: Vec::new(),
+            member_paths_withdrawn: false,
+            path_retentions: Vec::new(),
+            removals: Vec::new(),
+            lifetime: None,
         }
     }
     /// Whether the declaration retains a pointer or resets a holder (rule

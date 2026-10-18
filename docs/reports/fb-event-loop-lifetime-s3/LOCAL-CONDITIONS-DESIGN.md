@@ -1,11 +1,12 @@
-# Scoped conditional prerequisites: proposal awaiting clarification
+# Scoped conditional prerequisites: implementation direction
 
 The user proposed a brace context that switches prerequisites:
 `quant #threaded in { … }: [[local]];` and
 `quant not #threaded in { … }: [[local]];`, with `[[local]]` representing
-local scope for the clause condition. This is design direction, not approval
-of a finalized grammar or of the earlier scalar-member `when` proposal.
-No implementation is included here.
+local scope for the clause condition. The coordinator subsequently directed
+implementation using that exact block form, with an explicit read-only alias
+binding as a routine grammar choice. This supersedes the earlier pending
+syntax decision; it does not approve declared equalities or arbitrary effects.
 
 Conditional prerequisites are useful for S3. The threaded collector needs a
 proved ending of its worker-loop registration before release; the
@@ -45,14 +46,15 @@ Source grounding at the prepared 90978ac6 export:
   immutable-after-init premise must remain explicit; absence of later writes
   is not established merely by the two collector stores.
 
-## Recommended minimal surface
+## Chosen initial surface
 
-The following is a proposed grammar, not existing accepted syntax:
+The initial implementation grammar is:
 
 ```text
 binding := quant #C = (#P.MEMBER_PATH != 0);
-block   := quant [not] #C in { prerequisite+ }: [[local]];
+block   := quant [not] #C in { (prerequisite | protocol)+ }: [[local]];
 prerequisite := requires EXISTING_OBLIGATION;
+protocol := quant registered #B: TAG.INTERIOR |-> TAG.HOLDER;
 ```
 
 For a declaration whose pointer formal is named `ins`, the concrete binding
@@ -79,17 +81,19 @@ that clause and is unavailable to an enclosing alias. Likewise a setter's
 type-wide protocol predicates. Relating their conditions requires a checked
 root-specific `coll.instance == ins` derivation for the exact record being
 created or processed; a different record, an unresolved list lookup or an
-unproved instance relation preserves an unresolved obligation. This proposal
+unproved instance relation preserves an unresolved obligation. This initial implementation
 does not choose a new syntax for universal per-record conditional protocols.
 
-Initially admit only prerequisite clauses whose consumers implement guarded
-discharge and attribution. Keep the vocabulary selector, ABI, parameter and
+Initially admit conditional prerequisite and registered-footprint syntax;
+consumers must implement scoped discharge/correlation and attribution before
+relying on their effects. Keep the vocabulary selector, ABI, parameter and
 result custody modes, revision/review markers, global protocol declarations
 and outer envelopes outside conditional blocks. Unsupported inner clauses
-reject the module; they are not skipped. The S3 registered footprint remains
-a separately approved type-wide declaration, outside these local blocks.
-Conditional `ensures` can be a later extension or part of an explicit broader
-decision; it needs guarded state-transfer semantics as well as syntax.
+reject the module; they are not skipped. An unguarded S3 footprint is type-wide. A footprint inside a local block
+retains its condition and requires checked per-record/host-instance
+correlation; absent correlation stays unresolved. Conditional `ensures`
+remains outside this initial implementation; it needs guarded state transfer
+semantics as well as syntax.
 
 The alias is contract-local, has exactly one Boolean definition, and names a
 formal or a proved member path. Aliases cannot shadow formals, other binders
@@ -134,19 +138,30 @@ stability premises. The condition does not declare that equality. The true
 branch retains its worker-loop ending obligation; unchecked/absent joins
 remain unresolved. A poisoned registration still needs its own loop to end.
 
-## Decisions to settle
+## Direction resolved and boundaries retained
 
-1. Approve the user's block form plus an explicit local binding of the shape
-   `quant #threaded = (#ins.is_threaded != 0);`, or specify another binding
-   spelling. The block form alone leaves the Boolean's source unbound.
-2. Start with conditional prerequisites (recommended), or include guarded
-   `ensures`/effects in the same change. Changing custody modes by a local
-   block requires a separately defined conditional interface.
-3. Confirm `[[local]]` means a scoped branch fact with conditional caller
-   obligations preserved, as above. A body-only proof context that is never
-   part of a public contract would be a distinct feature.
+The user's local-context direction is authorized. The explicit alias spelling
+is the routine binding choice recorded before semantic code. Initial blocks
+contain conditional prerequisites and registered lifetime protocols; ordinary
+custody modes, arbitrary `ensures`, nested local blocks and other attributes
+remain rejected. The vocabulary selector remains unconditional.
 
-## Implementation and proof obligations after acceptance
+`[[local]]` denotes scoped branch facts with conditional caller obligations
+preserved. Callee bodies may be checked under their declared conditional
+preconditions, as in ordinary contract reasoning. At the caller/use boundary,
+the annotation itself establishes neither the condition nor its prerequisite.
+A body-only proof context that erases caller obligations is not implemented.
+
+A conditional type-wide protocol needs a derived root-specific correlation to
+the host's exact instance. Missing correlation is a named unresolved boundary,
+not a reason to ask again about the chosen syntax. Holder equalities remain
+derived-only. Interprocedural must-removals whose order or incoming poison is
+lost remain refused; only must-destroys discharge through that abstraction.
+New closed-world lifetime/stability facts must appear in dependencies and the
+runtime outer projection; absent an applicable loaded-code envelope, runtime
+admission stays withheld. No envelope is broadened in passing.
+
+## Implementation and proof obligations
 
 Add structured condition bindings/blocks to `frontend.rs`, with recursive
 clause parsing and precise spans rather than flattening an inner `requires`
@@ -173,4 +188,46 @@ an unproved holder equality ends no record; and the final caller fold only
 demotes. Retain the existing poisoning/holder-end theorems. Parser tests must
 exercise rejected unknown/nested/unsupported blocks, not just accepted syntax.
 
-No Rust/Lean gate or safety baseline is claimed for this design-only update.
+The report's gate record, when complete, owns commands and counts. This
+design document is not evidence of a full standing gate or a safety baseline.
+
+## Source extraction premises and conservative controls
+
+The abstract condition model uses numeric binder/root identifiers. Its Lean
+proof does not prove production canonicalization: the correspondence from each
+abstract identifier to a declaration-qualified condition and its exact canonical
+member path is an explicit extraction premise. Production matching uses the
+source/configuration/function-qualified actual root plus the complete normalized
+member chain, rather than a local alias spelling or a formal index alone.
+Bindings of two different members on the same actual object are distinct.
+
+A structural branch is accepted only in the supported structured-control subset.
+A function containing labels, goto, indirect goto, case/default labels, assembly,
+or recognized nonlocal jumps contributes no local condition facts. Effectful or
+unsupported argument/callee expressions invalidate prior facts before a call.
+Checked getter bodies must be a single member-return statement, and every getter
+actual/designator must be effect free; otherwise its enclosing conditional
+forgets inherited facts as well. This is a conservative source rule, not a proof
+that arbitrary C ancestry implies CFG dominance.
+
+Syntactically different formal/result roots remain possible aliases unless a
+separate checked disjointness fact exists. A lifted closed type footprint covers
+may effects only; destroying one unresolved holder never ends all records in
+that footprint, and lifted paths supply no must endings. The source summary
+retains unresolved effects and does not convert a linearized operation census
+into a proof of complete CFG exit coverage. Admission requires the independent
+body/source standing boundary, not merely an empty diagnostic census.
+
+The bounded active named-prerequisite path uses ordinary Hoare reasoning from
+the current function's own conditional `requires`, with full actual/member
+substitution and polarity preserved. It never reads an `ensures` as an entry
+premise. Entry-to-use correspondence additionally requires the explicit
+unconditional named premise
+`resource_premise(s3_condition_snapshot_stable, "Every member read by this function's condition bindings preserves its entry value until each guarded use.")`.
+This is not inferred from absence of local writes. The source subset still
+rejects intervening calls, stores, formal reassignment, effectful operands and
+unsupported control. Each used entry obligation and snapshot premise is
+qualified by the source/configuration/object identity in dependency output;
+loaded-code projection requires coverage and no existing envelope is extended.
+This general entry premise does not derive Fluent Bit's post-init flag
+immutability or holder equalities: those remain separately named D3 obligations.

@@ -581,6 +581,17 @@ pub fn custody_facts(dependencies: &Value, premises: &Value) -> BTreeSet<Fact> {
             key: key.to_owned(),
         });
     }
+    for key in strings(&dependencies[crate::contract_dependencies::LIFETIME_PREREQUISITES_KEY]) {
+        facts.insert(Fact::Premise {
+            name: key.to_owned(),
+        });
+    }
+    for key in strings(&dependencies[crate::contract_dependencies::LIFETIME_MEMBERS_KEY]) {
+        facts.insert(Fact::Member {
+            kind: "lifetime",
+            key: key.to_owned(),
+        });
+    }
     for list in ["declarations", "held", "withdrawn"] {
         for declaration in strings(&dependencies[list]) {
             for premise in premises[declaration].as_array().into_iter().flatten() {

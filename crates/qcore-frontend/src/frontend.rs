@@ -1235,7 +1235,7 @@ impl<'a> SourceParser<'a> {
                 if close >= limit {
                     return Err(self.error(open, "function contract lies outside its signature"));
                 }
-                contract = Some(self.contract_block(cursor, open, close)?);
+                contract = Some(self.contract_block(cursor, open, close, true)?);
                 cursor = close + 1;
             } else {
                 cursor = self.skip_group(cursor);
@@ -1249,6 +1249,7 @@ impl<'a> SourceParser<'a> {
         contract_start: usize,
         open: usize,
         close: usize,
+        allow_local: bool,
     ) -> Result<SourceFunctionContract, SourceParseError> {
         let mut clauses = Vec::new();
         let mut premise_names = BTreeSet::new();
@@ -1262,17 +1263,32 @@ impl<'a> SourceParser<'a> {
                     && !self.word(hash + 1, "outer")
                     && self.word(hash + 2, "in")
                 {
+                    if !allow_local {
+                        return Err(self.error(
+                            cursor,
+                            "local-condition-nesting: nested local blocks are unsupported",
+                        ));
+                    }
                     let condition = match self.tokens.get(hash + 1).map(|t| &t.kind) {
                         Some(TokenKind::Word(name)) => name.clone(),
-                        _ => return Err(self.error(hash + 1, "local-condition-name: expected a condition name")),
+                        _ => {
+                            return Err(self.error(
+                                hash + 1,
+                                "local-condition-name: expected a condition name",
+                            ));
+                        }
                     };
                     let inner_open = hash + 3;
                     if !self.symbol(inner_open, Symbol::LeftBrace) {
-                        return Err(self.error(inner_open, "local-condition-block: expected `{` after `in`"));
+                        return Err(self
+                            .error(inner_open, "local-condition-block: expected `{` after `in`"));
                     }
                     let inner_close = self.close(inner_open)?;
                     if inner_close >= close {
-                        return Err(self.error(inner_open, "local-condition-block: block exceeds its contract"));
+                        return Err(self.error(
+                            inner_open,
+                            "local-condition-block: block exceeds its contract",
+                        ));
                     }
                     let suffix = inner_close + 1;
                     if !self.symbol(suffix, Symbol::Colon)
@@ -1283,22 +1299,35 @@ impl<'a> SourceParser<'a> {
                         || !self.symbol(suffix + 5, Symbol::RightBracket)
                         || !self.symbol(suffix + 6, Symbol::Semicolon)
                     {
-                        return Err(self.error(suffix, "local-condition-scope: expected `: [[local]];`"));
+                        return Err(
+                            self.error(suffix, "local-condition-scope: expected `: [[local]];`")
+                        );
                     }
-                    let inner = self.contract_block(inner_open, inner_open, inner_close)?;
-                    if inner.clauses.is_empty() || inner.clauses.iter().any(|c| !matches!(
-                        c.value.kind, SourceContractClauseKind::Requires | SourceContractClauseKind::QuantRegistered
-                    )) {
+                    let inner = self.contract_block(inner_open, inner_open, inner_close, false)?;
+                    if inner.clauses.is_empty()
+                        || inner.clauses.iter().any(|c| {
+                            !matches!(
+                                c.value.kind,
+                                SourceContractClauseKind::Requires
+                                    | SourceContractClauseKind::QuantRegistered
+                            )
+                        })
+                    {
                         return Err(self.error(inner_open, "local-condition-clause: a nonempty local block contains only prerequisites or lifetime protocols"));
                     }
                     clauses.push(Located {
                         span: self.range_span(clause_start, suffix + 7),
                         value: SourceContractClause {
                             kind: SourceContractClauseKind::QuantConditionBlock {
-                                condition, negated, clauses: inner.clauses,
+                                condition,
+                                negated,
+                                clauses: inner.clauses,
                             },
                             expression_span: self.range_span(hash, suffix + 6),
-                            expression_source: self.source[self.range_span(hash, suffix + 6).start..self.range_span(hash, suffix + 6).end].trim().to_owned(),
+                            expression_source: self.source[self.range_span(hash, suffix + 6).start
+                                ..self.range_span(hash, suffix + 6).end]
+                                .trim()
+                                .to_owned(),
                         },
                     });
                     cursor = suffix + 7;

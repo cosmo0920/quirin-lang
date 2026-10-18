@@ -112,8 +112,19 @@ pub fn row_field(dependencies: &RowDependencies) -> Value {
     if !dependencies.null_premises.is_empty() {
         field[NULL_PREMISES_KEY] = names(&dependencies.null_premises);
     }
+    if !dependencies.lifetime_members.is_empty() {
+        field[LIFETIME_MEMBERS_KEY] = names(&dependencies.lifetime_members);
+    }
+    if !dependencies.lifetime_prerequisites.is_empty() {
+        field[LIFETIME_PREREQUISITES_KEY] = names(&dependencies.lifetime_prerequisites);
+    }
     field
 }
+
+pub const LIFETIME_PREREQUISITES_KEY: &str = "lifetime_prerequisites";
+
+/// S3 member/stability facts. Loaded code must be covered by a kept envelope.
+pub const LIFETIME_MEMBERS_KEY: &str = "lifetime_members";
 
 /// The row field's key of the named null premises (rule 14n).
 pub const NULL_PREMISES_KEY: &str = "null_premises";

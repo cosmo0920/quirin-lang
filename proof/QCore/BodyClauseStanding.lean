@@ -358,6 +358,7 @@ def ClauseKind.spelling : ClauseKind → String
   | .arm => "arm"
   | .memberState => "memberState"
   | .unreadable => "unreadable"
+  | .lifetimeProtocol => "lifetimeProtocol"
 
 def Evidence.spelling : Evidence → String
   | .w4 => "W4"

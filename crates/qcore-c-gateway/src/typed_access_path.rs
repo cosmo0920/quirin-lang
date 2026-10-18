@@ -707,6 +707,30 @@ pub(crate) fn definition_ast(function: &str) -> Option<Value> {
     })
 }
 
+/// S3 local prerequisites rederive their typed call/branch evidence from the
+/// retained analyzed source and exact frontend request, including on certificate
+/// replay. Ambient run facts are not a proof input for this bounded route.
+pub(crate) fn current_lifetime_source(
+    contracts: &qcore_schemas::contract::ResourceContracts,
+) -> Result<crate::loop_lifetime_source::SourceFacts, String> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow
+            .as_ref()
+            .ok_or("no retained analyzed source context")?;
+        let unit = C11TranslationUnit {
+            source: &context.source,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            input: context.request.input.clone(),
+            ..C11TranslationUnit::default()
+        };
+        crate::loop_lifetime_source::read_unit(&context.source, &unit, contracts)
+    })
+}
+
 /// Card **W43-ABI-ENUM-AND-CONST-PP** (rule 12u): Clang's declarations named
 /// by `filter` (its substring name filter) after `suffix` is appended to the
 /// analysed translation unit, read with the unit's own frontend request.
@@ -820,6 +844,12 @@ pub(crate) struct IndirectCallUnit<'a> {
 }
 
 impl IndirectCallUnit<'_> {
+    /// S3 call evidence is tied to this exact preprocessed source, beyond
+    /// its per-function token identity. The run records configuration too.
+    pub(crate) fn source_sha256(&self) -> String {
+        qcore_schemas::sha256_hex(self.source.as_bytes())
+    }
+
     /// The unique body Clang read for `name`.
     pub(crate) fn function(&self, name: &str) -> Option<&Value> {
         match self.ast.functions.get(name)?.as_slice() {
