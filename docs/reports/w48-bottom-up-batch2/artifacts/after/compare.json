@@ -1,0 +1,302 @@
+{
+  "before": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/base-corpus/resource-diagnostics.json",
+  "after": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-corpus-final/corpus/resource-diagnostics.json",
+  "functions": 4834,
+  "transitions": [
+    {
+      "before": "Safe",
+      "after": "Safe",
+      "count": 955
+    },
+    {
+      "before": "Unknown",
+      "after": "Safe",
+      "count": 4
+    },
+    {
+      "before": "Unknown",
+      "after": "Unknown",
+      "count": 3866
+    },
+    {
+      "before": "Unsafe",
+      "after": "Unsafe",
+      "count": 9
+    }
+  ],
+  "removed_leaves": [
+    [
+      "unsupported",
+      "call to uncontracted function `gf2_matrix_square`",
+      4
+    ],
+    [
+      "unsupported",
+      "call to uncontracted function `gf2_matrix_times`",
+      5
+    ],
+    [
+      "unsupported",
+      "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+      5
+    ],
+    [
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition",
+      2
+    ],
+    [
+      "unsupported",
+      "unmodeled expression may mutate a formal resource identity",
+      3
+    ]
+  ],
+  "added_leaves": [
+    [
+      "unsupported",
+      "call to `LZ4_compress_HC_continue` retains `src` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)",
+      1
+    ],
+    [
+      "unsupported",
+      "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)",
+      2
+    ]
+  ],
+  "changed": [
+    {
+      "key": [
+        "librdkafka",
+        "crc32c.c",
+        "crc32c_zeros",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `gf2_matrix_times`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "crc32c.c",
+        "crc32c_zeros_op",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `gf2_matrix_square`",
+          4
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "crc32c.c",
+        "gf2_matrix_square",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "call to uncontracted function `gf2_matrix_times`",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "crc32c.c",
+        "gf2_matrix_times",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled expression may mutate a formal resource identity",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compressHC",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compressHC2",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Safe",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compressHC2_withStateHC",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compressHC_continue",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "call to `LZ4_compress_HC_continue` retains `src` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compressHC_withStateHC",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "nested call `LZ4_compressBound` inside a modeled call is outside the resource projection",
+          1
+        ]
+      ],
+      "added_leaves": [
+        [
+          "unsupported",
+          "call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)",
+          1
+        ]
+      ]
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compress_HC_continue",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "librdkafka",
+        "lz4hc.c",
+        "LZ4_compress_HC_extStateHC_fastReset",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled call, aggregate or indirect access in branch condition",
+          1
+        ]
+      ],
+      "added_leaves": []
+    },
+    {
+      "key": [
+        "monkey-libevent",
+        "mk_core/mk_rconf.c",
+        "check_indent",
+        0
+      ],
+      "before": "Unknown",
+      "after": "Unknown",
+      "removed_leaves": [
+        [
+          "unsupported",
+          "unmodeled expression may mutate a formal resource identity",
+          2
+        ]
+      ],
+      "added_leaves": []
+    }
+  ]
+}

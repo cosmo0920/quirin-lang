@@ -289,6 +289,100 @@ pub(crate) fn stepped_access(
     Some((plan, effects))
 }
 
+/// W48 bottom-up batch 2: a scalar-pointer formal that the body only reads
+/// through and steps itself with the result discarded. No copy, address, call actual, store or other
+/// binding use is admitted. The caller additionally checks its own contract
+/// has no entry custody/out-slot mode and the declaration is a scalar pointer.
+pub(crate) fn read_only_formal(function: &serde_json::Value, name: &str) -> bool {
+    use crate::typed_c_ast::{children, kind};
+    use serde_json::Value;
+
+    fn peel(mut node: &Value) -> &Value {
+        while matches!(kind(node), "ImplicitCastExpr" | "ParenExpr") && children(node).len() == 1 {
+            node = &children(node)[0];
+        }
+        node
+    }
+    fn reference(node: &Value, id: &str) -> bool {
+        let node = peel(node);
+        kind(node) == "DeclRefExpr" && node["referencedDecl"]["id"].as_str() == Some(id)
+    }
+    fn walk(node: &Value, name: &str, id: &str, discarded: bool) -> bool {
+        if kind(node) == "DeclRefExpr" && node["referencedDecl"]["name"].as_str() == Some(name) {
+            return false;
+        }
+        // Clang's lvalue-to-rvalue conversion is the distinction between a
+        // scalar read and a store/address of the dereferenced object.
+        if kind(node) == "ImplicitCastExpr"
+            && node["castKind"].as_str() == Some("LValueToRValue")
+            && children(node).len() == 1
+        {
+            let operand = peel(&children(node)[0]);
+            if kind(operand) == "UnaryOperator"
+                && operand["opcode"].as_str() == Some("*")
+                && children(operand).len() == 1
+                && reference(&children(operand)[0], id)
+            {
+                return true;
+            }
+        }
+        if kind(node) == "UnaryOperator"
+            && matches!(node["opcode"].as_str(), Some("++" | "--"))
+            && children(node).len() == 1
+            && reference(&children(node)[0], id)
+        {
+            return discarded;
+        }
+        // A step's pointer result may not be handed to a call, binding,
+        // return or store. Track only whole discarded statement positions;
+        // nested steps (including `*s++`) are outside this bounded frame.
+        let inner = children(node);
+        inner.iter().enumerate().all(|(index, child)| {
+            let statement = discarded
+                && match kind(node) {
+                    "CompoundStmt" => true,
+                    "IfStmt" => {
+                        let arms = if node["hasElse"].as_bool() == Some(true) {
+                            2
+                        } else {
+                            1
+                        };
+                        index >= inner.len().saturating_sub(arms)
+                    }
+                    "ForStmt" => inner.len() == 5 && matches!(index, 0 | 3 | 4),
+                    "WhileStmt" | "SwitchStmt" | "LabelStmt" | "CaseStmt" | "DefaultStmt"
+                    | "AttributedStmt" => index + 1 == inner.len(),
+                    "DoStmt" => index == 0,
+                    "ParenExpr" => inner.len() == 1,
+                    _ => false,
+                };
+            walk(child, name, id, statement)
+        })
+    }
+    let formals = children(function)
+        .iter()
+        .filter(|node| kind(node) == "ParmVarDecl" && node["name"].as_str() == Some(name))
+        .collect::<Vec<_>>();
+    let [formal] = formals.as_slice() else {
+        return false;
+    };
+    let Some(id) = formal["id"].as_str() else {
+        return false;
+    };
+    let Some(body) = children(function)
+        .iter()
+        .find(|node| kind(node) == "CompoundStmt")
+    else {
+        return false;
+    };
+    walk(body, name, id, true)
+}
+
+/// `QCore.IndexTraversal.formalStepEligible`, after exact self-step matching.
+pub(crate) fn formal_step_eligible(scalar_pointer: bool, fixed: bool, read_only: bool) -> bool {
+    scalar_pointer && !fixed && read_only
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -467,6 +561,71 @@ mod tests {
             "buf [ i ++ + 1 ] = 0",
         ] {
             assert_eq!(stepped(statement), None, "{statement}");
+        }
+    }
+}
+
+#[cfg(test)]
+mod formal_tests {
+    #[test]
+    fn a_formal_frame_requires_each_step_result_to_be_discarded() {
+        if let Err(reason) = crate::clang::command() {
+            assert!(std::env::var_os("QCORE_CLANG").is_none(), "{reason}");
+            eprintln!("skipping Clang-dependent formal frame test: {reason}");
+            return;
+        }
+        for (definition, expected) in [
+            ("void w(char *s) { while (*s) s++; }", true),
+            ("void w(char *s) { for (; *s; s++) {} }", true),
+            ("void w(char *s) { if (*s) s++; else s--; }", true),
+            ("void w(char *s) { do { s++; } while (*s); }", true),
+            ("void w(char *s) { note(s++); }", false),
+            ("void w(char *s) { char *q = s++; }", false),
+            ("void w(char *s) { global = s++; }", false),
+            ("char *w(char *s) { return s++; }", false),
+            ("void w(char *s) { int x = *s++; }", false),
+        ] {
+            let source = format!("void note(char *); char *global; {definition}");
+            let _scope = crate::typed_access_path::enter_source(
+                &source,
+                crate::legacy_c::CCompilerDialect::Gnu17,
+                None,
+            );
+            let index = crate::typed_access_path::StatementIndex::read("w")
+                .unwrap_or_else(|| panic!("no function AST: {source}"));
+            assert_eq!(
+                super::read_only_formal(&index.function, "s"),
+                expected,
+                "{source}"
+            );
+        }
+    }
+
+    #[test]
+    fn formal_step_vectors_match_lean_and_cover_every_boolean_input() {
+        let lean = include_str!("../../../proof/QCore/IndexTraversal.lean");
+        let rows = lean
+            .split("def formalStepVectors")
+            .nth(1)
+            .unwrap()
+            .split("theorem formal_step_vectors_hold")
+            .next()
+            .unwrap();
+        let bits = rows
+            .split(|c: char| !c.is_alphabetic())
+            .filter_map(|word| match word {
+                "true" => Some(true),
+                "false" => Some(false),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(bits.len(), 32);
+        for (index, row) in bits.as_chunks::<4>().0.iter().enumerate() {
+            assert_eq!(
+                [row[0], row[1], row[2]],
+                [index & 4 != 0, index & 2 != 0, index & 1 != 0]
+            );
+            assert_eq!(super::formal_step_eligible(row[0], row[1], row[2]), row[3]);
         }
     }
 }

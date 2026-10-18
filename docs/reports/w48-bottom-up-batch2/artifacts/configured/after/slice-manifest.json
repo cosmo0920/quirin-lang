@@ -1,0 +1,15 @@
+{
+ "resource-diagnostics.json": "46e766e1ff3fb4ea36fa789040921e9876732d4dea85fea0c07697ebcae83a7a",
+ "resource-diagnostics.invocation.json": "5057ab046b829518d8ad674ead6a76bae7d1a0fd3489dd7cc6b994921becc20f",
+ "invocation.json": "bdd5f7113178b2086d8e8ba86ac9fefc5165a0ebcf7708fef1ec60fde21ecae5",
+ "head": "411e30c7ca7193546346310d5bc1d1b2339fcbcd089c8db2caf399d0947eee75",
+ "binary.sha256": "d32091bef41b9b823ff4d847f50be0d098bb0182a045636994c4e864c714901a",
+ "link-map.sha256": "c16cc6bec9f9d07d0558ee049e644bc777a29f68b714cd5154819864fcb2106b",
+ "slice.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+ "counts": {
+  "Unknown": 347,
+  "Safe": 52,
+  "Pending": 4,
+  "Unsafe": 1
+ }
+}

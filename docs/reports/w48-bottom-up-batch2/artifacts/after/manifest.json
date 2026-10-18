@@ -1,0 +1,10 @@
+{
+  "source": "/tmp/qcore-w48-bottom-up-batch2/private/w48-bottom-up-batch2/tip-corpus-final/corpus/resource-diagnostics.json",
+  "sha256": "b06079404e681338a455749ef6e72cb0ad3ad43b275aa3ee985742497b79a1fb",
+  "counts": {
+    "Unknown": 3866,
+    "Safe": 959,
+    "Unsafe": 9
+  },
+  "contracts_sha256": "ea0960f4c463553e0174c0754125d9e587118eab3eba8076c81b587c106983a5"
+}

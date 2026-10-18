@@ -9,7 +9,8 @@
 //! force. The two CFGs differ exactly where the body's construction reads the
 //! function's own contract: `protected_resource_formals` protects every formal
 //! the contract does not declare `Borrowed` (and the descriptor reader names
-//! its integer-kinded ones). The protected set seeds every typed-root premise
+//! its integer-kinded ones). W48 bottom-up batch 2 also makes this same
+//! non-Borrowed set immobile for formal self-steps. The protected set seeds every typed-root premise
 //! — the lexical never-bound closure (rule 10o), `may_bind` and the declared
 //! locals (`FunctionTypes`), and the AST closure rule 10l joins — so a copy
 //! `const T *a = _a;` of a formal the candidate seeds as an entry resource was

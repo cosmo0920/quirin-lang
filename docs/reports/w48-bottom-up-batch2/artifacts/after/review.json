@@ -1,0 +1,11 @@
+{
+ "source": "78751c611fb4df63d076d03035775f34017389ba",
+ "denominator": 4834,
+ "safe_regressions": 0,
+ "new_provisional_unsafe": 0,
+ "changed_rows": 12,
+ "unknown_to_safe": 4,
+ "removed_leaves": 19,
+ "added_leaves": 3,
+ "inspection": "Every changed row inspected; four promotions have zero diagnostics. Three legacy state/continuation wrappers remain Unknown on retention-undecided. Other changes remove known callee/branch/formal leaves without changing status. Scalar check_indent still has two branch-condition leaves. No runtime or null projection measured."
+}

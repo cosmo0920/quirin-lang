@@ -1,0 +1,185 @@
+{
+  "broader_all_located_homes": 378,
+  "ranked_plan_safe_or_unknown_homes": 367,
+  "excluded": [
+    {
+      "caller": [
+        "ctr_id.c",
+        "ctr_id_create_random"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "ctr_random.c",
+            "ctr_random_get"
+          ],
+          "Unsafe"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdhttp.c",
+        "unittest_http"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "rdhttp.c",
+            "unittest_http_get_params_append"
+          ],
+          "Unsafe"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka.c",
+        "rd_kafka_global_init"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "call_once"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka.c",
+        "rd_kafka_global_init0"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "mtx_init"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka.c",
+        "rd_kafka_thread_srand"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "call_once"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka_metadata_cache.c",
+        "rd_kafka_metadata_cache_propagate_changes"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "cnd_broadcast"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka_sasl_cyrus.c",
+        "rd_kafka_sasl_cyrus_global_term"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "mtx_destroy"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka_sasl_oauthbearer_oidc.c",
+        "unittest_sasl_oauthbearer_oidc_assertion"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "rdkafka_sasl_oauthbearer_oidc.c",
+            "ut_sasl_oauthbearer_oidc_assertion_parse_from_file"
+          ],
+          "Unsafe"
+        ],
+        [
+          [
+            "rdkafka_sasl_oauthbearer_oidc.c",
+            "ut_sasl_oauthbearer_oidc_assertion_process_template_file"
+          ],
+          "Unsafe"
+        ],
+        [
+          [
+            "rdkafka_sasl_oauthbearer_oidc.c",
+            "ut_sasl_oauthbearer_oidc_assertion_create"
+          ],
+          "Unsafe"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "rdkafka_timer.c",
+        "rd_kafka_timers_interrupt"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "cnd_signal"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "tinycthread_extra.c",
+        "thrd_current_id"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "tinycthread.c",
+            "thrd_current"
+          ],
+          "unanalysed"
+        ]
+      ]
+    },
+    {
+      "caller": [
+        "mk_server/mk_plugin.c",
+        "mk_plugin_http_error"
+      ],
+      "excluded_homes": [
+        [
+          [
+            "mk_server/mk_http.c",
+            "mk_http_error"
+          ],
+          "Unsafe"
+        ]
+      ]
+    }
+  ]
+}

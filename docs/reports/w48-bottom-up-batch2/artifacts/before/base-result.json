@@ -1,0 +1,13 @@
+{
+  "exact_base": "1543259f0e32c8a003a9062e7de7f59a42dd4519",
+  "counts": {
+    "Unknown": 3870,
+    "Safe": 955,
+    "Unsafe": 9
+  },
+  "audit_exit": 0,
+  "wrapper_exit": 1,
+  "wrapper_issue": "zsh read-only status assignment after successful audit; run.json is the independent audit exit record",
+  "diagnostics_sha256": "43e7a1d9a79bf0396ac8cf6c285663eec645f4836b1f30657f5f8d061423ba58",
+  "same_status_and_diagnostics_as_integration": true
+}

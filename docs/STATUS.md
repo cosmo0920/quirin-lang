@@ -51,6 +51,21 @@ rows and tail-pause slice's 404 rows retain their previous status and
 diagnostic projections. This conditional merged measurement does not replace
 the default W48 count or certify a particular link or plugin deployment.
 
+The isolated [W48 bottom-up batch 2](reports/w48-bottom-up-batch2/README.md)
+on exact base `1543259f0`, semantic source `78751c611`, extends the conditional
+map to six homes and admits checked scalar-read/discarded formal self-steps.
+Its fresh 66910c10 arbiter moves **955 → 959 Safe / 9 provisional Unsafe /
+3,870 → 3,866 Unknown**, 4,834 total, with no Safe regression. Gains are
+`gf2_matrix_times`, `gf2_matrix_square`, `LZ4_compressHC` and `LZ4_compressHC2`;
+three stateful/continuation LZ4 wrappers remain Unknown on retention. System
+and slice retain every status and complete diagnostic across 448 and 404
+configuration rows. Their base evidence is reused from the code/input-equivalent
+integration checkpoint; tip runs are fresh. The ranked hypothetical all-body
+plan is 367 → 362, candidate bodies 2,227 → 2,225, single-body waits 259 → 259;
+these are not Safe verdicts. Detach remains undecided. This conditional static
+custody measurement retains the actual-link/type/calling-convention/interposition
+premise and does not replace the default table or add a runtime/null claim.
+
 **Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
 specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.
@@ -228,19 +243,18 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest completed validation is [requested branch integration](reports/requested-branch-integration/gate.json)
-at `b640fefc`: **6,355 core Rust passed, 0 failed, 11 ignored over 355 units /
-368 summaries; 224 Lean audits; 365 root Python tests**. Rust figures combine
-309 units passing in the full run with 46 failed binaries passing on isolated,
-unrestricted retries; they are not a single clean full-suite invocation. The
-initial full run records 6,248 passed / 107 failed: sanitizer and namespace
-restrictions plus one checkpoint timeout. No assertion or source was changed.
-Formatting, Clippy and both reevaluation probes exit 0; the submodule check
-passes after a retry with writable Git metadata. Commands, all attempts and
-private logs are recorded in the report. Clang 21.1.8 was recorded in this
-worktree. This merge adds two historical evidence scripts; runtime, provider
-and Lean sources are byte-identical to its starting main. The provider workspace
-retains its preceding measurement; no new provider-package run is claimed.
+The latest completed validation is [W48 bottom-up batch 2](reports/w48-bottom-up-batch2/gate.json)
+on semantic source `78751c611`: **8,235 core Rust passed, 0 failed, 15 ignored
+over 513 units / 526 summaries; 337 Lean audits; 374 root Python tests**.
+The complete standing gate is one clean full-suite invocation on that source:
+submodules, formatting, Clippy with warnings denied, both reevaluation probes,
+documentation index and Clang checks also exit 0. Builds omit debug symbols and
+incremental caches after a retained disk-exhausted compilation; debug assertions
+and test controls are unchanged. The report retains that failed compilation,
+early focused failures and the earlier pre-tightening gate separately.
+Clang 21.1.8 was recorded in this worktree. Provider sources are byte-identical
+to stage 2; its 133-test provider measurement is explicitly borrowed, and no
+fresh provider-package run is claimed here.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

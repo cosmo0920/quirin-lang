@@ -1,0 +1,19 @@
+{
+  "source_tip": "ad526b5871c8cd05596c63d110932923431915d7",
+  "base": "1543259f0e32c8a003a9062e7de7f59a42dd4519",
+  "provenance": "Reused merged integration configured baselines; implementation, contracts and audit inputs are code/input-equivalent to this card base. They are not fresh base runs. See artifacts/before/base-provenance.json for exact diff paths.",
+  "routes": {
+    "system": {
+      "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-w44-rk-integration/measure-combined/system/resource-diagnostics.json",
+      "sha256": "477d22031729a195c964e74cdc5181d56cd7586e663599831622cc06016ed71a",
+      "audit_exit": 0,
+      "invocation_sha256": "314d1075015f96f0e159ba08059b164beb1be07fe3f7dd00cd4828e468901800"
+    },
+    "slice": {
+      "source": "/home/cosmo/Documents/GitHub/qcore-c/private/w48-w44-rk-integration/measure-combined/slice/resource-diagnostics.json",
+      "sha256": "7773f0e6eb44abc803a6063ea3495d69d000c6bb43ebb11ee6f4be5bfe518079",
+      "audit_exit": 0,
+      "invocation_sha256": "938c96d396760c35fbe526052d777134822f3abc6c9cbca9cc576eb76c2cf1e5"
+    }
+  }
+}

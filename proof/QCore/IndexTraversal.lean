@@ -518,3 +518,66 @@ theorem a_full_stepped_candidate_is_admitted :
     admitsStepped ⟨true, false, false, false, true⟩ = true := by decide
 
 end QCore.IndexTraversal
+
+namespace QCore.IndexTraversal
+
+/-! W48 bottom-up batch 2. The formal slot is a by-value C parameter.
+The caller separately holds its own slot; the exact AST use classifier
+certifies only scalar dereference reads and self-steps whose pointer result
+is discarded. This extraction
+predicate and Rust correspondence remain premises, as in the base module. -/
+
+def formalStepEligible (scalarPointer fixed readOnly : Bool) : Bool :=
+  scalarPointer && !fixed && readOnly
+
+structure FormalState where
+  localState : State
+  callerSlots : Nat → Option Binding
+
+def checkedFormalStep (scalarPointer fixed readOnly : Bool) (s : FormalState)
+    (names : List Nat) (x : Nat) (forward : Bool) : Option (FormalState × List Diagnostic) :=
+  if formalStepEligible scalarPointer fixed readOnly then
+    let result := stepInPlace s.localState names x forward
+    some ({ s with localState := result.1 }, result.2)
+  else none
+
+theorem a_fixed_formal_keeps_the_refusal (typed reads : Bool) (s : FormalState)
+    (names : List Nat) (x : Nat) (f : Bool) :
+    checkedFormalStep typed true reads s names x f = none := by
+  simp [checkedFormalStep, formalStepEligible]
+
+theorem an_exposed_formal_keeps_the_refusal (typed fixed : Bool) (s : FormalState)
+    (names : List Nat) (x : Nat) (f : Bool) :
+    checkedFormalStep typed fixed false s names x f = none := by
+  simp [checkedFormalStep, formalStepEligible]
+
+theorem a_checked_formal_step_preserves_custody_and_caller_slots
+    (typed fixed reads : Bool) (s : FormalState) (names : List Nat)
+    (x : Nat) (f : Bool) (result : FormalState × List Diagnostic)
+    (h : checkedFormalStep typed fixed reads s names x f = some result) :
+    result.1.localState.live = s.localState.live ∧
+    result.1.localState.held = s.localState.held ∧ result.1.callerSlots = s.callerSlots := by
+  unfold checkedFormalStep at h
+  split at h
+  · cases Option.some.inj h
+    exact ⟨rfl, rfl, rfl⟩
+  · contradiction
+
+theorem a_read_only_unbound_formal_step_is_admitted (s : FormalState)
+    (names : List Nat) (x : Nat) (f : Bool) (h : s.localState.binding x = none) :
+    ∃ result, checkedFormalStep true false true s names x f = some (result, []) ∧
+      result.localState.binding x = none := by
+  refine ⟨{ s with localState := (stepInPlace s.localState names x f).1 }, ?_, ?_⟩
+  · simp [checkedFormalStep, formalStepEligible, stepInPlace, lost, h]
+  · exact an_unbound_pointer_stays_unbound s.localState names x f h
+
+def formalStepVectors : List ((Bool × Bool × Bool) × Bool) :=
+  [((false, false, false), false), ((false, false, true), false),
+   ((false, true, false), false), ((false, true, true), false),
+   ((true, false, false), false), ((true, false, true), true),
+   ((true, true, false), false), ((true, true, true), false)]
+
+theorem formal_step_vectors_hold : ∀ row ∈ formalStepVectors,
+    formalStepEligible row.1.1 row.1.2.1 row.1.2.2 = row.2 := by decide
+
+end QCore.IndexTraversal

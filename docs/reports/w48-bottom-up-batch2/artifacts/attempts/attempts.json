@@ -1,0 +1,19 @@
+{
+  "initial_gate": {
+    "source": "04dd3f26f",
+    "all_steps_exit": 0,
+    "scope": "Before discarded-step-result tightening; not the final semantic source gate",
+    "private_log_directory": "private/w48-bottom-up-batch2/gate-final-v1"
+  },
+  "control_before_fix": {
+    "exit": 101,
+    "reason": "AST predicate accepted note(s++) despite pointer-result consumption; this is a predicate control, not a demonstrated Safe verdict defect",
+    "private_log": "private/w48-bottom-up-batch2/consumed-step-control-before-v2.log"
+  },
+  "disk_failure": {
+    "exit": 101,
+    "scope": "New focused-control compilation only; no tests ran",
+    "private_log": "private/w48-bottom-up-batch2/consumed-step-control-before.log",
+    "resolution": "Only own completed debug cache reclaimed; release executable/evidence retained. Final builds preserve assertions with DEV_DEBUG=0, TEST_DEBUG=0 and INCREMENTAL=0."
+  }
+}

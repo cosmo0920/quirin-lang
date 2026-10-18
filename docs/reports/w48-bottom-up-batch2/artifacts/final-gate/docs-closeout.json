@@ -1,0 +1,39 @@
+{
+ "matrix_regeneration_exit": 0,
+ "python_replay_exit": 0,
+ "python_tests": 374,
+ "checks": [
+  {
+   "command": [
+    "python3",
+    "scripts/build_docs_index.py"
+   ],
+   "exit": 0
+  },
+  {
+   "command": [
+    "python3",
+    "scripts/build_docs_index.py",
+    "--check"
+   ],
+   "exit": 0
+  },
+  {
+   "command": [
+    "bash",
+    "-n",
+    "docs/reports/w48-bottom-up-batch2/scripts/gate.sh",
+    "docs/reports/w48-bottom-up-batch2/scripts/measure.sh"
+   ],
+   "exit": 0
+  },
+  {
+   "command": [
+    "git",
+    "diff",
+    "--check"
+   ],
+   "exit": 0
+  }
+ ]
+}
