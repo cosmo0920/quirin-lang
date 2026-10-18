@@ -1,0 +1,13 @@
+{
+  "note": "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; final source d899486b47a582707d015a070c9e83e82a99a5a4; worktree-private logs in private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; standing tests 513 units/526 summaries/8235 passed/0 failed/15 ignored; Lean 338 audits; provider Rust 133 passed, provider Python 25 and scripts Python 374 tests; every required final gate step exited 0; corrected diagnostic attempts remain in the report. Source pins and per-route arbiter exits are separately recorded in the card report.",
+  "workspace_tests": 8235,
+  "provider_tests": 133,
+  "python_evidence_validator_tests": 374,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 338,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

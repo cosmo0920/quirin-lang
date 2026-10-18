@@ -91,7 +91,13 @@ The corpus uses source 66910c10, and the configured system and tail-pause slice
 use source 046accf6. Runtime envelopes require review of the deployed plugin
 class. These are separate assumptions and do not certify a deployment.
 
-Fresh tip measurements and provider-suite results are still pending. The
+The 32 baseline runtime custody Pending rows were read individually. Their
+current reasons are existing cJSON, librdkafka callback/queue premises or
+ordinary callback run-set/stated facts; none carries an interceptor-list
+run-set fact. They motivate review of the outer class but are not a promised
+promotion target for this runtime-only inventory.
+
+Fresh tip measurements are still pending. The
 reproducible commands are [measure.sh](measure.sh), [gate.sh](gate.sh),
 [compare.py](compare.py), [summarize.py](summarize.py) and
 [write_gate.py](write_gate.py). Worktree-private outputs live under
@@ -107,7 +113,11 @@ check, formatting, Clippy, contract sync and build/verification of all five
 packages. Root and provider compilation use the card-private target
 `/home/cosmo/Documents/GitHub/qcore-c/private/rk-interceptor-candidates-target`.
 [Clang observation](clang-version.txt) is from this worktree's final-source gate.
-Remaining suite results will be recorded before closing the card.
+Provider Rust passed 133 tests and provider Python passed 25; the script suite
+passed 374 tests and the generated documentation index check passed. Every
+required final gate step exited zero; [gate.json](gate.json) records the counts
+and exact implementation commit. The derived acceptance matrix was regenerated
+with these gate observations.
 
 ## Gate diagnostics retained
 
@@ -125,7 +135,10 @@ writes required narrow native escalation; an invalid task-context topic was
 corrected; contract sync initially found stale outer locks; one pin batch read
 the sync operation's temporary empty outer view and was rerun sequentially.
 The completed final-source preflights and final source-pin checks supersede
-those attempts without relabeling their nonzero exits as success.
+those attempts without relabeling their nonzero exits as success. The first
+matrix regeneration also rejected an unsupported source-commit key in the gate
+metadata before changing the matrix; source identity was moved into the
+supported note field and regeneration then passed.
 
 ## Integrator amendments and residuals
 

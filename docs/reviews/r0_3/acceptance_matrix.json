@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Merged W48/W44/RK stage 2 source tip ad526b5871c8cd05596c63d110932923431915d7; merge commits W48 44e6701d6, W44 868bbcc0f, RK d882f6e00; full standing gate private/w44xu/gate-final-integration-2: 513 units/526 summaries, 8230 Rust passed/0 failed/15 ignored, 337 Lean audits, 374 Python tests, all eight steps exit 0. The first integration attempt is retained with a stale matrix Lean-count failure. Provider tree is byte-identical to stage 2 tip a0ec4b37a; its passing gate-providers-v3 supplies 133 Rust tests, 25 Python tests and five verified packages. Integrated corpus, system and slice audits all exit 0 with exact row comparisons in private/w48-w44-rk-integration/; the report records counts and assumptions.",
-  "workspace_tests": 8230,
+  "note": "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; final source d899486b47a582707d015a070c9e83e82a99a5a4; worktree-private logs in private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; standing tests 513 units/526 summaries/8235 passed/0 failed/15 ignored; Lean 338 audits; provider Rust 133 passed, provider Python 25 and scripts Python 374 tests; every required final gate step exited 0; corrected diagnostic attempts remain in the report. Source pins and per-route arbiter exits are separately recorded in the card report.",
+  "workspace_tests": 8235,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
   "lean_audits": 338,
@@ -7104,7 +7104,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/rk-plugin-interceptor-candidates/gate.json)"
  },
  "named_followups": [
   {

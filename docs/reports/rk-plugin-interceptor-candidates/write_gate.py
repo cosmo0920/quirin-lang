@@ -54,7 +54,7 @@ def main():
     provider_python = int(match(r"Ran (\d+) tests", (providers / "python.log").read_text()).group(1))
     clang = (standing / "clang-version.txt").read_text().splitlines()[0]
     note = (
-        "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0, worktree-private logs in "
+        "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0; final source d899486b47a582707d015a070c9e83e82a99a5a4; worktree-private logs in "
         "private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; "
         f"standing tests {totals.group(1)} units/{totals.group(2)} summaries/"
         f"{totals.group(3)} passed/{totals.group(4)} failed/{totals.group(5)} ignored; "
