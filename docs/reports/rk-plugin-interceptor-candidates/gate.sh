@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# gate.sh {standing-pre|standing-tests|providers|docs}; coordinate heavy phases.
+# gate.sh {standing-pre|standing-tests|providers-pre|providers-tests|docs}; coordinate heavy phases.
 set -u
 part="$1"
 repo="$(cd "$(dirname "$0")/../../.." && pwd)"
-case "$part" in standing-*) group=standing;; *) group="$part";; esac
+case "$part" in standing-*) group=standing;; providers-*) group=providers;; *) group="$part";; esac
 out="$repo/private/rk-interceptor-candidates/gate-$group"
 mkdir -p "$out"
 cd "$repo" || exit 2
@@ -33,9 +33,8 @@ case "$part" in
   standing-tests)
     step tests python3 scripts/run_test_binaries.py --log-dir "$out/test-binaries"
     ;;
-  providers)
+  providers-pre)
     step check cargo check --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline
-    step tests cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
     step fmt cargo fmt --manifest-path providers/Cargo.toml --all -- --check
     step clippy cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings
     step contracts python3 providers/contracts.py check
@@ -44,6 +43,9 @@ case "$part" in
       [ -d "$package" ] || continue
       step "verify-$(basename "$package")" python3 providers/package.py verify "$package"
     done
+    ;;
+  providers-tests)
+    step tests cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline
     step python python3 -m unittest discover -s providers/tests
     ;;
   docs)

@@ -6757,7 +6757,7 @@
   "workspace_tests": 8230,
   "provider_tests": 133,
   "python_evidence_validator_tests": 374,
-  "lean_audits": 337,
+  "lean_audits": 338,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6958,6 +6958,7 @@
    "AuditOpCallbacks.lean",
    "AuditOsEndpointPostState.lean",
    "AuditOuterContract.lean",
+   "AuditOuterListCandidates.lean",
    "AuditOwnedFieldCopyReach.lean",
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
@@ -7103,7 +7104,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-w44-rk-integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
