@@ -367,6 +367,18 @@ mod tests {
         }
     }
     #[test]
+    fn exact_cjson_defining_struct_alias_frame_is_checked() {
+        let fixture = include_str!("../tests/fixtures/detach-same-item/cjson_actual_frame.h");
+        let actual = match std::env::var("QCORE_DETACH_PRODUCTION_INPUT") {
+            Ok(path) => std::fs::read_to_string(path).expect("explicit production input is readable"),
+            Err(std::env::VarError::NotPresent) => fixture.to_owned(),
+            Err(error) => panic!("invalid production input path: {error}"),
+        };
+        let result = physical_body(&super::super::tokenize(&actual), "cJSON_DetachItemViaPointer", &contract());
+        assert!(result.is_ok(), "actual cJSON frame: {result:?}");
+    }
+
+    #[test]
     fn extra_missing_and_misdirected_effects_refuse() {
         for source in [
             BODY.replace("return item;", "return parent;"),
