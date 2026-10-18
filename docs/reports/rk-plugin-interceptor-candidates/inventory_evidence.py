@@ -24,6 +24,8 @@ for root, identity in zip(sys.argv[1:], data['reviewed_identities']):
         content = subprocess.check_output(['git', '-C', root, 'show', 'HEAD:' + path])
         assert hashlib.sha256(content).hexdigest() == expected, path
         files[Path(path).name] = content.decode()
+    assert 'method->ic_opaque = ic_opaque;' in files['rdkafka_interceptor.c']
+    assert 'method->u.generic = func;' in files['rdkafka_interceptor.c']
     records = []
     for candidate in data['candidates']:
         arm = candidate['callback_member'].split('.')[-1]
@@ -38,6 +40,6 @@ for root, identity in zip(sys.argv[1:], data['reviewed_identities']):
         if candidate['lifecycle'] != 'configuration':
             assert 'assert(!rk->rk_initialized)' in body
             assert 'RD_KAFKA_INTERCEPTOR_REJECT_IF_SHARE(rk)' in body
-        records.append({'list': candidate['list_member'], 'union_arm': candidate['callback_member'], 'setter': candidate['setter'], 'signature': candidate['callback_signature'], 'lifecycle': candidate['lifecycle'], 'source_pins': 'match'})
+        records.append({'list': candidate['list_member'], 'union_arm': candidate['callback_member'], 'setter': candidate['setter'], 'signature': candidate['callback_signature'], 'lifecycle': candidate['lifecycle'], 'registration_lifetime': candidate['registration_lifetime'], 'source_pins': 'match'})
     results.append({'revision': revision, 'sources': len(files), 'candidates': records})
 print(json.dumps({'inventory_sha256': hashlib.sha256(inventory.read_bytes()).hexdigest(), 'audited': results}, indent=2))

@@ -45,23 +45,29 @@ theorem changed_source_is_never_in_force (e : PinEvidence)
 A configuration setter has no client initialization check. Client setters may
 be called only from on_new, before initialization, on a non-share client.
 Neutral is the explicit human-reviewed custody restriction, not a C type fact. -/
-def reviewScope (result : Int) (configuration onNew initialized share neutral : Bool) : Prop :=
-  result = 0 ∧ (configuration = true ∨ (onNew = true ∧ initialized = false ∧ share = false)) ∧ neutral = true
+def reviewScope (result : Int) (configuration onNew initialized share neutral liveThroughLastInvocation : Bool) : Prop :=
+  result = 0 ∧ (configuration = true ∨ (onNew = true ∧ initialized = false ∧ share = false)) ∧ neutral = true ∧ liveThroughLastInvocation = true
 
 theorem a_reviewed_registration_has_success (result : Int)
-    (configuration onNew initialized share neutral : Bool)
-    (h : reviewScope result configuration onNew initialized share neutral) : result = 0 := h.1
+    (configuration onNew initialized share neutral liveThroughLastInvocation : Bool)
+    (h : reviewScope result configuration onNew initialized share neutral liveThroughLastInvocation) : result = 0 := h.1
 
 theorem a_client_registration_precedes_initialization (result : Int)
-    (onNew initialized share neutral : Bool)
-    (h : reviewScope result false onNew initialized share neutral) :
+    (onNew initialized share neutral liveThroughLastInvocation : Bool)
+    (h : reviewScope result false onNew initialized share neutral liveThroughLastInvocation) :
     onNew = true ∧ initialized = false ∧ share = false := by
   simpa using h.2.1
 
 theorem an_unreviewed_callback_is_outside_the_candidate (result : Int)
-    (configuration onNew initialized share : Bool) :
-    ¬ reviewScope result configuration onNew initialized share false := by
+    (configuration onNew initialized share liveThroughLastInvocation : Bool) :
+    ¬ reviewScope result configuration onNew initialized share false liveThroughLastInvocation := by
   simp [reviewScope]
+
+/-- Retaining a callback or opaque context cannot silently forget its lifetime. -/
+theorem a_reviewed_registration_keeps_its_context_live (result : Int)
+    (configuration onNew initialized share neutral liveThroughLastInvocation : Bool)
+    (h : reviewScope result configuration onNew initialized share neutral liveThroughLastInvocation) :
+    liveThroughLastInvocation = true := h.2.2.2
 
 open QCore.OuterContract
 

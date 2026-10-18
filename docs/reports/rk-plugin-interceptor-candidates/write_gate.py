@@ -23,9 +23,9 @@ def match(pattern, text):
 
 
 def main():
-    standing = PRIVATE / "gate-standing"
-    providers = PRIVATE / "gate-providers"
-    docs = PRIVATE / "gate-docs"
+    standing = PRIVATE / "gate-standing-final"
+    providers = PRIVATE / "gate-providers-final"
+    docs = PRIVATE / "gate-docs-final"
     by_part = {"standing": exits(standing), "providers": exits(providers), "docs": exits(docs)}
     required = {
         "standing": {"submodule", "tests", "fmt", "clippy", "probe", "followup", "lean", "clang-version"},
@@ -55,7 +55,7 @@ def main():
     clang = (standing / "clang-version.txt").read_text().splitlines()[0]
     note = (
         "RK-PLUGIN-INTERCEPTOR-CANDIDATES on base 1543259f0, worktree-private logs in "
-        "private/rk-interceptor-candidates/gate-standing, gate-providers, gate-docs; "
+        "private/rk-interceptor-candidates/gate-standing-final, gate-providers-final, gate-docs-final; "
         f"standing tests {totals.group(1)} units/{totals.group(2)} summaries/"
         f"{totals.group(3)} passed/{totals.group(4)} failed/{totals.group(5)} ignored; "
         f"Lean {lean} audits; provider Rust {provider_tests} passed, provider Python {provider_python} "

@@ -8,7 +8,7 @@
     {
       "function": "rd_kafka_plugin_new",
       "module": "librdkafka/outer.qv",
-      "contract_sha256": "6b65b767270dd644a4f3d89e08dbf66984e5f8ca23d7eade83b85938ddf00934",
+      "contract_sha256": "0a618dc19d20d46f91aa68139e7353814749b5d3e9dfd310406905da3c4222dd",
       "identities": [
         {
           "reviewed_at": [

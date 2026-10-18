@@ -3,6 +3,7 @@ import QCore.OuterListCandidates
 #print axioms QCore.OuterListCandidates.different_lists_have_different_identities
 #print axioms QCore.OuterListCandidates.an_unbound_inventory_is_never_in_force
 #print axioms QCore.OuterListCandidates.changed_source_is_never_in_force
+#print axioms QCore.OuterListCandidates.a_reviewed_registration_keeps_its_context_live
 #print axioms QCore.OuterListCandidates.a_reviewed_registration_has_success
 #print axioms QCore.OuterListCandidates.a_client_registration_precedes_initialization
 #print axioms QCore.OuterListCandidates.an_unreviewed_callback_is_outside_the_candidate

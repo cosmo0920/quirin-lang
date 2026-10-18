@@ -10,7 +10,8 @@ their 14 `rd_kafka_s.rk_conf` aliases and their method union arms. It pins exact
 source bytes at both audited Fluent Bit revisions and preserves the C signatures.
 The candidate restriction is neutral custody for callbacks and their transitive
 calls, with borrowed pointer arguments and scalar resource handles, balanced local
-acquisitions and public registration lifecycle restrictions. It is a human review
+acquisitions, public registration lifecycle restrictions, and callback code/opaque
+contexts valid through their last possible invocation. It is a human review
 premise for deployed code; it does not declare the setters neutral, establish a
 static list closure or decide an unsupported static invocation.
 
@@ -21,7 +22,7 @@ only under those review restrictions. Static rule 12n remains unchanged.
 
 ## Follow-ons
 
-Static interceptor list invocation remains unsupported: a list/element/union-arm
+`RK-INTERCEPTOR-STATIC-LIST-CLOSURE`: static interceptor list invocation remains unsupported: a list/element/union-arm
 closure and candidate composition need their own sound rule. Callbacks that free
 or retain opaque state or transfer ownership do not meet this card's neutral
 candidate and remain unsupported. No deployed callback has been certified.

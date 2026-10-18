@@ -4,7 +4,7 @@ set -u
 part="$1"
 repo="$(cd "$(dirname "$0")/../../.." && pwd)"
 case "$part" in standing-*) group=standing;; providers-*) group=providers;; *) group="$part";; esac
-out="$repo/private/rk-interceptor-candidates/gate-$group"
+out="$repo/private/rk-interceptor-candidates/gate-$group${2:-}"
 mkdir -p "$out"
 cd "$repo" || exit 2
 export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0
@@ -21,7 +21,6 @@ step() {
 git rev-parse HEAD > "$out/head-$part"
 case "$part" in
   standing-pre)
-    step submodule git submodule update --init --recursive
     step fmt cargo fmt --all -- --check
     step clippy cargo clippy --all-targets -- -D warnings
     step probe cargo run -p qcore-compiler --example reevaluation_probe

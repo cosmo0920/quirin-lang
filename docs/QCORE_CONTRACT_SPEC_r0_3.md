@@ -1636,8 +1636,8 @@ statement cites its exact SHA-256 as `outer-candidates:DIGEST`; every listed
 `#registered` list path must cite that inventory. The inventory records the exact
 list key and embedded aliases, element record, callback union arm, C signature,
 public setter, success value (zero), configuration or pre-initialization/non-share
-lifecycle, duplicate behavior, and the callback's review restriction. Distinct
-lists remain distinct even when their element callback fields share a C union.
+lifecycle, duplicate behavior, registered code/context lifetime, and the callback's
+review restriction. Distinct lists remain distinct even when their element callback fields share a C union.
 
 The supported candidate restriction is neutral custody: every pointer argument
 and each object reachable from it is borrowed, with no release, retention,
@@ -1645,7 +1645,8 @@ ownership transfer or global custody effect. Scalar resource handles are borrowe
 too (including `sockfd`: no close, duplicate or transfer), and local acquisitions
 are balanced before return. Documented borrowed output-buffer
 writes are permitted; this does not waive the API's other conditions. A callback
-or transitive call that cannot satisfy this restriction is unsupported. Client
+or transitive call that cannot satisfy this restriction is unsupported. The
+registered code and opaque context stay valid through the last possible invocation, including destruction and copied `on_new` registrations. Client
 registrations occur only from `on_new`, before initialization completes, for a
 non-share client; configuration registrations use a live configuration. Rejected
 or duplicate registrations do not append; `on_conf_destroy` permits duplicates.

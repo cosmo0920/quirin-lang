@@ -41,6 +41,7 @@ struct Candidate {
     duplicates: String,
     custody: String,
     review: String,
+    registration_lifetime: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -101,6 +102,8 @@ fn parse(text: &str) -> Result<Inventory, String> {
                 .contains(&candidate.lifecycle.as_str())
             || !["allowed", "conflict-without-append"].contains(&candidate.duplicates.as_str())
             || candidate.custody != CUSTODY
+            || candidate.registration_lifetime
+                != "callback-code-and-opaque-valid-through-last-invocation"
             || candidate.review.trim().is_empty()
         {
             return Err(format!(
@@ -294,6 +297,10 @@ mod tests {
             ("\"successful_result\": 0", "\"successful_result\": 1"),
             ("exact-source-bytes-sha256", "unverified"),
             ("configuration", "any-time"),
+            (
+                "callback-code-and-opaque-valid-through-last-invocation",
+                "unchecked-lifetime",
+            ),
         ] {
             assert!(parse(&INVENTORY.replace(old, new)).is_err(), "{old}");
         }

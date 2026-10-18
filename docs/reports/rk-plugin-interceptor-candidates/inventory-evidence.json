@@ -1,5 +1,5 @@
 {
-  "inventory_sha256": "85e79e8245700cfeaa6ceb9071c038b485fdb4ff4bd15f83a0784f66d4c05d13",
+  "inventory_sha256": "5c3f8c4723832c0e9e6ebb784be6a57ebc0264d519421d5b95a18a8f68c18147",
   "audited": [
     {
       "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
@@ -11,6 +11,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
           "signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -19,6 +20,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -27,6 +29,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -35,6 +38,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_new",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -43,6 +47,7 @@
           "setter": "rd_kafka_interceptor_add_on_destroy",
           "signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -51,6 +56,7 @@
           "setter": "rd_kafka_interceptor_add_on_send",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -59,6 +65,7 @@
           "setter": "rd_kafka_interceptor_add_on_acknowledgement",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -67,6 +74,7 @@
           "setter": "rd_kafka_interceptor_add_on_consume",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -75,6 +83,7 @@
           "setter": "rd_kafka_interceptor_add_on_commit",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -83,6 +92,7 @@
           "setter": "rd_kafka_interceptor_add_on_request_sent",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -91,6 +101,7 @@
           "setter": "rd_kafka_interceptor_add_on_response_received",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -99,6 +110,7 @@
           "setter": "rd_kafka_interceptor_add_on_thread_start",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -107,6 +119,7 @@
           "setter": "rd_kafka_interceptor_add_on_thread_exit",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -115,6 +128,7 @@
           "setter": "rd_kafka_interceptor_add_on_broker_state_change",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         }
       ]
@@ -129,6 +143,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_set",
           "signature": "typedef rd_kafka_conf_res_t(rd_kafka_interceptor_f_on_conf_set_t)( rd_kafka_conf_t *conf, const char *name, const char *val, char *errstr, size_t errstr_size, void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -137,6 +152,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_dup",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_dup_t)( rd_kafka_conf_t *new_conf, const rd_kafka_conf_t *old_conf, size_t filter_cnt, const char **filter, void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -145,6 +161,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_conf_destroy",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_conf_destroy_t)( void *ic_opaque);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -153,6 +170,7 @@
           "setter": "rd_kafka_conf_interceptor_add_on_new",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_new_t)( rd_kafka_t *rk, const rd_kafka_conf_t *conf, void *ic_opaque, char *errstr, size_t errstr_size);",
           "lifecycle": "configuration",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -161,6 +179,7 @@
           "setter": "rd_kafka_interceptor_add_on_destroy",
           "signature": "typedef rd_kafka_resp_err_t( rd_kafka_interceptor_f_on_destroy_t)(rd_kafka_t *rk, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -169,6 +188,7 @@
           "setter": "rd_kafka_interceptor_add_on_send",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_send_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -177,6 +197,7 @@
           "setter": "rd_kafka_interceptor_add_on_acknowledgement",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_acknowledgement_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -185,6 +206,7 @@
           "setter": "rd_kafka_interceptor_add_on_consume",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_consume_t)( rd_kafka_t *rk, rd_kafka_message_t *rkmessage, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -193,6 +215,7 @@
           "setter": "rd_kafka_interceptor_add_on_commit",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_commit_t)( rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, rd_kafka_resp_err_t err, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -201,6 +224,7 @@
           "setter": "rd_kafka_interceptor_add_on_request_sent",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_request_sent_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -209,6 +233,7 @@
           "setter": "rd_kafka_interceptor_add_on_response_received",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_response_received_t)( rd_kafka_t *rk, int sockfd, const char *brokername, int32_t brokerid, int16_t ApiKey, int16_t ApiVersion, int32_t CorrId, size_t size, int64_t rtt, rd_kafka_resp_err_t err, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -217,6 +242,7 @@
           "setter": "rd_kafka_interceptor_add_on_thread_start",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_start_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -225,6 +251,7 @@
           "setter": "rd_kafka_interceptor_add_on_thread_exit",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_thread_exit_t)( rd_kafka_t *rk, rd_kafka_thread_type_t thread_type, const char *thread_name, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         },
         {
@@ -233,6 +260,7 @@
           "setter": "rd_kafka_interceptor_add_on_broker_state_change",
           "signature": "typedef rd_kafka_resp_err_t(rd_kafka_interceptor_f_on_broker_state_change_t)( rd_kafka_t *rk, int32_t broker_id, const char *secproto, const char *name, int port, const char *state, void *ic_opaque);",
           "lifecycle": "on-new-before-initialized-non-share",
+          "registration_lifetime": "callback-code-and-opaque-valid-through-last-invocation",
           "source_pins": "match"
         }
       ]
